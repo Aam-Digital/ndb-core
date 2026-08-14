@@ -230,7 +230,7 @@ when you need to work with continuous updates of a specific entity from the data
                 <tr>
                     <td class="col-md-4">
                                 <span class="modifier">Protected</span>
-                        <code>constructor(entityCtor: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt;</a>, entityID: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>)</code>
+                        <code>constructor(entityCtor: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt;</a>, entityID: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>, emitDeletions: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
                     </td>
                 </tr>
                         <tr>
@@ -281,6 +281,18 @@ when you need to work with continuous updates of a specific entity from the data
                                                   
                                                         <td>
                                                                         <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>emitDeletions</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -368,8 +380,8 @@ when you need to work with continuous updates of a specific entity from the data
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="63"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -413,8 +425,8 @@ a domain-specific error so that monitoring tools (e.g. Sentry) can group them pr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="27"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:27</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -454,8 +466,8 @@ a domain-specific error so that monitoring tools (e.g. Sentry) can group them pr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="41"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:41</a></div>
                         </td>
                     </tr>
 
@@ -504,6 +516,14 @@ export abstract class LatestEntityLoader&lt;T extends Entity&gt; {
     private entityCtor: EntityConstructor&lt;T&gt;,
     private entityID: string,
     protected entityMapper: EntityMapperService,
+    /**
+     * Whether a deletion of the entity is emitted through &#x60;entityUpdated&#x60; as well.
+     *
+     * A deleted document holds no data, so the emitted entity is empty apart from its id.
+     * Set this to false if the subscriber cannot handle that (and instead should simply
+     * keep the last known state until the app is reloaded).
+     */
+    private readonly emitDeletions: boolean &#x3D; true,
   ) {
     this.onInit();
   }
@@ -522,7 +542,10 @@ export abstract class LatestEntityLoader&lt;T extends Entity&gt; {
     // regardless of whether the initial load below succeeds or fails.
     this.entityMapper
       .receiveUpdates(this.entityCtor)
-      .pipe(filter(({ entity }) &#x3D;&gt; entity.getId(true) &#x3D;&#x3D;&#x3D; this.entityID))
+      .pipe(
+        filter(({ type }) &#x3D;&gt; this.emitDeletions || type !&#x3D;&#x3D; &quot;remove&quot;),
+        filter(({ entity }) &#x3D;&gt; entity.getId(true) &#x3D;&#x3D;&#x3D; this.entityID),
+      )
       .subscribe(({ entity }) &#x3D;&gt; this.entityUpdated.next(entity));
 
     return this.loadOnce();

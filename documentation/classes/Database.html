@@ -265,6 +265,11 @@ Database is not an Angular Service and has to be accessed through the DatabaseRe
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeAll" >removeAll</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Abstract</span>
                                 <a href="#reset" >reset</a>
                             </li>
@@ -441,8 +446,8 @@ because that will make your code tightly coupled with PouchDB rather than any ot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="142"
-                                    class="link-to-prism">src/app/core/database/database.ts:142</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="166"
+                                    class="link-to-prism">src/app/core/database/database.ts:166</a></div>
                         </td>
                     </tr>
 
@@ -480,8 +485,8 @@ because that will make your code tightly coupled with PouchDB rather than any ot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/database/database.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="164"
+                                    class="link-to-prism">src/app/core/database/database.ts:164</a></div>
                         </td>
                     </tr>
 
@@ -768,8 +773,8 @@ e.g. once user details are available.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="129"
-                                    class="link-to-prism">src/app/core/database/database.ts:129</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="153"
+                                    class="link-to-prism">src/app/core/database/database.ts:153</a></div>
                         </td>
                     </tr>
 
@@ -1260,6 +1265,98 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="removeAll"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeAll</b></span>
+                        <a href="#removeAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeAll&lt;T&gt;(shouldDelete: (doc: T) => void)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/core/database/database.ts:139</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Delete all documents of the database matching the given filter.</p>
+<p>Note that <code>getAll()</code> also returns the database&#39;s own &quot;_design/...&quot; index
+documents, so a filter that does not exclude them deletes the indices as well.
+They are only recreated when the app starts up again
+(see <a href="../injectables/DatabaseIndexingService.html">DatabaseIndexingService</a>), so only delete them if the calling code
+reloads the app or restores the documents immediately afterwards.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">   Pass a specialized document type if the filter reads fields other than `_id`.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>shouldDelete</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>filter deciding for each document whether it is deleted.
+Pass a specialized document type if the filter reads fields other than <code>_id</code>.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the number of deleted documents</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="reset"></a>
                     <span class="name">
                             <span class="modifier">Abstract</span>
@@ -1278,8 +1375,8 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/core/database/database.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/app/core/database/database.ts:159</a></div>
                         </td>
                     </tr>
 
@@ -1492,6 +1589,30 @@ export abstract class Database {
       startkey: prefix,
       endkey: prefix + &quot;\ufff0&quot;,
     });
+  }
+
+  /**
+   * Delete all documents of the database matching the given filter.
+   *
+   * Note that &#x60;getAll()&#x60; also returns the database&#x27;s own &quot;_design/...&quot; index
+   * documents, so a filter that does not exclude them deletes the indices as well.
+   * They are only recreated when the app starts up again
+   * (see {@link DatabaseIndexingService}), so only delete them if the calling code
+   * reloads the app or restores the documents immediately afterwards.
+   *
+   * @param shouldDelete filter deciding for each document whether it is deleted.
+   *        Pass a specialized document type if the filter reads fields other than &#x60;_id&#x60;.
+   * @returns the number of deleted documents
+   */
+  async removeAll&lt;T extends { _id: string }&gt;(
+    shouldDelete: (doc: T) &#x3D;&gt; boolean,
+  ): Promise&lt;number&gt; {
+    const allDocs: T[] &#x3D; await this.getAll();
+    const docsToDelete &#x3D; allDocs.filter(shouldDelete);
+    for (const doc of docsToDelete) {
+      await this.remove(doc);
+    }
+    return docsToDelete.length;
   }
 
   /**

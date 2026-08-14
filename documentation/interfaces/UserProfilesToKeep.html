@@ -1,0 +1,735 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  UserProfilesToKeep</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/system-reset/system-reset.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Which records have to be kept when deleting all records,
+because a login account is linked to them as its &quot;profile&quot;.</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#accountsVerified" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">accountsVerified</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#linkedProfileIds" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">linkedProfileIds</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="accountsVerified"></a>
+                                <span class="name "><b>accountsVerified</b>
+                                    <a href="#accountsVerified">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>accountsVerified:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/admin/system-reset/system-reset.service.ts:39</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether the login accounts could actually be looked up.</p>
+<p>If false (e.g. missing permissions, no user management server or offline),
+all records of types that can have user accounts are kept instead,
+because it is unknown which of them are linked to an account.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="linkedProfileIds"></a>
+                                <span class="name "><b>linkedProfileIds</b>
+                                    <a href="#linkedProfileIds">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>linkedProfileIds:     <code>Set&lt;string&gt;</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>Set&lt;string&gt;</code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/admin/system-reset/system-reset.service.ts:30</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>ids of the records that a login account is linked to</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, signal } from &quot;@angular/core&quot;;
+import { BackupService } from &quot;../backup/backup.service&quot;;
+import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import {
+  CustomYesNoButtons,
+  DELETE_CONFIRMATION_KEYWORD,
+  OkButton,
+} from &quot;../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { LOCATION_TOKEN, NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
+import { Database } from &quot;../../database/database&quot;;
+import { DatabaseResolverService } from &quot;../../database/database-resolver.service&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
+import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import { ImportMetadata } from &quot;../../import/import-metadata&quot;;
+import {
+  UserAdminApiError,
+  UserAdminService,
+} from &quot;../../user/user-admin-service/user-admin.service&quot;;
+import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
+import { firstValueFrom } from &quot;rxjs&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+
+/**
+ * Which records have to be kept when deleting all records,
+ * because a login account is linked to them as its &quot;profile&quot;.
+ */
+interface UserProfilesToKeep {
+  /** ids of the records that a login account is linked to */
+  linkedProfileIds: Set&lt;string&gt;;
+
+  /**
+   * Whether the login accounts could actually be looked up.
+   *
+   * If false (e.g. missing permissions, no user management server or offline),
+   * all records of types that can have user accounts are kept instead,
+   * because it is unknown which of them are linked to an account.
+   */
+  accountsVerified: boolean;
+}
+
+/**
+ * Admin actions to bulk-delete records (&quot;Empty Records&quot;) or reset the whole
+ * system (&quot;Reset System&quot;).
+ *
+ * This owns both what exactly is deleted and the confirmation dialogs, progress
+ * feedback and undo option shown to the user, because the two have to say the
+ * same thing: the dialog describes upfront what the deletion then does.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class SystemResetService {
+  private readonly backupService &#x3D; inject(BackupService);
+  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly snackBar &#x3D; inject(MatSnackBar);
+  private readonly location &#x3D; inject(LOCATION_TOKEN);
+  private readonly dbResolver &#x3D; inject(DatabaseResolverService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly userAdminService &#x3D; inject(UserAdminService);
+  private readonly sessionInfo &#x3D; inject(SessionSubject, { optional: true });
+  private readonly navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN, {
+    optional: true,
+  });
+
+  /**
+   * Internal entity types that document past data operations rather than system configuration.
+   * These are deleted together with the records they refer to,
+   * so that no import history remains offering to &quot;undo&quot; an import of records that no longer exist.
+   */
+  private static readonly DATA_HISTORY_TYPES: string[] &#x3D; [
+    ImportMetadata.ENTITY_TYPE,
+  ];
+
+  private readonly db: Database;
+
+  constructor() {
+    this.db &#x3D; this.dbResolver.getDatabase();
+    // WARNING: currently only the default &quot;app&quot; database is reset
+  }
+
+  /**
+   * Delete all records of all record types, keeping the system configuration.
+   */
+  async emptyRecords() {
+    if (!(await this.ensureDeletionPossible())) {
+      return;
+    }
+
+    const profilesToKeep &#x3D; await this.getUserProfilesToKeep();
+
+    const confirmed &#x3D; await this.confirmationDialog.getConfirmationWithKeyword(
+      $localize&#x60;:Empty records confirmation title:Delete all records?&#x60;,
+      $localize&#x60;:Empty records confirmation text:**IMPORTANT: Are you absolutely sure you want to delete all records?**
+
+This deletes all existing records of all record types in the database (like all cases, all activities and all notes), including all files and photos attached to them. Attached files cannot be restored by the undo option.
+
+Your system configuration (forms, dropdown options, reports, user roles) is kept. ${this.getKeptProfilesDescription(profilesToKeep)}
+
+This step cannot be reverted easily, if at all. In case of doubt, download a backup before taking this step.&#x60;,
+      DELETE_CONFIRMATION_KEYWORD,
+      CustomYesNoButtons(
+        $localize&#x60;:Empty records confirmation button:Yes, delete all records&#x60;,
+        $localize&#x60;:Empty records cancel button:Cancel&#x60;,
+      ),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    // only export the whole database once the deletion is actually going ahead
+    const restorePoint &#x3D; await this.backupService.getDatabaseExport();
+
+    const progressRef &#x3D; this.confirmationDialog.showProgressDialog(
+      signal($localize&#x60;Deleting all records ...&#x60;),
+    );
+    try {
+      await this.deleteAllRecords(profilesToKeep);
+    } finally {
+      progressRef.close();
+    }
+
+    const snackBarRef &#x3D; this.snackBar.open(
+      $localize&#x60;All records deleted&#x60;,
+      $localize&#x60;Undo&#x60;,
+      { duration: 8000 },
+    );
+    snackBarRef.onAction().subscribe(async () &#x3D;&gt; {
+      await this.backupService.restoreData(restorePoint, true);
+    });
+  }
+
+  /**
+   * Delete everything, including the system configuration,
+   * leaving a system that has to be set up from scratch.
+   */
+  async resetSystem() {
+    if (!(await this.ensureDeletionPossible())) {
+      return;
+    }
+
+    const confirmed &#x3D; await this.confirmationDialog.getConfirmationWithKeyword(
+      $localize&#x60;:Reset system confirmation title:Reset the whole system?&#x60;,
+      $localize&#x60;:Reset system confirmation text:**IMPORTANT: Are you absolutely sure you want to reset this system?**
+
+This deletes everything: all records of all record types including their attached files and photos, AND the complete configuration of your system (forms, fields, dropdown options, reports, templates, user roles and permissions).
+
+Only your own user profile is kept, so that you can keep working with your account. The profiles of all other users are deleted as well (their login accounts themselves are not deleted here).
+
+Afterwards you have to set up the system from scratch. This step cannot be reverted. Download a backup before taking this step.&#x60;,
+      DELETE_CONFIRMATION_KEYWORD,
+      CustomYesNoButtons(
+        $localize&#x60;:Reset system confirmation button:Yes, reset the system&#x60;,
+        $localize&#x60;:Reset system cancel button:Cancel&#x60;,
+      ),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const progressRef &#x3D; this.confirmationDialog.showProgressDialog(
+      signal($localize&#x60;Resetting the system ...&#x60;),
+    );
+    try {
+      await this.deleteEverything();
+    } finally {
+      progressRef.close();
+    }
+
+    // reload the app, which now starts up as a fresh system offering the initial setup
+    this.location.pathname &#x3D; &quot;&quot;;
+  }
+
+  /**
+   * Delete all records of all record types (&quot;Empty Records&quot;),
+   * keeping the system configuration (entity types, dropdown options,
+   * permissions, reports, templates and site settings) unchanged.
+   *
+   * The database&#x27;s own index documents are kept as well: the app keeps running
+   * after this action and only recreates its indices on the next startup.
+   */
+  private async deleteAllRecords(
+    profilesToKeep: UserProfilesToKeep,
+  ): Promise&lt;void&gt; {
+    // log before deleting for traceability of possible data loss
+    Logging.warn(&quot;Emptying records: deleting all records of all record types&quot;);
+
+    const deletedDocs &#x3D; await this.db.removeAll((doc) &#x3D;&gt;
+      this.isRecordDocument(
+        doc._id,
+        profilesToKeep.linkedProfileIds,
+        !profilesToKeep.accountsVerified,
+      ),
+    );
+    Logging.debug(&quot;Emptied records&quot;, { deletedDocs });
+  }
+
+  /**
+   * Delete everything (&quot;Reset System&quot;): all records as well as the complete
+   * system configuration (entity types, dropdown options, permissions, reports,
+   * templates and site settings), leaving a system that has to be set up from scratch.
+   *
+   * Only the profile of the user performing the reset is kept, so that they can
+   * keep working with their own account while setting the system up anew.
+   * The profiles of all other users are deleted (their login accounts are not touched).
+   *
+   * The database&#x27;s own index documents are deleted as well;
+   * they are recreated when the app reloads right after this.
+   */
+  private async deleteEverything(): Promise&lt;void&gt; {
+    // log before deleting for traceability of possible data loss
+    Logging.warn(
+      &quot;Resetting system: deleting all records and the system configuration&quot;,
+    );
+
+    const ownProfileId &#x3D; this.sessionInfo?.value?.entityId;
+
+    const deletedDocs &#x3D; await this.db.removeAll(
+      (doc) &#x3D;&gt; doc._id !&#x3D;&#x3D; ownProfileId,
+    );
+    Logging.debug(&quot;Reset system&quot;, { deletedDocs });
+  }
+
+  /**
+   * Look up which records must be kept by {@link deleteAllRecords}
+   * because a login account is linked to them.
+   *
+   * This runs before the confirmation dialog,
+   * so that the user can be told upfront what exactly will be kept.
+   */
+  private async getUserProfilesToKeep(): Promise&lt;UserProfilesToKeep&gt; {
+    try {
+      const accounts &#x3D; await firstValueFrom(
+        this.userAdminService.getAllUsers(),
+      );
+      const linkedProfileIds &#x3D; new Set(
+        accounts.map((account) &#x3D;&gt; account.userEntityId).filter(Boolean),
+      );
+      return { linkedProfileIds, accountsVerified: true };
+    } catch (err) {
+      // a missing account_manager role is an expected, common case and not worth a warning
+      if (err instanceof UserAdminApiError &amp;&amp; err.status &#x3D;&#x3D;&#x3D; 403) {
+        Logging.debug(
+          &quot;Could not look up user accounts before deleting records&quot;,
+          {
+            error: err,
+          },
+        );
+      } else {
+        Logging.warn(
+          &quot;Could not look up user accounts before deleting records&quot;,
+          {
+            error: err,
+          },
+        );
+      }
+      return { linkedProfileIds: new Set(), accountsVerified: false };
+    }
+  }
+
+  /**
+   * These bulk deletions must only run online, so that they take effect for everybody
+   * immediately. Inform the user and abort the action otherwise.
+   */
+  private async ensureDeletionPossible(): Promise&lt;boolean&gt; {
+    // offline the deletions would sit in the local database while other users keep
+    // working on records that are already deleted here, producing conflicts once
+    // the deletions are finally synced
+    if (this.navigator?.onLine ?? true) {
+      return true;
+    }
+
+    await this.confirmationDialog.getConfirmation(
+      $localize&#x60;:Delete records offline title:Not available offline&#x60;,
+      $localize&#x60;:Delete records offline text:This action requires an internet connection, so that it takes effect for all users immediately. Deleting the records offline would let others keep working on records that no longer exist here, causing conflicts once your changes are synchronised. Please connect to the internet and try again.&#x60;,
+      OkButton,
+      false,
+    );
+    return false;
+  }
+
+  /**
+   * Describe for the user which records are kept because a login account is linked to them.
+   */
+  private getKeptProfilesDescription(profilesToKeep: UserProfilesToKeep) {
+    if (!profilesToKeep.accountsVerified) {
+      return $localize&#x60;:Kept user profiles, accounts unknown:The linked login accounts could not be checked, so for safety all records of the record types that can have a login account (usually &quot;User&quot;) are kept.&#x60;;
+    }
+
+    return $localize&#x60;:Kept user profiles:Only those records that a login account is linked to are kept, so that users keep their profile.&#x60;;
+  }
+
+  /**
+   * Whether the given document holds user data (&quot;a record&quot;)
+   * as opposed to system configuration or internal database documents.
+   *
+   * @param docId the document to check
+   * @param profileIdsToKeep ids of user profile records that must not be deleted
+   * @param keepAllPotentialProfiles whether to additionally keep every record of a type
+   *        that can have user accounts, because it is unknown which of them actually have one
+   */
+  private isRecordDocument(
+    docId: string,
+    profileIdsToKeep: Set&lt;string&gt;,
+    keepAllPotentialProfiles: boolean,
+  ): boolean {
+    // documents used by the database itself (e.g. &quot;_design/...&quot; indices) are not records
+    if (docId.startsWith(&quot;_&quot;)) {
+      return false;
+    }
+
+    if (profileIdsToKeep.has(docId)) {
+      return false;
+    }
+
+    const entityType &#x3D; this.getEntityType(docId);
+    if (keepAllPotentialProfiles &amp;&amp; entityType?.enableUserAccounts) {
+      return false;
+    }
+    if (
+      SystemResetService.DATA_HISTORY_TYPES.includes(entityType?.ENTITY_TYPE)
+    ) {
+      return true;
+    }
+
+    // types that are not (or no longer) registered are leftover records, not config
+    return !entityType?.isInternalEntity;
+  }
+
+  private getEntityType(docId: string): EntityConstructor | undefined {
+    const type &#x3D; Entity.extractTypeFromId(docId);
+    return this.entityRegistry.has(type)
+      ? this.entityRegistry.get(type)
+      : undefined;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'UserProfilesToKeep.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

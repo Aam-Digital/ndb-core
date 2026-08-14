@@ -237,8 +237,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -318,8 +318,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -357,8 +357,8 @@ Shows targeted dialogs and optionally resets the local database to a clean state
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts:57</a></div>
                         </td>
                     </tr>
 
@@ -387,8 +387,7 @@ import {
   CustomYesNoButtons,
   OkButton,
 } from &quot;#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
-import { LOCATION_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
-import { RESET_PENDING_KEY } from &quot;#src/bootstrap-reset&quot;;
+import { LocalDeviceResetService } from &quot;../local-device-reset.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { SessionType } from &quot;../../session/session-type&quot;;
@@ -400,7 +399,7 @@ import { SessionType } from &quot;../../session/session-type&quot;;
 @Injectable({ providedIn: &quot;root&quot; })
 export class PouchdbCorruptionRecoveryService {
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
-  private readonly location &#x3D; inject&lt;Location&gt;(LOCATION_TOKEN);
+  private readonly localDeviceReset &#x3D; inject(LocalDeviceResetService);
   private warningDialogOpen &#x3D; false;
   private resetDialogOpen &#x3D; false;
 
@@ -472,8 +471,7 @@ This can happen after using multiple tabs in parallel.&#x60; +
     Logging.warn(
       &quot;Resetting application data after suspected local database corruption (user confirmed)&quot;,
     );
-    sessionStorage.setItem(RESET_PENDING_KEY, &quot;1&quot;);
-    this.location.pathname &#x3D; &quot;&quot;;
+    this.localDeviceReset.markResetPendingAndReload();
   }
 
   handleKnownMultiTabCorruption(err: unknown, logMessage: string): void {

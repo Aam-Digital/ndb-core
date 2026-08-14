@@ -212,7 +212,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/core/database/database.ts:151</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="175" class="link-to-prism">src/app/core/database/database.ts:175</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -259,7 +259,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/core/database/database.ts:151</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="175" class="link-to-prism">src/app/core/database/database.ts:175</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="149" class="link-to-prism">src/app/core/database/database.ts:149</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="173" class="link-to-prism">src/app/core/database/database.ts:173</a></div>
                                 </td>
                             </tr>
 
@@ -337,7 +337,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/core/database/database.ts:150</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="174" class="link-to-prism">src/app/core/database/database.ts:174</a></div>
                                 </td>
                             </tr>
 
@@ -454,6 +454,30 @@ export abstract class Database {
       startkey: prefix,
       endkey: prefix + &quot;\ufff0&quot;,
     });
+  }
+
+  /**
+   * Delete all documents of the database matching the given filter.
+   *
+   * Note that &#x60;getAll()&#x60; also returns the database&#x27;s own &quot;_design/...&quot; index
+   * documents, so a filter that does not exclude them deletes the indices as well.
+   * They are only recreated when the app starts up again
+   * (see {@link DatabaseIndexingService}), so only delete them if the calling code
+   * reloads the app or restores the documents immediately afterwards.
+   *
+   * @param shouldDelete filter deciding for each document whether it is deleted.
+   *        Pass a specialized document type if the filter reads fields other than &#x60;_id&#x60;.
+   * @returns the number of deleted documents
+   */
+  async removeAll&lt;T extends { _id: string }&gt;(
+    shouldDelete: (doc: T) &#x3D;&gt; boolean,
+  ): Promise&lt;number&gt; {
+    const allDocs: T[] &#x3D; await this.getAll();
+    const docsToDelete &#x3D; allDocs.filter(shouldDelete);
+    for (const doc of docsToDelete) {
+      await this.remove(doc);
+    }
+    return docsToDelete.length;
   }
 
   /**

@@ -153,6 +153,9 @@
             </p>
             <p class="comment">
                 <p>Create and load backups of the database.</p>
+<p>This only reads and writes the raw documents.
+For the admin actions to empty or reset a system see the SystemResetService,
+for clearing the data cached on the current device see the LocalDeviceResetService.</p>
 
             </p>
 
@@ -197,11 +200,6 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
-                                <a href="#resetApplication" >resetApplication</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
                                 <a href="#restoreData" >restoreData</a>
                             </li>
                         </ul>
@@ -227,7 +225,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/admin/backup/backup.service.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/admin/backup/backup.service.ts:19</a></div>
                             </td>
                         </tr>
 
@@ -262,15 +260,20 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="43"
-                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:43</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:46</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Removes all but the config of the database</p>
+                        <div class="io-description"><p>Removes all but the config of the database.</p>
+<p>This is used to wipe the database before restoring a backup file.
+The config is kept so that restoring a backup that does not contain a config
+does not leave the system unusable.</p>
+<p>The database indices are removed as well. They are part of the backup that is
+restored immediately afterwards, so they do not have to be rebuilt from scratch.</p>
 </div>
 
                         <div class="io-description">
@@ -307,8 +310,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="30"
+                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:30</a></div>
                         </td>
                     </tr>
 
@@ -321,45 +324,6 @@ This method can be used to create a backup of the data.</p>
 
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="resetApplication"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>resetApplication</b></span>
-                        <a href="#resetApplication"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>resetApplication()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="69"
-                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:69</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                 </td>
@@ -388,8 +352,8 @@ This method can be used to create a backup of the data.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/core/admin/backup/backup.service.ts:60</a></div>
                         </td>
                     </tr>
 
@@ -476,25 +440,21 @@ Data should be generated by the <code>getJsonExport</code> function</p>
 import { Database } from &quot;../../database/database&quot;;
 import { Config } from &quot;../../config/config&quot;;
 import { DatabaseResolverService } from &quot;../../database/database-resolver.service&quot;;
-import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
-import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
-import { Logging } from &quot;../../logging/logging.service&quot;;
-import { RESET_PENDING_KEY } from &quot;#src/bootstrap-reset&quot;;
 
 /**
  * Create and load backups of the database.
+ *
+ * This only reads and writes the raw documents.
+ * For the admin actions to empty or reset a system see the SystemResetService,
+ * for clearing the data cached on the current device see the LocalDeviceResetService.
  */
 @Injectable({
   providedIn: &quot;root&quot;,
 })
 export class BackupService {
-  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private dbResolver &#x3D; inject(DatabaseResolverService);
 
   private db: Database;
-
-  private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
-  private readonly location &#x3D; inject(LOCATION_TOKEN);
 
   constructor() {
     this.db &#x3D; this.dbResolver.getDatabase();
@@ -510,19 +470,22 @@ export class BackupService {
   }
 
   /**
-   * Removes all but the config of the database
+   * Removes all but the config of the database.
+   *
+   * This is used to wipe the database before restoring a backup file.
+   * The config is kept so that restoring a backup that does not contain a config
+   * does not leave the system unusable.
+   *
+   * The database indices are removed as well. They are part of the backup that is
+   * restored immediately afterwards, so they do not have to be rebuilt from scratch.
    *
    * @returns Promise&lt;any&gt; a promise that resolves after all remove operations are done
    */
   async clearDatabase(): Promise&lt;void&gt; {
-    const allDocs &#x3D; await this.db.getAll();
-    for (const row of allDocs) {
-      if (row._id.startsWith(Config.ENTITY_TYPE + &quot;:&quot;)) {
-        // skip config in order to not break login!
-        continue;
-      }
-      await this.db.remove(row);
-    }
+    // skip config in order to not break login!
+    await this.db.removeAll(
+      (doc) &#x3D;&gt; !doc._id.startsWith(Config.ENTITY_TYPE + &quot;:&quot;),
+    );
   }
 
   /**
@@ -538,29 +501,6 @@ export class BackupService {
       delete record._rev;
       await this.db.put(record, forceUpdate);
     }
-  }
-
-  async resetApplication() {
-    const choice &#x3D; await this.confirmationDialog.getConfirmation(
-      $localize&#x60;:Reset Application Confirmation:Reset Application&#x60;,
-      $localize&#x60;:Reset Application Confirmation:Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.&#x60;,
-    );
-    if (!choice) {
-      return;
-    }
-
-    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
-    Logging.warn(
-      &quot;Resetting application: user confirmed deletion of all local data&quot;,
-    );
-
-    // Reload the page first to kill all PouchDB connections, in-flight sync,
-    // view indexing, and other async operations. IDB databases are deleted on
-    // the fresh page by &#x60;runPendingReset()&#x60; (before Angular bootstraps) where no
-    // connections exist, avoiding race conditions with PouchDB&#x27;s IDB transactions.
-    this.localStorage.clear();
-    sessionStorage.setItem(RESET_PENDING_KEY, &quot;1&quot;);
-    this.location.pathname &#x3D; &quot;&quot;;
   }
 }
 </code></pre>

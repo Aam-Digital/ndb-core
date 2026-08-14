@@ -198,6 +198,10 @@ if (confirmed) {
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getConfirmationWithKeyword" >getConfirmationWithKeyword</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getDiscardConfirmation" >getDiscardConfirmation</a>
                             </li>
                             <li>
@@ -242,8 +246,8 @@ if (confirmed) {
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="40"
-                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:40</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -362,6 +366,160 @@ arbitrary</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getConfirmationWithKeyword"></a>
+                    <span class="name">
+                        <span ><b>getConfirmationWithKeyword</b></span>
+                        <a href="#getConfirmationWithKeyword"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getConfirmationWithKeyword(title: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, text: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, confirmationKeyword: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, buttons: <a href="../interfaces/ConfirmationDialogButton.html" target="_self">ConfirmationDialogButton[]</a>, closeButton: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Open a confirmation dialog for a critical, irreversible action,
+where the user additionally has to type the given keyword to unlock the confirming buttons.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">   e.g. {&#64;link DELETE_CONFIRMATION_KEYWORD}
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>title</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The title displayed for the dialog</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>text</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The text displayed for the dialog</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>confirmationKeyword</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The word the user has to type to be able to confirm,
+e.g. <a href="../miscellaneous/variables.html#DELETE_CONFIRMATION_KEYWORD">DELETE_CONFIRMATION_KEYWORD</a></p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>buttons</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ConfirmationDialogButton.html" target="_self" >ConfirmationDialogButton[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>YesNoButtons</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>The buttons to show. Defaults to &#39;yes&#39; and &#39;no&#39;, but can be arbitrary</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>closeButton</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>true</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Whether a single icon-button with an &#39;x&#39; is shown to the user</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean | string | undefined&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getDiscardConfirmation"></a>
                     <span class="name">
                         <span ><b>getDiscardConfirmation</b></span>
@@ -378,8 +536,8 @@ arbitrary</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="87"
+                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:87</a></div>
                         </td>
                     </tr>
 
@@ -415,8 +573,8 @@ arbitrary</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/common-components/confirmation-dialog/confirmation-dialog.service.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -477,6 +635,8 @@ import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import {
   ConfirmationDialogButton,
   ConfirmationDialogComponent,
+  ConfirmationDialogConfig,
+  DELETE_CONFIRMATION_KEYWORD,
   YesNoButtons,
 } from &quot;./confirmation-dialog/confirmation-dialog.component&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
@@ -517,16 +677,42 @@ export class ConfirmationDialogService {
     buttons: ConfirmationDialogButton[] &#x3D; YesNoButtons,
     closeButton &#x3D; true,
   ): Promise&lt;boolean | string | undefined&gt; {
-    const dialogRef &#x3D; this.ngZone.run(() &#x3D;&gt; {
-      return this.dialog.open(ConfirmationDialogComponent, {
-        data: {
-          title: title,
-          text: text,
-          buttons: buttons,
-          closeButton: closeButton,
-        },
-      });
+    return this.openDialog({ title, text, buttons, closeButton });
+  }
+
+  /**
+   * Open a confirmation dialog for a critical, irreversible action,
+   * where the user additionally has to type the given keyword to unlock the confirming buttons.
+   *
+   * @param title The title displayed for the dialog
+   * @param text The text displayed for the dialog
+   * @param confirmationKeyword The word the user has to type to be able to confirm,
+   *        e.g. {@link DELETE_CONFIRMATION_KEYWORD}
+   * @param buttons The buttons to show. Defaults to &#x27;yes&#x27; and &#x27;no&#x27;, but can be arbitrary
+   * @param closeButton Whether a single icon-button with an &#x27;x&#x27; is shown to the user
+   */
+  getConfirmationWithKeyword(
+    title: string,
+    text: string,
+    confirmationKeyword: string,
+    buttons: ConfirmationDialogButton[] &#x3D; YesNoButtons,
+    closeButton &#x3D; true,
+  ): Promise&lt;boolean | string | undefined&gt; {
+    return this.openDialog({
+      title,
+      text,
+      buttons,
+      closeButton,
+      confirmationKeyword,
     });
+  }
+
+  private openDialog(
+    data: ConfirmationDialogConfig,
+  ): Promise&lt;boolean | string | undefined&gt; {
+    const dialogRef &#x3D; this.ngZone.run(() &#x3D;&gt;
+      this.dialog.open(ConfirmationDialogComponent, { data }),
+    );
     return firstValueFrom(dialogRef.afterClosed());
   }
 

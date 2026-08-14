@@ -2109,6 +2109,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/LocalAuthService.html" data-type="entity-link" >LocalAuthService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/LocalDeviceResetService.html" data-type="entity-link" >LocalDeviceResetService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/MenuService.html" data-type="entity-link" >MenuService</a>
                                 </li>
                                 <li class="link">
@@ -2164,6 +2167,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="injectables/SqlReportService.html" data-type="entity-link" >SqlReportService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/SystemResetService.html" data-type="entity-link" >SystemResetService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/TableStateUrlService.html" data-type="entity-link" >TableStateUrlService</a>
@@ -2863,6 +2869,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UserDetailsDialogData.html" data-type="entity-link" >UserDetailsDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UserProfilesToKeep.html" data-type="entity-link" >UserProfilesToKeep</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/UserSessionRedirectDto.html" data-type="entity-link" >UserSessionRedirectDto</a>

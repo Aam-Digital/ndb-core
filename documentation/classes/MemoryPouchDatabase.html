@@ -347,6 +347,11 @@ not persisting any data after the page is closed.</p>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#getAll" >getAll</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeAll" >removeAll</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -2229,6 +2234,104 @@ run exactly once and are never routed through it.</p>
                         </div>
                             <div class="io-description">
                                 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeAll"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeAll</b></span>
+                        <a href="#removeAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeAll&lt;T&gt;(shouldDelete: (doc: T) => void)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:139</a></code>
+</div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Delete all documents of the database matching the given filter.</p>
+<p>Note that <code>getAll()</code> also returns the database&#39;s own &quot;_design/...&quot; index
+documents, so a filter that does not exclude them deletes the indices as well.
+They are only recreated when the app starts up again
+(see <a href="../injectables/DatabaseIndexingService.html">DatabaseIndexingService</a>), so only delete them if the calling code
+reloads the app or restores the documents immediately afterwards.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">   Pass a specialized document type if the filter reads fields other than `_id`.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>shouldDelete</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>filter deciding for each document whether it is deleted.
+Pass a specialized document type if the filter reads fields other than <code>_id</code>.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the number of deleted documents</p>
+
                             </div>
                 </td>
             </tr>

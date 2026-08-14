@@ -502,7 +502,7 @@ used within the AssistantDialog.</p>
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { SessionType } from &quot;../../session/session-type&quot;;
-import { BackupService } from &quot;../../admin/backup/backup.service&quot;;
+import { LocalDeviceResetService } from &quot;../../database/local-device-reset.service&quot;;
 
 /**
  * UI for some basic user guide,
@@ -526,11 +526,11 @@ export class ContextAwareAssistantComponent {
   isUserSupportEnabled: boolean &#x3D; environment.userSupportEnabled;
   isSaaS: boolean &#x3D; environment.SaaS;
 
-  private readonly backupService &#x3D; inject(BackupService);
+  private readonly localDeviceResetService &#x3D; inject(LocalDeviceResetService);
 
   async restartDemo() {
     if (environment.session_type !&#x3D;&#x3D; SessionType.mock) {
-      await this.backupService.resetApplication();
+      await this.localDeviceResetService.resetLocalDevice();
     } else {
       window.location.href &#x3D; &quot;/&quot;;
     }
