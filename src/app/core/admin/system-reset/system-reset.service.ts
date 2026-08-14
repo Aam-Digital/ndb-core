@@ -72,7 +72,7 @@ export class SystemResetService {
     ImportMetadata.ENTITY_TYPE,
   ];
 
-  private db: Database;
+  private readonly db: Database;
 
   constructor() {
     this.db = this.dbResolver.getDatabase();

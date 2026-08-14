@@ -55,8 +55,8 @@ import { Logging } from "#src/app/core/logging/logging.service";
 })
 export class AdminOverviewComponent {
   private backupService = inject(BackupService);
-  private systemResetService = inject(SystemResetService);
-  private localDeviceResetService = inject(LocalDeviceResetService);
+  private readonly systemResetService = inject(SystemResetService);
+  private readonly localDeviceResetService = inject(LocalDeviceResetService);
   private downloadService = inject(DownloadService);
   private dbResolver = inject(DatabaseResolverService);
   private confirmationDialog = inject(ConfirmationDialogService);

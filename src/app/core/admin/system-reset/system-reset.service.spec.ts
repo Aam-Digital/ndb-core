@@ -30,7 +30,7 @@ import "#src/app/features/reporting/report-config";
 /** a record type that login accounts can be linked to (i.e. holding "user profiles") */
 @DatabaseEntity("SystemResetUserProfileTestEntity")
 class SystemResetUserProfileTestEntity extends Entity {
-  static override enableUserAccounts = true;
+  static override readonly enableUserAccounts = true;
 }
 
 describe("SystemResetService", () => {
@@ -151,8 +151,9 @@ describe("SystemResetService", () => {
 
       await service.emptyRecords();
 
-      expect((await db.getAll()).map((doc) => doc._id).sort()).toEqual(
-        configDocs.sort(),
+      const byId = (a: string, b: string) => a.localeCompare(b);
+      expect((await db.getAll()).map((doc) => doc._id).toSorted(byId)).toEqual(
+        configDocs.toSorted(byId),
       );
     });
 

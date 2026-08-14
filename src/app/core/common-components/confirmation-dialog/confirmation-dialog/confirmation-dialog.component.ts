@@ -42,7 +42,7 @@ export class ConfirmationDialogComponent {
   typedConfirmation = signal("");
 
   /** whether the required keyword has been entered correctly */
-  private keywordEntered = computed(() => {
+  private readonly keywordEntered = computed(() => {
     const keyword = this.data.confirmationKeyword;
     return (
       !keyword ||

@@ -50,7 +50,7 @@ export class SupportComponent implements OnInit {
   private databaseResolver = inject(DatabaseResolverService);
   private http = inject(HttpClient);
   private backupService = inject(BackupService);
-  private localDeviceResetService = inject(LocalDeviceResetService);
+  private readonly localDeviceResetService = inject(LocalDeviceResetService);
   private downloadService = inject(DownloadService);
   private window = inject<Window>(WINDOW_TOKEN);
   protected readonly assistantService = inject(AssistantService);
