@@ -18,10 +18,15 @@ import {
   AUDIT_TIMESTAMP_INDEX,
   buildAuthorSampleQuery,
   buildChangeLogQuery,
+  buildReferenceViewQuery,
   distinctAuthors,
   MangoQuery,
   toChangeLogEntry,
 } from "./change-log-query";
+import {
+  AUDIT_REFERENCE_VIEW,
+  buildAuditReferenceIndex,
+} from "./audit-reference-index";
 
 /** CASL subject the audit records are keyed under (see replication-backend #4026). */
 export const AUDIT_RECORD_SUBJECT = "AuditRecord";
@@ -34,6 +39,11 @@ interface AuditFeatureStatus {
 /** Response of the audit database's `_find` endpoint, as proxied by the backend. */
 interface FindResponse {
   docs: RawAuditDoc[];
+}
+
+/** Response of a view query against the audit database, as proxied by the backend. */
+interface ViewResponse {
+  rows: { doc?: RawAuditDoc }[];
 }
 
 /** One page of the system-wide change log. */
@@ -136,6 +146,9 @@ export class ChangeHistoryService {
   /** in-flight or completed creation of the change log's index, attempted once */
   private indexCreated?: Promise<void>;
 
+  /** in-flight or completed creation of the related-record view, attempted once */
+  private referenceIndexCreated?: Promise<unknown>;
+
   private getAuditDb(): Database {
     if (!this.auditDb) {
       this.auditDb = this.dbFactory.createRemoteDatabase(
@@ -169,6 +182,9 @@ export class ChangeHistoryService {
    * {@link ChangeLogPage.hasMore} rather than returned, so the caller never
    * offers a next page that turns out to be empty.
    *
+   * Filtering by a related record takes a different route entirely, see
+   * {@link queryChangesRelatedTo}.
+   *
    * @throws if the audit database is unavailable or the query is rejected
    */
   async queryChangeLog(
@@ -176,11 +192,48 @@ export class ChangeHistoryService {
     pageSize: number,
     pageIndex = 0,
   ): Promise<ChangeLogPage> {
+    if (filters.relatedEntityId) {
+      return this.queryChangesRelatedTo(filters, pageSize, pageIndex);
+    }
+
     await this.ensureTimestampIndex();
     const response = await this.findInAuditDb(
       buildChangeLogQuery(filters, pageSize, pageIndex),
     );
     const docs = response.docs ?? [];
+    return {
+      entries: docs.slice(0, pageSize).map(toChangeLogEntry),
+      hasMore: docs.length > pageSize,
+    };
+  }
+
+  /**
+   * Fetch one page of the changes related to a single record, newest first.
+   *
+   * Goes through the `by_reference` view (see {@link buildAuditReferenceIndex}),
+   * the only thing that can answer "which records mentioned this id?" — the ids
+   * sit inside each record's `diff`, which no Mango index can reach.
+   *
+   * Unlike the other queries this uses the audit database's PouchDB handle,
+   * which speaks the view API directly.
+   *
+   * @throws if the view is unavailable (e.g. it could not be created) or the
+   *         query is rejected
+   */
+  private async queryChangesRelatedTo(
+    filters: ChangeLogFilters,
+    pageSize: number,
+    pageIndex: number,
+  ): Promise<ChangeLogPage> {
+    await this.ensureReferenceIndex();
+    const response: ViewResponse = await this.getAuditDb().query(
+      AUDIT_REFERENCE_VIEW,
+      buildReferenceViewQuery(filters, pageSize, pageIndex),
+    );
+    // a row without a doc is one the backend's permission filter removed
+    const docs = (response.rows ?? [])
+      .map((row) => row.doc)
+      .filter((doc): doc is RawAuditDoc => !!doc);
     return {
       entries: docs.slice(0, pageSize).map(toChangeLogEntry),
       hasMore: docs.length > pageSize,
@@ -220,6 +273,30 @@ export class ChangeHistoryService {
       Logging.debug("could not ensure the audit timestamp index", err);
       this.indexCreated = undefined;
     }
+  }
+
+  /**
+   * Create the view the related-record filter queries, once per session.
+   *
+   * `saveDatabaseIndex` writes the design document only when it is missing or
+   * its views actually differ, so a repeat costs one lookup and no reindexing.
+   *
+   * A failure must not stop the query: the view may well already exist, from an
+   * earlier session or another admin. Most relevantly, writing it needs the
+   * `manage _design` permission, which a restrictive permission config
+   * withholds. `PouchDatabase` already logs and swallows that itself; the catch
+   * here covers the abstract `Database` contract, which allows rejecting.
+   *
+   * The first creation triggers a full index build over the audit database,
+   * which on a long history takes a while before the first page appears.
+   */
+  private ensureReferenceIndex(): Promise<unknown> {
+    this.referenceIndexCreated ??= this.getAuditDb()
+      .saveDatabaseIndex(buildAuditReferenceIndex())
+      .catch((err) =>
+        Logging.debug("could not ensure the audit reference index", err),
+      );
+    return this.referenceIndexCreated;
   }
 
   private findInAuditDb(query: MangoQuery): Promise<FindResponse> {

@@ -11,7 +11,11 @@ import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
 
-let mockDb: { getAll: ReturnType<typeof vi.fn> };
+let mockDb: {
+  getAll: ReturnType<typeof vi.fn>;
+  query: ReturnType<typeof vi.fn>;
+  saveDatabaseIndex: ReturnType<typeof vi.fn>;
+};
 let dbFactory: { createRemoteDatabase: ReturnType<typeof vi.fn> };
 let abilityCan: ReturnType<typeof vi.fn>;
 let httpPost: ReturnType<typeof vi.fn>;
@@ -19,7 +23,11 @@ let httpPost: ReturnType<typeof vi.fn>;
 let abilityUpdated: () => void;
 
 function setup(docs: any[] = [], canRead = true) {
-  mockDb = { getAll: vi.fn().mockResolvedValue(docs) };
+  mockDb = {
+    getAll: vi.fn().mockResolvedValue(docs),
+    query: vi.fn().mockResolvedValue({ rows: [] }),
+    saveDatabaseIndex: vi.fn().mockResolvedValue(undefined),
+  };
   dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
   abilityCan = vi.fn().mockReturnValue(canRead);
   const abilityListeners: (() => void)[] = [];
@@ -266,9 +274,76 @@ it("samples recent records for the distinct authors of the filter dropdown", asy
   expect(lastFindCall()[1].fields).toEqual(["_id", "user"]);
 });
 
+it("queries the reference view instead of _find when filtering by a related record", async () => {
+  const service = setup();
+  mockDb.query.mockResolvedValue({
+    rows: [{ doc: rawDoc("2026-06-03T10:00:00.000Z") }],
+  });
+
+  const page = await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+
+  const [view, options] = mockDb.query.mock.calls.at(-1);
+  expect(view).toBe("audit-references/by_reference");
+  expect(options.startkey[0]).toBe("User:1");
+  expect(options.include_docs).toBe(true);
+  expect(page.entries[0].entityId).toBe("Entity:1");
+  // no _find fallback: its selector cannot reach the ids inside a diff
+  expect(
+    httpPost.mock.calls.filter((call) => call[0].endsWith("/_find")),
+  ).toEqual([]);
+});
+
+it("creates the reference view once before querying it", async () => {
+  const service = setup();
+
+  await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+  await service.queryChangeLog({ relatedEntityId: "User:2" }, 10);
+
+  expect(mockDb.saveDatabaseIndex).toHaveBeenCalledTimes(1);
+  expect(mockDb.saveDatabaseIndex.mock.calls[0][0]._id).toBe(
+    "_design/audit-references",
+  );
+  // the remote-only audit db, never the app db: routing this through the
+  // database resolver would open a *synced* handle and replicate the
+  // unboundedly growing audit history onto every device
+  expect(dbFactory.createRemoteDatabase).toHaveBeenCalledWith("app-audit");
+  expect(dbFactory.createRemoteDatabase).toHaveBeenCalledTimes(1);
+});
+
+it("still queries the reference view when its creation was rejected (it may already exist)", async () => {
+  const service = setup();
+  mockDb.saveDatabaseIndex.mockRejectedValue(new Error("forbidden"));
+  mockDb.query.mockResolvedValue({
+    rows: [{ doc: rawDoc("2026-06-03T10:00:00.000Z") }],
+  });
+
+  const page = await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+
+  expect(page.entries.length).toBe(1);
+});
+
+it("drops reference-view rows the backend's permission filter emptied", async () => {
+  const service = setup();
+  mockDb.query.mockResolvedValue({
+    rows: [
+      { doc: rawDoc("2026-06-03T10:00:00.000Z") },
+      { id: "AuditRecord:Secret:1:x:1-a" },
+    ],
+  });
+
+  const page = await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+
+  expect(page.entries.length).toBe(1);
+  expect(page.hasMore).toBe(false);
+});
+
 it("reads the audit feature status from the replication-backend /_features endpoint (lazily)", async () => {
   const httpGet = vi.fn().mockReturnValue(of({ audit: { enabled: true } }));
-  mockDb = { getAll: vi.fn().mockResolvedValue([]) };
+  mockDb = {
+    getAll: vi.fn().mockResolvedValue([]),
+    query: vi.fn().mockResolvedValue({ rows: [] }),
+    saveDatabaseIndex: vi.fn().mockResolvedValue(undefined),
+  };
   dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
   TestBed.configureTestingModule({
     providers: [

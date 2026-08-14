@@ -21,6 +21,36 @@
   box-shadow: none;
 }
 
+/* record ids can be long (a type prefix plus a uuid), so give the input more
+   room than the selects next to it get by default */
+.related-record-filter {
+  min-width: 260px;
+}
+
+/* the id under the record title: readable enough to tell two same-titled
+   records apart and to be copied into the related-record filter, quiet enough
+   not to compete with the title. Truncated rather than wrapped — the full id
+   stays in the DOM, so it is still selectable and shown as a hover tooltip */
+.record-id {
+  font-size: 85%;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* a row opens the record's full change history; rows of a record type that is
+   no longer registered cannot, and stay unstyled so they don't invite a click.
+   Same treatment as the user-list admin screen's clickable rows */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
 /* enough room for a few field chips side by side; without it every chip wraps
    onto its own line and the rows grow very tall */
 .changed-fields-cell {

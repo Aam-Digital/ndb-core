@@ -10,6 +10,16 @@
 export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
 
 /**
+ * The backend `operation` of a baseline record: the full-snapshot anchor written
+ * alongside the first audited change of a pre-existing record, so that record's
+ * history has a starting state to replay from.
+ *
+ * It is not a change anyone made, which is why the change *log* excludes it (see
+ * `buildChangeLogQuery`) while the per-record history still builds on it.
+ */
+export const BASELINE_OPERATION = "baseline";
+
+/**
  * Maps the backend audit `operation` to the displayed {@link ChangeAction}.
  */
 export const OPERATION_TO_ACTION: Record<string, ChangeAction> = {
@@ -91,6 +101,16 @@ export interface ChangeLogFilters {
   entityType?: string;
   /** author, matched against the recorded user name */
   changedBy?: string;
+  /**
+   * a record id, e.g. `User:1`: only changes *related* to that record — changes
+   * to the record itself, and changes to any other record that referenced it
+   * (a `Note`'s `authors` gaining or losing `User:1`).
+   *
+   * Served by a dedicated view rather than the log's default query, so it cannot
+   * be combined with {@link entityType} or {@link changedBy}; those are ignored
+   * (and disabled in the UI) while this is set.
+   */
+  relatedEntityId?: string;
   /** only changes at or after this time */
   from?: Date;
   /** only changes up to this time (the whole day is included) */

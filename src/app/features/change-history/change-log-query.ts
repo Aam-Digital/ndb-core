@@ -2,6 +2,7 @@ import moment from "moment";
 import { Entity } from "../../core/entity/model/entity";
 import { changedFieldsOf, RawAuditDoc } from "./change-history-normalize";
 import {
+  BASELINE_OPERATION,
   ChangeLogEntry,
   ChangeLogFilters,
   OPERATION_TO_ACTION,
@@ -72,21 +73,36 @@ export function buildChangeLogQuery(
   };
 }
 
+/**
+ * The upper timestamp bound of a date filter.
+ *
+ * The picker yields a plain day for a manually typed date, so it is extended to
+ * that day's end; a preset range already ends there and is unaffected.
+ */
+function endOfDay(to: Date): string {
+  return moment(to).endOf("day").toISOString();
+}
+
 function buildSelector(filters: ChangeLogFilters): Record<string, unknown> {
   const timestamp: Record<string, unknown> = {};
   if (filters.from) {
     timestamp.$gte = filters.from.toISOString();
   }
   if (filters.to) {
-    // the picker yields a plain day for a manually typed date, so extend it to
-    // that day's end; a preset range already ends there and is unaffected
-    timestamp.$lte = moment(filters.to).endOf("day").toISOString();
+    timestamp.$lte = endOfDay(filters.to);
   }
 
   const selector: Record<string, unknown> = {
     // the sort field must be constrained for the index to be usable; a date
     // bound already does that, otherwise match any record that has a timestamp
     timestamp: Object.keys(timestamp).length > 0 ? timestamp : { $gt: null },
+    // a baseline is not a change but a snapshot the system captured, written
+    // with the same timestamp and author as the first real change to that
+    // record — listing it would duplicate that change's row and attribute the
+    // record's whole field list to whoever happened to edit it first.
+    // `$ne` rather than a list of the wanted operations, so an operation added
+    // later (see ChangeAction) shows up instead of being silently dropped.
+    operation: { $ne: BASELINE_OPERATION },
   };
 
   if (filters.entityType) {
@@ -102,15 +118,74 @@ function buildSelector(filters: ChangeLogFilters): Record<string, unknown> {
 }
 
 /**
+ * Options for one page of the `by_reference` view, see {@link AUDIT_REFERENCE_VIEW}.
+ */
+export interface ReferenceViewQuery {
+  startkey: unknown[];
+  endkey: unknown[];
+  descending: true;
+  /**
+   * Always requested, and not only because the rows are rendered from the docs:
+   * the backend proxy only permission-filters a view response when the docs are
+   * included, so omitting them would hand out unfiltered audit data.
+   */
+  include_docs: true;
+  limit: number;
+  skip: number;
+}
+
+/**
+ * Build the query for one page of the changes related to a single record.
+ *
+ * The view is keyed `[referencedId, timestamp]`, so one id's changes are a
+ * contiguous key range, walked backwards for the same newest-first order the
+ * rest of the log uses. `descending` swaps the roles of the two bounds, hence
+ * the upper bound as `startkey`.
+ *
+ * A date filter narrows the same range, so it composes for free. The entity-type
+ * and author filters cannot: no key ordering serves them *and* newest-first, so
+ * they are unavailable (and disabled in the UI) while this filter is active.
+ *
+ * Like {@link buildChangeLogQuery}, one row beyond the page is requested to tell
+ * a full page from the last one.
+ */
+export function buildReferenceViewQuery(
+  filters: ChangeLogFilters,
+  pageSize: number,
+  pageIndex = 0,
+): ReferenceViewQuery {
+  const id = filters.relatedEntityId;
+  return {
+    // `{}` sorts after every string, so an unbounded range starts past the
+    // newest timestamp; a one-element array sorts before every `[id, ...]`,
+    // so it ends before the oldest
+    startkey: [id, filters.to ? endOfDay(filters.to) : {}],
+    endkey: filters.from ? [id, filters.from.toISOString()] : [id],
+    descending: true,
+    include_docs: true,
+    limit: pageSize + 1,
+    skip: pageIndex * pageSize,
+  };
+}
+
+/**
  * Build the query sampling the newest records for the author filter's options.
  *
  * `_id` is projected alongside `user` even though nothing displays it: the
  * backend derives a document's permission subject from its `_id` and drops any
  * doc that has none, so projecting `user` alone returns an empty list.
+ *
+ * Baselines are excluded like everywhere else in the log, here for a second
+ * reason: a baseline copies the author of the change it anchors, so it can only
+ * ever repeat an author already found — while filling up the sample window and
+ * shortening how far back it reaches.
  */
 export function buildAuthorSampleQuery(): MangoQuery {
   return {
-    selector: { timestamp: { $gt: null } },
+    selector: {
+      timestamp: { $gt: null },
+      operation: { $ne: BASELINE_OPERATION },
+    },
     sort: [{ timestamp: "desc" }],
     fields: ["_id", "user"],
     limit: AUTHOR_SAMPLE_SIZE,

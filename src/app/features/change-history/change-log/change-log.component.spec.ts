@@ -1,9 +1,15 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Router } from "@angular/router";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { MockEntityMapperService } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ChangeHistoryService } from "../change-history.service";
 import { ChangeLogEntry } from "../change-history.types";
+import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { ChangeLogComponent } from "./change-log.component";
 
 let fixture: ComponentFixture<ChangeLogComponent>;
@@ -11,6 +17,7 @@ let component: ChangeLogComponent;
 let queryChangeLog: ReturnType<typeof vi.fn>;
 let auditEnabled: ReturnType<typeof signal<boolean | undefined>>;
 let hasAuditPermission: ReturnType<typeof signal<boolean>>;
+let dialogOpen: ReturnType<typeof vi.fn>;
 
 function entry(id: string): ChangeLogEntry {
   return {
@@ -37,6 +44,7 @@ async function setup(enabled: boolean | "loading" = true, canRead = true) {
   auditEnabled = signal(enabled === "loading" ? undefined : enabled);
   hasAuditPermission = signal(canRead);
   queryChangeLog = vi.fn().mockResolvedValue(page(0));
+  dialogOpen = vi.fn();
   await TestBed.configureTestingModule({
     imports: [
       ChangeLogComponent,
@@ -54,6 +62,7 @@ async function setup(enabled: boolean | "loading" = true, canRead = true) {
           getChangeAuthors: vi.fn().mockResolvedValue(["demo-admin", "priya"]),
         },
       },
+      { provide: MatDialog, useValue: { open: dialogOpen } },
     ],
   }).compileComponents();
 
@@ -90,6 +99,7 @@ it("loads the first page and the author options when enabled and permitted", asy
     {
       entityType: undefined,
       changedBy: undefined,
+      relatedEntityId: undefined,
       from: undefined,
       to: undefined,
     },
@@ -142,9 +152,71 @@ it("re-queries with the selected record type and author", async () => {
   expect(callArgs()[0]).toEqual({
     entityType: "School",
     changedBy: "priya",
+    relatedEntityId: undefined,
     from: undefined,
     to: undefined,
   });
+});
+
+it("re-queries for the changes related to a pasted record id", async () => {
+  await setup();
+
+  component.setRelatedEntityFilter("User:1");
+  await settle();
+
+  expect(callArgs()[0].relatedEntityId).toBe("User:1");
+});
+
+it("trims a pasted record id, and treats a blank one as no restriction", async () => {
+  await setup();
+
+  component.setRelatedEntityFilter("  User:1 ");
+  await settle();
+  expect(callArgs()[0].relatedEntityId).toBe("User:1");
+
+  component.setRelatedEntityFilter("   ");
+  await settle();
+  expect(callArgs()[0].relatedEntityId).toBeUndefined();
+});
+
+it("stops applying the record type and author filters while a related record is set", async () => {
+  await setup();
+  component.setEntityTypeFilter("School");
+  component.setChangedByFilter("priya");
+  await settle();
+
+  component.setRelatedEntityFilter("User:1");
+  await settle();
+
+  // the reference view is keyed on the referenced id, so it cannot serve these
+  expect(component.otherFiltersDisabled()).toBe(true);
+  expect(callArgs()[0].entityType).toBeUndefined();
+  expect(callArgs()[0].changedBy).toBeUndefined();
+});
+
+it("applies the kept record type and author selection again once the id is cleared", async () => {
+  await setup();
+  component.setEntityTypeFilter("School");
+  component.setRelatedEntityFilter("User:1");
+  await settle();
+
+  component.setRelatedEntityFilter(undefined);
+  await settle();
+
+  expect(component.otherFiltersDisabled()).toBe(false);
+  expect(callArgs()[0].entityType).toBe("School");
+});
+
+it("returns to the first page when the related record filter changes", async () => {
+  await setup();
+  queryChangeLog.mockResolvedValue(page(10, true));
+  component.onPageChange({ pageIndex: 1, pageSize: 10, length: 11 });
+  await settle();
+
+  component.setRelatedEntityFilter("User:1");
+  await settle();
+
+  expect(component.pageIndex()).toBe(0);
 });
 
 it("passes the picked date range through as the time bounds", async () => {
@@ -210,6 +282,172 @@ it("offers a further page only when the backend reported one", async () => {
   component.setEntityTypeFilter("School");
   await settle();
   expect(component.pageLengthHint()).toBe(10);
+});
+
+it("shows the record type as its label, and each row's own record id", async () => {
+  await setup();
+  // records generated from one template share a title (every event of a
+  // recurring activity), so without the id the rows read as repeats of one
+  // record — which is the whole reason both are displayed
+  queryChangeLog.mockResolvedValue({
+    entries: [
+      {
+        ...entry("audit-1"),
+        entityId: "TestEntity:1",
+        entityType: "TestEntity",
+      },
+      {
+        ...entry("audit-2"),
+        entityId: "TestEntity:2",
+        entityType: "TestEntity",
+      },
+    ],
+    hasMore: false,
+  });
+  component.setEntityTypeFilter("TestEntity");
+  await settle();
+
+  const rows = [...fixture.nativeElement.querySelectorAll("tbody tr")].map(
+    (row: HTMLElement) => row.textContent,
+  );
+  expect(rows).toHaveLength(2);
+  // the registered label, not the raw type key
+  expect(rows[0]).toContain(TestEntity.label);
+  expect(rows[0]).toContain("TestEntity:1");
+  expect(rows[1]).toContain("TestEntity:2");
+});
+
+/** the entity the change-history dialog was opened for */
+function dialogEntity() {
+  return dialogOpen.mock.calls.at(-1)[1].data.entity;
+}
+
+it("opens the record's full change history when a row is clicked", async () => {
+  await setup();
+  const record = new TestEntity("1");
+  (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(record);
+  queryChangeLog.mockResolvedValue({
+    entries: [
+      {
+        ...entry("audit-1"),
+        entityId: "TestEntity:1",
+        entityType: "TestEntity",
+      },
+    ],
+    hasMore: false,
+  });
+  component.setEntityTypeFilter("TestEntity");
+  await settle();
+
+  fixture.nativeElement.querySelector("tbody tr").click();
+  await settle();
+
+  // the same dialog the record's details view offers, so the row's single
+  // change is shown in the context of the record's whole history
+  expect(dialogOpen).toHaveBeenCalledWith(
+    ChangeHistoryDialogComponent,
+    expect.anything(),
+  );
+  expect(dialogEntity()).toBe(record);
+});
+
+it("keeps the record link opening the record itself, not its history", async () => {
+  await setup();
+  const record = new TestEntity("1");
+  (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(record);
+  const navigate = vi.spyOn(TestBed.inject(Router), "navigate");
+  queryChangeLog.mockResolvedValue({
+    entries: [
+      {
+        ...entry("audit-1"),
+        entityId: "TestEntity:1",
+        entityType: "TestEntity",
+      },
+    ],
+    hasMore: false,
+  });
+  component.setEntityTypeFilter("TestEntity");
+  await settle();
+
+  // the "Record" column links to the details view - a different destination
+  // than the row's history dialog, so the click must not reach the row
+  fixture.nativeElement
+    .querySelector("tbody tr app-entity-block .clickable")
+    .click();
+  await settle();
+
+  expect(navigate).toHaveBeenCalled();
+  expect(dialogOpen).not.toHaveBeenCalled();
+});
+
+it("opens the history from a deleted record's own block, which links nowhere", async () => {
+  await setup();
+  // nothing added to the entity mapper: the record is gone, so its block shows
+  // the id without a link - the row is what the click belongs to
+  queryChangeLog.mockResolvedValue({
+    entries: [
+      {
+        ...entry("audit-1"),
+        entityId: "TestEntity:deleted",
+        entityType: "TestEntity",
+      },
+    ],
+    hasMore: false,
+  });
+  component.setEntityTypeFilter("TestEntity");
+  await settle();
+
+  fixture.nativeElement.querySelector("tbody tr app-entity-block span").click();
+  await settle();
+
+  expect(dialogOpen).toHaveBeenCalled();
+});
+
+it("opens the history of a deleted record with a stand-in for the record", async () => {
+  await setup();
+
+  // nothing added to the entity mapper: the record is gone, which is exactly
+  // the case the change log is there for
+  await component.openHistory({
+    ...entry("audit-1"),
+    entityId: "TestEntity:deleted",
+    entityType: "TestEntity",
+  });
+
+  const standIn = dialogEntity();
+  expect(standIn).toBeInstanceOf(TestEntity);
+  // the id is all the dialog needs to load the history of the deleted record
+  expect(standIn.getId()).toBe("TestEntity:deleted");
+});
+
+it("does not open a history for a record type that is no longer registered", async () => {
+  await setup();
+  const removedType = {
+    ...entry("audit-1"),
+    entityId: "LegacyType:1",
+    entityType: "LegacyType",
+  };
+
+  expect(component.canOpenHistory(removedType)).toBe(false);
+  await component.openHistory(removedType);
+  expect(dialogOpen).not.toHaveBeenCalled();
+});
+
+it("does not open a dialog when the click only ended a text selection", async () => {
+  await setup();
+  // the record id is displayed to be copied into the related-record filter,
+  // and selecting it ends in a click on the row
+  vi.spyOn(window, "getSelection").mockReturnValue({
+    toString: () => "TestEntity:1",
+  } as Selection);
+
+  await component.openHistory({
+    ...entry("audit-1"),
+    entityId: "TestEntity:1",
+    entityType: "TestEntity",
+  });
+
+  expect(dialogOpen).not.toHaveBeenCalled();
 });
 
 it("surfaces a load failure instead of an empty list", async () => {
