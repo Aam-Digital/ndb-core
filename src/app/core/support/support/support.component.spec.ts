@@ -14,6 +14,7 @@ import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { BackupService } from "../../admin/backup/backup.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
@@ -78,8 +79,12 @@ describe("SupportComponent", () => {
         {
           provide: BackupService,
           useValue: {
-            resetApplication: vi.fn(),
+            getDatabaseExport: vi.fn(),
           },
+        },
+        {
+          provide: LocalDeviceResetService,
+          useValue: { resetLocalDevice: vi.fn() },
         },
         { provide: DownloadService, useValue: null },
         {
