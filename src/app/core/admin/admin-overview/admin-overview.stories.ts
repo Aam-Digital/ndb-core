@@ -10,6 +10,8 @@ import { AdminOverviewComponent } from "./admin-overview.component";
 import { AdminOverviewService } from "./admin-overview.service";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../backup/backup.service";
+import { SystemResetService } from "../system-reset/system-reset.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfigService } from "../../config/config.service";
@@ -31,12 +33,18 @@ const mockBackupService = {
   restoreData: () => Promise.resolve(),
 };
 
+const mockSystemResetService = {
+  emptyRecords: () => Promise.resolve(),
+  resetSystem: () => Promise.resolve(),
+};
+
 const mockDownloadService = {
   triggerDownload: () => Promise.resolve(),
 };
 
 const mockConfirmationDialogService = {
   getConfirmation: () => Promise.resolve(true),
+  getConfirmationWithKeyword: () => Promise.resolve(true),
   showProgressDialog: () => ({ close: () => {} }),
 };
 
@@ -78,6 +86,11 @@ export default {
         AdminOverviewService,
         { provide: AlertService, useValue: mockAlertService },
         { provide: BackupService, useValue: mockBackupService },
+        { provide: SystemResetService, useValue: mockSystemResetService },
+        {
+          provide: LocalDeviceResetService,
+          useValue: { resetLocalDevice: () => Promise.resolve() },
+        },
         { provide: DownloadService, useValue: mockDownloadService },
         {
           provide: ConfirmationDialogService,

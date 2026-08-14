@@ -284,14 +284,23 @@
   <button mat-button (click)="save()" i18n="Button label">Apply</button>
   <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
   @if (data.overwriteLocally) {
-    <button
-      mat-button
-      (click)="resetToBaseFieldSettings()"
-      i18n="Button label"
-      matTooltip="Discard any changes you have made to this field only for this view and reset it to the general settings"
-      i18n-matTooltip
+    <div
+      matTooltip="This field does not exist yet, so it has no general settings to reset to. A new field with these settings will be created on the datatype."
+      i18n-matTooltip="
+        Tooltip explaining why resetting is unavailable while creating a field
+      "
+      [matTooltipDisabled]="fieldIdForm.disabled"
     >
-      Reset to base field settings
-    </button>
+      <button
+        mat-button
+        [disabled]="fieldIdForm.enabled"
+        (click)="resetToBaseFieldSettings()"
+        i18n="Button label"
+        matTooltip="Discard any changes you have made to this field only for this view and reset it to the general settings"
+        i18n-matTooltip
+      >
+        Reset to base field settings
+      </button>
+    </div>
   }
 </mat-dialog-actions>

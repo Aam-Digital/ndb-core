@@ -35,7 +35,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
     // eslint-disable-next-line
     entityMapper: EntityMapperService, // Prefer using the inject() function not possible here because base class requires the dependency to be passed to super()
   ) {
-    super(Config, Config.CONFIG_KEY, entityMapper);
+    // deletions are not emitted: a deleted config doc holds no data and would be
+    // misreported as a corrupt config by onInit() below. Deleting the config happens
+    // when an admin resets the system, which reloads the app right afterwards anyway.
+    super(Config, Config.CONFIG_KEY, entityMapper, false);
   }
 
   override onInit() {

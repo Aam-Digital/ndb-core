@@ -15,7 +15,20 @@ function seedForMigration(id: string): Record<string, unknown> {
       },
     };
   }
+  if (id === "set-map-countrycodes") {
+    return {
+      "app/Config:CONFIG_ENTITY": {
+        _id: "Config:CONFIG_ENTITY",
+        data: {},
+      },
+    };
+  }
   return {};
+}
+
+/** Arguments for the migrations that take a value, so they do real work here. */
+function argsForMigration(id: string): string[] {
+  return id === "set-map-countrycodes" ? ["de"] : [];
 }
 
 describe("All registered migrations are idempotent", () => {
@@ -23,7 +36,11 @@ describe("All registered migrations are idempotent", () => {
     'migration "%s" second run makes no state change',
     async (_id, migration) => {
       const seed = seedForMigration(migration.id);
-      const result = await runIdempotencyCheck(migration, seed);
+      const result = await runIdempotencyCheck(
+        migration,
+        seed,
+        argsForMigration(migration.id),
+      );
 
       expect(result.secondRunResult.changed).toBe(false);
       expect(

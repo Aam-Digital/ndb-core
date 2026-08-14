@@ -16,7 +16,7 @@ npm run cli -- migrate run --help
 | -------------------------------- | --------------------------------------------- |
 | `check`                          | Verify connectivity to all (or selected) orgs |
 | `migrate list`                   | List all available migrations                 |
-| `migrate run <id>`               | Run a migration (preview → confirm → apply)   |
+| `migrate run <id> [args...]`     | Run a migration (preview → confirm → apply)   |
 | `couchdb search <regex>`         | Find entity documents matching a regex        |
 | `couchdb edit <regex> <replace>` | Regex replace inside entity documents         |
 | `couchdb conflicts`              | List conflicted documents                     |

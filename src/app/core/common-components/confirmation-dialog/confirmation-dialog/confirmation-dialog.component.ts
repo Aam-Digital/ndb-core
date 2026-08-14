@@ -1,4 +1,10 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  signal,
+  computed,
+} from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -6,6 +12,8 @@ import {
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { MarkdownComponent } from "ngx-markdown";
 
 /**
@@ -21,12 +29,34 @@ import { MarkdownComponent } from "ngx-markdown";
     DialogCloseComponent,
     MatDialogModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
     MarkdownComponent,
   ],
 })
 export class ConfirmationDialogComponent {
   dialogRef = inject<MatDialogRef<ConfirmationDialogComponent>>(MatDialogRef);
   data = inject<ConfirmationDialogConfig>(MAT_DIALOG_DATA);
+
+  /** what the user has typed into the confirmation input (if a keyword is required) */
+  typedConfirmation = signal("");
+
+  /** whether the required keyword has been entered correctly */
+  private readonly keywordEntered = computed(() => {
+    const keyword = this.data.confirmationKeyword;
+    return (
+      !keyword ||
+      this.typedConfirmation().trim().toLowerCase() === keyword.toLowerCase()
+    );
+  });
+
+  /**
+   * Confirming buttons stay disabled until the required keyword has been typed,
+   * while buttons that abort the action (e.g. "Cancel") remain available.
+   */
+  isBlocked(button: ConfirmationDialogButton): boolean {
+    return !!button.dialogResult && !this.keywordEntered();
+  }
 }
 
 /**
@@ -46,7 +76,20 @@ export interface ConfirmationDialogConfig {
    * This button is on the top-right of the dialog and closes it with no result
    */
   closeButton?: boolean;
+
+  /**
+   * If set, the user has to type this keyword into an input field
+   * before the confirming buttons become available.
+   *
+   * Use this as an additional safeguard for critical, irreversible actions.
+   */
+  confirmationKeyword?: string;
 }
+
+/**
+ * The keyword a user has to type to confirm an action that deletes data irreversibly.
+ */
+export const DELETE_CONFIRMATION_KEYWORD = $localize`:Keyword to be typed by the user to confirm deleting data:delete`;
 
 export interface ConfirmationDialogButton {
   text: string;

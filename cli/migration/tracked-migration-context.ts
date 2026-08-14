@@ -16,6 +16,7 @@ export class TrackedMigrationContext implements MigrationContext {
     readonly org: SystemCredentials,
     readonly dryRun: boolean,
     readonly log: MigrationLogger,
+    readonly args: string[] = [],
   ) {}
 
   validateJson(value: unknown): void {

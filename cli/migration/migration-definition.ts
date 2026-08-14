@@ -14,6 +14,8 @@ export interface MigrationContext {
   couchdb: Couchdb;
   org: SystemCredentials;
   dryRun: boolean;
+  /** Extra arguments passed after the migration id, for migrations that take a value. */
+  args: string[];
   log: MigrationLogger;
   put(
     path: string,

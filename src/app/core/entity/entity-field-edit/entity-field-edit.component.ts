@@ -81,7 +81,8 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
         entity.getConstructor(),
       );
     }
-    const result = toFormFieldConfig(field);
+    // copy, so that the given config (which may come from the app config) is not changed here
+    const result = { ...toFormFieldConfig(field) };
     // add editComponent (because we cannot rely on the entity's schema yet for a new field)
     result.editComponent =
       result.editComponent ??

@@ -484,7 +484,8 @@ export class AdminEntityFormComponent {
    */
   private async createNewField(): Promise<string | undefined> {
     const newField = await this.openFieldConfig({ id: null });
-    if (!newField) {
+    if (!newField?.id) {
+      // without an id there is no field to add
       return undefined;
     }
 
