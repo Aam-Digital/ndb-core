@@ -59,7 +59,7 @@ import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { ExportColumnConfig } from "#src/app/core/export/data-transformation-service/export-column-config";
-import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/datasource-resolver";
+import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 /**
