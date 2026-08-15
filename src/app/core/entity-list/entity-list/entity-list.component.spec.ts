@@ -341,12 +341,14 @@ describe("EntityListComponent", () => {
 
   it("should use the PaginatedDataSource and disable the freetext filter in online mode", () => {
     const tmpSessionType = environment.session_type;
-    environment.session_type = SessionType.online;
-    createComponent();
+    try {
+      environment.session_type = SessionType.online;
+      createComponent();
 
-    expect(component.showFreetextFilter()).toBe(false);
-    expect(component.recordsDataSource()).toBeInstanceOf(PaginatedDataSource);
-
-    environment.session_type = tmpSessionType;
+      expect(component.showFreetextFilter()).toBe(false);
+      expect(component.recordsDataSource()).toBeInstanceOf(PaginatedDataSource);
+    } finally {
+      environment.session_type = tmpSessionType;
+    }
   });
 });

@@ -4,7 +4,6 @@ import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatPaginator } from "@angular/material/paginator";
 import { effect, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
-import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 
@@ -130,27 +129,9 @@ export class PaginatedDataSource<
     super._updatePaginator(this.totalCount);
   }
 
-  protected override async processEntityUpdate({
-    type,
-    entity,
-  }: UpdatedEntity<T>) {
-    if (type === "update") {
-      let updated = false;
-      const updatedEntities = this.filteredRecords().map((e) => {
-        if (e.getId() === entity.getId()) {
-          updated = true;
-          return entity;
-        } else {
-          return e;
-        }
-      });
-      if (updated) {
-        this.filteredRecords.set(updatedEntities);
-      }
-    } else {
-      // We don't really know how it might affect the pages -> full reload
-      await this.setRecords();
-    }
+  protected override async processEntityUpdate() {
+    // We don't really know how it might affect the pages -> full reload
+    await this.setRecords();
   }
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {

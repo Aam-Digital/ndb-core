@@ -395,8 +395,8 @@ export class PouchDatabase extends Database {
   ): Promise<any> {
     const findOptions: PouchDB.Find.FindRequest<any> = {
       selector: {
-        _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
         ...query,
+        _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
       },
     };
     if (Number.isInteger(page?.limit)) {
@@ -408,26 +408,29 @@ export class PouchDatabase extends Database {
     const pouchDB = await this.getPouchDBOnceReady();
     if (sort?.prop) {
       // TODO delete indexes at one point? e.g. when column is removed
-      const indexRes = await pouchDB.createIndex({
-        index: {
-          name: prefix + "_" + sort.prop,
-          partial_filter_selector: {
-            _id: findOptions.selector._id,
+      const indexRes = await pouchDB
+        .createIndex({
+          index: {
+            name: prefix + "_" + sort.prop,
+            partial_filter_selector: {
+              _id: findOptions.selector._id,
+            },
+            fields: [sort.prop],
           },
-          fields: [sort.prop],
-        },
-      });
+        })
+        .catch((err) => {
+          throw new DatabaseException(err);
+        });
       // deleted because already included in partial_filter_selector
       delete findOptions.selector._id;
       findOptions.sort = [{ [sort.prop]: sort.dir }];
       findOptions.use_index = indexRes["id"];
     }
-    try {
-      const res = await pouchDB.find(findOptions);
-      return res.docs;
-    } catch (err) {
-      throw new DatabaseException(err);
-    }
+    return this.withReadRetry(() => pouchDB.find(findOptions))
+      .then((res) => res.docs)
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   /**

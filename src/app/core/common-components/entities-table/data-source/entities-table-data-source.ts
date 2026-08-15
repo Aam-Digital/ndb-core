@@ -11,6 +11,7 @@ import { Subject, Subscription } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -132,7 +133,14 @@ export abstract class EntitiesTableDataSource<
   private executeLoad(): void {
     const reload = this.pendingReload;
     this.pendingReload = undefined;
-    const load = this.loadRecords().finally(() => this.isLoading.set(false));
+    const load = this.loadRecords()
+      .catch((err) => {
+        Logging.error(
+          `Error loading data in datasource with config ${this.loadRecordConfig}: ${err}`,
+        );
+        return [];
+      })
+      .finally(() => this.isLoading.set(false));
     // let awaiters (e.g. bulk operations) adopt the actual load's outcome
     reload?.resolve(load);
   }

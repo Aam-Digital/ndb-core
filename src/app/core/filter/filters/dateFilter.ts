@@ -43,7 +43,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     return new DateRange(undefined, undefined);
   }
 
-  getFilter(): DataFilter<T> {
+  getFilter(): DataFilter<T> | undefined {
     if (this.selectedOptionValues[0] === EMPTY_FILTER_OPTION_KEY) {
       return createEmptyValueFilter(this.name, false);
     }

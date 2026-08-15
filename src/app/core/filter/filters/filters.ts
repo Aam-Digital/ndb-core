@@ -87,7 +87,7 @@ export abstract class Filter<T extends Entity> {
     );
   }
 
-  abstract getFilter(): DataFilter<T>;
+  abstract getFilter(): DataFilter<T> | undefined;
 }
 
 /**
@@ -161,7 +161,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * Get the filter query for the given option.
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
-  public getFilter(): DataFilter<T> {
+  public getFilter(): DataFilter<T> | undefined {
     const filters: DataFilter<T>[] = this.selectedOptionValues
       .map((value: string) => this.getOption(value))
       .filter((value: FilterSelectionOption<T>) => value !== undefined)

@@ -3,12 +3,14 @@ import {
   Component,
   computed,
   input,
+  signal,
 } from "@angular/core";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../entity/model/entity";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 /**
  * Load and display a list of related entities
@@ -33,6 +35,9 @@ export class RelatedEntitiesWithSummaryComponent<
     total?: boolean;
     average?: boolean;
   }>();
+
+  /** Ignore `dataSource` input and always use in-memory datasource because summaries need all records present */
+  override recordsDataSource = signal(new InMemoryDataSource<E>());
 
   protected readonly summary = computed(() => this.buildSummary());
 

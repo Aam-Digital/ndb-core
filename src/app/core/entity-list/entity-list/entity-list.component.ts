@@ -58,7 +58,6 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
-import { ExportColumnConfig } from "#src/app/core/export/data-transformation-service/export-column-config";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
@@ -140,7 +139,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
-  exportConfig = input<ExportColumnConfig[]>();
   dataSource = input<DataSourceType>();
   recordsDataSource = computed(() =>
     resolveDataSource<T>(this.injector, this.dataSource()),
@@ -314,7 +312,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   applyFilter(filterValue: string) {
-    // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
     this.recordsDataSource().filter = filterValue.trim().toLowerCase();
   }
 

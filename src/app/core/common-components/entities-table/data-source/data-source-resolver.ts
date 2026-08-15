@@ -20,10 +20,10 @@ export function resolveDataSource<T extends Entity>(
 }
 
 function getDataSource(dataSource?: DataSourceType) {
-  if (dataSource && availableDataSources[dataSource]) {
-    return availableDataSources[dataSource];
-  } else if (environment.session_type === SessionType.online) {
-    return availableDataSources.paginated;
+  if (environment.session_type === SessionType.online) {
+    return dataSource && availableDataSources[dataSource]
+      ? availableDataSources[dataSource]
+      : availableDataSources.paginated;
   } else {
     return InMemoryDataSource;
   }

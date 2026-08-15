@@ -31,10 +31,6 @@ export class FilterService {
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],
   ): DataFilter<T> {
-    if (entityFilters.length === 0) {
-      return {} as DataFilter<T>;
-    }
-
     const filters = entityFilters
       .map((value) => value.getFilter())
       .filter((value) => value !== undefined);

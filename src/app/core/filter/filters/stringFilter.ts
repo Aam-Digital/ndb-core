@@ -35,7 +35,7 @@ export class StringFilter<T extends Entity> extends Filter<T> {
     return this.selectedOptionValues?.[0] ?? "";
   }
 
-  getFilter(): DataFilter<T> {
+  getFilter(): DataFilter<T> | undefined {
     const searchText = this.getSearchText();
     if (!searchText.trim()) {
       return undefined;

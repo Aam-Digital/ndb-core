@@ -133,31 +133,7 @@ describe("PaginatedDataSource", () => {
       return (dataSource as any).processEntityUpdate(update);
     }
 
-    it("should replace an updated record in place without reloading", async () => {
-      const original = new TestEntity("1");
-      original.name = "before";
-      dataSource.filteredRecords.set([original]);
-
-      const updated = new TestEntity("1");
-      updated.name = "after";
-      findTypeSpy.mockClear();
-
-      await processUpdate({ type: "update", entity: updated });
-
-      expect(dataSource.filteredRecords()).toEqual([updated]);
-      expect(findTypeSpy).not.toHaveBeenCalled();
-    });
-
-    it("should not change the records for an update of an entity not on the current page", async () => {
-      const shown = new TestEntity("1");
-      dataSource.filteredRecords.set([shown]);
-
-      await processUpdate({ type: "update", entity: new TestEntity("2") });
-
-      expect(dataSource.filteredRecords()).toEqual([shown]);
-    });
-
-    it("should reload from the DB for a newly created entity", async () => {
+    it("should reload from the DB when a entity is updated", async () => {
       dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
       TestBed.tick();
       await new Promise((resolve) => setTimeout(resolve));
