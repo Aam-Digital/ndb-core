@@ -144,7 +144,7 @@
   },
   "overrides": {
     "sublevel-pouchdb": {
-      "readable-stream": "^4.7.0"
+      "readable-stream": "^3.6.2"
     }
   }
 }
