@@ -39,6 +39,7 @@ export function createEmptyValueFilter<T extends Entity>(
     { [fieldName]: undefined } as DataFilter<T>,
     { [fieldName]: null } as DataFilter<T>,
     { [fieldName]: "" } as DataFilter<T>,
+    { [fieldName]: { $exists: false } } as DataFilter<T>,
   ];
 
   if (includeNestedId) {
@@ -46,6 +47,7 @@ export function createEmptyValueFilter<T extends Entity>(
       { [fieldName + ".id"]: undefined } as DataFilter<T>,
       { [fieldName + ".id"]: null } as DataFilter<T>,
       { [fieldName + ".id"]: "" } as DataFilter<T>,
+      { [fieldName + ".id"]: { $exists: false } } as DataFilter<T>,
     );
   }
 
@@ -136,6 +138,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * @param options An array of different filtering variants to chose between
    * @param label The user-friendly label describing this filter-selection
    * (optional, defaults to the name of the selection)
+   * @param singleSelectOnly if true, only one option can be selected at a time
    */
   constructor(
     public override name: string,

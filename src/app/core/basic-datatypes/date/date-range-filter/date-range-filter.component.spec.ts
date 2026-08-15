@@ -119,7 +119,12 @@ describe("DateRangeFilterComponent", () => {
     dateFilter.selectedOptionValues = [EMPTY_FILTER_OPTION_KEY];
     fixture.componentRef.setInput("filterConfig", dateFilter);
     expect(component.filterConfig().getFilter()).toEqual({
-      $or: [{ test: undefined }, { test: null }, { test: "" }],
+      $or: [
+        { test: undefined },
+        { test: null },
+        { test: "" },
+        { test: { $exists: false } },
+      ],
     });
   });
 
