@@ -84,6 +84,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "serve": "^14.2.6",
+    "setimmediate": "^1.0.5",
     "stream-browserify": "^3.0.0",
     "tslib": "^2.8.1",
     "util": "^0.12.5",
@@ -140,5 +141,10 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.66.0",
     "vitest": "^4.1.10"
+  },
+  "overrides": {
+    "sublevel-pouchdb": {
+      "readable-stream": "^4.7.0"
+    }
   }
 }
