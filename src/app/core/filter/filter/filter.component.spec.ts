@@ -286,5 +286,11 @@ describe("FilterComponent", () => {
     expect(emittedFilterObj).toEqual({
       $and: [{ "category.id": t1.id }],
     } as any);
+
+    component.filterOptionSelected(avilableOptions, [t1.id, t2.id]);
+
+    expect(emittedFilterObj).toEqual({
+      $and: [[{ $or: [{ "category.id": t1.id }, { "category.id": t2.id }] }]],
+    } as any);
   });
 });

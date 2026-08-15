@@ -34,6 +34,10 @@ export interface LoadRecordConfig<T extends Entity> {
   loaderMethod?: LoaderMethod;
 }
 
+/**
+ * Abstract data source for tables that handles all data handling internally.
+ * Depending on the environment all data might be in-memory or only requested from the server on demand.
+ */
 export abstract class EntitiesTableDataSource<
   T extends Entity,
 > extends MatTableDataSource<TableRow<T>> {

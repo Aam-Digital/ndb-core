@@ -91,6 +91,16 @@ export abstract class Database {
     throw new Error("purge() is not supported by this database implementation");
   }
 
+  /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * There might be differences in queries between a local PouchDB and the CouchDB.
+   *
+   * @param prefix of the entity to be queried
+   * @param query the Mango Query Language query
+   * @param page additional pagination options
+   * @param sort additional sorting options
+   */
   abstract find(
     prefix: string,
     query: any,

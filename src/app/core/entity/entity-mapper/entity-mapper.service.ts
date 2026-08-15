@@ -88,6 +88,13 @@ export class EntityMapperService {
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 
+  /**
+   * Similar to loadType but allows supports filtering, pagination and sorting
+   * @param entityType class for which results should be returned
+   * @param filter a valid Mango Query Syntax query
+   * @param page optional pagination options
+   * @param sort optional sort options
+   */
   public async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T>,
