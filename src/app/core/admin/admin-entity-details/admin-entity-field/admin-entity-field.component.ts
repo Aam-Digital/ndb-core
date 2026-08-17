@@ -358,15 +358,26 @@ export class AdminEntityFieldComponent implements OnInit {
     this.createNewAdditionalOption(input);
 
   /**
-   * Whether the given dataType can hold multiple values in one field,
-   * i.e. whether the `isArray` schema flag is applicable.
+   * Whether the user can choose to hold multiple values in one field of the given dataType,
+   * i.e. whether the "allow multiple values" option is offered.
    */
   supportsMultiValue(dataType: string): boolean {
     return AdminEntityFieldComponent.MULTI_VALUE_DATATYPES.includes(dataType);
   }
 
   /**
-   * Remove the `isArray` flag if the newly selected dataType does not support multiple values.
+   * Whether the dataType itself requires multiple values, independent of the user's choice
+   * (see {@link DefaultDatatype.normalizeSchemaField}, e.g. "attendance").
+   */
+  private enforcesMultiValue(dataType: string): boolean {
+    const datatype = (
+      this.allDataTypes as unknown as DefaultDatatype<any, any>[]
+    ).find((d) => d.dataType === dataType);
+    return !!datatype?.normalizeSchemaField({ dataType })?.isArray;
+  }
+
+  /**
+   * Remove the `isArray` flag if the newly selected dataType does not use multiple values.
    *
    * The "allow multiple values" checkbox is only displayed for some dataTypes.
    * Without this reset a previously set `isArray: true` silently remains in the config
@@ -374,7 +385,8 @@ export class AdminEntityFieldComponent implements OnInit {
    * making the field's value an array that the dataType's display component cannot handle.
    */
   private resetIsArrayIfUnsupported(dataType: string) {
-    if (this.supportsMultiValue(dataType)) return;
+    if (this.supportsMultiValue(dataType) || this.enforcesMultiValue(dataType))
+      return;
 
     const isArrayControl = this.schemaFieldsForm.get("isArray");
     if (!isArrayControl?.value) return;

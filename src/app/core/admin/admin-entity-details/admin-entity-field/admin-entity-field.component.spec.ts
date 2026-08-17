@@ -278,6 +278,25 @@ describe("AdminEntityFieldComponent", () => {
     expect(dialogData.entitySchemaField.isArray).toBe(true);
   });
 
+  it("should keep isArray when switching to a dataType that requires multiple values", async () => {
+    // "attendance" does not offer the checkbox but enforces isArray itself
+    await recreateComponentWithData({
+      label: "participants",
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+      isArray: true,
+    } as EntitySchemaField);
+    await fixture.whenStable();
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(AttendanceDatatype.dataType);
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("isArray").value).toBe(true);
+    expect(dialogData.entitySchemaField.isArray).toBe(true);
+  });
+
   it("should support array values for entity type additional", async () => {
     await recreateComponentWithData({
       label: "related records",
