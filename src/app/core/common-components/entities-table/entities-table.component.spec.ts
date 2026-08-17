@@ -233,6 +233,26 @@ describe("EntitiesTableComponent", () => {
     expect(shiftClick.defaultPrevented).toBe(true);
   });
 
+  it("should reset the selection if the filter or data changes", () => {
+    const entities = [1, 2, 3, 4].map(TestEntity.create);
+    fixture.componentRef.setInput("selectable", true);
+    fixture.detectChanges();
+
+    component.selectedRecords.set(entities);
+    fixture.componentRef.setInput("filter", { name: 1 });
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+
+    component.selectedRecords.set(entities);
+    component.recordsDataSource().allRecords.set([entities[0]]);
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+  });
+
   it("should filter data based on filter definition", () => {
     const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());

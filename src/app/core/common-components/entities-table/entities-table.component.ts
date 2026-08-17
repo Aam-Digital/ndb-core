@@ -11,6 +11,7 @@ import {
   OnInit,
   output,
   QueryList,
+  untracked,
   ViewChild,
 } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -181,6 +182,14 @@ export class EntitiesTableComponent<T extends Entity>
 
     effect(() => {
       this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
+    });
+    effect(() => {
+      this.recordsDataSource().dataFilter();
+      this.recordsDataSource().displayedData();
+      if (untracked(this.selectedRecords)?.length > 0) {
+        // reset selection if filter or input data changes
+        this.selectedRecords.set([]);
+      }
     });
   }
 
