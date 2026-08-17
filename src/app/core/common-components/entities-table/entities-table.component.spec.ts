@@ -17,6 +17,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { spyOn } from "@vitest/spy";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -340,5 +341,14 @@ describe("EntitiesTableComponent", () => {
       "/c/test-entity",
       child.getId(true),
     ]);
+  });
+
+  it("should go to first page if filter is changed", () => {
+    const fpSpy = spyOn(component.recordsDataSource().paginator, "firstPage");
+
+    fixture.componentRef.setInput("filter", { name: "" });
+    fixture.detectChanges();
+
+    expect(fpSpy).toHaveBeenCalled();
   });
 });

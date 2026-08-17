@@ -90,6 +90,11 @@ export abstract class EntitiesTableDataSource<
         this.listenToEntityUpdates();
       }
     });
+    effect(() => {
+      // got to first page if filter changes
+      this.dataFilter();
+      this.paginator?.firstPage();
+    });
 
     // Coalesce the many triggers that fire while a view initializes
     // (config, default + url-param filters, sort, paginator) into a single load.
