@@ -45,7 +45,7 @@
     "@angular/router": "^21.2.20",
     "@angular/service-worker": "^21.2.20",
     "@aytek/material-color-picker": "^1.0.4",
-    "@casl/ability": "^6.8.1",
+    "@casl/ability": "^7.0.1",
     "@casl/angular": "^9.0.6",
     "@codemirror/commands": "^6.11.0",
     "@codemirror/lang-sql": "^6.10.0",
