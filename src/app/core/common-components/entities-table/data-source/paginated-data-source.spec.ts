@@ -1,5 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { PaginatedDataSource } from "./paginated-data-source";
+import {
+  FULL_LOAD_PAGE_SIZE,
+  PaginatedDataSource,
+} from "./paginated-data-source";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
@@ -101,14 +104,49 @@ describe("PaginatedDataSource", () => {
       expect(await dataSource.getAllData()).toEqual([]);
     });
 
-    it("should request all records without pagination (for e.g. export)", async () => {
+    it("should page through the DB to return ALL records, not just CouchDB's default page", async () => {
       dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
-      findTypeSpy.mockClear();
 
-      await dataSource.getAllData(false);
+      // a completely filled page implies there may be more -> another request;
+      // a partially filled page means the end is reached
+      const firstPage = Array.from(
+        { length: FULL_LOAD_PAGE_SIZE },
+        (_, i) => new TestEntity(`${i}`),
+      );
+      const lastPage = [new TestEntity("last-1"), new TestEntity("last-2")];
+      findTypeSpy
+        .mockResolvedValueOnce(firstPage)
+        .mockResolvedValueOnce(lastPage);
 
-      // unfiltered ({}) and no page limit (undefined) => all records
-      expect(findTypeSpy).toHaveBeenCalledWith(TestEntity, {}, undefined, {});
+      const result = await dataSource.getAllData(false);
+
+      expect(result).toEqual([...firstPage, ...lastPage]);
+      expect(findTypeSpy).toHaveBeenCalledTimes(2);
+      // each request explicitly asks for a page (so CouchDB does not cap at 25)
+      expect(findTypeSpy).toHaveBeenNthCalledWith(
+        1,
+        TestEntity,
+        {},
+        { skip: 0, limit: FULL_LOAD_PAGE_SIZE },
+        {},
+      );
+      expect(findTypeSpy).toHaveBeenNthCalledWith(
+        2,
+        TestEntity,
+        {},
+        { skip: FULL_LOAD_PAGE_SIZE, limit: FULL_LOAD_PAGE_SIZE },
+        {},
+      );
+    });
+
+    it("should stop after a single request when the first page is not full", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      findTypeSpy.mockResolvedValue([new TestEntity("1"), new TestEntity("2")]);
+
+      const result = await dataSource.getAllData(false);
+
+      expect(result).toHaveLength(2);
+      expect(findTypeSpy).toHaveBeenCalledOnce();
     });
 
     it("should apply the current (processed) filter when requested filtered", async () => {
@@ -116,13 +154,14 @@ describe("PaginatedDataSource", () => {
       dataSource.dataFilter.set({ isActive: true } as any);
       TestBed.tick(); // compute effectiveFilter from dataFilter
       findTypeSpy.mockClear();
+      findTypeSpy.mockResolvedValue([]);
 
       await dataSource.getAllData(true);
 
       expect(findTypeSpy).toHaveBeenCalledWith(
         TestEntity,
         { $or: activeConditions },
-        undefined,
+        { skip: 0, limit: FULL_LOAD_PAGE_SIZE },
         {},
       );
     });

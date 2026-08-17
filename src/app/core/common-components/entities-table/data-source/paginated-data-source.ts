@@ -7,6 +7,12 @@ import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 
+/**
+ * Number of documents fetched per request when loading the complete dataset
+ * (see {@link PaginatedDataSource.getAllData}).
+ */
+export const FULL_LOAD_PAGE_SIZE = 500;
+
 export class PaginatedDataSource<
   T extends Entity,
 > extends EntitiesTableDataSource<T> {
@@ -103,12 +109,24 @@ export class PaginatedDataSource<
   override async getAllData(filtered = false): Promise<T[]> {
     if (!this.loadRecordConfig()) return [];
 
-    return this.entityMapper.findType(
-      this.loadRecordConfig().entityCtr,
-      filtered ? this.effectiveFilter : {},
-      undefined,
-      this.sortState,
-    );
+    const entityCtr = this.loadRecordConfig().entityCtr;
+    const filter = filtered ? this.effectiveFilter : {};
+
+    // CouchDB's _find returns only 25 documents when no limit is given, so we
+    // page through the results explicitly until a page is not completely filled.
+    const allRecords: T[] = [];
+    let page: T[];
+    do {
+      page = await this.entityMapper.findType(
+        entityCtr,
+        filter,
+        { skip: allRecords.length, limit: FULL_LOAD_PAGE_SIZE },
+        this.sortState,
+      );
+      allRecords.push(...page);
+    } while (page.length === FULL_LOAD_PAGE_SIZE);
+
+    return allRecords;
   }
 
   /**
