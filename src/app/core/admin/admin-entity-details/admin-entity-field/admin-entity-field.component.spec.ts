@@ -8,10 +8,12 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatFormFieldHarness } from "@angular/material/form-field/testing";
 import { MatInputHarness } from "@angular/material/input/testing";
+import { MatCheckboxHarness } from "@angular/material/checkbox/testing";
 import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
+import { LongTextDatatype } from "../../../basic-datatypes/string/long-text.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -217,6 +219,63 @@ describe("AdminEntityFieldComponent", () => {
     await fixture.whenStable();
 
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
+  });
+
+  it("should offer the multi-value option only for dataTypes supporting it", async () => {
+    const dataTypeForm = component.schemaFieldsForm.get("dataType");
+    async function findMultiValueCheckbox() {
+      const checkboxes = await loader.getAllHarnesses(
+        MatCheckboxHarness.with({ label: /allow multiple values/ }),
+      );
+      return checkboxes[0];
+    }
+
+    dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(await findMultiValueCheckbox()).toBeTruthy();
+
+    dataTypeForm.setValue(LongTextDatatype.dataType);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(await findMultiValueCheckbox()).toBeUndefined();
+  });
+
+  it("should remove isArray when switching to a dataType that does not support multiple values", async () => {
+    await recreateComponentWithData({
+      label: "interests",
+      dataType: ConfigurableEnumDatatype.dataType,
+      additional: "interests",
+      isArray: true,
+    } as EntitySchemaField);
+    await fixture.whenStable();
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(LongTextDatatype.dataType);
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("isArray").value).toBeFalsy();
+    // the flag has to be removed entirely, not just set to false
+    expect(dialogData.entitySchemaField.isArray).toBeUndefined();
+  });
+
+  it("should keep isArray when switching between dataTypes that support multiple values", async () => {
+    await recreateComponentWithData({
+      label: "related records",
+      dataType: ConfigurableEnumDatatype.dataType,
+      additional: "interests",
+      isArray: true,
+    } as EntitySchemaField);
+    await fixture.whenStable();
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(EntityDatatype.dataType);
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("isArray").value).toBe(true);
+    expect(dialogData.entitySchemaField.isArray).toBe(true);
   });
 
   it("should support array values for entity type additional", async () => {

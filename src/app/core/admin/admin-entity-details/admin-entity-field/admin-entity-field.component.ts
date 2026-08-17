@@ -140,6 +140,15 @@ export class AdminEntityFieldComponent implements OnInit {
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
   attendanceParticipantTypesForm = new FormControl<string[]>([]);
 
+  /**
+   * dataTypes for which a field can hold multiple values (`isArray`),
+   * so that the "allow multiple values" option is offered to the user.
+   */
+  private static readonly MULTI_VALUE_DATATYPES: string[] = [
+    ConfigurableEnumDatatype.dataType,
+    EntityDatatype.dataType,
+  ];
+
   ngOnInit() {
     this.entityType = this.data.entityType;
     this.initSettings();
@@ -277,6 +286,7 @@ export class AdminEntityFieldComponent implements OnInit {
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((v) => {
         this.updateDataTypeAdditional(v);
+        this.resetIsArrayIfUnsupported(v);
       });
     this.updateForNewOrExistingField();
   }
@@ -346,6 +356,32 @@ export class AdminEntityFieldComponent implements OnInit {
   createNewAdditionalOption: (input: string) => SimpleDropdownValue;
   createNewAdditionalOptionAsync = async (input) =>
     this.createNewAdditionalOption(input);
+
+  /**
+   * Whether the given dataType can hold multiple values in one field,
+   * i.e. whether the `isArray` schema flag is applicable.
+   */
+  supportsMultiValue(dataType: string): boolean {
+    return AdminEntityFieldComponent.MULTI_VALUE_DATATYPES.includes(dataType);
+  }
+
+  /**
+   * Remove the `isArray` flag if the newly selected dataType does not support multiple values.
+   *
+   * The "allow multiple values" checkbox is only displayed for some dataTypes.
+   * Without this reset a previously set `isArray: true` silently remains in the config
+   * (e.g. when a multi-select "configurable-enum" field is changed to "long-text"),
+   * making the field's value an array that the dataType's display component cannot handle.
+   */
+  private resetIsArrayIfUnsupported(dataType: string) {
+    if (this.supportsMultiValue(dataType)) return;
+
+    const isArrayControl = this.schemaFieldsForm.get("isArray");
+    if (!isArrayControl?.value) return;
+
+    // `null` (rather than `false`) so that the flag is removed from the schema entirely
+    isArrayControl.setValue(null);
+  }
 
   private updateDataTypeAdditional(
     dataType: string,

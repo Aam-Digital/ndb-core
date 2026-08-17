@@ -125,10 +125,7 @@
               ></app-basic-autocomplete>
             </mat-form-field>
 
-            @if (
-              formDataType.value === "configurable-enum" ||
-              formDataType.value === "entity"
-            ) {
+            @if (supportsMultiValue(formDataType.value)) {
               <mat-checkbox
                 formControlName="isArray"
                 matTooltip="Check this to let users select more than just one entry in this field."
