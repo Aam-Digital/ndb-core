@@ -20,17 +20,21 @@ import {
   mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { CurrentUserSubject } from "../../../core/session/current-user-subject";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("TemplateExportApiService", () => {
   let service: TemplateExportApiService;
 
   let entityMapper: MockEntityMapperService;
+  let currentUser: CurrentUserSubject;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         ...mockEntityMapperProvider(),
         EntityRegistry,
+        CurrentUserSubject,
         {
           provide: SyncStateSubject,
           useValue: of(SyncState.COMPLETED),
@@ -45,6 +49,7 @@ describe("TemplateExportApiService", () => {
     entityMapper = TestBed.inject(
       EntityMapperService,
     ) as MockEntityMapperService;
+    currentUser = TestBed.inject(CurrentUserSubject);
   });
 
   it("should be created", () => {
@@ -168,6 +173,52 @@ describe("TemplateExportApiService", () => {
     );
   });
 
+  it("should send the entity of the logged-in user as complement context", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    const dataEntity = { name: "abc" };
+    const userEntity = new TestEntity("user-1");
+    userEntity.name = "Test User";
+    currentUser.next(userEntity);
+
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    await lastValueFrom(
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
+    );
+
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render/" + templateEntity.getId(),
+      {
+        convertTo: "pdf",
+        data: dataEntity,
+        complement: { user: userEntity },
+      },
+      expect.any(Object),
+    );
+  });
+
+  it("should not send a complement if the user account has no linked entity", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    const dataEntity = { name: "abc" };
+    currentUser.next(null);
+
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(10) })));
+
+    await lastValueFrom(
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
+    );
+
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render/" + templateEntity.getId(),
+      { convertTo: "pdf", data: dataEntity },
+      expect.any(Object),
+    );
+  });
+
   it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataList = [{ name: "A" }, { name: "B" }, { name: "C" }];
@@ -196,6 +247,32 @@ describe("TemplateExportApiService", () => {
       {
         convertTo: "pdf",
         data: dataList,
+      },
+      expect.any(Object),
+    );
+  });
+
+  it("should send the complement once for the whole batch", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    const dataList = [{ name: "A" }, { name: "B" }];
+    const userEntity = new TestEntity("user-1");
+    userEntity.name = "Test User";
+    currentUser.next(userEntity);
+
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(new HttpResponse({ body: new ArrayBuffer(20) })));
+
+    await lastValueFrom(
+      service.generateBatchFromTemplate(templateEntity, dataList),
+    );
+
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render-batch/" + templateEntity.getId() + "?mode=zip",
+      {
+        convertTo: "pdf",
+        data: dataList,
+        complement: { user: userEntity },
       },
       expect.any(Object),
     );
