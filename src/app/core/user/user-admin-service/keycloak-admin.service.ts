@@ -55,6 +55,10 @@ export class KeycloakAdminService extends UserAdminService {
     email: string,
     roles: Role[],
   ): Observable<UserAccount> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     const newKeycloakUser = new KeycloakUserDto(email, userEntityId);
 
     return this.http.post(`${this.keycloakUrl}/users`, newKeycloakUser).pipe(
@@ -113,6 +117,10 @@ export class KeycloakAdminService extends UserAdminService {
     userAccountId: string,
     updatedUser: Partial<UserAccount>,
   ): Observable<{ userUpdated: boolean }> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     return this.getUserByAccountId(userAccountId).pipe(
       switchMap((userAccount) =>
         this.updateKeycloakUser(
@@ -163,6 +171,10 @@ export class KeycloakAdminService extends UserAdminService {
   }
 
   override resendInvitation(userAccountId: string): Observable<void> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     return this.sendEmail(userAccountId, "VERIFY_EMAIL").pipe(
       map(() => undefined),
       catchError((err) => throwError(() => this.transformStandardError(err))),
@@ -170,6 +182,10 @@ export class KeycloakAdminService extends UserAdminService {
   }
 
   override getUser(userEntityId: string): Observable<UserAccount> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     return this.findUserBy({
       q: `exact_username:${userEntityId}`,
     }).pipe(
@@ -273,6 +289,10 @@ export class KeycloakAdminService extends UserAdminService {
    * Fetches all users with their roles.
    */
   getAllUsers(): Observable<UserAccount[]> {
+    if (!this.canManageAccounts()) {
+      return throwError(() => new UserAdminApiError(403));
+    }
+
     return this.findUsersBy({}).pipe(
       switchMap((users) => {
         if (users.length === 0) {

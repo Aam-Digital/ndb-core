@@ -3,6 +3,8 @@ import { MatDialog } from "@angular/material/dialog";
 import {
   ConfirmationDialogButton,
   ConfirmationDialogComponent,
+  ConfirmationDialogConfig,
+  DELETE_CONFIRMATION_KEYWORD,
   YesNoButtons,
 } from "./confirmation-dialog/confirmation-dialog.component";
 import { firstValueFrom } from "rxjs";
@@ -43,16 +45,42 @@ export class ConfirmationDialogService {
     buttons: ConfirmationDialogButton[] = YesNoButtons,
     closeButton = true,
   ): Promise<boolean | string | undefined> {
-    const dialogRef = this.ngZone.run(() => {
-      return this.dialog.open(ConfirmationDialogComponent, {
-        data: {
-          title: title,
-          text: text,
-          buttons: buttons,
-          closeButton: closeButton,
-        },
-      });
+    return this.openDialog({ title, text, buttons, closeButton });
+  }
+
+  /**
+   * Open a confirmation dialog for a critical, irreversible action,
+   * where the user additionally has to type the given keyword to unlock the confirming buttons.
+   *
+   * @param title The title displayed for the dialog
+   * @param text The text displayed for the dialog
+   * @param confirmationKeyword The word the user has to type to be able to confirm,
+   *        e.g. {@link DELETE_CONFIRMATION_KEYWORD}
+   * @param buttons The buttons to show. Defaults to 'yes' and 'no', but can be arbitrary
+   * @param closeButton Whether a single icon-button with an 'x' is shown to the user
+   */
+  getConfirmationWithKeyword(
+    title: string,
+    text: string,
+    confirmationKeyword: string,
+    buttons: ConfirmationDialogButton[] = YesNoButtons,
+    closeButton = true,
+  ): Promise<boolean | string | undefined> {
+    return this.openDialog({
+      title,
+      text,
+      buttons,
+      closeButton,
+      confirmationKeyword,
     });
+  }
+
+  private openDialog(
+    data: ConfirmationDialogConfig,
+  ): Promise<boolean | string | undefined> {
+    const dialogRef = this.ngZone.run(() =>
+      this.dialog.open(ConfirmationDialogComponent, { data }),
+    );
     return firstValueFrom(dialogRef.afterClosed());
   }
 

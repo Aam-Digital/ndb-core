@@ -138,7 +138,7 @@ export class AdminEntityFormComponent {
   fieldGroups = linkedSignal<FormConfig | undefined, FieldGroup[]>({
     source: this.config,
     computation: (config, previous) => {
-      const incoming = config?.fieldGroups ?? [];
+      const incoming = dropEmptyFields(config?.fieldGroups ?? []);
       if (
         previous &&
         JSON.stringify(previous.value) === JSON.stringify(incoming)
@@ -484,7 +484,8 @@ export class AdminEntityFormComponent {
    */
   private async createNewField(): Promise<string | undefined> {
     const newField = await this.openFieldConfig({ id: null });
-    if (!newField) {
+    if (!newField?.id) {
+      // without an id there is no field to add
       return undefined;
     }
 
@@ -598,6 +599,26 @@ export class AdminEntityFormComponent {
   clearSearch() {
     this.searchFilter.setValue("");
   }
+}
+
+/**
+ * Remove empty (null / undefined) entries from the groups' field lists.
+ *
+ * These are not a valid `ColumnConfig` and only ever come from a malformed config, but every
+ * consumer dereferences them (`toFormFieldConfig(field).id`) and would throw on the whole editor.
+ * Dropping them here keeps the rest of the configuration editable so the admin can repair it.
+ */
+function dropEmptyFields(groups: FieldGroup[]): FieldGroup[] {
+  return groups.map((group) =>
+    group?.fields?.some((field) => field === null || field === undefined)
+      ? {
+          ...group,
+          fields: group.fields.filter(
+            (field) => field !== null && field !== undefined,
+          ),
+        }
+      : group,
+  );
 }
 
 /**

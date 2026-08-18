@@ -168,62 +168,6 @@ A `groupTitle` labels its group row, whose value is the sum of the rows nested b
 
 In the UI, grouped SQL reports are rendered as a hierarchical report view, while single-query SQL reports are shown as a flat table.
 
-#### Complete sample configs
-
-Two full report documents, one per rendering mode, ready to copy into a system for testing
-(these are also the samples used while testing the report admin UI):
-
-```json
-// a flat table: one query, many rows
-{
-  "_id": "ReportConfig:sql-child-export",
-  "title": "Child Details (SQL export)",
-  "mode": "sql",
-  "transformations": {
-    "startDate": ["SQL_FROM_DATE"],
-    "endDate": ["SQL_TO_DATE"]
-  },
-  "reportDefinition": [
-    {
-      "query": "SELECT name, gender, dateOfBirth, phone FROM Child ORDER BY name WHERE admissionDate BETWEEN $startDate AND $endDate"
-    }
-  ]
-}
-```
-
-```json
-// a hierarchical report: nested groups of single-value queries
-{
-  "_id": "ReportConfig:sql-child-counts",
-  "title": "Child Counts (SQL, grouped)",
-  "mode": "sql",
-  "reportDefinition": [
-    {
-      "groupTitle": "Children",
-      "items": [
-        {
-          "query": "SELECT count(*) as 'Total' FROM Child"
-        },
-        {
-          "query": "SELECT count(*) as 'With date of birth' FROM Child WHERE dateOfBirth IS NOT NULL"
-        },
-        {
-          "groupTitle": "by gender",
-          "items": [
-            {
-              "query": "SELECT count(*) as 'Male' FROM Child WHERE gender = 'M'"
-            },
-            {
-              "query": "SELECT count(*) as 'Female' FROM Child WHERE gender = 'F'"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
-
 #### SQL recipes
 
 Useful patterns for common Aam Digital reporting questions.
@@ -241,6 +185,28 @@ FROM Child
 
 ```sql
 SELECT COUNT(CASE WHEN c.gender = 'F' THEN c._id END) AS total_female FROM Child c
+```
+
+##### Join a linked entity to show a human-readable name
+
+A field with `dataType: "entity"` stores the id of the referenced entity, not its name.
+Join the referenced table to resolve it:
+
+```sql
+SELECT c.name AS child, s.name AS school
+FROM Child c
+JOIN School s ON s._id = c.schoolId
+```
+
+##### Unpack a multi-select (isArray) entity-reference field
+
+A field with `dataType: "entity"` and `isArray: true` stores a JSON array of ids (e.g. `Note.children`).
+Unpack it with `json_each()` and join to resolve each id to a name:
+
+```sql
+SELECT n.subject AS note, c.name AS participant
+FROM Note n, json_each(n.children) p
+JOIN Child c ON c._id = p.value
 ```
 
 ##### Attendance status of individual participants from EventNote

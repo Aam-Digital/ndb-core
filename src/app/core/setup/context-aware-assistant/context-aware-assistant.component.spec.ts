@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ContextAwareAssistantComponent } from "./context-aware-assistant.component";
-import { BackupService } from "../../admin/backup/backup.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 
 describe("ContextAwareAssistantComponent", () => {
   let component: ContextAwareAssistantComponent;
@@ -10,7 +10,7 @@ describe("ContextAwareAssistantComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ContextAwareAssistantComponent],
-      providers: [{ provide: BackupService, useValue: null }],
+      providers: [{ provide: LocalDeviceResetService, useValue: null }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ContextAwareAssistantComponent);

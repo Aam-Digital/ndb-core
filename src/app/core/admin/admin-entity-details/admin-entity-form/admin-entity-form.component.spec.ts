@@ -133,6 +133,29 @@ describe("AdminEntityFormComponent", () => {
     ]);
   });
 
+  it("should skip empty entries in a field group rather than fail (malformed config)", async () => {
+    const fieldsInView = ["date"];
+    fixture.componentRef.setInput("config", {
+      fieldGroups: [{ fields: [null, ...fieldsInView, undefined] }],
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const noteUserFacingFields = Array.from(TestEntity.schema.entries())
+      .filter(([key, value]) => !value.isInternalField)
+      .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
+      .map(([key]) => key);
+    // identical to a config without the empty entries: they are dropped, everything else still works
+    expect(component.availableFields()).toEqual([
+      component.createNewFieldPlaceholder,
+      component.createNewTextPlaceholder,
+      ...noteUserFacingFields.filter((x) => !fieldsInView.includes(x)),
+    ]);
+    expect(component.dummyForm()).toBeTruthy();
+    expect(component.fieldGroups()).toEqual([{ fields: fieldsInView }]);
+  });
+
   /**
    * Simulate dropping `field` into the drop list `to` (a field group's index or the toolbar).
    * Drags start from the toolbar unless `from` says otherwise.
@@ -258,6 +281,30 @@ describe("AdminEntityFormComponent", () => {
     await component.drop(mockDropEvent("name", 1, 0, 0, 0));
 
     expect(JSON.stringify(testConfig)).toBe(configBefore);
+  });
+
+  it("should keep a field that only overwrites some settings unchanged while rendering the preview", async () => {
+    // the preview is rendered before the dummy entity is available,
+    // so the field config must not be completed with details from its schema
+    const partiallyOverwrittenField = {
+      id: "name",
+      displayFullLengthLabel: true,
+    };
+    const previewFixture = TestBed.createComponent(AdminEntityFormComponent);
+    previewFixture.componentRef.setInput("config", {
+      fieldGroups: [{ fields: [partiallyOverwrittenField, "other"] }],
+    });
+    previewFixture.componentRef.setInput("entityType", TestEntity);
+
+    previewFixture.detectChanges();
+    await previewFixture.whenStable();
+
+    expect(previewFixture.componentInstance.fieldGroups()[0].fields[0]).toEqual(
+      {
+        id: "name",
+        displayFullLengthLabel: true,
+      },
+    );
   });
 
   it("should reorder the field groups", () => {

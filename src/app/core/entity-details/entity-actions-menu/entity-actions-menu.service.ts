@@ -21,10 +21,20 @@ export class EntityActionsMenuService {
   private readonly ability = inject(EntityAbility, { optional: true });
 
   getActions(entity?: Entity): EntityAction[] {
-    return [
-      ...this.actions,
-      ...this.actionsFactories.flatMap((factory) => factory(entity)),
-    ];
+    const factoryActions = this.actionsFactories.flatMap((factory) => {
+      try {
+        return factory(entity);
+      } catch (err) {
+        // a single misbehaving factory must not break the whole context menu
+        Logging.warn(
+          "EntityActionsMenu: action factory failed; skipping its actions.",
+          { error: err },
+        );
+        return [];
+      }
+    });
+
+    return [...this.actions, ...factoryActions];
   }
 
   /**

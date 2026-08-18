@@ -7,10 +7,8 @@ import { DataTransformationService } from "../../export/data-transformation-serv
 import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { SyncStateSubject } from "app/core/session/session-type";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { of } from "rxjs";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
+// import the entity types used in the specs below, so that they are registered
+import "../../config/config";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -31,7 +29,6 @@ describe("BackupService", () => {
           provide: DatabaseResolverService,
           useValue: { getDatabase: () => db },
         },
-        { provide: LOCATION_TOKEN, useValue: {} },
       ],
     });
 
@@ -40,24 +37,28 @@ describe("BackupService", () => {
 
   afterEach(async () => {
     await db.destroy();
-    vi.unstubAllGlobals();
-    sessionStorage.removeItem(RESET_PENDING_KEY);
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("clearDatabase should remove all records", async () => {
+  it("clearDatabase should remove all records but the config", async () => {
     await db.put({ _id: "Test:1", test: 1 });
-
-    const res = await db.getAll();
-    expect(res).toHaveLength(1);
+    await db.put({ _id: "Config:CONFIG_ENTITY", data: {} });
 
     await service.clearDatabase();
 
     const resAfter = await db.getAll();
-    expect(resAfter).toHaveLength(0);
+    expect(resAfter.map((doc) => doc._id)).toEqual(["Config:CONFIG_ENTITY"]);
+  });
+
+  it("clearDatabase should remove database indices, which are part of the restored backup", async () => {
+    await db.put({ _id: "_design/some_index", views: {} });
+
+    await service.clearDatabase();
+
+    expect(await db.getAll()).toEqual([]);
   });
 
   it("getDatabaseExport should return all records", async () => {
@@ -130,20 +131,6 @@ describe("BackupService", () => {
     expect(res).toHaveLength(1);
     expect(res[0].other, "empty property was added anyway").toBeUndefined();
     expect(res.map(ignoreRevProperty)).toEqual([{ _id: "Test:1", test: 1 }]);
-  });
-
-  it("should reset the application after confirmation", async () => {
-    const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    vi.spyOn(confirmationDialog, "getConfirmation").mockReturnValue({
-      afterClosed: () => of(true),
-    } as any);
-    localStorage.setItem("someItem", "someValue");
-
-    await service.resetApplication();
-
-    expect(localStorage.getItem("someItem")).toBeNull();
-    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
-    expect(TestBed.inject(LOCATION_TOKEN).pathname).toBe("");
   });
 
   function ignoreRevProperty(x) {

@@ -172,6 +172,21 @@ describe("Schema data type: configurable-enum", () => {
     expect(actualMapped).toBeUndefined();
   });
 
+  it("should return undefined for values that are marked as not to be imported", async () => {
+    enumService.getEnumValues.mockReturnValue(genders);
+
+    const actualMapped = await dataType.importMapFunction(
+      "skipped",
+      {
+        dataType: "configurable-enum",
+        additional: "genders",
+      },
+      { values: { MALEx: GENDER_MALE.id, skipped: null } },
+    );
+
+    expect(actualMapped).toBeUndefined();
+  });
+
   it("should create invalid option when mapping dialog is skipped", async () => {
     enumService.getEnumValues.mockReturnValue(genders);
 
