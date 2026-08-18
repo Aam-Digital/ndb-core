@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:alpine AS app
+FROM nginxinc/nginx-unprivileged:1.31.3-alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY ./dist/ /usr/share/nginx/html
 

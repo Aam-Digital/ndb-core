@@ -19,5 +19,7 @@ jobs:
     steps:
       - id: versions
         run: |
+          # renovate: datasource=node-version depName=node
           echo "node-version=22.19.0" >> "$GITHUB_OUTPUT"
+          # renovate: datasource=npm depName=npm
           echo "npm-version=11.7.0" >> "$GITHUB_OUTPUT"
