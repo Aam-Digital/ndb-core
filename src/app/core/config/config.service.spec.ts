@@ -868,6 +868,58 @@ describe("ConfigService", () => {
     testConfigMigration(oldConfig, expectedConfig);
   });
 
+  describe("multi-lingual config (#3862)", () => {
+    it("resolves multi-lingual values to the active locale for getConfig, but keeps raw maps in getRawConfig and exportConfig", async () => {
+      vi.useFakeTimers();
+      try {
+        const config = new Config();
+        config.data = {
+          "entity:X": { label: { "en-US": "Name", de: "Vorname" } },
+        };
+        entityMapper.load.mockResolvedValue(config);
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        // resolved display view (active locale defaults to en-US in tests)
+        expect(service.getConfig<any>("entity:X").label).toBe("Name");
+
+        // raw view keeps the full translation map for read-modify-save flows
+        expect(service.getRawConfig<any>("entity:X").label).toEqual({
+          "en-US": "Name",
+          de: "Vorname",
+        });
+
+        // export stays raw so no language is lost on a round-trip save
+        expect((service.exportConfig(true) as any)["entity:X"]).toEqual({
+          label: { "en-US": "Name", de: "Vorname" },
+        });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("exposes resolved strings via getAllConfigs and raw maps via getAllRawConfigs", async () => {
+      vi.useFakeTimers();
+      try {
+        const config = new Config();
+        config.data = {
+          "entity:A": { label: { "en-US": "Alpha", de: "Alpha DE" } },
+        };
+        entityMapper.load.mockResolvedValue(config);
+        service.loadOnce();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(service.getAllConfigs<any>("entity:")[0].label).toBe("Alpha");
+        expect(service.getAllRawConfigs<any>("entity:")[0].label).toEqual({
+          "en-US": "Alpha",
+          de: "Alpha DE",
+        });
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
   describe("undefined config handling", () => {
     /**
      * Sets up window.location/alert/Logging.error mocks for testing

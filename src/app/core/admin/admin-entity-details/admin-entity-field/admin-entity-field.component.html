@@ -29,6 +29,16 @@
             <mat-form-field>
               <mat-label i18n>Label</mat-label>
               <input formControlName="label" matInput #formLabel />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="openTranslations('label', $event)"
+                matTooltip="Configure this text in other languages"
+                i18n-matTooltip
+              >
+                <fa-icon icon="language"></fa-icon>
+              </button>
               @if (schemaFieldsForm.get("label").hasError("uniqueProperty")) {
                 <mat-error>
                   {{ schemaFieldsForm.get("label").getError("uniqueProperty") }}
@@ -59,6 +69,16 @@
                 matInput
                 [placeholder]="formLabel.value"
               />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="openTranslations('labelShort', $event)"
+                matTooltip="Configure this text in other languages"
+                i18n-matTooltip
+              >
+                <fa-icon icon="language"></fa-icon>
+              </button>
             </mat-form-field>
 
             <mat-form-field>
@@ -75,6 +95,16 @@
                 matInput
                 rows="3"
               ></textarea>
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="openTranslations('description', $event)"
+                matTooltip="Configure this text in other languages"
+                i18n-matTooltip
+              >
+                <fa-icon icon="language"></fa-icon>
+              </button>
             </mat-form-field>
           </div>
 
