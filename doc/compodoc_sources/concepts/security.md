@@ -63,7 +63,7 @@ The permission rules still run, but only in the browser. There they decide what 
 Two further consequences follow from the same design:
 
 - **There is no audit log.** Nothing records who changed what and when.
-- **Rules for anonymous visitors (`_public`) have no effect**, since the database only accepts tokens carrying the role above.
+- **Public forms cannot work.** They rely on the `_public` rules being applied to visitors without an account, and the database accepts only tokens carrying the role above — so an anonymous request never reaches it.
 
 This mode is therefore appropriate when everyone with an account in the system is trusted with all of its data — a small team working on one caseload — and not when the roles are meant to keep colleagues apart.
 
