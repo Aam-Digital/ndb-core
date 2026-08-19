@@ -122,8 +122,8 @@ describe("EntityBlockComponent", () => {
     // a config-defined type whose config sets no toStringAttributes keeps the
     // default ["entityId"], so toString() is the bare uuid: unreadable on its own
     class IdOnlyEntity extends Entity {
-      static override ENTITY_TYPE = "IdOnly";
-      static override label = "Literacy Test";
+      static override readonly ENTITY_TYPE = "IdOnly";
+      static override readonly label = "Literacy Test";
     }
     const record = new IdOnlyEntity("5e69d648-c2c7-441d-8da6-5543251dd917");
     mockEntityMapper.load.mockResolvedValue(record);
@@ -145,8 +145,8 @@ describe("EntityBlockComponent", () => {
     // a User's id is its username, so "displays its id" does not mean
     // "displays something meaningless" (regression: this rendered "User Record")
     class ChosenIdEntity extends Entity {
-      static override ENTITY_TYPE = "User";
-      static override label = "User";
+      static override readonly ENTITY_TYPE = "User";
+      static override readonly label = "User";
     }
     mockEntityMapper.load.mockResolvedValue(new ChosenIdEntity("demo-admin"));
 
@@ -164,7 +164,7 @@ describe("EntityBlockComponent", () => {
 
   it("falls back to the type key when such a type has no label either", async () => {
     class UnlabelledIdOnlyEntity extends Entity {
-      static override ENTITY_TYPE = "Aser";
+      static override readonly ENTITY_TYPE = "Aser";
     }
     mockEntityMapper.load.mockResolvedValue(
       new UnlabelledIdOnlyEntity("01740708-ead4-4580-abfc-678321075393"),

@@ -286,7 +286,7 @@ export class ChangeLogComponent {
    */
   setRelatedEntityFilter(relatedEntityId: string | undefined) {
     const trimmed = relatedEntityId?.trim();
-    this.relatedEntityFilter.set(trimmed ? trimmed : undefined);
+    this.relatedEntityFilter.set(trimmed || undefined);
     this.pageIndex.set(0);
   }
 

@@ -49,7 +49,7 @@ describe("EntityTypeLabelPipeEntity", () => {
     // a config-defined type (e.g. "Aser") whose config sets no label: registered,
     // so the unregistered-type fallback does not apply, and the label is empty
     class UnlabelledEntity extends Entity {
-      static override ENTITY_TYPE = "Unlabelled";
+      static override readonly ENTITY_TYPE = "Unlabelled";
     }
     entityRegistry.add(UnlabelledEntity.ENTITY_TYPE, UnlabelledEntity);
 
