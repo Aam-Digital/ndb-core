@@ -6,7 +6,7 @@ what the application does, what it leaves to the deployment, and what it does no
 This is about **one deployed system** — the app, its database and the accounts that reach it.
 
 > **Server operation and infrastructure are out of scope here.**
-> See [what this document does not cover](#what-this-document-does-not-cover) at the end.
+> See the last section, "What this document does not cover".
 
 ## The application in the browser
 
@@ -32,7 +32,7 @@ Password policy, multi-factor authentication, session lifetime, account lockout 
 
 Each system has its own Keycloak realm, and **membership of that realm is what grants access to that system's data**. Removing a person's access means disabling or removing their account in Keycloak — changing their roles inside the application is not sufficient on its own, for the reason described next.
 
-A local login lets an already-synced user open the app without connectivity. It works against credentials cached from a previous online login and grants no access the user did not already have.
+Once a user has logged in online at least once, the app offers them an **offline login** on the same device. This is a profile selection, not an authentication step: no credential is checked, because none is stored and the authentication server cannot be reached. It opens the local copy of the data that is already on that device, and grants nothing beyond it — but it does mean that whoever holds the device can open that copy. See "The copy of data on each user's device" below.
 
 ## Roles and permissions
 
@@ -48,7 +48,7 @@ Where those rules are actually _enforced_ depends on how the system is deployed,
 | Who checks a token | CouchDB, against the realm's public key | the backend, against the realm's public key                                                               |
 | Read access        | the whole database of that system       | filtered per user, rule by rule                                                                           |
 | Write access       | any document                            | validated against the same rules                                                                          |
-| Audit log          | none                                    | records write access                                                                                      |
+| Audit log          | none                                    | optional (`AUDIT_ENABLED`): every write recorded with user and time                                       |
 
 **Database-only** is the simpler setup. CouchDB validates the user's token itself and grants access to a single role that every user of the system holds. That is an all-or-nothing boundary: a user is either a member of this database or not.
 The permission rules still run — but only in the browser, where they decide what the interface offers and block writes before they are sent. **They are not an access boundary.** Anyone who can log in can read the entire database by talking to the database API directly, whatever their role says.
@@ -56,7 +56,7 @@ The permission rules still run — but only in the browser, where they decide wh
 **With the permission backend**, the same rules are additionally applied server-side: reads are filtered as they are replicated, and writes are checked again before they are stored. This is what turns a role restriction into a real restriction, and it is the only configuration in which "this user may only see the records of their own project" is a statement about access rather than about the user interface.
 
 So if different users of one system must not see each other's data, the permission backend is required.
-Deploying either mode is described in [Aam-Digital/ndb-setup](https://github.com/Aam-Digital/ndb-setup#deployment-profiles).
+Deploying either mode is described in [Aam-Digital/ndb-setup](https://github.com/Aam-Digital/ndb-setup#docker-compose-profiles).
 
 ## The copy of data on each user's device
 
@@ -65,6 +65,7 @@ To work offline, the app stores a copy of the records a user may access in the b
 - The copy is stored **unencrypted**. On a device without full-disk encryption, whoever holds the device can read it.
 - Its extent is whatever the user is allowed to sync — which, in database-only mode, is the whole database.
 - Revoking permissions server-side does not reach a device that never connects again. Local data is cleared when the server reports lost permissions during a sync, and that requires the device to come online.
+- The offline login described above opens that copy without checking any credential, so the device itself is the only thing standing between a stranger and the data.
 
 Two settings bear on this:
 
