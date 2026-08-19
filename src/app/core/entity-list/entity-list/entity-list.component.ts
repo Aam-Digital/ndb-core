@@ -141,7 +141,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   defaultSort = input<Sort>();
   dataSource = input<DataSourceType>();
   recordsDataSource = computed(() =>
-    resolveDataSource<T>(this.injector, this.dataSource()),
+    resolveDataSource<T>(this.injector, this.dataSource(), this.loaderMethod()),
   );
   showFreetextFilter = computed(
     () => this.recordsDataSource() instanceof InMemoryDataSource,
