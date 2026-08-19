@@ -21,7 +21,7 @@ Both are configurable per deployment.
 > The whitelist policy is currently served in **report-only** mode: violations are reported, not blocked.
 > Only the framing policy is enforced.
 
-The directives, their defaults and how to change them are documented with the image that sets them, under "Content Security Policy" in [Build and Deployment](../how-to-guides/build-and-deployment.html).
+The directives, their defaults and how to change them are documented with the image that sets them, under [Content Security Policy in `build/README.md`](https://github.com/Aam-Digital/ndb-core/blob/master/build/README.md#content-security-policy-csp).
 
 **Offline shell.** The app is installable and keeps working offline, which means an outdated version can keep running on a device until it next connects. Fixes reach users on their next online session, not immediately.
 

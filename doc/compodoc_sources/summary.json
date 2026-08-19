@@ -120,10 +120,6 @@
         "file": "../../e2e/README.md"
       },
       {
-        "title": "Build and Deployment",
-        "file": "../../build/README.md"
-      },
-      {
         "title": "Display Dialogs and Notifications",
         "file": "how-to-guides/dialogs-notifications.md"
       },
