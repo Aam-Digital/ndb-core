@@ -94,6 +94,14 @@ Because the device is beyond anything the application can enforce, client organi
 
 All traffic between browser, application server, database and Keycloak is expected to be TLS-encrypted. Certificates and TLS termination are part of the deployment, not of this code base.
 
+> **Side note — anonymization and deletion.** How long data is kept is a
+> security question as much as a policy one: records that are no longer needed
+> are still exposed by everything above. Aam Digital can archive, anonymize or
+> delete an entity, with anonymization removing the personal fields while
+> keeping the record countable for statistics. What each action does, and how a
+> field is configured to survive anonymization, is documented under
+> [Archiving, Anonymizing and Deleting Entities](https://github.com/Aam-Digital/ndb-core/blob/master/src/app/core/entity/entity-actions/README.md).
+
 ## Keeping the code base secure
 
 - Dependencies are updated continuously through automated pull requests and scanned for known vulnerabilities on every push to `master` and weekly (Snyk, reported into GitHub code scanning).
