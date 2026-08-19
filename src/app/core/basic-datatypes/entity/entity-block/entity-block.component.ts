@@ -22,6 +22,7 @@ import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
 import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { validate as isGeneratedId } from "uuid";
 
 /**
  * Display an inline block representing an entity.
@@ -131,16 +132,23 @@ export class EntityBlockComponent {
   );
 
   /**
-   * Whether the record has nothing to display but its own id.
+   * Whether the record has nothing to display but a generated id.
    *
    * A type that configures no `toStringAttributes` keeps the default
-   * `["entityId"]`, so `toString()` returns the bare uuid. Compared against the
-   * id rather than inspecting the config, so a type that spells out the same
-   * default explicitly is treated the same way.
+   * `["entityId"]`, so `toString()` returns the bare id. That alone is not a
+   * problem: an id chosen deliberately is usually the best name a record has
+   * (a `User`'s id is their username). Only a generated one says nothing, so
+   * the id must also be a uuid, as `Entity`'s constructor defaults to.
    */
   readonly showsOnlyId = computed(() => {
     const entity = this.entityResource.value();
-    return !!entity && entity.toString() === entity.getId(true);
+    if (!entity) {
+      return false;
+    }
+    const id = entity.getId(true);
+    // `isGeneratedId` from the same package `Entity` generates ids with, so the
+    // two can never drift apart
+    return entity.toString() === id && isGeneratedId(id);
   });
 
   /**

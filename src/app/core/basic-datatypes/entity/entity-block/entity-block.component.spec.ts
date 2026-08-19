@@ -125,7 +125,7 @@ describe("EntityBlockComponent", () => {
       static override ENTITY_TYPE = "IdOnly";
       static override label = "Literacy Test";
     }
-    const record = new IdOnlyEntity("5e69d648");
+    const record = new IdOnlyEntity("5e69d648-c2c7-441d-8da6-5543251dd917");
     mockEntityMapper.load.mockResolvedValue(record);
 
     fixture.componentRef.setInput("entityId", record.getId());
@@ -134,20 +134,46 @@ describe("EntityBlockComponent", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain("Literacy Test Record");
-    expect(fixture.nativeElement.textContent).not.toContain("5e69d648");
+    expect(fixture.nativeElement.textContent).not.toContain("5e69d648-c2c7");
     // still reachable on hover, for support and debugging
     expect(fixture.nativeElement.querySelector("span[title]").title).toBe(
       record.getId(),
     );
   });
 
+  it("keeps a deliberately chosen id, which is itself the display value", async () => {
+    // a User's id is its username, so "displays its id" does not mean
+    // "displays something meaningless" (regression: this rendered "User Record")
+    class ChosenIdEntity extends Entity {
+      static override ENTITY_TYPE = "User";
+      static override label = "User";
+    }
+    mockEntityMapper.load.mockResolvedValue(new ChosenIdEntity("demo-admin"));
+
+    fixture.componentRef.setInput("entityId", "User:demo-admin");
+    fixture.detectChanges();
+    await vi.waitFor(() =>
+      expect(component.entityResource.value()).toBeTruthy(),
+    );
+    fixture.detectChanges();
+
+    expect(component.showsOnlyId()).toBe(false);
+    expect(fixture.nativeElement.textContent).toContain("demo-admin");
+    expect(fixture.nativeElement.textContent).not.toContain("User Record");
+  });
+
   it("falls back to the type key when such a type has no label either", async () => {
     class UnlabelledIdOnlyEntity extends Entity {
       static override ENTITY_TYPE = "Aser";
     }
-    mockEntityMapper.load.mockResolvedValue(new UnlabelledIdOnlyEntity("1"));
+    mockEntityMapper.load.mockResolvedValue(
+      new UnlabelledIdOnlyEntity("01740708-ead4-4580-abfc-678321075393"),
+    );
 
-    fixture.componentRef.setInput("entityId", "Aser:1");
+    fixture.componentRef.setInput(
+      "entityId",
+      "Aser:01740708-ead4-4580-abfc-678321075393",
+    );
     fixture.detectChanges();
     await vi.waitFor(() => expect(component.showsOnlyId()).toBe(true));
     fixture.detectChanges();
