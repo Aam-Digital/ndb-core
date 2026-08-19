@@ -50,12 +50,28 @@ Where those rules are actually _enforced_ depends on how the system is deployed,
 | Write access       | any document                            | validated against the same rules                                                                          |
 | Audit log          | none                                    | optional (`AUDIT_ENABLED`): every write recorded with user and time                                       |
 
-**Database-only** is the simpler setup. CouchDB validates the user's token itself and grants access to a single role that every user of the system holds. That is an all-or-nothing boundary: a user is either a member of this database or not.
-The permission rules still run — but only in the browser, where they decide what the interface offers and block writes before they are sent. **They are not an access boundary.** Anyone who can log in can read the entire database by talking to the database API directly, whatever their role says.
+#### Database-only, and what it does not give you
 
-**With the permission backend**, the same rules are additionally applied server-side: reads are filtered as they are replicated, and writes are checked again before they are stored. This is what turns a role restriction into a real restriction, and it is the only configuration in which "this user may only see the records of their own project" is a statement about access rather than about the user interface.
+CouchDB is exposed directly and validates the user's token itself. Access is granted to a **single role that every user of the system holds**, so the boundary the server enforces is all-or-nothing: a user is either a member of this system's database, or not.
 
-So if different users of one system must not see each other's data, the permission backend is required.
+The permission rules still run, but only in the browser. There they decide what the interface offers and block writes before they are sent — which is genuinely useful, because it keeps users out of areas that do not concern them and prevents accidental edits. It is a usability and safety layer. **It is not an access boundary**, and nothing about it survives a user who talks to the database API directly instead of using the app. Concretely, in this mode any user who can log in can:
+
+- **read the entire database**, including entity types and records their role hides in the interface — and, since it is one database, that includes the configuration and the permission rules themselves;
+- **write or delete any document**, including those same permission rules, because the rule check that would have stopped it lives in the browser they are bypassing;
+- **keep reading after their roles change**, because a narrowed role restricts the interface but not what their token can fetch. Withdrawing access means disabling the account in Keycloak.
+
+Two further consequences follow from the same design:
+
+- **There is no audit log.** Nothing records who changed what and when.
+- **Rules for anonymous visitors (`_public`) have no effect**, since the database only accepts tokens carrying the role above.
+
+This mode is therefore appropriate when everyone with an account in the system is trusted with all of its data — a small team working on one caseload — and not when the roles are meant to keep colleagues apart.
+
+#### With the permission backend
+
+The same rules are additionally applied server-side: reads are filtered as they are replicated, and writes are checked again before they are stored, with CouchDB itself no longer reachable from outside. This is what turns a role restriction into a real restriction, and it is the only configuration in which "this user may only see the records of their own project" is a statement about access rather than about the user interface. It is also the only one that can record who changed what.
+
+**So if different users of one system must not see each other's data, the permission backend is required.**
 Deploying either mode is described in [Aam-Digital/ndb-setup](https://github.com/Aam-Digital/ndb-setup#docker-compose-profiles).
 
 ## The copy of data on each user's device
