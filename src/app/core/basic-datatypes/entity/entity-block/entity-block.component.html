@@ -36,7 +36,11 @@
     (click)="showDetailsPage()"
     [appTemplateTooltip]="tooltip"
     [tooltipDisabled]="!entityBlockConfig()"
-    [title]="entityResource.value()?.toString()"
+    [title]="
+      showsOnlyId()
+        ? entityResource.value()?.getId()
+        : entityResource.value()?.toString()
+    "
   >
     <app-fa-dynamic-icon
       [icon]="entityIcon()"
@@ -44,7 +48,11 @@
       class="margin-right-small"
     ></app-fa-dynamic-icon>
 
-    {{ entityResource.value()?.toString() }}
+    @if (showsOnlyId()) {
+      {{ idOnlyLabel() }}
+    } @else {
+      {{ entityResource.value()?.toString() }}
+    }
   </span>
 }
 

@@ -98,6 +98,41 @@
         }
       </mat-form-field>
 
+      <mat-form-field
+        subscriptSizing="dynamic"
+        [matTooltip]="disabledFilterHint"
+        [matTooltipDisabled]="!otherFiltersDisabled()"
+      >
+        <mat-label i18n="Change log filter label">Action</mat-label>
+        <mat-select
+          [value]="actionFilter()"
+          [disabled]="otherFiltersDisabled()"
+          (valueChange)="setActionFilter($event)"
+        >
+          @for (action of actions; track action) {
+            <mat-option [value]="action">
+              <app-change-history-action-badge
+                [action]="action"
+              ></app-change-history-action-badge>
+            </mat-option>
+          }
+        </mat-select>
+        @if (actionFilter() && !otherFiltersDisabled()) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            matTooltip="Clear action filter"
+            i18n-matTooltip
+            aria-label="Clear action filter"
+            i18n-aria-label
+            (click)="$event.stopPropagation(); setActionFilter(undefined)"
+          >
+            <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
+          </button>
+        }
+      </mat-form-field>
+
       <!-- the same date-range control as the reports screen, so its presets and
            manual from/to inputs behave identically in both places -->
       <app-date-range-filter

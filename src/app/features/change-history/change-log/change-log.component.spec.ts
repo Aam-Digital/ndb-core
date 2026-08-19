@@ -219,6 +219,31 @@ it("returns to the first page when the related record filter changes", async () 
   expect(component.pageIndex()).toBe(0);
 });
 
+it("re-queries with the selected action and returns to the first page", async () => {
+  await setup();
+  component.onPageChange({ pageIndex: 1, pageSize: 10, length: 11 });
+  await settle();
+
+  component.setActionFilter("deleted");
+  await settle();
+
+  expect(callArgs()[0].action).toBe("deleted");
+  expect(component.pageIndex()).toBe(0);
+});
+
+it("does not apply the action filter while filtering by a related record", async () => {
+  await setup();
+  component.setActionFilter("deleted");
+  await settle();
+
+  component.setRelatedEntityFilter("Child:1");
+  await settle();
+
+  // the view behind the related-record filter cannot narrow by operation
+  expect(callArgs()[0].action).toBeUndefined();
+  expect(component.otherFiltersDisabled()).toBe(true);
+});
+
 it("passes the picked date range through as the time bounds", async () => {
   await setup();
   const from = new Date("2026-06-01T00:00:00.000Z");

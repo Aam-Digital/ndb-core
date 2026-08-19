@@ -10,6 +10,7 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
+import { Entity } from "../../../entity/model/entity";
 describe("EntityBlockComponent", () => {
   let component: EntityBlockComponent;
   let fixture: ComponentFixture<EntityBlockComponent>;
@@ -115,6 +116,57 @@ describe("EntityBlockComponent", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain("not available");
+  });
+
+  it("names the record type when its type configures no display value", async () => {
+    // a config-defined type whose config sets no toStringAttributes keeps the
+    // default ["entityId"], so toString() is the bare uuid: unreadable on its own
+    class IdOnlyEntity extends Entity {
+      static override ENTITY_TYPE = "IdOnly";
+      static override label = "Literacy Test";
+    }
+    const record = new IdOnlyEntity("5e69d648");
+    mockEntityMapper.load.mockResolvedValue(record);
+
+    fixture.componentRef.setInput("entityId", record.getId());
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(component.showsOnlyId()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain("Literacy Test Record");
+    expect(fixture.nativeElement.textContent).not.toContain("5e69d648");
+    // still reachable on hover, for support and debugging
+    expect(fixture.nativeElement.querySelector("span[title]").title).toBe(
+      record.getId(),
+    );
+  });
+
+  it("falls back to the type key when such a type has no label either", async () => {
+    class UnlabelledIdOnlyEntity extends Entity {
+      static override ENTITY_TYPE = "Aser";
+    }
+    mockEntityMapper.load.mockResolvedValue(new UnlabelledIdOnlyEntity("1"));
+
+    fixture.componentRef.setInput("entityId", "Aser:1");
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(component.showsOnlyId()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain("Aser Record");
+  });
+
+  it("keeps the configured display value for a type that has one", async () => {
+    testEntity.name = "Chandani Marar";
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.detectChanges();
+    await vi.waitFor(() =>
+      expect(component.entityResource.value()).toEqual(testEntity),
+    );
+    fixture.detectChanges();
+
+    expect(component.showsOnlyId()).toBe(false);
+    expect(fixture.nativeElement.textContent).toContain("Chandani Marar");
+    expect(fixture.nativeElement.textContent).not.toContain("Record");
   });
 
   it("shows the raw id instead of 'not available' when asked to", async () => {

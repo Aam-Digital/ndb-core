@@ -130,6 +130,32 @@ export class EntityBlockComponent {
     () => this.missingEntityType()?.icon || "diamond",
   );
 
+  /**
+   * Whether the record has nothing to display but its own id.
+   *
+   * A type that configures no `toStringAttributes` keeps the default
+   * `["entityId"]`, so `toString()` returns the bare uuid. Compared against the
+   * id rather than inspecting the config, so a type that spells out the same
+   * default explicitly is treated the same way.
+   */
+  readonly showsOnlyId = computed(() => {
+    const entity = this.entityResource.value();
+    return !!entity && entity.toString() === entity.getId(true);
+  });
+
+  /**
+   * What to show instead of that bare uuid: the kind of record it is, which is
+   * the one thing actually known about it. The full id stays on the element's
+   * `title`, and callers with room for a second line (e.g. the change log) show
+   * it themselves; this block is a single-line inline element everywhere else.
+   */
+  readonly idOnlyLabel = computed(() => {
+    const type = this.entityResource.value()?.getConstructor();
+    // an unlabelled config-defined type still names itself through its key
+    const typeName = type?.label || type?.ENTITY_TYPE;
+    return $localize`:Entity block label for a record with no display value:${typeName}:type: Record`;
+  });
+
   readonly entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()
       ?.toBlockDetailsAttributes;

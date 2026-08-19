@@ -20,6 +20,24 @@ export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
 export const BASELINE_OPERATION = "baseline";
 
 /**
+ * The actions a user can filter the change log by, and the backend `operation`
+ * each one selects.
+ *
+ * `baseline` is deliberately absent: the log never lists snapshots, so offering
+ * it would only ever return nothing (see `buildChangeLogQuery`).
+ */
+export const FILTERABLE_ACTION_OPERATIONS: Record<string, string> = {
+  created: "create",
+  updated: "update",
+  deleted: "delete",
+};
+
+/** The filterable actions, in the order the filter offers them. */
+export const FILTERABLE_ACTIONS = Object.keys(
+  FILTERABLE_ACTION_OPERATIONS,
+) as ChangeAction[];
+
+/**
  * Maps the backend audit `operation` to the displayed {@link ChangeAction}.
  */
 export const OPERATION_TO_ACTION: Record<string, ChangeAction> = {
@@ -101,6 +119,11 @@ export interface ChangeLogFilters {
   entityType?: string;
   /** author, matched against the recorded user name */
   changedBy?: string;
+  /**
+   * only one kind of change, keyed by displayed action (`created`/`updated`/
+   * `deleted`); see {@link FILTERABLE_ACTION_OPERATIONS}.
+   */
+  action?: string;
   /**
    * a record id, e.g. `User:1`: only changes *related* to that record — changes
    * to the record itself, and changes to any other record that referenced it

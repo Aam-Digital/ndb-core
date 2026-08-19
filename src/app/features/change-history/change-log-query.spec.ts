@@ -57,6 +57,25 @@ it("filters by entity type as an id prefix range", () => {
   });
 });
 
+it("filters by the selected action, replacing the baseline exclusion", () => {
+  const selector: any = buildChangeLogQuery({ action: "deleted" }, 10).selector;
+  // the exact operation, not the "anything but a baseline" default
+  expect(selector.operation).toBe("delete");
+});
+
+it("still excludes baselines when no action is selected", () => {
+  const selector: any = buildChangeLogQuery({}, 10).selector;
+  expect(selector.operation).toEqual({ $ne: "baseline" });
+});
+
+it("ignores an action that maps to no backend operation", () => {
+  const selector: any = buildChangeLogQuery(
+    { action: "baseline" },
+    10,
+  ).selector;
+  expect(selector.operation).toEqual({ $ne: "baseline" });
+});
+
 it("filters by author and by a lower date bound", () => {
   expect(
     buildChangeLogQuery(

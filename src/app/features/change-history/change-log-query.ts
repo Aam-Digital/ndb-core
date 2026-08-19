@@ -5,6 +5,7 @@ import {
   BASELINE_OPERATION,
   ChangeLogEntry,
   ChangeLogFilters,
+  FILTERABLE_ACTION_OPERATIONS,
   OPERATION_TO_ACTION,
 } from "./change-history.types";
 
@@ -102,8 +103,14 @@ function buildSelector(filters: ChangeLogFilters): Record<string, unknown> {
     // record's whole field list to whoever happened to edit it first.
     // `$ne` rather than a list of the wanted operations, so an operation added
     // later (see ChangeAction) shows up instead of being silently dropped.
+    // A selected action narrows this to that one operation below.
     operation: { $ne: BASELINE_OPERATION },
   };
+
+  const operation = FILTERABLE_ACTION_OPERATIONS[filters.action];
+  if (operation) {
+    selector.operation = operation;
+  }
 
   if (filters.entityType) {
     selector.entityId = {

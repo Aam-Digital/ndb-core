@@ -33,7 +33,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { NotificationTimePipe } from "../../notification/notification-time.pipe";
 import { ChangeHistoryService } from "../change-history.service";
-import { ChangeLogEntry } from "../change-history.types";
+import { ChangeLogEntry, FILTERABLE_ACTIONS } from "../change-history.types";
 import { authorEntityId } from "../change-log-query";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
@@ -130,6 +130,12 @@ export class ChangeLogComponent {
     "changedFields",
   ];
 
+  /**
+   * The actions offered by the filter. Each option renders the same badge the
+   * table uses, so there is no second copy of the action wording to keep in sync.
+   */
+  readonly actions = FILTERABLE_ACTIONS;
+
   readonly entityTypes = this.entityRegistry
     .getEntityTypes(true)
     .map(({ key, value }) => ({ key, label: value.label }))
@@ -137,6 +143,7 @@ export class ChangeLogComponent {
 
   readonly entityTypeFilter = signal<string | undefined>(undefined);
   readonly changedByFilter = signal<string | undefined>(undefined);
+  readonly actionFilter = signal<string | undefined>(undefined);
   readonly relatedEntityFilter = signal<string | undefined>(undefined);
   readonly dateFrom = signal<Date | undefined>(undefined);
   readonly dateTo = signal<Date | undefined>(undefined);
@@ -181,6 +188,9 @@ export class ChangeLogComponent {
             changedBy: this.otherFiltersDisabled()
               ? undefined
               : this.changedByFilter(),
+            action: this.otherFiltersDisabled()
+              ? undefined
+              : this.actionFilter(),
             relatedEntityId: this.relatedEntityFilter(),
             from: this.dateFrom(),
             to: this.dateTo(),
@@ -197,6 +207,7 @@ export class ChangeLogComponent {
           {
             entityType: params.entityType,
             changedBy: params.changedBy,
+            action: params.action,
             relatedEntityId: params.relatedEntityId,
             from: params.from,
             to: params.to,
@@ -256,6 +267,11 @@ export class ChangeLogComponent {
 
   setEntityTypeFilter(entityType: string | undefined) {
     this.entityTypeFilter.set(entityType);
+    this.pageIndex.set(0);
+  }
+
+  setActionFilter(action: string | undefined) {
+    this.actionFilter.set(action);
     this.pageIndex.set(0);
   }
 
