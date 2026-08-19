@@ -16,6 +16,16 @@ The whitelisted CSP sources can be overwritten and adapted using a docker enviro
 > CSP is currently running in "report-only" mode for testing.
 > Scripts and connections are not yet blocked by default.
 
+### Embedding the app in an iframe (`frame-ancestors`)
+
+Which sites are allowed to embed the app in an iframe is controlled by a second, _enforcing_ CSP header: `Content-Security-Policy: frame-ancestors 'self' ...`.
+This has to be a separate header because `frame-ancestors` is ignored in a "report-only" policy.
+As that policy contains no other directive, it does not restrict anything but framing and the whitelist above stays report-only.
+
+By default only the app's own origin can embed it.
+To let other sites embed an instance (e.g. a demo system embedded into a project website), set the docker environment variable `CSP_EXTRA_FRAME_ANCESTORS` to a space-separated list of origins, e.g. `https://example.com https://www.example.com`.
+Each origin has to be given with its scheme and exact host - `example.com` and `www.example.com` are different origins - and without any path.
+
 ### Allowing PouchDB to function under CSP
 
 The browser-side database system PouchDB uses map-reduce functions for indexing which are defined as strings.
