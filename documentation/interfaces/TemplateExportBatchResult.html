@@ -223,7 +223,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:68</a></div>
                                 </td>
                             </tr>
 
@@ -262,7 +262,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:52</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:67</a></div>
                                 </td>
                             </tr>
 
@@ -285,6 +285,10 @@ import { switchMap } from &quot;rxjs/operators&quot;;
 import { TemplateExport } from &quot;../template-export.entity&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
+import {
+  TemplateExportComplement,
+  TemplateExportContextService,
+} from &quot;../template-export-context/template-export-context.service&quot;;
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -307,6 +311,11 @@ interface TemplateRenderRequestDto {
    * The data used to fill placeholders in the template.
    */
   data: Object;
+
+  /**
+   * Additional context data available in the template under the &#x60;{c.…}&#x60; prefix.
+   */
+  complement?: TemplateExportComplement;
 }
 
 /**
@@ -316,6 +325,12 @@ interface TemplateRenderRequestDto {
 interface TemplateRenderBatchRequestDto {
   convertTo: string;
   data: Object[];
+
+  /**
+   * Additional context data, shared by all records of the batch,
+   * available in the template under the &#x60;{c.…}&#x60; prefix.
+   */
+  complement?: TemplateExportComplement;
 }
 
 export interface TemplateExportResult {
@@ -336,6 +351,7 @@ export interface TemplateExportBatchResult {
 })
 export class TemplateExportApiService extends FileService {
   private navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN);
+  private readonly exportContext &#x3D; inject(TemplateExportContextService);
 
   readonly API_URL &#x3D; environment.API_PROXY_PREFIX + &quot;/v1/export&quot;;
 
@@ -408,12 +424,15 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     data: Object,
   ): Observable&lt;TemplateExportResult&gt; {
+    const complement &#x3D; this.exportContext.getComplement();
+
     return this.httpClient
       .post(
         this.API_URL + &quot;/render/&quot; + template.getId(),
         {
           convertTo: &quot;pdf&quot;,
           data: data,
+          ...(complement ? { complement } : {}),
         } as TemplateRenderRequestDto,
         { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
       )
@@ -456,12 +475,15 @@ export class TemplateExportApiService extends FileService {
     mode: &quot;zip&quot; | &quot;combined&quot; &#x3D; &quot;zip&quot;,
   ): Observable&lt;TemplateExportBatchResult&gt; {
     const fallbackExtension &#x3D; mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;;
+    const complement &#x3D; this.exportContext.getComplement();
+
     return this.httpClient
       .post(
         this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
         {
           convertTo: &quot;pdf&quot;,
           data: dataList,
+          ...(complement ? { complement } : {}),
         } as TemplateRenderBatchRequestDto,
         { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
       )

@@ -675,13 +675,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/TemplateExportModule.html" data-type="entity-link" >TemplateExportModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' }>
+                                        'data-bs-target="#injectables-links-module-TemplateExportModule-0ac8e5210fd5a18a15f1372d860340c0dd9bd9c4476c69df74b5fd4746a684bd38a78a721a22cc45ff2259dc72096af5f3b5e84d12b3ab228b790419658134ea"' : 'data-bs-target="#xs-injectables-links-module-TemplateExportModule-0ac8e5210fd5a18a15f1372d860340c0dd9bd9c4476c69df74b5fd4746a684bd38a78a721a22cc45ff2259dc72096af5f3b5e84d12b3ab228b790419658134ea"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' :
-                                        'id="xs-injectables-links-module-TemplateExportModule-ab403b1a1457ded8ae4f1f6cf116d2dfbb73c1ac198ad7dbf81087af47d83e3241f65955427d4d9474d6af6304a72e9d135b65e2fce74426a4c744540a6920ec"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-TemplateExportModule-0ac8e5210fd5a18a15f1372d860340c0dd9bd9c4476c69df74b5fd4746a684bd38a78a721a22cc45ff2259dc72096af5f3b5e84d12b3ab228b790419658134ea"' :
+                                        'id="xs-injectables-links-module-TemplateExportModule-0ac8e5210fd5a18a15f1372d860340c0dd9bd9c4476c69df74b5fd4746a684bd38a78a721a22cc45ff2259dc72096af5f3b5e84d12b3ab228b790419658134ea"' }>
                                         <li class="link">
                                             <a href="injectables/TemplateExportFileDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >TemplateExportFileDatatype</a>
                                         </li>
@@ -2178,6 +2178,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/TemplateExportApiService.html" data-type="entity-link" >TemplateExportApiService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/TemplateExportContextService.html" data-type="entity-link" >TemplateExportContextService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/TemplateExportService.html" data-type="entity-link" >TemplateExportService</a>
                                 </li>
                                 <li class="link">
@@ -2836,6 +2839,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateExportBatchResult.html" data-type="entity-link" >TemplateExportBatchResult</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/TemplateExportComplement.html" data-type="entity-link" >TemplateExportComplement</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateExportResult.html" data-type="entity-link" >TemplateExportResult</a>

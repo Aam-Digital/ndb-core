@@ -2390,7 +2390,7 @@ export class TemplateExport extends Entity {
   @DatabaseField({
     label: $localize&#x60;:TemplateExport:File name pattern for generated file&#x60;,
     labelShort: $localize&#x60;:TemplateExport:File name pattern&#x60;,
-    description: $localize&#x60;:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. &quot;my-report_{d.name}.pdf&quot;).&#x60;,
+    description: $localize&#x60;:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. &quot;my-report_{d.name}_{c.user.name}.pdf&quot;).&#x60;,
     validators: { required: true },
   })
   targetFileName: string;
