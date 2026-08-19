@@ -529,7 +529,6 @@
   "7635494124656371456": "Template-Datei",
   "7873150375551239187": "Dateiname der generierten Dateien",
   "2457281208979739045": "Dateinamen-Vorlage",
-  "6019588592701270147": "Der Dateiname beim Download aus diesem Template generierter Dokumente. Sie können hier ebenfalls Platzhalter wie in der Template-Datei benutzen (z.B. \"mein-bericht_{d.name}\").",
   "2802527336682245295": "Dokument aus einem Template erstellen.",
   "545544867626738363": "Vereinbarung unterschreiben",
   "5282841875657353411": "Wir haben die Details vereinbart, brauchen aber noch eine Unterschrift.",
@@ -1006,7 +1005,6 @@
   "1069752456589679355": "Verfügbare Datensatztypen",
   "3119588924321452745": "Datensatztypen",
   "8730424656612569034": "Laden Sie ein speziell vorbereitetes Dokument hoch, das Platzhalter enthält, die beim Generieren einer PDF-Datei durch die tatsächlichen Daten eines bestimmten Datensatzes ersetzt werden.",
-  "2799157977117199524": "Laden Sie hier eine speziell vorbereitete Vorlagendatei hoch.\n\nDie Datei kann Platzhalter enthalten, die beim Generieren einer Datei für einen ausgewählten Datensatz durch die tatsächlichen Daten ersetzt werden.\n\nBeispielsweise wird {d.name} durch den Wert im Feld „Name“ des jeweiligen Datensatzes ersetzt.\n\nWeitere Informationen finden Sie in der Dokumentation des [carbone-Systems](https://carbone.io/documentation.html#substitutions).\n\nDie Platzhalterschlüssel müssen mit dem Feld „Feld-ID“ der Datensatzstruktur in Aam Digital übereinstimmen.\nSie finden diese ID im Formulargenerator der Admin-Oberfläche (Datenstruktur bearbeiten → Detailansicht). Bearbeiten Sie ein bestimmtes Feld, um dessen Details anzuzeigen.\n\nVorlagendateien können in den meisten Office-Dokumentformaten (odt, docx, ods, xlsx, odp, pptx) oder als PDF vorliegen.",
   "3953200480979433077": "Sie können einen Link manuell definieren. Um einen neuen Link zu erstellen, öffnen Sie Aam Digital in einem neuen Tab, gehen Sie zum gewünschten Datensatztyp, kopieren Sie alles nach „https://<Ihr-System>.aam-digital.app/“ und fügen Sie es hier als Linkziel ein. ",
   "1532367822363849958": "{$INTERPOLATION} Zeile(n) wurden übersprungen, da basierend auf Ihrer Spaltenzuordnung keine zuordenbaren Daten gefunden wurden. ",
   "4338073449583918499": "Falls Sie zusätzliche Felder benötigen, bearbeiten Sie hier den zugehörigen Datensatztyp.",
@@ -1316,7 +1314,7 @@
   "5739101854121137421": "Dropdown-Liste \"{$PH}\" erfolgreich gelöscht.",
   "5109668206135094036": "Dropdown-Liste wird in Konfiguration verwendet und kann nicht gelöscht werden.",
   "3868778677107272306": "Dropdown-Liste konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
-  "7933316575756020369": "Liste herunterladen",
+  "7933316575756020369": "{$PH} Liste herunterladen",
   "8218299390349021252": "{$INTERPOLATION} Anwesenheit ",
   "2781675311266594834": "Der Wert wird anonymisiert, wobei jedoch einige allgemeine Informationen erhalten bleiben. Bei Datumsangaben wird der Tag entfernt und nur das Jahr für statistische Auswertungen beibehalten. Bei Textfeldern wird nur das erste Zeichen (z. B. als Initial) beibehalten und der Rest maskiert. Unterstützt ein Datentyp keine partielle Anonymisierung, wird der Wert stattdessen vollständig entfernt.",
   "5531363857096638174": "Datensätze als CSV- oder XLSX-Datei herunterladen",
@@ -1641,5 +1639,7 @@
   "2677411136790917101": "Es werden nur die Datensätze gespeichert, mit denen ein Benutzerkonto verknüpft ist, damit die Benutzer ihr Profil behalten können.",
   "3076634754286908805": "Geben Sie \"{$INTERPOLATION}\" ein, um zu bestätigen",
   "7020826383871245399": "Lokale Daten auf diesem Gerät zurücksetzen?",
-  "6306748668688546271": "Möchten Sie wirklich alle auf diesem Gerät zwischengespeicherten Daten löschen und die Synchronisierung mit dem Server wiederholen? Dies hat keine Auswirkungen auf den Server oder andere Benutzer. Alle Änderungen auf diesem Gerät, die noch nicht synchronisiert wurden, gehen dabei verloren."
+  "6306748668688546271": "Möchten Sie wirklich alle auf diesem Gerät zwischengespeicherten Daten löschen und die Synchronisierung mit dem Server wiederholen? Dies hat keine Auswirkungen auf den Server oder andere Benutzer. Alle Änderungen auf diesem Gerät, die noch nicht synchronisiert wurden, gehen dabei verloren.",
+  "1633257724616063740": "The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. \"my-report_{d.name}_{c.user.name}.pdf\").",
+  "2171116827047743108": "Upload a specially prepared template file here.\nThe file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.\nFor example {d.name} will be replaced with the value in the \"name\" field of the given record.\nSee the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.\n\nThe placeholder keys must match the field \"Field ID\" of the record data structure in Aam Digital.\nYou can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.\n\nIn addition to the selected record, you can also use fields of the currently logged-in user's own record by prefixing them with \"c.user.\" (e.g. {c.user.name}). This works both in the template file and in the file name pattern.\n\nTemplate files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF."
 }
