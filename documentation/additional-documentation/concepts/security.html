@@ -143,6 +143,13 @@ The whitelisted CSP sources can be overwritten and adapted using a docker enviro
 <p>CSP is currently running in &quot;report-only&quot; mode for testing.
 Scripts and connections are not yet blocked by default.</p>
 </blockquote>
+<h3>Embedding the app in an iframe (<code>frame-ancestors</code>)</h3>
+<p>Which sites are allowed to embed the app in an iframe is controlled by a second, <em>enforcing</em> CSP header: <code>Content-Security-Policy: frame-ancestors &#39;self&#39; ...</code>.
+This has to be a separate header because <code>frame-ancestors</code> is ignored in a &quot;report-only&quot; policy.
+As that policy contains no other directive, it does not restrict anything but framing and the whitelist above stays report-only.</p>
+<p>By default only the app&#39;s own origin can embed it.
+To let other sites embed an instance (e.g. a demo system embedded into a project website), set the docker environment variable <code>CSP_EXTRA_FRAME_ANCESTORS</code> to a space-separated list of origins, e.g. <code>https://example.com https://www.example.com</code>.
+Each origin has to be given with its scheme and exact host - <code>example.com</code> and <code>www.example.com</code> are different origins - and without any path.</p>
 <h3>Allowing PouchDB to function under CSP</h3>
 <p>The browser-side database system PouchDB uses map-reduce functions for indexing which are defined as strings.
 It is therefore requiring <code>&#39;unsafe-eval&#39;</code> in the CSP.</p>
