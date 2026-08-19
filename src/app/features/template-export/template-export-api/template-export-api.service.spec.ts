@@ -20,8 +20,8 @@ import {
   mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { CurrentUserSubject } from "../../../core/session/current-user-subject";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("TemplateExportApiService", () => {
   let service: TemplateExportApiService;

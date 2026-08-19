@@ -1,8 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 
 import { TemplateExportContextService } from "./template-export-context.service";
-import { CurrentUserSubject } from "../../../core/session/current-user-subject";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("TemplateExportContextService", () => {
   let service: TemplateExportContextService;

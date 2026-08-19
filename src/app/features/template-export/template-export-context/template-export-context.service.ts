@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
-import { Entity } from "../../../core/entity/model/entity";
-import { CurrentUserSubject } from "../../../core/session/current-user-subject";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 
 /**
  * Additional context data (beyond the record itself) available in template placeholders.
