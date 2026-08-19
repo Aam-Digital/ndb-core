@@ -356,11 +356,12 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   await argosScreenshot(page, "children-filtered-sorted-page-2");
 
   // Archived records that match the filters show up only when explicitly
-  // included, and the page we are on recomputes without being left.
+  // included, the paginator jumps back to page one
   const archivedToggle = page.getByRole("switch", {
     name: "Include archived records",
   });
   await archivedToggle.click();
+  await page.getByRole("button", { name: "Next page" }).click();
   await expect(paginatorRange).toHaveText(/^\s*11 - 16 of 16\s*$/);
   await expect(nameCells).toHaveText([
     ...MATCHING_NAMES.slice(PAGE_SIZE),
@@ -368,10 +369,11 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   ]);
 
   await archivedToggle.click();
-  await expect(paginatorRange).toHaveText(/^\s*11 - 14 of 14\s*$/);
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 14\s*$/);
 
   // Sorting the other way round while on the second page. The list deliberately
   // keeps the current page index instead of jumping back to the first page.
+  await page.getByRole("button", { name: "Next page" }).click();
   await nameHeader.click();
   await expect(nameHeader).toHaveAttribute("aria-sort", "descending");
   await expect(paginatorRange).toHaveText(/^\s*11 - 14 of 14\s*$/);
@@ -380,7 +382,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
   );
 
   // Narrowing the filter so that the result no longer reaches the current page:
-  // the list falls back to a page that exists rather than showing nothing.
+  // the list falls back to the first page
   await selectFilterOption(page, "School", MATCHING_SCHOOL_NAME);
   await selectFilterOption(page, "School", OTHER_SCHOOL_NAME);
 

@@ -246,6 +246,7 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     if (!newSide.selected) {
+      // Currently this component only works with the InMemoryDataSource because all records should be displayed on the map
       runInInjectionContext(
         this.injector,
         () => (newSide.dataSource = new InMemoryDataSource()),
