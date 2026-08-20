@@ -10,6 +10,7 @@ describe("PublicFormPermissionService", () => {
   let mockPermissionsConfig: {
     load: ReturnType<typeof vi.fn>;
     canManagePermissions: ReturnType<typeof vi.fn>;
+    saveWithBackup: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
@@ -22,6 +23,19 @@ describe("PublicFormPermissionService", () => {
         .fn()
         .mockName("PermissionsConfigService.canManagePermissions")
         .mockReturnValue(false),
+      // mirrors the real service: back up the previous state, then store the new one
+      saveWithBackup: vi
+        .fn()
+        .mockName("PermissionsConfigService.saveWithBackup")
+        .mockImplementation(async (config: Config, updatedData) => {
+          const backup = new Config(
+            Config.PERMISSION_KEY + ":backup",
+            structuredClone(config.data),
+          );
+          config.data = updatedData;
+          await mockEntityMapper.save(config, true);
+          return backup;
+        }),
     };
 
     TestBed.configureTestingModule({
@@ -141,6 +155,23 @@ describe("PublicFormPermissionService", () => {
 
     mockPermissionsConfig.canManagePermissions.mockReturnValue(false);
     expect(service.hasAdminPermission()).toBe(false);
+  });
+
+  it("should back up the previous permissions before adding a public create rule", async () => {
+    const existingConfig = new Config(Config.PERMISSION_KEY, {
+      _public: [{ subject: "School", action: "create" }],
+    });
+    mockPermissionsConfig.load.mockResolvedValue(existingConfig);
+
+    await service.addPublicCreatePermission("Child");
+
+    const [config, updatedData] =
+      mockPermissionsConfig.saveWithBackup.mock.calls[0];
+    expect(config).toBe(existingConfig);
+    expect(updatedData._public).toContainEqual({
+      subject: "Child",
+      action: "create",
+    });
   });
 
   it("should create new permissions config when none exists", async () => {
