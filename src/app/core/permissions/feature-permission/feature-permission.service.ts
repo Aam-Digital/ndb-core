@@ -7,42 +7,57 @@ import {
   EntityActionPermission,
   isReservedRuleConfigKey,
   LEGACY_DEFAULT_KEY,
+  ruleCoversAction,
+  SYSTEM_DEFAULT_RULE_REASON,
 } from "../permission-types";
 import { PermissionsConfigService } from "../permissions-config.service";
 
 /**
- * Maps the "Use" / "Manage" checkboxes shown in the feature-permission UI to the
- * underlying CASL actions stored in the permissions config.
+ * The actions offered as a checkbox in the feature-permission UI, in display order.
  *
- * This is the single source of truth for that mapping: if "Use" should ever grant
- * more than read access (e.g. also create/update), change {@link FEATURE_USE_ACTION}.
- *
- * Semantics (confirmed with product): "read" lets a role *use* a feature
- * (e.g. send emails from an EmailTemplate) without being able to add/edit its
- * records, while "manage" grants full control.
+ * A role that is granted all of them is stored as the CASL `manage` action instead,
+ * so that a config written by an admin keeps the shape it had before.
  */
-const FEATURE_USE_ACTION: EntityActionPermission = "read";
-const FEATURE_MANAGE_ACTION: EntityActionPermission = "manage";
+export const FEATURE_ACTIONS = [
+  "create",
+  "read",
+  "update",
+  "delete",
+] as const satisfies readonly EntityActionPermission[];
+
+export type FeatureAction = (typeof FEATURE_ACTIONS)[number];
+
+/** why a checkbox is shown but cannot be changed here */
+export type PermissionLockReason =
+  /** granted to everyone by the shared `_default` section */
+  | "default"
+  /** the role's access comes from a rule this UI must not rewrite */
+  | "advanced-rule";
+
+/** the state of a single action checkbox in one row */
+export interface FeatureActionPermission {
+  granted: boolean;
+  editable: boolean;
+  lockedBy?: PermissionLockReason;
+}
 
 /**
- * The "Use"/"Manage" permission state of a single role for one feature entity type.
+ * The permission state of one row of the dialog - either a user role or the
+ * shared `_default` section - for one feature entity type.
  */
 export interface RoleFeaturePermission {
   /** the role's technical name as used as a key in the permissions config */
   role: string;
-  /** whether the role effectively has the "Use" (read) permission for this feature */
-  use: boolean;
-  /** whether the role effectively has the "Manage" (manage) permission for this feature */
-  manage: boolean;
+  actions: Record<FeatureAction, FeatureActionPermission>;
   /**
-   * Whether this row can be edited via the grid.
+   * Whether any checkbox of this row can be edited.
    *
-   * `false` when the role's access is (partly) decided by a rule the grid does not
-   * own - a wildcard `all` subject, a grouped/array subject, a conditioned rule,
-   * an inverted (deny) rule or a rule in the shared `_default` block. In that case
-   * the checkboxes reflect the role's *effective* access but are shown read-only,
-   * because the grid cannot change such a rule without affecting other entity
-   * types; the admin must use the advanced (raw JSON) editor instead.
+   * `false` for the `_default` row and for roles whose access to this feature is
+   * decided by a rule this UI does not own - a wildcard `all` subject, a grouped
+   * subject, a conditioned rule or an inverted (deny) rule. Such a row shows the
+   * role's *effective* access read-only, because the rule cannot be changed
+   * without affecting other entity types or roles; the admin must use the
+   * advanced (raw JSON) editor instead.
    */
   editable: boolean;
 }
@@ -52,31 +67,44 @@ export interface RoleFeaturePermission {
  */
 export interface FeaturePermissionState {
   entityType: string;
+
+  /**
+   * The shared `_default` section, shown as a read-only first row so that
+   * checkboxes disabled on the role rows have a visible reason.
+   */
+  defaultRules: RoleFeaturePermission;
+
   roles: RoleFeaturePermission[];
 
   /**
-   * true if at least one role's access is decided by rules the grid cannot edit
-   * (wildcards, grouped subjects, conditions, inverted rules or shared `_default`
-   * rules) - i.e. some rows are read-only.
+   * true if at least one role's access is decided by rules this UI cannot edit
+   * (wildcards, grouped subjects, conditions or inverted rules) - i.e. some rows
+   * are read-only.
    *
    * When true the UI points admins to the advanced (raw JSON) permissions editor
-   * for the full picture. Editing via the grid stays safe either way:
+   * for the full picture. Editing here stays safe either way:
    * {@link FeaturePermissionService.setPermissions} never mutates those rules.
    */
   hasComplexRules: boolean;
 }
 
+/** the actions of one row as sent back to {@link FeaturePermissionService.setPermissions} */
+export interface RoleFeaturePermissionUpdate {
+  role: string;
+  actions: Record<FeatureAction, boolean>;
+}
+
 /**
- * Read and edit the per-role "Use"/"Manage" permissions of a single feature
- * (internal entity type such as EmailTemplate, TemplateExport, ReportConfig, ...)
- * against the central `Config:Permissions` document.
+ * Read and edit the per-role permissions of a single feature (internal entity
+ * type such as EmailTemplate, TemplateExport, ReportConfig, ...) against the
+ * central `Config:Permissions` document.
  *
- * To keep the two-checkbox model a faithful (non-destructive) projection of the
+ * To keep the checkbox grid a faithful (non-destructive) projection of the
  * arbitrarily complex CASL rules, this service only ever reads and writes rules
  * that it "owns" for the exact entity type (single string subject, no conditions,
- * action `read` or `manage`). Any other rule - grouped subjects, conditions,
- * wildcards, inverted rules or other actions - is preserved untouched, and surfaced
- * via {@link FeaturePermissionState.hasComplexRules} so the UI can defer to the
+ * only feature actions). Any other rule - grouped subjects, conditions, wildcards
+ * or inverted rules - is preserved untouched, and surfaced via
+ * {@link FeaturePermissionState.hasComplexRules} so the UI can defer to the
  * advanced editor.
  */
 @Injectable({ providedIn: "root" })
@@ -84,7 +112,7 @@ export class FeaturePermissionService {
   private readonly permissionsConfig = inject(PermissionsConfigService);
 
   /**
-   * Compute the current "Use"/"Manage" state of the given roles for one feature.
+   * Compute the current permission state of the given roles for one feature.
    * @param entityType the feature's ENTITY_TYPE (e.g. "EmailTemplate")
    * @param roleNames the roles to display (typically all assignable roles)
    */
@@ -93,93 +121,131 @@ export class FeaturePermissionService {
     roleNames: string[],
   ): Promise<FeaturePermissionState> {
     const rules = (await this.permissionsConfig.load())?.data ?? {};
-    // rules in `_default` apply to every logged-in user, on top of their role rules
-    const defaultRules =
-      rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY] ?? [];
+    const defaultRules = this.getDefaultRules(rules);
+    const grantedByDefault = this.getDefaultGrants(defaultRules, entityType);
 
-    const roles: RoleFeaturePermission[] = roleNames.map((role) => {
-      const roleRules = rules[role] ?? [];
-      const effectiveRules = [...defaultRules, ...roleRules];
-
-      // access decided by a rule the grid does not own (wildcard, grouped subject,
-      // condition or inverted rule) cannot be changed via the grid -> show the
-      // effective state read-only. A `_default` rule is shared by every role, so
-      // it is never grid-owned no matter how simple its shape is.
-      const decidedByUneditableRule =
-        defaultRules.some((rule) => this.affectsFeature(rule, entityType)) ||
-        roleRules.some(
-          (rule) =>
-            this.affectsFeature(rule, entityType) &&
-            !this.isGridOwnedRule(rule, entityType),
-        );
-
-      if (decidedByUneditableRule) {
-        const manage = this.hasEffectiveAccess(
-          effectiveRules,
+    const roles = roleNames
+      .filter((role) => !isReservedRuleConfigKey(role))
+      .map((role) =>
+        this.getRolePermission(
+          role,
+          rules[role] ?? [],
+          defaultRules,
+          grantedByDefault,
           entityType,
-          FEATURE_MANAGE_ACTION,
-        );
-        const use =
-          manage ||
-          this.hasEffectiveAccess(
-            effectiveRules,
-            entityType,
-            FEATURE_USE_ACTION,
-          );
-        return { role, use, manage, editable: false };
-      }
-
-      // otherwise the role's access is fully described by rules we own and can edit
-      const owned = roleRules.filter((rule) =>
-        this.isGridOwnedRule(rule, entityType),
+        ),
       );
-      return {
-        role,
-        use: owned.some((rule) => rule.action === FEATURE_USE_ACTION),
-        manage: owned.some((rule) => rule.action === FEATURE_MANAGE_ACTION),
-        editable: true,
-      };
-    });
 
     return {
       entityType,
+      defaultRules: {
+        role: DEFAULT_SECTION_KEY,
+        actions: this.mapActions((action) => ({
+          granted: grantedByDefault[action],
+          editable: false,
+          lockedBy: "default",
+        })),
+        editable: false,
+      },
       roles,
       hasComplexRules: roles.some((role) => !role.editable),
     };
   }
 
+  private getRolePermission(
+    role: string,
+    roleRules: DatabaseRule[],
+    defaultRules: DatabaseRule[],
+    grantedByDefault: Record<FeatureAction, boolean>,
+    entityType: string,
+  ): RoleFeaturePermission {
+    // access decided by a rule this UI does not own (wildcard, grouped subject,
+    // condition or inverted rule) cannot be changed here -> show the effective
+    // state of the whole row read-only.
+    const hasAdvancedRule = roleRules.some(
+      (rule) =>
+        this.affectsFeature(rule, entityType) &&
+        !this.isOwnedRule(rule, entityType),
+    );
+
+    if (hasAdvancedRule) {
+      const effectiveRules = [...defaultRules, ...roleRules];
+      return {
+        role,
+        actions: this.mapActions((action) => ({
+          granted: this.hasEffectiveAccess(effectiveRules, entityType, action),
+          editable: false,
+          lockedBy: "advanced-rule",
+        })),
+        editable: false,
+      };
+    }
+
+    const ownedRules = roleRules.filter((rule) =>
+      this.isOwnedRule(rule, entityType),
+    );
+    return {
+      role,
+      actions: this.mapActions((action) => {
+        // an action granted to everyone through `_default` cannot be revoked for a
+        // single role here (that would need an inverted rule), so it is locked
+        if (grantedByDefault[action]) {
+          return { granted: true, editable: false, lockedBy: "default" };
+        }
+        return {
+          granted: ownedRules.some((rule) =>
+            ruleCoversAction(rule, entityType, action),
+          ),
+          editable: true,
+        };
+      }),
+      editable: true,
+    };
+  }
+
   /**
-   * Persist the updated "Use"/"Manage" state for the given roles.
+   * Persist the updated permissions for the given roles.
    *
    * Only rules this service owns for the exact entity type are replaced; every
    * other rule (including `_default`/`_public` and complex rules) is preserved.
+   * Actions already granted through `_default` are never written as a role rule,
+   * so that inherited access does not get duplicated into every role.
    * A timestamped backup of the previous config is stored before saving.
    *
    * @returns the backup Config that was created, so callers can offer an "undo".
    */
   async setPermissions(
     entityType: string,
-    updates: Pick<RoleFeaturePermission, "role" | "use" | "manage">[],
+    updates: RoleFeaturePermissionUpdate[],
   ): Promise<Config<DatabaseRules>> {
-    const config = await this.loadOrInitPermissionsConfig();
+    const existing = await this.permissionsConfig.load();
+    // the grants to suppress are the ones the admin actually saw as inherited,
+    // i.e. from the stored config - not from a `_default` section seeded below
+    const grantedByDefault = this.getDefaultGrants(
+      this.getDefaultRules(existing?.data ?? {}),
+      entityType,
+    );
+    const config = this.ensurePermissionsConfig(existing);
     const updatedData = structuredClone(config.data);
 
-    for (const { role, use, manage } of updates) {
+    for (const { role, actions } of updates) {
       // never edit the shared baseline sections through the per-role grid
       if (isReservedRuleConfigKey(role)) {
         continue;
       }
 
-      // keep every rule we don't own, then re-add the selected owned rules
+      const selected = FEATURE_ACTIONS.filter(
+        (action) => actions[action] && !grantedByDefault[action],
+      );
+
+      // keep every rule we don't own, then re-add the selected actions
       const preserved = (updatedData[role] ?? []).filter(
-        (rule) => !this.isGridOwnedRule(rule, entityType),
+        (rule) => !this.isOwnedRule(rule, entityType),
       );
       const updated = [...preserved];
-      if (use) {
-        updated.push({ subject: entityType, action: FEATURE_USE_ACTION });
-      }
-      if (manage) {
-        updated.push({ subject: entityType, action: FEATURE_MANAGE_ACTION });
+      const grantedAction = this.toRuleAction(selected);
+      if (grantedAction) {
+        updated.push({ subject: entityType, action: grantedAction });
       }
 
       if (updated.length > 0) {
@@ -205,19 +271,63 @@ export class FeaturePermissionService {
   }
 
   /**
-   * A rule is "owned" by the grid (and thus safe to read/rewrite) only if it
-   * grants a single feature action to exactly this entity type without any
-   * conditions or inversion. Managed `[system-default]` rules (written by the
-   * backend to guarantee a baseline) are never owned, so they are left untouched.
+   * The action to store for the given selection: `manage` if every feature action
+   * is selected (keeping the shape an admin would write by hand), a plain string
+   * for a single action and an array otherwise. `undefined` if nothing is selected.
    */
-  private isGridOwnedRule(rule: DatabaseRule, entityType: string): boolean {
+  private toRuleAction(
+    selected: FeatureAction[],
+  ): EntityActionPermission | EntityActionPermission[] | undefined {
+    if (selected.length === 0) {
+      return undefined;
+    }
+    if (selected.length === FEATURE_ACTIONS.length) {
+      return "manage";
+    }
+    return selected.length === 1 ? selected[0] : [...selected];
+  }
+
+  /** rules in `_default` apply to every logged-in user, on top of their role rules */
+  private getDefaultRules(rules: DatabaseRules): DatabaseRule[] {
+    return rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY] ?? [];
+  }
+
+  /** which actions the shared `_default` section grants for this feature */
+  private getDefaultGrants(
+    defaultRules: DatabaseRule[],
+    entityType: string,
+  ): Record<FeatureAction, boolean> {
+    return this.mapActions((action) =>
+      this.hasEffectiveAccess(defaultRules, entityType, action),
+    );
+  }
+
+  private mapActions<T>(
+    valueFor: (action: FeatureAction) => T,
+  ): Record<FeatureAction, T> {
+    return Object.fromEntries(
+      FEATURE_ACTIONS.map((action) => [action, valueFor(action)]),
+    ) as Record<FeatureAction, T>;
+  }
+
+  /**
+   * A rule is "owned" by this UI (and thus safe to read/rewrite) only if it grants
+   * feature actions to exactly this entity type without any conditions or
+   * inversion. Managed `[system-default]` rules (written by the backend to
+   * guarantee a baseline) are never owned, so they are left untouched.
+   */
+  private isOwnedRule(rule: DatabaseRule, entityType: string): boolean {
+    const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
     return (
       !rule.inverted &&
       !rule.conditions &&
-      !rule.reason?.includes("[system-default]") &&
+      !rule.reason?.includes(SYSTEM_DEFAULT_RULE_REASON) &&
       rule.subject === entityType &&
-      (rule.action === FEATURE_USE_ACTION ||
-        rule.action === FEATURE_MANAGE_ACTION)
+      actions.every(
+        (action) =>
+          action === "manage" ||
+          FEATURE_ACTIONS.includes(action as FeatureAction),
+      )
     );
   }
 
@@ -226,7 +336,9 @@ export class FeaturePermissionService {
    * grants or denies it.
    */
   private affectsFeature(rule: DatabaseRule, entityType: string): boolean {
-    return this.coversAction(rule, entityType, FEATURE_USE_ACTION);
+    return FEATURE_ACTIONS.some((action) =>
+      ruleCoversAction(rule, entityType, action),
+    );
   }
 
   /**
@@ -235,7 +347,7 @@ export class FeaturePermissionService {
    * CASL resolves overlapping rules so that the last matching one wins, so an
    * inverted rule revokes a grant that came before it while a later granting
    * rule re-enables access again. Ignoring that would make a row claim access
-   * the user does not have. The grid cannot express an inverted rule, which is
+   * the user does not have. This UI cannot express an inverted rule, which is
    * why any role affected by one is rendered read-only.
    *
    * `rules` must be in the order the AbilityService applies them, i.e. the
@@ -247,46 +359,14 @@ export class FeaturePermissionService {
     action: EntityActionPermission,
   ): boolean {
     const decidingRule = rules.findLast((rule) =>
-      this.coversAction(rule, entityType, action),
+      ruleCoversAction(rule, entityType, action),
     );
     return !!decidingRule && !decidingRule.inverted;
   }
 
-  /**
-   * Whether the rule applies to this entity type and covers the given action,
-   * ignoring conditions and inversion. "manage" covers every other action.
-   */
-  private coversAction(
-    rule: DatabaseRule,
-    entityType: string,
-    action: EntityActionPermission,
-  ): boolean {
-    return (
-      this.subjectMatches(rule.subject, entityType) &&
-      (this.actionIncludes(rule.action, action) ||
-        this.actionIncludes(rule.action, FEATURE_MANAGE_ACTION))
-    );
-  }
-
-  private subjectMatches(
-    subject: DatabaseRule["subject"],
-    entityType: string,
-  ): boolean {
-    if (Array.isArray(subject)) {
-      return subject.includes(entityType) || subject.includes("all");
-    }
-    return subject === entityType || subject === "all";
-  }
-
-  private actionIncludes(
-    action: DatabaseRule["action"],
-    target: EntityActionPermission,
-  ): boolean {
-    return Array.isArray(action) ? action.includes(target) : action === target;
-  }
-
-  private async loadOrInitPermissionsConfig(): Promise<Config<DatabaseRules>> {
-    const existing = await this.permissionsConfig.load();
+  private ensurePermissionsConfig(
+    existing: Config<DatabaseRules> | null,
+  ): Config<DatabaseRules> {
     if (existing?.data) {
       return existing;
     }
@@ -294,7 +374,7 @@ export class FeaturePermissionService {
     // No permissions config yet means "everyone may do everything". Seed the
     // `_default` all-access rule so that starting to restrict a single feature
     // does not accidentally lock every logged-in user out of everything else.
-    // This is the one case in which the grid writes a `_default` section.
+    // This is the one case in which this UI writes a `_default` section.
     const config = existing ?? new Config<DatabaseRules>(Config.PERMISSION_KEY);
     config.data = {
       [DEFAULT_SECTION_KEY]: [{ subject: "all", action: "manage" }],
