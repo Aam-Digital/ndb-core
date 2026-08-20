@@ -239,7 +239,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/filter/filters/filters.ts:75</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/filter/filters/filters.ts:100</a></div>
                             </td>
                         </tr>
 
@@ -318,7 +318,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/filter/filters/filters.ts:65</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/filter/filters/filters.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -351,7 +351,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/filter/filters/filters.ts:79</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/core/filter/filters/filters.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -378,7 +378,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/filter/filters/filters.ts:78</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/core/filter/filters/filters.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -409,7 +409,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/filter/filters/filters.ts:75</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/filter/filters/filters.ts:100</a></div>
                         </td>
                     </tr>
 
@@ -449,7 +449,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/filter/filters/filters.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/filter/filters/filters.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -483,8 +483,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -556,8 +556,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -598,6 +598,31 @@ import { EventEmitter, Type } from &quot;@angular/core&quot;;
 export type DataFilter&lt;T&gt; &#x3D; MongoQuery&lt;T&gt; | {};
 
 export const EMPTY_FILTER_OPTION_KEY &#x3D; &quot;__empty__&quot;;
+
+/**
+ * Combine the given conditions so that all of them have to be met.
+ *
+ * Conditions without any content are left out, because an empty object as an &#x60;$and&#x60; branch makes a
+ * database query match no document at all, and &#x60;$and&#x60; is dropped entirely when it is not needed.
+ * Use this instead of merging conditions into one object, which would silently overwrite a key
+ * (like &#x60;$or&#x60;) that more than one of them uses.
+ */
+export function combineFilterConditions&lt;T&gt;(
+  ...conditions: DataFilter&lt;T&gt;[]
+): DataFilter&lt;T&gt; {
+  const relevant &#x3D; conditions.filter(
+    (condition) &#x3D;&gt; condition &amp;&amp; Object.keys(condition).length &gt; 0,
+  );
+
+  if (relevant.length &#x3D;&#x3D;&#x3D; 0) {
+    return {};
+  }
+  if (relevant.length &#x3D;&#x3D;&#x3D; 1) {
+    return relevant[0];
+  }
+
+  return { $and: relevant } as DataFilter&lt;T&gt;;
+}
 
 export function createEmptyValueFilter&lt;T extends Entity&gt;(
   fieldName: string,

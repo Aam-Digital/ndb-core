@@ -1568,7 +1568,7 @@ ${byParticipantChecks}
     );
     const allActivities &#x3D; ([] as Entity[])
       .concat(...allActivitiesNested)
-      .filter((a) &#x3D;&gt; a.isActive);
+      .filter((a) &#x3D;&gt; !a.inactive);
 
     const allEvents &#x3D; await this.buildEventsFromActivities(
       allActivities,

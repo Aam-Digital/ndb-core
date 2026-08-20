@@ -259,7 +259,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="193" class="link-to-prism">src/app/core/filter/filters/filters.ts:193</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="218" class="link-to-prism">src/app/core/filter/filters/filters.ts:218</a></div>
                                 </td>
                             </tr>
 
@@ -304,7 +304,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="204" class="link-to-prism">src/app/core/filter/filters/filters.ts:204</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="229" class="link-to-prism">src/app/core/filter/filters/filters.ts:229</a></div>
                                 </td>
                             </tr>
 
@@ -354,7 +354,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/core/filter/filters/filters.ts:199</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="224" class="link-to-prism">src/app/core/filter/filters/filters.ts:224</a></div>
                                 </td>
                             </tr>
 
@@ -404,7 +404,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="196" class="link-to-prism">src/app/core/filter/filters/filters.ts:196</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="221" class="link-to-prism">src/app/core/filter/filters/filters.ts:221</a></div>
                                 </td>
                             </tr>
 
@@ -449,7 +449,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="187" class="link-to-prism">src/app/core/filter/filters/filters.ts:187</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="212" class="link-to-prism">src/app/core/filter/filters/filters.ts:212</a></div>
                                 </td>
                             </tr>
 
@@ -494,7 +494,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="190" class="link-to-prism">src/app/core/filter/filters/filters.ts:190</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="215" class="link-to-prism">src/app/core/filter/filters/filters.ts:215</a></div>
                                 </td>
                             </tr>
 
@@ -525,6 +525,31 @@ import { EventEmitter, Type } from &quot;@angular/core&quot;;
 export type DataFilter&lt;T&gt; &#x3D; MongoQuery&lt;T&gt; | {};
 
 export const EMPTY_FILTER_OPTION_KEY &#x3D; &quot;__empty__&quot;;
+
+/**
+ * Combine the given conditions so that all of them have to be met.
+ *
+ * Conditions without any content are left out, because an empty object as an &#x60;$and&#x60; branch makes a
+ * database query match no document at all, and &#x60;$and&#x60; is dropped entirely when it is not needed.
+ * Use this instead of merging conditions into one object, which would silently overwrite a key
+ * (like &#x60;$or&#x60;) that more than one of them uses.
+ */
+export function combineFilterConditions&lt;T&gt;(
+  ...conditions: DataFilter&lt;T&gt;[]
+): DataFilter&lt;T&gt; {
+  const relevant &#x3D; conditions.filter(
+    (condition) &#x3D;&gt; condition &amp;&amp; Object.keys(condition).length &gt; 0,
+  );
+
+  if (relevant.length &#x3D;&#x3D;&#x3D; 0) {
+    return {};
+  }
+  if (relevant.length &#x3D;&#x3D;&#x3D; 1) {
+    return relevant[0];
+  }
+
+  return { $and: relevant } as DataFilter&lt;T&gt;;
+}
 
 export function createEmptyValueFilter&lt;T extends Entity&gt;(
   fieldName: string,

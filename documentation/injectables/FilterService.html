@@ -234,8 +234,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/core/filter/filter.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/filter/filter.service.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -333,8 +333,8 @@ This patch happens in-place.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="31"
-                                    class="link-to-prism">src/app/core/filter/filter.service.ts:31</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/core/filter/filter.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -408,8 +408,8 @@ This patch happens in-place.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="56"
-                                    class="link-to-prism">src/app/core/filter/filter.service.ts:56</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/core/filter/filter.service.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -490,7 +490,11 @@ import {
 } from &quot;@ucast/mongo2js&quot;;
 import moment from &quot;moment&quot;;
 import { ConfigurableEnumService } from &quot;../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
-import { DataFilter, Filter as EntityFilter } from &quot;./filters/filters&quot;;
+import {
+  combineFilterConditions,
+  DataFilter,
+  Filter as EntityFilter,
+} from &quot;./filters/filters&quot;;
 import { MongoQuery } from &quot;@casl/ability&quot;;
 import { extendedCompare } from &quot;../../utils/filter-compare-utils&quot;;
 
@@ -512,17 +516,11 @@ export class FilterService {
   combineFilters&lt;T extends Entity&gt;(
     entityFilters: EntityFilter&lt;T&gt;[],
   ): DataFilter&lt;T&gt; {
-    if (entityFilters.length &#x3D;&#x3D;&#x3D; 0) {
-      return {} as DataFilter&lt;T&gt;;
-    }
-
-    return {
-      $and: [
-        ...entityFilters.map((value: EntityFilter&lt;T&gt;): DataFilter&lt;T&gt; &#x3D;&gt; {
-          return value.getFilter();
-        }),
-      ],
-    } as unknown as DataFilter&lt;T&gt;;
+    return combineFilterConditions&lt;T&gt;(
+      ...entityFilters.map((value: EntityFilter&lt;T&gt;): DataFilter&lt;T&gt; &#x3D;&gt;
+        value.getFilter(),
+      ),
+    );
   }
 
   /**

@@ -391,14 +391,14 @@ export class EntityCountDashboardComponent {
 
   entityDefinition &#x3D; computed(() &#x3D;&gt; this.entities.get(this.entityType()));
   totalEntities &#x3D; computed(
-    () &#x3D;&gt; this.rawEntities().filter((entity) &#x3D;&gt; entity.isActive).length,
+    () &#x3D;&gt; this.rawEntities().filter((entity) &#x3D;&gt; !entity.inactive).length,
   );
 
   entityGroupCounts &#x3D; computed&lt;Record&lt;string, GroupCountRow[]&gt;&gt;(() &#x3D;&gt; {
     const result: Record&lt;string, GroupCountRow[]&gt; &#x3D; {};
     const entityDefinition &#x3D; this.entityDefinition();
     const activeEntities &#x3D; this.rawEntities().filter(
-      (entity) &#x3D;&gt; entity.isActive,
+      (entity) &#x3D;&gt; !entity.inactive,
     );
 
     for (const groupByField of this.groupBy()) {

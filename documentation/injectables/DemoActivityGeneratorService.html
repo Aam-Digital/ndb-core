@@ -570,7 +570,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator&lt;Entity&gt
 
   generateEntities(): Entity[] {
     const data: Entity[] &#x3D; [];
-    const children &#x3D; this.demoChildren.entities.filter((c) &#x3D;&gt; c.isActive);
+    const children &#x3D; this.demoChildren.entities.filter((c) &#x3D;&gt; !c.inactive);
 
     for (const typeSettings of this.attendanceService.eventTypeSettings) {
       if (!typeSettings.activityType) continue;

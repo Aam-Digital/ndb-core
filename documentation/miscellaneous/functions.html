@@ -227,6 +227,9 @@
                             <a href="#collectQueryStrings" title="src/app/features/reporting/report-config.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>collectQueryStrings</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#combineFilterConditions" title="src/app/core/filter/filters/filters.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>combineFilterConditions</b>&nbsp;&nbsp;&nbsp;(src/.../filters.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#compareDates" title="src/app/utils/filter-compare-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>compareDates</b>&nbsp;&nbsp;&nbsp;(src/.../filter-compare-utils.ts)</span></a>
                         </li>
                         <li>
@@ -584,6 +587,9 @@
                             <a href="#maxLevelBelow" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>maxLevelBelow</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#migrateIsActiveQuerySelection" title="src/app/core/export/is-active-query-migration.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migrateIsActiveQuerySelection</b>&nbsp;&nbsp;&nbsp;(src/.../is-active-query-migration.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#migrateIsoDatesToInferredDateOnly" title="src/app/core/basic-datatypes/date-only/date-only.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migrateIsoDatesToInferredDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../date-only.datatype.ts)</span></a>
                         </li>
                         <li>
@@ -708,6 +714,9 @@
                         </li>
                         <li>
                             <a href="#resourceWithRetention" title="src/app/utils/resourceWithRetention.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resourceWithRetention</b>&nbsp;&nbsp;&nbsp;(src/.../resourceWithRetention.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#restrictToNotArchived" title="src/app/core/filter/not-archived-filter.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>restrictToNotArchived</b>&nbsp;&nbsp;&nbsp;(src/.../not-archived-filter.ts)</span></a>
                         </li>
                         <li>
                             <a href="#retryOnServerError" title="src/app/utils/retry-on-server-error.rxjs-pipe.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>retryOnServerError</b>&nbsp;&nbsp;&nbsp;(src/.../retry-on-server-error.rxjs-pipe.ts)</span></a>
@@ -5756,6 +5765,182 @@ date placeholders used in its queries so it stays in sync with the actual report
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/filter/filters/filters.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="combineFilterConditions"></a>
+                    <span class="name">
+                        <span ><b>combineFilterConditions</b></span>
+                        <a href="#combineFilterConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>combineFilterConditions&lt;T&gt;(...conditions: undefined)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Combine the given conditions so that all of them have to be met.</p>
+<p>Conditions without any content are left out, because an empty object as an <code>$and</code> branch makes a
+database query match no document at all, and <code>$and</code> is dropped entirely when it is not needed.
+Use this instead of merging conditions into one object, which would silently overwrite a key
+(like <code>$or</code>) that more than one of them uses.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>conditions</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createEmptyValueFilter"></a>
+                    <span class="name">
+                        <span ><b>createEmptyValueFilter</b></span>
+                        <a href="#createEmptyValueFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createEmptyValueFilter&lt;T extends Entity&gt;(fieldName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, includeNestedId: unknown, includeEmptyArray: unknown)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T extends Entity</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>includeNestedId</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>includeEmptyArray</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/utils/filter-compare-utils.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -7543,111 +7728,6 @@ Handles Date objects, date strings (YYYY-MM-DD), timestamps, and special value &
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Date | undefined</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/filter/filters/filters.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="createEmptyValueFilter"></a>
-                    <span class="name">
-                        <span ><b>createEmptyValueFilter</b></span>
-                        <a href="#createEmptyValueFilter"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>createEmptyValueFilter&lt;T extends Entity&gt;(fieldName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, includeNestedId: unknown, includeEmptyArray: unknown)</code>
-                </td>
-            </tr>
-
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <b>Type parameters :</b>
-                            <ul class="type-parameters">
-                                    <li>T extends Entity</li>
-                            </ul>
-                        </td>
-                    </tr>
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>fieldName</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>includeNestedId</td>
-                                            <td>
-                                                        <code>unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>false</code>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>includeEmptyArray</td>
-                                            <td>
-                                                        <code>unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>false</code>
-                                            </td>
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -14412,6 +14492,86 @@ including keycloak-specific transient failures.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/export/is-active-query-migration.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="migrateIsActiveQuerySelection"></a>
+                    <span class="name">
+                        <span ><b>migrateIsActiveQuerySelection</b></span>
+                        <a href="#migrateIsActiveQuerySelection"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>migrateIsActiveQuerySelection&lt;T&gt;(query: T)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Rewrite a stored query that selects on the removed, calculated &quot;isActive&quot; property,
+so it uses the equivalent query helpers instead:
+<code>[*isActive=true]</code> becomes <code>:filterActive</code> and <code>[*isActive=false]</code> becomes <code>:filterInactive</code>.</p>
+<p>Only used by the two migrations that need this rewrite, one for queries stored inside the config
+document and one for queries stored on ReportConfig entities, so both apply it the same way.
+Values that are not a string are passed through, which lets both walk a document with it.</p>
+<p>Node-safe: no</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>T</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/basic-datatypes/date-only/date-only.datatype.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -15494,6 +15654,80 @@ that are randomized (in case there are many parallel requests to be spread out).
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>ResourceRef&lt;T | undefined&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/filter/not-archived-filter.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="restrictToNotArchived"></a>
+                    <span class="name">
+                        <span ><b>restrictToNotArchived</b></span>
+                        <a href="#restrictToNotArchived"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>restrictToNotArchived&lt;T extends Entity&gt;(filter?: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter</a>)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T extends Entity</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Restrict the given filter to records that are not archived.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
 
                         </div>
                             <div class="io-description">

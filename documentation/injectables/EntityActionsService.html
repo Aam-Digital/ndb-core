@@ -848,7 +848,7 @@ export class EntityActionsService {
         primaryAction: true,
         visible: async (entity) &#x3D;&gt; {
           const entities &#x3D; asArray(entity);
-          return entities.some((e) &#x3D;&gt; e.isActive &amp;&amp; !e.anonymized);
+          return entities.some((e) &#x3D;&gt; !e.inactive &amp;&amp; !e.anonymized);
         },
         availableFor: &quot;all&quot;,
       },

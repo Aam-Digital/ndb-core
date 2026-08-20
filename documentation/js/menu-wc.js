@@ -1410,6 +1410,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/PublicFormComponent.html" data-type="entity-link" >PublicFormComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/PublicFormFormatWarningComponent.html" data-type="entity-link" >PublicFormFormatWarningComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/PublicFormPermissionWarningComponent.html" data-type="entity-link" >PublicFormPermissionWarningComponent</a>
                             </li>
                             <li class="link">

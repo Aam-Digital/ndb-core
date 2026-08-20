@@ -244,7 +244,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="508" class="link-to-prism">src/app/core/export/query.service.ts:508</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="534" class="link-to-prism">src/app/core/export/query.service.ts:534</a></div>
                                 </td>
                             </tr>
 
@@ -289,7 +289,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="502" class="link-to-prism">src/app/core/export/query.service.ts:502</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="528" class="link-to-prism">src/app/core/export/query.service.ts:528</a></div>
                                 </td>
                             </tr>
 
@@ -328,7 +328,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="505" class="link-to-prism">src/app/core/export/query.service.ts:505</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="531" class="link-to-prism">src/app/core/export/query.service.ts:531</a></div>
                                 </td>
                             </tr>
 
@@ -367,7 +367,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="504" class="link-to-prism">src/app/core/export/query.service.ts:504</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="530" class="link-to-prism">src/app/core/export/query.service.ts:530</a></div>
                                 </td>
                             </tr>
 
@@ -406,7 +406,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="503" class="link-to-prism">src/app/core/export/query.service.ts:503</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="529" class="link-to-prism">src/app/core/export/query.service.ts:529</a></div>
                                 </td>
                             </tr>
 
@@ -427,6 +427,7 @@ import { AttendanceItem } from &quot;#src/app/features/attendance/model/attendan
 import { EventWithAttendance } from &quot;#src/app/features/attendance/model/event-with-attendance&quot;;
 import jsonQuery from &quot;json-query&quot;;
 import { EntityRegistry } from &quot;../entity/database-entity.decorator&quot;;
+import { TimePeriod } from &quot;../entity-details/related-time-period-entities/time-period&quot;;
 
 /**
  * A query service which uses the json-query library (https://github.com/auditassistant/json-query).
@@ -521,6 +522,8 @@ export class QueryService {
       data: data,
       locals: {
         toArray: this.toArray,
+        filterActive: this.filterActive.bind(this),
+        filterInactive: this.filterInactive.bind(this),
         unique: this.unique,
         count: this.count,
         sum: this.sum,
@@ -631,6 +634,29 @@ export class QueryService {
    */
   private toArray(obj): any[] {
     return Object.values(obj);
+  }
+
+  /**
+   * Keep only the records that are currently active.
+   *
+   * A record counts as active if it has not been archived and, for records covering a time period,
+   * if today lies within that period.
+   * @param data the records to be filtered
+   */
+  private filterActive(data: Entity[]): Entity[] {
+    const today &#x3D; new Date();
+    return (data ?? []).filter(
+      (e) &#x3D;&gt; !e.inactive &amp;&amp; (!(e instanceof TimePeriod) || e.isActiveAt(today)),
+    );
+  }
+
+  /**
+   * Keep only the records that are currently not active, the complement of &#x60;filterActive&#x60;.
+   * @param data the records to be filtered
+   */
+  private filterInactive(data: Entity[]): Entity[] {
+    const active &#x3D; new Set(this.filterActive(data));
+    return (data ?? []).filter((e) &#x3D;&gt; !active.has(e));
   }
 
   /**

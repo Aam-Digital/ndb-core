@@ -256,6 +256,13 @@ const dynamicComponents: [string, AsyncComponent][] &#x3D; [
         (c) &#x3D;&gt; c.PublicFormPermissionWarningComponent,
       ),
   ],
+  [
+    &quot;PublicFormFormatWarning&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/public-form-format-warning/public-form-format-warning.component&quot;).then(
+        (c) &#x3D;&gt; c.PublicFormFormatWarningComponent,
+      ),
+  ],
 ];
 
 const viewConfigs: ViewConfig[] &#x3D; [
@@ -285,7 +292,15 @@ const viewConfigs: ViewConfig[] &#x3D; [
               config: {
                 fieldGroups: [
                   {
-                    fields: [&quot;route&quot;, &quot;title&quot;, &quot;description&quot;],
+                    fields: [
+                      {
+                        id: &quot;public_form_format_warning&quot;,
+                        viewComponent: &quot;PublicFormFormatWarning&quot;,
+                      },
+                      &quot;route&quot;,
+                      &quot;title&quot;,
+                      &quot;description&quot;,
+                    ],
                   },
                   {
                     fields: [

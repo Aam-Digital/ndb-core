@@ -558,34 +558,6 @@ export class Entity {
   }
 
   /**
-   * Check, if this entity is considered active or archived.
-   *
-   * This is taken from the property &quot;inactive&quot;.
-   * If the property doesn&#x27;t exist, the default is &#x60;true&#x60;.
-   *
-   * Some subclasses overwrite this functionality, but this logic is considered deprecated (!) now
-   * and implementations have to make sure that &quot;inactive&quot; property takes precedence!
-   */
-  get isActive(): boolean {
-    if (this.inactive !&#x3D;&#x3D; undefined) {
-      return !this.inactive;
-    }
-    if (this[&quot;active&quot;] !&#x3D;&#x3D; undefined) {
-      return this[&quot;active&quot;];
-    }
-    return true;
-  }
-
-  /**
-   * If existing entities with &#x60;isActive: false&#x60; exist, then these values are assigned to the property &quot;active&quot;.
-   * @param isActive
-   */
-  set isActive(isActive: boolean) {
-    this[&quot;active&quot;] &#x3D; isActive;
-    this.inactive &#x3D; !isActive;
-  }
-
-  /**
    * Creates an entity object with the given id. This id is final and won&#x27;t be changeable after this object has been
    * created.
    *

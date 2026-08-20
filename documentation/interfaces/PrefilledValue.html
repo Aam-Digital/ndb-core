@@ -229,7 +229,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="195" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:195</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:199</a></div>
                                 </td>
                             </tr>
 
@@ -268,7 +268,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="194" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:194</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="198" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:198</a></div>
                                 </td>
                             </tr>
 
@@ -312,7 +312,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="196" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:196</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.ts:200</a></div>
                                 </td>
                             </tr>
 
@@ -410,7 +410,8 @@ export class EditPrefilledValuesComponent
   formFieldConfig &#x3D; input&lt;FormFieldConfig&gt;();
   entity &#x3D; input&lt;Entity&gt;();
 
-  entityConstructor: EntityConstructor;
+  /** not set for configs in the multi form format, which hold no top-level entity type */
+  entityConstructor?: EntityConstructor;
   entitySchemaField: EntitySchemaField;
 
   private readonly entities &#x3D; inject(EntityRegistry);
@@ -426,7 +427,10 @@ export class EditPrefilledValuesComponent
     const entity &#x3D; this.entity();
     if (!entity) return;
 
-    this.entityConstructor &#x3D; this.entities.get(entity[&quot;entity&quot;]);
+    // configs in the multi form format do not hold a top-level entity type
+    this.entityConstructor &#x3D; entity[&quot;entity&quot;]
+      ? this.entities.get(entity[&quot;entity&quot;])
+      : undefined;
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) &#x3D;&gt;
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),

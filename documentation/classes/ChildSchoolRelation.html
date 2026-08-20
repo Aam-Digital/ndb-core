@@ -343,11 +343,6 @@ TODO: refactor into generic time-period based relationship entity --&gt; #2512</
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier"></span>
-                                <a href="#getColor" >getColor</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#isActiveAt" >isActiveAt</a>
                             </li>
                             <li>
@@ -369,6 +364,11 @@ TODO: refactor into generic time-period based relationship entity --&gt; #2512</
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
                                 <a href="#extractTypeFromId" >extractTypeFromId</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#getColor" >getColor</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -1389,7 +1389,7 @@ This can be overwritten in subclasses or through the config.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:52</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:36</a></code>
 </div>
                         </td>
                     </tr>
@@ -1400,51 +1400,6 @@ This can be overwritten in subclasses or through the config.</p>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getColor"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>getColor</b></span>
-                        <a href="#getColor"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getColor()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:48</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                 </td>
@@ -1477,7 +1432,7 @@ This can be overwritten in subclasses or through the config.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/TimePeriod.html#source" target="_self" >TimePeriod:41</a></code>
+                                <div class="io-line">        <code><a href="../classes/TimePeriod.html#source" target="_self" >TimePeriod:29</a></code>
 </div>
                         </td>
                     </tr>
@@ -1559,7 +1514,7 @@ This can be overwritten in subclasses or through the config.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:476</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:448</a></code>
 </div>
                         </td>
                     </tr>
@@ -1887,6 +1842,54 @@ to avoid shared mutable state between original and copy.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getColor"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getColor</b></span>
+                        <a href="#getColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getColor()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:372</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Used by some generic UI components to set the color for the entity instance.
+Override this method as needed.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getColorWithConditions"></a>
                     <span class="name">
                             <span class="modifier">Static</span>
@@ -1911,7 +1914,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:407</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:379</a></code>
 </div>
                         </td>
                     </tr>
@@ -1986,7 +1989,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:330</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:302</a></code>
 </div>
                         </td>
                     </tr>
@@ -2033,7 +2036,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:349</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:321</a></code>
 </div>
                         </td>
                     </tr>
@@ -2115,7 +2118,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:337</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:309</a></code>
 </div>
                         </td>
                     </tr>
@@ -2162,7 +2165,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:360</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:332</a></code>
 </div>
                         </td>
                     </tr>
@@ -2214,7 +2217,7 @@ to avoid shared mutable state between original and copy.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:463</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:435</a></code>
 </div>
                         </td>
                     </tr>
