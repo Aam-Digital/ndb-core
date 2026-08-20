@@ -744,6 +744,39 @@ describe("QueryService", () => {
     });
   });
 
+  it("should select currently active records with :filterActive", () => {
+    const archived = new TestEntity();
+    archived.inactive = true;
+    const active = new TestEntity();
+
+    const pastRelation = new ChildSchoolRelation();
+    pastRelation.start = moment().subtract(1, "year").toDate();
+    pastRelation.end = moment().subtract(1, "day").toDate();
+    const currentRelation = new ChildSchoolRelation();
+    currentRelation.start = moment().subtract(1, "year").toDate();
+    const archivedCurrentRelation = new ChildSchoolRelation();
+    archivedCurrentRelation.start = moment().subtract(1, "year").toDate();
+    archivedCurrentRelation.inactive = true;
+
+    const data = [
+      archived,
+      active,
+      pastRelation,
+      currentRelation,
+      archivedCurrentRelation,
+    ];
+
+    expect(service.queryData(":filterActive", null, null, data)).toEqual([
+      active,
+      currentRelation,
+    ]);
+    expect(service.queryData(":filterInactive", null, null, data)).toEqual([
+      archived,
+      pastRelation,
+      archivedCurrentRelation,
+    ]);
+  });
+
   // Helper functions
   function createEvent(
     date: Date,

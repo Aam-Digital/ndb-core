@@ -38,11 +38,11 @@ describe("EntityListComponent", () => {
     },
     filters: [
       {
-        id: "isActive",
+        id: "inactive",
         type: "boolean",
-        default: "true",
-        true: "Currently active children",
-        false: "Currently inactive children",
+        default: "false",
+        true: "Archived children",
+        false: "Currently active children",
       } as BooleanFilterConfig,
       {
         id: "category",

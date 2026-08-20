@@ -149,7 +149,7 @@ describe("DataTransformationService", () => {
           {
             label: "related_child",
             query:
-              ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId",
+              ":getRelated(ChildSchoolRelation, schoolId):filterActive.childId",
           },
         ],
       },

@@ -207,4 +207,52 @@ describe("applyConfigMigrations", () => {
       });
     });
   });
+
+  it("replaces the isActive selection in report queries with the query helpers", () => {
+    const old = {
+      reportDefinition: [
+        { query: "Child:toArray[*isActive=true]" },
+        {
+          query:
+            ":getRelated(ChildSchoolRelation, schoolId)[*isActive = true].childId:unique",
+        },
+        { query: "Child:toArray[*isActive=false]" },
+        { query: "Child:toArray[*isActive!=true]" },
+        { query: "Child:toArray[*privateSchool=true]" },
+      ],
+    };
+
+    expect(applyConfigMigrations(old)).toEqual({
+      reportDefinition: [
+        { query: "Child:toArray:filterActive" },
+        {
+          query:
+            ":getRelated(ChildSchoolRelation, schoolId):filterActive.childId:unique",
+        },
+        { query: "Child:toArray:filterInactive" },
+        { query: "Child:toArray:filterInactive" },
+        { query: "Child:toArray[*privateSchool=true]" },
+      ],
+    });
+  });
+
+  it("drops stored options of the prebuilt todo filter", () => {
+    const old = {
+      filters: [
+        {
+          id: "todo-due-status",
+          type: "prebuilt",
+          options: [{ key: "open", filter: { isCompleted: false } }],
+        },
+        { id: "assignedTo" },
+      ],
+    };
+
+    expect(applyConfigMigrations(old)).toEqual({
+      filters: [
+        { id: "todo-due-status", type: "prebuilt" },
+        { id: "assignedTo" },
+      ],
+    });
+  });
 });

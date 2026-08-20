@@ -9,7 +9,11 @@ import {
 } from "@ucast/mongo2js";
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { DataFilter, Filter as EntityFilter } from "./filters/filters";
+import {
+  combineFilterConditions,
+  DataFilter,
+  Filter as EntityFilter,
+} from "./filters/filters";
 import { MongoQuery } from "@casl/ability";
 import { extendedCompare } from "../../utils/filter-compare-utils";
 
@@ -31,17 +35,11 @@ export class FilterService {
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],
   ): DataFilter<T> {
-    if (entityFilters.length === 0) {
-      return {} as DataFilter<T>;
-    }
-
-    return {
-      $and: [
-        ...entityFilters.map((value: EntityFilter<T>): DataFilter<T> => {
-          return value.getFilter();
-        }),
-      ],
-    } as unknown as DataFilter<T>;
+    return combineFilterConditions<T>(
+      ...entityFilters.map((value: EntityFilter<T>): DataFilter<T> =>
+        value.getFilter(),
+      ),
+    );
   }
 
   /**

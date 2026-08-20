@@ -51,7 +51,7 @@ export class EntityActionsService {
         primaryAction: true,
         visible: async (entity) => {
           const entities = asArray(entity);
-          return entities.some((e) => e.isActive && !e.anonymized);
+          return entities.some((e) => !e.inactive && !e.anonymized);
         },
         availableFor: "all",
       },

@@ -48,7 +48,7 @@ export function generateTodos(params: {
 }): Todo[] {
   const data = [];
   for (const child of params.children) {
-    if (!child.isActive) {
+    if (child.inactive) {
       continue;
     }
 
