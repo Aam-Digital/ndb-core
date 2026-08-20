@@ -50,6 +50,11 @@ export class PublicFormPermissionWarningComponent {
     return legacyEntityType ?? "";
   });
 
+  /** Shared with the save confirmation dialog, see PublicFormPermissionService. */
+  readonly missingPermissionWarning = computed(() =>
+    this.permissionService.missingPublicPermissionWarning(this.entityType()),
+  );
+
   readonly permissionCheck = resource({
     params: () => ({ entityType: this.entityType() }),
     loader: async ({ params: { entityType } }) => {

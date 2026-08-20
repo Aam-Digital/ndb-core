@@ -1,11 +1,20 @@
 import { TestBed } from "@angular/core/testing";
 import { ExportColumnsService } from "./export-columns.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { MockedTestingModule } from "../../utils/mocked-testing.module";
-import { DatabaseEntity } from "../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { normalizeQueryKey } from "./data-transformation-service/export-column-config";
+import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
+import { StringDatatype } from "../basic-datatypes/string/string.datatype";
+import { DateWithAgeDatatype } from "../basic-datatypes/date-with-age/date-with-age.datatype";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { EntityActionsService } from "../entity/entity-actions/entity-actions.service";
 
 @DatabaseEntity("ExportColumnsTestEntity")
 class ExportColumnsTestEntity extends Entity {
@@ -25,8 +34,22 @@ describe("ExportColumnsService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
-      providers: [ExportColumnsService, EntitySchemaService],
+      providers: [
+        ExportColumnsService,
+        EntitySchemaService,
+        // only the datatypes of the test entity's schema, rather than a whole module
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: DateWithAgeDatatype,
+          multi: true,
+        },
+        { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+        // EntityDatatype only uses these to resolve values, which the export column definitions don't
+        { provide: EntityMapperService, useValue: {} },
+        { provide: EntityActionsService, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
+      ],
     });
     service = TestBed.inject(ExportColumnsService);
   });

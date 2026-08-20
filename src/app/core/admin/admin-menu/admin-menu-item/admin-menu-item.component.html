@@ -1,16 +1,7 @@
-<mat-nav-list class="drop-list flex-column gap-regular limit-width">
+<mat-nav-list class="limit-width">
   @if (item()) {
-    <div
-      class="flex-row menu-item-container drop-item"
-      cdkDrag
-      [cdkDragData]="item()"
-      cdkDropList
-      [id]="item().uniqueId"
-      [cdkDropListData]="item().subMenu"
-      [cdkDropListConnectedTo]="connectedTo()"
-      (cdkDropListDropped)="onDragDrop($event)"
-    >
-      <div class="flex-row" cdkDragHandle>
+    <div class="flex-row menu-item-container">
+      <div class="flex-row">
         <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
         <app-menu-item
@@ -33,37 +24,22 @@
             mat-icon-button
             color="accent"
             (click)="editMenuItem(item())"
+            i18n-aria-label
             aria-label="Edit menu item"
           >
-            <fa-icon aria-label="edit" icon="pen"></fa-icon>
+            <fa-icon aria-hidden="true" icon="pen"></fa-icon>
           </button>
 
           <button
             mat-icon-button
             (click)="onDelete(item())"
+            i18n-aria-label
             aria-label="Remove menu item"
           >
-            <fa-icon aria-label="delete" icon="times"></fa-icon>
+            <fa-icon aria-hidden="true" icon="times"></fa-icon>
           </button>
         </div>
       </div>
-
-      @if (allowSubMenu() && item().subMenu && item().subMenu.length > 0) {
-        <div class="submenu">
-          @for (subItem of item().subMenu; track subItem.uniqueId) {
-            <app-admin-menu-item
-              [item]="subItem"
-              [connectedTo]="connectedTo()"
-              [allowEntityLinks]="allowEntityLinks()"
-              [allowSubMenu]="allowSubMenu()"
-              (itemDrop)="onDragDrop($event)"
-              (deleteItem)="removeSubItem(subItem)"
-              (itemChange)="onSubItemChange($event)"
-              class="submenu-list"
-            ></app-admin-menu-item>
-          }
-        </div>
-      }
     </div>
   }
 </mat-nav-list>

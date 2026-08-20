@@ -6,11 +6,11 @@
   entityType="Note"
   [dataMapper]="dataMapper()"
 >
-  <table mat-table aria-label="Notes needing follow-up">
+  <table mat-table i18n-aria-label aria-label="Notes needing follow-up">
     <!-- Table header only for assistive technologies like screen readers -->
-    <tr hidden="true">
-      <th scope="col">Date</th>
-      <th scope="col">Title</th>
+    <tr class="visually-hidden">
+      <th scope="col" i18n="Column header for the date of a note">Date</th>
+      <th scope="col" i18n="Column header for the title of a note">Title</th>
     </tr>
     <ng-container matColumnDef="date">
       <td *matCellDef="let note" class="date-cell row-indicator">

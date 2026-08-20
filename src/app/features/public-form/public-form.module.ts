@@ -75,6 +75,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
         (c) => c.PublicFormPermissionWarningComponent,
       ),
   ],
+  [
+    "PublicFormFormatWarning",
+    () =>
+      import("app/features/public-form/public-form-format-warning/public-form-format-warning.component").then(
+        (c) => c.PublicFormFormatWarningComponent,
+      ),
+  ],
 ];
 
 const viewConfigs: ViewConfig[] = [
@@ -104,7 +111,15 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["route", "title", "description"],
+                    fields: [
+                      {
+                        id: "public_form_format_warning",
+                        viewComponent: "PublicFormFormatWarning",
+                      },
+                      "route",
+                      "title",
+                      "description",
+                    ],
                   },
                   {
                     fields: [

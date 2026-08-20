@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { CdkDrag, CdkDragDrop, CdkDropList } from "@angular/cdk/drag-drop";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
+import { By } from "@angular/platform-browser";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
@@ -18,7 +19,16 @@ import { DefaultValueService } from "../../../default-values/default-value-servi
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEntityService } from "../../admin-entity.service";
 import { AdminModule } from "../../admin.module";
-import { AdminEntityFormComponent } from "./admin-entity-form.component";
+import {
+  AdminEntityFormComponent,
+  FieldDropTarget,
+} from "./admin-entity-form.component";
+
+type FieldDropEvent = CdkDragDrop<
+  FieldDropTarget,
+  FieldDropTarget,
+  ColumnConfig
+>;
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
@@ -99,8 +109,8 @@ describe("AdminEntityFormComponent", () => {
   it("should create and init a form", () => {
     expect(component).toBeTruthy();
 
-    expect(component.dummyEntity).toBeTruthy();
-    expect(component.dummyForm).toBeTruthy();
+    expect(component.dummyEntity()).toBeTruthy();
+    expect(component.dummyForm()).toBeTruthy();
   });
 
   it("should load all fields from schema that are not already in form as available fields", async () => {
@@ -123,23 +133,47 @@ describe("AdminEntityFormComponent", () => {
     ]);
   });
 
-  function mockDropNewFieldEvent(
-    targetContainer: ColumnConfig[],
-    previousContainer?: ColumnConfig[],
-    previousIndex?: number,
-  ) {
-    previousContainer = previousContainer ?? component.availableFields();
-    previousIndex = previousIndex ?? 0; // "new field" placeholder is always first
+  it("should skip empty entries in a field group rather than fail (malformed config)", async () => {
+    const fieldsInView = ["date"];
+    fixture.componentRef.setInput("config", {
+      fieldGroups: [{ fields: [null, ...fieldsInView, undefined] }],
+    });
 
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const noteUserFacingFields = Array.from(TestEntity.schema.entries())
+      .filter(([key, value]) => !value.isInternalField)
+      .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
+      .map(([key]) => key);
+    // identical to a config without the empty entries: they are dropped, everything else still works
+    expect(component.availableFields()).toEqual([
+      component.createNewFieldPlaceholder,
+      component.createNewTextPlaceholder,
+      ...noteUserFacingFields.filter((x) => !fieldsInView.includes(x)),
+    ]);
+    expect(component.dummyForm()).toBeTruthy();
+    expect(component.fieldGroups()).toEqual([{ fields: fieldsInView }]);
+  });
+
+  /**
+   * Simulate dropping `field` into the drop list `to` (a field group's index or the toolbar).
+   * Drags start from the toolbar unless `from` says otherwise.
+   */
+  function mockDropEvent(
+    field: ColumnConfig,
+    to: FieldDropTarget,
+    currentIndex = 1,
+    from: FieldDropTarget = "available",
+    previousIndex = 0,
+  ) {
     return {
-      container: { data: targetContainer },
-      currentIndex: 1,
-      previousContainer: { data: previousContainer },
-      previousIndex: previousIndex,
-    } as Partial<CdkDragDrop<ColumnConfig[], ColumnConfig[]>> as CdkDragDrop<
-      ColumnConfig[],
-      ColumnConfig[]
-    >;
+      item: { data: field },
+      container: { data: to },
+      currentIndex,
+      previousContainer: { data: from },
+      previousIndex,
+    } as FieldDropEvent;
   }
 
   it("should add new field in view if field config dialog succeeds", async () => {
@@ -153,15 +187,20 @@ describe("AdminEntityFormComponent", () => {
         afterClosed: () => of(newField),
       } as any);
 
-      const targetContainer = component.config().fieldGroups[0].fields;
-      component.drop(mockDropNewFieldEvent(targetContainer));
+      component.drop(mockDropEvent(component.createNewFieldPlaceholder, 0));
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockDialog.open).toHaveBeenCalled();
-      expect(targetContainer).toEqual(["name", newField.id, "other"]);
+      expect(component.fieldGroups()[0].fields).toEqual([
+        "name",
+        newField.id,
+        "other",
+      ]);
       expect(component.availableFields()).toContain(
         component.createNewFieldPlaceholder,
       );
+      // the new field is in the form now, so it is no longer offered in the toolbar
+      expect(component.availableFields()).not.toContain(newField.id);
     } finally {
       vi.useRealTimers();
     }
@@ -172,11 +211,10 @@ describe("AdminEntityFormComponent", () => {
     try {
       mockDialog.open.mockReturnValue({ afterClosed: () => of("") } as any);
 
-      const targetContainer = component.config().fieldGroups[0].fields;
-      component.drop(mockDropNewFieldEvent(targetContainer));
+      component.drop(mockDropEvent(component.createNewFieldPlaceholder, 0));
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(targetContainer).toEqual(["name", "other"]);
+      expect(component.fieldGroups()[0].fields).toEqual(["name", "other"]);
       expect(mockDialog.open).toHaveBeenCalled();
       expect(component.availableFields()).toContain(
         component.createNewFieldPlaceholder,
@@ -189,7 +227,9 @@ describe("AdminEntityFormComponent", () => {
   it("should not create field (show dialog) if new field is dropped on toolbar (available fields)", async () => {
     vi.useFakeTimers();
     try {
-      component.drop(mockDropNewFieldEvent(component.availableFields()));
+      component.drop(
+        mockDropEvent(component.createNewFieldPlaceholder, "available"),
+      );
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockDialog.open).not.toHaveBeenCalled();
@@ -201,19 +241,123 @@ describe("AdminEntityFormComponent", () => {
   it("should create a new fieldGroup in config on dropping field in new-group drop area", async () => {
     vi.useFakeTimers();
     try {
-      const field = component.config().fieldGroups[0].fields[0];
-      const dropEvent = mockDropNewFieldEvent(
-        null,
-        component.config().fieldGroups[0].fields,
-        0,
-      );
-      component.dropNewGroup(dropEvent);
+      const field = component.fieldGroups()[0].fields[0];
+      component.dropNewGroup(mockDropEvent(field, undefined, 0, 0, 0));
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.fieldGroups()[2]).toEqual({ fields: [field] });
+      // the field has moved, so it is gone from the group it was dragged out of
+      expect(component.fieldGroups()[0].fields).toEqual(["other"]);
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should move a field from one group into another", async () => {
+    await component.drop(mockDropEvent("name", 1, 0, 0, 0));
+
+    expect(component.fieldGroups()).toEqual([
+      { header: "Group 1", fields: ["other"] },
+      { fields: ["name", "category"] },
+    ]);
+  });
+
+  it("should reorder fields within a group", async () => {
+    await component.drop(mockDropEvent("name", 0, 1, 0, 0));
+
+    expect(component.fieldGroups()[0].fields).toEqual(["other", "name"]);
+  });
+
+  it("should remove a field from the form when dropped back into the toolbar", async () => {
+    await component.drop(mockDropEvent("name", "available", 0, 0, 0));
+
+    expect(component.fieldGroups()[0].fields).toEqual(["other"]);
+    expect(component.availableFields()).toContain("name");
+  });
+
+  it("should not mutate the config input when fields are moved", async () => {
+    const configBefore = JSON.stringify(testConfig);
+
+    await component.drop(mockDropEvent("name", 1, 0, 0, 0));
+
+    expect(JSON.stringify(testConfig)).toBe(configBefore);
+  });
+
+  it("should keep a field that only overwrites some settings unchanged while rendering the preview", async () => {
+    // the preview is rendered before the dummy entity is available,
+    // so the field config must not be completed with details from its schema
+    const partiallyOverwrittenField = {
+      id: "name",
+      displayFullLengthLabel: true,
+    };
+    const previewFixture = TestBed.createComponent(AdminEntityFormComponent);
+    previewFixture.componentRef.setInput("config", {
+      fieldGroups: [{ fields: [partiallyOverwrittenField, "other"] }],
+    });
+    previewFixture.componentRef.setInput("entityType", TestEntity);
+
+    previewFixture.detectChanges();
+    await previewFixture.whenStable();
+
+    expect(previewFixture.componentInstance.fieldGroups()[0].fields[0]).toEqual(
+      {
+        id: "name",
+        displayFullLengthLabel: true,
+      },
+    );
+  });
+
+  it("should reorder the field groups", () => {
+    component.dropFieldGroups({
+      previousIndex: 0,
+      currentIndex: 1,
+    } as CdkDragDrop<unknown>);
+
+    expect(component.fieldGroups()).toEqual([
+      { fields: ["category"] },
+      { header: "Group 1", fields: ["name", "other"] },
+    ]);
+  });
+
+  it("should identify each fields drop list by the target a drop applies to", () => {
+    const dropListData = fixture.debugElement
+      .queryAll(By.directive(CdkDropList))
+      .map((el) => el.injector.get(CdkDropList).data);
+
+    // the outer list only reorders the groups themselves and needs no target;
+    // the two group lists and the toolbar identify where a dropped field goes
+    expect(dropListData).toEqual([undefined, 0, 1, undefined, "available"]);
+  });
+
+  it("should connect the toolbar, so fields can be dragged out of the form again", () => {
+    const dropLists = fixture.debugElement
+      .queryAll(By.directive(CdkDropList))
+      .map((el) => el.injector.get(CdkDropList));
+    const toolbar = dropLists.find((list) => list.data === "available");
+    const fieldGroups = dropLists.filter(
+      (list) => typeof list.data === "number",
+    );
+
+    expect(toolbar.id).toBe(component.availableFieldsDropListId());
+    for (const group of fieldGroups) {
+      expect(group.connectedTo).toContain(toolbar.id);
+    }
+  });
+
+  it("should attach each field to its drag, so a drop knows what was moved", () => {
+    const draggedFields = fixture.debugElement
+      .queryAll(By.css(".admin-form-field"))
+      .map((el) => el.injector.get(CdkDrag).data);
+
+    expect(draggedFields).toEqual(
+      expect.arrayContaining([
+        "name",
+        "other",
+        "category",
+        component.createNewFieldPlaceholder,
+        component.createNewTextPlaceholder,
+      ]),
+    );
   });
 
   it("should move all fields from removed group to availableFields toolbar", async () => {
@@ -319,6 +463,60 @@ describe("AdminEntityFormComponent", () => {
     } finally {
       TestEntity.schema.delete("uniqueTestFieldId");
       TestEntity.schema.delete("anotherFieldForTest");
+    }
+  });
+
+  it("should keep the group header input while typing, without rebuilding the form", async () => {
+    // the parent (e.g. AdminEntityDetailsComponent) feeds the emitted config back into the input
+    component.configChange.subscribe((newConfig) =>
+      fixture.componentRef.setInput("config", newConfig),
+    );
+    const getHeaderInput = () =>
+      fixture.nativeElement.querySelector(
+        "app-admin-section-header input",
+      ) as HTMLInputElement;
+
+    const inputBefore = getHeaderInput();
+    inputBefore.focus();
+    const createFormCallsBefore =
+      mockFormService.createEntityForm.mock.calls.length;
+
+    inputBefore.value = "Group 1x";
+    inputBefore.dispatchEvent(new Event("input"));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(getHeaderInput()).toBe(inputBefore);
+    expect(document.activeElement).toBe(inputBefore);
+    expect(component.fieldGroups()[0].header).toBe("Group 1x");
+    expect(mockFormService.createEntityForm.mock.calls.length).toBe(
+      createFormCallsBefore,
+    );
+  });
+
+  it("should update the preview of a field whose schema was changed", async () => {
+    vi.useFakeTimers();
+    const originalSchema = TestEntity.schema.get("name");
+    try {
+      const previewLabels = () =>
+        fixture.debugElement
+          .queryAll(By.css("app-entity-field-edit"))
+          .map((field) => field.componentInstance._field()?.label);
+      fixture.detectChanges();
+      expect(previewLabels()).toContain("Name");
+
+      TestBed.inject(AdminEntityService).updateSchemaField(TestEntity, "name", {
+        ...originalSchema,
+        label: "Full Legal Title",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
+
+      expect(previewLabels()).toContain("Full Legal Title");
+    } finally {
+      TestEntity.schema.set("name", originalSchema);
+      vi.useRealTimers();
     }
   });
 

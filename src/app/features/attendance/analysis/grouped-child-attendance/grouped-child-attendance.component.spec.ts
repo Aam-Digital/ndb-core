@@ -55,9 +55,8 @@ describe("GroupedChildAttendanceComponent", () => {
 
   it("should separate active and archived activities", async () => {
     const activeActivity = TestEntity.create("active");
-    activeActivity.isActive = true;
     const archivedActivity = TestEntity.create("archived");
-    archivedActivity.isActive = false;
+    archivedActivity.inactive = true;
     mockAttendanceService.getActivitiesForParticipant.mockResolvedValue([
       activeActivity,
       archivedActivity,

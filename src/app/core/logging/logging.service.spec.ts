@@ -121,6 +121,151 @@ describe("LoggingService", () => {
       expect(processSentryEvent(messageEvent(), {})).toBeNull();
     });
 
+    describe("grouping fingerprint", () => {
+      const chainedEvent = (
+        rootCause: { type: string; value: string },
+        thrown: { type: string; value: string },
+      ) =>
+        ({
+          // Sentry orders the chain innermost-first: the thrown error is last
+          exception: { values: [rootCause, thrown] },
+        }) as any;
+
+      it("should group our wrapper errors by thrown error and root cause", () => {
+        const event = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Failed to fetch from DB" },
+            {
+              type: "ConfigLoadError",
+              value: "Failed to load configuration from the database.",
+            },
+          ),
+          {},
+        );
+
+        expect(event.fingerprint).toEqual([
+          "ConfigLoadError",
+          "Failed to load configuration from the database.",
+          "DatabaseException",
+          "Failed to fetch from DB",
+        ]);
+      });
+
+      it("should give the same wrapper error a different fingerprint per root cause", () => {
+        const offline = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Failed to fetch from DB" },
+            { type: "ConfigLoadError", value: "Failed to load configuration." },
+          ),
+          {},
+        );
+        const unauthorized = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "unauthorized" },
+            { type: "ConfigLoadError", value: "Failed to load configuration." },
+          ),
+          {},
+        );
+
+        expect(offline.fingerprint).not.toEqual(unauthorized.fingerprint);
+      });
+
+      it("should mask ids, urls and numbers so the same problem matches", () => {
+        const withId = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "DatabaseException",
+                  value:
+                    'Document update conflict. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+        const withOtherId = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "DatabaseException",
+                  value:
+                    'Document update conflict. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(withId.fingerprint).toEqual(withOtherId.fingerprint);
+      });
+
+      it("should give a self-wrapping error the same fingerprint as the unwrapped one", () => {
+        const cause = {
+          type: "DatabaseException",
+          value: "database is destroyed",
+        };
+
+        const unwrapped = processSentryEvent(
+          { exception: { values: [cause] } } as any,
+          {},
+        );
+        const selfWrapped = processSentryEvent(
+          chainedEvent({ ...cause }, { ...cause }),
+          {},
+        );
+
+        expect(selfWrapped.fingerprint).toEqual(unwrapped.fingerprint);
+      });
+
+      it("should group a registry lookup by key, not by the call site's stack", () => {
+        const lookupEvent = (key: string) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "RegistryLookupError",
+                  value: `Requested item is not registered in EntityRegistry. Key: ${key}`,
+                },
+              ],
+            },
+          }) as any;
+
+        const fromPipe = processSentryEvent(lookupEvent("Event"), {});
+        const fromImport = processSentryEvent(lookupEvent("Event"), {});
+        const otherKey = processSentryEvent(lookupEvent("Child"), {});
+
+        expect(fromPipe.fingerprint).toEqual(fromImport.fingerprint);
+        // a different missing registration is a different problem to fix
+        expect(otherKey.fingerprint).not.toEqual(fromPipe.fingerprint);
+      });
+
+      it("should not fingerprint generic errors, keeping Sentry's stack-based grouping", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "TypeError", value: "x is not a function" }],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.fingerprint).toBeUndefined();
+      });
+
+      it("should not fingerprint message-only events", () => {
+        const event = processSentryEvent(
+          { message: "some static warning" } as any,
+          {},
+        );
+
+        expect(event.fingerprint).toBeUndefined();
+      });
+    });
+
     describe("offline network errors", () => {
       afterEach(() => vi.unstubAllGlobals());
 

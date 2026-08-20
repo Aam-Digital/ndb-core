@@ -27,7 +27,7 @@ import { AttendanceModule } from "./features/attendance/attendance.module";
 import { DeDuplicationModule } from "./features/de-duplication/de-duplication-module";
 import { NotificationModule } from "./features/notification/notification.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
-import { PUBLIC_FORM_ROUTE } from "./features/public-form/public-form-routing";
+import { PUBLIC_FORM_ROUTE } from "./features/public-form/public-form-route";
 import { UnsavedChangesService } from "./core/entity-details/form/unsaved-changes.service";
 import { EntityPermissionGuard } from "./core/permissions/permission-guard/entity-permission.guard";
 import { RoutedViewComponent } from "./core/ui/routed-view/routed-view.component";

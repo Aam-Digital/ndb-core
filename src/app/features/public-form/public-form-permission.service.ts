@@ -2,7 +2,12 @@ import { AlertService } from "app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { inject, Injectable } from "@angular/core";
 import { Config } from "../../core/config/config";
-import { DatabaseRules } from "../../core/permissions/permission-types";
+import {
+  DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  LEGACY_PUBLIC_KEY,
+  PUBLIC_SECTION_KEY,
+} from "../../core/permissions/permission-types";
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
@@ -19,6 +24,14 @@ export class PublicFormPermissionService {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly sessionInfo = inject(SessionSubject);
   private readonly entityMapper = inject(EntityMapperService);
+
+  /**
+   * The warning explaining that the "public" role cannot create records of the given type.
+   * Single source of truth, shared by the inline warning box and the save confirmation dialog.
+   */
+  missingPublicPermissionWarning(entityType: string): string {
+    return $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.`;
+  }
 
   /**
    * Helper method to check if a permission rule subject matches an entity type.
@@ -51,7 +64,10 @@ export class PublicFormPermissionService {
       if (!permissionsConfig?.data) {
         return false; // No permissions config means "public" users have no access
       }
-      const publicRules = permissionsConfig.data.public || [];
+      const publicRules =
+        permissionsConfig.data[PUBLIC_SECTION_KEY] ??
+        permissionsConfig.data[LEGACY_PUBLIC_KEY] ??
+        [];
       return publicRules.some(
         (rule) =>
           this.subjectMatches(rule.subject, entityType) &&
@@ -97,7 +113,8 @@ export class PublicFormPermissionService {
         ];
 
     let dialogText =
-      $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\n` +
+      this.missingPublicPermissionWarning(entityType) +
+      "\n\n" +
       (isAdmin
         ? $localize`Would you like to add the required permission automatically?`
         : $localize`You need an administrator to add the required permissions. Do you still want to save this form?`);
@@ -177,23 +194,39 @@ export class PublicFormPermissionService {
       permissionsConfig.data = {};
     }
 
-    if (!permissionsConfig.data.public) {
-      permissionsConfig.data.public = [];
+    // migrate any legacy section key to the underscore-prefixed name so we
+    // never write both spellings (the read path prefers the new key)
+    const migratedLegacyPublic = LEGACY_PUBLIC_KEY in permissionsConfig.data;
+    if (
+      permissionsConfig.data[LEGACY_PUBLIC_KEY] &&
+      !permissionsConfig.data[PUBLIC_SECTION_KEY]
+    ) {
+      permissionsConfig.data[PUBLIC_SECTION_KEY] =
+        permissionsConfig.data[LEGACY_PUBLIC_KEY];
+    }
+    delete permissionsConfig.data[LEGACY_PUBLIC_KEY];
+
+    if (!permissionsConfig.data[PUBLIC_SECTION_KEY]) {
+      permissionsConfig.data[PUBLIC_SECTION_KEY] = [];
     }
 
     // Only add default rule if creating a new config
     if (isNewConfig) {
       // all logged-in users should continue to have full access (which is default without a permission doc):
-      permissionsConfig.data.default = [{ subject: "all", action: "manage" }];
+      permissionsConfig.data[DEFAULT_SECTION_KEY] = [
+        { subject: "all", action: "manage" },
+      ];
     }
 
+    const publicRules = permissionsConfig.data[PUBLIC_SECTION_KEY];
+
     // basic read permissions on config elements is required for public forms to work:
-    const hasPublicFormConfigRead = permissionsConfig.data.public.some(
+    const hasPublicFormConfigRead = publicRules.some(
       (rule) =>
         this.subjectMatches(rule.subject, "PublicFormConfig") &&
         (rule.action === "read" || rule.action === "manage"),
     );
-    const hasConfigRead = permissionsConfig.data.public.some(
+    const hasConfigRead = publicRules.some(
       (rule) =>
         this.subjectMatches(rule.subject, "Config") &&
         (rule.action === "read" || rule.action === "manage"),
@@ -201,7 +234,7 @@ export class PublicFormPermissionService {
     const formReadExists = hasPublicFormConfigRead && hasConfigRead;
 
     if (!formReadExists) {
-      permissionsConfig.data.public.push({
+      publicRules.push({
         subject: [
           "Config",
           "SiteSettings",
@@ -213,19 +246,20 @@ export class PublicFormPermissionService {
     }
 
     // Check if public create permission already exists to avoid duplicates
-    const createExists = permissionsConfig.data.public.some(
+    const createExists = publicRules.some(
       (rule) =>
         this.subjectMatches(rule.subject, entityType) &&
         (rule.action === "create" || rule.action === "manage"),
     );
     if (!createExists) {
-      permissionsConfig.data.public.push({
+      publicRules.push({
         subject: entityType,
         action: "create",
       });
     }
 
-    if (!createExists || !formReadExists) {
+    // also persist when we only migrated a legacy section (no new rule added)
+    if (migratedLegacyPublic || !createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
     }
   }

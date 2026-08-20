@@ -8,9 +8,9 @@ import {
   inject,
   input,
   model,
+  OnInit,
   output,
   QueryList,
-  signal,
   ViewChild,
 } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -20,7 +20,6 @@ import { MatSort, MatSortModule, Sort } from "@angular/material/sort";
 import {
   MatColumnDef,
   MatTable,
-  MatTableDataSource,
   MatTableModule,
 } from "@angular/material/table";
 import { Router } from "@angular/router";
@@ -29,9 +28,8 @@ import { EntityFieldLabelComponent } from "../../entity/entity-field-label/entit
 import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-field-view.component";
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
-import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
+import { restrictToNotArchived } from "../../filter/not-archived-filter";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import {
@@ -43,12 +41,12 @@ import { EntityFormService } from "../entity-form/entity-form.service";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
-import { tableSort } from "./table-sort/table-sort";
 import {
   EntitiesTableSelectionStore,
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -73,12 +71,11 @@ import { EntitiesTableSortStore } from "./entities-table-sort.store";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<
-  T extends Entity,
-> implements AfterContentInit {
+export class EntitiesTableComponent<T extends Entity>
+  implements AfterContentInit, OnInit
+{
   private readonly formDialog = inject(FormDialogService);
   private readonly router = inject(Router);
-  private readonly filterService = inject(FilterService);
   private readonly entityFormService = inject(EntityFormService);
   protected readonly sortStore = inject(
     EntitiesTableSortStore,
@@ -88,7 +85,7 @@ export class EntitiesTableComponent<
   ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  records = input<T[]>();
+  recordsDataSource = input.required<InMemoryDataSource<T>>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });
@@ -101,7 +98,6 @@ export class EntitiesTableComponent<
       transform: (value) => value ?? {},
     },
   );
-  filterFreetext = input<string>();
   showEntityColor = input<boolean>(false);
   getBackgroundColor = input<(rec: T) => string>();
   clickMode = input<"popup" | "navigate" | "popup-details" | "none">("popup");
@@ -110,7 +106,6 @@ export class EntitiesTableComponent<
   selectable = input<boolean>(false);
 
   // --- Outputs & Models ---
-  filteredRecordsChange = output<T[]>();
   entityClick = output<T>();
   selectedRecords = model<T[]>([]);
   showInactive = model<boolean>(false);
@@ -156,27 +151,11 @@ export class EntitiesTableComponent<
   readonly effectiveFilter = computed<DataFilter<T>>(() => {
     const nextFilter = { ...this.filter() };
     if (this.showInactive()) {
-      delete nextFilter["isActive"];
-    } else {
-      nextFilter["isActive"] = true;
+      // the toggle overrides an archived condition that may come from the configured filter
+      delete nextFilter["inactive"];
+      return nextFilter;
     }
-    return nextFilter;
-  });
-
-  readonly filteredRecords = computed<T[]>(() => {
-    const records = this.records() ?? [];
-    const predicate = this.filterService.getFilterPredicate(
-      this.effectiveFilter(),
-    );
-    const domainFiltered = records.filter(predicate);
-
-    const freetext = this.filterFreetext() ?? "";
-    if (!freetext) {
-      return domainFiltered;
-    }
-    return domainFiltered.filter((record) =>
-      entityFilterPredicate(record, freetext),
-    );
+    return restrictToNotArchived(nextFilter);
   });
 
   // --- Background color ---
@@ -186,23 +165,27 @@ export class EntitiesTableComponent<
     return custom ?? ((rec: T) => (useEntityColor ? rec.getColor() : ""));
   });
 
-  // --- Loading state ---
-  readonly isLoading = signal(true);
-
-  // --- Material DataSource (for paginator interop) ---
-  readonly recordsDataSource = this.createDataSource();
-
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.sortStore.attachSort(sort);
     if (sort) {
-      this.recordsDataSource.sort = sort;
+      this.recordsDataSource().sort = sort;
     }
   }
 
   constructor() {
+    effect(() => {
+      this.recordsDataSource().dataFilter.set(this.effectiveFilter());
+    });
+
+    effect(() => {
+      this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
+    });
+  }
+
+  ngOnInit() {
     // Connect sort store
     this.sortStore.connect({
       columnsToDisplay: this._columnsToDisplay,
@@ -223,34 +206,13 @@ export class EntitiesTableComponent<
         ];
       }),
       externalSort: this.sortBy,
-      filteredRecords: this.filteredRecords,
     });
 
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      sortedRows: this.sortStore.sortedRows,
-      getCurrentPageRows: () => this.getCurrentPageRows(),
-    });
-
-    // Sync sorted rows to Material DataSource
-    effect(() => {
-      this.recordsDataSource.data = this.sortStore.sortedRows();
-    });
-
-    // Track loading state
-    effect(() => {
-      const records = this.records();
-      if (records !== undefined && records !== null) {
-        this.isLoading.set(false);
-      }
-    });
-
-    // Emit filtered records changes
-    effect(() => {
-      this.filteredRecordsChange.emit(
-        this.sortStore.sortedRows().map((row) => row.record),
-      );
+      selectableRows: this.recordsDataSource().displayedData,
+      currentPageRows: this.recordsDataSource().renderedRows,
     });
   }
 
@@ -281,6 +243,12 @@ export class EntitiesTableComponent<
       return;
     }
 
+    if (event.shiftKey) {
+      // stop the browser from also extending its text selection across the rows,
+      // which blocks scrolling until the selection is cleared again
+      event.preventDefault();
+    }
+
     if (this.selectionStore.handleSelectableRowMouseDown(event, row)) {
       this.onRowClick(row, event);
     }
@@ -301,29 +269,5 @@ export class EntitiesTableComponent<
         ]);
         break;
     }
-  }
-
-  getCurrentPageRows(): TableRow<T>[] {
-    const rows = this.sortStore.sortedRows();
-    const paginator = this.recordsDataSource.paginator;
-    if (!paginator) {
-      return rows;
-    }
-
-    const startIndex = paginator.pageIndex * paginator.pageSize;
-    return rows.slice(startIndex, startIndex + paginator.pageSize);
-  }
-
-  private createDataSource() {
-    const dataSource = new MatTableDataSource<TableRow<T>>();
-    dataSource.sortData = (data, sort) =>
-      tableSort<T, keyof T>(data, {
-        active: (sort.active as keyof T) ?? "",
-        direction: sort.direction,
-        sortValueFns: this.sortStore.sortValueFns(),
-      });
-    dataSource.filterPredicate = (data, filter) =>
-      entityFilterPredicate(data.record, filter);
-    return dataSource;
   }
 }

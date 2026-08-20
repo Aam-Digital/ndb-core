@@ -42,7 +42,7 @@ export class EditMatchingEntitySideComponent {
     .map((ctor) => ctor.value.ENTITY_TYPE);
 
   readonly additionalFields = computed<ColumnConfig[]>(() => [
-    { id: "distance", label: "Distance" },
+    { id: "distance", label: $localize`:column for matching view:Distance` },
     {
       id: "_id",
       label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,

@@ -214,7 +214,7 @@ describe("ChildrenService", () => {
   it("should on default only return active relations", async () => {
     const allRelations = await entityMapper.loadType(ChildSchoolRelation);
     const activeRelations = allRelations
-      .filter((rel) => rel.isActive && rel.childId === "Child:3")
+      .filter((rel) => rel.isActiveAt(new Date()) && rel.childId === "Child:3")
       .sort(sortByAttribute("start", "desc"));
 
     const result = await service.queryActiveRelationsOf("Child:3");

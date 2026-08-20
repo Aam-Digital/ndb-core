@@ -7,8 +7,8 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { DownloadService } from "../../export/download-service/download.service";
 import { Config } from "../../config/config";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
-import { ReportEntity } from "../../../features/reporting/report-config";
-import { PublicFormConfig } from "../../../features/public-form/public-form-config";
+import { ReportEntity } from "#src/app/features/reporting/report-config";
+import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import moment from "moment";
 import { SiteSettings } from "../../site-settings/site-settings";
 
@@ -41,25 +41,22 @@ export class AdminAiAgentComponent {
    * them as a single JSON file suitable for use as AI agent context.
    */
   async downloadAiContext(): Promise<void> {
-    const [configurableEnums, reportConfigs, publicFormConfigs] =
-      await Promise.all([
-        this.entityMapper.loadType(ConfigurableEnum),
-        this.entityMapper.loadType(SiteSettings),
-        this.entityMapper.loadType(ReportEntity),
-        this.entityMapper.loadType(PublicFormConfig),
-      ]);
-
-    const configDocs = await Promise.all([
-      this.entityMapper.load(Config, Config.CONFIG_KEY).catch(() => null),
-      this.entityMapper.load(Config, Config.PERMISSION_KEY).catch(() => null),
-    ]);
-
-    const docs = [
-      ...configDocs.filter(Boolean),
-      ...configurableEnums,
-      ...reportConfigs,
-      ...publicFormConfigs,
+    const documentSources = [
+      this.entityMapper
+        .load(Config, Config.CONFIG_KEY)
+        .then((document) => [document])
+        .catch(() => []),
+      this.entityMapper
+        .load(Config, Config.PERMISSION_KEY)
+        .then((document) => [document])
+        .catch(() => []),
+      this.entityMapper.loadType(ConfigurableEnum),
+      this.entityMapper.loadType(SiteSettings),
+      this.entityMapper.loadType(ReportEntity),
+      this.entityMapper.loadType(PublicFormConfig),
     ];
+
+    const docs = (await Promise.all(documentSources)).flat();
 
     await this.downloadService.triggerDownload(
       docs,

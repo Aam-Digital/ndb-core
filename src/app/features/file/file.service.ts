@@ -2,6 +2,7 @@ import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { Observable } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { filter, map, shareReplay } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
 import { SafeUrl } from "@angular/platform-browser";
@@ -39,9 +40,11 @@ export abstract class FileService {
   protected entityMapper = inject(EntityMapperService);
   protected entities = inject(EntityRegistry);
   protected syncState = inject(SyncStateSubject);
+  protected schemaService = inject(EntitySchemaService);
 
   constructor() {
-    // TODO maybe registration is too late (only when component is rendered)
+    // this listener has to be active from app start on, not only once a file component
+    // is rendered - see the app initializer in FileModule that creates this service eagerly
     this.syncState
       // Only start listening to changes once the initial sync has been completed
       .pipe(waitForChangeTo(SyncState.COMPLETED))
@@ -79,11 +82,24 @@ export abstract class FileService {
 
   private entityHasFileProperty(entity: EntityConstructor): boolean {
     for (const prop of entity.schema.values()) {
-      if (prop.dataType === FileDatatype.dataType) {
+      if (this.isFileDataType(prop.dataType)) {
         return true;
       }
     }
     return false;
+  }
+
+  /**
+   * Whether values of the given datatype are stored as file attachments.
+   *
+   * Resolved through the datatype instance rather than comparing the name to
+   * `FileDatatype.dataType`, so that datatypes extending it (like "photo") are covered too.
+   */
+  private isFileDataType(dataType: string): boolean {
+    return (
+      !!dataType &&
+      this.schemaService.getDatatypeOrDefault(dataType) instanceof FileDatatype
+    );
   }
 
   /**

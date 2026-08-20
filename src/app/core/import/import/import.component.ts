@@ -30,6 +30,8 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { HintBoxComponent } from "../../common-components/hint-box/hint-box.component";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ImportConfigDialogService } from "../import-column-mapping/import-config-dialog.service";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -65,6 +67,8 @@ export class ImportComponent {
   private router = inject(Router);
   private location = inject<Location>(LOCATION_TOKEN);
   private readonly ability = inject(EntityAbility);
+  private readonly entities = inject(EntityRegistry);
+  private readonly configDialogs = inject(ImportConfigDialogService);
 
   rawData: any[];
 
@@ -115,6 +119,27 @@ export class ImportComponent {
     () =>
       this.importSettings().columnMapping?.filter((m) => !!m.propertyName)
         .length ?? 0,
+  );
+
+  /**
+   * Columns that are mapped to a field whose values have to be transformed,
+   * but whose transformation the user has not configured and confirmed yet.
+   */
+  columnsMissingConfig = computed(() => {
+    const entityType = this.importSettings().entityType;
+    const entityCtor = entityType ? this.entities.get(entityType) : undefined;
+    if (!entityCtor) {
+      return [];
+    }
+    return (this.importSettings().columnMapping ?? []).filter((m) =>
+      this.configDialogs.isConfigMissing(m, entityCtor),
+    );
+  });
+
+  /** whether the user can continue from the column mapping step to the import preview */
+  columnMappingComplete = computed(
+    () =>
+      this.mappedColumnsCount() > 0 && this.columnsMissingConfig().length === 0,
   );
 
   constructor() {

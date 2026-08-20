@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-
 import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
@@ -8,6 +7,7 @@ import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Todo } from "../model/todo";
+import { TODO_NOT_COMPLETED_FILTER } from "../model/todo-filters";
 import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.component";
 
 describe("TodosRelatedToEntityComponent", () => {
@@ -35,7 +35,7 @@ describe("TodosRelatedToEntityComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load data from index when having a single relation", waitForAsync(async () => {
+  it("should load data from index when having a single relation", async () => {
     const child = createEntityOfType("Child");
     const relatedTodo = new Todo();
     relatedTodo.relatedEntities = [child.getId(), new TestEntity().getId()];
@@ -53,15 +53,17 @@ describe("TodosRelatedToEntityComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.componentRef.setInput("filter", undefined);
     fixture.detectChanges();
-    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
 
     expect(indexSpy).toHaveBeenCalled();
     expect(component.filterObj()).toEqual({
-      relatedEntities: { $elemMatch: { $eq: child.getId() } },
-      isActive: true,
+      $and: [
+        TODO_NOT_COMPLETED_FILTER,
+        { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
+      ],
     });
-    expect(component.data()).toEqual([relatedTodo]);
-  }));
+    expect(component.dataSource.allRecords()).toEqual([relatedTodo]);
+  });
 
   it("should load data with entity mapper when having multiple relations", waitForAsync(async () => {
     const relatedEntitiesSchema = Todo.schema.get("relatedEntities");
@@ -89,28 +91,42 @@ describe("TodosRelatedToEntityComponent", () => {
     fixture.componentRef.setInput("property", undefined);
     fixture.componentRef.setInput("filter", undefined);
     fixture.detectChanges();
-    TestBed.flushEffects();
-    await fixture.whenStable();
+    await new Promise((resolve) => setTimeout(resolve));
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expectArrayWithExactContents(component.data(), [
+    expectArrayWithExactContents(component.dataSource.allRecords(), [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,
     ]);
     expect(component.filterObj()).toEqual({
-      $or: [
+      $and: [
+        TODO_NOT_COMPLETED_FILTER,
         {
-          assignedTo: { $elemMatch: { $eq: user.getId() } },
-        },
-        {
-          relatedEntities: { $elemMatch: { $eq: user.getId() } },
+          $or: [
+            {
+              assignedTo: { $elemMatch: { $eq: user.getId() } },
+            },
+            {
+              relatedEntities: { $elemMatch: { $eq: user.getId() } },
+            },
+          ],
         },
       ],
-      isActive: true,
     });
 
     relatedEntitiesSchema.additional = originalRelatedEntitiesAdditional;
     assignedToSchema.additional = originalAssignedToAdditional;
   }));
+
+  it("should not add an empty condition when no relation property resolves", () => {
+    // an empty $and branch would make a database query match no document at all
+    vi.spyOn(component as any, "getProperty").mockReturnValue([]);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("property", undefined);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.detectChanges();
+
+    expect(component.filterObj()).toEqual(TODO_NOT_COMPLETED_FILTER);
+  });
 });

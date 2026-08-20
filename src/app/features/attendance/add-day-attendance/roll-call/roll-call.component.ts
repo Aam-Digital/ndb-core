@@ -256,7 +256,7 @@ export class RollCallComponent {
       const entity = await this.entityMapper.load(entityType, id);
       event = this.attendanceService.wrapEventEntity(entity);
     } catch (e) {
-      Logging.warn("Could not load event " + id, e);
+      Logging.warn("Could not load event", { eventId: id, error: e });
       void this.router.navigate(["/404"]);
       return undefined;
     }
@@ -326,7 +326,7 @@ export class RollCallComponent {
 
       attendanceMap[participantId] = attendanceItem;
 
-      if (participant.isActive) {
+      if (!participant.inactive) {
         active.push(participant);
         validAttendanceItems.push(attendanceItem);
       } else {

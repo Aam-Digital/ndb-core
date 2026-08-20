@@ -208,6 +208,26 @@ When developing new functionality:
 - Run the full CI-style unit test suite with coverage: `npm run test-ci`
 - See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
 
+#### Shared state between spec files
+
+The unit-test runner is **not** isolated: the Angular builder leaves Vitest's `isolate`
+at `false`, so every spec file in a worker shares one module registry, one `environment`
+singleton, one TestBed — and one jsdom `localStorage`. Anything a spec mutates and does
+not restore leaks into whichever file runs next, so the damage surfaces in an innocent
+spec and moves between runs.
+
+Practical rules:
+
+- **Never stub a shared prototype.** `vi.spyOn(Storage.prototype, ...)` and friends patch
+  an object owned by the worker process, so even `isolate: true` would not undo it. Inject
+  a fake instead — for storage, provide [`LOCAL_STORAGE_TOKEN`](src/app/utils/di-tokens.ts)
+  with [`createFakeStorage()`](src/app/utils/test-utils/fake-storage.ts).
+- **Restore from a hook, not the end of a test body**, so the restore still runs when an
+  assertion fails partway through.
+- **Register every entity type a spec relies on** by importing the model (the
+  `@DatabaseEntity` decorator registers it). Do not depend on another spec file having
+  imported it.
+
 ### End-to-End Testing (Playwright)
 
 - Run tests: `npm run e2e`

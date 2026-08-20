@@ -30,12 +30,12 @@
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
-      @if (!!allEntities()) {
+      @if (!dataSource.isLoading()) {
         <app-filter
           class="flex-row gap-regular flex-wrap"
           [filterConfig]="filters()"
           [entityType]="entityConstructor()!"
-          [entities]="allEntities()"
+          [entities]="dataSource.allRecords()"
           [useUrlQueryParams]="true"
           [(filterObj)]="filterObj"
           [filterString]="filterString"
@@ -116,6 +116,7 @@
       <button
         mat-icon-button
         matIconSuffix
+        i18n-aria-label
         aria-label="Clear"
         (click)="filterString = ''; applyFilter('')"
       >
@@ -128,7 +129,7 @@
 <ng-template #subrecord>
   <app-entities-table
     [entityType]="entityConstructor()!"
-    [records]="allEntities()"
+    [recordsDataSource]="dataSource"
     [customColumns]="columns()"
     [editable]="false"
     [clickMode]="clickMode()"
@@ -139,8 +140,6 @@
     [(selectedRecords)]="selectedRows"
     [selectable]="!!selectedRows()"
     [showInactive]="showInactive()"
-    (filteredRecordsChange)="filteredData = $event"
-    [filterFreetext]="filterFreetext"
     [showEntityColor]="showEntityColor()"
   ></app-entities-table>
 </ng-template>
@@ -160,7 +159,7 @@
     >
       <fa-icon
         class="color-accent standard-icon-with-text"
-        aria-label="add element"
+        aria-hidden="true"
         icon="plus-circle"
       ></fa-icon>
       <span i18n="Add a new entity to a list of multiple entities">
@@ -170,7 +169,7 @@
 
     <button mat-menu-item (click)="openFilterOverlay()">
       <fa-icon
-        aria-label="filter"
+        aria-hidden="true"
         class="color-accent standard-icon-with-text"
         icon="filter"
       >
@@ -191,7 +190,7 @@
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
-      aria-label="download"
+      aria-hidden="true"
       icon="download"
     ></fa-icon>
     <span i18n="Download list contents"> Download </span>
@@ -208,7 +207,7 @@
     >
       <fa-icon
         class="color-accent standard-icon-with-text"
-        aria-label="import file"
+        aria-hidden="true"
         icon="file-import"
       ></fa-icon>
       <span i18n> Import from file </span>
@@ -224,7 +223,7 @@
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
-      aria-label="bulk actions"
+      aria-hidden="true"
       icon="list-check"
     ></fa-icon>
     <span i18n> Bulk Actions </span>

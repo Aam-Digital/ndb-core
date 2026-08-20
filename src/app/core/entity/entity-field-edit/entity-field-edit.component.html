@@ -1,4 +1,4 @@
-@if (_field() && form() && _field().editComponent) {
+@if (_field() && form() && _field().editComponent && formControl()) {
   <div
     class="flex-row"
     [class.hidden]="_field()?.hideFromForm"

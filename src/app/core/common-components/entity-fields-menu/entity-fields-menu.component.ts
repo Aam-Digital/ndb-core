@@ -57,7 +57,10 @@ export class EntityFieldsMenuComponent implements OnInit {
 
         return mappedField;
       })
-      .filter((field) => !field.isInternalField && field.label);
+      .filter(
+        (field) =>
+          field["_customField"] || (!field.isInternalField && field.label),
+      );
 
     const deduplicatedFieldsById: Record<string, FormFieldConfig> = {};
     for (const field of fieldsConfig) {

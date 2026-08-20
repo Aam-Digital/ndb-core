@@ -10,9 +10,13 @@ import {
   expectEntitiesToMatch,
 } from "../../../utils/expect-entity-data.spec";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import { Logging } from "../../logging/logging.service";
 
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
@@ -42,6 +46,9 @@ describe("ImportAdditionalService", () => {
     participants: AttendanceItem[];
   }
 
+  @DatabaseEntity("GroupEntity")
+  class GroupEntity extends Entity {}
+
   @DatabaseEntity("RelationshipEntity")
   class RelationshipEntity extends Entity {
     @DatabaseField({
@@ -51,8 +58,12 @@ describe("ImportAdditionalService", () => {
     })
     participant: string;
 
-    @DatabaseField({ dataType: "entity", additional: "Other" })
+    @DatabaseField({ dataType: "entity", additional: GroupEntity.ENTITY_TYPE })
     group: string;
+
+    // a config where the referenced type was renamed or removed leaves such a dangling reference behind
+    @DatabaseField({ dataType: "entity", additional: "RemovedEntity" })
+    removedGroup: string;
   }
 
   beforeEach(async () => {
@@ -92,9 +103,10 @@ describe("ImportAdditionalService", () => {
         relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
         relationshipProperty: "participant",
         relationshipTargetProperty: "group",
-        targetType: "Other",
+        targetType: GroupEntity.ENTITY_TYPE,
         expertOnly: false,
       },
+      // the action for RelationshipEntity.removedGroup is omitted because "RemovedEntity" is not registered
     ]);
   });
 
@@ -112,7 +124,7 @@ describe("ImportAdditionalService", () => {
   });
 
   it("should  get actions linking imported data to the given type for indirectly linked", async () => {
-    const actual = service.getActionsLinkingTo("Other");
+    const actual = service.getActionsLinkingTo(GroupEntity.ENTITY_TYPE);
     expect(actual).toEqual([
       expect.objectContaining({
         sourceType: ImportedEntity.ENTITY_TYPE,
@@ -120,7 +132,7 @@ describe("ImportAdditionalService", () => {
         relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
         relationshipProperty: "participant",
         relationshipTargetProperty: "group",
-        targetType: "Other",
+        targetType: GroupEntity.ENTITY_TYPE,
       }),
     ]);
   });
@@ -331,5 +343,24 @@ describe("ImportAdditionalService", () => {
     };
     const label = service.createActionLabel(multiTypeAction);
     expect(label).toContain("ImportedEntity / DirectlyLinkingEntity");
+  });
+
+  it("should skip actions referencing an unregistered entity type instead of throwing on their label", () => {
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    expect(TestBed.inject(EntityRegistry).has("RemovedEntity")).toBe(false);
+
+    const actions = service.getActionsLinkingFor(ImportedEntity.ENTITY_TYPE);
+
+    expect(
+      actions.some((a) => a["targetType"] === "RemovedEntity"),
+    ).toBeFalsy();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("not registered"),
+      expect.objectContaining({ unregisteredType: "RemovedEntity" }),
+    );
+    // building labels for the remaining actions must not hit an unregistered type
+    expect(() =>
+      actions.map((a) => service.createActionLabel(a)),
+    ).not.toThrow();
   });
 });

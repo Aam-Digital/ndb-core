@@ -35,7 +35,7 @@
         </button>
       </div>
       <div>
-        <label for="customDiff">Custom Resolution:</label>
+        <label for="customDiff" i18n>Custom Resolution:</label>
         <textarea
           id="customDiff"
           cdkTextareaAutosize
@@ -81,6 +81,6 @@
   </mat-expansion-panel>
 } @else {
   <div>
-    <em>Resolved ({{ resolution() }})</em>
+    <em i18n>Resolved ({{ resolution() }})</em>
   </div>
 }

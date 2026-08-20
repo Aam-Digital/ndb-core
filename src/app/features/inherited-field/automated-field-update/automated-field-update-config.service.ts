@@ -348,7 +348,9 @@ export class AutomatedFieldUpdateConfigService {
           return entity;
         } catch (error) {
           Logging.warn(
-            `AutomatedFieldUpdateConfigService: Failed to load entity of type ${entityType.ENTITY_TYPE} with ID ${id}: ${error}`,
+            "AutomatedFieldUpdateConfigService: Failed to load entity for automated field update",
+            { entityType: entityType.ENTITY_TYPE, entityId: id },
+            error,
           );
           return null;
         }

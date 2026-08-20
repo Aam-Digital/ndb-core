@@ -3,6 +3,8 @@ import { Registry } from "../config/registry/dynamic-registry";
 import { getEntitySchema } from "./database-field.decorator";
 
 export class EntityRegistry extends Registry<EntityConstructor> {
+  protected override readonly registryName = "EntityRegistry";
+
   /**
    * Get an array of entity types, optionally filtered to exclude internal, administrative types.
    * @param onlyUserFacing Whether to only include types that are explicitly defined and customized in the config, from which we infer they are user-facing.

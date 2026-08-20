@@ -17,6 +17,7 @@ import { EntityFieldSelectComponent } from "../../../entity/entity-field-select/
 import { FormsModule } from "@angular/forms";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { ImportAdditionalSettings } from "../../import-additional-settings";
+import { ImportConfigDialogService } from "../import-config-dialog.service";
 
 /**
  * Component to edit a single imported column's mapping to an entity field
@@ -35,7 +36,8 @@ import { ImportAdditionalSettings } from "../../import-additional-settings";
   ],
 })
 export class EditImportColumnMappingComponent {
-  private schemaService = inject(EntitySchemaService);
+  private readonly schemaService = inject(EntitySchemaService);
+  private readonly configDialogs = inject(ImportConfigDialogService);
 
   columnMapping = input.required<ColumnMapping>();
 
@@ -60,6 +62,14 @@ export class EditImportColumnMappingComponent {
 
   columnMappingChange = output<ColumnMapping>();
 
+  /**
+   * Whether this column's config dialog is currently open.
+   *
+   * The field select notifies twice for a single selection, this keeps the second notification
+   * from opening the same dialog again on top of the first one.
+   */
+  private configDialogOpen = false;
+
   currentlyMappedDatatype = computed<DefaultDatatype | null>(() => {
     const col = this.columnMapping();
     const schema = this.entityCtor()?.schema?.get(col?.propertyName);
@@ -67,6 +77,16 @@ export class EditImportColumnMappingComponent {
       ? this.schemaService.getDatatypeOrDefault(schema.dataType)
       : null;
   });
+
+  /**
+   * Error message below the field while the transformation of its values still has to be
+   * configured and confirmed by the user, `null` once it is configured or not needed at all.
+   */
+  configError = computed<string | null>(() =>
+    this.configDialogs.isConfigMissing(this.columnMapping(), this.entityCtor())
+      ? $localize`:import column mapping - config missing:Value mapping is not configured yet. Open it and confirm to continue.`
+      : null,
+  );
 
   inlineComponentConfig = computed<DynamicComponentConfig | null>(() => {
     const componentName = this.currentlyMappedDatatype()?.importConfigComponent;
@@ -98,14 +118,37 @@ export class EditImportColumnMappingComponent {
       .importAllowsMultiMapping &&
     option.id !== this.columnMapping()?.propertyName;
 
-  onFieldSelected(propertyName: string) {
-    const col = this.columnMapping();
-    this.columnMappingChange.emit({
-      ...col,
+  async onFieldSelected(propertyName: string) {
+    const col: ColumnMapping = {
+      ...this.columnMapping(),
       propertyName,
+      // the new field brings its own transformation, the previous config does not apply to it
       additional: undefined,
       manuallyUpdated: true,
-    });
+    };
+    this.columnMappingChange.emit(col);
+
+    if (
+      this.configDialogOpen ||
+      !this.configDialogs.hasConfigDialog(col, this.entityCtor())
+    ) {
+      return;
+    }
+
+    // open the config right away, so that the user reviews and confirms the suggested value
+    // mappings of the field they just picked instead of importing the file's values unchanged
+    this.configDialogOpen = true;
+    try {
+      const configuredCol = await this.configDialogs.openConfigDialog(
+        col,
+        this.rawData(),
+        this.entityCtor(),
+        this.additionalSettings(),
+      );
+      this.columnMappingChange.emit(configuredCol);
+    } finally {
+      this.configDialogOpen = false;
+    }
   }
 
   updateMapping(settingAdditional = false) {

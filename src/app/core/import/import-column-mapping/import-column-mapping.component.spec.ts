@@ -6,7 +6,6 @@ import { ColumnMapping } from "../column-mapping";
 describe("ImportColumnMappingComponent", () => {
   let component: ImportColumnMappingComponent;
   let fixture: ComponentFixture<ImportColumnMappingComponent>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MockedTestingModule, ImportColumnMappingComponent],
@@ -37,6 +36,29 @@ describe("ImportColumnMappingComponent", () => {
         column: "Name",
         propertyName: "Test2",
       }),
+    ]);
+  });
+
+  it("should update the column mapping also if the row emitted an outdated object", () => {
+    // e.g. a config dialog that was opened for the previous object of that column emits after it was replaced
+    const outdatedColumnMapping: ColumnMapping = {
+      column: "Name",
+      propertyName: "test",
+    };
+
+    fixture.componentRef.setInput("columnMapping", [
+      { ...outdatedColumnMapping },
+    ]);
+    fixture.detectChanges();
+
+    component.updateColumnMapping(outdatedColumnMapping, {
+      column: "Name",
+      propertyName: "test",
+      additional: "YYYY-MM-DD",
+    });
+
+    expect(component.columnMapping()).toEqual([
+      expect.objectContaining({ column: "Name", additional: "YYYY-MM-DD" }),
     ]);
   });
 });

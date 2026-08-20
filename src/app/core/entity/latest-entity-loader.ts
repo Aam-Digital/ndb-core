@@ -17,6 +17,14 @@ export abstract class LatestEntityLoader<T extends Entity> {
     private entityCtor: EntityConstructor<T>,
     private entityID: string,
     protected entityMapper: EntityMapperService,
+    /**
+     * Whether a deletion of the entity is emitted through `entityUpdated` as well.
+     *
+     * A deleted document holds no data, so the emitted entity is empty apart from its id.
+     * Set this to false if the subscriber cannot handle that (and instead should simply
+     * keep the last known state until the app is reloaded).
+     */
+    private readonly emitDeletions: boolean = true,
   ) {
     this.onInit();
   }
@@ -35,7 +43,10 @@ export abstract class LatestEntityLoader<T extends Entity> {
     // regardless of whether the initial load below succeeds or fails.
     this.entityMapper
       .receiveUpdates(this.entityCtor)
-      .pipe(filter(({ entity }) => entity.getId(true) === this.entityID))
+      .pipe(
+        filter(({ type }) => this.emitDeletions || type !== "remove"),
+        filter(({ entity }) => entity.getId(true) === this.entityID),
+      )
       .subscribe(({ entity }) => this.entityUpdated.next(entity));
 
     return this.loadOnce();

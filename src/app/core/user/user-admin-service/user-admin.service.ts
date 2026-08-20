@@ -1,5 +1,7 @@
+import { inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { Role, UserAccount } from "./user-account";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * Admin functionalities to manage users in an authentication server like Keycloak.
@@ -9,6 +11,20 @@ export abstract class UserAdminService {
    * Users with this role can create and update other accounts.
    */
   static readonly ACCOUNT_MANAGER_ROLE = "account_manager";
+
+  private readonly sessionInfo = inject(SessionSubject, { optional: true });
+
+  /**
+   * Whether the current user has the role required to manage accounts
+   * (e.g. list, create, update or delete accounts) on the authentication server.
+   */
+  canManageAccounts(): boolean {
+    return (
+      this.sessionInfo?.value?.roles?.includes(
+        UserAdminService.ACCOUNT_MANAGER_ROLE,
+      ) ?? false
+    );
+  }
 
   /**
    * Get the user account details of the user linked to the given entity.
@@ -113,6 +129,8 @@ export class UserAdminApiError extends Error {
 
   private generateDefaultMessage(status: number) {
     switch (status) {
+      case 403:
+        return $localize`:User API error:You do not have permission to manage user accounts.`;
       case 404:
         return $localize`:User API error:The entry does not exist.`;
       case 409:

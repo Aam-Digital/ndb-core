@@ -979,6 +979,24 @@ describe("ConfigService", () => {
       }
     });
 
+    it("should not abort app when the config doc is deleted (e.g. admin resetting the system)", async () => {
+      vi.useFakeTimers();
+      try {
+        const { reloadMock } = await setupReloadTest();
+
+        // a deleted doc holds no data, which must not be reported as a corrupt config
+        updateSubject.next({ entity: new Config(), type: "remove" });
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(Logging.error).not.toHaveBeenCalled();
+        expect(window.alert).not.toHaveBeenCalled();
+        expect(reloadMock).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+        vi.restoreAllMocks();
+      }
+    });
+
     it("should stop auto-reloading after the retry budget is exhausted to avoid a reload loop", async () => {
       vi.useFakeTimers();
       try {

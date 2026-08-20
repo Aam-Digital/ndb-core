@@ -64,6 +64,12 @@ export class TestEntity extends Entity {
   })
   dateOfBirth: DateWithAge;
 
+  @DatabaseField({
+    label: "Rating",
+    dataType: "number",
+  })
+  rating: number;
+
   static create(data: Partial<TestEntity> | string): TestEntity {
     if (typeof data === "string") {
       data = { name: data };

@@ -38,8 +38,10 @@ import { ImportAdditionalSettings } from "../import-additional-settings";
   ],
 })
 export class ImportColumnMappingComponent {
-  private entities = inject(EntityRegistry);
-  private importColumnMappingService = inject(ImportColumnMappingService);
+  private readonly entities = inject(EntityRegistry);
+  private readonly importColumnMappingService = inject(
+    ImportColumnMappingService,
+  );
 
   rawData = input<any[]>([]);
   columnMapping = model<ColumnMapping[]>([]);
@@ -72,7 +74,10 @@ export class ImportColumnMappingComponent {
   ) {
     this.columnMapping.update((cm) => {
       const next = [...cm];
-      const index = next.indexOf(originalColumnMapping);
+      // match by column rather than object identity, changes can be emitted after the array was replaced
+      const index = next.findIndex(
+        (c) => c.column === originalColumnMapping.column,
+      );
       if (index >= 0) {
         next[index] = { ...newColumnMapping };
       }

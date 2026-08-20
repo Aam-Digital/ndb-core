@@ -450,7 +450,7 @@ describe("DataAggregationService", () => {
       label: "Total # of children",
       aggregations: [
         {
-          query: `[*isActive = true]`,
+          query: `:filterActive`,
           groupBy: ["name"],
           label: "Total # of old children",
         },

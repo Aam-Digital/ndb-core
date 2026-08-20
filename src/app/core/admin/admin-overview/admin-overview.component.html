@@ -1,4 +1,4 @@
-<h1>System Settings</h1>
+<h1 i18n>System Settings</h1>
 
 <app-warning-not-optimized-for-small-screen />
 
@@ -236,13 +236,31 @@
         <span matListItemTitle i18n>PouchDB Debug: Send to console.log()</span>
       </mat-list-item>
       <mat-list-item
-        (click)="clearDatabase()"
+        (click)="emptyRecords()"
         button
-        matTooltip="Delete all data in the database."
+        matTooltip="Delete all data while keeping the system configuration and the profiles of users with an account."
         i18n-matTooltip
         matTooltipPosition="before"
       >
-        <span matListItemTitle i18n>Empty Database</span>
+        <span matListItemTitle class="color-error" i18n>Empty Records</span>
+      </mat-list-item>
+      <mat-list-item
+        (click)="resetSystem()"
+        button
+        matTooltip="Delete everything, including all records and the complete system configuration, keeping only your own user profile, to set up this system from scratch."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
+        <span matListItemTitle class="color-error" i18n>Reset System</span>
+      </mat-list-item>
+      <mat-list-item
+        (click)="resetLocalDevice()"
+        button
+        matTooltip="Clear all data cached on this device and re-synchronize from the server. Does not affect other users or delete anything on the server."
+        i18n-matTooltip
+        matTooltipPosition="before"
+      >
+        <span matListItemTitle i18n>Reset Local Device</span>
       </mat-list-item>
       <mat-list-item
         [routerLink]="['/admin/conflicts']"

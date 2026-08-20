@@ -30,25 +30,25 @@
 <table class="support-table" aria-describedby="table-description">
   <thead>
     <tr>
-      <th>Detail</th>
-      <th>Value</th>
+      <th i18n>Detail</th>
+      <th i18n>Value</th>
     </tr>
   </thead>
   <tbody class="support-table--body">
     <tr>
-      <td>Session</td>
+      <td i18n>Session</td>
       <td>{{ sessionInfo?.id ?? "-" }}</td>
     </tr>
     <tr>
-      <td>Session type</td>
+      <td i18n>Session type</td>
       <td>{{ sessionType }}</td>
     </tr>
     <tr>
-      <td>Username</td>
+      <td i18n>Username</td>
       <td>{{ sessionInfo?.email ?? "-" }}</td>
     </tr>
     <tr>
-      <td>User Profile</td>
+      <td i18n>User Profile</td>
       <td>
         @if (currentUser) {
           {{ sessionInfo?.entityId }} ({{ currentUser?.toString() }})
@@ -58,46 +58,60 @@
       </td>
     </tr>
     <tr>
-      <td>App version</td>
+      <td i18n>App version</td>
       <td>{{ appVersion }}</td>
     </tr>
     <tr>
-      <td>Device info</td>
+      <td i18n>Device info</td>
       <td>{{ userAgent }}</td>
     </tr>
     <tr>
-      <td>Current sync state</td>
+      <td i18n>Current sync state</td>
       <td>{{ currentSyncState }}</td>
     </tr>
     <tr>
-      <td>Last sync</td>
+      <td i18n>Last sync</td>
       <td>{{ lastSync }}</td>
     </tr>
     <tr>
-      <td>Last remote login</td>
+      <td i18n>Last remote login</td>
       <td>{{ lastRemoteLogin }}</td>
     </tr>
     <tr>
-      <td>Database name</td>
+      <td i18n>Database name</td>
       <td>{{ dbName ?? "-" }}</td>
     </tr>
     <tr>
-      <td>Database adapter</td>
+      <td i18n>Database adapter</td>
+      <!-- eslint-disable @angular-eslint/template/i18n -- raw diagnostic output incl. a literal config flag name -->
       <td>
         {{ dbAdapter ?? "-" }}
         (use_indexeddb_adapter config flag: {{ useIndexeddbAdapter }})
       </td>
+      <!-- eslint-enable @angular-eslint/template/i18n -->
     </tr>
     <tr>
-      <td>Storage usage</td>
-      <td>{{ storageInfo || "No information" }}</td>
+      <td i18n>Storage usage</td>
+      <td>{{ storageInfo() || "No information" }}</td>
     </tr>
     <tr>
-      <td>Database documents</td>
+      <td i18n>Persistent storage</td>
+      <td>
+        @if (storagePersistent() === true) {
+          <span i18n>Yes</span>
+        } @else if (storagePersistent() === false) {
+          <span i18n>No</span>
+        } @else {
+          <span i18n>No information</span>
+        }
+      </td>
+    </tr>
+    <tr>
+      <td i18n>Database documents</td>
       <td>{{ dbInfo }}</td>
     </tr>
     <tr>
-      <td>Service Worker</td>
+      <td i18n>Service Worker</td>
       <td>{{ swStatus }}</td>
     </tr>
   </tbody>
@@ -106,7 +120,7 @@
 <mat-expansion-panel class="mat-elevation-z0">
   <mat-expansion-panel-header>
     <mat-panel-title class="tech-details">
-      Service Worker Logs
+      <span i18n>Service Worker Logs</span>
     </mat-panel-title>
   </mat-expansion-panel-header>
   <div class="sw-logs tech-details">{{ swLog }}</div>
@@ -123,7 +137,7 @@
   >
     Download Local Database
   </button>
-  <button mat-raised-button color="warn" (click)="resetApplication()" i18n>
+  <button mat-raised-button color="warn" (click)="resetLocalDevice()" i18n>
     Reset Application
   </button>
 </div>

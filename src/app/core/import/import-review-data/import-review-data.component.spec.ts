@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { ImportReviewDataComponent } from "./import-review-data.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { MatDialog } from "@angular/material/dialog";
@@ -74,7 +73,7 @@ describe("ImportReviewDataComponent", () => {
       });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.mappedEntities()).toEqual(testEntities);
+      expect(component.dataSource.allRecords()).toEqual(testEntities);
       expect(component.displayColumns()).toEqual([
         component.IMPORT_STATUS_COLUMN,
         "name",
@@ -112,7 +111,7 @@ describe("ImportReviewDataComponent", () => {
       });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.mappedEntities()).toEqual([]);
+      expect(component.dataSource.allRecords()).toEqual([]);
       expect(component.isLoading()).toBe(false);
       expect(Logging.error).toHaveBeenCalled();
     } finally {
@@ -146,7 +145,7 @@ describe("ImportReviewDataComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-      expect(component.mappedEntities()).toEqual(testEntities);
+      expect(component.dataSource.allRecords()).toEqual(testEntities);
       expect(component.isLoading()).toBe(false);
     } finally {
       vi.useRealTimers();
@@ -179,7 +178,7 @@ describe("ImportReviewDataComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-      expect(component.mappedEntities()).toEqual(testEntities);
+      expect(component.dataSource.allRecords()).toEqual(testEntities);
       expect(component.isLoading()).toBe(false);
     } finally {
       vi.useRealTimers();
@@ -214,7 +213,7 @@ describe("ImportReviewDataComponent", () => {
       expect(
         mockImportService.transformRawDataToEntities,
       ).not.toHaveBeenCalled();
-      expect(component.mappedEntities()).toEqual([]);
+      expect(component.dataSource.allRecords()).toEqual([]);
 
       // Now show the preview
       component.stepIsFocused = true;
@@ -226,7 +225,7 @@ describe("ImportReviewDataComponent", () => {
       // Should parse now and show the confirmation dialog for errors
       expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
       expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
-      expect(component.mappedEntities()).toEqual(testEntities);
+      expect(component.dataSource.allRecords()).toEqual(testEntities);
       expect(component.isLoading()).toBe(false);
     } finally {
       vi.useRealTimers();
@@ -254,7 +253,7 @@ describe("ImportReviewDataComponent", () => {
       expect(
         mockImportService.transformRawDataToEntities,
       ).not.toHaveBeenCalled();
-      expect(component.mappedEntities()).toEqual([]);
+      expect(component.dataSource.allRecords()).toEqual([]);
 
       // Make preview visible
       component.stepIsFocused = true;
@@ -264,7 +263,7 @@ describe("ImportReviewDataComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
-      expect(component.mappedEntities()).toEqual(testEntities);
+      expect(component.dataSource.allRecords()).toEqual(testEntities);
     } finally {
       vi.useRealTimers();
     }

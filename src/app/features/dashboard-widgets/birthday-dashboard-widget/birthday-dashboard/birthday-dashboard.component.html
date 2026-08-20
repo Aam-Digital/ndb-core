@@ -7,10 +7,20 @@
 >
   <div class="table-wrapper">
     <table mat-table>
-      <tr hidden="true">
-        <th scope="col">Name</th>
-        <th scope="col">DateOfBirth</th>
-        <th scope="col">AfterBirthdayAge</th>
+      <!-- Table header only for assistive technologies like screen readers -->
+      <tr class="visually-hidden">
+        <th scope="col" i18n="Column header for the name of a participant">
+          Name
+        </th>
+        <th scope="col" i18n="Column header for the date of anniversary">
+          Date of "anniversary"
+        </th>
+        <th
+          scope="col"
+          i18n="Column header for the age at the next anniversary date"
+        >
+          Age after next date
+        </th>
       </tr>
       <ng-container matColumnDef="entity">
         <td *matCellDef="let entity">

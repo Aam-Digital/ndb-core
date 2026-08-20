@@ -4,6 +4,7 @@ import { importProvidersFrom } from "@angular/core";
 import { ListFilterComponent } from "./list-filter.component";
 import { Entity } from "../../entity/model/entity";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
+import { NOT_ARCHIVED_FILTER } from "../not-archived-filter";
 
 export default {
   title: "Core/> App Layout/Filter",
@@ -21,11 +22,11 @@ const Template: StoryFn<ListFilterComponent<Entity>> = (args) => ({
 });
 
 const filterConfig: FilterConfig = {
-  id: "isActive",
+  id: "inactive",
   label: "Active",
   options: [
-    { key: "true", label: "Yes", filter: { isActive: true } },
-    { key: "false", label: "No", filter: { isActive: false } },
+    { key: "true", label: "Yes", filter: NOT_ARCHIVED_FILTER },
+    { key: "false", label: "No", filter: { inactive: true } },
   ],
 };
 

@@ -18,46 +18,54 @@
 import moment from "moment";
 import { testEntitySubclass } from "../../entity/model/entity.test-utils";
 import { TimePeriod } from "./time-period";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
 
 describe("TimePeriod Entity", () => {
-  testEntitySubclass("TimePeriod", TimePeriod, {
-    _id: "TimePeriod:some-id",
+  testEntitySubclass(
+    "TimePeriod",
+    TimePeriod,
+    {
+      _id: "TimePeriod:some-id",
 
-    start: "2019-01-01",
-    end: "2019-12-31",
+      start: "2019-01-01",
+      end: "2019-12-31",
+    },
+    false,
+    [{ provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true }],
+  );
+
+  it("should determine the active status from the covered time period", () => {
+    const withoutEnd = new TimePeriod();
+    withoutEnd.start = new Date();
+    expect(withoutEnd.isActiveAt(new Date()), "without end date").toBe(true);
+
+    const startingTomorrow = new TimePeriod();
+    startingTomorrow.start = moment().add(1, "day").toDate();
+    expect(
+      startingTomorrow.isActiveAt(new Date()),
+      "starting in the future",
+    ).toBe(false);
+
+    const endedYesterday = new TimePeriod();
+    endedYesterday.start = moment().subtract(1, "week").toDate();
+    endedYesterday.end = moment().subtract(1, "day").toDate();
+    expect(endedYesterday.isActiveAt(new Date()), "ended in the past").toBe(
+      false,
+    );
+
+    const endingToday = new TimePeriod();
+    endingToday.start = moment().subtract(1, "week").toDate();
+    endingToday.end = new Date();
+    expect(endingToday.isActiveAt(new Date()), "ending today").toBe(true);
   });
 
-  it("should mark relations without end date as active", () => {
-    const relation = new TimePeriod();
-    relation.start = new Date();
-    expect(relation.isActive).toBe(true);
-  });
-
-  it("should mark relation starting in the future as inactive", () => {
-    const relation = new TimePeriod();
-    relation.start = moment().add(1, "day").toDate();
-    expect(relation.isActive).toBe(false);
-  });
-
-  it("should mark relation with end date in the past as inactive", () => {
+  it("should keep the calculated status independent of manual archiving", () => {
     const relation = new TimePeriod();
     relation.start = moment().subtract(1, "week").toDate();
-    relation.end = moment().subtract(1, "day").toDate();
-    expect(relation.isActive).toBe(false);
-  });
+    relation.inactive = true;
 
-  it("should mark relation with end date in the future as active", () => {
-    const relation = new TimePeriod();
-    relation.start = moment().subtract(1, "week").toDate();
-    relation.end = moment().add(1, "day").toDate();
-    expect(relation.isActive).toBe(true);
-  });
-
-  it("should mark relation with end date being today as active", () => {
-    const relation = new TimePeriod();
-    relation.start = moment().subtract(1, "week").toDate();
-    relation.end = new Date();
-    expect(relation.isActive).toBe(true);
+    expect(relation.isActiveAt(new Date())).toBe(true);
   });
 
   it("should fail validation when end date but no start date is defined", () => {

@@ -500,10 +500,11 @@ export class PouchDatabase extends Database {
       newObject._rev = existingObject._rev;
       return this.put(newObject);
     } else {
-      existingError.message = `${
-        existingError.message
-      } (unable to resolve) ID: ${JSON.stringify(newObject)}`;
-      throw new DatabaseException(existingError);
+      // the document's ID is passed as entityId rather than appended to the
+      // message: remote monitoring groups by message, so an ID in there would
+      // fragment one recurring problem into a separate issue per document
+      existingError.message = `${existingError.message} (unable to resolve)`;
+      throw new DatabaseException(existingError, newObject._id);
     }
   }
 

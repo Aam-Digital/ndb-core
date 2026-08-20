@@ -307,7 +307,8 @@ const NETWORK_ERROR_PATTERNS = [
 /**
  * Sentry `beforeSend` hook: drops network failures of offline devices
  * and excessive repeats of an identical event,
- * and enriches the remaining events with structured extra data.
+ * and enriches the remaining events with structured extra data
+ * and a stable grouping fingerprint.
  */
 export function processSentryEvent(
   event: Sentry.ErrorEvent,
@@ -316,7 +317,7 @@ export function processSentryEvent(
   if (isOfflineNetworkError(event) || isExcessiveRepeat(event)) {
     return null;
   }
-  return enrichSentryEvent(event, hint);
+  return fingerprintSentryEvent(enrichSentryEvent(event, hint));
 }
 
 /**
@@ -341,23 +342,23 @@ function isOfflineNetworkError(event: Sentry.ErrorEvent): boolean {
 /**
  * Count occurrences of an event and check whether it exceeded the session cap.
  *
- * The key is deliberately coarse: error class + message of the root cause
- * (`values[0]` is the deepest `cause` in the chain; the originally thrown,
+ * The key is deliberately coarse: error class + normalized message of the root
+ * cause (`values[0]` is the deepest `cause` in the chain; the originally thrown,
  * outermost error is last), without any stack information.
  * Consequences:
  * - Same-message errors from different code paths share one budget,
  *   and all wrappers of a cascading failure are capped via their common
  *   root cause. This is a flood guard, not a grouping mechanism -
- *   Sentry's server-side, stack-based grouping remains authoritative
- *   for separating issues, and the first occurrences always get through.
- * - Errors that interpolate data (e.g. entity IDs) into their message
- *   get a separate budget per variant, so the cap is weaker for those.
+ *   see {@link fingerprintSentryEvent} for how issues are separated.
+ * - Errors that interpolate data (e.g. entity IDs) into their message still
+ *   share one budget, because the key is normalized the same way as the
+ *   grouping fingerprint.
  */
 function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
   const exception = event.exception?.values?.[0];
   const key = exception
-    ? `${exception.type}: ${exception.value}`
-    : String(event.message ?? "unknown");
+    ? `${exception.type}: ${normalizeErrorValue(exception.value)}`
+    : normalizeErrorValue(String(event.message ?? "unknown"));
 
   const count = (sentryEventCounts.get(key) ?? 0) + 1;
   sentryEventCounts.set(key, count);
@@ -373,13 +374,113 @@ function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
 }
 
 /**
+ * Our own error classes that describe *what* failed precisely enough that all
+ * their occurrences belong into a single issue in remote monitoring,
+ * no matter which component, route or async call site ran into them.
+ *
+ * For these, Sentry's default grouping by stack trace actively hurts: they are
+ * thrown from one central place, while the stack differs per caller and even
+ * per build (releases without source maps report minified frames). One problem
+ * then scatters across a dozen issues that each have to be triaged separately,
+ * and archiving one of them does not silence the others.
+ *
+ * Only add error types whose name and message already identify the problem on
+ * their own, so that the stack adds nothing but noise. Generic errors (`Error`,
+ * `TypeError`, ...) must keep the default grouping - for those the stack trace
+ * is the only thing telling two unrelated bugs apart.
+ */
+const CAUSE_GROUPED_ERROR_TYPES = [
+  "DatabaseException",
+  "ConfigLoadError",
+  "PermissionRulesLoadError",
+  "SiteSettingsLoadError",
+  "RegistryLookupError",
+  "RegistryDuplicateError",
+];
+
+/**
+ * Data that varies between occurrences of the same problem and therefore has to
+ * be masked before an error message can be used as a grouping key.
+ * Order matters: the more specific patterns have to run before the plain number.
+ */
+const VOLATILE_VALUE_PATTERNS: [RegExp, string][] = [
+  [/https?:\/\/\S+/gi, "<url>"],
+  [
+    /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi,
+    "<uuid>",
+  ],
+  [/\b\d+-[0-9a-f]{32}\b/gi, "<rev>"],
+  [/\d+/g, "<n>"],
+];
+
+/**
+ * Mask volatile details (ids, urls, numbers) so that different occurrences of
+ * the same problem produce the same string.
+ */
+function normalizeErrorValue(value: string | undefined): string {
+  if (!value) {
+    return "<none>";
+  }
+  return VOLATILE_VALUE_PATTERNS.reduce(
+    (normalized, [pattern, placeholder]) =>
+      normalized.replace(pattern, placeholder),
+    value,
+  );
+}
+
+/**
+ * Group events of our own wrapper error classes (see
+ * {@link CAUSE_GROUPED_ERROR_TYPES}) by their error chain instead of by stack
+ * trace, so that one problem shows up as one issue.
+ *
+ * `exception.values` is ordered innermost-first: `values[0]` is the deepest
+ * `cause`, the originally thrown error is last. Both ends matter - the thrown
+ * error says which operation failed, the root cause says why (e.g. a config
+ * load failing because the device is offline is a different problem from the
+ * same load failing because the user is unauthorized).
+ *
+ * The route remains available as the `transaction` tag, so a failure can still
+ * be filtered by where it happened without splitting it into separate issues.
+ */
+function fingerprintSentryEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
+  const values = event.exception?.values;
+  if (!values?.length) {
+    // captureMessage events group by their message,
+    // which is kept free of variable data by convention
+    return event;
+  }
+
+  const thrownError = values[values.length - 1];
+  const thrownType = thrownError.type ?? "";
+  if (!CAUSE_GROUPED_ERROR_TYPES.includes(thrownType)) {
+    return event;
+  }
+
+  const thrownValue = normalizeErrorValue(thrownError.value);
+  const fingerprint = [thrownType, thrownValue];
+
+  const rootCause = values[0];
+  const rootType = rootCause.type ?? "";
+  const rootValue = normalizeErrorValue(rootCause.value);
+  // compared by content, not by identity: an error wrapping another error of
+  // the same type and message describes one failure, not two, and has to match
+  // the fingerprint of the same failure reported without the extra wrapper
+  if (rootType !== thrownType || rootValue !== thrownValue) {
+    fingerprint.push(rootType, rootValue);
+  }
+
+  event.fingerprint = fingerprint;
+  return event;
+}
+
+/**
  * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
  */
 function enrichSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
-): Sentry.ErrorEvent | null {
+): Sentry.ErrorEvent {
   // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
   // so that details like entityId, status, reason are visible in Sentry's "Additional Data"
   const err = hint.originalException;

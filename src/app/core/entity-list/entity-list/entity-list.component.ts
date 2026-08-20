@@ -19,7 +19,6 @@ import {
 } from "../EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -45,15 +44,10 @@ import { Sort } from "@angular/material/sort";
 import { ExportColumnsService } from "../../export/export-columns.service";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
-import { applyUpdate, UpdatedEntity } from "../../entity/model/entity-update";
-import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
-import {
-  EntitySpecialLoaderService,
-  LoaderMethod,
-} from "../../entity/entity-special-loader/entity-special-loader.service";
+import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { AblePurePipe } from "@casl/angular";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
@@ -62,7 +56,7 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import { BulkOperationStateService } from "../../entity/entity-actions/bulk-operation-state.service";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -111,20 +105,16 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private screenWidthObserver = inject(ScreenWidthObserver);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  protected entityMapperService = inject(EntityMapperService);
   private entities = inject(EntityRegistry);
   private dialog = inject(MatDialog);
-  private entitySpecialLoader = inject(EntitySpecialLoaderService, {
-    optional: true,
-  });
   private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
-  private readonly bulkOperationState = inject(BulkOperationStateService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly publicFormsService = inject(PublicFormsService);
   private readonly ability = inject(EntityAbility);
   public publicFormConfigs: PublicFormConfig[] = [];
+  readonly dataSource = new InMemoryDataSource<T>();
 
   /**
    * Whether the current user may import records of this type.
@@ -142,8 +132,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.ability.can("create", ImportMetadata)
     );
   });
-
-  allEntities = model<T[] | undefined>(undefined);
 
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
@@ -184,8 +172,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   filterObj = model<DataFilter<T>>({});
   filterString = "";
-  filteredData = [];
-  filterFreetext: string;
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -219,6 +205,12 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.loaderMethod();
       // untracked: internal signals set during build (title, allEntities) must not re-trigger this effect
       void untracked(() => this.buildComponentFromConfig());
+    });
+    effect(() => {
+      this.dataSource.loadRecordConfig.set({
+        entityCtr: this.entityConstructor(),
+        loaderMethod: this.loaderMethod(),
+      });
     });
 
     this.screenWidthObserver
@@ -277,84 +269,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     if (!this.title()) {
       this.title.set(this.entityConstructor()?.labelPlural);
     }
-
-    if (!this.allEntities()) {
-      // if no entities are passed as input, by default load all entities of the type
-      await this.loadEntities();
-    } else {
-      this.cdr.markForCheck();
-    }
-  }
-
-  protected async loadEntities() {
-    this.allEntities.set(await this.getEntities());
-    this.cdr.markForCheck();
-    this.listenToEntityUpdates();
-  }
-
-  /**
-   * Template method that can be overwritten to change the loading logic.
-   * @protected
-   */
-  protected getEntities(): Promise<T[]> {
-    const loaderMethod = this.loaderMethod();
-    if (loaderMethod && this.entitySpecialLoader) {
-      return this.entitySpecialLoader.loadData(loaderMethod);
-    }
-
-    const entityConstructor = this.entityConstructor();
-    if (!entityConstructor) {
-      return Promise.resolve([]);
-    }
-    return this.entityMapperService.loadType(entityConstructor);
-  }
-
-  private updateSubscription: Subscription;
-
-  private listenToEntityUpdates() {
-    const entityConstructor = this.entityConstructor();
-    if (this.updateSubscription || !entityConstructor) {
-      return;
-    }
-
-    this.updateSubscription = this.entityMapperService
-      .receiveUpdates(entityConstructor)
-      .pipe(untilDestroyed(this))
-      .subscribe(async (updatedEntity: UpdatedEntity<T>) => {
-        if (this.bulkOperationState.isBulkOperationInProgress()) {
-          //buffer updates during bulk operations to avoid UI performance issues
-          const inProgress =
-            this.bulkOperationState.updateBulkOperationProgress(
-              updatedEntity,
-              false,
-            );
-          if (!inProgress) {
-            // reload the list once
-            this.allEntities.set(await this.getEntities());
-            this.cdr.markForCheck();
-            // Use setTimeout and requestAnimationFrame to detect when UI rendering is complete and inform the bulk action update
-            setTimeout(() => {
-              requestAnimationFrame(() => {
-                this.bulkOperationState.completeBulkOperation();
-              });
-            });
-          }
-          return;
-        }
-
-        //get specially enhanced entity if necessary
-        const loaderMethod = this.loaderMethod();
-        if (loaderMethod && this.entitySpecialLoader) {
-          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
-            loaderMethod,
-            updatedEntity,
-          );
-        }
-        this.allEntities.set(
-          applyUpdate(this.allEntities() ?? [], updatedEntity),
-        );
-        this.cdr.markForCheck();
-      });
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
@@ -389,7 +303,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   applyFilter(filterValue: string) {
     // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
-    this.filterFreetext = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -412,7 +326,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       data: {
         filterConfig: this.filters(),
         entityType: this.entityConstructor(),
-        entities: this.allEntities(),
+        entities: this.dataSource.allRecords(),
         useUrlQueryParams: true,
         filterObjChange: (filter: DataFilter<T>) => this.filterObj.set(filter),
       },
@@ -461,8 +375,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.allEntities(),
-        filteredData: this.filteredData,
+        allEntities: this.dataSource.allRecords(),
+        filteredData: this.dataSource.filteredData.map((row) => row.record),
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),
