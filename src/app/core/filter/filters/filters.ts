@@ -30,6 +30,31 @@ export type DataFilter<T> = MongoQuery<T> | {};
 
 export const EMPTY_FILTER_OPTION_KEY = "__empty__";
 
+/**
+ * Combine the given conditions so that all of them have to be met.
+ *
+ * Conditions without any content are left out, because an empty object as an `$and` branch makes a
+ * database query match no document at all, and `$and` is dropped entirely when it is not needed.
+ * Use this instead of merging conditions into one object, which would silently overwrite a key
+ * (like `$or`) that more than one of them uses.
+ */
+export function combineFilterConditions<T>(
+  ...conditions: DataFilter<T>[]
+): DataFilter<T> {
+  const relevant = conditions.filter(
+    (condition) => condition && Object.keys(condition).length > 0,
+  );
+
+  if (relevant.length === 0) {
+    return {};
+  }
+  if (relevant.length === 1) {
+    return relevant[0];
+  }
+
+  return { $and: relevant } as DataFilter<T>;
+}
+
 export function createEmptyValueFilter<T extends Entity>(
   fieldName: string,
   includeNestedId = false,

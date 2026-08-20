@@ -30,6 +30,7 @@ import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { DataFilter } from "../../filter/filters/filters";
+import { restrictToNotArchived } from "../../filter/not-archived-filter";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import {
@@ -151,11 +152,11 @@ export class EntitiesTableComponent<T extends Entity>
   readonly effectiveFilter = computed<DataFilter<T>>(() => {
     const nextFilter = { ...this.filter() };
     if (this.showInactive()) {
-      delete nextFilter["isActive"];
-    } else {
-      nextFilter["isActive"] = true;
+      // the toggle overrides an archived condition that may come from the configured filter
+      delete nextFilter["inactive"];
+      return nextFilter;
     }
-    return nextFilter;
+    return restrictToNotArchived(nextFilter);
   });
 
   // --- Background color ---

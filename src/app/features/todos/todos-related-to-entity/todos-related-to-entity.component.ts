@@ -12,9 +12,13 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
+import {
+  combineFilterConditions,
+  DataFilter,
+} from "#src/app/core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Todo } from "../model/todo";
+import { TODO_NOT_COMPLETED_FILTER } from "../model/todo-filters";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 
 @DynamicComponent("TodosRelatedToEntity")
@@ -36,7 +40,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   backgroundColorFn = (r: Todo) => {
-    if (!r.isActive) {
+    if (r.completed || r.inactive) {
       return "#e0e0e0";
     } else {
       return r.getColor();
@@ -53,7 +57,10 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   protected override initFilter(): DataFilter<Todo> {
-    return { isActive: true, ...super.initFilter() };
+    return combineFilterConditions<Todo>(
+      TODO_NOT_COMPLETED_FILTER,
+      super.initFilter(),
+    );
   }
 
   showDetails(entity: Todo) {

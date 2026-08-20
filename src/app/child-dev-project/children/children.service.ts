@@ -51,7 +51,9 @@ export class ChildrenService {
     child: Entity,
     relations: ChildSchoolRelation[],
   ) {
-    const active = relations.filter((r) => r.isActive);
+    const active = relations.filter(
+      (r) => !r.inactive && r.isActiveAt(new Date()),
+    );
     child["schoolId"] = active.map((r) => r.schoolId);
     if (active.length > 0) {
       child["schoolClass"] = active[0]["schoolClass"];
@@ -162,7 +164,7 @@ export class ChildrenService {
     const results = new Map();
     const entities = await this.entityMapper.loadType(entityType);
     entities
-      .filter((c) => c.isActive)
+      .filter((c) => !c.inactive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
     const noteProperty = Note.getPropertyFor(entityType);

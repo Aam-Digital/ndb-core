@@ -227,8 +227,9 @@ describe("FilterComponent", () => {
     });
 
     // "other" is a string field, so a StringFilter with a $regex query is applied
+    // a single condition needs no $and wrapper
     expect(emittedFilterObj).toEqual({
-      $and: [{ other: { $regex: "Alipore", $options: "i" } }],
+      other: { $regex: "Alipore", $options: "i" },
     } as any);
   });
 
@@ -283,14 +284,13 @@ describe("FilterComponent", () => {
 
     component.filterOptionSelected(avilableOptions, [t1.id]);
 
-    expect(emittedFilterObj).toEqual({
-      $and: [{ "category.id": t1.id }],
-    } as any);
+    // a single condition needs no $and wrapper
+    expect(emittedFilterObj).toEqual({ "category.id": t1.id } as any);
 
     component.filterOptionSelected(avilableOptions, [t1.id, t2.id]);
 
     expect(emittedFilterObj).toEqual({
-      $and: [{ $or: [{ "category.id": t1.id }, { "category.id": t2.id }] }],
+      $or: [{ "category.id": t1.id }, { "category.id": t2.id }],
     } as any);
   });
 });

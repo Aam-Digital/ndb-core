@@ -93,7 +93,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay()"
-      [class.inactive-row]="!row.record.isActive"
+      [class.inactive-row]="row.record.inactive"
       [style.background-color]="effectiveBackgroundColor()(row.record)"
       class="table-row"
       (mousedown)="onRowMouseDown($event, row)"

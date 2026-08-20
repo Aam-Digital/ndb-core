@@ -85,7 +85,8 @@ export class EditPrefilledValuesComponent
   formFieldConfig = input<FormFieldConfig>();
   entity = input<Entity>();
 
-  entityConstructor: EntityConstructor;
+  /** not set for configs in the multi form format, which hold no top-level entity type */
+  entityConstructor?: EntityConstructor;
   entitySchemaField: EntitySchemaField;
 
   private readonly entities = inject(EntityRegistry);
@@ -101,7 +102,10 @@ export class EditPrefilledValuesComponent
     const entity = this.entity();
     if (!entity) return;
 
-    this.entityConstructor = this.entities.get(entity["entity"]);
+    // configs in the multi form format do not hold a top-level entity type
+    this.entityConstructor = entity["entity"]
+      ? this.entities.get(entity["entity"])
+      : undefined;
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),

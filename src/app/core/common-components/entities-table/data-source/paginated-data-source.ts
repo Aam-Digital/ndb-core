@@ -153,33 +153,8 @@ export class PaginatedDataSource<
   }
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
-    // isActive is not available in the database
-    // TODO remove once PR #4238 is done
-    if (filter["isActive"]) {
-      if (filter["isActive"] === true) {
-        // Only active -> either 'inactive' not set or not 'true'
-        const isActive = [
-          { inactive: { $ne: true } },
-          { inactive: { $exists: false } },
-        ];
-        if (filter["$or"]) {
-          const existingOr = filter["$or"];
-          delete filter["$or"];
-          if (!filter["$and"]) {
-            filter["$and"] = [];
-          }
-          filter["$and"].push({ $or: existingOr }, { $or: isActive });
-        } else {
-          filter["$or"] = isActive;
-        }
-      } else {
-        // Only inactive -> inactive needs to be 'true'
-        filter["inactive"] = true;
-      }
-      delete filter["isActive"];
-    }
-    filter = convertToCouchRegex(filter);
     // Mango queries need `$options: "i"` while CouchDB only supports `$regex: "(?i)..."`
+    filter = convertToCouchRegex(filter);
     const filterString = JSON.stringify(filter);
     // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
     const updatedString = filterString.replace(/("\w+)\.id(?=":)/g, "$1");
