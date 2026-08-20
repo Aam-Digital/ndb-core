@@ -47,7 +47,12 @@ export class InMemoryDataSource<
   }
 
   override async getAllData(filtered = false): Promise<T[]> {
-    return filtered ? this.filteredRecords() : this.allRecords();
+    if (!filtered) {
+      return this.allRecords();
+    }
+
+    // including free-text filter and filter predicate
+    return this.filteredData.map((row) => row.record);
   }
 
   private getRecords() {

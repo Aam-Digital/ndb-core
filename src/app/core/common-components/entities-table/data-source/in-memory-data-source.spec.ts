@@ -65,4 +65,54 @@ describe("InMemoryDataSource", () => {
 
     expect(dataSource.data).toEqual([]);
   });
+
+  describe("getAllData", () => {
+    let e1: TestEntity;
+    let e2: TestEntity;
+    let e3: TestEntity;
+
+    beforeEach(async () => {
+      e1 = TestEntity.create({ name: "Alpha One", other: "group-a" });
+      e2 = TestEntity.create({ name: "Alpha Two", other: "group-a" });
+      e3 = TestEntity.create({ name: "Beta One", other: "group-b" });
+      await entityMapper.save(e1);
+      await entityMapper.save(e2);
+      await entityMapper.save(e3);
+      TestBed.tick();
+    });
+
+    it("should return all records, ignoring any filter, when filtered=false", async () => {
+      dataSource.dataFilter.set({ other: "group-a" } as any);
+      dataSource.filter = "two";
+      TestBed.tick();
+
+      const result = await dataSource.getAllData(false);
+
+      expect(result).toEqual(expect.arrayContaining([e1, e2, e3]));
+    });
+
+    it("should apply only the structured dataFilter when no free-text filter is set", async () => {
+      dataSource.dataFilter.set({ other: "group-a" } as any);
+      TestBed.tick();
+
+      const result = await dataSource.getAllData(true);
+
+      expect(result).toEqual(expect.arrayContaining([e1, e2]));
+      expect(result).toHaveLength(2);
+    });
+
+    it("should also apply the free-text filter (as currently displayed by the table) when filtered=true", async () => {
+      dataSource.dataFilter.set({ other: "group-a" } as any);
+      // simulates the free-text search box, which lower-cases+trims before assigning
+      dataSource.filter = "two";
+      TestBed.tick();
+
+      const result = await dataSource.getAllData(true);
+
+      // e2 matches both the structured filter (group-a) and the free-text
+      // filter ("Two" in its name); e1 is excluded by the free-text filter,
+      // e3 is excluded by the structured filter.
+      expect(result).toEqual([e2]);
+    });
+  });
 });
