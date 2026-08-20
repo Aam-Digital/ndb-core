@@ -33,6 +33,10 @@ import {
   RoleWithPermissions,
 } from "../role-permissions.service";
 import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.service";
+import {
+  DatabaseRule,
+  DEFAULT_SECTION_KEY,
+} from "../../../permissions/permission-types";
 
 /** fresh empty matrix model; a factory (not a shared const) so callers can never alias a mutable object */
 const emptyModel = (): MatrixModel => ({ rows: [], unsupportedRules: [] });
@@ -119,6 +123,7 @@ export class AdminRoleDetailsComponent implements OnInit {
     this.editing.set(true);
     this.model.set(emptyModel());
     const roles = await this.rolePermissionsService.loadRoles();
+    this.setInheritedRules(roles);
     this.existingRoleNames = new Set(roles.map((r) => r.name));
   }
 
@@ -126,9 +131,23 @@ export class AdminRoleDetailsComponent implements OnInit {
     const roles = await this.rolePermissionsService.loadRoles();
     const role = roles.find((r) => r.name === this.roleName());
     this.role.set(role);
+    this.setInheritedRules(roles);
     this.model.set(rulesToMatrix(role?.rules ?? []));
     this.descriptionControl.setValue(role?.description ?? "");
     this.descriptionControl.markAsPristine();
+  }
+
+  /**
+   * Rules of the shared "_default" role, which every logged-in user has on top
+   * of their own roles. Empty while editing that role itself, which cannot
+   * inherit from itself.
+   */
+  readonly inheritedRules = signal<DatabaseRule[]>([]);
+
+  private setInheritedRules(roles: RoleWithPermissions[]) {
+    const isDefaultRole = this.roleName() === DEFAULT_SECTION_KEY;
+    const defaultRole = roles.find((r) => r.name === DEFAULT_SECTION_KEY);
+    this.inheritedRules.set(isDefaultRole ? [] : (defaultRole?.rules ?? []));
   }
 
   /** whether the user may create/delete/update roles in the authentication server (reactive) */

@@ -15,6 +15,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { describeConditionFragment } from "../../../common-components/entity-form/dynamic-form-validators/permission-condition-validators";
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
@@ -24,23 +25,36 @@ import {
   PermissionConditionDialogComponent,
   PermissionConditionDialogData,
 } from "../condition-dialog/permission-condition-dialog.component";
-import { EntityActionPermission } from "../../../permissions/permission-types";
+import {
+  DatabaseRule,
+  DEFAULT_SECTION_KEY,
+  EntityActionPermission,
+} from "../../../permissions/permission-types";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
-import { DEFAULT_ROLE } from "../role-permissions.service";
 
 /** the four individual CRUD actions shown as their own matrix columns ("manage" is separate) */
 type CrudAction = "read" | "create" | "update" | "delete";
 
+/**
+ * Where an action is granted from, if not by an own rule of its row:
+ * the row's own "manage", the "all record types" row of this same role,
+ * or the shared "_default" role that applies to every logged-in user.
+ */
+type GrantedBy = "manage" | "wildcard" | "default";
+
 /** display state of one action cell */
 interface CellState {
-  /**
-   * allowed by its own rule. Each action (and "manage") is an independent
-   * permission, so this does not reflect the broader "manage" wildcard.
-   */
+  /** shown as granted, either by an own rule of this row or by a broader one */
   allowed: boolean;
+  /** granted by an own rule of this row, so a condition can be attached to it */
+  ownAllowed: boolean;
+  /** whether the checkbox may be changed on this row */
+  editable: boolean;
   hasCondition: boolean;
   /** readable summary of the condition, empty when none */
   summary: string;
+  /** why the checkbox cannot be changed; empty when it is editable */
+  lockTooltip: string;
 }
 
 /**
@@ -68,10 +82,18 @@ interface CellState {
 export class PermissionMatrixComponent {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmation = inject(ConfirmationDialogService);
 
   readonly model = input.required<MatrixModel>();
   readonly editable = input(false);
   readonly roleName = input("");
+
+  /**
+   * Rules of the shared "_default" role, which apply to every logged-in user on
+   * top of their own roles. Shown as already granted here, because revoking them
+   * for a single role would require an inverted rule.
+   */
+  readonly inheritedRules = input<DatabaseRule[]>([]);
   readonly modelChange = output<MatrixModel>();
 
   /** CRUD columns with their headers baked in, so the template needs no per-cell method call */
@@ -96,32 +118,194 @@ export class PermissionMatrixComponent {
     "rowActions",
   ];
 
-  /** rows with subject label/icon and per-action cell states resolved once per model change */
-  readonly viewRows = computed(() =>
-    this.model().rows.map((row) => ({
+  /** the "all record types" row of this role, which grants its actions for every type */
+  private readonly wildcardRow = computed(() =>
+    this.model().rows.find((row) => row.subject === "all"),
+  );
+
+  /**
+   * rows with subject label/icon and per-action cell states, resolved once per
+   * model change. The shared "_default" role is prepended as a read-only row,
+   * so it is visible what every logged-in user may do on top of this role.
+   */
+  readonly viewRows = computed(() => {
+    const rows = this.model().rows.map((row, modelIndex) =>
+      this.toViewRow(row, modelIndex),
+    );
+    const defaultRow = this.defaultViewRow();
+    return defaultRow ? [defaultRow, ...rows] : rows;
+  });
+
+  private toViewRow(row: MatrixRow, modelIndex: number) {
+    // "manage" grants every action, so the individual actions are shown as
+    // covered (checked, not individually editable) when it is set
+    const manageAllowed = !!row.cells.manage?.allowed;
+    return {
       row,
+      /** index in the edited model; -1 for the read-only "Default" row */
+      modelIndex,
+      isDefaultRow: false,
       label: this.subjectLabel(row.subject),
       icon: this.subjectIcon(row.subject),
       isInternal: this.isInternalSubject(row.subject),
       conditionsEditable: this.canHaveConditions(row.subject),
-      // "manage" grants every action, so the individual actions are shown as
-      // covered (checked, not individually editable) when it is set
-      manageAllowed: row.subject === "all" || !!row.cells.manage?.allowed,
+      manageAllowed,
+      manageState: this.cellState(row, "manage", manageAllowed),
       actionStates: Object.fromEntries(
-        this.crudActions.map((action) => {
-          const cell = row.cells[action];
-          const state: CellState = {
-            allowed: !!cell?.allowed,
-            hasCondition: !!cell?.conditions,
-            summary: cell?.conditions
-              ? this.describeConditions(cell.conditions, row.subject)
-              : "",
-          };
-          return [action, state];
-        }),
+        this.crudActions.map((action) => [
+          action,
+          this.cellState(row, action, manageAllowed),
+        ]),
       ) as Record<CrudAction, CellState>,
-    })),
-  );
+    };
+  }
+
+  /**
+   * The shared "_default" role as a read-only row, listing what it grants for
+   * every record type. Absent while editing that role itself and when it grants
+   * nothing across all record types.
+   */
+  private readonly defaultViewRow = computed(() => {
+    if (this.isDefaultRole()) {
+      return undefined;
+    }
+
+    // only what the default role grants for every record type is shown here;
+    // grants for a single type lock that type's row instead
+    const cells: MatrixRow["cells"] = {};
+    for (const action of [...this.crudActions, "manage" as const]) {
+      if (this.inheritedGrantsForAllTypes(action)) {
+        cells[action] = { allowed: true };
+      }
+    }
+    if (Object.keys(cells).length === 0) {
+      // nothing granted to everyone, so the row would only add noise
+      return undefined;
+    }
+
+    const row: MatrixRow = { subject: DEFAULT_SECTION_KEY, cells };
+    const manageAllowed = !!cells.manage?.allowed;
+    return {
+      row,
+      modelIndex: -1,
+      isDefaultRow: true,
+      label: $localize`:Default permissions row label:Default`,
+      icon: undefined,
+      isInternal: false,
+      conditionsEditable: false,
+      manageAllowed,
+      manageState: this.defaultRowCellState(!!cells.manage?.allowed),
+      actionStates: Object.fromEntries(
+        this.crudActions.map((action) => [
+          action,
+          this.defaultRowCellState(manageAllowed || !!cells[action]?.allowed),
+        ]),
+      ) as Record<CrudAction, CellState>,
+    };
+  });
+
+  private defaultRowCellState(allowed: boolean): CellState {
+    return {
+      allowed,
+      ownAllowed: false,
+      editable: false,
+      hasCondition: false,
+      summary: "",
+      lockTooltip: $localize`:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the "Default" role.`,
+    };
+  }
+
+  private cellState(
+    row: MatrixRow,
+    action: EntityActionPermission,
+    manageAllowed: boolean,
+  ): CellState {
+    const cell = row.cells[action];
+    const grantedBy = this.grantedBy(row, action, manageAllowed);
+    return {
+      allowed: !!cell?.allowed || !!grantedBy,
+      ownAllowed: !!cell?.allowed,
+      editable: !grantedBy,
+      hasCondition: !!cell?.conditions,
+      summary: cell?.conditions
+        ? this.describeConditions(cell.conditions, row.subject)
+        : "",
+      lockTooltip: grantedBy ? this.grantedByTooltip(grantedBy) : "",
+    };
+  }
+
+  /**
+   * Whether a broader rule already grants this action, so it cannot be taken
+   * away on this row: the row's own "manage", the role's "all record types"
+   * row, or the shared "_default" role.
+   */
+  private grantedBy(
+    row: MatrixRow,
+    action: EntityActionPermission,
+    manageAllowed: boolean,
+  ): GrantedBy | undefined {
+    if (manageAllowed && action !== "manage") {
+      return "manage";
+    }
+    if (row.subject !== "all" && this.rowGrants(this.wildcardRow(), action)) {
+      return "wildcard";
+    }
+    if (this.inheritedGrants(row.subject, action)) {
+      return "default";
+    }
+    return undefined;
+  }
+
+  private grantedByTooltip(grantedBy: GrantedBy): string {
+    switch (grantedBy) {
+      case "manage":
+        return $localize`Already granted by "Manage (all)" for this record type.`;
+      case "wildcard":
+        return $localize`Already granted by the "All record types" row of this role.`;
+      case "default":
+        return $localize`Already granted to every logged-in user by the "Default" role, so it cannot be revoked for a single role here.`;
+    }
+  }
+
+  /** whether a matrix row grants the action, directly or through its "manage" */
+  private rowGrants(
+    row: MatrixRow | undefined,
+    action: EntityActionPermission,
+  ): boolean {
+    if (!row) return false;
+    return !!row.cells.manage?.allowed || !!row.cells[action]?.allowed;
+  }
+
+  /** whether the shared "_default" rules grant the action for every record type */
+  private inheritedGrantsForAllTypes(action: EntityActionPermission): boolean {
+    return this.inheritedGrants("all", action);
+  }
+
+  /** whether the shared "_default" rules grant the action for this record type */
+  private inheritedGrants(
+    subject: string,
+    action: EntityActionPermission,
+  ): boolean {
+    if (this.isDefaultRole()) {
+      return false;
+    }
+    return this.inheritedRules().some((rule) => {
+      if (rule.inverted) return false;
+      const subjects = Array.isArray(rule.subject)
+        ? rule.subject
+        : [rule.subject];
+      // the wildcard row itself is only covered by a default rule that applies
+      // to every record type, not by one for a single type
+      const matchesSubject =
+        subjects.includes("all") ||
+        (subject !== "all" && subjects.includes(subject));
+      const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
+      return (
+        matchesSubject &&
+        (actions.includes(action) || actions.includes("manage"))
+      );
+    });
+  }
 
   /** whether the "all" wildcard row is already present (drives the add options) */
   readonly hasAllSubject = computed(() =>
@@ -129,7 +313,9 @@ export class PermissionMatrixComponent {
   );
 
   /** the base "_default" role has no fallback to itself, so its empty state differs */
-  readonly isDefaultRole = computed(() => this.roleName() === DEFAULT_ROLE);
+  readonly isDefaultRole = computed(
+    () => this.roleName() === DEFAULT_SECTION_KEY,
+  );
 
   /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */
   private describeConditions(conditions: any, subject: string): string {
@@ -218,7 +404,25 @@ export class PermissionMatrixComponent {
    * not add or remove the individual action rules.
    */
   setManage(rowIndex: number, checked: boolean) {
-    this.setCellAllowed(rowIndex, "manage", checked);
+    if (!checked) {
+      this.setCellAllowed(rowIndex, "manage", false);
+      return;
+    }
+
+    this.emitUpdated((m) => {
+      const cells = m.rows[rowIndex].cells;
+      cells.manage = { allowed: true };
+      // "manage" already implies the individual actions, so drop the plain ones:
+      // otherwise they silently stay behind when "manage" is removed again.
+      // Cells carrying a condition or properties this matrix does not model
+      // (e.g. a rule managed by the backend) are kept untouched.
+      for (const action of this.crudActions) {
+        const cell = cells[action];
+        if (cell && !cell.conditions && !cell.extra) {
+          delete cells[action];
+        }
+      }
+    });
   }
 
   removeRow(rowIndex: number) {
@@ -288,19 +492,27 @@ export class PermissionMatrixComponent {
    */
   readonly addSelectVisible = signal(true);
 
-  addSubject(selected: string | string[]) {
+  async addSubject(selected: string | string[]) {
     const subject = Array.isArray(selected) ? selected[0] : selected;
     this.addPickerOpen.set(false);
     this.resetAddSelect();
     if (!subject || this.model().rows.some((r) => r.subject === subject)) {
       return;
     }
-    // the "all" wildcard row grants full access ({subject: "all", action: "manage"}),
-    // new entity rows start with read only
-    const cells: MatrixRow["cells"] =
-      subject === "all"
-        ? { manage: { allowed: true } }
-        : { read: { allowed: true } };
+
+    if (subject === "all") {
+      const confirmed = await this.confirmation.getConfirmation(
+        $localize`Add permissions for all record types?`,
+        $localize`Whatever you allow here applies to every record type, also to types added later. Those actions can then no longer be revoked for an individual record type.`,
+      );
+      if (confirmed !== true) {
+        return;
+      }
+    }
+    // every new row starts with read only, including the "all" wildcard row:
+    // a wildcard may grant just some actions, with the remaining ones added
+    // per record type
+    const cells: MatrixRow["cells"] = { read: { allowed: true } };
     this.emitUpdated((m) => m.rows.push({ subject, cells }));
   }
 

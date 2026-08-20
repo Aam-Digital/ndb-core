@@ -5,6 +5,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { of } from "rxjs";
 
 import { PermissionMatrixComponent } from "./permission-matrix.component";
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { MatrixModel } from "../permission-matrix";
@@ -28,6 +29,7 @@ describe("PermissionMatrixComponent", () => {
   };
 
   const mockDialog = { open: vi.fn() };
+  const mockConfirmation = { getConfirmation: vi.fn().mockResolvedValue(true) };
 
   const entityRegistry = new EntityRegistry();
 
@@ -38,6 +40,7 @@ describe("PermissionMatrixComponent", () => {
       providers: [
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: ConfirmationDialogService, useValue: mockConfirmation },
       ],
     }).compileComponents();
 
@@ -57,11 +60,12 @@ describe("PermissionMatrixComponent", () => {
     expect(text).toContain("All record types");
 
     const childRow = rows[0];
-    // read and create are allowed (both rendered as checked, read carries a condition)
+    // the "all" row of this role grants manage, so every action of the record
+    // type is shown as already granted
     const checkedBoxes = childRow.querySelectorAll(
       "mat-checkbox.mat-mdc-checkbox-checked",
     );
-    expect(checkedBoxes.length).toBe(2);
+    expect(checkedBoxes.length).toBe(5);
     // the condition is shown as a readable chip next to its checkbox
     const chip = childRow.querySelector(".cell-condition-chip");
     expect(chip).not.toBeNull();
@@ -110,7 +114,7 @@ describe("PermissionMatrixComponent", () => {
     expect(emitted.length).toBe(5);
   });
 
-  it("adds the all wildcard row with full manage access", () => {
+  it("adds a new row with read access only, including the all wildcard row", async () => {
     fixture.componentRef.setInput("model", {
       rows: [],
       unsupportedRules: [],
@@ -119,11 +123,132 @@ describe("PermissionMatrixComponent", () => {
     const emitted: MatrixModel[] = [];
     component.modelChange.subscribe((m) => emitted.push(m));
 
-    component.addSubject("all");
+    await component.addSubject("all");
 
+    // granting something for every record type is confirmed first
+    expect(mockConfirmation.getConfirmation).toHaveBeenCalled();
     expect(emitted[0].rows).toEqual([
-      { subject: "all", cells: { manage: { allowed: true } } },
+      { subject: "all", cells: { read: { allowed: true } } },
     ]);
+  });
+
+  it("drops the plain actions covered by manage, so removing manage clears the row", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [
+        {
+          subject: "Child",
+          cells: {
+            read: { allowed: true },
+            create: { allowed: true, conditions: { center: "x" } },
+          },
+        },
+      ],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    component.setManage(0, true);
+
+    // the plain "read" is implied by manage, the conditioned "create" is kept
+    expect(emitted[0].rows[0].cells).toEqual({
+      manage: { allowed: true },
+      create: { allowed: true, conditions: { center: "x" } },
+    });
+  });
+
+  it("keeps the rules of individual record types when the wildcard row grants manage", async () => {
+    fixture.componentRef.setInput("editable", true);
+    const emitted: MatrixModel[] = [];
+    component.modelChange.subscribe((m) => emitted.push(m));
+
+    // the fixture model holds a "Child" row and the "all" row at index 1
+    component.setManage(1, true);
+
+    expect(emitted[0].rows.map((r) => r.subject)).toEqual(["Child", "all"]);
+    expect(emitted[0].rows[0].cells.read).toEqual({
+      allowed: true,
+      conditions: { center: "x" },
+    });
+  });
+
+  it("locks only the actions a partial wildcard grants, leaving the rest editable per record type", () => {
+    // the canonical case: a wildcard for read, plus additional actions
+    // configured for individual record types
+    fixture.componentRef.setInput("model", {
+      rows: [
+        { subject: "all", cells: { read: { allowed: true } } },
+        { subject: "Child", cells: { manage: { allowed: true } } },
+        { subject: "School", cells: { create: { allowed: true } } },
+      ],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    fixture.detectChanges();
+
+    const state = (rowIndex: number) =>
+      Array.from(
+        fixture.nativeElement
+          .querySelectorAll("tr[mat-row]")
+          [rowIndex].querySelectorAll("mat-checkbox"),
+      ).map(
+        (box: HTMLElement) =>
+          (box.classList.contains("mat-mdc-checkbox-checked") ? "x" : "-") +
+          (box.classList.contains("mat-mdc-checkbox-disabled") ? "!" : ""),
+      );
+
+    // read/create/update/delete/manage per row
+    expect(state(0)).toEqual(["x", "-", "-", "-", "-"]);
+    // covered by its own manage, which stays editable
+    expect(state(1)).toEqual(["x!", "x!", "x!", "x!", "x"]);
+    // read comes from the wildcard, the other actions can still be added here
+    expect(state(2)).toEqual(["x!", "x", "-", "-", "-"]);
+  });
+
+  it("keeps the wildcard row editable when the default role only covers single record types", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [{ subject: "all", cells: { read: { allowed: true } } }],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    fixture.componentRef.setInput("inheritedRules", [
+      { subject: "SiteSettings", action: "read" },
+    ]);
+    fixture.detectChanges();
+
+    const boxes = fixture.nativeElement
+      .querySelectorAll("tr[mat-row]")[0]
+      .querySelectorAll("mat-checkbox");
+    boxes.forEach((box: HTMLElement) =>
+      expect(box.classList).not.toContain("mat-mdc-checkbox-disabled"),
+    );
+  });
+
+  it("lists the default role as a read-only row and locks what it grants", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [{ subject: "Child", cells: {} }],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    fixture.componentRef.setInput("inheritedRules", [
+      { subject: "all", action: "read" },
+    ]);
+    fixture.detectChanges();
+
+    const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
+    expect(rows[0].textContent).toContain("Default");
+
+    // the default row itself is never editable
+    const defaultBoxes = rows[0].querySelectorAll("mat-checkbox");
+    expect(defaultBoxes[0].classList).toContain("mat-mdc-checkbox-checked");
+    expect(defaultBoxes[0].classList).toContain("mat-mdc-checkbox-disabled");
+
+    // what it grants is locked on the role's own rows, the rest stays editable
+    const childBoxes = rows[1].querySelectorAll("mat-checkbox");
+    expect(childBoxes[0].classList).toContain("mat-mdc-checkbox-checked");
+    expect(childBoxes[0].classList).toContain("mat-mdc-checkbox-disabled");
+    expect(childBoxes[1].classList).not.toContain("mat-mdc-checkbox-disabled");
   });
 
   it("keeps the four actions independent and does not merge them into manage-all", () => {
@@ -150,21 +275,6 @@ describe("PermissionMatrixComponent", () => {
     const cells = emitted[0].rows[0].cells;
     expect(cells.manage).toBeUndefined();
     expect(cells.delete).toEqual({ allowed: true });
-  });
-
-  it("toggles manage as its own permission without touching the individual actions", () => {
-    fixture.componentRef.setInput("model", {
-      rows: [{ subject: "Child", cells: { read: { allowed: true } } }],
-      unsupportedRules: [],
-    } satisfies MatrixModel);
-    fixture.componentRef.setInput("editable", true);
-    const emitted: MatrixModel[] = [];
-    component.modelChange.subscribe((m) => emitted.push(m));
-
-    component.setManage(0, true);
-
-    expect(emitted[0].rows[0].cells.manage).toEqual({ allowed: true });
-    expect(emitted[0].rows[0].cells.read).toEqual({ allowed: true });
   });
 
   it("applies dialog result as cell conditions and keeps cell allowed", () => {

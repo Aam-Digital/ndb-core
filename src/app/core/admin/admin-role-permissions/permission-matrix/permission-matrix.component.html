@@ -16,7 +16,19 @@
           Record type
         </th>
         <td mat-cell *matCellDef="let v" class="subject-col">
-          @if (v.row.subject === "all") {
+          @if (v.isDefaultRow) {
+            <div class="flex-row align-center gap-regular">
+              <div class="wildcard-badge">
+                <fa-icon icon="lock"></fa-icon>
+              </div>
+              <div>
+                <div>{{ v.label }}</div>
+                <div class="text-secondary wildcard-subtitle" i18n>
+                  applies to any logged-in user, in addition to their roles
+                </div>
+              </div>
+            </div>
+          } @else if (v.row.subject === "all") {
             <div class="flex-row align-center gap-regular">
               <div class="wildcard-badge">
                 <fa-icon icon="asterisk"></fa-icon>
@@ -24,7 +36,7 @@
               <div>
                 <div>{{ v.label }}</div>
                 <div class="text-secondary wildcard-subtitle" i18n>
-                  wildcard, grants full access, edited as a whole
+                  applies to every record type, also to types added later
                 </div>
               </div>
             </div>
@@ -55,43 +67,64 @@
           <th mat-header-cell *matHeaderCellDef class="action-col">
             {{ col.label }}
           </th>
-          <td mat-cell *matCellDef="let v; let i = index" class="action-col">
+          <td mat-cell *matCellDef="let v" class="action-col">
             <div class="cell-stack">
-              <mat-checkbox
-                [checked]="v.manageAllowed || v.actionStates[col.key].allowed"
-                [disabled]="!editable() || v.manageAllowed"
-                [attr.aria-label]="col.label + ' – ' + v.label"
-                (change)="setCellAllowed(i, col.key, $event.checked)"
-              ></mat-checkbox>
+              <span
+                [matTooltip]="v.actionStates[col.key].lockTooltip"
+                [matTooltipDisabled]="!v.actionStates[col.key].lockTooltip"
+              >
+                <mat-checkbox
+                  [checked]="v.actionStates[col.key].allowed"
+                  [disabled]="!editable() || !v.actionStates[col.key].editable"
+                  [attr.aria-label]="col.label + ' – ' + v.label"
+                  (change)="
+                    setCellAllowed(v.modelIndex, col.key, $event.checked)
+                  "
+                ></mat-checkbox>
+              </span>
 
-              @if (v.actionStates[col.key].hasCondition && !v.manageAllowed) {
+              @if (v.actionStates[col.key].hasCondition) {
                 <!-- condition chip: editable only for subjects whose conditions
                      can be edited visually, read-only otherwise -->
                 <span
                   class="cell-condition-chip"
-                  [class.readonly]="!(editable() && v.conditionsEditable)"
+                  [class.readonly]="
+                    !(
+                      editable() &&
+                      v.conditionsEditable &&
+                      v.actionStates[col.key].editable
+                    )
+                  "
                   [attr.role]="
-                    editable() && v.conditionsEditable ? 'button' : null
+                    editable() &&
+                    v.conditionsEditable &&
+                    v.actionStates[col.key].editable
+                      ? 'button'
+                      : null
                   "
                   [attr.tabindex]="
-                    editable() && v.conditionsEditable ? 0 : null
+                    editable() &&
+                    v.conditionsEditable &&
+                    v.actionStates[col.key].editable
+                      ? 0
+                      : null
                   "
                   [matTooltip]="v.actionStates[col.key].summary"
                   (click)="
                     editable() &&
                       v.conditionsEditable &&
-                      openConditionDialog(i, col.key)
+                      openConditionDialog(v.modelIndex, col.key)
                   "
                   (keydown.enter)="
                     editable() &&
                       v.conditionsEditable &&
-                      openConditionDialog(i, col.key)
+                      openConditionDialog(v.modelIndex, col.key)
                   "
                   (keydown.space)="
                     $event.preventDefault();
                     editable() &&
                       v.conditionsEditable &&
-                      openConditionDialog(i, col.key)
+                      openConditionDialog(v.modelIndex, col.key)
                   "
                 >
                   <fa-icon icon="filter"></fa-icon>
@@ -107,28 +140,30 @@
                       i18n-matTooltip
                       matTooltip="Remove condition"
                       (click)="
-                        $event.stopPropagation(); removeCondition(i, col.key)
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
                       "
                       (keydown.enter)="
-                        $event.stopPropagation(); removeCondition(i, col.key)
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
                       "
                       (keydown.space)="
                         $event.preventDefault();
                         $event.stopPropagation();
-                        removeCondition(i, col.key)
+                        removeCondition(v.modelIndex, col.key)
                       "
                     ></fa-icon>
                   }
                 </span>
               } @else if (
                 editable() &&
-                v.actionStates[col.key].allowed &&
-                !v.manageAllowed &&
+                v.actionStates[col.key].ownAllowed &&
+                v.actionStates[col.key].editable &&
                 v.conditionsEditable
               ) {
                 <button
                   class="cell-condition-link"
-                  (click)="openConditionDialog(i, col.key)"
+                  (click)="openConditionDialog(v.modelIndex, col.key)"
                 >
                   <fa-icon icon="filter"></fa-icon>
                   <span i18n>only where&hellip;</span>
@@ -143,27 +178,28 @@
         <th mat-header-cell *matHeaderCellDef class="action-col manage-col">
           {{ manageColLabel }}
         </th>
-        <td
-          mat-cell
-          *matCellDef="let v; let i = index"
-          class="action-col manage-col"
-        >
-          <mat-checkbox
-            [checked]="v.manageAllowed"
-            [disabled]="!editable() || v.row.subject === 'all'"
-            [attr.aria-label]="manageColLabel + ' – ' + v.label"
-            (change)="setManage(i, $event.checked)"
-          ></mat-checkbox>
+        <td mat-cell *matCellDef="let v" class="action-col manage-col">
+          <span
+            [matTooltip]="v.manageState.lockTooltip"
+            [matTooltipDisabled]="!v.manageState.lockTooltip"
+          >
+            <mat-checkbox
+              [checked]="v.manageState.allowed"
+              [disabled]="!editable() || !v.manageState.editable"
+              [attr.aria-label]="manageColLabel + ' – ' + v.label"
+              (change)="setManage(v.modelIndex, $event.checked)"
+            ></mat-checkbox>
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="rowActions">
         <th mat-header-cell *matHeaderCellDef class="row-actions-col"></th>
-        <td mat-cell *matCellDef="let v; let i = index" class="row-actions-col">
-          @if (editable()) {
+        <td mat-cell *matCellDef="let v" class="row-actions-col">
+          @if (editable() && !v.isDefaultRow) {
             <button
               mat-icon-button
-              (click)="removeRow(i)"
+              (click)="removeRow(v.modelIndex)"
               i18n-matTooltip
               matTooltip="Remove all permissions for this record type"
             >
@@ -178,6 +214,7 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns"
         [class.wildcard-row]="row.row.subject === 'all'"
+        [class.default-row]="row.isDefaultRow"
       ></tr>
     </table>
   </div>

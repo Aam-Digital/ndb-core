@@ -86,6 +86,7 @@
 
 <app-permission-matrix
   [model]="model()"
+  [inheritedRules]="inheritedRules()"
   [editable]="editing()"
   [roleName]="roleName()"
   (modelChange)="onModelChange($event)"

@@ -136,4 +136,21 @@ describe("permission-matrix", () => {
       },
     ]);
   });
+
+  it("keeps a wildcard rule and the additional rules of individual record types side by side", () => {
+    const rules: DatabaseRule[] = [
+      { subject: "all", action: "read" },
+      { subject: "Child", action: "manage" },
+      { subject: "School", action: "create" },
+    ];
+
+    const matrix = rulesToMatrix(rules);
+
+    expect(matrix.rows.map((r) => r.subject)).toEqual([
+      "all",
+      "Child",
+      "School",
+    ]);
+    expect(matrixToRules(matrix)).toEqual(rules);
+  });
 });

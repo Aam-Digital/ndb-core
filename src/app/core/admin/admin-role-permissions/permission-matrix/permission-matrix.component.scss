@@ -132,3 +132,8 @@ td.mat-mdc-cell {
 .empty-state {
   text-align: center;
 }
+
+/* the shared "_default" role, listed above the role's own rules */
+.default-row {
+  background: rgba(0, 0, 0, 0.02);
+}
