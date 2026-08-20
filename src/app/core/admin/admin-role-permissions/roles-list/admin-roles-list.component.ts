@@ -19,8 +19,10 @@ import { ViewTitleComponent } from "../../../common-components/view-title/view-t
 import { Logging } from "../../../logging/logging.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
 import {
-  DEFAULT_ROLE,
-  PUBLIC_ROLE,
+  DEFAULT_SECTION_KEY,
+  PUBLIC_SECTION_KEY,
+} from "../../../permissions/permission-types";
+import {
   RolePermissionsService,
   RoleWithPermissions,
 } from "../role-permissions.service";
@@ -62,8 +64,8 @@ export class AdminRolesListComponent implements OnInit {
 
   readonly displayedColumns = ["name", "description", "permissions"];
 
-  readonly publicRole = PUBLIC_ROLE;
-  readonly defaultRole = DEFAULT_ROLE;
+  readonly publicRole = PUBLIC_SECTION_KEY;
+  readonly defaultRole = DEFAULT_SECTION_KEY;
 
   /** whether the user may create/delete roles in the authentication server (reactive) */
   readonly canManageRoles = this.rolePermissionsService.canManageRoles;

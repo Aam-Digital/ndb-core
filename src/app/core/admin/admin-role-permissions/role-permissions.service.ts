@@ -11,38 +11,26 @@ import { SessionSubject } from "../../session/auth/session-info";
 import {
   DatabaseRule,
   DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  LEGACY_DEFAULT_KEY,
+  LEGACY_PUBLIC_KEY,
+  PUBLIC_SECTION_KEY,
+  RESERVED_ROLE_PREFIX,
+  RESERVED_RULE_CONFIG_KEYS,
 } from "../../permissions/permission-types";
 import { Role } from "../../user/user-admin-service/user-account";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 
 /**
- * Reserved permission rules that apply to every logged-in user, combined with
- * their assigned roles. Stored under this key in the Config:Permissions document.
+ * Whether a key of the permissions config carries special semantics instead of
+ * naming a user role, so it must never be listed as an ordinary, deletable role.
  */
-export const DEFAULT_ROLE = "_default";
-
-/**
- * Reserved permission rules that apply before login (e.g. public forms).
- * Stored under this key in the Config:Permissions document.
- */
-export const PUBLIC_ROLE = "_public";
-
-/**
- * Legacy unprefixed keys for the reserved roles, still read by the runtime
- * permission enforcer until the reserved-name migration renames them.
- * Read here as a fallback so an un-migrated config shows its base rules under
- * the reserved rows instead of exposing them as ordinary, deletable roles.
- */
-const LEGACY_DEFAULT_ROLE = "default";
-const LEGACY_PUBLIC_ROLE = "public";
-
-/** all keys that must never appear as ordinary, deletable roles in the list */
-const RESERVED_RULE_KEYS = [
-  DEFAULT_ROLE,
-  PUBLIC_ROLE,
-  LEGACY_DEFAULT_ROLE,
-  LEGACY_PUBLIC_ROLE,
-];
+function isReservedRuleConfigKey(key: string): boolean {
+  return (
+    key.startsWith(RESERVED_ROLE_PREFIX) ||
+    RESERVED_RULE_CONFIG_KEYS.includes(key)
+  );
+}
 
 /**
  * Technical roles that serve a special function in the authentication server
@@ -137,23 +125,23 @@ export class RolePermissionsService {
 
     const roles: RoleWithPermissions[] = [
       {
-        name: DEFAULT_ROLE,
+        name: DEFAULT_SECTION_KEY,
         isVirtual: true,
         isProtected: true,
         description: $localize`Base permissions that apply to every logged-in user, combined with their other roles`,
-        rules: rules[DEFAULT_ROLE] ?? rules[LEGACY_DEFAULT_ROLE],
+        rules: rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY],
       },
       {
-        name: PUBLIC_ROLE,
+        name: PUBLIC_SECTION_KEY,
         isVirtual: true,
         isProtected: true,
         description: $localize`Permissions that apply before login (e.g. public registration forms)`,
-        rules: rules[PUBLIC_ROLE] ?? rules[LEGACY_PUBLIC_ROLE],
+        rules: rules[PUBLIC_SECTION_KEY] ?? rules[LEGACY_PUBLIC_KEY],
       },
     ];
 
     for (const key of Object.keys(rules)) {
-      if (RESERVED_RULE_KEYS.includes(key)) continue;
+      if (isReservedRuleConfigKey(key)) continue;
       const keycloakRole = keycloakRoles.find((r) => r.name === key);
       roles.push({
         name: key,
