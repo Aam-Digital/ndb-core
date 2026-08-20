@@ -66,7 +66,6 @@ const viewConfigs: ViewConfig[] = [
     config: {
       entityType: EmailTemplate.ENTITY_TYPE,
       columns: ["subject", "body", "availableForEntityTypes", "category"],
-      managePermissions: true,
     } as EntityListConfig,
   },
 

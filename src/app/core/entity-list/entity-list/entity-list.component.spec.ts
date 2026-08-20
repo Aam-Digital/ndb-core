@@ -14,6 +14,7 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { FeaturePermissionDialogComponent } from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -260,6 +261,50 @@ describe("EntityListComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should offer permission configuration only for internal entity types", () => {
+    createComponent();
+    component.isDesktop = true;
+    fixture.detectChanges();
+
+    const permissionButton = () =>
+      Array.from(fixture.nativeElement.querySelectorAll("button")).find(
+        (button: HTMLElement) =>
+          button.textContent.includes("Configure Permissions"),
+      );
+
+    // regular entity types do not offer this at all (the list menu is already full)
+    expect(component.isFeatureType()).toBe(false);
+    expect(permissionButton()).toBeUndefined();
+
+    class FeatureTestEntity extends TestEntity {
+      static override isInternalEntity = true;
+    }
+    fixture.componentRef.setInput("entityConstructor", FeatureTestEntity);
+    fixture.detectChanges();
+
+    expect(component.isFeatureType()).toBe(true);
+    expect(permissionButton()).toBeTruthy();
+  });
+
+  it("should open the feature permission dialog for the displayed entity type", () => {
+    createComponent();
+    const openSpy = vi
+      .spyOn(TestBed.inject(MatDialog), "open")
+      .mockImplementation(() => makeMatDialogRef());
+
+    component.openPermissionsDialog();
+
+    expect(openSpy).toHaveBeenCalledWith(
+      FeaturePermissionDialogComponent,
+      expect.objectContaining({
+        data: {
+          entityType: TestEntity.ENTITY_TYPE,
+          entityLabel: TestEntity.labelPlural,
+        },
+      }),
+    );
   });
 
   function createComponent() {
