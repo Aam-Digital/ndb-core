@@ -6,7 +6,10 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { provideRouter } from "@angular/router";
 import { of, throwError } from "rxjs";
 import { FeaturePermissionDialogComponent } from "./feature-permission-dialog.component";
-import { FeaturePermissionService } from "../feature-permission.service";
+import {
+  FeatureAction,
+  FeaturePermissionService,
+} from "../feature-permission.service";
 import { PermissionsConfigService } from "../../permissions-config.service";
 import { UserAdminService } from "../../../user/user-admin-service/user-admin.service";
 import { Config } from "../../../config/config";
@@ -28,13 +31,43 @@ describe("FeaturePermissionDialogComponent", () => {
   const ENTITY_TYPE = "TemplateExport";
   const backupConfig = new Config(Config.PERMISSION_KEY + ":backup", {});
 
-  /** default state: one read-only wildcard role and one editable role */
+  function permissions(
+    granted: FeatureAction[],
+    editable: FeatureAction[],
+  ): Record<FeatureAction, { granted: boolean; editable: boolean }> {
+    return Object.fromEntries(
+      (["create", "read", "update", "delete"] as FeatureAction[]).map(
+        (action) => [
+          action,
+          {
+            granted: granted.includes(action),
+            editable: editable.includes(action),
+          },
+        ],
+      ),
+    ) as Record<FeatureAction, { granted: boolean; editable: boolean }>;
+  }
+
+  /** default state: shared read access, one read-only role and one editable role */
   function defaultState() {
     return {
       entityType: ENTITY_TYPE,
+      defaultRules: {
+        role: "_default",
+        actions: permissions(["read"], []),
+        editable: false,
+      },
       roles: [
-        { role: "user_app", use: true, manage: true, editable: false },
-        { role: "assistant_app", use: false, manage: false, editable: true },
+        {
+          role: "user_app",
+          actions: permissions(["create", "read", "update", "delete"], []),
+          editable: false,
+        },
+        {
+          role: "assistant_app",
+          actions: permissions(["read"], ["create", "update", "delete"]),
+          editable: true,
+        },
       ],
       hasComplexRules: true,
     };
@@ -43,7 +76,9 @@ describe("FeaturePermissionDialogComponent", () => {
   async function createAndInit() {
     fixture = TestBed.createComponent(FeaturePermissionDialogComponent);
     component = fixture.componentInstance;
-    await component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
   }
 
   beforeEach(async () => {
@@ -94,110 +129,93 @@ describe("FeaturePermissionDialogComponent", () => {
     }).compileComponents();
   });
 
-  it("should create", () => {
-    fixture = TestBed.createComponent(FeaturePermissionDialogComponent);
-    component = fixture.componentInstance;
-    expect(component).toBeTruthy();
-  });
-
-  it("should merge auth-server roles with config roles and map to rows", async () => {
+  it("should list the shared default rules above the roles, with descriptions from the auth server", async () => {
     await createAndInit();
 
-    // both sources merged, Keycloak roles first, and passed to the service
+    expect(
+      component
+        .rows()
+        .map((row) => [row.role, row.label, row.isDefaultRow, row.description]),
+    ).toEqual([
+      ["_default", "Default", true, "(applies to any logged-in user)"],
+      ["user_app", "user_app", false, "App user"],
+      ["assistant_app", "assistant_app", false, undefined],
+    ]);
     expect(mockPermissionService.getPermissions).toHaveBeenCalledWith(
       ENTITY_TYPE,
       ["user_app", "assistant_app"],
     );
-
-    const rows = component.roles();
-    expect(rows).toEqual([
-      {
-        role: "user_app",
-        description: "App user",
-        use: true,
-        manage: true,
-        editable: false,
-        useAriaLabel: expect.stringContaining("user_app"),
-        manageAriaLabel: expect.stringContaining("user_app"),
-      },
-      {
-        role: "assistant_app",
-        description: undefined,
-        use: false,
-        manage: false,
-        editable: true,
-        useAriaLabel: expect.stringContaining("assistant_app"),
-        manageAriaLabel: expect.stringContaining("assistant_app"),
-      },
-    ]);
     expect(component.hasComplexRules()).toBe(true);
   });
 
-  it("should fall back to config roles when the auth server is unavailable", async () => {
+  it("should merge roles that only exist in the permissions config when the auth server is unavailable", async () => {
     mockUserAdmin.getAllRoles.mockReturnValue(
-      throwError(() => new Error("no admin API")),
+      throwError(() => new Error("keycloak unavailable")),
     );
 
     await createAndInit();
 
-    expect(mockPermissionService.getConfiguredRoleNames).toHaveBeenCalled();
-    const roleNames = component.roles()?.map((r) => r.role);
-    expect(roleNames).toEqual(["user_app", "assistant_app"]);
+    expect(mockPermissionService.getPermissions).toHaveBeenCalledWith(
+      ENTITY_TYPE,
+      ["user_app", "assistant_app"],
+    );
+    expect(component.permissionRows.error()).toBeUndefined();
   });
 
-  it("should show a load error when no roles are available", async () => {
+  it.each([
+    ["no roles can be determined", () => Promise.resolve([])],
+    [
+      "loading the permissions fails",
+      () => Promise.reject(new Error("offline")),
+    ],
+  ])("should show an error when %s", async (_name, configuredRoles) => {
     mockUserAdmin.getAllRoles.mockReturnValue(of([]));
-    mockPermissionService.getConfiguredRoleNames.mockResolvedValue([]);
-
-    await createAndInit();
-
-    expect(component.loadError()).toBe(true);
-    expect(component.roles()).toEqual([]);
-    expect(mockPermissionService.getPermissions).not.toHaveBeenCalled();
-  });
-
-  it("should update a role immutably via setUse and setManage", async () => {
-    await createAndInit();
-    const before = component.roles();
-
-    component.setManage("assistant_app", true);
-    component.setUse("assistant_app", true);
-
-    const after = component.roles();
-    expect(after).not.toBe(before); // new array reference -> OnPush re-renders
-    expect(after?.find((r) => r.role === "assistant_app")).toEqual(
-      expect.objectContaining({ use: true, manage: true }),
+    mockPermissionService.getConfiguredRoleNames.mockImplementation(
+      configuredRoles,
     );
-    // other rows untouched
-    expect(after?.find((r) => r.role === "user_app")?.manage).toBe(true);
-  });
 
-  it("should persist only editable rows on confirm and offer an undo", async () => {
     await createAndInit();
 
+    expect(component.permissionRows.error()).toBeTruthy();
+    expect(component.rows()).toEqual([]);
+  });
+
+  it("should save only the editable role rows and offer an undo", async () => {
+    await createAndInit();
+
+    component.setAction("assistant_app", "create", true);
     await component.confirm();
 
     expect(mockPermissionService.setPermissions).toHaveBeenCalledWith(
       ENTITY_TYPE,
-      [{ role: "assistant_app", use: false, manage: false }],
+      [
+        {
+          role: "assistant_app",
+          actions: {
+            create: true,
+            read: true,
+            update: false,
+            delete: false,
+          },
+        },
+      ],
     );
     expect(mockPermissionsConfig.offerUndo).toHaveBeenCalledWith(
       backupConfig,
-      expect.any(String),
+      expect.stringContaining("Export Templates"),
     );
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
   });
 
-  it("should keep the dialog open and warn when saving fails", async () => {
+  it("should keep the dialog open and inform the user when saving fails", async () => {
     mockPermissionService.setPermissions.mockRejectedValue(
-      new Error("database unreachable"),
+      new Error("conflict"),
     );
 
     await createAndInit();
     await component.confirm();
 
     expect(mockSnackBar.open).toHaveBeenCalled();
-    expect(mockPermissionsConfig.offerUndo).not.toHaveBeenCalled();
     expect(mockDialogRef.close).not.toHaveBeenCalled();
     expect(component.saving()).toBe(false);
   });

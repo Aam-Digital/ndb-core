@@ -1,5 +1,13 @@
 @use "variables/colors";
 
+.permission-hint p {
+  margin: 0;
+}
+
+.permission-hint a {
+  margin-top: 8px;
+}
+
 .permission-table {
   border-collapse: collapse;
   margin-top: 8px;
@@ -25,6 +33,15 @@
 
   .checkbox-tooltip-wrapper {
     display: inline-block;
+  }
+
+  // the shared `_default` section is listed above the roles it applies to
+  .default-row td {
+    border-bottom: 2px solid colors.$border-color;
+  }
+
+  .default-row strong {
+    font-style: italic;
   }
 
   .readonly-row {
