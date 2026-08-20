@@ -361,6 +361,7 @@ test("Combining filters keeps sorting consistent across paginated pages", async 
     name: "Include archived records",
   });
   await archivedToggle.click();
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 16\s*$/);
   await page.getByRole("button", { name: "Next page" }).click();
   await expect(paginatorRange).toHaveText(/^\s*11 - 16 of 16\s*$/);
   await expect(nameCells).toHaveText([

@@ -6,7 +6,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("InMemoryDataSource", () => {
-  let dataSource: InMemoryDataSource<Entity>;
+  let dataSource: InMemoryDataSource<TestEntity>;
   let entityMapper: EntityMapperService;
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -14,7 +14,7 @@ describe("InMemoryDataSource", () => {
       providers: [InMemoryDataSource],
     }).compileComponents();
 
-    dataSource = TestBed.inject(InMemoryDataSource);
+    dataSource = TestBed.inject(InMemoryDataSource<TestEntity>);
     entityMapper = TestBed.inject(EntityMapperService);
     dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
     TestBed.tick();
@@ -82,7 +82,7 @@ describe("InMemoryDataSource", () => {
     });
 
     it("should return all records, ignoring any filter, when filtered=false", async () => {
-      dataSource.dataFilter.set({ other: "group-a" } as any);
+      dataSource.dataFilter.set({ other: "group-a" });
       dataSource.filter = "two";
       TestBed.tick();
 
@@ -92,7 +92,7 @@ describe("InMemoryDataSource", () => {
     });
 
     it("should apply only the structured dataFilter when no free-text filter is set", async () => {
-      dataSource.dataFilter.set({ other: "group-a" } as any);
+      dataSource.dataFilter.set({ other: "group-a" });
       TestBed.tick();
 
       const result = await dataSource.getAllData(true);
@@ -102,7 +102,7 @@ describe("InMemoryDataSource", () => {
     });
 
     it("should also apply the free-text filter (as currently displayed by the table) when filtered=true", async () => {
-      dataSource.dataFilter.set({ other: "group-a" } as any);
+      dataSource.dataFilter.set({ other: "group-a" });
       // simulates the free-text search box, which lower-cases+trims before assigning
       dataSource.filter = "two";
       TestBed.tick();

@@ -4,7 +4,7 @@ import { FilterComponent } from "./filter.component";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { StringFilter } from "../filters/stringFilter";
 
@@ -19,7 +19,6 @@ describe("FilterComponent", () => {
   let fixture: ComponentFixture<FilterComponent>;
 
   let activatedRouteMock = new ActivatedRouteMock();
-  let router: Router;
 
   beforeEach(async () => {
     activatedRouteMock.snapshot = {
@@ -35,7 +34,6 @@ describe("FilterComponent", () => {
         },
       ],
     }).compileComponents();
-    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(FilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
