@@ -87,7 +87,7 @@ export class ConfigureEnumPopupComponent {
   private async confirmDiscardChanges(): Promise<boolean> {
     if (!this.hasUnsavedChanges()) return true;
     const confirmed = await this.confirmationService.getConfirmation(
-      $localize`Discard changes?`,
+      $localize`:Discard changes header:Discard Changes?`,
       $localize`You have unsaved changes. Discard them?`,
       CustomYesNoButtons($localize`Discard`, $localize`Continue Editing`),
     );
@@ -286,7 +286,7 @@ export class ConfigureEnumPopupComponent {
 
   private showDuplicateSkippedMessage(skipped: number) {
     this.snackBar.open(
-      $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? "y" : "ies"}.`,
+      $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entries.`,
       undefined,
       { duration: 3000 },
     );
@@ -297,7 +297,7 @@ export class ConfigureEnumPopupComponent {
     const entriesList = invalidEntries.map((e) => `"${e}"`).join(", ");
     await this.confirmationService.getConfirmation(
       $localize`:@@invalidOptionsSkippedTitle:Some entries skipped`,
-      $localize`:@@invalidOptionsSkipped:Skipped ${count} entr${count === 1 ? "y" : "ies"} without usable letters or numbers for ID: ${entriesList}.`,
+      $localize`:@@invalidOptionsSkipped:Skipped ${count} entries without usable letters or numbers for ID: ${entriesList}.`,
       OkButton,
     );
   }

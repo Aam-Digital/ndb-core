@@ -48,7 +48,7 @@
                 i18n-matTooltip="
                   tooltip for remove icon on chips of dropdown item
                 "
-                matTooltip="remove"
+                matTooltip="Remove"
                 icon="xmark"
               ></app-fa-dynamic-icon>
             </button>
@@ -79,6 +79,7 @@
     matInput
     style="text-overflow: ellipsis"
     [matAutocomplete]="autoSuggestions"
+    [appKeepPanelOpenOnSelect]="!!multi()"
     [matAutocompleteConnectedTo]="autocompleteOrigin"
     (focusout)="onFocusOut($event)"
     [placeholder]="placeholder"
@@ -92,6 +93,7 @@ Autocomplete
   [disableRipple]="true"
   #autoSuggestions="matAutocomplete"
   (optionSelected)="select($event.option.value)"
+  (closed)="onDropdownClosed()"
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="true"
   [panelWidth]="panelWidth()"
@@ -110,6 +112,7 @@ Autocomplete
       >
         <mat-option
           [value]="item"
+          (onSelectionChange)="onOptionSelectionChange($event)"
           *cdkVirtualFor="
             let item of autocompleteOptions();
             trackBy: trackByOptionValueFn
@@ -123,7 +126,11 @@ Autocomplete
       </cdk-virtual-scroll-viewport>
     } @else {
       @for (item of autocompleteOptions(); track item.asValue) {
-        <mat-option [value]="item" class="option-with-wrap">
+        <mat-option
+          [value]="item"
+          class="option-with-wrap"
+          (onSelectionChange)="onOptionSelectionChange($event)"
+        >
           <ng-container
             [ngTemplateOutlet]="optionContent"
             [ngTemplateOutletContext]="{ $implicit: item, truncate: false }"
@@ -155,7 +162,7 @@ Autocomplete
       class="option-content flex-row disable-autocomplete-active-color align-center"
     >
       @if (multi()) {
-        <mat-checkbox [checked]="item.selected"></mat-checkbox>
+        <mat-checkbox [checked]="isSelected(item)"></mat-checkbox>
       }
       @if (!templateRef()) {
         <span
@@ -186,6 +193,7 @@ Autocomplete
       <mat-option
         [value]="toCreateOptionValue(option, inputElement.value)"
         [attr.aria-label]="createOptionAriaLabel(option, inputElement.value)"
+        (onSelectionChange)="onOptionSelectionChange($event)"
       >
         <em
           i18n="

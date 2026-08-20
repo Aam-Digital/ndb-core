@@ -4,8 +4,7 @@ import {
   CustomYesNoButtons,
   OkButton,
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { LOCATION_TOKEN } from "#src/app/utils/di-tokens";
-import { BackupService } from "../../admin/backup/backup.service";
+import { LocalDeviceResetService } from "../local-device-reset.service";
 import { Logging } from "../../logging/logging.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
@@ -17,9 +16,18 @@ import { SessionType } from "../../session/session-type";
 @Injectable({ providedIn: "root" })
 export class PouchdbCorruptionRecoveryService {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly location = inject<Location>(LOCATION_TOKEN);
+  private readonly localDeviceReset = inject(LocalDeviceResetService);
   private warningDialogOpen = false;
   private resetDialogOpen = false;
+
+  /**
+   * Shared closing line of both recovery dialogs.
+   * Must stay a getter: this service is in the eagerly imported graph of main.ts, so a
+   * module-level `$localize` would run before `initLanguage()` and never be translated.
+   */
+  private get improvementsPlannedHint(): string {
+    return $localize`:local db corruption dialog improvements hint:We are working on improvements to allow this in the future.`;
+  }
 
   async promptMultiTabWarningDialog(): Promise<void> {
     if (environment.session_type === SessionType.online) {
@@ -35,9 +43,9 @@ export class PouchdbCorruptionRecoveryService {
         $localize`:multi-tab warning dialog title:Multiple Tabs Open`,
         $localize`:multi-tab warning dialog text:The app is open in multiple tabs, which can break the local database.
 
-Please close the other tabs and try again to avoid local database corruption.
-
-We are working on improvements to allow this in the future.`,
+Please close the other tabs and try again to avoid local database corruption.` +
+          "\n\n" +
+          this.improvementsPlannedHint,
         OkButton,
         false,
       );
@@ -57,8 +65,9 @@ We are working on improvements to allow this in the future.`,
         $localize`:local db corruption dialog title:Local Database Needs Reset`,
         $localize`:local db corruption dialog text:The local database appears corrupted and saving is no longer reliable.
 
-This can happen after using multiple tabs in parallel.
-We are working on improvements to allow this in the future.`,
+This can happen after using multiple tabs in parallel.` +
+          "\n" +
+          this.improvementsPlannedHint,
         CustomYesNoButtons(
           $localize`:local db corruption dialog button reset:Reset Application`,
           $localize`:Confirmation dialog Cancel:Cancel`,
@@ -79,8 +88,7 @@ We are working on improvements to allow this in the future.`,
     Logging.warn(
       "Resetting application data after suspected local database corruption (user confirmed)",
     );
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
-    this.location.pathname = "";
+    this.localDeviceReset.markResetPendingAndReload();
   }
 
   handleKnownMultiTabCorruption(err: unknown, logMessage: string): void {

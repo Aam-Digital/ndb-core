@@ -29,6 +29,12 @@
       "url": "https://matomo.aam-digital.org",
       "site_id": "8"
     },
+    "appConfig:map": {
+      "start": [
+        53.5520952,
+        9.9933974
+      ]
+    },
     "navigationMenu": {
       "items": [
         {

@@ -10,7 +10,6 @@ import {
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
@@ -18,7 +17,7 @@ import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
 import { AdminMenuItemDetailsComponent } from "../admin-menu-item-details/admin-menu-item-details.component";
 import {
-  hasNoLinkAndNoSubItems,
+  isManualItemWithoutLink,
   MenuItemForAdminUi,
 } from "../menu-item-for-admin-ui";
 import { MatNavList } from "@angular/material/list";
@@ -26,18 +25,18 @@ import { MatIconButton } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
- * Display and edit a menu item in the admin interface,
- * including recursively editing and drag&drop of subMenu items.
+ * Display and edit a single menu item in the admin interface.
+ *
+ * Nesting and drag & drop are handled by the surrounding
+ * {@link MenuItemListEditorComponent}, which renders the whole (nested) menu as one flat list.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-admin-menu-item",
-  standalone: true,
   imports: [
     MatNavList,
     MenuItemComponent,
     FaIconComponent,
-    DragDropModule,
     MatFormFieldModule,
     FormsModule,
     MatIconButton,
@@ -54,6 +53,9 @@ export class AdminMenuItemComponent {
   private readonly menuService = inject(MenuService);
 
   item = model.required<MenuItemForAdminUi>();
+
+  /** whether this item has nested sub-items (which are rows of their own in the editor) */
+  hasSubItems = input<boolean>(false);
 
   itemToDisplay = computed<MenuItem>(() => {
     const item = this.item();
@@ -72,42 +74,16 @@ export class AdminMenuItemComponent {
    */
   hasNoLinkWarning = computed(() => {
     const item = this.item();
-    return item ? hasNoLinkAndNoSubItems(item) : false;
+    return item ? isManualItemWithoutLink(item) && !this.hasSubItems() : false;
   });
-
-  connectedTo = input<string[]>([]);
 
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */
   allowEntityLinks = input<boolean>(true);
 
-  /** Whether sub-menus are allowed for this item type */
-  allowSubMenu = input<boolean>(true);
-
-  itemDrop = output<CdkDragDrop<MenuItemForAdminUi[]>>();
   deleteItem = output<MenuItemForAdminUi>();
-
-  removeSubItem(subItem: MenuItemForAdminUi): void {
-    this.item.set({
-      ...this.item(),
-      subMenu: [...this.item().subMenu.filter((i) => i !== subItem)],
-    });
-  }
-
-  onSubItemChange(updatedSubItem: MenuItemForAdminUi) {
-    this.item.set({
-      ...this.item(),
-      subMenu: this.item().subMenu.map((sub) =>
-        sub.uniqueId === updatedSubItem.uniqueId ? updatedSubItem : sub,
-      ),
-    });
-  }
 
   onDelete(item: MenuItemForAdminUi): void {
     this.deleteItem.emit(item);
-  }
-
-  onDragDrop(event: CdkDragDrop<MenuItemForAdminUi[]>) {
-    this.itemDrop.emit(event);
   }
 
   async editMenuItem(item: MenuItemForAdminUi) {
@@ -134,7 +110,7 @@ export class AdminMenuItemComponent {
       width: "600px",
       data: {
         item: item ? { ...item } : {},
-        allowEntityLinks: this.allowEntityLinks,
+        allowEntityLinks: this.allowEntityLinks(),
       },
     });
     return firstValueFrom(dialogRef.afterClosed());

@@ -10,6 +10,10 @@ import { switchMap } from "rxjs/operators";
 import { TemplateExport } from "../template-export.entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { environment } from "../../../../environments/environment";
+import {
+  TemplateExportComplement,
+  TemplateExportContextService,
+} from "../template-export-context/template-export-context.service";
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -32,6 +36,11 @@ interface TemplateRenderRequestDto {
    * The data used to fill placeholders in the template.
    */
   data: Object;
+
+  /**
+   * Additional context data available in the template under the `{c.…}` prefix.
+   */
+  complement?: TemplateExportComplement;
 }
 
 /**
@@ -41,6 +50,12 @@ interface TemplateRenderRequestDto {
 interface TemplateRenderBatchRequestDto {
   convertTo: string;
   data: Object[];
+
+  /**
+   * Additional context data, shared by all records of the batch,
+   * available in the template under the `{c.…}` prefix.
+   */
+  complement?: TemplateExportComplement;
 }
 
 export interface TemplateExportResult {
@@ -61,6 +76,7 @@ export interface TemplateExportBatchResult {
 })
 export class TemplateExportApiService extends FileService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+  private readonly exportContext = inject(TemplateExportContextService);
 
   readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
 
@@ -133,12 +149,15 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     data: Object,
   ): Observable<TemplateExportResult> {
+    const complement = this.exportContext.getComplement();
+
     return this.httpClient
       .post(
         this.API_URL + "/render/" + template.getId(),
         {
           convertTo: "pdf",
           data: data,
+          ...(complement ? { complement } : {}),
         } as TemplateRenderRequestDto,
         { observe: "response", responseType: "arraybuffer" },
       )
@@ -181,12 +200,15 @@ export class TemplateExportApiService extends FileService {
     mode: "zip" | "combined" = "zip",
   ): Observable<TemplateExportBatchResult> {
     const fallbackExtension = mode === "combined" ? ".pdf" : ".zip";
+    const complement = this.exportContext.getComplement();
+
     return this.httpClient
       .post(
         this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
         {
           convertTo: "pdf",
           data: dataList,
+          ...(complement ? { complement } : {}),
         } as TemplateRenderBatchRequestDto,
         { observe: "response", responseType: "arraybuffer" },
       )

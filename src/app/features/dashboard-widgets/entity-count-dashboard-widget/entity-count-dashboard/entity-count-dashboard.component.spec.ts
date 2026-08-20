@@ -1,17 +1,20 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapperProvider,
   MockEntityMapperService,
-} from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { Note } from "../../../../child-dev-project/notes/model/note";
-import { TestEntity } from "../../../../utils/test-utils/TestEntity";
-import { Entity } from "../../../../core/entity/model/entity";
+} from "#src/app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { Note } from "#src/app/child-dev-project/notes/model/note";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnum } from "app/core/basic-datatypes/configurable-enum/configurable-enum";
+import { spyOn } from "@vitest/spy";
+import { Router } from "@angular/router";
+import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
@@ -120,7 +123,7 @@ describe("EntityCountDashboardComponent", () => {
     TestEntity.schema.delete(testGroupBy);
   });
 
-  it("inlcudes a row for entities with missing configurable enum value", async () => {
+  it("includes a row for entities with missing configurable enum value", async () => {
     const c1: ConfigurableEnumValue = { label: "foo", id: "01" };
     const configurableEnum = new ConfigurableEnum("testEnum", [c1]);
     entityMapper.add(configurableEnum);
@@ -248,6 +251,18 @@ describe("EntityCountDashboardComponent", () => {
           entity: expect.any(Note),
         }),
       ]),
+    );
+  });
+
+  it("should use url-encoding when navigating to the entity list", async () => {
+    entityMapper.add(createChild({ id: "a,b", label: "CenterA" }));
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+
+    component.goToEntityList("a,b");
+
+    expect(navigateSpy).toHaveBeenCalledWith(
+      [getEntityRuntimeRoute(component.entityDefinition())],
+      { queryParams: { category: encodeURIComponent("a,b") } },
     );
   });
 });

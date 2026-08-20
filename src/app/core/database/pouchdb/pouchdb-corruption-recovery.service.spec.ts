@@ -5,7 +5,7 @@ import {
   isKnownMultiTabDatabaseCorruption,
   PouchdbCorruptionRecoveryService,
 } from "./pouchdb-corruption-recovery.service";
-import { BackupService } from "../../admin/backup/backup.service";
+import { RESET_PENDING_KEY } from "#src/bootstrap-reset";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 
@@ -38,12 +38,12 @@ describe("PouchdbCorruptionRecoveryService", () => {
     (service as any).warningDialogOpen = false;
     (service as any).resetDialogOpen = false;
     localStorage.clear();
-    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+    sessionStorage.removeItem(RESET_PENDING_KEY);
   });
 
   afterEach(() => {
     localStorage.clear();
-    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
+    sessionStorage.removeItem(RESET_PENDING_KEY);
   });
 
   it("should reset application state when user confirms", async () => {
@@ -53,7 +53,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
     await service.promptResetApplicationDialog();
 
     expect(localStorage.getItem("foo")).toBe("bar");
-    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBe("1");
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBe("1");
     expect(location.pathname).toBe("");
   });
 
@@ -65,7 +65,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
 
     expect(confirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
     expect(localStorage.getItem("foo")).toBe("bar");
-    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
   });
 
@@ -94,7 +94,7 @@ describe("PouchdbCorruptionRecoveryService", () => {
     await service.promptResetApplicationDialog();
 
     expect(localStorage.getItem("foo")).toBe("bar");
-    expect(sessionStorage.getItem(BackupService.RESET_PENDING_KEY)).toBeNull();
+    expect(sessionStorage.getItem(RESET_PENDING_KEY)).toBeNull();
     expect(location.pathname).toBe("/entities/Entity:1");
   });
 });

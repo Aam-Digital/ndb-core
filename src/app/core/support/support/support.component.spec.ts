@@ -14,6 +14,7 @@ import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { BackupService } from "../../admin/backup/backup.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
@@ -23,6 +24,7 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -51,7 +53,7 @@ describe("SupportComponent", () => {
     const testDbName = TEST_USER + "-" + Entity.DATABASE;
     mockDB = Object.create(SyncedPouchDatabase.prototype);
     Object.defineProperty(mockDB, "LAST_SYNC_KEY", {
-      value: SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + testDbName,
+      value: LAST_SYNC_KEY_PREFIX + testDbName,
     });
     mockDB.getPouchDBOnceReady = vi.fn().mockReturnValue(
       Promise.resolve({
@@ -77,8 +79,12 @@ describe("SupportComponent", () => {
         {
           provide: BackupService,
           useValue: {
-            resetApplication: vi.fn(),
+            getDatabaseExport: vi.fn(),
           },
+        },
+        {
+          provide: LocalDeviceResetService,
+          useValue: { resetLocalDevice: vi.fn() },
         },
         { provide: DownloadService, useValue: null },
         {

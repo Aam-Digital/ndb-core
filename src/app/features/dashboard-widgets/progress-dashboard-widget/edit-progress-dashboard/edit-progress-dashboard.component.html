@@ -4,9 +4,7 @@
       [formControl]="title"
       matInput
       type="text"
-      i18n-placeholder="
-        Title Progress|Edit the progress of one or multiple tasks
-      "
+      i18n-placeholder="Edit the progress of one or multiple tasks"
       placeholder="Title"
     />
     @if (title.hasError("required")) {
@@ -25,7 +23,7 @@
           formControlName="label"
           matInput
           type="text"
-          i18n-placeholder="Process Label|The label of a process or task"
+          i18n-placeholder="The label of a process or task"
           placeholder="Task"
         />
         @if (control.hasError("required", "label")) {
@@ -35,6 +33,7 @@
       <button mat-icon-button color="accent" (click)="removePart(index)">
         <fa-icon
           class="button-icon"
+          i18n-aria-label
           aria-label="remove element"
           icon="trash"
         ></fa-icon>
@@ -95,7 +94,7 @@
     <button mat-button color="accent" (click)="addPart()">
       <fa-icon
         class="button-icon margin-sides-small"
-        aria-label="add element"
+        aria-hidden="true"
         icon="plus-circle"
       ></fa-icon>
       <span i18n="Add a task to the progress dashboard list">

@@ -20,6 +20,7 @@
   </div>
 
   <app-feature-disabled-info
+    i18n-featureName
     featureName="Notification API"
     [featureEnabled]="notificationService.isNotificationServerEnabled()"
   ></app-feature-disabled-info>
@@ -62,7 +63,7 @@
           i18n-matTooltip
         >
           <fa-icon
-            aria-label="add element"
+            aria-hidden="true"
             icon="plus-circle"
             class="standard-icon-with-text"
           ></fa-icon>
@@ -114,6 +115,7 @@
                 checked
                 disabled
                 class="indented-item"
+                i18n-matTooltip
                 matTooltip="Always enabled"
               ></mat-slide-toggle>
               <span i18n>Notification Center (in app)</span>

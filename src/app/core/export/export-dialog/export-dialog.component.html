@@ -12,6 +12,7 @@
   <mat-radio-group
     [ngModel]="format()"
     (ngModelChange)="format.set($event)"
+    i18n-aria-label
     aria-label="Export format"
   >
     <mat-radio-button value="csv" i18n="Export format CSV option"

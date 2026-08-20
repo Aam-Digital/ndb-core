@@ -7,7 +7,7 @@
     }"
     (click)="edit(); $event.stopPropagation()"
   >
-    <fa-icon aria-label="edit" icon="pen"></fa-icon>
+    <fa-icon i18n-aria-label aria-label="edit" icon="pen"></fa-icon>
   </button>
 }
 
@@ -20,7 +20,7 @@
       [angularticsCategory]="row()?.record?.getType()"
       angularticsAction="subrecord_inlineedit_save"
     >
-      <fa-icon aria-label="save" icon="check-circle"></fa-icon>
+      <fa-icon i18n-aria-label aria-label="save" icon="check-circle"></fa-icon>
     </button>
     <button
       mat-icon-button
@@ -29,7 +29,11 @@
       [angularticsCategory]="row()?.record?.getType()"
       angularticsAction="subrecord_inlineedit_cancel"
     >
-      <fa-icon aria-label="cancel" icon="times-circle"></fa-icon>
+      <fa-icon
+        i18n-aria-label
+        aria-label="cancel"
+        icon="times-circle"
+      ></fa-icon>
     </button>
     <button
       mat-icon-button
@@ -42,7 +46,7 @@
       [angularticsCategory]="row()?.record?.getType()"
       angularticsAction="subrecord_inlineedit_delete"
     >
-      <fa-icon aria-label="delete" icon="trash"></fa-icon>
+      <fa-icon i18n-aria-label aria-label="delete" icon="trash"></fa-icon>
     </button>
   </div>
 }

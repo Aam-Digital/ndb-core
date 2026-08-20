@@ -18,6 +18,7 @@ import { AttendanceDatatype } from "../../../features/attendance/model/attendanc
 import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 import { asArray } from "../../../utils/asArray";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Service to handle additional import actions
@@ -131,7 +132,9 @@ export class ImportAdditionalService {
    * @param entityType
    */
   getActionsLinkingFor(entityType: string): AdditionalImportAction[] {
-    return this.linkableEntities.get(entityType) ?? [];
+    return (this.linkableEntities.get(entityType) ?? []).filter((a) =>
+      this.hasAllReferencedTypes(a),
+    );
   }
 
   /**
@@ -143,13 +146,41 @@ export class ImportAdditionalService {
     const linkingTypes: AdditionalImportAction[] = [];
 
     for (const entityType of this.linkableEntities.keys()) {
-      const matchingActions = (
-        this.linkableEntities.get(entityType) ?? []
-      ).filter((a) => a.targetType === targetEntityType);
+      const matchingActions = (this.linkableEntities.get(entityType) ?? [])
+        .filter((a) => a.targetType === targetEntityType)
+        .filter((a) => this.hasAllReferencedTypes(a));
       linkingTypes.push(...matchingActions);
     }
 
     return linkingTypes;
+  }
+
+  /**
+   * Check that every entity type an action refers to is actually registered.
+   *
+   * The types come from the entity config (e.g. a relationship field's `additional`),
+   * where a renamed or removed type can leave a dangling reference behind.
+   * Looking such a type up throws, so an action referencing one must not be offered at all.
+   */
+  private hasAllReferencedTypes(action: AdditionalImportAction): boolean {
+    const referencedTypes = [
+      action.sourceType,
+      ...asArray(action["targetType"] ?? []),
+      ...asArray(action["relationshipEntityType"] ?? []),
+    ];
+
+    const unregisteredType = referencedTypes.find(
+      (type) => !this.entityRegistry.has(type),
+    );
+    if (unregisteredType) {
+      Logging.warn(
+        "ImportAdditional: skipping action referencing an entity type that is not registered.",
+        { unregisteredType, action },
+      );
+      return false;
+    }
+
+    return true;
   }
 
   /**

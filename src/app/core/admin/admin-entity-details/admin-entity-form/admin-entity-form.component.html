@@ -2,7 +2,7 @@
   <!-- FORM PREVIEW -->
   <div
     cdkDropList
-    (cdkDropListDropped)="dropfieldGroups($event, fieldGroups())"
+    (cdkDropListDropped)="dropFieldGroups($event)"
     cdkDropListOrientation="mixed"
     class="flex-grow padding-right-regular drop-list"
     [class.admin-grid-layout]="!fieldsOnlyMode()"
@@ -30,7 +30,7 @@
         <div
           cdkDropList
           [id]="uniqueAreaId() + '-group' + i"
-          [cdkDropListData]="group.fields"
+          [cdkDropListData]="i"
           (cdkDropListDropped)="drop($event)"
           [cdkDropListConnectedTo]="connectedGroups()"
           [cdkDropListDisabled]="isDisabled()"
@@ -39,10 +39,16 @@
         >
           <!-- FIELD [start] -->
           @for (field of group.fields; track field) {
+            <!--
+              No cdkDragBoundary here: it clamps the pointer to
+              `boundary.right - (previewWidth - grabOffset)`, which for a field-wide preview
+              grabbed at its handle stops short of the toolbar, making it impossible to drag
+              a field out of the form again.
+            -->
             <div
               class="admin-form-field flex-row align-center"
               cdkDrag
-              cdkDragBoundary=".overall-container"
+              [cdkDragData]="field"
             >
               <fa-icon
                 icon="grip-vertical"
@@ -63,6 +69,7 @@
                   mat-icon-button
                   color="black"
                   (click)="hideField(field, group)"
+                  i18n-aria-label
                   aria-label="Hide Field"
                   matTooltip="remove (i.e. hide) this field from the form"
                   i18n-matTooltip
@@ -112,9 +119,11 @@
     <mat-card-content>
       <div
         cdkDropList
+        [id]="availableFieldsDropListId()"
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListData]="filteredFields()"
+        [cdkDropListData]="availableFieldsTarget"
         [cdkDropListConnectedTo]="connectedGroups()"
+        [cdkDropListDisabled]="isDisabled()"
         class="drop-list"
       >
         <div class="drop-area-hint">
@@ -161,6 +170,7 @@
               field === createNewTextPlaceholder
             "
             cdkDrag
+            [cdkDragData]="field"
             cdkDragBoundary="mat-drawer-container"
           >
             <fa-icon
@@ -183,7 +193,7 @@
                   class="field-hover-buttons field-edit-button"
                   (click)="openConfigDetails(field)"
                 >
-                  Edit
+                  <span i18n>Edit</span>
                 </button>
               }
             </div>

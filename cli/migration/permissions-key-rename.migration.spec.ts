@@ -20,7 +20,7 @@ function seedLegacyPermissions(): DocStore {
 }
 
 describe("permissionsKeyRename migration", () => {
-  it("renames legacy default/public sections to _default/_public and drops the legacy keys", async () => {
+  it("copies legacy default/public sections to _default/_public and keeps the legacy keys", async () => {
     const store = seedLegacyPermissions();
     const ctx = buildTestContext(store, false);
 
@@ -33,13 +33,38 @@ describe("permissionsKeyRename migration", () => {
       { subject: "SiteSettings", action: "read" },
     ]);
     expect(data._public).toEqual([{ subject: "Config", action: "read" }]);
-    expect(data.default).toBeUndefined();
-    expect(data.public).toBeUndefined();
+    // legacy keys are kept for backwards compatibility
+    expect(data.default).toEqual([{ subject: "SiteSettings", action: "read" }]);
+    expect(data.public).toEqual([{ subject: "Config", action: "read" }]);
     // role sections untouched
     expect(data.user_app).toEqual([{ subject: "all", action: "manage" }]);
   });
 
-  it("prefers an existing renamed key and only drops the legacy one", async () => {
+  it("recreates a missing legacy key from an existing underscore-prefixed key", async () => {
+    // simulates permissionsKeyLegacyCleanup having already removed the
+    // legacy keys on this instance
+    const store: DocStore = {
+      "app/Config:Permissions": {
+        _id: "Config:Permissions",
+        _rev: "1-abc",
+        data: {
+          _default: [{ subject: "SiteSettings", action: "read" }],
+          _public: [{ subject: "Config", action: "read" }],
+        },
+      },
+    };
+    const ctx = buildTestContext(store, false);
+
+    const result = await permissionsKeyRename.run(ctx);
+
+    expect(result.changed).toBe(true);
+    expect(result.status).toBe("ok");
+    const data = (store["app/Config:Permissions"] as any).data;
+    expect(data.default).toEqual([{ subject: "SiteSettings", action: "read" }]);
+    expect(data.public).toEqual([{ subject: "Config", action: "read" }]);
+  });
+
+  it("leaves an already-present underscore-prefixed key untouched, even if the legacy key differs", async () => {
     const store: DocStore = {
       "app/Config:Permissions": {
         _id: "Config:Permissions",
@@ -52,11 +77,13 @@ describe("permissionsKeyRename migration", () => {
     };
     const ctx = buildTestContext(store, false);
 
-    await permissionsKeyRename.run(ctx);
+    const result = await permissionsKeyRename.run(ctx);
 
+    expect(result.changed).toBe(false);
+    expect(result.status).toBe("no-change");
     const data = (store["app/Config:Permissions"] as any).data;
     expect(data._default).toEqual([{ subject: "New", action: "read" }]);
-    expect(data.default).toBeUndefined();
+    expect(data.default).toEqual([{ subject: "Legacy", action: "read" }]);
   });
 
   it("writes nothing in dry-run mode", async () => {

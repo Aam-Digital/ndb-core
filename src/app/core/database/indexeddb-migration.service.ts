@@ -181,10 +181,10 @@ export class IndexeddbMigrationService {
         checkBothComplete();
       })
       .catch((err) => {
-        Logging.warn(
-          `IndexeddbMigration: replication into "${newDbName}" failed`,
-          err,
-        );
+        Logging.warn("IndexeddbMigration: replication into new db failed", {
+          newDbName,
+          error: err,
+        });
         newDb.close();
       });
 
@@ -325,10 +325,11 @@ export class IndexeddbMigrationService {
             `IndexeddbMigration: deleted legacy ${key} database "${dbInfo.name}"`,
           );
         } catch (e) {
-          Logging.warn(
-            `IndexeddbMigration: failed to delete legacy ${key} database "${dbInfo.name}"`,
-            e,
-          );
+          Logging.warn("IndexeddbMigration: failed to delete legacy database", {
+            key,
+            database: dbInfo.name,
+            error: e,
+          });
         }
       }
     }
@@ -349,7 +350,8 @@ export class IndexeddbMigrationService {
       req.onerror = () => reject(req.error);
       req.onblocked = () => {
         Logging.warn(
-          `IndexeddbMigration: deletion of "${name}" is blocked by open connections; resolving anyway`,
+          "IndexeddbMigration: deletion is blocked by open connections; resolving anyway",
+          { database: name },
         );
         // Deletion will proceed once connections close; treat as non-fatal.
         resolve();

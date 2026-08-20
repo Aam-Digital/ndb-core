@@ -3,6 +3,9 @@ import { latestConfigFormats } from "./latest-config-formats.migration.js";
 import { consolidateReportDefinition } from "./consolidate-report-definition.migration.js";
 import { reportConfigSafeIds } from "./reportconfig-safe-ids.migration.js";
 import { permissionsKeyRename } from "./permissions-key-rename.migration.js";
+import { setMapCountrycodes } from "./set-map-countrycodes.migration.js";
+import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.migration.js";
+import { shortcutDashboardLinkPrefix } from "./shortcut-dashboard-link-prefix.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
 
 export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
@@ -17,4 +20,7 @@ export const migrations: MigrationDefinition[] = [
   consolidateReportDefinition,
   reportConfigSafeIds,
   permissionsKeyRename,
+  // permissionsKeyLegacyCleanup,
+  shortcutDashboardLinkPrefix,
+  setMapCountrycodes,
 ];

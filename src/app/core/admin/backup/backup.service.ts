@@ -2,24 +2,21 @@ import { inject, Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
-import { Logging } from "../../logging/logging.service";
 
 /**
  * Create and load backups of the database.
+ *
+ * This only reads and writes the raw documents.
+ * For the admin actions to empty or reset a system see the SystemResetService,
+ * for clearing the data cached on the current device see the LocalDeviceResetService.
  */
 @Injectable({
   providedIn: "root",
 })
 export class BackupService {
-  private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private dbResolver = inject(DatabaseResolverService);
 
   private db: Database;
-
-  private readonly confirmationDialog = inject(ConfirmationDialogService);
-  private readonly location = inject(LOCATION_TOKEN);
 
   constructor() {
     this.db = this.dbResolver.getDatabase();
@@ -35,19 +32,22 @@ export class BackupService {
   }
 
   /**
-   * Removes all but the config of the database
+   * Removes all but the config of the database.
+   *
+   * This is used to wipe the database before restoring a backup file.
+   * The config is kept so that restoring a backup that does not contain a config
+   * does not leave the system unusable.
+   *
+   * The database indices are removed as well. They are part of the backup that is
+   * restored immediately afterwards, so they do not have to be rebuilt from scratch.
    *
    * @returns Promise<any> a promise that resolves after all remove operations are done
    */
   async clearDatabase(): Promise<void> {
-    const allDocs = await this.db.getAll();
-    for (const row of allDocs) {
-      if (row._id.startsWith(Config.ENTITY_TYPE + ":")) {
-        // skip config in order to not break login!
-        continue;
-      }
-      await this.db.remove(row);
-    }
+    // skip config in order to not break login!
+    await this.db.removeAll(
+      (doc) => !doc._id.startsWith(Config.ENTITY_TYPE + ":"),
+    );
   }
 
   /**
@@ -62,71 +62,6 @@ export class BackupService {
       // Remove _rev so CouchDB treats it as a new rather than a updated document
       delete record._rev;
       await this.db.put(record, forceUpdate);
-    }
-  }
-
-  /**
-   * sessionStorage key used to signal that a reset is pending.
-   * Set before page reload; checked on next bootstrap in {@link runPendingReset}.
-   */
-  static readonly RESET_PENDING_KEY = "__RESET_PENDING";
-
-  async resetApplication() {
-    const choice = await this.confirmationDialog.getConfirmation(
-      $localize`:Reset Application Confirmation:Reset Application`,
-      $localize`:Reset Application Confirmation:Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.`,
-    );
-    if (!choice) {
-      return;
-    }
-
-    // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
-    Logging.warn(
-      "Resetting application: user confirmed deletion of all local data",
-    );
-
-    // Reload the page first to kill all PouchDB connections, in-flight sync,
-    // view indexing, and other async operations. IDB databases are deleted on
-    // the fresh page (before Angular bootstraps) where no connections exist,
-    // avoiding race conditions with PouchDB's internal IDB transactions.
-    this.localStorage.clear();
-    sessionStorage.setItem(BackupService.RESET_PENDING_KEY, "1");
-    this.location.pathname = "";
-  }
-
-  /**
-   * Run pending reset cleanup before Angular bootstraps.
-   * Called from main.ts so that IndexedDB databases are deleted while
-   * no PouchDB connections are open (eliminating race conditions).
-   */
-  static async runPendingReset(): Promise<void> {
-    if (!sessionStorage.getItem(BackupService.RESET_PENDING_KEY)) {
-      return;
-    }
-    sessionStorage.removeItem(BackupService.RESET_PENDING_KEY);
-    DatabaseResolverService.clearLastSyncMarkers();
-
-    // Delete all IndexedDB databases
-    // (keep Sentry's offline queue so pending diagnostic logs about the reset
-    // itself still reach remote logging after the reload)
-    const dbs = await indexedDB.databases();
-    await Promise.all(
-      dbs
-        .filter(({ name }) => name !== "sentry-offline")
-        .map(
-          ({ name }) =>
-            new Promise<void>((resolve, reject) => {
-              const del = indexedDB.deleteDatabase(name);
-              del.onsuccess = () => resolve();
-              del.onerror = () => reject(del.error);
-            }),
-        ),
-    );
-
-    // Unregister all service workers
-    if (navigator.serviceWorker) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((reg) => reg.unregister()));
     }
   }
 }

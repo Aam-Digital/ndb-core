@@ -37,12 +37,14 @@ export function registerMigrateCommand(program: Command): void {
     });
 
   migrateCmd
-    .command("run <id>")
-    .description("Run a migration (preview first, then confirm)")
+    .command("run <id> [args...]")
+    .description(
+      "Run a migration (preview first, then confirm). Migrations that take a value read it from [args...]",
+    )
     .option("--dry-run", "Preview changes and exit without writing")
     .option("--yes", "Skip confirmation prompt")
     .option("--timeout <seconds>", "Per-org timeout in seconds", "30")
-    .action(async (id: string, cmdOpts) => {
+    .action(async (id: string, args: string[], cmdOpts) => {
       const opts = { ...program.opts(), ...cmdOpts };
       const migration = migrations.find((m) => m.id === id);
       if (!migration) {
@@ -79,7 +81,13 @@ export function registerMigrateCommand(program: Command): void {
         org: SystemCredentials,
         dryRun: boolean,
       ): Promise<MigrationOutcome> => {
-        const ctx = new TrackedMigrationContext(couchdb, org, dryRun, logger);
+        const ctx = new TrackedMigrationContext(
+          couchdb,
+          org,
+          dryRun,
+          logger,
+          args,
+        );
         try {
           const result = await withTimeout(
             migration.run(ctx),

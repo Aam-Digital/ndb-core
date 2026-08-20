@@ -16,7 +16,7 @@ npm run cli -- migrate run --help
 | -------------------------------- | --------------------------------------------- |
 | `check`                          | Verify connectivity to all (or selected) orgs |
 | `migrate list`                   | List all available migrations                 |
-| `migrate run <id>`               | Run a migration (preview → confirm → apply)   |
+| `migrate run <id> [args...]`     | Run a migration (preview → confirm → apply)   |
 | `couchdb search <regex>`         | Find entity documents matching a regex        |
 | `couchdb edit <regex> <replace>` | Regex replace inside entity documents         |
 | `couchdb conflicts`              | List conflicted documents                     |
@@ -141,16 +141,19 @@ passphrase (the [age](https://github.com/FiloSottile/age) format) so the secrets
 in the clear.
 
 The CLI encrypts and decrypts `.age` files itself — no external tool needed. Bootstrap the encrypted
-file from your plaintext one, then let the merge shred the plaintext once it's written:
+file from your plaintext one, then let the command shred the plaintext once it's written:
 
 ```bash
-npm run cli -- credentials merge cli/credentials.json --credentials cli/credentials.json.age
+npm run cli -- credentials merge cli/credentials.json
 ```
 
-Confirm the write it proposes (this is also the prompt that names shredding your plaintext file),
-then enter a new passphrase twice — `credentials.json.age` doesn't exist yet, so there's nothing to
-reuse. That's it. The CLI **prefers `credentials.json.age` over the plaintext file**, prompts you for
-the passphrase, and decrypts it **into memory only** — no plaintext is ever written back to disk.
+Pointed at your own plaintext `credentials.json` with no encrypted file yet, `merge` recognises
+there is nothing to merge into and encrypts it in place instead. (Naming the target explicitly with
+`--credentials cli/credentials.json.age` works the same way.) Confirm the write it proposes (this is
+also the prompt that names shredding your plaintext file), then enter a new passphrase twice —
+`credentials.json.age` doesn't exist yet, so there's nothing to reuse. That's it. The CLI **prefers
+`credentials.json.age` over the plaintext file**, prompts you for the passphrase, and decrypts it
+**into memory only** — no plaintext is ever written back to disk.
 
 ```console
 $ npm run cli -- check

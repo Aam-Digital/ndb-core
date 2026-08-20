@@ -25,6 +25,14 @@ export class PublicFormPermissionService {
   private readonly entityMapper = inject(EntityMapperService);
 
   /**
+   * The warning explaining that the "public" role cannot create records of the given type.
+   * Single source of truth, shared by the inline warning box and the save confirmation dialog.
+   */
+  missingPublicPermissionWarning(entityType: string): string {
+    return $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.`;
+  }
+
+  /**
    * Helper method to check if a permission rule subject matches an entity type.
    * Handles both single subject strings and grouped/array subjects.
    * @param ruleSubject The subject field from a permission rule (string or string[])
@@ -104,7 +112,8 @@ export class PublicFormPermissionService {
         ];
 
     let dialogText =
-      $localize`This public form will currently not work for external users without an account because the "public" role does not have permission to create new "${entityType}" records.\n\n` +
+      this.missingPublicPermissionWarning(entityType) +
+      "\n\n" +
       (isAdmin
         ? $localize`Would you like to add the required permission automatically?`
         : $localize`You need an administrator to add the required permissions. Do you still want to save this form?`);

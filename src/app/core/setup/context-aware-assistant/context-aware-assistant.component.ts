@@ -2,7 +2,7 @@ import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
-import { BackupService } from "../../admin/backup/backup.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 
 /**
  * UI for some basic user guide,
@@ -26,11 +26,11 @@ export class ContextAwareAssistantComponent {
   isUserSupportEnabled: boolean = environment.userSupportEnabled;
   isSaaS: boolean = environment.SaaS;
 
-  private readonly backupService = inject(BackupService);
+  private readonly localDeviceResetService = inject(LocalDeviceResetService);
 
   async restartDemo() {
     if (environment.session_type !== SessionType.mock) {
-      await this.backupService.resetApplication();
+      await this.localDeviceResetService.resetLocalDevice();
     } else {
       window.location.href = "/";
     }
