@@ -154,16 +154,21 @@ describe("getCredentials", () => {
 
     const { getCredentials } = await import("./credentials");
 
-    await expect(
-      getCredentials(undefined, { org: "famev" }),
-    ).rejects.toThrow(/DOMAIN env var is required/);
+    await expect(getCredentials(undefined, { org: "famev" })).rejects.toThrow(
+      /DOMAIN env var is required/,
+    );
   });
 
   it("filters by category the same way, before resolving urls", async () => {
     vi.stubEnv("DOMAIN", "");
     const raw = JSON.stringify([
       { name: "broken", password: "pw1", category: "codo" },
-      { name: "famev", password: "pw2", url: "famev.example.com", category: "prod" },
+      {
+        name: "famev",
+        password: "pw2",
+        url: "famev.example.com",
+        category: "prod",
+      },
     ]);
     vi.mocked(fs.existsSync).mockImplementation((p) =>
       String(p).endsWith("credentials.json"),
@@ -197,9 +202,9 @@ describe("getCredentials", () => {
 
     const { getCredentials } = await import("./credentials");
 
-    await expect(
-      getCredentials(undefined, { org: "famev" }),
-    ).rejects.toThrow(/org at index 1 is missing "password"/);
+    await expect(getCredentials(undefined, { org: "famev" })).rejects.toThrow(
+      /org at index 1 is missing "password"/,
+    );
   });
 
   it("throws when password is missing", async () => {

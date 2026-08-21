@@ -111,7 +111,9 @@ export async function getCredentials(
   // Indices are captured before filtering so error messages still point at
   // the entry's real position in the credentials file.
   const indexed = rawOrgs.map((c, index) => ({ c, index }));
-  const selected = filter ? indexed.filter(({ c }) => matchesFilter(c, filter)) : indexed;
+  const selected = filter
+    ? indexed.filter(({ c }) => matchesFilter(c, filter))
+    : indexed;
 
   const domain = process.env["DOMAIN"] ?? "";
   const orgs = selected.map(({ c, index }) => {
