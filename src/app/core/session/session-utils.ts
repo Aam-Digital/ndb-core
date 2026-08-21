@@ -10,6 +10,8 @@ export interface ParsedJWT {
   email: string;
   // roles according to couchdb format
   "_couchdb.roles": string[];
+  // per-client roles (present only if the client-roles token mapper is configured)
+  resource_access?: { [client: string]: { roles: string[] } };
 }
 
 /**
