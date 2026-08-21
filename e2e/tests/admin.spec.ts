@@ -657,14 +657,14 @@ test("Admin: edit general settings (label, tooltip, verify after save)", async (
   await page.getByText("Configure Data Structure").click();
   await page.waitForLoadState("networkidle");
   await page.getByText("General Settings").click();
-  await expect(page.locator("[formcontrolname='label']")).toBeVisible({
+  await expect(page.locator("[formcontrolname='label'] input")).toBeVisible({
     timeout: 10000,
   });
 
-  await expect(page.locator("[formcontrolname='label']")).toHaveValue(
+  await expect(page.locator("[formcontrolname='label'] input")).toHaveValue(
     "Participant",
   );
-  await expect(page.locator("[formcontrolname='labelPlural']")).toHaveValue(
+  await expect(page.locator("[formcontrolname='labelPlural'] input")).toHaveValue(
     "Participants",
   );
 

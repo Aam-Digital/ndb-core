@@ -43,6 +43,9 @@ import {
   selector: "app-translatable-text-input",
   host: {
     "[class.is-multiline]": "multiline()",
+    // the placeholder belongs on the inner text field only - leaving it on
+    // the host too would make it match twice when queried by placeholder
+    "[attr.placeholder]": "null",
   },
   templateUrl: "./translatable-text-input.component.html",
   styleUrls: ["./translatable-text-input.component.scss"],

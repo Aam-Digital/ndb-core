@@ -1,6 +1,7 @@
 @if (multiline()) {
   <textarea
     class="text-field"
+    [id]="id"
     [rows]="rows()"
     [value]="displayText()"
     [placeholder]="placeholder ?? ''"
@@ -11,6 +12,7 @@
 } @else {
   <input
     class="text-field"
+    [id]="id"
     [value]="displayText()"
     [placeholder]="placeholder ?? ''"
     [disabled]="!enabled()"
