@@ -136,7 +136,6 @@ export class AdminEntityFieldComponent implements OnInit {
   private readonly locale = inject(LOCALE_ID);
   private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
-
   private readonly validatorConfig = viewChild(
     ConfigureEntityFieldValidatorComponent,
   );
@@ -579,7 +578,9 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** the label text of the active language, for display outside the form field */
   get resolvedLabel(): string {
-    return this.resolveForDisplay(this.schemaFieldsForm?.get("label")?.value) ?? "";
+    return (
+      this.resolveForDisplay(this.schemaFieldsForm?.get("label")?.value) ?? ""
+    );
   }
 
   private resolveForDisplay(value: TranslatableText): string | undefined {

@@ -53,7 +53,10 @@ import {
     FontAwesomeModule,
   ],
   providers: [
-    { provide: MatFormFieldControl, useExisting: TranslatableTextInputComponent },
+    {
+      provide: MatFormFieldControl,
+      useExisting: TranslatableTextInputComponent,
+    },
   ],
 })
 export class TranslatableTextInputComponent extends CustomFormControlDirective<TranslatableText> {

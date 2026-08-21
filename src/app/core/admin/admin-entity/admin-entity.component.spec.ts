@@ -72,7 +72,9 @@ describe("AdminEntityComponent", () => {
     };
     mockConfigService.getConfig.mockReturnValue(config[viewConfigId]);
     // the raw config is read to keep multi-lingual labels editable
-    mockConfigService.getRawConfig.mockImplementation((id: string) => config[id]);
+    mockConfigService.getRawConfig.mockImplementation(
+      (id: string) => config[id],
+    );
 
     TestBed.configureTestingModule({
       imports: [

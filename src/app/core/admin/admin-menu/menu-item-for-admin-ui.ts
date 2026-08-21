@@ -19,8 +19,7 @@ export type EditableMenuItem = Omit<MenuItem, "label" | "subMenu"> & {
  * Extension of MenuItem that includes additional properties
  * for the admin drag&drop logic.
  */
-export interface MenuItemForAdminUi
-  extends Omit<EditableMenuItem, "subMenu"> {
+export interface MenuItemForAdminUi extends Omit<EditableMenuItem, "subMenu"> {
   uniqueId: string;
   subMenu: MenuItemForAdminUi[];
 }

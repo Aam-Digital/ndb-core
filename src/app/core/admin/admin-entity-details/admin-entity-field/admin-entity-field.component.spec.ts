@@ -491,7 +491,9 @@ describe("AdminEntityFieldComponent", () => {
 
       // editing any other setting writes the whole form back onto the schema
       // field - the translations must not be lost by that
-      component.schemaFieldsForm.get("description").setValue("Some description");
+      component.schemaFieldsForm
+        .get("description")
+        .setValue("Some description");
       await fixture.whenStable();
 
       await component.save();
