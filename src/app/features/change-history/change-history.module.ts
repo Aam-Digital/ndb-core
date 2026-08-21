@@ -29,7 +29,7 @@ export class ChangeHistoryModule {
     this.entityActionsMenu.registerActions([
       {
         action: "view-change-history",
-        label: $localize`:entity context menu:View change history`,
+        label: $localize`:entity context menu:View change log`,
         icon: "clock-rotate-left",
         tooltip: $localize`:entity context menu tooltip:Show who changed this record, when, and what changed.`,
         availableFor: "individual-only",

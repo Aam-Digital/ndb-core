@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
+import { ActivatedRoute } from "@angular/router";
 import { MatTableModule } from "@angular/material/table";
 import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -109,6 +110,7 @@ export const CHANGE_LOG_DATE_RANGES: DateRangeFilterConfigOption[] = [
 export class ChangeLogComponent {
   private readonly service = inject(ChangeHistoryService);
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly route = inject(ActivatedRoute);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
 
@@ -141,7 +143,13 @@ export class ChangeLogComponent {
     .map(({ key, value }) => ({ key, label: value.label }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  readonly entityTypeFilter = signal<string | undefined>(undefined);
+  /**
+   * Pre-filled from the `entityType` query parameter, so an entity list can link
+   * here for its own record type and land on that type's changes.
+   */
+  readonly entityTypeFilter = signal<string | undefined>(
+    this.route.snapshot.queryParamMap.get("entityType") ?? undefined,
+  );
   readonly changedByFilter = signal<string | undefined>(undefined);
   readonly actionFilter = signal<string | undefined>(undefined);
   readonly relatedEntityFilter = signal<string | undefined>(undefined);
@@ -336,6 +344,9 @@ export class ChangeLogComponent {
     ChangeHistoryDialogComponent.open(
       this.dialog,
       await this.loadRecord(entry),
+      // the row's own audit record, so the dialog opens on the change that was
+      // clicked rather than a collapsed list to search through again
+      entry.id,
     );
   }
 

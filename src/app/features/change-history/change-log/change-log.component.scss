@@ -57,6 +57,12 @@
   min-width: 240px;
 }
 
+/* match the action badge next to them, which sets its own 12px; the chip
+   default is larger and made the field names shout over the action */
+.changed-fields-cell ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__text-label {
+  font-size: 12px;
+}
+
 :host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
   justify-content: flex-start;
 }

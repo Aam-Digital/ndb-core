@@ -1,5 +1,6 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Router } from "@angular/router";
@@ -40,7 +41,11 @@ function page(count: number, hasMore = false) {
 }
 
 // "loading" rather than undefined: a default parameter would swallow undefined
-async function setup(enabled: boolean | "loading" = true, canRead = true) {
+async function setup(
+  enabled: boolean | "loading" = true,
+  canRead = true,
+  queryParams: Record<string, string> = {},
+) {
   auditEnabled = signal(enabled === "loading" ? undefined : enabled);
   hasAuditPermission = signal(canRead);
   queryChangeLog = vi.fn().mockResolvedValue(page(0));
@@ -52,6 +57,12 @@ async function setup(enabled: boolean | "loading" = true, canRead = true) {
       NoopAnimationsModule,
     ],
     providers: [
+      {
+        provide: ActivatedRoute,
+        useValue: {
+          snapshot: { queryParamMap: convertToParamMap(queryParams) },
+        },
+      },
       {
         provide: ChangeHistoryService,
         useValue: {
@@ -111,6 +122,15 @@ it("loads the first page and the author options when enabled and permitted", asy
     { value: "demo-admin", entityId: undefined },
     { value: "priya", entityId: undefined },
   ]);
+});
+
+it("starts pre-filtered by the record type the caller navigated from", async () => {
+  // an entity list links here with its own type, so the log opens showing that
+  // type's changes rather than the whole system's
+  await setup(true, true, { entityType: "School" });
+
+  expect(component.entityTypeFilter()).toBe("School");
+  expect(callArgs()[0].entityType).toBe("School");
 });
 
 it("does not query while the feature flag is still loading, then queries once it is on", async () => {
