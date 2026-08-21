@@ -12,6 +12,25 @@
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
       } @else {
         <div class="flex-row gap-regular">
+          @if (canManagePermissions() && isFeatureType()) {
+            <button
+              mat-stroked-button
+              color="accent"
+              class="header-action-button"
+              (click)="openPermissionsDialog()"
+              matTooltip="Access to this feature is controlled by user roles"
+              i18n-matTooltip="Configure feature permissions tooltip"
+            >
+              <fa-icon
+                class="standard-icon-with-text"
+                aria-hidden="true"
+                icon="user-lock"
+              ></fa-icon>
+              <span i18n="Configure feature permissions button"
+                >Configure Permissions</span
+              >
+            </button>
+          }
           <app-entity-create-button
             [entityType]="entityConstructor()!"
             (entityCreate)="addNew()"
@@ -176,6 +195,19 @@
       </fa-icon>
       <span i18n="Show filter options popup for list"> Filter options </span>
     </button>
+
+    @if (canManagePermissions() && isFeatureType()) {
+      <button mat-menu-item (click)="openPermissionsDialog()">
+        <fa-icon
+          class="standard-icon-with-text color-accent"
+          aria-hidden="true"
+          icon="user-lock"
+        ></fa-icon>
+        <span i18n="Configure feature permissions button">
+          Configure Permissions
+        </span>
+      </button>
+    }
   </div>
 
   <button

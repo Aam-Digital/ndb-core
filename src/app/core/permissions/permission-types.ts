@@ -58,6 +58,56 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] = [
 ];
 
 /**
+ * Whether a key in {@link DatabaseRules} carries special semantics instead of
+ * naming a user role, so it must neither be resolved as a role nor rewritten by
+ * a per-role UI. Covers the reserved underscore prefix as well as the legacy
+ * (non-prefixed) spellings of not yet migrated configs.
+ */
+export function isReservedRuleConfigKey(key: string): boolean {
+  return (
+    key.startsWith(RESERVED_ROLE_PREFIX) ||
+    RESERVED_RULE_CONFIG_KEYS.includes(key)
+  );
+}
+
+/**
+ * Marker written into a rule's `reason` by the backend for rules it manages itself
+ * to guarantee a baseline. Such rules must not be rewritten by an admin UI.
+ */
+export const SYSTEM_DEFAULT_RULE_REASON = "[system-default]";
+
+/**
+ * Whether the rule applies to the given entity type, ignoring conditions and
+ * inversion. `all` matches every entity type.
+ */
+export function ruleAppliesToSubject(
+  subject: DatabaseRule["subject"],
+  entityType: string,
+): boolean {
+  if (Array.isArray(subject)) {
+    return subject.includes(entityType) || subject.includes("all");
+  }
+  return subject === entityType || subject === "all";
+}
+
+/**
+ * Whether the rule grants the given action for the entity type, ignoring conditions
+ * and inversion. `manage` covers every other action, and a rule can list several
+ * actions as an array.
+ */
+export function ruleCoversAction(
+  rule: DatabaseRule,
+  entityType: string,
+  action: EntityActionPermission,
+): boolean {
+  const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
+  return (
+    ruleAppliesToSubject(rule.subject, entityType) &&
+    (actions.includes(action) || actions.includes("manage"))
+  );
+}
+
+/**
  * The format of the JSON object which defines the rules for each role.
  * The format is `<user-role>: <array of DatabaseRule>`, meaning for each role an array of rules can be defined.
  * The rules defined in '_default' (legacy 'default') are prepended to any other rules defined for a user.

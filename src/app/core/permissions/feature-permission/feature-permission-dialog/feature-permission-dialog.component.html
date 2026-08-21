@@ -1,0 +1,117 @@
+<h2 mat-dialog-title i18n="Feature permission dialog title">
+  Permissions for {{ entityLabel }}
+</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  @if (permissionRows.isLoading()) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else if (permissionRows.error()) {
+    <app-hint-box type="warning">
+      <span i18n>
+        Could not load the list of user roles. Please try again later or edit
+        permissions in the advanced settings.
+      </span>
+    </app-hint-box>
+  } @else {
+    <app-hint-box type="warning" class="permission-hint">
+      <p i18n="Feature permission dialog explanation">
+        Select which user roles can use or manage this feature.
+      </p>
+      <p i18n="Feature permission dialog read hint">
+        Give at least <strong>Read</strong> permissions, if users should be able
+        to use the feature (i.e. create files).
+      </p>
+      @if (hasComplexRules()) {
+        <p i18n="Feature permission dialog complex rules hint">
+          Some permissions are shown read-only because they come from the
+          default or an advanced permission rule.
+        </p>
+      }
+      <a
+        mat-button
+        color="accent"
+        routerLink="/admin/user-roles"
+        mat-dialog-close
+        i18n="Open advanced permissions editor link"
+        >Open advanced editor</a
+      >
+    </app-hint-box>
+
+    <table class="permission-table full-width">
+      <thead>
+        <tr>
+          <th i18n="Role column header">Role</th>
+          @for (column of actionColumns; track column.action) {
+            <th class="checkbox-col" [matTooltip]="column.tooltip">
+              {{ column.label }}
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.role) {
+          <tr
+            [class.readonly-row]="!row.editable"
+            [class.default-row]="row.isDefaultRow"
+          >
+            <td>
+              <strong>{{ row.label }}</strong>
+              @if (!row.editable) {
+                <fa-icon
+                  icon="lock"
+                  class="readonly-icon"
+                  [matTooltip]="row.lockTooltip"
+                ></fa-icon>
+              }
+              @if (row.description) {
+                <span class="role-description">{{ row.description }}</span>
+              }
+            </td>
+            @for (cell of row.cells; track cell.action) {
+              <td class="checkbox-col">
+                <span
+                  class="checkbox-tooltip-wrapper"
+                  [matTooltip]="cell.lockTooltip"
+                  [matTooltipDisabled]="cell.editable"
+                >
+                  <mat-checkbox
+                    [checked]="cell.granted"
+                    [disabled]="!cell.editable || saving()"
+                    (change)="setAction(row.role, cell.action, $event.checked)"
+                    [attr.aria-label]="cell.ariaLabel"
+                  ></mat-checkbox>
+                </span>
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr>
+            <td
+              [attr.colspan]="actionColumns.length + 1"
+              class="text-secondary"
+              i18n
+            >
+              No user roles available to configure.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close i18n="Cancel button">Cancel</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="confirm()"
+    [disabled]="
+      permissionRows.isLoading() || !!permissionRows.error() || saving()
+    "
+    i18n="Confirm button"
+  >
+    Confirm
+  </button>
+</mat-dialog-actions>

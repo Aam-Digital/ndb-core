@@ -27,6 +27,7 @@ _Key files:_
 - `ability/entity-ability.ts` — extends CASL `Ability`, converts `Entity` instances to CASL subjects
 - `ability/ability.service.ts` — loads `Config:Permissions` and builds the `EntityAbility`
 - `../entity/entity-mapper/entity-mapper.service.ts` — calls `assertPermission()` before `save()` / `remove()` (write enforcement)
+- `feature-permission/feature-permission.service.ts` — admin-facing editing of per-role access to a single "feature" entity type (see [Feature permission dialog](#feature-permission-dialog))
 
 _Flow:_
 
@@ -88,6 +89,11 @@ Admins edit this document to control what each role can do.
 
 - Use CouchDB Fauxton GUI or another database tool to edit the document directly
 
+**Per feature, from its admin list view:**
+
+- On an internal "feature" type (e.g. Export Templates, Email Templates, Public Forms) use the "Configure Permissions" button next to "Add New"
+- See [Feature permission dialog](#feature-permission-dialog) below for what this can and cannot change
+
 ### Permission structure
 
 Permissions use JSON format with a role → rules mapping:
@@ -137,6 +143,75 @@ Permissions use JSON format with a role → rules mapping:
 - **`_public`**: Rules applied to anonymous (not logged-in) visitors
 - **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules. Older documents may still use the non-prefixed `default` / `public` names; these are read as a fallback and migrated to the underscore form by the `oneoff-20260724-permissions-key-rename` migration (see `cli/migration/`). `_default` and `_public` are the only allowed underscore-prefixed keys; do not create realm roles, or any other rule section, whose name starts with `_`.
 - **Combining roles**: If a user has multiple roles, their rules are appended in order (the `_default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
+
+### Feature permission dialog
+
+Instead of editing raw JSON, admins can review and change who has access to one
+entity type directly from its list view. It is offered as a button next to
+"Add New" on internal "feature" types (`isInternalEntity`, e.g. `TemplateExport`,
+`EmailTemplate`, `PublicFormConfig`, `ReportConfig`); on mobile, where the header
+has no room, the same action sits in the list's overflow (`⋮`) menu. Regular
+entity types do not offer it - their list menu is already crowded, and their
+permissions are managed in the advanced editor.
+
+It shows one row per user role with a checkbox per action:
+
+| Checkbox   | Action written |
+| ---------- | -------------- |
+| **Add**    | `create`       |
+| **Read**   | `read`         |
+| **Update** | `update`       |
+| **Delete** | `delete`       |
+
+The selected actions are stored as a single rule for this entity type: a plain
+string for one action, an array for several and `"manage"` when all four are
+selected (keeping the shape an admin would write by hand).
+
+**The shared `_default` row.** The `_default` section applies to every logged-in
+user on top of their roles, so it is listed as a read-only first row. An action it
+grants is shown checked and disabled on every role row: it cannot be revoked for a
+single role here (that would require an inverted rule), and it is never duplicated
+into a role's own rules when saving. Other actions of the same role stay editable.
+
+**What it will not touch.** Checkboxes cannot represent arbitrary CASL rules, so
+the dialog only ever adds or removes rules whose `subject` is _exactly_ this one
+entity type with plain feature actions. Everything else is read (to display the
+effective state) but never written:
+
+- grouped subjects (`subject: ["A", "B"]`) and the `all` wildcard
+- rules with `conditions` or `inverted: true`
+- the shared `_default` and `_public` sections (and their legacy `default` / `public` spellings)
+- managed `[system-default]` rules written by the backend
+
+A role whose access is decided by one of those rules is shown **read-only** for the
+whole row with a lock icon, because the dialog cannot change such a rule without
+affecting other roles or entity types. In the default config `user_app` and
+`admin_app` hold `{ subject: "all", action: "manage" }`, so both appear locked.
+
+The checkboxes show what a role can actually do, resolved the way CASL does it: of
+all rules matching this entity type and action, the **last matching one wins**. So a
+grant followed by an `"inverted": true` rule renders as unchecked, and a granting
+rule after that inverted one renders as checked again.
+
+The dialog always links to the advanced (JSON) editor, and says explicitly when at
+least one row is read-only.
+
+Every save first stores a timestamped backup document (`Config:Permissions:<timestamp>`)
+and offers an "Undo" action.
+
+The one case in which the dialog writes a `_default` section is the very first save on
+an instance that has no permissions config at all: an absent config means "everyone may
+do everything", so `_default: [{ subject: "all", action: "manage" }]` is seeded alongside
+the new rules to avoid locking every logged-in user out of everything else.
+
+Who may open the dialog is derived from CASL (`update` on `Config`), not from a hardcoded
+role name, so an instance that grants permission editing to a role other than `admin_app`
+gets the same UI.
+
+_Key files:_ `feature-permission/feature-permission.service.ts` (rule reading/writing),
+`feature-permission/feature-permission-dialog/`, `permissions-config.service.ts`
+(shared loading, backup/undo and admin check), `entity-list/entity-list.component.html`
+(where the dialog is offered).
 
 ### Restricting access (inverted rules)
 
@@ -240,7 +315,7 @@ Pass the entity and the operation (`create`, `read`, `update`, `delete`, `manage
 
 ## Testing
 
-- Frontend: `src/app/core/permissions/ability/ability.service.spec.ts`, `entity-ability.spec.ts`
+- Frontend: `src/app/core/permissions/ability/ability.service.spec.ts`, `entity-ability.spec.ts`, `feature-permission/feature-permission.service.spec.ts`
 - Backend: `src/permissions/rules/rules.service.spec.ts`, `src/permissions/permission/permission.service.spec.ts`
 
 When testing permissions:
