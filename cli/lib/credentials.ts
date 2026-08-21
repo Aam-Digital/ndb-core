@@ -52,8 +52,42 @@ const BACKUP_SUFFIX = ".bak";
  */
 let sessionPassphrase: string | undefined;
 
+export interface OrgFilter {
+  org?: string;
+  category?: string;
+}
+
+/**
+ * Whether a *raw*, not-yet-resolved credential entry could possibly survive
+ * {@link OrgRunner.filterOrgs}'s later filtering by name/url/category. `url`
+ * only counts as a match here when explicitly set — an entry that needs
+ * DOMAIN to compute its url can't be matched against before that resolution
+ * runs, but such an entry is also never what `--org <name>` means in practice.
+ */
+function matchesFilter(c: RawCredential, filter: OrgFilter): boolean {
+  if (filter.org) {
+    const names = filter.org.split(",").map((s) => s.trim());
+    const nameMatches = names.includes(c.name?.trim() ?? "");
+    const urlMatches = !!c.url?.trim() && names.includes(c.url.trim());
+    if (!nameMatches && !urlMatches) return false;
+  }
+  if (filter.category && (c.category?.trim() ?? "") !== filter.category) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Parses and resolves every org's url. When `filter` is given (an operator
+ * ran a command with `--org`/`--category`), only entries that could match it
+ * are resolved/validated at all — one unrelated org missing DOMAIN-dependent
+ * fields must never block using a different, correctly-configured org.
+ * Without a filter (e.g. `credentials merge`, or a command meant to run
+ * against the whole fleet), every entry is resolved and validated, as before.
+ */
 export async function getCredentials(
   credentialsPath?: string,
+  filter?: OrgFilter,
 ): Promise<CredentialsFile> {
   const path = credentialsPath ?? resolveCredentialsPath();
   const content = await readCredentialsContent(path);
@@ -74,8 +108,13 @@ export async function getCredentials(
     ? undefined
     : (parsed as { keycloak?: KeycloakConfig }).keycloak;
 
+  // Indices are captured before filtering so error messages still point at
+  // the entry's real position in the credentials file.
+  const indexed = rawOrgs.map((c, index) => ({ c, index }));
+  const selected = filter ? indexed.filter(({ c }) => matchesFilter(c, filter)) : indexed;
+
   const domain = process.env["DOMAIN"] ?? "";
-  const orgs = rawOrgs.map((c, index) => {
+  const orgs = selected.map(({ c, index }) => {
     if (!c.password) {
       throw new Error(
         `Invalid credentials: org at index ${index} is missing "password".`,

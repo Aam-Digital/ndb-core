@@ -116,4 +116,134 @@ describe("Couchdb", () => {
     const opts = mockFetch.mock.calls[0][1] as RequestInit;
     expect((opts.headers as Record<string, string>)["If-Match"]).toBe("3-a");
   });
+
+  describe("putAttachment", () => {
+    it("PUTs the raw buffer with the given content-type, no JSON encoding", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(
+        makeJsonResponse({ ok: true, id: "Child:1", rev: "2-abc" }, 201),
+      );
+      const buffer = Buffer.from("file bytes");
+
+      const result = await db.putAttachment(
+        "Child:1/dateienAusFreinet1?rev=1-xyz",
+        buffer,
+        "application/pdf",
+      );
+
+      const [url, opts] = mockFetch.mock.calls[0] as [string, RequestInit];
+      expect(url).toContain(
+        "/db/couchdb/app-attachments/Child:1/dateienAusFreinet1?rev=1-xyz",
+      );
+      expect(opts.body).toBe(buffer);
+      expect((opts.headers as Record<string, string>)["Content-Type"]).toBe(
+        "application/pdf",
+      );
+      expect(result).toEqual({ ok: true, id: "Child:1", rev: "2-abc" });
+    });
+
+    it("falls back to the alt path on 404/405", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({}, 404));
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({ ok: true }, 201));
+
+      await db.putAttachment("Child:1/f1?rev=1-a", Buffer.from("x"), "text/plain");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch.mock.calls[1][0] as string).not.toContain("/couchdb");
+    });
+
+    it("does not retry and throws on a non-endpoint error (e.g. 409 conflict)", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({ error: "conflict" }, 409));
+
+      await expect(
+        db.putAttachment("Child:1/f1?rev=stale", Buffer.from("x"), "text/plain"),
+      ).rejects.toMatchObject({ status: 409 });
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("databaseExists", () => {
+    it("returns true on 200", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({ db_name: "app-attachments" }));
+
+      await expect(db.databaseExists("app-attachments")).resolves.toBe(true);
+    });
+
+    it("returns false on 404", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValue(makeJsonResponse({ error: "not_found" }, 404));
+
+      await expect(db.databaseExists("app-attachments")).resolves.toBe(false);
+    });
+
+    it("falls back to the alt path before concluding", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({}, 404));
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({ db_name: "app-attachments" }));
+
+      await expect(db.databaseExists("app-attachments")).resolves.toBe(true);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it("throws on a genuine error (e.g. 403)", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValue(makeJsonResponse({ error: "forbidden" }, 403));
+
+      await expect(db.databaseExists("app-attachments")).rejects.toMatchObject({
+        status: 403,
+      });
+    });
+  });
+
+  describe("createDatabase", () => {
+    it("resolves on 201 created", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({ ok: true }, 201));
+
+      await expect(db.createDatabase("app-attachments")).resolves.toBeUndefined();
+    });
+
+    it("treats 412 (already exists) as success, not an error", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(
+        makeJsonResponse({ error: "file_exists" }, 412),
+      );
+
+      await expect(db.createDatabase("app-attachments")).resolves.toBeUndefined();
+    });
+
+    it("falls back to the alt path on 404/405", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({}, 404));
+      mockFetch.mockResolvedValueOnce(makeJsonResponse({ ok: true }, 201));
+
+      await db.createDatabase("app-attachments");
+
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch.mock.calls[1][0] as string).not.toContain("/couchdb");
+    });
+
+    it("throws on a genuine error (e.g. 500)", async () => {
+      const { Couchdb } = await import("./couchdb-client");
+      const db = new Couchdb("x.example.com", "pw");
+      mockFetch.mockResolvedValue(makeJsonResponse({ error: "server_error" }, 500));
+
+      await expect(db.createDatabase("app-attachments")).rejects.toMatchObject({
+        status: 500,
+      });
+    });
+  });
 });
