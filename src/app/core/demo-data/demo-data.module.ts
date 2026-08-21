@@ -36,8 +36,8 @@ import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-g
 
 const demoDataGeneratorProviders = [
   ...DemoUserGeneratorService.provider(),
-  ...DemoChildGenerator.provider({ count: 10000 }),
-  ...DemoSchoolGenerator.provider({ count: 100 }),
+  ...DemoChildGenerator.provider({ count: 1000 }),
+  ...DemoSchoolGenerator.provider({ count: 10 }),
   ...DemoChildSchoolRelationGenerator.provider(),
   ...DemoActivityGeneratorService.provider(),
   ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
