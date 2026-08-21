@@ -487,6 +487,15 @@ export class AdminEntityFieldComponent implements OnInit {
   entityAdditionalMultiSelect: WritableSignal&lt;boolean&gt; &#x3D; signal(false);
   attendanceParticipantTypesForm &#x3D; new FormControl&lt;string[]&gt;([]);
 
+  /**
+   * dataTypes for which a field can hold multiple values (&#x60;isArray&#x60;),
+   * so that the &quot;allow multiple values&quot; option is offered to the user.
+   */
+  private static readonly MULTI_VALUE_DATATYPES: string[] &#x3D; [
+    ConfigurableEnumDatatype.dataType,
+    EntityDatatype.dataType,
+  ];
+
   ngOnInit() {
     this.entityType &#x3D; this.data.entityType;
     this.initSettings();
@@ -624,6 +633,7 @@ export class AdminEntityFieldComponent implements OnInit {
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((v) &#x3D;&gt; {
         this.updateDataTypeAdditional(v);
+        this.resetIsArrayIfUnsupported(v);
       });
     this.updateForNewOrExistingField();
   }
@@ -693,6 +703,44 @@ export class AdminEntityFieldComponent implements OnInit {
   createNewAdditionalOption: (input: string) &#x3D;&gt; SimpleDropdownValue;
   createNewAdditionalOptionAsync &#x3D; async (input) &#x3D;&gt;
     this.createNewAdditionalOption(input);
+
+  /**
+   * Whether the user can choose to hold multiple values in one field of the given dataType,
+   * i.e. whether the &quot;allow multiple values&quot; option is offered.
+   */
+  supportsMultiValue(dataType: string): boolean {
+    return AdminEntityFieldComponent.MULTI_VALUE_DATATYPES.includes(dataType);
+  }
+
+  /**
+   * Whether the dataType itself requires multiple values, independent of the user&#x27;s choice
+   * (see {@link DefaultDatatype.normalizeSchemaField}, e.g. &quot;attendance&quot;).
+   */
+  private enforcesMultiValue(dataType: string): boolean {
+    const datatype &#x3D; (
+      this.allDataTypes as unknown as DefaultDatatype&lt;any, any&gt;[]
+    ).find((d) &#x3D;&gt; d.dataType &#x3D;&#x3D;&#x3D; dataType);
+    return !!datatype?.normalizeSchemaField({ dataType })?.isArray;
+  }
+
+  /**
+   * Remove the &#x60;isArray&#x60; flag if the newly selected dataType does not use multiple values.
+   *
+   * The &quot;allow multiple values&quot; checkbox is only displayed for some dataTypes.
+   * Without this reset a previously set &#x60;isArray: true&#x60; silently remains in the config
+   * (e.g. when a multi-select &quot;configurable-enum&quot; field is changed to &quot;long-text&quot;),
+   * making the field&#x27;s value an array that the dataType&#x27;s display component cannot handle.
+   */
+  private resetIsArrayIfUnsupported(dataType: string) {
+    if (this.supportsMultiValue(dataType) || this.enforcesMultiValue(dataType))
+      return;
+
+    const isArrayControl &#x3D; this.schemaFieldsForm.get(&quot;isArray&quot;);
+    if (!isArrayControl?.value) return;
+
+    // &#x60;null&#x60; (rather than &#x60;false&#x60;) so that the flag is removed from the schema entirely
+    isArrayControl.setValue(null);
+  }
 
   private updateDataTypeAdditional(
     dataType: string,
