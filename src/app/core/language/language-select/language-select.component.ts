@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   input,
+  output,
   signal,
 } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
@@ -24,10 +25,27 @@ export class LanguageSelectComponent {
 
   availableLocales = input<ConfigurableEnumValue[]>([]);
 
+  /** optional explanation shown below the dropdown, like other form fields' hints */
+  hint = input<string>();
+
+  /**
+   * Whether picking a language applies it immediately (which reloads the app).
+   *
+   * Set to false when the caller has to persist the choice first - it then only
+   * emits {@link localeChange} and leaves applying it to the caller.
+   */
+  applyImmediately = input<boolean>(true);
+
+  localeChange = output<string>();
+
   currentLocale = signal(this.languageService.getCurrentLocale());
 
   changeLocale(lang: string): void {
     this.currentLocale.set(lang);
-    this.languageService.switchLocale(lang);
+    this.localeChange.emit(lang);
+
+    if (this.applyImmediately()) {
+      this.languageService.switchLocale(lang);
+    }
   }
 }
