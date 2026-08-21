@@ -36,14 +36,14 @@ import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-g
 
 const demoDataGeneratorProviders = [
   ...DemoUserGeneratorService.provider(),
-  ...DemoChildGenerator.provider({ count: 120 }),
-  ...DemoSchoolGenerator.provider({ count: 8 }),
+  ...DemoChildGenerator.provider({ count: 10000 }),
+  ...DemoSchoolGenerator.provider({ count: 100 }),
   ...DemoChildSchoolRelationGenerator.provider(),
   ...DemoActivityGeneratorService.provider(),
   ...DemoActivityEventsGeneratorService.provider({ forNLastYears: 1 }),
   ...DemoNoteGeneratorService.provider({
-    minNotesPerChild: 2,
-    maxNotesPerChild: 6,
+    minNotesPerChild: 8,
+    maxNotesPerChild: 12,
     groupNotes: 3,
   }),
   ...DemoAserGeneratorService.provider(),
