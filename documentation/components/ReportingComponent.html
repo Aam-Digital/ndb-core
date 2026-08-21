@@ -1463,7 +1463,7 @@ export class ReportingComponent {
           ((reason as ReportCalculationError)?.reportCalculation
             ?.errorDetails ?? &quot;&quot;),
       );
-      Logging.warn(reason.message ?? &quot;Report Calculation Error&quot;, reason);
+      Logging.debug(reason.message ?? &quot;Report Calculation Error&quot;, reason);
       return { data: [] as any[], calculation: undefined };
     });
 
