@@ -664,9 +664,9 @@ test("Admin: edit general settings (label, tooltip, verify after save)", async (
   await expect(page.locator("[formcontrolname='label'] input")).toHaveValue(
     "Participant",
   );
-  await expect(page.locator("[formcontrolname='labelPlural'] input")).toHaveValue(
-    "Participants",
-  );
+  await expect(
+    page.locator("[formcontrolname='labelPlural'] input"),
+  ).toHaveValue("Participants");
 
   await argosScreenshot(page, "admin-general-settings-after-save");
 });
