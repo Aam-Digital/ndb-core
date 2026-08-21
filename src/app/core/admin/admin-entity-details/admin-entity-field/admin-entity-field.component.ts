@@ -45,7 +45,7 @@ import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurab
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { EntityConfig } from "../../../entity/entity-config";
 import { EntityConfigService } from "../../../entity/entity-config.service";
-import { ConfigureTranslationsPopupComponent } from "../../../config/configure-translations-popup/configure-translations-popup.component";
+import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
 import {
   resolveTranslatableText,
   TranslatableText,
@@ -119,6 +119,7 @@ export interface AdminEntityFieldData {
     AdminDefaultValueComponent,
     EntityTypeSelectComponent,
     AdminSearchableCheckboxComponent,
+    TranslatableTextInputComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
@@ -135,16 +136,6 @@ export class AdminEntityFieldComponent implements OnInit {
   private readonly locale = inject(LOCALE_ID);
   private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
-  /**
-   * Translation maps edited through the "Configure translations" dialog,
-   * keyed by schema field property (e.g. "label").
-   *
-   * These are only written onto the schema field in `save()`: the form's
-   * `valueChanges` writes every control back onto the schema field, so a map
-   * stored earlier would be overwritten by the plain text of the form control.
-   */
-  private pendingTranslations: Record<string, TranslatableText | undefined> =
-    {};
 
   private readonly validatorConfig = viewChild(
     ConfigureEntityFieldValidatorComponent,
@@ -214,8 +205,9 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     const labelFormControl = this.fb.control(
-      // may hold a translation map if translations were configured but not saved yet
-      this.resolveForDisplay(this.data.entitySchemaField.label),
+      // the raw value (plain string or per-language map) - the input component
+      // displays only the active language of it
+      this.rawSchemaValue("label"),
       {
         validators: [Validators.required],
         asyncValidators: [
@@ -244,18 +236,14 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm = this.fb.group({
       id: this.fieldIdForm,
       label: labelFormControl,
-      labelShort: [
-        this.resolveForDisplay(this.data.entitySchemaField.labelShort),
-      ],
+      labelShort: [this.rawSchemaValue("labelShort")],
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,
       ],
       displayFullLengthOptionLabel: [
         this.data.entitySchemaField.displayFullLengthOptionLabel ?? false,
       ],
-      description: [
-        this.resolveForDisplay(this.data.entitySchemaField.description),
-      ],
+      description: [this.rawSchemaValue("description")],
 
       dataType: [this.data.entitySchemaField.dataType, Validators.required],
       isArray: [this.data.entitySchemaField.isArray],
@@ -355,9 +343,10 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
-    const label =
+    const label = this.resolveForDisplay(
       this.schemaFieldsForm.get("labelShort").value ??
-      this.schemaFieldsForm.get("label").value;
+        this.schemaFieldsForm.get("label").value,
+    );
     const generatedId = generateIdFromLabel(label);
     this.fieldIdForm.setValue(generatedId, { emitEvent: false });
   }
@@ -545,7 +534,6 @@ export class AdminEntityFieldComponent implements OnInit {
 
     if (this.form.invalid || validatorForm?.invalid) return;
     this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
-    this.applyPendingTranslations();
     this.dialogRef.close(this.data.entitySchemaField);
   }
 
@@ -570,44 +558,14 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   /**
-   * Open the dialog to configure this text in multiple languages (#3862).
-   *
-   * Edits the *raw* config value, so translations of languages other than the
-   * currently active one are never lost.
+   * The raw, unresolved value of a schema field property, taken from the config
+   * document so that all configured languages are available for editing.
+   * The runtime schema only holds the text of the currently active language.
    */
-  openTranslations(property: string, event: Event) {
-    event.stopPropagation();
-
-    this.dialog
-      .open(ConfigureTranslationsPopupComponent, {
-        data: {
-          value: this.getRawSchemaValue(property),
-          fieldLabel: this.schemaFieldsForm.get("label")?.value,
-        },
-        disableClose: true,
-      })
-      .afterClosed()
-      .subscribe((result?: TranslatableText) => {
-        if (result === undefined) {
-          // dialog cancelled: keep whatever was configured before
-          return;
-        }
-
-        this.pendingTranslations[property] = result;
-        // the plain form field keeps showing the text of the active language
-        this.schemaFieldsForm
-          .get(property)
-          ?.setValue(this.resolveForDisplay(result) ?? "");
-      });
-  }
-
-  /**
-   * The raw, unresolved value of a schema field property, read from the config
-   * document (the runtime schema only holds values of the active language).
-   */
-  private getRawSchemaValue(property: string): TranslatableText | undefined {
-    if (this.pendingTranslations[property] !== undefined) {
-      return this.pendingTranslations[property];
+  private rawSchemaValue(property: string): TranslatableText | undefined {
+    if (this.data.overwriteLocally) {
+      // editing a single view's field config, which carries its own texts
+      return this.data.entitySchemaField[property];
     }
 
     const entityConfig: EntityConfig =
@@ -616,7 +574,12 @@ export class AdminEntityFieldComponent implements OnInit {
       entityConfig?.attributes?.[this.data.entitySchemaField.id]?.[property];
 
     // a field that is not in the config yet (newly added) has no raw value
-    return rawValue ?? this.schemaFieldsForm.get(property)?.value;
+    return rawValue ?? this.data.entitySchemaField[property];
+  }
+
+  /** the label text of the active language, for display outside the form field */
+  get resolvedLabel(): string {
+    return this.resolveForDisplay(this.schemaFieldsForm?.get("label")?.value) ?? "";
   }
 
   private resolveForDisplay(value: TranslatableText): string | undefined {
@@ -626,23 +589,5 @@ export class AdminEntityFieldComponent implements OnInit {
       DEFAULT_LANGUAGE,
       this.validLocaleIds,
     );
-  }
-
-  /**
-   * Write the configured translation maps onto the schema field.
-   *
-   * This has to happen last, when no further form updates can occur:
-   * `schemaFieldsForm.valueChanges` writes every control back onto the schema
-   * field, so a map written earlier would be replaced by the plain text of the
-   * form control as soon as any other setting is edited.
-   */
-  private applyPendingTranslations() {
-    for (const [property, value] of Object.entries(this.pendingTranslations)) {
-      if (value === undefined) {
-        delete this.data.entitySchemaField[property];
-      } else {
-        this.data.entitySchemaField[property] = value;
-      }
-    }
   }
 }

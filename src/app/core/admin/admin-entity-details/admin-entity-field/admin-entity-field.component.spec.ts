@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { of } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -476,38 +475,8 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.fieldIdForm.errors).toBeNull();
   });
 
-  describe("multi-lingual config (#3862)", () => {
+  describe("multi-lingual config", () => {
     const TRANSLATIONS = { "en-US": "Name", de: "Vorname" };
-
-    /** simulate the user configuring translations and confirming the dialog */
-    function configureTranslations(
-      property: string,
-      result: Record<string, string> | string,
-    ) {
-      // the component gets MatDialog from its own injector (it imports
-      // MatDialogModule), so spying on the TestBed instance would not apply
-      vi.spyOn(component["dialog"], "open").mockReturnValue({
-        afterClosed: () => of(result),
-      } as any);
-
-      component.openTranslations(property, {
-        stopPropagation: () => undefined,
-      } as Event);
-    }
-
-    it("should show the active language's text in the plain input", async () => {
-      await recreateComponentWithData({
-        id: "name",
-        label: "Name",
-        dataType: "string",
-      } as EntitySchemaField);
-
-      configureTranslations("label", TRANSLATIONS);
-      await fixture.whenStable();
-
-      // tests run in the default language
-      expect(component.schemaFieldsForm.get("label").value).toBe("Name");
-    });
 
     it("should keep configured translations when other settings are edited afterwards", async () => {
       await recreateComponentWithData({
@@ -516,50 +485,48 @@ describe("AdminEntityFieldComponent", () => {
         dataType: "string",
       } as EntitySchemaField);
 
-      configureTranslations("label", TRANSLATIONS);
+      // the translatable input writes the full value (all languages) to the control
+      component.schemaFieldsForm.get("label").setValue(TRANSLATIONS);
       await fixture.whenStable();
 
       // editing any other setting writes the whole form back onto the schema
       // field - the translations must not be lost by that
-      component.schemaFieldsForm
-        .get("description")
-        .setValue("Some description");
+      component.schemaFieldsForm.get("description").setValue("Some description");
       await fixture.whenStable();
 
-      component.save();
+      await component.save();
 
       expect(dialogData.entitySchemaField.label).toEqual(TRANSLATIONS);
       expect(dialogData.entitySchemaField.description).toBe("Some description");
     });
 
-    it("should store a plain string when only one language is configured", async () => {
+    it("should show the text of the active language outside the form field", async () => {
       await recreateComponentWithData({
         id: "name",
         label: "Name",
         dataType: "string",
       } as EntitySchemaField);
 
-      configureTranslations("label", "Full Name");
+      component.schemaFieldsForm.get("label").setValue(TRANSLATIONS);
       await fixture.whenStable();
 
-      await component.save();
-
-      expect(dialogData.entitySchemaField.label).toBe("Full Name");
+      // tests run in the default language
+      expect(component.resolvedLabel).toBe("Name");
     });
 
-    it("should not change anything when the translations dialog is cancelled", async () => {
+    it("should generate the field id from the text, not from a translation map", async () => {
       await recreateComponentWithData({
-        id: "name",
-        label: "Name",
         dataType: "string",
       } as EntitySchemaField);
 
-      configureTranslations("label", undefined);
+      component.schemaFieldsForm
+        .get("label")
+        .setValue({ "en-US": "My New Field", de: "Mein neues Feld" });
       await fixture.whenStable();
 
-      component.save();
-
-      expect(dialogData.entitySchemaField.label).toBe("Name");
+      expect(component.fieldIdForm.value).toBe(
+        generateIdFromLabel("My New Field"),
+      );
     });
   });
 });

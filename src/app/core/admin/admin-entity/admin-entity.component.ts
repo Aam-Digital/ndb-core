@@ -57,6 +57,7 @@ export class AdminEntityComponent {
   private configService = inject(ConfigService);
   private location = inject(Location);
   private adminEntityService = inject(AdminEntityService);
+  private entityConfigService = inject(EntityConfigService);
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
   private readonly queryParams = toSignal(this.routes.queryParams, {
@@ -104,9 +105,12 @@ export class AdminEntityComponent {
   private getEntitySettingsFromConstructor(
     entityCtr: EntityConstructor,
   ): EntityConfig {
+    // labels come from the raw config (not the resolved constructor statics)
+    // so that all configured languages remain editable
+    const rawConfig = this.entityConfigService.getRawEntityConfig(entityCtr);
     const config: EntityConfig = {
-      label: entityCtr.label,
-      labelPlural: entityCtr.labelPlural,
+      label: rawConfig?.label ?? entityCtr.label,
+      labelPlural: rawConfig?.labelPlural ?? entityCtr.labelPlural,
       icon: entityCtr.icon,
       color: entityCtr.color,
       toStringAttributes: [...entityCtr.toStringAttributes],
@@ -136,8 +140,10 @@ export class AdminEntityComponent {
       viewType === "details"
         ? EntityConfigService.getDetailsViewId(entityType)
         : EntityConfigService.getListViewId(entityType);
+    // raw, because this editor saves the view config back to the config
+    // document - resolving here would drop all other languages
     const viewConfig: DynamicComponentConfig =
-      this.configService.getConfig(viewId);
+      this.configService.getRawConfig(viewId);
 
     if (!viewConfig) {
       // return default view config

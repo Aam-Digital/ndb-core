@@ -62,6 +62,12 @@ export class AdminTabsComponent<
   E extends { title: string } | { name: string },
 > {
   tabs = model<E[]>([]);
+
+  /**
+   * Whether tab titles may be configured in several languages.
+   * Off by default - a list view's column group name doubles as its identifier.
+   */
+  translatableTitle = input<boolean>(false);
   newTabFactory = input<() => E>(
     () => ({ [this.tabTitleProperty()]: "" }) as E,
   );
