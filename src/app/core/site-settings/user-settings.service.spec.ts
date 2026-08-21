@@ -53,7 +53,10 @@ describe("UserSettingsService", () => {
 
     await service.setLanguage(GERMAN);
 
-    const saved = entityMapper.get(SiteSettings.ENTITY_TYPE, "user-1") as SiteSettings;
+    const saved = entityMapper.get(
+      SiteSettings.ENTITY_TYPE,
+      "user-1",
+    ) as SiteSettings;
     expect(saved.defaultLanguage).toEqual(GERMAN);
     expect(await service.getLanguage()).toBe("de");
   });
