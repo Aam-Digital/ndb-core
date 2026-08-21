@@ -2,6 +2,7 @@ import {
   Component,
   DestroyRef,
   inject,
+  LOCALE_ID,
   OnInit,
   signal,
   viewChild,
@@ -42,6 +43,15 @@ import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-e
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
+import { EntityConfig } from "../../../entity/entity-config";
+import { EntityConfigService } from "../../../entity/entity-config.service";
+import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
+import {
+  resolveTranslatableText,
+  TranslatableText,
+} from "../../../config/multi-lingual-config";
+import { availableLocales } from "../../../language/languages";
+import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
@@ -109,6 +119,7 @@ export interface AdminEntityFieldData {
     AdminDefaultValueComponent,
     EntityTypeSelectComponent,
     AdminSearchableCheckboxComponent,
+    TranslatableTextInputComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
@@ -121,6 +132,9 @@ export class AdminEntityFieldComponent implements OnInit {
   private dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly entityConfigService = inject(EntityConfigService);
+  private readonly locale = inject(LOCALE_ID);
+  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   private readonly validatorConfig = viewChild(
     ConfigureEntityFieldValidatorComponent,
@@ -190,7 +204,9 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     const labelFormControl = this.fb.control(
-      this.data.entitySchemaField.label,
+      // the raw value (plain string or per-language map) - the input component
+      // displays only the active language of it
+      this.rawSchemaValue("label"),
       {
         validators: [Validators.required],
         asyncValidators: [
@@ -203,7 +219,8 @@ export class AdminEntityFieldComponent implements OnInit {
               ] of this.data.entityType.schema.entries()) {
                 if (key === this.data.entitySchemaField.id) continue;
                 if (field.label) {
-                  labels.push(field.label);
+                  // compare the texts of the active language, not raw maps
+                  labels.push(this.resolveForDisplay(field.label));
                 }
               }
               return labels;
@@ -218,14 +235,14 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm = this.fb.group({
       id: this.fieldIdForm,
       label: labelFormControl,
-      labelShort: [this.data.entitySchemaField.labelShort],
+      labelShort: [this.rawSchemaValue("labelShort")],
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,
       ],
       displayFullLengthOptionLabel: [
         this.data.entitySchemaField.displayFullLengthOptionLabel ?? false,
       ],
-      description: [this.data.entitySchemaField.description],
+      description: [this.rawSchemaValue("description")],
 
       dataType: [this.data.entitySchemaField.dataType, Validators.required],
       isArray: [this.data.entitySchemaField.isArray],
@@ -325,9 +342,10 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
-    const label =
+    const label = this.resolveForDisplay(
       this.schemaFieldsForm.get("labelShort").value ??
-      this.schemaFieldsForm.get("label").value;
+        this.schemaFieldsForm.get("label").value,
+    );
     const generatedId = generateIdFromLabel(label);
     this.fieldIdForm.setValue(generatedId, { emitEvent: false });
   }
@@ -536,5 +554,41 @@ export class AdminEntityFieldComponent implements OnInit {
 
   resetToBaseFieldSettings() {
     this.dialogRef.close(this.fieldIdForm.getRawValue());
+  }
+
+  /**
+   * The raw, unresolved value of a schema field property, taken from the config
+   * document so that all configured languages are available for editing.
+   * The runtime schema only holds the text of the currently active language.
+   */
+  private rawSchemaValue(property: string): TranslatableText | undefined {
+    if (this.data.overwriteLocally) {
+      // editing a single view's field config, which carries its own texts
+      return this.data.entitySchemaField[property];
+    }
+
+    const entityConfig: EntityConfig =
+      this.entityConfigService.getRawEntityConfig(this.entityType);
+    const rawValue =
+      entityConfig?.attributes?.[this.data.entitySchemaField.id]?.[property];
+
+    // a field that is not in the config yet (newly added) has no raw value
+    return rawValue ?? this.data.entitySchemaField[property];
+  }
+
+  /** the label text of the active language, for display outside the form field */
+  get resolvedLabel(): string {
+    return (
+      this.resolveForDisplay(this.schemaFieldsForm?.get("label")?.value) ?? ""
+    );
+  }
+
+  private resolveForDisplay(value: TranslatableText): string | undefined {
+    return resolveTranslatableText(
+      value,
+      this.locale,
+      DEFAULT_LANGUAGE,
+      this.validLocaleIds,
+    );
   }
 }

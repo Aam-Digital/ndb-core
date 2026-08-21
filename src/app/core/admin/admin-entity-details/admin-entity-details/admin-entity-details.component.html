@@ -13,6 +13,7 @@
 </app-view-title>
 
 <app-admin-tabs
+  [translatableTitle]="true"
   [tabs]="panels()"
   (tabsChange)="panels.set($event)"
   [newTabFactory]="newPanelFactory"
@@ -45,6 +46,7 @@
                 ></fa-icon>
                 <div class="section-header-content">
                   <app-admin-section-header
+                    [translatable]="true"
                     [(title)]="componentConfig.title"
                     (remove)="removeComponent(item, i)"
                     (keydown)="$event.stopPropagation()"

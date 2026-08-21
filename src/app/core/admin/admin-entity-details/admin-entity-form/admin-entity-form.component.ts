@@ -1,4 +1,5 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -560,7 +561,7 @@ export class AdminEntityFormComponent {
     );
   }
 
-  updateGroupHeader(i: number, header: string) {
+  updateGroupHeader(i: number, header: TranslatableText) {
     this.fieldGroups.update((groups) =>
       groups.map((g, idx) => (idx === i ? { ...g, header } : g)),
     );

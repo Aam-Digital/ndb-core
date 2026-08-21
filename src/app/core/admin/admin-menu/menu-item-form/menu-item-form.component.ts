@@ -8,6 +8,8 @@ import {
   effect,
 } from "@angular/core";
 import { MenuItem } from "../../../ui/navigation/menu-item";
+import { EditableMenuItem } from "../menu-item-for-admin-ui";
+import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormControl, FormsModule } from "@angular/forms";
@@ -28,6 +30,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
   selector: "app-menu-item-form",
   standalone: true,
   imports: [
+    TranslatableTextInputComponent,
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
@@ -44,7 +47,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 export class MenuItemFormComponent {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
-  item = model.required<MenuItem>();
+  item = model.required<EditableMenuItem>();
   hideLabel = input<boolean>(false);
   hideLink = input<boolean>(false);
   isNew = input<boolean>(false);
