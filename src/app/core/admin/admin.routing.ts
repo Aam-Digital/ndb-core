@@ -14,6 +14,7 @@ import { UserListComponent } from "../user/user-list/user-list.component";
 import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primary-action.component";
 import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
 import { AdminConfigCleanupComponent } from "./config-cleanup/admin-config-cleanup.component";
+import { ChangeLogComponent } from "../../features/change-history/change-log/change-log.component";
 
 export const adminRoutes: Routes = [
   {
@@ -154,6 +155,14 @@ export const adminRoutes: Routes = [
       requiredPermissionOperation: "update",
     },
     canActivate: [EntityPermissionGuard],
+  },
+  {
+    path: "change-log",
+    component: ChangeLogComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
   },
   {
     path: "conflicts",

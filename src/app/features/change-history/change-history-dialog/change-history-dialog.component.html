@@ -1,9 +1,19 @@
-<h2 mat-dialog-title class="flex-row align-center gap-small">
-  <span class="flex-grow" i18n="Change history dialog title"
-    >Change History</span
-  >
+<h2
+  mat-dialog-title
+  class="flex-row align-center gap-small remove-margin-bottom"
+>
+  <span class="flex-grow" i18n="Change log dialog title">Change Log</span>
   <app-dialog-close></app-dialog-close>
 </h2>
+<!-- which record this history belongs to, so the dialog is identifiable at a
+     glance when it was opened from a list of many records -->
+<div class="record-subtitle text-secondary margin-bottom-small">
+  <app-entity-block
+    [entity]="entity"
+    [linkDisabled]="true"
+    [showIdEntityId]="true"
+  ></app-entity-block>
+</div>
 
 <mat-dialog-content>
   <!-- The entity's own created / last-updated metadata. Pure entity state, so
@@ -81,8 +91,8 @@
        loading indicator while the flag is still being fetched -->
   <app-feature-disabled-info
     [featureEnabled]="auditEnabled()"
-    featureName="Change History"
-    i18n-featureName="Change history feature name"
+    featureName="Change Log"
+    i18n-featureName="Change log feature name"
   ></app-feature-disabled-info>
 
   @if (auditEnabled() === true) {
@@ -91,8 +101,8 @@
         class="empty-state flex-column align-center gap-regular text-secondary"
       >
         <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
-        <p i18n="Change history no access">
-          You don't have permission to view the detailed change history of this
+        <p i18n="Change log no access">
+          You don't have permission to view the detailed change log of this
           record. The created and last-updated information above is still
           available.
         </p>
@@ -104,8 +114,8 @@
         class="empty-state flex-column align-center gap-regular text-secondary"
       >
         <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
-        <p i18n="Change history load error">
-          Couldn't load the change history — there may be a temporary problem.
+        <p i18n="Change log load error">
+          Couldn't load the change log — there may be a temporary problem.
           Please try again or contact your administrator.
         </p>
       </div>
@@ -114,7 +124,7 @@
         class="empty-state flex-column align-center gap-regular text-secondary"
       >
         <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
-        <p i18n="Change history empty">No change history recorded yet.</p>
+        <p i18n="Change log empty">No change log recorded yet.</p>
       </div>
     } @else {
       <app-hint-box class="history-hints">
@@ -123,13 +133,13 @@
         </p>
         <p i18n="Change history linked-records hint">
           Actions that link this record to another (e.g. adding a note) appear
-          in the change history of that related record, not here.
+          in the change log of that related record, not here.
         </p>
       </app-hint-box>
 
       <mat-accordion class="timeline">
         @for (event of events() ?? []; track event.id; let isFirst = $first) {
-          <mat-expansion-panel>
+          <mat-expansion-panel [expanded]="event.id === expandEventId">
             <mat-expansion-panel-header
               class="event-header"
               collapsedHeight="56px"

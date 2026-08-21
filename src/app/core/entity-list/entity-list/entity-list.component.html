@@ -214,6 +214,26 @@
     </button>
   }
 
+  @if (canViewChangeLog()) {
+    <button
+      mat-menu-item
+      [routerLink]="['/admin/change-log']"
+      [queryParams]="{ entityType: entityConstructor()?.ENTITY_TYPE }"
+      matTooltip="See all recorded changes to records of this type: when, by whom and which fields"
+      i18n-matTooltip
+      matTooltipPosition="before"
+    >
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        aria-hidden="true"
+        icon="clock-rotate-left"
+      ></fa-icon>
+      <span i18n="Open the change log filtered to this record type">
+        Change Log
+      </span>
+    </button>
+  }
+
   <button
     mat-menu-item
     (click)="selectedRows.set([])"

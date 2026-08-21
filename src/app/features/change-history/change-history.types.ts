@@ -10,6 +10,34 @@
 export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
 
 /**
+ * The backend `operation` of a baseline record: the full-snapshot anchor written
+ * alongside the first audited change of a pre-existing record, so that record's
+ * history has a starting state to replay from.
+ *
+ * It is not a change anyone made, which is why the change *log* excludes it (see
+ * `buildChangeLogQuery`) while the per-record history still builds on it.
+ */
+export const BASELINE_OPERATION = "baseline";
+
+/**
+ * The actions a user can filter the change log by, and the backend `operation`
+ * each one selects.
+ *
+ * `baseline` is deliberately absent: the log never lists snapshots, so offering
+ * it would only ever return nothing (see `buildChangeLogQuery`).
+ */
+export const FILTERABLE_ACTION_OPERATIONS: Record<string, string> = {
+  created: "create",
+  updated: "update",
+  deleted: "delete",
+};
+
+/** The filterable actions, in the order the filter offers them. */
+export const FILTERABLE_ACTIONS = Object.keys(
+  FILTERABLE_ACTION_OPERATIONS,
+) as ChangeAction[];
+
+/**
  * Maps the backend audit `operation` to the displayed {@link ChangeAction}.
  */
 export const OPERATION_TO_ACTION: Record<string, ChangeAction> = {
@@ -48,6 +76,68 @@ export interface ChangeEvent {
   changes: FieldChange[];
   /** optional contextual note (e.g. the baseline explanation) */
   note?: string;
+}
+
+/**
+ * One row of the system-wide change log: a single audited write, across all
+ * records rather than within one entity's history.
+ *
+ * Carries only what the list displays. The field-level before/after is
+ * deliberately absent: that needs the entity's full replayed state (see
+ * `buildChangeEvents`), which the per-record change-history dialog provides.
+ */
+export interface ChangeLogEntry {
+  /** the audit document `_id` */
+  id: string;
+  /** server-set time of the change */
+  at: Date;
+  /**
+   * authenticated author recorded by the backend (name, or id as fallback).
+   * This is the raw recorded value, and what the author filter matches on.
+   */
+  by: string;
+  /**
+   * {@link by} as an entity id, when the author was recorded as an app user
+   * record; unset for a plain username, which has no record to resolve.
+   */
+  byEntityId?: string;
+  action: ChangeAction;
+  /** the changed record's id, e.g. `Child:123` */
+  entityId: string;
+  /** the changed record's type prefix, e.g. `Child` */
+  entityType: string;
+  /** names of the fields this write changed; empty for a delete */
+  changedFields: string[];
+}
+
+/**
+ * The active filters of the system-wide change log. An unset property means
+ * "no restriction" on that dimension.
+ */
+export interface ChangeLogFilters {
+  /** entity type prefix, e.g. `Child` */
+  entityType?: string;
+  /** author, matched against the recorded user name */
+  changedBy?: string;
+  /**
+   * only one kind of change, keyed by displayed action (`created`/`updated`/
+   * `deleted`); see {@link FILTERABLE_ACTION_OPERATIONS}.
+   */
+  action?: string;
+  /**
+   * a record id, e.g. `User:1`: only changes *related* to that record — changes
+   * to the record itself, and changes to any other record that referenced it
+   * (a `Note`'s `authors` gaining or losing `User:1`).
+   *
+   * Served by a dedicated view rather than the log's default query, so it cannot
+   * be combined with {@link entityType} or {@link changedBy}; those are ignored
+   * (and disabled in the UI) while this is set.
+   */
+  relatedEntityId?: string;
+  /** only changes at or after this time */
+  from?: Date;
+  /** only changes up to this time (the whole day is included) */
+  to?: Date;
 }
 
 /**

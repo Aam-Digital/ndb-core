@@ -1,0 +1,71 @@
+@use "variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+/* the table shell, matching the user-list admin screen */
+.table-container {
+  position: relative;
+  @include mat-elevation.elevation(2);
+  background-color: white;
+  /* five columns do not fit a narrow content area; scroll the table itself
+     rather than clipping the changed-fields column or the whole page */
+  overflow-x: auto;
+}
+
+.table-footer {
+  @include mat-elevation.elevation(1);
+  border-top: colors.$grey-darker solid 2px;
+  background-color: white;
+}
+
+.table {
+  box-shadow: none;
+}
+
+/* record ids can be long (a type prefix plus a uuid), so give the input more
+   room than the selects next to it get by default */
+.related-record-filter {
+  min-width: 260px;
+}
+
+/* the id under the record title: readable enough to tell two same-titled
+   records apart and to be copied into the related-record filter, quiet enough
+   not to compete with the title. Truncated rather than wrapped — the full id
+   stays in the DOM, so it is still selectable and shown as a hover tooltip */
+.record-id {
+  font-size: 85%;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* a row opens the record's full change history; rows of a record type that is
+   no longer registered cannot, and stay unstyled so they don't invite a click.
+   Same treatment as the user-list admin screen's clickable rows */
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* enough room for a few field chips side by side; without it every chip wraps
+   onto its own line and the rows grow very tall */
+.changed-fields-cell {
+  min-width: 240px;
+}
+
+/* match the action badge next to them, which sets its own 12px; the chip
+   default is larger and made the field names shout over the action */
+.changed-fields-cell
+  ::ng-deep
+  .mat-mdc-standard-chip
+  .mdc-evolution-chip__text-label {
+  font-size: 12px;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
+  justify-content: flex-start;
+}

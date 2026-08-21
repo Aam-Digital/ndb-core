@@ -11,6 +11,9 @@ import {
   output,
   untracked,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { map } from "rxjs";
+import { SessionSubject } from "../../session/auth/session-info";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -113,6 +116,18 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   private readonly publicFormsService = inject(PublicFormsService);
   private readonly ability = inject(EntityAbility);
+  private readonly sessionSubject = inject(SessionSubject);
+
+  /**
+   * The change log lives behind the admin route, so only offer the link to
+   * someone the route will actually let in.
+   */
+  readonly canViewChangeLog = toSignal(
+    this.sessionSubject.pipe(
+      map((session) => session?.roles?.includes("admin_app") ?? false),
+    ),
+    { initialValue: false },
+  );
   public publicFormConfigs: PublicFormConfig[] = [];
   readonly dataSource = new InMemoryDataSource<T>();
 
