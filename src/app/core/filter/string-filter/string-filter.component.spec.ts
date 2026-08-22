@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
   STRING_FILTER_DEBOUNCE_MS,
   StringFilterComponent,
@@ -36,37 +31,40 @@ describe("StringFilterComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should not emit on every keystroke but coalesce into a single emit after the debounce", fakeAsync(() => {
+  it("should not emit on every keystroke but coalesce into a single emit after the debounce", () => {
+    vi.useFakeTimers();
     component.textControl.setValue("a");
     component.textControl.setValue("ab");
     component.textControl.setValue("abc");
 
     // still within the debounce window: nothing emitted yet
-    tick(STRING_FILTER_DEBOUNCE_MS - 1);
+    vi.advanceTimersByTime(STRING_FILTER_DEBOUNCE_MS - 1);
     expect(emitted).toEqual([]);
 
     // once the user pauses, a single update with the final text is emitted
-    tick(1);
+    vi.advanceTimersByTime(1);
     expect(emitted).toEqual([["abc"]]);
-  }));
+  });
 
-  it("should emit an empty selection when the text is cleared", fakeAsync(() => {
+  it("should emit an empty selection when the text is cleared", () => {
+    vi.useFakeTimers();
     component.textControl.setValue("abc");
-    tick(STRING_FILTER_DEBOUNCE_MS);
+    vi.advanceTimersByTime(STRING_FILTER_DEBOUNCE_MS);
     expect(emitted).toEqual([["abc"]]);
 
     component.textControl.setValue("");
-    tick(STRING_FILTER_DEBOUNCE_MS);
+    vi.advanceTimersByTime(STRING_FILTER_DEBOUNCE_MS);
     expect(emitted).toEqual([["abc"], []]);
-  }));
+  });
 
-  it("should reflect external changes without echoing them back through the debounce", fakeAsync(() => {
+  it("should reflect external changes without echoing them back through the debounce", () => {
+    vi.useFakeTimers();
     // e.g. "clear all filters" emits an external change
     filter.selectedOptionChange.emit([]);
-    tick(STRING_FILTER_DEBOUNCE_MS);
+    vi.advanceTimersByTime(STRING_FILTER_DEBOUNCE_MS);
 
     expect(component.textControl.value).toBe("");
     // only the external emit is recorded, no echoed emit from the text input
     expect(emitted).toEqual([[]]);
-  }));
+  });
 });

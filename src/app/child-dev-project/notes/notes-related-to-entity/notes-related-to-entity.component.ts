@@ -1,10 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
   input,
-  ChangeDetectionStrategy,
-  InputSignal,
 } from "@angular/core";
 import { Note } from "../model/note";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -40,7 +39,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
     LoaderMethod.NotesRelatedToEntity,
   );
   /** set this to make sure that loader method is used (it will not be used if multiple relation properties are found) */
-  override property = input("children")
+  override property = input("children");
 
   protected override getDefaultColumns(): FormFieldConfig[] {
     return structuredClone(
