@@ -5,6 +5,7 @@ import {
   computed,
   effect,
   inject,
+  Injector,
   input,
   model,
   OnInit,
@@ -56,7 +57,9 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
+import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -110,11 +113,11 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly exportColumnsService = inject(ExportColumnsService);
   private readonly formDialog = inject(FormDialogService);
   private readonly cdr = inject(ChangeDetectorRef);
-
   private readonly publicFormsService = inject(PublicFormsService);
   private readonly ability = inject(EntityAbility);
+  private readonly injector = inject(Injector);
+
   public publicFormConfigs: PublicFormConfig[] = [];
-  readonly dataSource = new InMemoryDataSource<T>();
 
   /**
    * Whether the current user may import records of this type.
@@ -136,6 +139,13 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
   defaultSort = input<Sort>();
+  dataSource = input<DataSourceType>();
+  recordsDataSource = computed(() =>
+    resolveDataSource<T>(this.injector, this.dataSource(), this.loaderMethod()),
+  );
+  showFreetextFilter = computed(
+    () => this.recordsDataSource() instanceof InMemoryDataSource,
+  );
 
   /**
    * The special service or method to load data via an index or other special method.
@@ -207,7 +217,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       void untracked(() => this.buildComponentFromConfig());
     });
     effect(() => {
-      this.dataSource.loadRecordConfig.set({
+      this.recordsDataSource().loadRecordConfig.set({
         entityCtr: this.entityConstructor(),
         loaderMethod: this.loaderMethod(),
       });
@@ -302,8 +312,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   applyFilter(filterValue: string) {
-    // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.recordsDataSource().filter = filterValue.trim().toLowerCase();
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -326,7 +335,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       data: {
         filterConfig: this.filters(),
         entityType: this.entityConstructor(),
-        entities: this.dataSource.allRecords(),
+        entities: this.recordsDataSource().allRecords(),
         useUrlQueryParams: true,
         filterObjChange: (filter: DataFilter<T>) => this.filterObj.set(filter),
       },
@@ -375,8 +384,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.dataSource.allRecords(),
-        filteredData: this.dataSource.filteredData.map((row) => row.record),
+        allEntities: () => this.recordsDataSource().getAllData(false),
+        filteredData: () => this.recordsDataSource().getAllData(true),
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),

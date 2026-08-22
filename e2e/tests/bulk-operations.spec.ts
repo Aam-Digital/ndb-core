@@ -274,7 +274,7 @@ test("Bulk selection follows the rendered order through sorting, filtering and p
   await rows.nth(1).click();
 
   // Bulk-editing them out of the active filter must update the filtered result
-  // and the paginator while we are on the second page.
+  // and the paginator resets to page 1
   await page
     .locator("app-entity-bulk-actions")
     .locator("input")
@@ -301,8 +301,8 @@ test("Bulk selection follows the rendered order through sorting, filtering and p
   await dialog.getByRole("button", { name: "Save" }).click();
   await expect(dialog).not.toBeVisible();
 
-  await expect(paginatorRange).toHaveText(/^\s*11 - 12 of 12\s*$/, {
+  await expect(paginatorRange).toHaveText(/^\s*1 - 10 of 12\s*$/, {
     timeout: 10_000,
   });
-  await expect(nameCells).toHaveText(BULK_NAMES.slice(PAGE_SIZE + 2));
+  await expect(nameCells).toHaveText(BULK_NAMES.slice(0, PAGE_SIZE));
 });
