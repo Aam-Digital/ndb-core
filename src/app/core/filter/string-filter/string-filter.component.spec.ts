@@ -66,5 +66,6 @@ describe("StringFilterComponent", () => {
     expect(component.textControl.value).toBe("");
     // only the external emit is recorded, no echoed emit from the text input
     expect(emitted).toEqual([[]]);
+    vi.useRealTimers();
   });
 });
