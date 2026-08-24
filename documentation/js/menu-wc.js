@@ -1688,6 +1688,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/EmailTemplate.html" data-type="entity-link" >EmailTemplate</a>
                             </li>
                             <li class="link">
+                                <a href="classes/EntitiesTableDataSource.html" data-type="entity-link" >EntitiesTableDataSource&lt;T extends Entity&gt;</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/Entity.html" data-type="entity-link" >Entity</a>
                             </li>
                             <li class="link">
@@ -1778,6 +1781,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/ObservableQueue.html" data-type="entity-link" >ObservableQueue</a>
                             </li>
                             <li class="link">
+                                <a href="classes/PaginatedDataSource.html" data-type="entity-link" >PaginatedDataSource&lt;T extends Entity&gt;</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/PouchDatabase.html" data-type="entity-link" >PouchDatabase</a>
                             </li>
                             <li class="link">
@@ -1851,6 +1857,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/Todo.html" data-type="entity-link" >Todo</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/UnknownTotalPaginatorIntl.html" data-type="entity-link" >UnknownTotalPaginatorIntl</a>
                             </li>
                             <li class="link">
                                 <a href="classes/UpdateMetadata.html" data-type="entity-link" >UpdateMetadata</a>

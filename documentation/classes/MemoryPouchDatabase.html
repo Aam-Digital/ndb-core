@@ -268,6 +268,11 @@ not persisting any data after the page is closed.</p>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
+                                <a href="#find" >find</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#get" >get</a>
                             </li>
                             <li>
@@ -472,7 +477,7 @@ not persisting any data after the page is closed.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:55</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:57</a></code>
 </div>
                         </td>
                     </tr>
@@ -514,7 +519,7 @@ Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the 
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:43</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:45</a></code>
 </div>
                         </td>
                     </tr>
@@ -560,7 +565,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:45</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:47</a></code>
 </div>
                         </td>
                     </tr>
@@ -600,7 +605,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:48</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -645,7 +650,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:36</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:38</a></code>
 </div>
                         </td>
                     </tr>
@@ -685,7 +690,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:30</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:32</a></code>
 </div>
                         </td>
                     </tr>
@@ -817,7 +822,7 @@ See <a href="https://github.com/pouchdb/pouchdb/tree/master/packages/node_module
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:158</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:160</a></code>
 </div>
                         </td>
                     </tr>
@@ -901,7 +906,7 @@ because that will make your code tightly coupled with PouchDB rather than any ot
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:316</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:318</a></code>
 </div>
                         </td>
                     </tr>
@@ -953,7 +958,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:368</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:370</a></code>
 </div>
                         </td>
                     </tr>
@@ -968,6 +973,128 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                             <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="find"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>find</b></span>
+                        <a href="#find"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>, page?: { limit: number; skip: number }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:390</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;&quot;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit: number; skip: number }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1000,7 +1127,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:127</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:129</a></code>
 </div>
                         </td>
                     </tr>
@@ -1121,7 +1248,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:102</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:104</a></code>
 </div>
                         </td>
                     </tr>
@@ -1168,7 +1295,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:92</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:94</a></code>
 </div>
                         </td>
                     </tr>
@@ -1211,7 +1338,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:305</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:307</a></code>
 </div>
                         </td>
                     </tr>
@@ -1259,7 +1386,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:88</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:90</a></code>
 </div>
                         </td>
                     </tr>
@@ -1304,7 +1431,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:520</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:568</a></code>
 </div>
                         </td>
                     </tr>
@@ -1353,7 +1480,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:265</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:267</a></code>
 </div>
                         </td>
                     </tr>
@@ -1445,7 +1572,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:179</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:181</a></code>
 </div>
                         </td>
                     </tr>
@@ -1550,7 +1677,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:202</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:204</a></code>
 </div>
                         </td>
                     </tr>
@@ -1655,7 +1782,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:398</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:446</a></code>
 </div>
                         </td>
                     </tr>
@@ -1754,7 +1881,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:241</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:243</a></code>
 </div>
                         </td>
                     </tr>
@@ -1837,7 +1964,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:380</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:382</a></code>
 </div>
                         </td>
                     </tr>
@@ -1882,7 +2009,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:420</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:468</a></code>
 </div>
                         </td>
                     </tr>
@@ -1966,7 +2093,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:466</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:514</a></code>
 </div>
                         </td>
                     </tr>
@@ -2046,7 +2173,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:326</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:328</a></code>
 </div>
                         </td>
                     </tr>
@@ -2092,7 +2219,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:116</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:118</a></code>
 </div>
                         </td>
                     </tr>
@@ -2181,7 +2308,7 @@ run exactly once and are never routed through it.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:135</a></code>
 </div>
                         </td>
                     </tr>
@@ -2267,7 +2394,7 @@ run exactly once and are never routed through it.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:139</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:156</a></code>
 </div>
                         </td>
                     </tr>

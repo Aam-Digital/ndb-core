@@ -479,7 +479,7 @@ const filtered = this.data.filter(predicate)</code></pre></div></div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { EntitySchemaField } from &quot;../entity/schema/entity-schema-field&quot;;
 import { Entity } from &quot;../entity/model/entity&quot;;
 import {
@@ -533,7 +533,7 @@ export class FilterService {
    * @param filter a valid filter object, e.g. as provided by the &#x60;FilterComponent&#x60;
    */
   getFilterPredicate&lt;T extends Entity&gt;(filter: DataFilter&lt;T&gt;) {
-    return this.filterFactory&lt;T&gt;(filter as MongoQuery&lt;T&gt;);
+    return this.filterFactory&lt;T&gt;((filter ?? {}) as MongoQuery&lt;T&gt;);
   }
 
   /**

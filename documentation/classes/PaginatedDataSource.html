@@ -1,0 +1,1625 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >PaginatedDataSource&lt;T extends Entity&gt;</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/common-components/entities-table/data-source/paginated-data-source.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource&lt;T&gt;</a></code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource&lt;T&gt;</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasUnknownTotalCount" >hasUnknownTotalCount</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#allRecords" >allRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#dataFilter" >dataFilter</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#displayedData" >displayedData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#entityMapper" >entityMapper</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#filteredRecords" >filteredRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#isLoading" >isLoading</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#loadRecordConfig" >loadRecordConfig</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#renderedRows" >renderedRows</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#sortValueFns" >sortValueFns</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#_pageData" >_pageData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#_updatePaginator" >_updatePaginator</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllData" >getAllData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadRecords" >loadRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#processEntityUpdate" >processEntityUpdate</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#listenToEntityUpdates" >listenToEntityUpdates</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#setRecords" >setRecords</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#sort" >sort</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#paginator" >paginator</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:79</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasUnknownTotalCount"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasUnknownTotalCount</b></span>
+                        <a href="#hasUnknownTotalCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:77</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the reported total is only a lower bound because there are more
+records than have been loaded/counted so far. In this case the paginator
+should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allRecords"></a>
+                    <span class="name">
+                        <span ><b>allRecords</b></span>
+                        <a href="#allRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:51</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dataFilter"></a>
+                    <span class="name">
+                        <span ><b>dataFilter</b></span>
+                        <a href="#dataFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;DataFilter&lt;T&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:49</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="displayedData"></a>
+                    <span class="name">
+                        <span ><b>displayedData</b></span>
+                        <a href="#displayedData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;TableRow&lt;T&gt;[]&gt;([])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:57</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The rows handed to the table as input data, in the order they were loaded.
+Sorting and pagination are applied on top of this by the table, see <a href="renderedRows">renderedRows</a>.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityMapper"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>entityMapper</b></span>
+                        <a href="#entityMapper"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(EntityMapperService)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:46</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filteredRecords"></a>
+                    <span class="name">
+                        <span ><b>filteredRecords</b></span>
+                        <a href="#filteredRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;T[]&gt;([])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:52</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isLoading"></a>
+                    <span class="name">
+                        <span ><b>isLoading</b></span>
+                        <a href="#isLoading"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:64</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecordConfig"></a>
+                    <span class="name">
+                        <span ><b>loadRecordConfig</b></span>
+                        <a href="#loadRecordConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;LoadRecordConfig&lt;T&gt;&gt;(undefined)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:63</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="renderedRows"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>renderedRows</b></span>
+                        <a href="#renderedRows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>toSignal(this.connect(), { requireSync: true })</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:62</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The rows as currently rendered by the table:
+filtered, sorted and reduced to the current page.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortValueFns"></a>
+                    <span class="name">
+                        <span ><b>sortValueFns</b></span>
+                        <a href="#sortValueFns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;SortValueFns&lt;T&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:50</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="_pageData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>_pageData</b></span>
+                        <a href="#_pageData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>_pageData(data: <a href="../interfaces/TableRow.html" target="_self">TableRow&lt;T&gt;[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:136</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Records are already paginated by the database query,
+so the MatTableDataSource base class must not slice them again by page index.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/TableRow.html" target="_self" >TableRow[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="_updatePaginator"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>_updatePaginator</b></span>
+                        <a href="#_updatePaginator"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>_updatePaginator(_filteredDataLength: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:146</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The MatTableDataSource base class updates the paginator with the length of the
+loaded data (deferred, after every data change) - which here is only a single page.
+Report the overall total from the database query instead,
+otherwise the base class would overwrite paginator.length right after setRecords().</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>_filteredDataLength</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllData</b></span>
+                        <a href="#getAllData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllData(filtered: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:109</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filtered</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>loadRecords</b></span>
+                        <a href="#loadRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadRecords()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:91</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="processEntityUpdate"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>processEntityUpdate</b></span>
+                        <a href="#processEntityUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>processEntityUpdate()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:150</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="listenToEntityUpdates"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>listenToEntityUpdates</b></span>
+                        <a href="#listenToEntityUpdates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>listenToEntityUpdates()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:163</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setRecords"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>setRecords</b></span>
+                        <a href="#setRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setRecords()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:127</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Request a (re)load of the records for the current config/filter/sort/page.</p>
+<p>All the triggers that fire while a view initializes are debounced into a
+single request, so opening a list does not send several redundant DB
+requests (and the request already uses the fully resolved filter/sort/page).
+<a href="isLoading">isLoading</a> is set immediately so the table can show a progress
+indicator until the load finishes.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>a promise that resolves once the resulting load has completed.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+            <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="sort"></a>
+                        <span class="name"><b>sort</b><a href="#sort"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>sort()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:28</a></div>
+                                </td>
+                            </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>sort(sort: MatSort)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:21</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                        <td>Type</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>sort</td>
+                                                    
+                                                            <td>
+                                                                        <code>MatSort</code>
+                                                            </td>
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="paginator"></a>
+                        <span class="name"><b>paginator</b><a href="#paginator"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>paginator()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:62</a></div>
+                                </td>
+                            </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>set</b><code>paginator(paginator: MatPaginator)</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:49</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+
+                                <div class="io-description">
+                                        <b>Parameters :</b>
+                                        <table class="params">
+                                            <thead>
+                                                <tr>
+                                                    <td>Name</td>
+                                                        <td>Type</td>
+                                                    <td>Optional</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                            <td>paginator</td>
+                                                    
+                                                            <td>
+                                                                        <code>MatPaginator</code>
+                                                            </td>
+                                                    
+                                                        <td>
+                                                                No
+                                                        </td>
+                                                        
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                </div>
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+</section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { MatSort } from &quot;@angular/material/sort&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { MatPaginator } from &quot;@angular/material/paginator&quot;;
+import { effect, signal } from &quot;@angular/core&quot;;
+import { EntityFilter } from &quot;#src/app/core/filter/filters/entityFilter&quot;;
+import { EntitiesTableDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/entities-table-data-source&quot;;
+import { TableRow } from &quot;#src/app/core/common-components/entities-table/table-row&quot;;
+
+/**
+ * Number of documents fetched per request when loading the complete dataset
+ * (see {@link PaginatedDataSource.getAllData}).
+ */
+export const FULL_LOAD_PAGE_SIZE &#x3D; 500;
+
+export class PaginatedDataSource&lt;
+  T extends Entity,
+&gt; extends EntitiesTableDataSource&lt;T&gt; {
+  private sortRef: MatSort;
+  private sortState: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; } &#x3D; {};
+  override set sort(sort: MatSort) {
+    this.sortRef &#x3D; sort;
+    this.updateSort(this.sortRef.active, this.sortRef.direction);
+    this.sortRef.sortChange.subscribe(({ active, direction }) &#x3D;&gt; {
+      this.updateSort(active, direction);
+    });
+  }
+  override get sort(): MatSort {
+    return this.sortRef;
+  }
+
+  private updateSort(active: string, direction: &quot;asc&quot; | &quot;desc&quot; | &quot;&quot;) {
+    if (
+      (direction &#x3D;&#x3D;&#x3D; &quot;&quot; &amp;&amp; this.sortState.dir &#x3D;&#x3D;&#x3D; undefined) ||
+      (this.sortState.prop &#x3D;&#x3D;&#x3D; active &amp;&amp; this.sortState.dir &#x3D;&#x3D;&#x3D; direction)
+    ) {
+      return;
+    }
+    if (direction &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+      this.sortState &#x3D; {};
+    } else {
+      this.sortState &#x3D; { prop: active, dir: direction };
+    }
+    this.setRecords();
+  }
+
+  private page: { size?: number; index?: number } &#x3D; {};
+  private paginatorRef: MatPaginator;
+  override set paginator(paginator: MatPaginator) {
+    this.paginatorRef &#x3D; paginator;
+    this.paginatorRef.initialized.subscribe(() &#x3D;&gt; {
+      this.page.size &#x3D; this.paginatorRef.pageSize;
+      this.page.index &#x3D; this.paginatorRef.pageIndex;
+      this.setRecords();
+    });
+    this.paginatorRef.page.subscribe((val) &#x3D;&gt; {
+      this.page.size &#x3D; val.pageSize;
+      this.page.index &#x3D; val.pageIndex;
+      this.setRecords();
+    });
+  }
+  override get paginator(): MatPaginator {
+    return this.paginatorRef;
+  }
+
+  /**
+   * Total number of records reported to the paginator
+   * (loaded pages plus at least one more record, if it exists).
+   */
+  private totalCount &#x3D; 0;
+
+  /**
+   * Whether the reported total is only a lower bound because there are more
+   * records than have been loaded/counted so far. In this case the paginator
+   * should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).
+   */
+  readonly hasUnknownTotalCount &#x3D; signal(false);
+
+  private effectiveFilter: DataFilter&lt;T&gt; &#x3D; {};
+
+  constructor() {
+    super();
+    effect(() &#x3D;&gt; {
+      this.effectiveFilter &#x3D; this.processFilterForDB(this.dataFilter());
+      if (this.loadRecordConfig()) {
+        this.setRecords();
+      }
+    });
+  }
+
+  protected override async loadRecords() {
+    if (!this.loadRecordConfig()) return [];
+
+    const res &#x3D; await this.entityMapper.findType(
+      this.loadRecordConfig().entityCtr,
+      this.effectiveFilter,
+      { skip: this.page.index * this.page.size, limit: this.page.size + 1 },
+      this.sortState,
+    );
+    // an extra record beyond the page size was loaded as a probe:
+    // if it exists, there are more records than we can currently count
+    const hasMoreRecords &#x3D; res.length &gt; this.page.size;
+    this.hasUnknownTotalCount.set(hasMoreRecords);
+    this.totalCount &#x3D; this.page.size * this.page.index + res.length;
+    // &#x60;this.allRecords&#x60; stays empty
+    this.filteredRecords.set(res.slice(0, this.page.size));
+  }
+
+  override async getAllData(filtered &#x3D; false): Promise&lt;T[]&gt; {
+    if (!this.loadRecordConfig()) return [];
+
+    const entityCtr &#x3D; this.loadRecordConfig().entityCtr;
+    const filter &#x3D; filtered ? this.effectiveFilter : {};
+
+    // CouchDB&#x27;s _find returns only 25 documents when no limit is given, so we
+    // page through the results explicitly until a page is not completely filled.
+    const allRecords: T[] &#x3D; [];
+    let page: T[];
+    do {
+      page &#x3D; await this.entityMapper.findType(
+        entityCtr,
+        filter,
+        { skip: allRecords.length, limit: FULL_LOAD_PAGE_SIZE },
+        this.sortState,
+      );
+      allRecords.push(...page);
+    } while (page.length &#x3D;&#x3D;&#x3D; FULL_LOAD_PAGE_SIZE);
+
+    return allRecords;
+  }
+
+  /**
+   * Records are already paginated by the database query,
+   * so the MatTableDataSource base class must not slice them again by page index.
+   */
+  override _pageData(data: TableRow&lt;T&gt;[]): TableRow&lt;T&gt;[] {
+    return data;
+  }
+
+  /**
+   * The MatTableDataSource base class updates the paginator with the length of the
+   * loaded data (deferred, after every data change) - which here is only a single page.
+   * Report the overall total from the database query instead,
+   * otherwise the base class would overwrite paginator.length right after setRecords().
+   */
+  override _updatePaginator(_filteredDataLength: number): void {
+    super._updatePaginator(this.totalCount);
+  }
+
+  protected override async processEntityUpdate() {
+    // We don&#x27;t really know how it might affect the pages -&gt; full reload
+    await this.setRecords();
+  }
+
+  private processFilterForDB(filter: DataFilter&lt;T&gt;): EntityFilter&lt;T&gt; {
+    // Mango queries need &#x60;$options: &quot;i&quot;&#x60; while CouchDB only supports &#x60;$regex: &quot;(?i)...&quot;&#x60;
+    filter &#x3D; convertToCouchRegex(filter);
+    const filterString &#x3D; JSON.stringify(filter);
+    // replace e.g. &quot;gender.id&quot; with &quot;gender&quot; as configurable enums are only stored with id value
+    const updatedString &#x3D; filterString.replace(/(&quot;\w+)\.id(?&#x3D;&quot;:)/g, &quot;$1&quot;);
+    return JSON.parse(updatedString);
+  }
+}
+
+/**
+ * Recursively converts any $regex value in an object to a CouchDB inline (?i) pattern.
+ *
+ * @param {*} node - The query object or value to transform.
+ * @returns {*} The transformed query object.
+ */
+function convertToCouchRegex(node: any): any {
+  if (node &#x3D;&#x3D;&#x3D; null || typeof node !&#x3D;&#x3D; &quot;object&quot;) {
+    return node;
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(convertToCouchRegex);
+  }
+
+  const result &#x3D; {};
+
+  for (const [key, value] of Object.entries(node)) {
+    // Strip $options completely
+    if (key &#x3D;&#x3D;&#x3D; &quot;$options&quot;) {
+      continue;
+    }
+
+    // Convert $regex patterns to inline case-insensitive format
+    if (key &#x3D;&#x3D;&#x3D; &quot;$regex&quot; &amp;&amp; typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      result[&quot;$regex&quot;] &#x3D; &#x60;(?i)${value}&#x60;;
+    } else {
+      result[key] &#x3D; convertToCouchRegex(value);
+    }
+  }
+
+  return result;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'PaginatedDataSource.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -212,7 +212,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="175" class="link-to-prism">src/app/core/database/database.ts:175</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="192" class="link-to-prism">src/app/core/database/database.ts:192</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -259,7 +259,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="175" class="link-to-prism">src/app/core/database/database.ts:175</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="192" class="link-to-prism">src/app/core/database/database.ts:192</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="173" class="link-to-prism">src/app/core/database/database.ts:173</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="190" class="link-to-prism">src/app/core/database/database.ts:190</a></div>
                                 </td>
                             </tr>
 
@@ -337,7 +337,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="174" class="link-to-prism">src/app/core/database/database.ts:174</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="191" class="link-to-prism">src/app/core/database/database.ts:191</a></div>
                                 </td>
                             </tr>
 
@@ -423,6 +423,23 @@ export abstract class Database {
   purge(_id: string): Promise&lt;boolean&gt; {
     throw new Error(&quot;purge() is not supported by this database implementation&quot;);
   }
+
+  /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * There might be differences in queries between a local PouchDB and the CouchDB.
+   *
+   * @param prefix of the entity to be queried
+   * @param query the Mango Query Language query
+   * @param page additional pagination options
+   * @param sort additional sorting options
+   */
+  abstract find(
+    prefix: string,
+    query: any,
+    page?: { limit?: number; skip?: number },
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;any&gt;;
 
   /**
    * Query data from the database based on a more complex, indexed request.

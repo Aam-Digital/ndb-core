@@ -259,7 +259,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="218" class="link-to-prism">src/app/core/filter/filters/filters.ts:218</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="224" class="link-to-prism">src/app/core/filter/filters/filters.ts:224</a></div>
                                 </td>
                             </tr>
 
@@ -304,7 +304,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="229" class="link-to-prism">src/app/core/filter/filters/filters.ts:229</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="235" class="link-to-prism">src/app/core/filter/filters/filters.ts:235</a></div>
                                 </td>
                             </tr>
 
@@ -354,7 +354,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="224" class="link-to-prism">src/app/core/filter/filters/filters.ts:224</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="230" class="link-to-prism">src/app/core/filter/filters/filters.ts:230</a></div>
                                 </td>
                             </tr>
 
@@ -404,7 +404,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="221" class="link-to-prism">src/app/core/filter/filters/filters.ts:221</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="227" class="link-to-prism">src/app/core/filter/filters/filters.ts:227</a></div>
                                 </td>
                             </tr>
 
@@ -449,7 +449,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="212" class="link-to-prism">src/app/core/filter/filters/filters.ts:212</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="218" class="link-to-prism">src/app/core/filter/filters/filters.ts:218</a></div>
                                 </td>
                             </tr>
 
@@ -494,7 +494,7 @@ used by <a href="../classes/SelectableFilter.html">SelectableFilter</a></p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="215" class="link-to-prism">src/app/core/filter/filters/filters.ts:215</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="221" class="link-to-prism">src/app/core/filter/filters/filters.ts:221</a></div>
                                 </td>
                             </tr>
 
@@ -560,6 +560,7 @@ export function createEmptyValueFilter&lt;T extends Entity&gt;(
     { [fieldName]: undefined } as DataFilter&lt;T&gt;,
     { [fieldName]: null } as DataFilter&lt;T&gt;,
     { [fieldName]: &quot;&quot; } as DataFilter&lt;T&gt;,
+    { [fieldName]: { $exists: false } } as DataFilter&lt;T&gt;,
   ];
 
   if (includeNestedId) {
@@ -567,6 +568,7 @@ export function createEmptyValueFilter&lt;T extends Entity&gt;(
       { [fieldName + &quot;.id&quot;]: undefined } as DataFilter&lt;T&gt;,
       { [fieldName + &quot;.id&quot;]: null } as DataFilter&lt;T&gt;,
       { [fieldName + &quot;.id&quot;]: &quot;&quot; } as DataFilter&lt;T&gt;,
+      { [fieldName + &quot;.id&quot;]: { $exists: false } } as DataFilter&lt;T&gt;,
     );
   }
 
@@ -608,7 +610,7 @@ export abstract class Filter&lt;T extends Entity&gt; {
     );
   }
 
-  abstract getFilter(): DataFilter&lt;T&gt;;
+  abstract getFilter(): DataFilter&lt;T&gt; | undefined;
 }
 
 /**
@@ -657,6 +659,7 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
    * @param options An array of different filtering variants to chose between
    * @param label The user-friendly label describing this filter-selection
    * (optional, defaults to the name of the selection)
+   * @param singleSelectOnly if true, only one option can be selected at a time
    */
   constructor(
     public override name: string,
@@ -682,7 +685,7 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
    * Get the filter query for the given option.
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
-  public getFilter(): DataFilter&lt;T&gt; {
+  public getFilter(): DataFilter&lt;T&gt; | undefined {
     const filters: DataFilter&lt;T&gt;[] &#x3D; this.selectedOptionValues
       .map((value: string) &#x3D;&gt; this.getOption(value))
       .filter((value: FilterSelectionOption&lt;T&gt;) &#x3D;&gt; value !&#x3D;&#x3D; undefined)
@@ -691,7 +694,10 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
       });
 
     if (filters.length &#x3D;&#x3D;&#x3D; 0) {
-      return {} as DataFilter&lt;T&gt;;
+      return undefined;
+    }
+    if (filters.length &#x3D;&#x3D;&#x3D; 1) {
+      return filters[0];
     }
     return {
       $or: [...filters],

@@ -307,7 +307,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/filter/string-filter/string-filter.component.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/filter/string-filter/string-filter.component.ts:39</a></div>
                             </td>
                         </tr>
 
@@ -338,7 +338,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/filter/string-filter/string-filter.component.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/filter/string-filter/string-filter.component.ts:35</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -378,7 +378,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/filter/string-filter/string-filter.component.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/filter/string-filter/string-filter.component.ts:39</a></div>
                         </td>
                     </tr>
 
@@ -403,8 +403,16 @@ import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 import { FormControl, ReactiveFormsModule } from &quot;@angular/forms&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { debounceTime, distinctUntilChanged } from &quot;rxjs/operators&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { StringFilter } from &quot;../filters/stringFilter&quot;;
+
+/**
+ * Delay (ms) before a changed search text is applied, so that typing does not
+ * trigger a filter update (and, for server-side data sources, a DB request) on
+ * every single keystroke.
+ */
+export const STRING_FILTER_DEBOUNCE_MS &#x3D; 400;
 
 /**
  * A simple text input to filter entities by free-text properties
@@ -425,7 +433,11 @@ export class StringFilterComponent&lt;E extends Entity&gt; {
 
   constructor() {
     this.textControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        debounceTime(STRING_FILTER_DEBOUNCE_MS),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((text) &#x3D;&gt; {
         this.filterConfig().selectedOptionChange.emit(text ? [text] : []);
       });

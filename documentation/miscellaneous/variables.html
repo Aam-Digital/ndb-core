@@ -179,6 +179,9 @@
                             <a href="#AUDIT_RECORD_SUBJECT" title="src/app/features/change-history/change-history.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>AUDIT_RECORD_SUBJECT</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#availableDataSources" title="src/app/core/common-components/entities-table/data-source/available-data-sources.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>availableDataSources</b>&nbsp;&nbsp;&nbsp;(src/.../available-data-sources.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#availableLocales" title="src/app/core/language/languages.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>availableLocales</b>&nbsp;&nbsp;&nbsp;(src/.../languages.ts)</span></a>
                         </li>
                         <li>
@@ -351,6 +354,9 @@
                         </li>
                         <li>
                             <a href="#fileComponents" title="src/app/features/file/file-components.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>fileComponents</b>&nbsp;&nbsp;&nbsp;(src/.../file-components.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#FULL_LOAD_PAGE_SIZE" title="src/app/core/common-components/entities-table/data-source/paginated-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FULL_LOAD_PAGE_SIZE</b>&nbsp;&nbsp;&nbsp;(src/.../paginated-data-source.ts)</span></a>
                         </li>
                         <li>
                             <a href="#genders" title="src/app/child-dev-project/children/model/genders.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>genders</b>&nbsp;&nbsp;&nbsp;(src/.../genders.ts)</span></a>
@@ -669,6 +675,9 @@
                         </li>
                         <li>
                             <a href="#stories" title="src/app/features/todos/model/demo-todo-generator.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>stories</b>&nbsp;&nbsp;&nbsp;(src/.../demo-todo-generator.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#STRING_FILTER_DEBOUNCE_MS" title="src/app/core/filter/string-filter/string-filter.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>STRING_FILTER_DEBOUNCE_MS</b>&nbsp;&nbsp;&nbsp;(src/.../string-filter.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#TEST_USER" title="src/app/core/user/demo-user-generator.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>TEST_USER</b>&nbsp;&nbsp;&nbsp;(src/.../demo-user-generator.service.ts)</span></a>
@@ -2080,6 +2089,38 @@ has visited every page.</p>
 </div>
                 </td>
             </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/common-components/entities-table/data-source/available-data-sources.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="availableDataSources"></a>
+                    <span class="name">
+                        <span ><b>availableDataSources</b></span>
+                        <a href="#availableDataSources"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  &quot;in-memory&quot;: InMemoryDataSource,
+  paginated: PaginatedDataSource,
+}</code>
+                    </td>
+                </tr>
+
 
         </tbody>
     </table>
@@ -6381,6 +6422,42 @@ so they are not reported to remote logging.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/common-components/entities-table/data-source/paginated-data-source.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FULL_LOAD_PAGE_SIZE"></a>
+                    <span class="name">
+                        <span ><b>FULL_LOAD_PAGE_SIZE</b></span>
+                        <a href="#FULL_LOAD_PAGE_SIZE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>500</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Number of documents fetched per request when loading the complete dataset
+(see <a href="PaginatedDataSource.getAllData">PaginatedDataSource.getAllData</a>).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/child-dev-project/children/model/genders.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -9217,6 +9294,43 @@ Separating these routes from the main AppModule routing allows lazy-loading of m
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/filter/string-filter/string-filter.component.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="STRING_FILTER_DEBOUNCE_MS"></a>
+                    <span class="name">
+                        <span ><b>STRING_FILTER_DEBOUNCE_MS</b></span>
+                        <a href="#STRING_FILTER_DEBOUNCE_MS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>400</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Delay (ms) before a changed search text is applied, so that typing does not
+trigger a filter update (and, for server-side data sources, a DB request) on
+every single keystroke.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>

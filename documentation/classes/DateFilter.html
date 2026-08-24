@@ -519,7 +519,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:100</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:102</a></code>
 </div>
                         </td>
                     </tr>
@@ -566,7 +566,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:92</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:94</a></code>
 </div>
                         </td>
                     </tr>
@@ -656,7 +656,7 @@ The filter can either be one of the predefined options or two manually entered d
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter | undefined</a></code>
 
                         </div>
                 </td>
@@ -726,7 +726,7 @@ The filter can either be one of the predefined options or two manually entered d
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:107</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -833,7 +833,7 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
     return new DateRange(undefined, undefined);
   }
 
-  getFilter(): DataFilter&lt;T&gt; {
+  getFilter(): DataFilter&lt;T&gt; | undefined {
     if (this.selectedOptionValues[0] &#x3D;&#x3D;&#x3D; EMPTY_FILTER_OPTION_KEY) {
       return createEmptyValueFilter(this.name, false);
     }
@@ -848,7 +848,7 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
     }
     return filterObject.$gte || filterObject.$lte
       ? ({ [this.name]: filterObject } as DataFilter&lt;T&gt;)
-      : ({} as DataFilter&lt;T&gt;);
+      : undefined;
   }
 
   getSelectedOption() {

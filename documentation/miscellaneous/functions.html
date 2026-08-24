@@ -245,6 +245,9 @@
                             <a href="#computeLegacyDbNames" title="src/app/core/database/db-name-helpers.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>computeLegacyDbNames</b>&nbsp;&nbsp;&nbsp;(src/.../db-name-helpers.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#convertToCouchRegex" title="src/app/core/common-components/entities-table/data-source/paginated-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>convertToCouchRegex</b>&nbsp;&nbsp;&nbsp;(src/.../paginated-data-source.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#convertToMomentFormat" title="src/app/core/basic-datatypes/date/date.static.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>convertToMomentFormat</b>&nbsp;&nbsp;&nbsp;(src/.../date.static.ts)</span></a>
                         </li>
                         <li>
@@ -405,6 +408,9 @@
                         </li>
                         <li>
                             <a href="#getConfigsForInheritedMode" title="src/app/features/inherited-field/inherited-value.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getConfigsForInheritedMode</b>&nbsp;&nbsp;&nbsp;(src/.../inherited-value.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#getDataSource" title="src/app/core/common-components/entities-table/data-source/data-source-resolver.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getDataSource</b>&nbsp;&nbsp;&nbsp;(src/.../data-source-resolver.ts)</span></a>
                         </li>
                         <li>
                             <a href="#getDefaultConfigEntity" title="src/app/core/config/testing-config-service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getDefaultConfigEntity</b>&nbsp;&nbsp;&nbsp;(src/.../testing-config-service.ts)</span></a>
@@ -711,6 +717,9 @@
                         </li>
                         <li>
                             <a href="#resolveAgeSourceField" title="src/app/core/common-components/entities-table/entities-table-sort.store.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resolveAgeSourceField</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-sort.store.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#resolveDataSource" title="src/app/core/common-components/entities-table/data-source/data-source-resolver.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resolveDataSource</b>&nbsp;&nbsp;&nbsp;(src/.../data-source-resolver.ts)</span></a>
                         </li>
                         <li>
                             <a href="#resourceWithRetention" title="src/app/utils/resourceWithRetention.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resourceWithRetention</b>&nbsp;&nbsp;&nbsp;(src/.../resourceWithRetention.ts)</span></a>
@@ -6522,6 +6531,80 @@ Used with the old &quot;idb&quot; adapter before migration.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/common-components/entities-table/data-source/paginated-data-source.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="convertToCouchRegex"></a>
+                    <span class="name">
+                        <span ><b>convertToCouchRegex</b></span>
+                        <a href="#convertToCouchRegex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>convertToCouchRegex(node: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Recursively converts any $regex value in an object to a CouchDB inline (?i) pattern.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>node</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The query object or value to transform.</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>The transformed query object.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/basic-datatypes/date/date.static.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -12052,6 +12135,168 @@ This generates a camelCase string, removing special characters.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../classes/Config.html" target="_self" >Map&lt;string, DefaultValueConfigInheritedField&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/common-components/entities-table/data-source/data-source-resolver.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getDataSource"></a>
+                    <span class="name">
+                        <span ><b>getDataSource</b></span>
+                        <a href="#getDataSource"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getDataSource(dataSource?: <a href="../miscellaneous/typealiases.html#DataSourceType" target="_self">DataSourceType</a>, loaderMethod?: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dataSource</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataSourceType" target="_self" >DataSourceType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>loaderMethod</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self" >LoaderMethod</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resolveDataSource"></a>
+                    <span class="name">
+                        <span ><b>resolveDataSource</b></span>
+                        <a href="#resolveDataSource"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>resolveDataSource&lt;T extends Entity&gt;(injector: <a href="https://angular.dev/api/core/Injector" target="_blank">Injector</a>, dataSource?: <a href="../miscellaneous/typealiases.html#DataSourceType" target="_self">DataSourceType</a>, loaderMethod?: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T extends Entity</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>injector</td>
+                                            <td>
+                                                            <code><a href="https://angular.dev/api/core/Injector" target="_blank" >Injector</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dataSource</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataSourceType" target="_self" >DataSourceType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>loaderMethod</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self" >LoaderMethod</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource&lt;T&gt;</a></code>
 
                         </div>
                             <div class="io-description">

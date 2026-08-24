@@ -275,7 +275,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:83</a></div>
                                 </td>
                             </tr>
 
@@ -314,7 +314,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:81</a></div>
                                 </td>
                             </tr>
 
@@ -358,7 +358,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:76</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:84</a></div>
                                 </td>
                             </tr>
 
@@ -402,7 +402,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:77</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:85</a></div>
                                 </td>
                             </tr>
 
@@ -446,7 +446,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:74</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:82</a></div>
                                 </td>
                             </tr>
 
@@ -461,6 +461,7 @@
 import { FormFieldConfig } from &quot;../common-components/entity-form/FormConfig&quot;;
 import { Sort } from &quot;@angular/material/sort&quot;;
 import { unitOfTime } from &quot;moment&quot;;
+import { DataSourceType } from &quot;#src/app/core/common-components/entities-table/data-source/available-data-sources&quot;;
 
 export interface EntityListConfig {
   /**
@@ -473,6 +474,13 @@ export interface EntityListConfig {
    * (optional) This is only used and necessary if EntityListComponent is used directly in config
    */
   entityType?: string;
+
+  /**
+   * Select what kind of data source is used for the table.
+   * (optional) default is &quot;paginated&quot; in online-only session and &quot;in-memory&quot; otherwise
+   * see &#x60;data-source-factory.service.ts&#x60;
+   */
+  dataSource?: DataSourceType;
 
   /**
    * Custom overwrites or additional columns to be displayed in the table.

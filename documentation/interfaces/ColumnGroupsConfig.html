@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:52</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:60</a></div>
                                 </td>
                             </tr>
 
@@ -281,7 +281,7 @@ Default is the name of the first group.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:46</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:54</a></div>
                                 </td>
                             </tr>
 
@@ -325,7 +325,7 @@ Default is the name of the first group.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:58</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:66</a></div>
                                 </td>
                             </tr>
 
@@ -347,6 +347,7 @@ Default is the name of the first group.</p>
 import { FormFieldConfig } from &quot;../common-components/entity-form/FormConfig&quot;;
 import { Sort } from &quot;@angular/material/sort&quot;;
 import { unitOfTime } from &quot;moment&quot;;
+import { DataSourceType } from &quot;#src/app/core/common-components/entities-table/data-source/available-data-sources&quot;;
 
 export interface EntityListConfig {
   /**
@@ -359,6 +360,13 @@ export interface EntityListConfig {
    * (optional) This is only used and necessary if EntityListComponent is used directly in config
    */
   entityType?: string;
+
+  /**
+   * Select what kind of data source is used for the table.
+   * (optional) default is &quot;paginated&quot; in online-only session and &quot;in-memory&quot; otherwise
+   * see &#x60;data-source-factory.service.ts&#x60;
+   */
+  dataSource?: DataSourceType;
 
   /**
    * Custom overwrites or additional columns to be displayed in the table.

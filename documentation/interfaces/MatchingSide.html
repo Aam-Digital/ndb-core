@@ -837,7 +837,7 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from &quot;./matching-entities-config&quot;;
-import { InMemoryDataSource } from &quot;#src/app/core/common-components/entities-table/in-memory-data-source&quot;;
+import { InMemoryDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/in-memory-data-source&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 
 export interface MatchingSide extends MatchingSideConfig {
@@ -1025,6 +1025,7 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     if (!newSide.selected) {
+      // Currently this component only works with the InMemoryDataSource because all records should be displayed on the map
       runInInjectionContext(
         this.injector,
         () &#x3D;&gt; (newSide.dataSource &#x3D; new InMemoryDataSource()),

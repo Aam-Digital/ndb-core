@@ -1036,13 +1036,13 @@ import {
 import { ColumnGroupsConfig } from &quot;../../entity-list/EntityListConfig&quot;;
 
 export interface ExportDialogData {
-  /** All records (unfiltered, permissions-limited) */
-  allEntities: any[];
+  /** Resolves with all records (unfiltered, permissions-limited) */
+  allEntities: () &#x3D;&gt; Promise&lt;any[]&gt;;
   /**
-   * Currently filtered/visible records.
+   * Resolves with the currently filtered/visible records.
    * When omitted, the scope selector is hidden and allEntities are exported directly.
    */
-  filteredData?: any[];
+  filteredData?: () &#x3D;&gt; Promise&lt;any[]&gt;;
   exportConfig?: ExportColumnConfig[];
   preselectedExportConfig?: ExportColumnConfig[];
   filename: string;
@@ -1170,8 +1170,8 @@ export class ExportDialogComponent {
     try {
       const exportData &#x3D;
         this.data.filteredData &amp;&amp; this.scope() &#x3D;&#x3D;&#x3D; &quot;filtered&quot;
-          ? this.data.filteredData
-          : this.data.allEntities;
+          ? await this.data.filteredData()
+          : await this.data.allEntities();
       const selectedKeys &#x3D; this.selectedColumnKeys();
       await this.downloadService.triggerDownload(
         exportData,

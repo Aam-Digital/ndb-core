@@ -239,7 +239,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/filter/filters/filters.ts:100</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/filter/filters/filters.ts:102</a></div>
                             </td>
                         </tr>
 
@@ -318,7 +318,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/filter/filters/filters.ts:90</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/filter/filters/filters.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -351,7 +351,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/core/filter/filters/filters.ts:104</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/filter/filters/filters.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -378,7 +378,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/core/filter/filters/filters.ts:103</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/core/filter/filters/filters.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -409,7 +409,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/filter/filters/filters.ts:100</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/filter/filters/filters.ts:102</a></div>
                         </td>
                     </tr>
 
@@ -449,7 +449,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/filter/filters/filters.ts:92</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/filter/filters/filters.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -483,8 +483,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="107"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:107</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -556,8 +556,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="115"
-                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:115</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/app/core/filter/filters/filters.ts:117</a></div>
                         </td>
                     </tr>
 
@@ -566,7 +566,7 @@
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter | undefined</a></code>
 
                         </div>
                 </td>
@@ -633,6 +633,7 @@ export function createEmptyValueFilter&lt;T extends Entity&gt;(
     { [fieldName]: undefined } as DataFilter&lt;T&gt;,
     { [fieldName]: null } as DataFilter&lt;T&gt;,
     { [fieldName]: &quot;&quot; } as DataFilter&lt;T&gt;,
+    { [fieldName]: { $exists: false } } as DataFilter&lt;T&gt;,
   ];
 
   if (includeNestedId) {
@@ -640,6 +641,7 @@ export function createEmptyValueFilter&lt;T extends Entity&gt;(
       { [fieldName + &quot;.id&quot;]: undefined } as DataFilter&lt;T&gt;,
       { [fieldName + &quot;.id&quot;]: null } as DataFilter&lt;T&gt;,
       { [fieldName + &quot;.id&quot;]: &quot;&quot; } as DataFilter&lt;T&gt;,
+      { [fieldName + &quot;.id&quot;]: { $exists: false } } as DataFilter&lt;T&gt;,
     );
   }
 
@@ -681,7 +683,7 @@ export abstract class Filter&lt;T extends Entity&gt; {
     );
   }
 
-  abstract getFilter(): DataFilter&lt;T&gt;;
+  abstract getFilter(): DataFilter&lt;T&gt; | undefined;
 }
 
 /**
@@ -730,6 +732,7 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
    * @param options An array of different filtering variants to chose between
    * @param label The user-friendly label describing this filter-selection
    * (optional, defaults to the name of the selection)
+   * @param singleSelectOnly if true, only one option can be selected at a time
    */
   constructor(
     public override name: string,
@@ -755,7 +758,7 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
    * Get the filter query for the given option.
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
-  public getFilter(): DataFilter&lt;T&gt; {
+  public getFilter(): DataFilter&lt;T&gt; | undefined {
     const filters: DataFilter&lt;T&gt;[] &#x3D; this.selectedOptionValues
       .map((value: string) &#x3D;&gt; this.getOption(value))
       .filter((value: FilterSelectionOption&lt;T&gt;) &#x3D;&gt; value !&#x3D;&#x3D; undefined)
@@ -764,7 +767,10 @@ export class SelectableFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
       });
 
     if (filters.length &#x3D;&#x3D;&#x3D; 0) {
-      return {} as DataFilter&lt;T&gt;;
+      return undefined;
+    }
+    if (filters.length &#x3D;&#x3D;&#x3D; 1) {
+      return filters[0];
     }
     return {
       $or: [...filters],

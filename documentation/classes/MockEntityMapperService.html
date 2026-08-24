@@ -229,6 +229,12 @@ and loaded. This is not to be used to mock database/anything related to the Sche
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#findType" >findType</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#get" >get</a>
                             </li>
@@ -333,8 +339,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="63"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -409,8 +415,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -483,8 +489,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="206"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:206</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="250"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:250</a></div>
                         </td>
                     </tr>
 
@@ -522,8 +528,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:81</a></div>
                         </td>
                     </tr>
 
@@ -593,8 +599,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:126</a></div>
                         </td>
                     </tr>
 
@@ -646,6 +652,136 @@ and loaded. This is not to be used to mock database/anything related to the Sche
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="findType"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>findType</b></span>
+                        <a href="#findType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findType&lt;T&gt;(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>, filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, page?: { limit: number; skip: number }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:149</a></code>
+</div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit: number; skip: number }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="get"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -664,8 +800,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -747,8 +883,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="116"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:116</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -826,8 +962,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="196"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:196</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="240"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:240</a></div>
                         </td>
                     </tr>
 
@@ -876,7 +1012,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:132</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:134</a></code>
 </div>
                         </td>
                     </tr>
@@ -972,7 +1108,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:140</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:142</a></code>
 </div>
                         </td>
                     </tr>
@@ -1055,7 +1191,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:181</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -1138,7 +1274,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:176</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:220</a></code>
 </div>
                         </td>
                     </tr>
@@ -1222,7 +1358,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:165</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:209</a></code>
 </div>
                         </td>
                     </tr>
@@ -1324,7 +1460,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:172</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:216</a></code>
 </div>
                         </td>
                     </tr>
@@ -1399,7 +1535,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:94</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:115</a></code>
 </div>
                         </td>
                     </tr>
@@ -1477,7 +1613,7 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:235</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:256</a></code>
 </div>
                         </td>
                     </tr>
@@ -1560,7 +1696,7 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:267</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:288</a></code>
 </div>
                         </td>
                     </tr>
@@ -1626,6 +1762,8 @@ import { UpdatedEntity } from &quot;../model/entity-update&quot;;
 import { Provider } from &quot;@angular/core&quot;;
 import { DatabaseResolverService } from &quot;../../database/database-resolver.service&quot;;
 import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
+import { filter as buildFilterPredicate } from &quot;@ucast/mongo2js&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 
 export function createEntityMapperSpyObj() {
   return {
@@ -1762,6 +1900,48 @@ export class MockEntityMapperService extends EntityMapperService {
   ): Promise&lt;T[]&gt; {
     let type &#x3D; this.getTypeViaRegistry(entityType);
     return this.getAll(type);
+  }
+
+  override async findType&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+    filter: DataFilter&lt;T&gt; &#x3D; {},
+    page?: { limit: number; skip: number },
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;T[]&gt; {
+    let records &#x3D; await this.loadType&lt;T&gt;(entityType);
+
+    // filter
+    const predicate &#x3D; buildFilterPredicate(filter as any);
+    records &#x3D; records.filter((record) &#x3D;&gt; predicate(record as any));
+
+    // sort
+    if (sort?.prop) {
+      records &#x3D; this.sortRecords(records, sort.prop, sort.dir);
+    }
+
+    // paginate
+    if (page) {
+      records &#x3D; records.slice(page.skip, page.skip + page.limit);
+    }
+
+    return records;
+  }
+
+  private sortRecords&lt;T extends Entity&gt;(
+    records: T[],
+    prop: string,
+    dir: &quot;asc&quot; | &quot;desc&quot; &#x3D; &quot;asc&quot;,
+  ): T[] {
+    const direction &#x3D; dir &#x3D;&#x3D;&#x3D; &quot;desc&quot; ? -1 : 1;
+    return [...records].sort((a, b) &#x3D;&gt; {
+      const aValue &#x3D; a[prop];
+      const bValue &#x3D; b[prop];
+      if (aValue &#x3D;&#x3D;&#x3D; bValue) return 0;
+      // undefined/null values are always sorted to the end
+      if (aValue &#x3D;&#x3D;&#x3D; undefined || aValue &#x3D;&#x3D;&#x3D; null) return 1;
+      if (bValue &#x3D;&#x3D;&#x3D; undefined || bValue &#x3D;&#x3D;&#x3D; null) return -1;
+      return (aValue &gt; bValue ? 1 : -1) * direction;
+    });
   }
 
   private getTypeViaRegistry(entityType: EntityConstructor | string): string {

@@ -218,6 +218,11 @@ Database is not an Angular Service and has to be accessed through the DatabaseRe
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Abstract</span>
+                                <a href="#find" >find</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Abstract</span>
                                 <a href="#get" >get</a>
                             </li>
                             <li>
@@ -446,8 +451,8 @@ because that will make your code tightly coupled with PouchDB rather than any ot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/app/core/database/database.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/app/core/database/database.ts:183</a></div>
                         </td>
                     </tr>
 
@@ -485,8 +490,8 @@ because that will make your code tightly coupled with PouchDB rather than any ot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="164"
-                                    class="link-to-prism">src/app/core/database/database.ts:164</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/app/core/database/database.ts:181</a></div>
                         </td>
                     </tr>
 
@@ -500,6 +505,132 @@ because that will make your code tightly coupled with PouchDB rather than any ot
                             <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="find"></a>
+                    <span class="name">
+                            <span class="modifier">Abstract</span>
+                        <span ><b>find</b></span>
+                        <a href="#find"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, page?: { limit?: number; skip?: number }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/core/database/database.ts:104</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Uses the PouchDB-find plugin <a href="https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find">https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find</a>
+This supports querying using the Mango Query Language <a href="https://pouchdb.com/guides/mango-queries.html#query-language">https://pouchdb.com/guides/mango-queries.html#query-language</a>
+There might be differences in queries between a local PouchDB and the CouchDB.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>of the entity to be queried</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the Mango Query Language query</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit?: number; skip?: number }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>additional pagination options</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>additional sorting options</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -616,8 +747,8 @@ because that will make your code tightly coupled with PouchDB rather than any ot
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="118"
-                                    class="link-to-prism">src/app/core/database/database.ts:118</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/core/database/database.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -773,8 +904,8 @@ e.g. once user details are available.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="153"
-                                    class="link-to-prism">src/app/core/database/database.ts:153</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/core/database/database.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -1113,8 +1244,8 @@ Throws if not supported by the current implementation.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="103"
-                                    class="link-to-prism">src/app/core/database/database.ts:103</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="120"
+                                    class="link-to-prism">src/app/core/database/database.ts:120</a></div>
                         </td>
                     </tr>
 
@@ -1283,8 +1414,8 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="139"
-                                    class="link-to-prism">src/app/core/database/database.ts:139</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/core/database/database.ts:156</a></div>
                         </td>
                     </tr>
 
@@ -1375,8 +1506,8 @@ Pass a specialized document type if the filter reads fields other than <code>_id
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="159"
-                                    class="link-to-prism">src/app/core/database/database.ts:159</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="176"
+                                    class="link-to-prism">src/app/core/database/database.ts:176</a></div>
                         </td>
                     </tr>
 
@@ -1417,8 +1548,8 @@ Pass a specialized document type if the filter reads fields other than <code>_id
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/database/database.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="129"
+                                    class="link-to-prism">src/app/core/database/database.ts:129</a></div>
                         </td>
                     </tr>
 
@@ -1558,6 +1689,23 @@ export abstract class Database {
   purge(_id: string): Promise&lt;boolean&gt; {
     throw new Error(&quot;purge() is not supported by this database implementation&quot;);
   }
+
+  /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * There might be differences in queries between a local PouchDB and the CouchDB.
+   *
+   * @param prefix of the entity to be queried
+   * @param query the Mango Query Language query
+   * @param page additional pagination options
+   * @param sort additional sorting options
+   */
+  abstract find(
+    prefix: string,
+    query: any,
+    page?: { limit?: number; skip?: number },
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;any&gt;;
 
   /**
    * Query data from the database based on a more complex, indexed request.

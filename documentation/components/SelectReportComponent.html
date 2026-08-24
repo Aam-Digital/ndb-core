@@ -1009,6 +1009,7 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
@@ -1016,7 +1017,6 @@
   linkedSignal,
   output,
   signal,
-  ChangeDetectionStrategy,
 } from &quot;@angular/core&quot;;
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
@@ -1025,7 +1025,7 @@ import { MatSelectModule } from &quot;@angular/material/select&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { MatDatepickerModule } from &quot;@angular/material/datepicker&quot;;
 import { Angulartics2Module } from &quot;angulartics2&quot;;
-import { ExportDialogComponent } from &quot;../../../../core/export/export-dialog/export-dialog.component&quot;;
+import { ExportDialogComponent } from &quot;#src/app/core/export/export-dialog/export-dialog.component&quot;;
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
@@ -1162,7 +1162,7 @@ export class SelectReportComponent {
   openExportDialog() {
     this.dialog.open(ExportDialogComponent, {
       data: {
-        allEntities: this.exportableData(),
+        allEntities: () &#x3D;&gt; Promise.resolve(this.exportableData()),
         filename: this.baseExportFileName,
       },
     });

@@ -473,7 +473,7 @@ implemented as a <code>$regex</code> condition of the MongoDB query syntax.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:100</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:102</a></code>
 </div>
                         </td>
                     </tr>
@@ -520,7 +520,7 @@ implemented as a <code>$regex</code> condition of the MongoDB query syntax.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:92</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:94</a></code>
 </div>
                         </td>
                     </tr>
@@ -571,7 +571,7 @@ implemented as a <code>$regex</code> condition of the MongoDB query syntax.</p>
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter | undefined</a></code>
 
                         </div>
                 </td>
@@ -643,7 +643,7 @@ implemented as a <code>$regex</code> condition of the MongoDB query syntax.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:107</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -742,10 +742,10 @@ export class StringFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
     return this.selectedOptionValues?.[0] ?? &quot;&quot;;
   }
 
-  getFilter(): DataFilter&lt;T&gt; {
+  getFilter(): DataFilter&lt;T&gt; | undefined {
     const searchText &#x3D; this.getSearchText();
     if (!searchText.trim()) {
-      return {} as DataFilter&lt;T&gt;;
+      return undefined;
     }
 
     return {
