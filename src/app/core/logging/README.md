@@ -89,9 +89,10 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    `isConnectivityErrorMessage`) is collected into the single `network-error` issue. The browser
    raises these at whatever point a request happened to be made, so by stack trace they are an
    open-ended stream of near-identical issues with the same (non-)answer. They are still reported
-   rather than dropped, because a server outage surfaces exactly this way — as one issue whose event
-   count is the signal. The browsers' differing wordings would make the merged issue's title
-   flip-flop, so it is replaced by a stable one and kept as the searchable `network_error` tag.
+   rather than dropped, because a server outage surfaces exactly this way — as one issue, whose
+   number of affected users and sessions is the signal (not its event count, see the cap below).
+   The browsers' differing wordings would make the merged issue's title flip-flop, so it is
+   replaced by a stable one and kept as the searchable `network_error` tag.
 
    This runs _after_ case 1 on purpose: a `ConfigLoadError` caused by a failed request is about the
    config load, not about the network, and keeps its own issue.
@@ -106,6 +107,18 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
 
 Otherwise the event keeps Sentry's default grouping: for a generic error (`Error`, `TypeError`, ...)
 with a stack, that stack is the only thing telling two unrelated bugs apart.
+
+### One report per issue per session
+
+An error thrown on every change detection cycle would otherwise send thousands of identical events,
+so `isExcessiveRepeat` caps each issue at `MAX_REPEATED_SENTRY_EVENTS` per page load — keyed on the
+fingerprint, which is why grouping runs before the cap. Budgeting more coarsely than per issue
+starves issues that merely share a cause: while a device is on a flaky connection, one connectivity
+failure is the root cause of the config load, the permission rules, the sync and every file download
+alike, and whichever of them failed first would silence all the others.
+
+An issue's **event count is therefore not a measure of how often a problem occurs** — how many users
+and sessions it affects is.
 
 Values that go into a fingerprint are normalized (`fingerprintKey`): ids, URLs and numbers are masked,
 and punctuation and casing are dropped, so that occurrences of the same problem match even where a

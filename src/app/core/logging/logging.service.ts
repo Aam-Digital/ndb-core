@@ -337,15 +337,20 @@ const sentryEventCounts = new Map<string, number>();
  * and excessive repeats of an identical event,
  * and enriches the remaining events with structured extra data
  * and a stable grouping fingerprint.
+ *
+ * Grouping runs before the repeat cap because the cap is applied per issue,
+ * which is what the fingerprint defines (see {@link isExcessiveRepeat}).
  */
 export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event) || isExcessiveRepeat(event)) {
+  if (isOfflineNetworkError(event)) {
     return null;
   }
-  return groupSentryEvent(enrichSentryEvent(event, hint), hint);
+
+  const grouped = groupSentryEvent(enrichSentryEvent(event, hint), hint);
+  return isExcessiveRepeat(grouped) ? null : grouped;
 }
 
 /**
@@ -368,23 +373,18 @@ function isOfflineNetworkError(event: Sentry.ErrorEvent): boolean {
 /**
  * Count occurrences of an event and check whether it exceeded the session cap.
  *
- * The key is deliberately coarse: error class + normalized message of the root
- * cause (`values[0]` is the deepest `cause` in the chain; the originally thrown,
- * outermost error is last), without any stack information.
- * Consequences:
- * - Same-message errors from different code paths share one budget,
- *   and all wrappers of a cascading failure are capped via their common
- *   root cause. This is a flood guard, not a grouping mechanism -
- *   see {@link groupSentryEvent} for how issues are separated.
- * - Errors that interpolate data (e.g. entity IDs) into their message still
- *   share one budget, because the key is normalized the same way as the
- *   grouping fingerprint.
+ * The budget is one per issue (see {@link repeatKey}), so that a device running
+ * into several problems at once still reports each of them. Keying it more
+ * coarsely - by the root cause the issues have in common - starves them instead:
+ * in an offline-first app a single connectivity failure is the root cause of the
+ * config load, the permission rules, the sync and every file download alike, so
+ * whichever of them failed first would silence all the others for that session.
+ *
+ * Note that the cap therefore also limits how much an issue's event count says
+ * about the volume of a problem - it shows that it occurs, not how often.
  */
 function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
-  const exception = event.exception?.values?.[0];
-  const key = exception
-    ? `${exception.type}: ${fingerprintKey(exception.value)}`
-    : fingerprintKey(String(event.message ?? "unknown"));
+  const key = repeatKey(event);
 
   const count = (sentryEventCounts.get(key) ?? 0) + 1;
   sentryEventCounts.set(key, count);
@@ -397,6 +397,25 @@ function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
     return true;
   }
   return false;
+}
+
+/**
+ * The issue an event will end up in, as far as it is known here: the
+ * fingerprint is exactly what separates issues, and for the events that keep
+ * Sentry's stack-based grouping the thrown error is the closest stand-in
+ * (deliberately without any stack information, so that an error loop is capped
+ * even where the frames differ between occurrences).
+ */
+function repeatKey(event: Sentry.ErrorEvent): string {
+  if (event.fingerprint?.length) {
+    return event.fingerprint.join(" | ");
+  }
+
+  const values = event.exception?.values;
+  const thrownError = values?.[values.length - 1];
+  return thrownError
+    ? `${thrownError.type}: ${fingerprintKey(thrownError.value)}`
+    : fingerprintKey(String(event.message ?? "unknown"));
 }
 
 /**

@@ -144,6 +144,31 @@ describe("LoggingService", () => {
       expect(processSentryEvent(messageEvent(), {})).toBeNull();
     });
 
+    it("should budget repeats per issue, so one problem does not silence another", () => {
+      // both wrappers share a root cause, as everything does while a device is
+      // on a flaky connection - but they are separate issues to be reported
+      const wrapped = (type: string) =>
+        ({
+          exception: {
+            values: [
+              { type: "DatabaseException", value: "Failed to fetch from DB" },
+              { type, value: `Failed to load the ${type} document` },
+            ],
+          },
+        }) as any;
+
+      for (let i = 0; i < MAX_REPEATED_SENTRY_EVENTS; i++) {
+        expect(
+          processSentryEvent(wrapped("ConfigLoadError"), {}),
+        ).not.toBeNull();
+      }
+      expect(processSentryEvent(wrapped("ConfigLoadError"), {})).toBeNull();
+
+      expect(
+        processSentryEvent(wrapped("PermissionRulesLoadError"), {}),
+      ).not.toBeNull();
+    });
+
     describe("grouping fingerprint", () => {
       const chainedEvent = (
         rootCause: { type: string; value: string },
