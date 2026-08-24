@@ -3,7 +3,7 @@
 A conceptual overview of how a single Aam Digital system protects the data it holds:
 what the application does, what it leaves to the deployment, and what it does not do at all.
 
-This is about **one deployed system** — the app, its database and the accounts that reach it.
+This is about **one deployed system** (the app, its database and the accounts that reach it).
 
 > **Server operation and infrastructure are out of scope here.**
 > See the last section, "What this document does not cover".
@@ -50,7 +50,7 @@ Where those rules are actually _enforced_ depends on how the system is deployed,
 | Write access       | any document                            | validated against the same rules                                                                          |
 | Audit log          | none                                    | optional (`AUDIT_ENABLED`): every write recorded with user and time                                       |
 
-#### Database-only, and what it does not give you
+#### Database-only (no user roles)
 
 This light-weight deployment does explicitly not support user roles and individual permissions.
 All users with a valid login have full read/write access to all data.
@@ -67,9 +67,14 @@ Because CouchDB checks only realm membership and nothing about a user's role, na
 
 This mode is therefore appropriate when everyone with an account in the system is trusted with all of its data — a small team working on one caseload — and not when the roles are meant to keep colleagues apart.
 
-#### With the permission backend
+#### With permission backend
 
-The same rules are additionally applied server-side: reads are filtered as they are replicated, and writes are checked again before they are stored, with CouchDB itself no longer reachable from outside. Unlike database-only mode, a narrowed role then restricts what the user can actually fetch, not only what the interface offers. This is what turns a role restriction into a real restriction, and it is the only configuration in which "this user may only see the records of their own project" is a statement about access rather than about the user interface. It is also the only one that can record who changed what.
+Permissions of user roles are enforced server-side (in addition to local UI checks on the device):
+reads are filtered while data is synced or requested from the server,
+and writes are checked again before they are stored, with the database itself no longer reachable from outside.
+Unlike database-only mode, a narrowed role then restricts what the user can actually fetch, not only what the interface offers.
+
+The permission backend also includes functionality to record a detailed change history of who changed what.
 
 **So if different users of one system must not see each other's data, the permission backend is required.**
 Deploying either mode is described in [Aam-Digital/ndb-setup](https://github.com/Aam-Digital/ndb-setup#docker-compose-profiles).
@@ -78,10 +83,8 @@ Deploying either mode is described in [Aam-Digital/ndb-setup](https://github.com
 
 To work offline, the app stores a copy of the records a user may access in the browser's storage on that user's device. This is what makes Aam Digital usable without connectivity, and it has consequences worth stating plainly:
 
-- The copy is stored **unencrypted**. On a device without full-disk encryption, whoever holds the device can read it.
-- Its extent is whatever the user is allowed to sync.
+- The copy includes whatever that user is allowed to sync.
 - Revoking permissions server-side does not reach a device that never connects again. Local data is cleared when the server reports lost permissions during a sync, and that requires the device to come online.
-- The offline login described above opens that copy without checking any credential, so the device itself is the only thing standing between a stranger and the data.
 
 Two settings bear on this:
 
