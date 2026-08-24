@@ -7,9 +7,11 @@ import {
   input,
   signal,
 } from "@angular/core";
+import { debounceTime, merge } from "rxjs";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { MatTableModule } from "@angular/material/table";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { DatePipe } from "@angular/common";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
@@ -38,6 +40,7 @@ interface BirthdayDashboardConfig {
 })
 export class BirthdayDashboardComponent {
   private birthdayIndex = inject(BirthdayDashboardIndexService);
+  private entityMapper = inject(EntityMapperService);
   private entitiesByType = signal<Map<string, Entity[]>>(new Map());
 
   static getRequiredEntities(config: BirthdayDashboardConfig) {
@@ -94,13 +97,47 @@ export class BirthdayDashboardComponent {
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);
 
-    effect(async () => {
+    effect((onCleanup) => {
       const entityConfig = this.entities();
       const threshold = this.threshold();
-      await this.birthdayIndex.buildBirthdayIndex(entityConfig);
-      await this.birthdayIndex
-        .queryBirthdayIndex(entityConfig, threshold)
-        .then((res) => this.entitiesByType.set(res));
+      let isCurrent = true;
+
+      // Built once per entities()/threshold() change only - not re-run by reload()
+      // below, since PUTting the design doc isn't free and the index structure only
+      // depends on entityConfig, not on entity data.
+      const indexBuilt = this.birthdayIndex.buildBirthdayIndex(entityConfig);
+
+      const reload = () =>
+        indexBuilt
+          .then(() =>
+            this.birthdayIndex.queryBirthdayIndex(entityConfig, threshold),
+          )
+          .then((res) => {
+            if (isCurrent) {
+              this.entitiesByType.set(res);
+            }
+          });
+
+      // initial load - covers the case where matching entities already exist on mount.
+      void reload();
+
+      // Re-query (cheap/incremental) whenever a relevant entity type changes, so the
+      // widget picks up entities added/edited after the initial query (e.g. while the
+      // index was still empty during sync/demo-data generation), and stays live for
+      // ongoing changes. Debounced because e.g. demo-data generation saves many
+      // entities in a burst - without this, that's one redundant query per save.
+      const subscription = merge(
+        ...Object.keys(entityConfig).map((type) =>
+          this.entityMapper.receiveUpdates(type),
+        ),
+      )
+        .pipe(debounceTime(500))
+        .subscribe(() => reload());
+
+      onCleanup(() => {
+        isCurrent = false;
+        subscription.unsubscribe();
+      });
     });
   }
 

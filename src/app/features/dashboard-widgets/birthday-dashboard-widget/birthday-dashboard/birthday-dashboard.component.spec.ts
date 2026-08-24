@@ -7,6 +7,7 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DateWithAge } from "#src/app/core/basic-datatypes/date-with-age/dateWithAge";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import type { Mock } from "vitest";
 
 type BirthdayDashboardIndexServiceMock = Pick<
@@ -36,6 +37,7 @@ describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;
   let fixture: ComponentFixture<BirthdayDashboardComponent>;
   let mockIndexService: BirthdayDashboardIndexServiceMock;
+  let entityMapper: EntityMapperService;
 
   beforeEach(waitForAsync(() => {
     mockIndexService = {
@@ -60,6 +62,7 @@ describe("BirthdayDashboardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BirthdayDashboardComponent);
     component = fixture.componentInstance;
+    entityMapper = TestBed.inject(EntityMapperService);
     fixture.detectChanges();
   });
 
@@ -231,6 +234,120 @@ describe("BirthdayDashboardComponent", () => {
       expect(mockIndexService.queryBirthdayIndex).toHaveBeenLastCalledWith(
         { [TestEntity.ENTITY_TYPE]: "dateOfBirth" },
         14,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should pick up entities added after the initial empty query once entityMapper reports an update", async () => {
+    vi.useFakeTimers();
+    try {
+      const child = TestEntity.create("Late Arrival");
+      child.dateOfBirth = new DateWithAge(
+        moment().subtract(7, "years").add(4, "days").toDate(),
+      );
+
+      mockIndexService.queryBirthdayIndex
+        .mockResolvedValueOnce(new Map())
+        .mockResolvedValue(new Map([[TestEntity.ENTITY_TYPE, [child]]]));
+
+      fixture.componentRef.setInput("entities", {
+        [TestEntity.ENTITY_TYPE]: "dateOfBirth",
+      });
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(component.entries()).toEqual([]);
+
+      await entityMapper.save(child);
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(component.entries()).toEqual([
+        {
+          entity: child,
+          birthday: expectedNextBirthday(child.dateOfBirth),
+          newAge: child.dateOfBirth.age + 1,
+        },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should only issue one additional query for multiple rapid entity updates within the debounce window", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput("entities", {
+        [TestEntity.ENTITY_TYPE]: "dateOfBirth",
+      });
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const callCountBeforeBurst =
+        mockIndexService.queryBirthdayIndex.mock.calls.length;
+
+      await entityMapper.save(TestEntity.create("Burst Child 1"));
+      await entityMapper.save(TestEntity.create("Burst Child 2"));
+      await entityMapper.save(TestEntity.create("Burst Child 3"));
+
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(mockIndexService.queryBirthdayIndex.mock.calls.length).toBe(
+        callCountBeforeBurst + 1,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not call buildBirthdayIndex again when only entity data changes (no config change)", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput("entities", {
+        [TestEntity.ENTITY_TYPE]: "dateOfBirth",
+      });
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const buildCallCountBefore =
+        mockIndexService.buildBirthdayIndex.mock.calls.length;
+      const queryCallCountBefore =
+        mockIndexService.queryBirthdayIndex.mock.calls.length;
+
+      await entityMapper.save(TestEntity.create("Data Change"));
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(mockIndexService.buildBirthdayIndex.mock.calls.length).toBe(
+        buildCallCountBefore,
+      );
+      expect(mockIndexService.queryBirthdayIndex.mock.calls.length).toBe(
+        queryCallCountBefore + 1,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should unsubscribe from entity updates and stop reacting after the component is destroyed", async () => {
+    vi.useFakeTimers();
+    try {
+      fixture.componentRef.setInput("entities", {
+        [TestEntity.ENTITY_TYPE]: "dateOfBirth",
+      });
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const queryCallCountBefore =
+        mockIndexService.queryBirthdayIndex.mock.calls.length;
+
+      fixture.destroy();
+
+      await entityMapper.save(TestEntity.create("After Destroy"));
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(mockIndexService.queryBirthdayIndex.mock.calls.length).toBe(
+        queryCallCountBefore,
       );
     } finally {
       vi.useRealTimers();
