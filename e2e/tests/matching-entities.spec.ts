@@ -55,3 +55,25 @@ test("Matching entities widget renders and supports selecting a candidate", asyn
   // Once a candidate is picked, the create-match action enables.
   await expect(createMatchButton).toBeEnabled();
 });
+
+test("Matching view renders the map with clustered location markers", async ({
+  page,
+}) => {
+  // Full demo data: many children with addresses close to each other,
+  // which guarantees the map groups them into cluster icons.
+  await loadApp(page);
+
+  await page.getByRole("navigation").getByText("Schools").click();
+  await page.getByRole("navigation").getByText("Matching View").click();
+
+  await expect(page.locator(".leaflet-container")).toBeVisible();
+
+  // Cluster icons are created by the leaflet.markercluster side-effect plugin,
+  // which patches leaflet's live exports object. This breaks silently if the
+  // plugin's additions are not visible on the imported leaflet object (the map
+  // then throws during initialization and renders no markers), so assert the
+  // plugin-generated cluster element itself.
+  await expect(page.locator(".marker-cluster").first()).toBeVisible({
+    timeout: 10_000,
+  });
+});
