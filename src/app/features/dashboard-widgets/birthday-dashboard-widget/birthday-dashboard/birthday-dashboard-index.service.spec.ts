@@ -135,6 +135,47 @@ describe("BirthdayDashboardIndexService", () => {
     expect(data.get(BirthdayEntity.ENTITY_TYPE)).toEqual([e1, e2]);
   });
 
+  it("should list an entity once per configured birthday property if several of its birthday properties are within the threshold", async () => {
+    @DatabaseEntity("MultiBirthdayEntity")
+    class MultiBirthdayEntity extends Entity {
+      @DatabaseField()
+      birthday: DateWithAge;
+
+      @DatabaseField()
+      secondBirthday: DateWithAge;
+    }
+
+    const birthdayIn3Days = moment()
+      .add(3, "days")
+      .subtract(8, "years")
+      .startOf("day");
+    const secondBirthdayIn5Days = moment()
+      .add(5, "days")
+      .subtract(30, "years")
+      .startOf("day");
+
+    const entity = new MultiBirthdayEntity();
+    entity.birthday = new DateWithAge(birthdayIn3Days.toDate());
+    entity.secondBirthday = new DateWithAge(secondBirthdayIn5Days.toDate());
+    await entityMapper.save(entity);
+
+    const entityConfig = {
+      [MultiBirthdayEntity.ENTITY_TYPE]: ["birthday", "secondBirthday"],
+    };
+
+    await service.buildBirthdayIndex(entityConfig);
+    const data = await service.queryBirthdayIndex(entityConfig, 31);
+
+    // The map function emits one index entry per configured, matching property, so an entity
+    // with several upcoming birthdays currently shows up multiple times in the result - once
+    // per property, ordered by that property's days-until-birthday (here: "birthday" before
+    // "secondBirthday").
+    expect(data.get(MultiBirthdayEntity.ENTITY_TYPE)).toEqual([
+      entity,
+      entity,
+    ]);
+  });
+
   describe("boundary behavior around today and the threshold", () => {
     const entityConfig = { [TestEntity.ENTITY_TYPE]: "dateOfBirth" };
     const threshold = 10;
