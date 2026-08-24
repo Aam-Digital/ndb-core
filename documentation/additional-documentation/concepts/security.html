@@ -128,37 +128,108 @@
 
 
 <h1>Security</h1>
-<p>We have made both technical and design choices to develop a secure platform.
-The Angular framework itself has some in-built protection against common security issues like cross-site scripting attacks (see <a href="https://angular.io/guide/security">Angular &gt; Security</a>).
-Beyond this, the following measures are implemented:</p>
-<ul>
-<li>If deployed including our <a href="https://github.com/Aam-Digital/replication-backend">&quot;replication-backend&quot;</a>, that server-side API also ensures authenticated users can only access and sync data their account has permissions for.</li>
-<li>Password policy enforces users to set a strong password including special characters (either via Keycloak or the platforms user profile form)</li>
-<li>Content Security Policy (CSP) headers restrict connections to and execution of code from sources that are not whitelisted.</li>
-</ul>
-<h2>Content Security Policy (CSP)</h2>
-<p>CSP headers are set in the nginx server being built from the code base to serve the Angular app.
-The whitelisted CSP sources can be overwritten and adapted using a docker environment variable <code>CSP</code> (the default whitelist is defined in the <a href="https://github.com/Aam-Digital/ndb-core/blob/master/build/Dockerfile">Dockerfile</a>).</p>
+<p>A conceptual overview of how a single Aam Digital system protects the data it holds:
+what the application does, what it leaves to the deployment, and what it does not do at all.</p>
+<p>This is about <strong>one deployed system</strong> (the app, its database and the accounts that reach it).</p>
 <blockquote>
-<p>CSP is currently running in &quot;report-only&quot; mode for testing.
-Scripts and connections are not yet blocked by default.</p>
+<p><strong>Server operation and infrastructure are out of scope here.</strong>
+See the last section, &quot;What this document does not cover&quot;.</p>
 </blockquote>
-<h3>Embedding the app in an iframe (<code>frame-ancestors</code>)</h3>
-<p>Which sites are allowed to embed the app in an iframe is controlled by a second, <em>enforcing</em> CSP header: <code>Content-Security-Policy: frame-ancestors &#39;self&#39; ...</code>.
-This has to be a separate header because <code>frame-ancestors</code> is ignored in a &quot;report-only&quot; policy.
-As that policy contains no other directive, it does not restrict anything but framing and the whitelist above stays report-only.</p>
-<p>By default only the app&#39;s own origin can embed it.
-To let other sites embed an instance (e.g. a demo system embedded into a project website), set the docker environment variable <code>CSP_EXTRA_FRAME_ANCESTORS</code> to a space-separated list of origins, e.g. <code>https://example.com https://www.example.com</code>.
-Each origin has to be given with its scheme and exact host - <code>example.com</code> and <code>www.example.com</code> are different origins - and without any path.</p>
-<h3>Allowing PouchDB to function under CSP</h3>
-<p>The browser-side database system PouchDB uses map-reduce functions for indexing which are defined as strings.
-It is therefore requiring <code>&#39;unsafe-eval&#39;</code> in the CSP.</p>
-<h3>Whitelisting the index.html</h3>
-<p>To whitelist a specific script section (currently only in the index.html) a <a href="https://content-security-policy.com/hash/">CSP hash</a> can be used.
-Updating the hash should be necessary only rarely, when that script section changes.</p>
-<p>The easiest and most reliable way to get the correct hash is to deploy a production build image and check the browser console.
-It states something like <code>&quot;Refused to execute inline script because it violates the following Content Security Policy directive: &quot;...&quot;. Either the &#39;unsafe-inline&#39; keyword, a hash (&#39;sha256-&lt;RELEVANT HASH&gt;&#39;)&quot; or a nonce is required.&quot;</code> from where you can copy the given hash and include/update it in the CSP headers.
-Generating the hash by pasting the script into an online generator does not seem to work, probably because code is minified during the build process.</p>
+<h2>The application in the browser</h2>
+<p>Aam Digital is an Angular single-page application. Everything a user sees is rendered in the browser from data fetched from the database.</p>
+<p><strong>Cross-site scripting.</strong> Angular treats all values as untrusted by default and escapes or sanitizes them for the context they are rendered into, which covers the ordinary case of a record field containing markup (see <a href="https://angular.dev/best-practices/security">Angular &gt; Security</a>).
+Sanitization is only bypassed deliberately and under code review, never for values that originate from user-entered record content.</p>
+<p><strong>Content Security Policy and framing.</strong> The nginx server that serves the built app sets two policy headers: a whitelist of the sources the app may load code and data from, and an enforcing policy for which sites may embed the app in an iframe.
+Both are configurable per deployment.</p>
+<blockquote>
+<p>The whitelist policy is currently served in <strong>report-only</strong> mode: violations are reported, not blocked.
+Only the framing policy is enforced.</p>
+</blockquote>
+<p>The directives, their defaults and how to change them are documented with the image that sets them, under <a href="https://github.com/Aam-Digital/ndb-core/blob/master/build/README.md#content-security-policy-csp">Content Security Policy in <code>build/README.md</code></a>.</p>
+<p><strong>Offline shell.</strong> The app is installable and keeps working offline, which means an outdated version can keep running on a device until it next connects. Fixes reach users on their next online session, not immediately.</p>
+<h2>Authentication</h2>
+<p>Users authenticate against a <strong>Keycloak</strong> server (OpenID Connect). Aam Digital never sees or stores a password: the app receives a token and passes it on to the database.
+Password policy, multi-factor authentication, session lifetime, account lockout and email verification are therefore Keycloak configuration, not application code.</p>
+<p>Each system has its own Keycloak realm, and <strong>membership of that realm is what grants access to that system&#39;s data</strong>. In a database-only deployment, removing a person&#39;s access means disabling or removing their account in Keycloak — changing their roles inside the application is not sufficient on its own; see &quot;Database-only, and what it does not give you&quot; below.</p>
+<p>Once a user has logged in online at least once, the app offers them an <strong>offline login</strong> on the same device. This is a profile selection, not an authentication step: no credential is checked, because none is stored and the authentication server cannot be reached. It opens the local copy of the data that is already on that device, and grants nothing beyond it — but it does mean that whoever holds the device can open that copy. See &quot;The copy of data on each user&#39;s device&quot; below.</p>
+<h2>Roles and permissions</h2>
+<p>Permissions are role-based rules in a single configuration document that an administrator edits. The rule format, the available conditions and how rules combine are documented under <a href="./user-roles-and-permissions.html">User Roles and Permissions</a>.</p>
+<p>Where those rules are actually <em>enforced</em> depends on how the system is deployed, and that difference is a security property rather than a detail.</p>
+<h3>Two deployment modes</h3>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr><th></th><th><strong>Database-only</strong></th><th><strong>With permission backend</strong></th></tr>
+</thead>
+<tbody>
+<tr><td>What is exposed</td><td>CouchDB directly</td><td><a href="https://github.com/Aam-Digital/replication-backend">replication-backend</a> in front of an internal CouchDB</td></tr>
+<tr><td>Who checks a token</td><td>CouchDB, against the realm&#39;s public key</td><td>the backend, against the realm&#39;s public key</td></tr>
+<tr><td>Read access</td><td>the whole database of that system</td><td>filtered per user, rule by rule</td></tr>
+<tr><td>Write access</td><td>any document</td><td>validated against the same rules</td></tr>
+<tr><td>Audit log</td><td>none</td><td>optional (<code>AUDIT_ENABLED</code>): every write recorded with user and time</td></tr>
+</tbody>
+</table>
+<h4>Database-only (no user roles)</h4>
+<p>This light-weight deployment does explicitly not support user roles and individual permissions.
+All users with a valid login have full read/write access to all data.</p>
+<p>Access to the database without a valid user account is not possible.
+This also means <em><strong>Public Forms</strong></em> cannot work for external data collection.</p>
+<blockquote>
+<p>Adding a <code>Config:Permissions</code> doc (in preparation of introducing user roles) is technically still possible.
+Those permissions are partly enforced by the local device&#39;s user interface
+but this <strong>does not</strong> enforce actual data protection on the server.
+DO NOT USE this as a security functionality.</p>
+</blockquote>
+<p>Because CouchDB checks only realm membership and nothing about a user&#39;s role, narrowing someone&#39;s role never restricts what their existing token can fetch — withdrawing access means disabling their account in Keycloak, not just changing their role.</p>
+<p>This mode is therefore appropriate when everyone with an account in the system is trusted with all of its data — a small team working on one caseload — and not when the roles are meant to keep colleagues apart.</p>
+<h4>With permission backend</h4>
+<p>Permissions of user roles are enforced server-side (in addition to local UI checks on the device):
+reads are filtered while data is synced or requested from the server,
+and writes are checked again before they are stored, with the database itself no longer reachable from outside.
+Unlike database-only mode, a narrowed role then restricts what the user can actually fetch, not only what the interface offers.</p>
+<p>The permission backend also includes functionality to record a detailed change history of who changed what.</p>
+<p><strong>So if different users of one system must not see each other&#39;s data, the permission backend is required.</strong>
+Deploying either mode is described in <a href="https://github.com/Aam-Digital/ndb-setup#docker-compose-profiles">Aam-Digital/ndb-setup</a>.</p>
+<h2>The copy of data on each user&#39;s device</h2>
+<p>To work offline, the app stores a copy of the records a user may access in the browser&#39;s storage on that user&#39;s device. This is what makes Aam Digital usable without connectivity, and it has consequences worth stating plainly:</p>
+<ul>
+<li>The copy includes whatever that user is allowed to sync.</li>
+<li>Revoking permissions server-side does not reach a device that never connects again. Local data is cleared when the server reports lost permissions during a sync, and that requires the device to come online.</li>
+</ul>
+<p>Two settings bear on this:</p>
+<ul>
+<li><code>session_type: online</code> runs without any local database at all. Data is read directly from the server and nothing persists on the device — at the cost of offline capability.</li>
+<li><code>session_type_choice</code> decides whether users may choose between the two modes on the login page, or whether the configured mode is enforced.</li>
+</ul>
+<p>Because the device is beyond anything the application can enforce, client organisations should be advised to keep devices locked and encrypted, to avoid sharing browser profiles between staff, and to report lost devices and staff departures promptly so that accounts can be disabled.</p>
+<h2>Data in transit</h2>
+<p>All traffic between browser, application server, database and Keycloak is expected to be TLS-encrypted. Certificates and TLS termination are part of the deployment, not of this code base.</p>
+<blockquote>
+<p><strong>Side note — anonymization and deletion.</strong> How long data is kept is a
+security question as much as a policy one: records that are no longer needed
+are still exposed by everything above. Aam Digital can archive, anonymize or
+delete an entity, with anonymization removing the personal fields while
+keeping the record countable for statistics. What each action does, and how a
+field is configured to survive anonymization, is documented under
+<a href="https://github.com/Aam-Digital/ndb-core/blob/master/src/app/core/entity/entity-actions/README.md">Archiving, Anonymizing and Deleting Entities</a>.</p>
+</blockquote>
+<h2>Keeping the code base secure</h2>
+<ul>
+<li>Dependencies are updated continuously through automated pull requests and scanned for known vulnerabilities on every push to <code>master</code> and weekly (Snyk, reported into GitHub code scanning).</li>
+<li>Changes are reviewed before merging; see <a href="../how-to-guides/review-a-pull-request.html">Review a Pull Request</a>.</li>
+<li>Aam Digital is open source, so the code implementing everything described here can be inspected rather than taken on trust.</li>
+</ul>
+<h2>What this document does not cover</h2>
+<p>Everything below is <strong>out of scope for the application</strong> and belongs to whoever operates the servers:</p>
+<ul>
+<li><strong>Server and network security</strong> — hardening, patching, firewalls, isolation between services, intrusion detection, log retention.</li>
+<li><strong>Encryption at rest</strong> — disk and volume encryption for the database, uploaded files and any derived copies.</li>
+<li><strong>Backups</strong> — that they run, that they are encrypted, that a restore has actually been tested, and who holds the keys.</li>
+<li><strong>Operating the Keycloak server</strong> — its own hardening, backups and administrative access, along with the password and MFA policy configured in it.</li>
+<li><strong>Administrative access to the servers</strong>, and the fact that whoever holds it can read the data of every system running on them.</li>
+</ul>
+<p>Aam Digital is built so that these can be done well, but it cannot do them for you.
+If you host the system yourself, treat them as real work: involve your IT department, or bring in an IT service provider, and hold them to the same standard as the application itself.</p>
+<p>For most organisations the easier, more reliable and more secure option is a <strong>hosted (SaaS) Aam Digital system</strong>, where these responsibilities sit with a provider who maintains them as a matter of routine rather than as an occasional project.</p>
 
                    </div><div class="search-results">
     <div class="has-results">
