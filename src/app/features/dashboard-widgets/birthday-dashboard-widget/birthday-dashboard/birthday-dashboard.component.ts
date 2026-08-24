@@ -6,16 +6,17 @@ import {
   inject,
   input,
   signal,
-  untracked,
 } from "@angular/core";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { MatTableModule } from "@angular/material/table";
-import { Entity } from "../../../../core/entity/model/entity";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { DatePipe } from "@angular/common";
-import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-import { applyUpdate } from "../../../../core/entity/model/entity-update";
-import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { DashboardListWidgetComponent } from "#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import {
+  BirthdayDashboardIndexService,
+  EntityPropertyMap,
+} from "./birthday-dashboard-index.service";
 
 interface BirthdayDashboardConfig {
   entities: EntityPropertyMap;
@@ -36,7 +37,7 @@ interface BirthdayDashboardConfig {
   ],
 })
 export class BirthdayDashboardComponent {
-  private entityMapper = inject(EntityMapperService);
+  private birthdayIndex = inject(BirthdayDashboardIndexService);
   private entitiesByType = signal<Map<string, Entity[]>>(new Map());
 
   static getRequiredEntities(config: BirthdayDashboardConfig) {
@@ -61,7 +62,6 @@ export class BirthdayDashboardComponent {
   threshold = input(32);
 
   entries = computed(() => {
-    const threshold = this.threshold();
     const dataByType = this.entitiesByType();
     const entityConfig = this.entities();
     const data: EntityWithBirthday[] = [];
@@ -74,21 +74,14 @@ export class BirthdayDashboardComponent {
 
       for (const property of propertyList) {
         data.push(
-          ...entities
-            .filter((entity) => !entity.inactive && entity[property])
-            .map((entity) => ({
-              entity: entity,
-              birthday: this.getNextBirthday(entity[property]),
-              newAge: entity[property]?.age + 1,
-            }))
-            .filter((entry) => this.daysUntil(entry.birthday) < threshold),
+          ...entities.map((entity) => ({
+            entity: entity,
+            birthday: this.getNextBirthday(entity[property]),
+            newAge: entity[property]?.age + 1,
+          })),
         );
       }
     }
-
-    data.sort(
-      (a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
-    );
     return data;
   });
 
@@ -101,44 +94,13 @@ export class BirthdayDashboardComponent {
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);
 
-    effect((onCleanup) => {
+    effect(async () => {
       const entityConfig = this.entities();
-      const subscriptions: Array<{ unsubscribe: () => void }> = [];
-      let isCurrent = true;
-
-      this.entitiesByType.set(new Map());
-
-      for (const entityType of Object.keys(entityConfig)) {
-        untracked(async () => {
-          const entities = await this.entityMapper.loadType(entityType);
-          if (!isCurrent) {
-            return;
-          }
-          this.setEntitiesForType(entityType, entities as Entity[]);
-        });
-
-        const subscription = this.entityMapper
-          .receiveUpdates(entityType)
-          .subscribe((update) => {
-            const currentData = this.entitiesByType().get(entityType) ?? [];
-            const updatedData = applyUpdate(currentData, update) as Entity[];
-            this.setEntitiesForType(entityType, updatedData);
-          });
-        subscriptions.push(subscription);
-      }
-
-      onCleanup(() => {
-        isCurrent = false;
-        subscriptions.forEach((subscription) => subscription.unsubscribe());
-      });
-    });
-  }
-
-  private setEntitiesForType(entityType: string, entities: Entity[]) {
-    this.entitiesByType.update((current) => {
-      const next = new Map(current);
-      next.set(entityType, entities);
-      return next;
+      const threshold = this.threshold();
+      await this.birthdayIndex.buildBirthdayIndex(entityConfig);
+      await this.birthdayIndex
+        .queryBirthdayIndex(entityConfig, threshold)
+        .then((res) => this.entitiesByType.set(res));
     });
   }
 
@@ -154,15 +116,6 @@ export class BirthdayDashboardComponent {
     }
     return birthday;
   }
-
-  private daysUntil(date: Date): number {
-    const diff = date.getTime() - this.today.getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
-  }
-}
-
-interface EntityPropertyMap {
-  [key: string]: string | string[];
 }
 
 interface EntityWithBirthday {
