@@ -42,7 +42,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -62,7 +62,7 @@ describe("TodosRelatedToEntityComponent", () => {
         { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
       ],
     });
-    expect(component.dataSource.allRecords()).toEqual([relatedTodo]);
+    expect(component.recordsDataSource().allRecords()).toEqual([relatedTodo]);
   });
 
   it("should load data with entity mapper when having multiple relations", waitForAsync(async () => {
@@ -94,7 +94,7 @@ describe("TodosRelatedToEntityComponent", () => {
     await new Promise((resolve) => setTimeout(resolve));
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expectArrayWithExactContents(component.dataSource.allRecords(), [
+    expectArrayWithExactContents(component.recordsDataSource().allRecords(), [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,
