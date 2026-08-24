@@ -11,9 +11,12 @@ describe("ExportDialogComponent", () => {
   let mockDownloadService: { triggerDownload: ReturnType<typeof vi.fn> };
   let mockDialogRef: { close: ReturnType<typeof vi.fn> };
 
+  const allEntities = [{ id: 1 }, { id: 2 }];
+  const filteredEntities = [{ id: 1 }];
+
   const dialogData = {
-    allEntities: [{ id: 1 }, { id: 2 }],
-    filteredData: [{ id: 1 }],
+    allEntities: () => Promise.resolve(allEntities),
+    filteredData: () => Promise.resolve(filteredEntities),
     exportConfig: [
       { query: "name", label: "Name" },
       { query: "age", label: "Age" },
@@ -61,7 +64,7 @@ describe("ExportDialogComponent", () => {
     await component.download();
 
     expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-      dialogData.filteredData,
+      filteredEntities,
       "csv",
       dialogData.filename,
       [
@@ -78,7 +81,7 @@ describe("ExportDialogComponent", () => {
     await component.download();
 
     expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-      dialogData.filteredData,
+      filteredEntities,
       "csv",
       dialogData.filename,
       [{ query: "name", label: "Name" }],
@@ -92,7 +95,7 @@ describe("ExportDialogComponent", () => {
     await component.download();
 
     expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-      dialogData.allEntities,
+      allEntities,
       "xlsx",
       dialogData.filename,
       [

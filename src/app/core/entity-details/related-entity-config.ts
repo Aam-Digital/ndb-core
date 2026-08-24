@@ -1,4 +1,5 @@
 import { ColumnConfig } from "../common-components/entity-form/FormConfig";
+import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 
 /**
  * Configuration for related entity components like RelatedEntitiesComponent or RelatedEntitiesWithSummaryComponent.
@@ -10,6 +11,13 @@ export interface RelatedEntitiesComponentConfig {
    * The string identifier of the related entity type (e.g., "Aser", "HealthCheck").
    */
   entityType?: string;
+
+  /**
+   * Select what kind of data source is used for the table.
+   * (optional) default is "paginated" in online-only session and "in-memory" otherwise
+   * see `data-source-factory.service.ts`
+   */
+  dataSource?: DataSourceType;
 
   /**
    * (Optional)The name of the component to be rendered (e.g., "RelatedEntities", "RelatedEntitiesWithSummary").
