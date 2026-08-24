@@ -1,0 +1,1111 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >LoggedError</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/logging/logging.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Wrapper that <a href="LoggingService.error">LoggingService.error</a> creates when an error is logged
+together with a descriptive message (<code>Logging.error(&quot;msg&quot;, err)</code>), so that the
+message - not the underlying error&#39;s own, often generic message - becomes the
+issue title and grouping key in remote monitoring.</p>
+<p>The original error is kept as <code>cause</code>, which Sentry links into the reported
+exception chain, so its stack trace is not lost.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>Error</code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>Error</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(message: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cause?: unknown)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="294" class="link-to-prism">src/app/core/logging/logging.service.ts:294</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>message</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>cause</td>
+                                                  
+                                                        <td>
+                                                                    <code>unknown</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Yes
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { LogLevel } from &quot;./log-level&quot;;
+import * as Sentry from &quot;@sentry/angular&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import {
+  ErrorHandler,
+  Provider,
+  inject,
+  provideAppInitializer,
+  EnvironmentProviders,
+} from &quot;@angular/core&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { LoginState } from &quot;../session/session-states/login-state.enum&quot;;
+import { LoginStateSubject } from &quot;../session/session-type&quot;;
+import { SessionSubject } from &quot;../session/auth/session-info&quot;;
+import { TraceService } from &quot;@sentry/angular&quot;;
+import {
+  CONNECTIVITY_ERROR_NAMES,
+  CONNECTIVITY_ERROR_STATUS,
+  isConnectivityErrorMessage,
+} from &quot;#src/app/utils/connectivity-error&quot;;
+
+/**
+ * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
+ * that allows developers to monitor and analyse problems.
+ *
+ * Logging to the remote monitoring server is set only for warnings and errors.
+ *
+ * To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.
+ *
+ * Import the constant &#x60;Logging&#x60; to use this from anywhere (without Angular DI).
+ */
+export class LoggingService {
+  /**
+   * Initialize the remote logging module with the given options.
+   * If set up this will be used to send errors to a remote endpoint for analysis.
+   * @param options
+   */
+  initRemoteLogging(options: Sentry.BrowserOptions) {
+    if (!options.dsn) {
+      // abort if no target url is set
+      return;
+    }
+
+    const defaultOptions: Sentry.BrowserOptions &#x3D; {
+      release: &quot;ndb-core@&quot; + environment.appVersion,
+      transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+      beforeBreadcrumb: enhanceSentryBreadcrumb,
+      beforeSend: processSentryEvent,
+    };
+    Sentry.init(Object.assign(defaultOptions, options));
+  }
+
+  /**
+   * Register any additional logging context integrations that need Angular services.
+   * @param loginState
+   * @param sessionInfo
+   */
+  initAngularLogging(
+    loginState: LoginStateSubject,
+    sessionInfo: SessionSubject,
+  ) {
+    return () &#x3D;&gt;
+      loginState.subscribe((newState) &#x3D;&gt; {
+        if (newState &#x3D;&#x3D;&#x3D; LoginState.LOGGED_IN) {
+          const username &#x3D; sessionInfo.value?.id;
+          Logging.setLoggingContextUser(username);
+        } else {
+          Logging.setLoggingContextUser(undefined);
+        }
+      });
+  }
+
+  /**
+   * Get the Angular providers to set up additional logging and tracing,
+   * that should be added to the providers array of the AppModule.
+   */
+  getAngularTracingProviders(): (Provider | EnvironmentProviders)[] {
+    return [
+      /* Sentry setup */
+      {
+        provide: ErrorHandler,
+        useValue: Sentry.createErrorHandler(),
+      },
+      {
+        provide: Sentry.TraceService,
+        deps: [Router],
+      },
+      provideAppInitializer(() &#x3D;&gt; {
+        inject(TraceService);
+      }),
+      provideAppInitializer(() &#x3D;&gt; {
+        Logging.initAngularLogging(
+          inject(LoginStateSubject),
+          inject(SessionSubject),
+        );
+      }),
+    ];
+  }
+
+  /**
+   * Update a piece of context information that will be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param key Identifier of the key-value pair
+   * @param value Value of the key-value pair
+   * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
+   */
+  addContext(key: string, value: any, asTag: boolean &#x3D; false) {
+    if (asTag) {
+      Sentry.setTag(key, value);
+    } else {
+      if (typeof value !&#x3D;&#x3D; &quot;object&quot;) {
+        value &#x3D; { value: value };
+      }
+      Sentry.getCurrentScope().setContext(key, value);
+    }
+  }
+
+  /**
+   * Update the username to be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param username
+   */
+  setLoggingContextUser(username: string) {
+    Sentry.setUser({ username: username });
+  }
+
+  /**
+   * Log the message with &quot;debug&quot; level - for very detailed, non-essential information.
+   * @param message
+   * @param context Additional context for debugging
+   */
+  public debug(message: any, ...context: any[]) {
+    this.log(message, LogLevel.DEBUG, ...context);
+  }
+
+  /**
+   * Log the message with &quot;info&quot; level - for relevant information that occurs during regular functioning of the app.
+   * @param message
+   */
+  public info(message: any) {
+    this.log(message, LogLevel.INFO);
+  }
+
+  /**
+   * Log the message with &quot;warning&quot; level - for unexpected events that the app can still handle gracefully.
+   * @param message
+   * @param context
+   */
+  public warn(message: any, ...context: any[]) {
+    this.log(message, LogLevel.WARN, ...context);
+  }
+
+  /**
+   * Log the message with &quot;error&quot; level - for unexpected critical events that cannot be handled and will affect functions.
+   * @param message
+   * @param context
+   */
+  public error(message: any, ...context: any[]) {
+    this.log(message, LogLevel.ERROR, ...context);
+  }
+
+  /**
+   * Generic logging of a message.
+   * @param message Message to be logged
+   * @param logLevel Optional log level - default is &quot;info&quot;
+   * @param context Additional context for debugging
+   */
+  public log(
+    message: any,
+    logLevel: LogLevel &#x3D; LogLevel.INFO,
+    ...context: any[]
+  ) {
+    this.logToConsole(message, logLevel, ...context);
+
+    if (logLevel !&#x3D;&#x3D; LogLevel.DEBUG &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.INFO) {
+      this.logToRemoteMonitoring(message, logLevel, ...context);
+    }
+  }
+
+  private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
+    switch (+logLevel) {
+      case LogLevel.DEBUG:
+        console.debug(message, ...context);
+        break;
+      case LogLevel.INFO:
+        console.info(message, ...context);
+        break;
+      case LogLevel.WARN:
+        console.warn(message, ...context);
+        break;
+      case LogLevel.ERROR:
+        console.error(message, ...context);
+        break;
+      default:
+        console.log(message, ...context);
+        break;
+    }
+  }
+
+  private logToRemoteMonitoring(
+    message: any,
+    logLevel: LogLevel,
+    ...context: any[]
+  ) {
+    const extra: Record&lt;string, unknown&gt; &#x3D; {};
+    if (context.length &gt; 0) {
+      extra.context &#x3D; context;
+    }
+    if (typeof message !&#x3D;&#x3D; &quot;string&quot; &amp;&amp; !(message instanceof Error)) {
+      // an object logged as the &quot;message&quot; only contributes its text to the
+      // report, so keep the whole of it available for debugging
+      extra.message &#x3D; message;
+    }
+    const scope &#x3D; {
+      extra: Object.keys(extra).length &gt; 0 ? extra : undefined,
+    };
+
+    if (logLevel &#x3D;&#x3D;&#x3D; LogLevel.ERROR) {
+      Sentry.captureException(toReportedError(message, context), scope);
+    } else {
+      Sentry.captureMessage(messageText(message), {
+        ...scope,
+        level: this.translateLogLevel(logLevel),
+      });
+    }
+  }
+
+  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
+    switch (+logLevel) {
+      case LogLevel.DEBUG:
+        return &quot;debug&quot;;
+      case LogLevel.INFO:
+        return &quot;info&quot;;
+      case LogLevel.WARN:
+        return &quot;warning&quot;;
+      case LogLevel.ERROR:
+        return &quot;error&quot;;
+      default:
+        return &quot;info&quot;;
+    }
+  }
+}
+
+/**
+ * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
+ *
+ * see https://docs.sentry.io/platforms/javascript/enriching-events/breadcrumbs/
+ */
+function enhanceSentryBreadcrumb(
+  breadcrumb: Sentry.Breadcrumb,
+  hint: SentryBreadcrumbHint,
+) {
+  if (breadcrumb.category &#x3D;&#x3D;&#x3D; &quot;ui.click&quot;) {
+    const event &#x3D; hint.event;
+    const elementText &#x3D; event.target?.[&quot;innerText&quot;] ?? &quot;&quot;;
+    breadcrumb.message &#x3D; elementText + &quot; | &quot; + breadcrumb.message;
+  }
+  return breadcrumb;
+}
+
+/**
+ * https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs
+ */
+interface SentryBreadcrumbHint {
+  /**
+   * For breadcrumbs created from browser events, the Sentry SDK often supplies the event to the breadcrumb as a hint.
+   * This can be used to extract data from the target DOM element into a breadcrumb, for example.
+   */
+  event?: PointerEvent;
+
+  input?: string[];
+
+  /**
+   * e.g. console output level (warn / log / ...)
+   */
+  level: string;
+
+  response?: Response;
+  request?: any;
+  xhr?: XMLHttpRequest;
+}
+
+export const Logging &#x3D; new LoggingService();
+
+/**
+ * Wrapper that {@link LoggingService.error} creates when an error is logged
+ * together with a descriptive message (&#x60;Logging.error(&quot;msg&quot;, err)&#x60;), so that the
+ * message - not the underlying error&#x27;s own, often generic message - becomes the
+ * issue title and grouping key in remote monitoring.
+ *
+ * The original error is kept as &#x60;cause&#x60;, which Sentry links into the reported
+ * exception chain, so its stack trace is not lost.
+ */
+export class LoggedError extends Error {
+  constructor(message: string, cause?: unknown) {
+    super(message, { cause });
+    // Sentry reports &#x60;error.name&#x60; as the exception type. Keep the plain &quot;Error&quot;
+    // so titles read &quot;Error: &lt;our message&gt;&quot; rather than a class name that is
+    // minified in production builds anyway; the beforeSend hook recognizes this
+    // wrapper through &#x60;hint.originalException instanceof LoggedError&#x60; instead.
+    this.name &#x3D; &quot;Error&quot;;
+  }
+}
+
+/** The text of anything that was passed to the logger as its &quot;message&quot;. */
+function messageText(message: any): string {
+  return typeof message &#x3D;&#x3D;&#x3D; &quot;string&quot;
+    ? message
+    : String(message?.message ?? message?.error ?? message);
+}
+
+/**
+ * The Error to report for a log call: an error that was logged directly is
+ * reported as it is, anything else is wrapped in a {@link LoggedError}.
+ */
+export function toReportedError(message: any, context: any[]): Error {
+  if (message instanceof Error) {
+    return message;
+  }
+  return new LoggedError(
+    messageText(message),
+    context.find((c) &#x3D;&gt; c instanceof Error),
+  );
+}
+
+/**
+ * Maximum number of times an identical event is sent to remote logging
+ * within one app session (page load).
+ * Guards against error loops (e.g. an error thrown on every change detection
+ * cycle) flooding remote monitoring with thousands of duplicate events.
+ */
+export const MAX_REPEATED_SENTRY_EVENTS &#x3D; 5;
+
+const sentryEventCounts &#x3D; new Map&lt;string, number&gt;();
+
+/**
+ * Sentry &#x60;beforeSend&#x60; hook: drops network failures of offline devices
+ * and excessive repeats of an identical event,
+ * and enriches the remaining events with structured extra data
+ * and a stable grouping fingerprint.
+ *
+ * Grouping runs before the repeat cap because the cap is applied per issue,
+ * which is what the fingerprint defines (see {@link isExcessiveRepeat}).
+ */
+export function processSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent | null {
+  if (isOfflineNetworkError(event)) {
+    return null;
+  }
+
+  const grouped &#x3D; groupSentryEvent(enrichSentryEvent(event, hint), hint);
+  return isExcessiveRepeat(grouped) ? null : grouped;
+}
+
+/**
+ * Whether the event is a network-layer fetch failure that occurred while the
+ * device was offline. In an offline-first app this is a normal state without
+ * diagnostic value (server outages still surface through online users).
+ */
+function isOfflineNetworkError(event: Sentry.ErrorEvent): boolean {
+  if (navigator.onLine) {
+    return false;
+  }
+
+  const messages &#x3D; [
+    event.message,
+    ...(event.exception?.values?.map((v) &#x3D;&gt; v.value) ?? []),
+  ];
+  return messages.some((msg) &#x3D;&gt; msg &amp;&amp; isConnectivityErrorMessage(msg));
+}
+
+/**
+ * Count occurrences of an event and check whether it exceeded the session cap.
+ *
+ * The budget is one per issue (see {@link repeatKey}), so that a device running
+ * into several problems at once still reports each of them. Keying it more
+ * coarsely - by the root cause the issues have in common - starves them instead:
+ * in an offline-first app a single connectivity failure is the root cause of the
+ * config load, the permission rules, the sync and every file download alike, so
+ * whichever of them failed first would silence all the others for that session.
+ *
+ * Note that the cap therefore also limits how much an issue&#x27;s event count says
+ * about the volume of a problem - it shows that it occurs, not how often.
+ */
+function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
+  const key &#x3D; repeatKey(event);
+
+  const count &#x3D; (sentryEventCounts.get(key) ?? 0) + 1;
+  sentryEventCounts.set(key, count);
+
+  if (count &gt; MAX_REPEATED_SENTRY_EVENTS) {
+    Logging.debug(&quot;Skipping repeated event for remote logging&quot;, {
+      event: key,
+      occurrence: count,
+    });
+    return true;
+  }
+  return false;
+}
+
+/**
+ * The issue an event will end up in, as far as it is known here: the
+ * fingerprint is exactly what separates issues, and for the events that keep
+ * Sentry&#x27;s stack-based grouping the thrown error is the closest stand-in
+ * (deliberately without any stack information, so that an error loop is capped
+ * even where the frames differ between occurrences).
+ */
+function repeatKey(event: Sentry.ErrorEvent): string {
+  // serialized as a tagged tuple so that neither the elements of a fingerprint
+  // nor the three kinds of key can collide with one another
+  if (event.fingerprint?.length) {
+    return JSON.stringify([&quot;fingerprint&quot;, ...event.fingerprint]);
+  }
+
+  const values &#x3D; event.exception?.values;
+  const thrownError &#x3D; values?.[values.length - 1];
+  return thrownError
+    ? JSON.stringify([
+        &quot;exception&quot;,
+        thrownError.type,
+        fingerprintKey(thrownError.value),
+      ])
+    : JSON.stringify([
+        &quot;message&quot;,
+        fingerprintKey(String(event.message ?? &quot;unknown&quot;)),
+      ]);
+}
+
+/**
+ * Our own error classes that describe *what* failed precisely enough that all
+ * their occurrences belong into a single issue in remote monitoring,
+ * no matter which component, route or async call site ran into them.
+ *
+ * For these, Sentry&#x27;s default grouping by stack trace actively hurts: they are
+ * thrown from one central place, while the stack differs per caller and even
+ * per build (releases without source maps report minified frames). One problem
+ * then scatters across a dozen issues that each have to be triaged separately,
+ * and archiving one of them does not silence the others.
+ *
+ * Only add error types whose name and message already identify the problem on
+ * their own, so that the stack adds nothing but noise. Generic errors (&#x60;Error&#x60;,
+ * &#x60;TypeError&#x60;, ...) must keep the default grouping - for those the stack trace
+ * is the only thing telling two unrelated bugs apart.
+ */
+const CAUSE_GROUPED_ERROR_TYPES &#x3D; [
+  &quot;DatabaseException&quot;,
+  &quot;SyncStalledError&quot;,
+  &quot;ConfigLoadError&quot;,
+  &quot;PermissionRulesLoadError&quot;,
+  &quot;SiteSettingsLoadError&quot;,
+  &quot;RegistryLookupError&quot;,
+  &quot;RegistryDuplicateError&quot;,
+];
+
+/**
+ * Data that varies between occurrences of the same problem and therefore has to
+ * be masked before an error message can be used as a grouping key.
+ * Order matters: the more specific patterns have to run before the plain number.
+ */
+const VOLATILE_VALUE_PATTERNS: [RegExp, string][] &#x3D; [
+  [/https?:\/\/\S+/gi, &quot;&lt;url&gt;&quot;],
+  [
+    /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi,
+    &quot;&lt;uuid&gt;&quot;,
+  ],
+  [/\b\d+-[0-9a-f]{32}\b/gi, &quot;&lt;rev&gt;&quot;],
+  // legacy entity ids that embed a username (e.g. &#x60;User:some.person&#x60;); the
+  // uuid-based ones are already masked above. Requires a non-space directly
+  // after the colon, so that an error prefix like &quot;TypeError: ...&quot; is kept.
+  [/\b[A-Z][A-Za-z]{2,}:[A-Za-z0-9._&lt;&gt;-]+/g, &quot;&lt;entityId&gt;&quot;],
+  [/\d+/g, &quot;&lt;n&gt;&quot;],
+];
+
+/**
+ * Mask volatile details (ids, urls, numbers) so that different occurrences of
+ * the same problem produce the same string.
+ *
+ * Stays human-readable, as it is also used to describe the root cause in the
+ * issue title (see {@link describeCause}).
+ */
+function normalizeErrorValue(value: string | undefined): string {
+  if (!value) {
+    return &quot;&lt;none&gt;&quot;;
+  }
+  return VOLATILE_VALUE_PATTERNS.reduce(
+    (normalized, [pattern, placeholder]) &#x3D;&gt;
+      normalized.replace(pattern, placeholder),
+    value,
+  );
+}
+
+/**
+ * Reduce an error message to a grouping key.
+ *
+ * On top of {@link normalizeErrorValue} this also removes differences that
+ * carry no meaning but do split issues, as third-party libraries are not
+ * consistent about them: PouchDB reports both &quot;Unauthorized&quot; and
+ * &quot;unauthorized&quot;, and both &quot;Document update conflict&quot; and &quot;Document update
+ * conflict.&quot; (with a period) for the same failure.
+ */
+function fingerprintKey(value: string | undefined): string {
+  return normalizeErrorValue(value)
+    .toLowerCase()
+    .replace(/[.,;:!?]/g, &quot;&quot;)
+    .replace(/\s+/g, &quot; &quot;)
+    .trim();
+}
+
+/**
+ * Set an explicit grouping fingerprint where Sentry&#x27;s default grouping splits
+ * one problem across many issues.
+ *
+ * Sentry groups by stack trace whenever one is available. That is the right
+ * default for a bug in application code, but not for a failure that is raised
+ * from one central place and reached from many components, routes and async
+ * call sites - the stack then differs per caller and even per build (releases
+ * without source maps report minified frames), so one problem scatters across a
+ * dozen issues that each have to be triaged separately, and archiving one of
+ * them does not silence the others.
+ *
+ * The cases are checked most-specific first: an error we recognize by name says
+ * more about what went wrong than the fact that a network request failed
+ * underneath it, so those keep their own issues instead of being absorbed into
+ * the shared network bucket.
+ */
+function groupSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent {
+  const values &#x3D; event.exception?.values;
+  if (!values?.length) {
+    // captureMessage events group by their message. Normalizing it enforces the
+    // &quot;keep message strings static&quot; convention: a message that does interpolate
+    // variable data still produces one issue instead of one per value.
+    if (event.message) {
+      event.fingerprint &#x3D; [fingerprintKey(event.message)];
+    }
+    return event;
+  }
+
+  const thrownError &#x3D; values[values.length - 1];
+  const thrownType &#x3D; thrownError.type ?? &quot;&quot;;
+
+  if (
+    CAUSE_GROUPED_ERROR_TYPES.includes(thrownType) ||
+    hint?.originalException instanceof LoggedError
+  ) {
+    return groupByErrorChain(event, values);
+  }
+
+  if (values.some(isConnectivityException) || hasConnectivityStatus(event)) {
+    return groupAsNetworkError(event, thrownError);
+  }
+
+  if (!values.some((v) &#x3D;&gt; v.stacktrace?.frames?.length)) {
+    // without a stack Sentry falls back to grouping by type and message, so an
+    // id or url interpolated into the message opens a new issue every time
+    event.fingerprint &#x3D; [
+      thrownType || &quot;Error&quot;,
+      fingerprintKey(thrownError.value),
+    ];
+  }
+
+  return event;
+}
+
+/**
+ * Group by the error chain instead of the stack trace, so that one problem
+ * shows up as one issue.
+ *
+ * &#x60;exception.values&#x60; is ordered innermost-first: &#x60;values[0]&#x60; is the deepest
+ * &#x60;cause&#x60;, the originally thrown error is last. Both ends matter - the thrown
+ * error says which operation failed, the root cause says why (e.g. a config
+ * load failing because the device is offline is a different problem from the
+ * same load failing because the user is unauthorized).
+ *
+ * Because the root cause is part of the grouping key, it is also appended to
+ * the reported message: otherwise several issues share one title (a dozen
+ * &quot;Failed to load configuration from the database.&quot; rows) and can only be told
+ * apart by opening each of them.
+ *
+ * The route remains available as the &#x60;transaction&#x60; tag, so a failure can still
+ * be filtered by where it happened without splitting it into separate issues.
+ */
+function groupByErrorChain(
+  event: Sentry.ErrorEvent,
+  values: Sentry.Exception[],
+): Sentry.ErrorEvent {
+  const thrownError &#x3D; values[values.length - 1];
+  const thrownType &#x3D; thrownError.type ?? &quot;&quot;;
+  const thrownValue &#x3D; groupingValue(thrownError);
+  const fingerprint &#x3D; [thrownType, thrownValue];
+
+  const rootCause &#x3D; values[0];
+  const rootType &#x3D; rootCause.type ?? &quot;&quot;;
+  const rootValue &#x3D; groupingValue(rootCause);
+  // compared by content, not by identity: an error wrapping another error of
+  // the same type and message describes one failure, not two, and has to match
+  // the fingerprint of the same failure reported without the extra wrapper.
+  // Two links that are both network failures are one such case - which of them
+  // the chain happens to include says nothing about the problem.
+  const isDistinctCause &#x3D;
+    !(thrownValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE &amp;&amp; rootValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE) &amp;&amp;
+    (rootType !&#x3D;&#x3D; thrownType || rootValue !&#x3D;&#x3D; thrownValue);
+
+  if (isDistinctCause) {
+    fingerprint.push(rootType, rootValue);
+    thrownError.value &#x3D; &#x60;${thrownError.value} ${describeCause(rootCause)}&#x60;;
+  }
+
+  if (thrownValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE) {
+    // the wordings collected here differ per browser, so use a stable title
+    reportAsUnreachableServer(event, thrownError);
+  }
+
+  event.fingerprint &#x3D; fingerprint;
+  return event;
+}
+
+/**
+ * Replace the reported message by one that does not depend on which browser
+ * (or library) sent the event, keeping the original one available as extra data.
+ */
+function reportAsUnreachableServer(
+  event: Sentry.ErrorEvent,
+  exception: Sentry.Exception,
+) {
+  event.extra &#x3D; { ...event.extra, originalError: exception.value };
+  exception.value &#x3D; &quot;Failed to reach the server&quot;;
+}
+
+/**
+ * Placeholder for a connectivity failure, which every browser words differently
+ * (&quot;Failed to fetch&quot; / &quot;Load failed&quot; / ...) while describing one problem.
+ *
+ * Substituted wherever an error message is used as a grouping key or shown as
+ * the cause of another error, so that a mix of browsers neither splits an issue
+ * nor makes its title flip-flop between its events.
+ */
+const NETWORK_FAILURE &#x3D; &quot;network failure&quot;;
+
+/** The part of an error message that identifies the problem. */
+function groupingValue(exception: Sentry.Exception): string {
+  return isConnectivityException(exception)
+    ? NETWORK_FAILURE
+    : fingerprintKey(exception.value);
+}
+
+/** Human-readable, but stable across occurrences of the same problem. */
+function describeCause(rootCause: Sentry.Exception): string {
+  const cause &#x3D; isConnectivityException(rootCause)
+    ? NETWORK_FAILURE
+    : normalizeErrorValue(rootCause.value);
+  return &#x60;(caused by ${rootCause.type ?? &quot;Error&quot;}: ${cause})&#x60;;
+}
+
+/**
+ * Collect all failures that are really &quot;the app could not reach the server&quot;
+ * into a single issue.
+ *
+ * These are raised by the browser (and by third-party libraries wrapping it) at
+ * whatever point a request happened to be made, so grouping them by stack trace
+ * produces an open-ended stream of near-identical issues that all have the same
+ * (non-)answer. They still have to be reported rather than dropped, because a
+ * server outage surfaces exactly this way - but as one issue whose event count
+ * is the interesting signal.
+ *
+ * The browsers&#x27; differing wordings (&quot;Failed to fetch&quot; / &quot;Load failed&quot; / ...)
+ * would make the title flip-flop between events of the merged issue, so it is
+ * replaced by a stable one and kept as a searchable tag instead.
+ */
+function groupAsNetworkError(
+  event: Sentry.ErrorEvent,
+  thrownError: Sentry.Exception,
+): Sentry.ErrorEvent {
+  const original &#x3D; &#x60;${thrownError.type ?? &quot;Error&quot;}: ${normalizeErrorValue(thrownError.value)}&#x60;;
+
+  event.fingerprint &#x3D; [&quot;network-error&quot;];
+  event.tags &#x3D; {
+    ...event.tags,
+    // Sentry rejects tag values longer than 200 characters
+    network_error: original.slice(0, 200),
+  };
+
+  reportAsUnreachableServer(event, thrownError);
+  thrownError.type &#x3D; &quot;NetworkError&quot;;
+
+  return event;
+}
+
+/** Whether one link of a reported error chain is a connectivity failure. */
+function isConnectivityException(exception: Sentry.Exception): boolean {
+  return (
+    CONNECTIVITY_ERROR_NAMES.includes(exception.type ?? &quot;&quot;) ||
+    isConnectivityErrorMessage(exception.value ?? &quot;&quot;)
+  );
+}
+
+/**
+ * Whether the reported error carries the HTTP status of a request that never
+ * reached the backend - a gateway error names the problem in its status rather
+ * than in a message {@link isConnectivityException} could recognize.
+ *
+ * Event-level, because the status describes the error that was captured (it is
+ * attached by {@link enrichSentryEvent}) rather than one link of its chain.
+ */
+function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
+  const status &#x3D; event.extra?.status;
+  return (
+    typeof status &#x3D;&#x3D;&#x3D; &quot;number&quot; &amp;&amp; CONNECTIVITY_ERROR_STATUS.includes(status)
+  );
+}
+
+/**
+ * Enrich events with structured extra data
+ * from custom Error properties (e.g. DatabaseException&#x27;s entityId, status, reason).
+ */
+function enrichSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent {
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
+  // so that details like entityId, status, reason are visible in Sentry&#x27;s &quot;Additional Data&quot;
+  const err &#x3D; hint.originalException;
+  if (err &amp;&amp; typeof err &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    const extras: Record&lt;string, unknown&gt; &#x3D; {};
+    for (const key of [&quot;entityId&quot;, &quot;status&quot;, &quot;reason&quot;, &quot;name&quot;]) {
+      if (key in err &amp;&amp; (err as any)[key] !&#x3D;&#x3D; undefined) {
+        extras[key] &#x3D; (err as any)[key];
+      }
+    }
+    if (Object.keys(extras).length &gt; 0) {
+      event.extra &#x3D; { ...event.extra, ...extras };
+    }
+  }
+
+  return event;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'LoggedError.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

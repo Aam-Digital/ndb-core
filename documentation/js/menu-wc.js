@@ -1742,6 +1742,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/LatestEntityLoader.html" data-type="entity-link" >LatestEntityLoader&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="classes/LoggedError.html" data-type="entity-link" >LoggedError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/LoggingService.html" data-type="entity-link" >LoggingService</a>
                             </li>
                             <li class="link">

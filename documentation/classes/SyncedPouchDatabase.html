@@ -3484,7 +3484,15 @@ export class SyncedPouchDatabase extends PouchDatabase {
 type SyncResult &#x3D; PouchDB.Replication.SyncResultComplete&lt;any&gt;;
 
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {}
+class SyncStalledError extends Error {
+  constructor() {
+    super(&quot;Sync cancelled after making no progress&quot;);
+    // set explicitly: an Error subclass inherits the name &quot;Error&quot;, and the class
+    // name is minified in production - remote monitoring would report this as
+    // &quot;Error: No error message&quot; (see logging module README)
+    this.name &#x3D; &quot;SyncStalledError&quot;;
+  }
+}
 </code></pre>
     </div>
 </div>

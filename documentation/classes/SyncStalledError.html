@@ -136,6 +136,12 @@
                 role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
         </li>
         <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
             <a href="#source" 
                 class="nav-link"
                 
@@ -184,6 +190,35 @@
         </section>
     </div>
 
+    <div class="tab-pane fade " id="api">
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="454" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:454</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+
+
+
+    </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
@@ -640,7 +675,15 @@ export class SyncedPouchDatabase extends PouchDatabase {
 type SyncResult &#x3D; PouchDB.Replication.SyncResultComplete&lt;any&gt;;
 
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {}
+class SyncStalledError extends Error {
+  constructor() {
+    super(&quot;Sync cancelled after making no progress&quot;);
+    // set explicitly: an Error subclass inherits the name &quot;Error&quot;, and the class
+    // name is minified in production - remote monitoring would report this as
+    // &quot;Error: No error message&quot; (see logging module README)
+    this.name &#x3D; &quot;SyncStalledError&quot;;
+  }
+}
 </code></pre>
     </div>
 </div>

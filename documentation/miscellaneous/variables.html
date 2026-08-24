@@ -236,7 +236,13 @@
                             <a href="#conflictResolutionComponents" title="src/app/features/conflict-resolution/conflict-resolution-components.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>conflictResolutionComponents</b>&nbsp;&nbsp;&nbsp;(src/.../conflict-resolution-components.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#CONNECTIVITY_ERROR_NAMES" title="src/app/utils/connectivity-error.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CONNECTIVITY_ERROR_NAMES</b>&nbsp;&nbsp;&nbsp;(src/.../connectivity-error.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#CONNECTIVITY_ERROR_PATTERNS" title="src/app/utils/connectivity-error.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CONNECTIVITY_ERROR_PATTERNS</b>&nbsp;&nbsp;&nbsp;(src/.../connectivity-error.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#CONNECTIVITY_ERROR_STATUS" title="src/app/utils/connectivity-error.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CONNECTIVITY_ERROR_STATUS</b>&nbsp;&nbsp;&nbsp;(src/.../connectivity-error.ts)</span></a>
                         </li>
                         <li>
                             <a href="#coreComponents" title="src/app/core/core-components.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>coreComponents</b>&nbsp;&nbsp;&nbsp;(src/.../core-components.ts)</span></a>
@@ -560,7 +566,7 @@
                             <a href="#NAVIGATOR_TOKEN" title="src/app/utils/di-tokens.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>NAVIGATOR_TOKEN</b>&nbsp;&nbsp;&nbsp;(src/.../di-tokens.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#NETWORK_ERROR_PATTERNS" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>NETWORK_ERROR_PATTERNS</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                            <a href="#NETWORK_FAILURE" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>NETWORK_FAILURE</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#noSpecialUrlChars" title="src/app/features/public-form/edit-publicform-route/edit-publicform-route.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>noSpecialUrlChars</b>&nbsp;&nbsp;&nbsp;(src/.../edit-publicform-route.component.ts)</span></a>
@@ -2408,7 +2414,7 @@ its diff and as the badge tooltip (single source of truth).</p>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>miscellaneous</code>
+                        <i>Type : </i>    <code>[]</code>
 
                     </td>
                 </tr>
@@ -2416,6 +2422,7 @@ its diff and as the badge tooltip (single source of truth).</p>
                     <td class="col-md-4">
                         <i>Default value : </i><code>[
   &quot;DatabaseException&quot;,
+  &quot;SyncStalledError&quot;,
   &quot;ConfigLoadError&quot;,
   &quot;PermissionRulesLoadError&quot;,
   &quot;SiteSettingsLoadError&quot;,
@@ -2510,33 +2517,32 @@ cycle) flooding remote monitoring with thousands of duplicate events.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="NETWORK_ERROR_PATTERNS"></a>
+                    <a name="NETWORK_FAILURE"></a>
                     <span class="name">
-                        <span ><b>NETWORK_ERROR_PATTERNS</b></span>
-                        <a href="#NETWORK_ERROR_PATTERNS"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>NETWORK_FAILURE</b></span>
+                        <a href="#NETWORK_FAILURE"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>    <code>[]</code>
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>[
-  &quot;Failed to fetch&quot;, // Chrome (also matches DatabaseException &quot;Failed to fetch from DB&quot;)
-  &quot;NetworkError when attempting to fetch resource&quot;, // Firefox
-  &quot;Load failed&quot;, // Safari
-]</code>
+                        <i>Default value : </i><code>&quot;network failure&quot;</code>
                     </td>
                 </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Error message fragments produced by browsers (and our fetch wrapper)
-when a request fails at the network layer.</p>
+                    <div class="io-description"><p>Placeholder for a connectivity failure, which every browser words differently
+(&quot;Failed to fetch&quot; / &quot;Load failed&quot; / ...) while describing one problem.</p>
+<p>Substituted wherever an error message is used as a grouping key or shown as
+the cause of another error, so that a mix of browsers neither splits an issue
+nor makes its title flip-flop between its events.</p>
 </div>
                 </td>
             </tr>
@@ -2595,6 +2601,10 @@ when a request fails at the network layer.</p>
     &quot;&lt;uuid&gt;&quot;,
   ],
   [/\b\d+-[0-9a-f]{32}\b/gi, &quot;&lt;rev&gt;&quot;],
+  // legacy entity ids that embed a username (e.g. &#x60;User:some.person&#x60;); the
+  // uuid-based ones are already masked above. Requires a non-space directly
+  // after the colon, so that an error prefix like &quot;TypeError: ...&quot; is kept.
+  [/\b[A-Z][A-Za-z]{2,}:[A-Za-z0-9._&lt;&gt;-]+/g, &quot;&lt;entityId&gt;&quot;],
   [/\d+/g, &quot;&lt;n&gt;&quot;],
 ]</code>
                     </td>
@@ -4315,6 +4325,39 @@ Drop the stored options so the definition provided by the app is used.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="CONNECTIVITY_ERROR_NAMES"></a>
+                    <span class="name">
+                        <span ><b>CONNECTIVITY_ERROR_NAMES</b></span>
+                        <a href="#CONNECTIVITY_ERROR_NAMES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;TimeoutError&quot;, &quot;AbortError&quot;]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Error <code>name</code>s that browsers use for requests that were cut off before
+completing, rather than answered with an error.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="CONNECTIVITY_ERROR_PATTERNS"></a>
                     <span class="name">
                         <span ><b>CONNECTIVITY_ERROR_PATTERNS</b></span>
@@ -4331,11 +4374,12 @@ Drop the stored options so the definition provided by the app is used.</p>
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>[
-  &quot;Failed to fetch&quot;,
-  &quot;NetworkError&quot;,
-  &quot;Load failed&quot;,
+  &quot;Failed to fetch&quot;, // Chrome (also matches DatabaseException &quot;Failed to fetch from DB&quot;)
+  &quot;NetworkError&quot;, // Firefox (&quot;NetworkError when attempting to fetch resource&quot;)
+  &quot;Load failed&quot;, // Safari
   &quot;Network request failed&quot;,
   &quot;network timeout&quot;,
+  &quot;0 Unknown Error&quot;, // Angular HttpErrorResponse for a request that never reached the server
 ]</code>
                     </td>
                 </tr>
@@ -4345,6 +4389,40 @@ Drop the stored options so the definition provided by the app is used.</p>
                     <div class="io-description"><p>Common network/connectivity error patterns shared across the application.
 These indicate transient failures (offline, DNS, proxy issues) rather than
 application-level errors.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CONNECTIVITY_ERROR_STATUS"></a>
+                    <span class="name">
+                        <span ><b>CONNECTIVITY_ERROR_STATUS</b></span>
+                        <a href="#CONNECTIVITY_ERROR_STATUS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[0, 502, 503, 504]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>HTTP statuses of a request that never reached the application&#39;s backend:
+<code>0</code> for one that got no response at all, the others reported by an
+infrastructure component in front of it.</p>
 </div>
                 </td>
             </tr>
