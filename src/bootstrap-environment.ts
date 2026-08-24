@@ -71,7 +71,7 @@ async function initConfigJsonToEnvironment() {
     // if offline, the config.json should be served by the service worker
     // if we cannot get a valid config.json, we won't be able to switch to session_type "synced" and load client data
 
-    Logging.error(err, "failed to load config.json");
+    Logging.error("failed to load config.json", err);
 
     const attempts = Number(
       sessionStorage.getItem(CONFIG_JSON_RELOAD_ATTEMPTS_KEY) ?? "0",
