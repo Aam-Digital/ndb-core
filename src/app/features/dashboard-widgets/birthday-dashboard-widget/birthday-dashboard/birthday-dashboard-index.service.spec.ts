@@ -170,10 +170,7 @@ describe("BirthdayDashboardIndexService", () => {
     // with several upcoming birthdays currently shows up multiple times in the result - once
     // per property, ordered by that property's days-until-birthday (here: "birthday" before
     // "secondBirthday").
-    expect(data.get(MultiBirthdayEntity.ENTITY_TYPE)).toEqual([
-      entity,
-      entity,
-    ]);
+    expect(data.get(MultiBirthdayEntity.ENTITY_TYPE)).toEqual([entity, entity]);
   });
 
   describe("boundary behavior around today and the threshold", () => {

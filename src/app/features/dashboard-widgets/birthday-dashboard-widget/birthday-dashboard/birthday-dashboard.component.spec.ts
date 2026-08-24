@@ -13,9 +13,7 @@ type BirthdayDashboardIndexServiceMock = Pick<
   BirthdayDashboardIndexService,
   "buildBirthdayIndex" | "queryBirthdayIndex"
 > & {
-  buildBirthdayIndex: Mock<
-    BirthdayDashboardIndexService["buildBirthdayIndex"]
-  >;
+  buildBirthdayIndex: Mock<BirthdayDashboardIndexService["buildBirthdayIndex"]>;
   queryBirthdayIndex: Mock<BirthdayDashboardIndexService["queryBirthdayIndex"]>;
 };
 
