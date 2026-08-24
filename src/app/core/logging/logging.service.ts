@@ -15,6 +15,7 @@ import { SessionSubject } from "../session/auth/session-info";
 import { TraceService } from "@sentry/angular";
 import {
   CONNECTIVITY_ERROR_NAMES,
+  CONNECTIVITY_ERROR_STATUS,
   isConnectivityErrorMessage,
 } from "#src/app/utils/connectivity-error";
 
@@ -407,15 +408,24 @@ function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
  * even where the frames differ between occurrences).
  */
 function repeatKey(event: Sentry.ErrorEvent): string {
+  // serialized as a tagged tuple so that neither the elements of a fingerprint
+  // nor the three kinds of key can collide with one another
   if (event.fingerprint?.length) {
-    return event.fingerprint.join(" | ");
+    return JSON.stringify(["fingerprint", ...event.fingerprint]);
   }
 
   const values = event.exception?.values;
   const thrownError = values?.[values.length - 1];
   return thrownError
-    ? `${thrownError.type}: ${fingerprintKey(thrownError.value)}`
-    : fingerprintKey(String(event.message ?? "unknown"));
+    ? JSON.stringify([
+        "exception",
+        thrownError.type,
+        fingerprintKey(thrownError.value),
+      ])
+    : JSON.stringify([
+        "message",
+        fingerprintKey(String(event.message ?? "unknown")),
+      ]);
 }
 
 /**
@@ -540,7 +550,7 @@ function groupSentryEvent(
     return groupByErrorChain(event, values);
   }
 
-  if (values.some(isConnectivityException)) {
+  if (values.some(isConnectivityException) || hasConnectivityStatus(event)) {
     return groupAsNetworkError(event, thrownError);
   }
 
@@ -685,6 +695,21 @@ function isConnectivityException(exception: Sentry.Exception): boolean {
   return (
     CONNECTIVITY_ERROR_NAMES.includes(exception.type ?? "") ||
     isConnectivityErrorMessage(exception.value ?? "")
+  );
+}
+
+/**
+ * Whether the reported error carries the HTTP status of a request that never
+ * reached the backend - a gateway error names the problem in its status rather
+ * than in a message {@link isConnectivityException} could recognize.
+ *
+ * Event-level, because the status describes the error that was captured (it is
+ * attached by {@link enrichSentryEvent}) rather than one link of its chain.
+ */
+function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
+  const status = event.extra?.status;
+  return (
+    typeof status === "number" && CONNECTIVITY_ERROR_STATUS.includes(status)
   );
 }
 

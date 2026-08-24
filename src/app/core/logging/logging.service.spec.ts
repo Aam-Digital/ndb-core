@@ -1,4 +1,5 @@
 import { LogLevel } from "./log-level";
+import type * as Sentry from "@sentry/angular";
 import {
   LoggedError,
   LoggingService,
@@ -147,15 +148,13 @@ describe("LoggingService", () => {
     it("should budget repeats per issue, so one problem does not silence another", () => {
       // both wrappers share a root cause, as everything does while a device is
       // on a flaky connection - but they are separate issues to be reported
-      const wrapped = (type: string) =>
-        ({
-          exception: {
-            values: [
-              { type: "DatabaseException", value: "Failed to fetch from DB" },
-              { type, value: `Failed to load the ${type} document` },
-            ],
-          },
-        }) as any;
+      const wrapped = (type: string) => {
+        const values: Sentry.Exception[] = [
+          { type: "DatabaseException", value: "Failed to fetch from DB" },
+          { type, value: `Failed to load the ${type} document` },
+        ];
+        return { exception: { values } } as Sentry.ErrorEvent;
+      };
 
       for (let i = 0; i < MAX_REPEATED_SENTRY_EVENTS; i++) {
         expect(
@@ -556,6 +555,26 @@ describe("LoggingService", () => {
                   type: "AbortError",
                   value: "signal is aborted without reason",
                   stacktrace: { frames: [{ filename: "b.ts" }] },
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.fingerprint).toEqual(["network-error"]);
+      });
+
+      it("should recognize a gateway status, which names the problem instead of the message", () => {
+        const event = processSentryEvent(
+          {
+            extra: { status: 503 },
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "Server responded with an invalid status.",
+                  stacktrace: { frames: [{ filename: "c.ts" }] },
                 },
               ],
             },

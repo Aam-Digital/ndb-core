@@ -19,6 +19,13 @@ const CONNECTIVITY_ERROR_PATTERNS = [
 export const CONNECTIVITY_ERROR_NAMES = ["TimeoutError", "AbortError"];
 
 /**
+ * HTTP statuses of a request that never reached the application's backend:
+ * `0` for one that got no response at all, the others reported by an
+ * infrastructure component in front of it.
+ */
+export const CONNECTIVITY_ERROR_STATUS = [0, 502, 503, 504];
+
+/**
  * Check whether an error *message* describes a transient network/connectivity
  * failure.
  *
@@ -47,7 +54,7 @@ export function isConnectivityError(err: any): boolean {
   if (names.some((name) => CONNECTIVITY_ERROR_NAMES.includes(name))) {
     return true;
   }
-  if ([0, 502, 503, 504].includes(err?.status)) return true;
+  if (CONNECTIVITY_ERROR_STATUS.includes(err?.status)) return true;
 
   const message = `${err?.message ?? ""} ${err?.reason ?? ""} ${err?.toString?.() ?? ""}`;
   return isConnectivityErrorMessage(message);
