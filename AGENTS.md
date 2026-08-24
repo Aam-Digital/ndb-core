@@ -231,6 +231,8 @@ Practical rules:
 ### End-to-End Testing (Playwright)
 
 - Run tests: `npm run e2e`
+- Keep the number of stand-alone e2e tests to a minimum: the initial `loadApp()` is expensive,
+  so prefer integrating a new check as an additional step into an existing scenario.
 - See [`.github/instructions/e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) for detailed patterns and examples
 
 ### Working with Test Results
