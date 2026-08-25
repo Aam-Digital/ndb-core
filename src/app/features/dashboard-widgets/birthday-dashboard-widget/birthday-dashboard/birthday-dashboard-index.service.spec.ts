@@ -2,6 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import {
   BirthdayDashboardIndexService,
   EntityWithBirthday,
+  getNextOccurrence,
 } from "./birthday-dashboard-index.service";
 import { BirthdayDashboardComponent } from "#src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component";
 import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
@@ -13,24 +14,20 @@ import { DateWithAge } from "#src/app/core/basic-datatypes/date-with-age/dateWit
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
-import { calculateAge } from "#src/app/utils/utils";
 
-/** Mirrors the service's private next-occurrence/age logic, for building expected results. */
+/** Helper method to build expected results */
 function expectedEntityWithBirthday(
   entity: Entity,
   dateOfBirth: Date,
 ): EntityWithBirthday {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const birthday = new Date(
-    today.getFullYear(),
-    dateOfBirth.getMonth(),
-    dateOfBirth.getDate(),
-  );
-  if (today.getTime() > birthday.getTime()) {
-    birthday.setFullYear(birthday.getFullYear() + 1);
-  }
-  return { entity, birthday, newAge: calculateAge(dateOfBirth) + 1 };
+  const birthday = getNextOccurrence(dateOfBirth, today);
+  return {
+    entity,
+    birthday,
+    newAge: birthday.getFullYear() - dateOfBirth.getFullYear(),
+  };
 }
 
 describe("BirthdayDashboardIndexService", () => {
@@ -273,6 +270,29 @@ describe("BirthdayDashboardIndexService", () => {
 
     it("should include a birthday that is today", async () => {
       await expectBirthdayOffsetToBeIncluded(0, true);
+    });
+
+    it("should report the correct age for a child born today", async () => {
+      const child = new TestEntity();
+      child.dateOfBirth = new DateWithAge(
+        moment().subtract(20, "years").startOf("day").toDate(),
+      );
+      await entityMapper.save(child);
+
+      await service.buildBirthdayIndex(entityConfig);
+      const data = await service.queryBirthdayIndex(entityConfig, threshold);
+
+      // calculateAge(dateOfBirth) alone already reflects today's birthday as having
+      // happened (no decrement when month/day match exactly), so unconditionally
+      // adding 1 on top of that would over-count by one specifically on the day of
+      // the birthday itself.
+      expect(data).toEqual([
+        {
+          entity: child,
+          birthday: moment().startOf("day").toDate(),
+          newAge: 20,
+        },
+      ]);
     });
 
     it("should not include a birthday that was yesterday", async () => {

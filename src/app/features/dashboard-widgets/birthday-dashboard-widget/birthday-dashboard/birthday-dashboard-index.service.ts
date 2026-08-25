@@ -3,7 +3,6 @@ import { inject, Injectable } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { calculateAge } from "#src/app/utils/utils";
 
 export interface EntityPropertyMap {
   [key: string]: string | string[];
@@ -82,40 +81,20 @@ export class BirthdayDashboardIndexService {
     );
 
     return result.rows
-      .filter((row) => this.daysUntil(new Date(row.value), today) <= threshold)
+      .filter((row) => daysUntil(new Date(row.value), today) <= threshold)
       .map((row) => {
         const entityType = Entity.extractTypeFromId(row.doc._id);
         const entityConstructor = this.entityRegistry.get(entityType);
         const entity = new entityConstructor("");
         this.entitySchemaService.loadDataIntoEntity(entity, row.doc);
         const dateOfBirth = new Date(row.value);
+        const birthday = getNextOccurrence(dateOfBirth, today);
         return {
           entity,
-          birthday: this.getNextOccurrence(dateOfBirth, today),
-          newAge: calculateAge(dateOfBirth) + 1,
+          birthday,
+          newAge: birthday.getFullYear() - dateOfBirth.getFullYear(),
         };
       });
-  }
-
-  /**
-   * Real calendar date of the next occurrence (this year, or next year if it has already
-   * passed) of the given date's month/day, relative to `today`.
-   */
-  private getNextOccurrence(date: Date, today: Date): Date {
-    const next = new Date(today.getFullYear(), date.getMonth(), date.getDate());
-    if (today.getTime() > next.getTime()) {
-      next.setFullYear(next.getFullYear() + 1);
-    }
-    return next;
-  }
-
-  /**
-   * Exact number of real calendar days from `today` until the next occurrence of the
-   * given date's month/day.
-   */
-  private daysUntil(date: Date, today: Date): number {
-    const next = this.getNextOccurrence(date, today);
-    return Math.round((next.getTime() - today.getTime()) / 86400000);
   }
 
   /**
@@ -202,4 +181,25 @@ export class BirthdayDashboardIndexService {
     ${typeBlocks}
   }`;
   }
+}
+
+/**
+ * Real calendar date of the next occurrence (this year, or next year if it has already
+ * passed) of the given date's month/day, relative to `today`.
+ */
+export function getNextOccurrence(date: Date, today: Date): Date {
+  const next = new Date(today.getFullYear(), date.getMonth(), date.getDate());
+  if (today.getTime() > next.getTime()) {
+    next.setFullYear(next.getFullYear() + 1);
+  }
+  return next;
+}
+
+/**
+ * Exact number of real calendar days from `today` until the next occurrence of the
+ * given date's month/day.
+ */
+export function daysUntil(date: Date, today: Date): number {
+  const next = getNextOccurrence(date, today);
+  return Math.round((next.getTime() - today.getTime()) / 86400000);
 }
