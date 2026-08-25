@@ -6,7 +6,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
@@ -23,6 +23,7 @@ type EntityAbilityMock = {
 
 @Component({
   template: ``,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class TestEntityDetailsComponent extends AbstractEntityDetailsComponent {}

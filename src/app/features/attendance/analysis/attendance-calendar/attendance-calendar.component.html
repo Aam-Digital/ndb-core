@@ -40,7 +40,9 @@
                   given
                 "
                 placeholder="Remarks"
-                [ngModel]="selectedEventAttendance()?.remarks"
+                [ngModel]="
+                  $safeNavigationMigration(selectedEventAttendance()?.remarks)
+                "
                 (ngModelChange)="onRemarksChange($event)"
                 (blur)="save()"
               ></textarea>

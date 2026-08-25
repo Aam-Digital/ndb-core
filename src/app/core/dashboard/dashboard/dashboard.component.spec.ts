@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
@@ -11,6 +11,7 @@ import { ComponentRegistry } from "../../../dynamic-components";
 @Component({
   selector: "app-mock-entity-count-dashboard",
   template: "",
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class MockEntityCountDashboardComponent {
@@ -22,6 +23,7 @@ class MockEntityCountDashboardComponent {
 @Component({
   selector: "app-mock-birthday-dashboard",
   template: "",
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class MockBirthdayDashboardComponent {
@@ -35,6 +37,7 @@ class MockBirthdayDashboardComponent {
 @Component({
   selector: "app-mock-no-entity-dashboard",
   template: "",
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class MockNoEntityDashboardComponent {}
@@ -42,6 +45,7 @@ class MockNoEntityDashboardComponent {}
 @Component({
   selector: "app-mock-generic-dashboard",
   template: "",
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class MockGenericDashboardComponent {}

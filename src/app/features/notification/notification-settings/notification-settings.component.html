@@ -165,7 +165,11 @@
           <div class="flex-row gap-regular align-center">
             <mat-slide-toggle
               (change)="toggleEmailChannel($event)"
-              [checked]="notificationConfig()?.channels?.['email']"
+              [checked]="
+                $safeNavigationMigration(
+                  notificationConfig()?.channels?.['email']
+                )
+              "
               [disabled]="!notificationService.isEmailNotificationEnabled()"
               class="indented-item"
               [matTooltipDisabled]="

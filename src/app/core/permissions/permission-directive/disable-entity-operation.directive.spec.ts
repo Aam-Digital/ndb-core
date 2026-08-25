@@ -1,6 +1,11 @@
 import type { Mock } from "vitest";
 import { DisableEntityOperationDirective } from "./disable-entity-operation.directive";
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../../entity/model/entity";
 import { EntityAbility } from "../ability/entity-ability";
@@ -121,6 +126,7 @@ describe("DisableEntityOperationDirective", () => {
     }"
     #button
   ></button>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })

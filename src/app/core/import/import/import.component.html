@@ -18,7 +18,10 @@
     </ng-template>
 
     <!-- STEP 1: SELECT FILE -->
-    <mat-step [completed]="rawData?.length > 0" #step1>
+    <mat-step
+      [completed]="$safeNavigationMigration(rawData?.length) > 0"
+      #step1
+    >
       <ng-template matStepLabel>
         <div i18n="Import Step - upload">Select File</div>
 

@@ -4,10 +4,11 @@ import { RoutedViewComponent } from "./routed-view.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { Component, input } from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
   template: ``,
+  changeDetection: ChangeDetectionStrategy.Eager,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })

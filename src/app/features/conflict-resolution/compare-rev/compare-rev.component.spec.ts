@@ -96,6 +96,9 @@ describe("CompareRevComponent", () => {
     component.onPanelOpen();
     fixture.detectChanges();
     await fixture.whenStable();
+    // the auto-resolution effect awaits internally before setting resolution()
+    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(
       mockResolutionService.shouldDeleteConflictingRevision,

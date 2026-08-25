@@ -32,7 +32,7 @@
     (click)="showDetailsPage()"
     [appTemplateTooltip]="tooltip"
     [tooltipDisabled]="!entityBlockConfig()"
-    [title]="entityResource.value()?.toString()"
+    [title]="$safeNavigationMigration(entityResource.value()?.toString())"
   >
     <app-fa-dynamic-icon
       [icon]="entityIcon()"
@@ -51,7 +51,7 @@
       <app-display-img
         class="tooltip-photo"
         [entity]="entityResource.value()"
-        [imgProperty]="entityBlockConfig()?.image"
+        [imgProperty]="$safeNavigationMigration(entityBlockConfig()?.image)"
       ></app-display-img>
     }
 
@@ -61,7 +61,7 @@
         @if (entityBlockConfig()?.title) {
           <app-entity-field-view
             [entity]="entityResource.value()"
-            [field]="entityBlockConfig()?.title"
+            [field]="$safeNavigationMigration(entityBlockConfig()?.title)"
           ></app-entity-field-view>
         } @else {
           {{ entityResource.value()?.toString() }}

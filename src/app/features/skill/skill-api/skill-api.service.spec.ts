@@ -12,7 +12,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
-import { provideHttpClient } from "@angular/common/http";
+import { provideHttpClient, withXhr } from "@angular/common/http";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { firstValueFrom, throwError } from "rxjs";
@@ -38,7 +38,7 @@ describe("SkillApiService", () => {
     TestBed.configureTestingModule({
       providers: [
         SkillApiService,
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: new EntityRegistry() },

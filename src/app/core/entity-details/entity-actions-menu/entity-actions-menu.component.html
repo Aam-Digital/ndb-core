@@ -10,7 +10,7 @@
           entity: entity(),
         }"
         angulartics2On="click"
-        [angularticsCategory]="entity()?.getType()"
+        [angularticsCategory]="$safeNavigationMigration(entity()?.getType())"
         [angularticsAction]="'entity_' + a.action"
         [matTooltip]="getActionTooltip(a)"
       >
@@ -46,7 +46,7 @@
             entity: entity(),
           }"
           angulartics2On="click"
-          [angularticsCategory]="entity()?.getType()"
+          [angularticsCategory]="$safeNavigationMigration(entity()?.getType())"
           [angularticsAction]="'entity_' + a.action"
           [matTooltip]="getActionTooltip(a)"
           matTooltipPosition="before"

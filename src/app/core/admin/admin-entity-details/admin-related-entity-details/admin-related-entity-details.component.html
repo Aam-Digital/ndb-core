@@ -16,7 +16,10 @@
   <app-admin-entity-form
     [entityType]="entityConstructor"
     [config]="formConfig"
-    [uniqueAreaId]="'related-entity-details-' + entityConstructor?.ENTITY_TYPE"
+    [uniqueAreaId]="
+      'related-entity-details-' +
+      $safeNavigationMigration(entityConstructor?.ENTITY_TYPE)
+    "
     [fieldsOnlyMode]="true"
     (configChange)="onConfigChange($event)"
   ></app-admin-entity-form>

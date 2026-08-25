@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { provideRouter, Route, Router } from "@angular/router";
 import { ConfigService } from "../config.service";
@@ -19,7 +19,7 @@ import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component"
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 import { EntityListComponent } from "../../entity-list/entity-list/entity-list.component";
 
-@Component({ template: "" })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager, template: "" })
 class TestComponent {}
 
 describe("RouterService", () => {

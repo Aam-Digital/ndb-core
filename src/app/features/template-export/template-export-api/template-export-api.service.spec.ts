@@ -14,6 +14,7 @@ import {
   HttpResponse,
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { TemplateExport } from "../template-export.entity";
 import {
@@ -36,7 +37,7 @@ describe("TemplateExportApiService", () => {
           useValue: of(SyncState.COMPLETED),
         },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     });

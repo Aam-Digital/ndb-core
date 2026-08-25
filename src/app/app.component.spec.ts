@@ -23,6 +23,7 @@ import { provideHttpClientTesting } from "@angular/common/http/testing";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { DatabaseResolverService } from "./core/database/database-resolver.service";
 
@@ -37,7 +38,7 @@ describe("AppComponent", () => {
     await TestBed.configureTestingModule({
       imports: [AppModule],
       providers: [
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     }).compileComponents();

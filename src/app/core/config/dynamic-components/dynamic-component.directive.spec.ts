@@ -4,12 +4,14 @@ import {
   Component,
   ViewContainerRef,
   input,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { DynamicComponentDirective } from "./dynamic-component.directive";
 import { ComponentRegistry } from "../../../dynamic-components";
 
 @Component({
   selector: "app-test-signal-input",
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: "",
 })
 class TestSignalInputComponent {

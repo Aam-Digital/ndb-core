@@ -9,8 +9,12 @@
     mat-table
     [dataSource]="recordsDataSource()"
     matSort
-    [matSortActive]="sortStore.effectiveSort()?.active"
-    [matSortDirection]="sortStore.effectiveSort()?.direction"
+    [matSortActive]="
+      $safeNavigationMigration(sortStore.effectiveSort()?.active)
+    "
+    [matSortDirection]="
+      $safeNavigationMigration(sortStore.effectiveSort()?.direction)
+    "
     class="full-width table"
   >
     @for (col of _columns(); track col.id) {

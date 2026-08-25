@@ -7,8 +7,11 @@
     automatically update them. The following records are linked through the
     <b>
       "{{
-        data.entities[0]?.relatedReferenceField
-          | entityFieldLabel: data.entities[0]?.relatedReferenceFieldEntityType
+        $safeNavigationMigration(data.entities[0]?.relatedReferenceField)
+          | entityFieldLabel
+            : $safeNavigationMigration(
+                data.entities[0]?.relatedReferenceFieldEntityType
+              )
       }}"
     </b>
     field. Please review these affected records below. You can manually change

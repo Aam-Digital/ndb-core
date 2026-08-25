@@ -3,7 +3,7 @@
   color="accent"
   (click)="save()"
   angulartics2On="click"
-  [angularticsCategory]="entity()?.getType()"
+  [angularticsCategory]="$safeNavigationMigration(entity()?.getType())"
   angularticsAction="form_popup_save"
   i18n="Form save button"
 >
@@ -15,7 +15,7 @@
     mat-stroked-button
     (click)="cancel()"
     angulartics2On="click"
-    [angularticsCategory]="entity()?.getType()"
+    [angularticsCategory]="$safeNavigationMigration(entity()?.getType())"
     angularticsAction="form_popup_cancel"
     i18n="Form cancel button"
   >

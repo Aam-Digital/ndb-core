@@ -19,9 +19,15 @@
     </div>
     <div
       class="notification-time"
-      [matTooltip]="notification().created?.at | date: 'short'"
+      [matTooltip]="
+        $safeNavigationMigration(notification().created?.at) | date: 'short'
+      "
     >
-      {{ notification().created?.at | notificationTime | async }}
+      {{
+        $safeNavigationMigration(notification().created?.at)
+          | notificationTime
+          | async
+      }}
     </div>
   </div>
 

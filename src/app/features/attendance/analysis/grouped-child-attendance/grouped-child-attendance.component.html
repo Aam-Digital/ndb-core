@@ -13,7 +13,7 @@
     <mat-tab [label]="activity.toString()">
       <app-activity-attendance-section
         [entity]="activity"
-        [forChild]="entity()?.getId()"
+        [forChild]="$safeNavigationMigration(entity()?.getId())"
       >
       </app-activity-attendance-section>
     </mat-tab>
@@ -41,7 +41,7 @@
         <div>
           <app-activity-attendance-section
             [entity]="selectedActivity()"
-            [forChild]="entity()?.getId()"
+            [forChild]="$safeNavigationMigration(entity()?.getId())"
           >
           </app-activity-attendance-section>
         </div>

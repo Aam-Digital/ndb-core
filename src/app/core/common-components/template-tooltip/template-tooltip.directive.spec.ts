@@ -1,6 +1,6 @@
 import { TemplateTooltipDirective } from "./template-tooltip.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("TemplateTooltipDirective", () => {
@@ -101,6 +101,7 @@ describe("TemplateTooltipDirective", () => {
     </div>
     <ng-template #tooltip><h2>Custom Tooltip</h2></ng-template>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class MockComponent {}

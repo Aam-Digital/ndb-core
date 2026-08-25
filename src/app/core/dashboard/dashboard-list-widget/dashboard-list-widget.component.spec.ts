@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DashboardListWidgetComponent } from "./dashboard-list-widget.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { By } from "@angular/platform-browser";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Subject } from "rxjs";
@@ -25,6 +25,7 @@ import { MatTableModule } from "@angular/material/table";
       <tr mat-row *matRowDef="let row; columns: ['name']"></tr>
     </table>
   </app-dashboard-list-widget>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DashboardListWidgetComponent, MatTableModule],
 })
 export class DashboardWidgetTestComponent {
@@ -76,6 +77,7 @@ describe("DashboardListWidgetComponent", () => {
       parentComponent.entries = testEntries;
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.isLoading()).toBe(false);
     } finally {
@@ -94,8 +96,9 @@ describe("DashboardListWidgetComponent", () => {
 
       parentComponent.entries = [{ name: "ignored direct entry" }];
       parentComponent.entityType = "Note";
-      fixture.detectChanges();
+      TestBed.tick();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.dataSource.data).toEqual(testEntries);
       expect(component.isLoading()).toBe(false);
@@ -110,12 +113,14 @@ describe("DashboardListWidgetComponent", () => {
       const initialEntry = Note.create(new Date("2022-01-01"));
       mockEntityMapper.loadType.mockResolvedValue([initialEntry]);
       parentComponent.entityType = "Note";
-      fixture.detectChanges();
+      TestBed.tick();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       const newEntity = Note.create(new Date());
       mockEntityUpdates.next({ type: "new", entity: newEntity });
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.dataSource.data).toContain(newEntity);
       expect(component.dataSource.data).toContain(initialEntry);
@@ -140,8 +145,9 @@ describe("DashboardListWidgetComponent", () => {
           .sort((a, b) => a.date.getTime() - b.date.getTime());
 
       parentComponent.entityType = "Note";
-      fixture.detectChanges();
+      TestBed.tick();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.dataSource.data).toEqual([
         testEntries[1],

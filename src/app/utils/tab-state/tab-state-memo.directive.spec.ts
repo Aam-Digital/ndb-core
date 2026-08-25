@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { TabStateModule } from "./tab-state.module";
@@ -64,6 +64,7 @@ describe("TabStateService", () => {
     <mat-tab label="D">D</mat-tab>
     <mat-tab label="E">E</mat-tab>
   </mat-tab-group>`,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 class TestAppComponent {}

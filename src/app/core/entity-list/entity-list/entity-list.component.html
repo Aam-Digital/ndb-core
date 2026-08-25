@@ -56,7 +56,9 @@
               <mat-tab
                 [label]="item.name"
                 angulartics2On="click"
-                [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
+                [angularticsCategory]="
+                  $safeNavigationMigration(entityConstructor()?.ENTITY_TYPE)
+                "
                 angularticsAction="list_column_view"
                 [angularticsLabel]="item.name"
               ></mat-tab>
@@ -182,7 +184,9 @@
     mat-menu-item
     (click)="openExportDialog()"
     angulartics2On="click"
-    [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
+    [angularticsCategory]="
+      $safeNavigationMigration(entityConstructor()?.ENTITY_TYPE)
+    "
     angularticsAction="list_export"
     matTooltip="Download records as CSV or XLSX"
     i18n-matTooltip
@@ -200,10 +204,14 @@
     <button
       mat-menu-item
       angulartics2On="click"
-      [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
+      [angularticsCategory]="
+        $safeNavigationMigration(entityConstructor()?.ENTITY_TYPE)
+      "
       angularticsAction="import_file"
       [routerLink]="['/import']"
-      [queryParams]="{ entityType: entityConstructor()?.ENTITY_TYPE }"
+      [queryParams]="{
+        entityType: $safeNavigationMigration(entityConstructor()?.ENTITY_TYPE),
+      }"
     >
       <fa-icon
         class="color-accent standard-icon-with-text"
@@ -249,7 +257,9 @@
     <button
       mat-menu-item
       [routerLink]="['/deduplication/review-duplicates']"
-      [queryParams]="{ entityType: entityConstructor()?.ENTITY_TYPE }"
+      [queryParams]="{
+        entityType: $safeNavigationMigration(entityConstructor()?.ENTITY_TYPE),
+      }"
     >
       <fa-icon
         class="standard-icon-with-text color-accent"
@@ -266,7 +276,10 @@
   ) {
     <button
       mat-menu-item
-      [routerLink]="['/admin/entity', entityConstructor()?.ENTITY_TYPE]"
+      [routerLink]="[
+        '/admin/entity',
+        $safeNavigationMigration(entityConstructor()?.ENTITY_TYPE),
+      ]"
       [queryParams]="{ mode: 'list' }"
       queryParamsHandling="merge"
     >

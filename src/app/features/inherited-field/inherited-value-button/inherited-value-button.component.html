@@ -22,8 +22,10 @@
     <div i18n>
       Inherited value from parent record selected in field
       "<app-entity-field-label
-        [field]="defaultValueHint()?.inheritedFromField"
-        [entityType]="entity()?.getConstructor()"
+        [field]="
+          $safeNavigationMigration(defaultValueHint()?.inheritedFromField)
+        "
+        [entityType]="$safeNavigationMigration(entity()?.getConstructor())"
       ></app-entity-field-label
       >"
     </div>

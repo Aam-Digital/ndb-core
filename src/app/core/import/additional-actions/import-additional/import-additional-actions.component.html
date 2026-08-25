@@ -1,5 +1,5 @@
 <mat-expansion-panel
-  [expanded]="importActions()?.length > 0"
+  [expanded]="$safeNavigationMigration(importActions()?.length) > 0"
   [disabled]="!entityType()"
 >
   <mat-expansion-panel-header>
@@ -84,7 +84,9 @@
           <app-edit-entity
             formControlName="targetId"
             [entityType]="
-              linkEntityForm.controls['action'].value?.['targetType']
+              $safeNavigationMigration(
+                linkEntityForm.controls['action'].value?.['targetType']
+              )
             "
             [multi]="false"
             label="for record"

@@ -1,12 +1,12 @@
 <div class="flex-row flex-wrap">
   <div class="flex-grow">
     <ng-container
-      *ngTemplateOutlet="viewContext?.title?.template"
+      *ngTemplateOutlet="$safeNavigationMigration(viewContext?.title?.template)"
     ></ng-container>
   </div>
 
   <ng-container
-    *ngTemplateOutlet="viewContext?.actions?.template"
+    *ngTemplateOutlet="$safeNavigationMigration(viewContext?.actions?.template)"
   ></ng-container>
 </div>
 

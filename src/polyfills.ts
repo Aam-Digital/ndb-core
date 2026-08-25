@@ -30,9 +30,6 @@ import "@angular/localize/init";
  * Need to import at least one locale-data with intl.
  */
 // import 'intl/locale-data/jsonp/en';
-// Import hammer.js to enable gestures
-// on mobile devices
-import "hammerjs";
 import * as buffer from "buffer";
 import * as process from "process";
 

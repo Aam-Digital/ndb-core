@@ -5,7 +5,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
-import { HttpClient, provideHttpClient } from "@angular/common/http";
+import { HttpClient, provideHttpClient, withXhr } from "@angular/common/http";
 
 describe("ThirdPartyAuthenticationService", () => {
   let service: ThirdPartyAuthenticationService;
@@ -14,7 +14,7 @@ describe("ThirdPartyAuthenticationService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting()],
     });
     service = TestBed.inject(ThirdPartyAuthenticationService);
 

@@ -7,7 +7,9 @@
 >
   <span
     [matBadge]="
-      unreadNotifications()?.length > 0 ? unreadNotifications()?.length : null
+      unreadNotifications()?.length > 0
+        ? $safeNavigationMigration(unreadNotifications()?.length)
+        : null
     "
     matBadgeColor="accent"
   >

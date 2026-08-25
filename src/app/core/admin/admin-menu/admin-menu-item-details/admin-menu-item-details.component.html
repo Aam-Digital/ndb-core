@@ -19,7 +19,7 @@
       <mat-form-field appearance="fill" class="margin-bottom-large">
         <mat-label i18n>Record Type</mat-label>
         <app-entity-type-select
-          [value]="item?.['entityType']"
+          [value]="$safeNavigationMigration(item?.['entityType'])"
           (valueChange)="onEntityTypeSelected($event)"
           [multi]="false"
         ></app-entity-type-select>
