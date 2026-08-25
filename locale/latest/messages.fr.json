@@ -1645,5 +1645,7 @@
   "5410559394690226644": "This form uses the newer multi-step format",
   "4206120165243320934": " Forms that create several records at once cannot be configured here yet. The form itself keeps working for the people filling it in, but the fields below do not show its actual setup and saving this page can break it. Please contact your technical support team if you need changes. ",
   "2296681895307893686": "any",
-  "paginator.rangeOfUnknownTotalLabel": "{$PH} - {$PH_1} of {$PH_2}+"
+  "paginator.rangeOfUnknownTotalLabel": "{$PH} - {$PH_1} of {$PH_2}+",
+  "8063959242492242939": "Update failed: {$PH}",
+  "335267426279817274": "Revert failed: {$PH}"
 }
