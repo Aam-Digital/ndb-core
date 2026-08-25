@@ -452,7 +452,6 @@ const CAUSE_GROUPED_ERROR_TYPES = [
   "SiteSettingsLoadError",
   "RegistryLookupError",
   "RegistryDuplicateError",
-  "EntityPermissionError",
 ];
 
 /**
@@ -722,12 +721,20 @@ function enrichSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent {
-  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
-  // so that details like entityId, status, reason are visible in Sentry's "Additional Data"
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException,
+  // EntityPermissionError) so that details like entityId, status, reason are visible in
+  // Sentry's "Additional Data" - even though (deliberately) not part of the message itself.
   const err = hint.originalException;
   if (err && typeof err === "object") {
     const extras: Record<string, unknown> = {};
-    for (const key of ["entityId", "status", "reason", "name"]) {
+    for (const key of [
+      "entityId",
+      "status",
+      "reason",
+      "name",
+      "action",
+      "entityType",
+    ]) {
       if (key in err && (err as any)[key] !== undefined) {
         extras[key] = (err as any)[key];
       }

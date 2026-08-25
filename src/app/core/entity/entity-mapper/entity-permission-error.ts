@@ -4,13 +4,13 @@ export class EntityPermissionError extends Error {
     public readonly entityId: string,
     public readonly entityType: string,
   ) {
-    // entityId is deliberately kept out of the message: it is per-record (and
-    // for new entities even timestamp-based), so interpolating it would defeat
-    // Sentry grouping. It stays available as a property and is picked up as
-    // structured context by enrichSentryEvent in logging.service.ts.
-    super(
-      `Current user is not permitted to "${action}" entity of type "${entityType}"`,
-    );
+    // action, entityId and entityType are deliberately kept out of the message
+    // (entityId is per-record and, for new entities, even timestamp-based; all
+    // three would otherwise fragment Sentry grouping). They stay available as
+    // properties and are picked up as structured context by enrichSentryEvent
+    // in logging.service.ts, so they remain visible in Sentry's "Additional
+    // Data" without being part of the message or name.
+    super("Current user is not permitted this action");
     this.name = "EntityPermissionError";
   }
 }

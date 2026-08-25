@@ -480,43 +480,6 @@ describe("LoggingService", () => {
         expect(one.fingerprint).toEqual(other.fingerprint);
       });
 
-      it("should group EntityPermissionError by its stable message, not by the differing call-site stack", () => {
-        const permissionEvent = (frame: string) =>
-          ({
-            exception: {
-              values: [
-                {
-                  type: "EntityPermissionError",
-                  value:
-                    'Current user is not permitted to "create" entity of type "Config"',
-                  stacktrace: { frames: [{ filename: frame }] },
-                },
-              ],
-            },
-          }) as any;
-
-        const fromAdminOverview = processSentryEvent(
-          permissionEvent("admin-overview.component.ts"),
-          {},
-        );
-        const fromUserRoles = processSentryEvent(
-          permissionEvent("user-role.component.ts"),
-          {},
-        );
-
-        // a fingerprint has to actually be set here - otherwise this and the
-        // assertion below would also pass without EntityPermissionError being
-        // cause-grouped, since Sentry's default (stack-based) grouping produces
-        // no explicit fingerprint at all (see the "generic errors" test above)
-        expect(fromAdminOverview.fingerprint).toEqual([
-          "EntityPermissionError",
-          'current user is not permitted to "create" entity of type "config"',
-        ]);
-        expect(fromAdminOverview.fingerprint).toEqual(
-          fromUserRoles.fingerprint,
-        );
-      });
-
       it("should group message-only events by their normalized message", () => {
         const one = processSentryEvent(
           { message: "Report failed after 12 rows" } as any,
@@ -528,6 +491,38 @@ describe("LoggingService", () => {
         );
 
         expect(one.fingerprint).toEqual(other.fingerprint);
+      });
+    });
+
+    describe("structured extra data", () => {
+      it("should surface a custom error's properties as extra data, even when they are deliberately left out of a generic message", () => {
+        // EntityPermissionError keeps its message a static, generic string (so
+        // that occurrences group instead of fragmenting), but still exposes
+        // action/entityId/entityType as plain properties for exactly this case
+        const error = Object.assign(
+          new Error("Current user is not permitted this action"),
+          {
+            name: "EntityPermissionError",
+            action: "create",
+            entityId: "Config:CONFIG_ENTITY",
+            entityType: "Config",
+          },
+        );
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "EntityPermissionError", value: error.message }],
+            },
+          } as any,
+          { originalException: error },
+        );
+
+        expect(event.extra).toMatchObject({
+          action: "create",
+          entityId: "Config:CONFIG_ENTITY",
+          entityType: "Config",
+        });
       });
     });
 
