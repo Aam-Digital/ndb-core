@@ -282,10 +282,6 @@ describe("BirthdayDashboardIndexService", () => {
       await service.buildBirthdayIndex(entityConfig);
       const data = await service.queryBirthdayIndex(entityConfig, threshold);
 
-      // calculateAge(dateOfBirth) alone already reflects today's birthday as having
-      // happened (no decrement when month/day match exactly), so unconditionally
-      // adding 1 on top of that would over-count by one specifically on the day of
-      // the birthday itself.
       expect(data).toEqual([
         {
           entity: child,
