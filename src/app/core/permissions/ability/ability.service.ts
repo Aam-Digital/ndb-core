@@ -20,6 +20,8 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { filter, firstValueFrom, merge } from "rxjs";
 import { map } from "rxjs/operators";
+import { HttpStatusCode } from "@angular/common/http";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -51,11 +53,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     try {
       initialPermissions = await super.startLoading();
     } catch (err) {
-      const error = new Error("Failed to load permission rules", {
-        cause: err,
-      });
-      error.name = "PermissionRulesLoadError";
-      Logging.error(error);
+      this.logRulesLoadFailure(err);
     }
 
     if (initialPermissions) {
@@ -71,6 +69,37 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       this.sessionInfo.pipe(map(() => this.currentRules)),
       this.currentUser.pipe(map(() => this.currentRules)),
     ).subscribe((rules) => this.updateAbilityWithUserRules(rules));
+  }
+
+  /**
+   * Report a failed load of the permission rules, unless the failure is an
+   * expected part of normal operation:
+   *
+   * - 401/403: the session may not read the rules config. Anonymous visitors of
+   *   a public form never can, and an expired session is already handled by the
+   *   database layer (which triggers re-login).
+   * - connectivity: offline, a request timeout or a 5xx from the server.
+   *
+   * Both are transient or by design and would otherwise drown out the failures
+   * that do indicate a problem.
+   */
+  private logRulesLoadFailure(err: any) {
+    const status = err?.status ?? err?.statusCode;
+    if (
+      status === HttpStatusCode.Unauthorized ||
+      status === HttpStatusCode.Forbidden
+    ) {
+      Logging.debug("Permission rules not readable for this session", err);
+      return;
+    }
+    if (isConnectivityError(err)) {
+      Logging.debug("Could not load permission rules (connectivity)", err);
+      return;
+    }
+
+    const error = new Error("Failed to load permission rules", { cause: err });
+    error.name = "PermissionRulesLoadError";
+    Logging.error(error);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {

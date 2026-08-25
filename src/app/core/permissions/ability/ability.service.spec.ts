@@ -477,4 +477,43 @@ describe("AbilityService", () => {
       vi.useRealTimers();
     }
   });
+
+  describe("failed rules load", () => {
+    /** run initializeRules() with a load that rejects with the given error */
+    async function initWithLoadError(err: any) {
+      entityMapper.load.mockRejectedValue(err);
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+    }
+
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it("should not report an expected permission denial as an error", async () => {
+      // anonymous visitors of a public form may not read the rules config
+      const errorSpy = vi.spyOn(Logging, "error");
+
+      await initWithLoadError({ status: 401, message: "unauthorized" });
+
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not report a connectivity failure as an error", async () => {
+      const errorSpy = vi.spyOn(Logging, "error");
+
+      await initWithLoadError(new Error("Failed to fetch from DB"));
+
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    it("should report an unexpected failure as PermissionRulesLoadError", async () => {
+      const errorSpy = vi.spyOn(Logging, "error");
+
+      await initWithLoadError(new Error("something unexpected"));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "PermissionRulesLoadError" }),
+      );
+    });
+  });
 });
