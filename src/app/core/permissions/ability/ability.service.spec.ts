@@ -506,6 +506,37 @@ describe("AbilityService", () => {
       expect(errorSpy).not.toHaveBeenCalled();
     });
 
+    it("should not hand the permissive fallback to the enforcer while the rules are unknown", async () => {
+      // otherwise "allowed everything" is stored as the baseline, so the real
+      // rules arriving later look like a permission change
+      await initWithLoadError(new Error("something unexpected"));
+
+      TestBed.inject(SessionSubject).next({
+        name: "some-user",
+        id: "1",
+        roles: ["user_app"],
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(
+        TestBed.inject(PermissionEnforcerService).enforcePermissionsOnLocalData,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("should enforce the real rules once they arrive after a failed load", async () => {
+      await initWithLoadError(new Error("something unexpected"));
+
+      entityUpdates.next({
+        entity: new Config(Config.PERMISSION_KEY, rules),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(
+        TestBed.inject(PermissionEnforcerService).enforcePermissionsOnLocalData,
+      ).toHaveBeenCalledWith(rules["user_app"]);
+    });
+
     it("should report an unexpected failure as PermissionRulesLoadError", async () => {
       const errorSpy = vi.spyOn(Logging, "error");
 

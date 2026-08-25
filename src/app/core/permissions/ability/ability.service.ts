@@ -40,18 +40,36 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
   private currentRules: DatabaseRules;
 
+  /**
+   * Whether the state of the permission config is actually known, i.e. it was
+   * loaded from the database or the database confirmed it does not exist.
+   *
+   * `currentRules` alone cannot express this: it is `undefined` both for an
+   * instance that deliberately defines no permissions (-> allow everything) and
+   * for a config we simply failed to load. Only the former is a fact about the
+   * instance that may be enforced on local data.
+   */
+  private rulesKnown = false;
+
   constructor() {
     const entityMapper = inject(EntityMapperService);
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.entityUpdated.subscribe((config) => (this.currentRules = config.data));
+    this.entityUpdated.subscribe((config) => {
+      this.currentRules = config.data;
+      // includes a deletion of the config (empty entity): that the rules are
+      // gone is a known state, unlike a failed load
+      this.rulesKnown = true;
+    });
   }
 
   async initializeRules() {
     let initialPermissions: Config<DatabaseRules> | undefined;
     try {
       initialPermissions = await super.startLoading();
+      // loaded, or confirmed to not exist (404)
+      this.rulesKnown = true;
     } catch (err) {
       this.logRulesLoadFailure(err);
     }
@@ -68,7 +86,14 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       this.entityUpdated.pipe(map((config) => config.data)),
       this.sessionInfo.pipe(map(() => this.currentRules)),
       this.currentUser.pipe(map(() => this.currentRules)),
-    ).subscribe((rules) => this.updateAbilityWithUserRules(rules));
+    )
+      // While the rules are unknown, a session or user change must not re-derive
+      // the permissive fallback and hand it to the enforcer: that would store
+      // "allowed everything" as the baseline for future comparisons, so the real
+      // rules arriving afterwards look like a permission change and trigger a
+      // full re-sync (or, on the legacy adapter, destroy the local database).
+      .pipe(filter(() => this.rulesKnown))
+      .subscribe((rules) => this.updateAbilityWithUserRules(rules));
   }
 
   /**
