@@ -92,6 +92,27 @@ describe("PermissionEnforcerService", () => {
     }
   });
 
+  it("should return the last enforced rules for the current user", async () => {
+    vi.useFakeTimers();
+    try {
+      service.enforcePermissionsOnLocalData(userRules);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(service.getLastEnforcedRules()).toEqual(userRules);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not return malformed stored rules", () => {
+    window.localStorage.setItem(
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
+      "not json",
+    );
+
+    expect(service.getLastEnforcedRules()).toBeUndefined();
+  });
+
   it("should not reset if roles didnt change since last check", async () => {
     vi.useFakeTimers();
     try {
