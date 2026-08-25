@@ -6,7 +6,7 @@
 
 Report them privately through GitHub's
 [Report a vulnerability](https://github.com/Aam-Digital/ndb-core/security/advisories/new)
-form, or by email to [support@aam-digital.com](mailto:support@aam-digital.com)
+form, or by email to [it@aam-digital.com](mailto:it@aam-digital.com)
 with "security" in the subject line.
 
 Helpful to include, as far as you have it:
@@ -28,7 +28,7 @@ suspected problem that turns out to be harmless than not hear about a real one.
 ## Supported versions
 
 Fixes are released from the `master` branch and published as a new version. Only
-the most recent release is supported — if you run an older one, updating is the
+the most recent release is supported - if you run an older one, updating is the
 first step.
 
 ## Scope
@@ -50,6 +50,6 @@ describes what the application protects and what it deliberately leaves to
 whoever operates the servers.
 
 If you have found a problem in a **hosted (SaaS) Aam Digital system** we
-operate, report it the same way — say which instance it concerns, and please do
+operate, report it the same way - say which instance it concerns, and please do
 not access, modify or download any data that is not your own while
 investigating.
