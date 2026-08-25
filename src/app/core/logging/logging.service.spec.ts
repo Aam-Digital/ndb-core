@@ -494,6 +494,38 @@ describe("LoggingService", () => {
       });
     });
 
+    describe("structured extra data", () => {
+      it("should surface a custom error's properties as extra data, even when they are deliberately left out of a generic message", () => {
+        // EntityPermissionError keeps its message a static, generic string (so
+        // that occurrences group instead of fragmenting), but still exposes
+        // action/entityId/entityType as plain properties for exactly this case
+        const error = Object.assign(
+          new Error("Current user is not permitted this action"),
+          {
+            name: "EntityPermissionError",
+            action: "create",
+            entityId: "Config:CONFIG_ENTITY",
+            entityType: "Config",
+          },
+        );
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "EntityPermissionError", value: error.message }],
+            },
+          } as any,
+          { originalException: error },
+        );
+
+        expect(event.extra).toMatchObject({
+          action: "create",
+          entityId: "Config:CONFIG_ENTITY",
+          entityType: "Config",
+        });
+      });
+    });
+
     describe("network errors", () => {
       beforeEach(() => vi.stubGlobal("navigator", { onLine: true }));
       afterEach(() => vi.unstubAllGlobals());
