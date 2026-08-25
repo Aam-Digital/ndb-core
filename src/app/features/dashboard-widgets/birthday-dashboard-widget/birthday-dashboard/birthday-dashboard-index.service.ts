@@ -2,9 +2,23 @@ import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/
 import { inject, Injectable } from "@angular/core";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { calculateAge } from "#src/app/utils/utils";
 
 export interface EntityPropertyMap {
   [key: string]: string | string[];
+}
+
+/**
+ * One entity paired with the next occurrence of a single one of its configured
+ * birthday properties. An entity with several matching birthday properties is
+ * represented by several `EntityWithBirthday` entries (one per matching property),
+ * mirroring the underlying index which emits one row per (entity, property) match.
+ */
+export interface EntityWithBirthday {
+  entity: Entity;
+  birthday: Date;
+  newAge: number;
 }
 
 const INDEX_ID_PREFIX = "birthdayDashboard";
@@ -22,8 +36,9 @@ function toPropertyList(properties: string | string[]): string[] {
   providedIn: "root",
 })
 export class BirthdayDashboardIndexService {
-  private dbIndexing = inject(DatabaseIndexingService);
-  private entityRegistry = inject(EntityRegistry);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly entityRegistry = inject(EntityRegistry);
+  private readonly entitySchemaService = inject(EntitySchemaService);
 
   /**
    * Build the design doc (with one view per configured entity type) that indexes entities
@@ -50,31 +65,60 @@ export class BirthdayDashboardIndexService {
    * Query the birthday index for entities of the given type whose (cyclic) birthday falls
    * within `threshold` days from today - padded by one day on each side to account for the
    * index's reference-year-based approximation (e.g. around Feb 29 in leap years).
+   *
+   * Builds the `EntityWithBirthday` result directly from the index's rows (one row per
+   * matching (entity, property) pair), rather than returning raw entities that a caller
+   * would have to re-match against the configured properties - re-matching against every
+   * configured property independently would multiply an entity's rows by the number of
+   * configured properties, producing duplicate/incorrect entries whenever more than one
+   * property matches.
    */
   async queryBirthdayIndex(
     entityConfig: EntityPropertyMap,
     threshold: number,
-  ): Promise<Map<string, Entity[]>> {
-    const entitiesByType = new Map<string, Entity[]>();
+  ): Promise<Map<string, EntityWithBirthday[]>> {
+    const entitiesByType = new Map<string, EntityWithBirthday[]>();
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayDayOfYear = this.getCyclicDayOfYear(today);
 
-    const promises = Object.keys(entityConfig).map((entityType) =>
-      this.dbIndexing
-        .queryIndexDocs(
-          this.entityRegistry.get(entityType),
-          this.getIndexViewName(entityConfig, entityType),
-          {
-            startkey: todayDayOfYear - 1,
-            endkey: todayDayOfYear + threshold + 1,
-          },
-        )
-        .then((docs) => entitiesByType.set(entityType, docs)),
-    );
+    const promises = Object.keys(entityConfig).map((entityType) => {
+      const entityConstructor = this.entityRegistry.get(entityType);
+      return this.dbIndexing
+        .queryIndexRaw(this.getIndexViewName(entityConfig, entityType), {
+          startkey: todayDayOfYear - 1,
+          endkey: todayDayOfYear + threshold + 1,
+          include_docs: true,
+        })
+        .then((result) => {
+          const entries: EntityWithBirthday[] = result.rows.map((row) => {
+            const entity = new entityConstructor("");
+            this.entitySchemaService.loadDataIntoEntity(entity, row.doc);
+            const dateOfBirth = new Date(row.value);
+            return {
+              entity,
+              birthday: this.getNextOccurrence(dateOfBirth, today),
+              newAge: calculateAge(dateOfBirth) + 1,
+            };
+          });
+          entitiesByType.set(entityType, entries);
+        });
+    });
     await Promise.all(promises);
     return entitiesByType;
+  }
+
+  /**
+   * Real calendar date of the next occurrence (this year, or next year if it has already
+   * passed) of the given date's month/day, relative to `today`.
+   */
+  private getNextOccurrence(date: Date, today: Date): Date {
+    const next = new Date(today.getFullYear(), date.getMonth(), date.getDate());
+    if (today.getTime() > next.getTime()) {
+      next.setFullYear(next.getFullYear() + 1);
+    }
+    return next;
   }
 
   /**

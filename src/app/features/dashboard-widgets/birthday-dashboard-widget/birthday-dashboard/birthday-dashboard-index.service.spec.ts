@@ -1,5 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { BirthdayDashboardIndexService } from "./birthday-dashboard-index.service";
+import {
+  BirthdayDashboardIndexService,
+  EntityWithBirthday,
+} from "./birthday-dashboard-index.service";
 import { BirthdayDashboardComponent } from "#src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component";
 import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -10,6 +13,25 @@ import { DateWithAge } from "#src/app/core/basic-datatypes/date-with-age/dateWit
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { calculateAge } from "#src/app/utils/utils";
+
+/** Mirrors the service's private next-occurrence/age logic, for building expected results. */
+function expectedEntityWithBirthday(
+  entity: Entity,
+  dateOfBirth: Date,
+): EntityWithBirthday {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const birthday = new Date(
+    today.getFullYear(),
+    dateOfBirth.getMonth(),
+    dateOfBirth.getDate(),
+  );
+  if (today.getTime() > birthday.getTime()) {
+    birthday.setFullYear(birthday.getFullYear() + 1);
+  }
+  return { entity, birthday, newAge: calculateAge(dateOfBirth) + 1 };
+}
 
 describe("BirthdayDashboardIndexService", () => {
   let service: BirthdayDashboardIndexService;
@@ -48,7 +70,9 @@ describe("BirthdayDashboardIndexService", () => {
     await service.buildBirthdayIndex(entityConfig);
     const data = await service.queryBirthdayIndex(entityConfig, 31);
 
-    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([child1]);
+    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(child1, child1.dateOfBirth),
+    ]);
   });
 
   it("should sort entities according to days until next birthday", async () => {
@@ -70,7 +94,10 @@ describe("BirthdayDashboardIndexService", () => {
     await service.buildBirthdayIndex(entityConfig);
     const data = await service.queryBirthdayIndex(entityConfig, 31);
 
-    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([child1, child2]);
+    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(child1, child1.dateOfBirth),
+      expectedEntityWithBirthday(child2, child2.dateOfBirth),
+    ]);
   });
 
   it("should not return birthdays of inactive entities", async () => {
@@ -89,7 +116,9 @@ describe("BirthdayDashboardIndexService", () => {
     await service.buildBirthdayIndex(entityConfig);
     const data = await service.queryBirthdayIndex(entityConfig, 31);
 
-    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([activeChild]);
+    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(activeChild, activeChild.dateOfBirth),
+    ]);
   });
 
   it("should support multiple entity types with multiple, different properties tracking a date of birth", async () => {
@@ -131,8 +160,13 @@ describe("BirthdayDashboardIndexService", () => {
     await service.buildBirthdayIndex(entityConfig);
     const data = await service.queryBirthdayIndex(entityConfig, 31);
 
-    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([e3]);
-    expect(data.get(BirthdayEntity.ENTITY_TYPE)).toEqual([e1, e2]);
+    expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(e3, e3.dateOfBirth),
+    ]);
+    expect(data.get(BirthdayEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(e1, e1.birthday),
+      expectedEntityWithBirthday(e2, e2.secondBirthday),
+    ]);
   });
 
   it("should list an entity once per configured birthday property if several of its birthday properties are within the threshold", async () => {
@@ -167,10 +201,49 @@ describe("BirthdayDashboardIndexService", () => {
     const data = await service.queryBirthdayIndex(entityConfig, 31);
 
     // The map function emits one index entry per configured, matching property, so an entity
-    // with several upcoming birthdays currently shows up multiple times in the result - once
-    // per property, ordered by that property's days-until-birthday (here: "birthday" before
-    // "secondBirthday").
-    expect(data.get(MultiBirthdayEntity.ENTITY_TYPE)).toEqual([entity, entity]);
+    // with several upcoming birthdays is represented by several EntityWithBirthday entries -
+    // one per property, each carrying that property's own birthday/newAge (not the other
+    // property's), ordered by days-until-birthday (here: "birthday" before "secondBirthday").
+    expect(data.get(MultiBirthdayEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(entity, entity.birthday),
+      expectedEntityWithBirthday(entity, entity.secondBirthday),
+    ]);
+  });
+
+  it("should list an entity only once if only one of its several configured birthday properties is set", async () => {
+    @DatabaseEntity("PartialBirthdayEntity")
+    class PartialBirthdayEntity extends Entity {
+      @DatabaseField()
+      birthday: DateWithAge;
+
+      @DatabaseField()
+      secondBirthday: DateWithAge;
+    }
+
+    const birthdayIn3Days = moment()
+      .add(3, "days")
+      .subtract(8, "years")
+      .startOf("day");
+
+    const entity = new PartialBirthdayEntity();
+    entity.birthday = new DateWithAge(birthdayIn3Days.toDate());
+    // secondBirthday is intentionally left unset
+    await entityMapper.save(entity);
+
+    const entityConfig = {
+      [PartialBirthdayEntity.ENTITY_TYPE]: ["birthday", "secondBirthday"],
+    };
+
+    await service.buildBirthdayIndex(entityConfig);
+    const data = await service.queryBirthdayIndex(entityConfig, 31);
+
+    // The map function only emits for properties that are actually set on the doc (see
+    // buildMapFunction's `if (doc.${property})` guard), so an unset configured property
+    // simply contributes no index entry - the entity shows up once, for "birthday" only,
+    // not twice and not omitted entirely.
+    expect(data.get(PartialBirthdayEntity.ENTITY_TYPE)).toEqual([
+      expectedEntityWithBirthday(entity, entity.birthday),
+    ]);
   });
 
   describe("boundary behavior around today and the threshold", () => {
@@ -200,7 +273,9 @@ describe("BirthdayDashboardIndexService", () => {
       const data = await service.queryBirthdayIndex(entityConfig, threshold);
 
       expect(data.get(TestEntity.ENTITY_TYPE)).toEqual(
-        expectIncluded ? [child] : [],
+        expectIncluded
+          ? [expectedEntityWithBirthday(child, child.dateOfBirth)]
+          : [],
       );
     }
 
@@ -264,7 +339,9 @@ describe("BirthdayDashboardIndexService", () => {
         daysUntilMarch1,
       );
 
-      expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([child]);
+      expect(data.get(TestEntity.ENTITY_TYPE)).toEqual([
+        expectedEntityWithBirthday(child, child.dateOfBirth),
+      ]);
     });
 
     it("should treat a Feb 29 birthday (leap year) the same as its folded equivalent, March 1 (non-leap year)", async () => {
@@ -287,7 +364,13 @@ describe("BirthdayDashboardIndexService", () => {
       );
 
       expect(data.get(TestEntity.ENTITY_TYPE)).toEqual(
-        expect.arrayContaining([leapYearChild, nonLeapYearChild]),
+        expect.arrayContaining([
+          expectedEntityWithBirthday(leapYearChild, leapYearChild.dateOfBirth),
+          expectedEntityWithBirthday(
+            nonLeapYearChild,
+            nonLeapYearChild.dateOfBirth,
+          ),
+        ]),
       );
       expect(data.get(TestEntity.ENTITY_TYPE)).toHaveLength(2);
     });

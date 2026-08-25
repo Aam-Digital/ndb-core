@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import moment from "moment";
 
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
-import { BirthdayDashboardIndexService } from "./birthday-dashboard-index.service";
+import {
+  BirthdayDashboardIndexService,
+  EntityWithBirthday,
+} from "./birthday-dashboard-index.service";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { DateWithAge } from "#src/app/core/basic-datatypes/date-with-age/dateWithAge";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import type { Mock } from "vitest";
@@ -17,21 +18,6 @@ type BirthdayDashboardIndexServiceMock = Pick<
   buildBirthdayIndex: Mock<BirthdayDashboardIndexService["buildBirthdayIndex"]>;
   queryBirthdayIndex: Mock<BirthdayDashboardIndexService["queryBirthdayIndex"]>;
 };
-
-/** Mirrors the private `getNextBirthday` logic of the component for use in test expectations. */
-function expectedNextBirthday(dateOfBirth: Date): Date {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const birthday = new Date(
-    today.getFullYear(),
-    dateOfBirth.getMonth(),
-    dateOfBirth.getDate(),
-  );
-  if (today.getTime() > birthday.getTime()) {
-    birthday.setFullYear(birthday.getFullYear() + 1);
-  }
-  return birthday;
-}
 
 describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;
@@ -70,107 +56,27 @@ describe("BirthdayDashboardComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should create one entry per entity for a single configured birthday property", async () => {
-    vi.useFakeTimers();
-    try {
-      const child1 = TestEntity.create("First Child");
-      child1.dateOfBirth = new DateWithAge(
-        moment().subtract(10, "years").add(5, "days").toDate(),
-      );
-      const child2 = TestEntity.create("Second Child");
-      child2.dateOfBirth = new DateWithAge(
-        moment().subtract(8, "years").add(20, "days").toDate(),
-      );
-      mockIndexService.queryBirthdayIndex.mockResolvedValue(
-        new Map([[TestEntity.ENTITY_TYPE, [child1, child2]]]),
-      );
-
-      fixture.componentRef.setInput("entities", {
-        [TestEntity.ENTITY_TYPE]: "dateOfBirth",
-      });
-      fixture.detectChanges();
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(component.entries()).toEqual([
-        {
-          entity: child1,
-          birthday: expectedNextBirthday(child1.dateOfBirth),
-          newAge: child1.dateOfBirth.age + 1,
-        },
-        {
-          entity: child2,
-          birthday: expectedNextBirthday(child2.dateOfBirth),
-          newAge: child2.dateOfBirth.age + 1,
-        },
-      ]);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should create one entry per configured property for entities with several birthday properties", async () => {
-    vi.useFakeTimers();
-    try {
-      const child = TestEntity.create("Child With Two Birthdays");
-      child.dateOfBirth = new DateWithAge(
-        moment().subtract(10, "years").add(5, "days").toDate(),
-      );
-      const secondBirthday = new DateWithAge(
-        moment().subtract(20, "years").add(15, "days").toDate(),
-      );
-      (child as unknown as Record<string, unknown>).secondBirthday =
-        secondBirthday;
-
-      mockIndexService.queryBirthdayIndex.mockResolvedValue(
-        new Map([[TestEntity.ENTITY_TYPE, [child]]]),
-      );
-
-      fixture.componentRef.setInput("entities", {
-        [TestEntity.ENTITY_TYPE]: ["dateOfBirth", "secondBirthday"],
-      });
-      fixture.detectChanges();
-      await vi.advanceTimersByTimeAsync(0);
-
-      // the entity has an upcoming birthday for both configured properties, so it is
-      // represented by one entry per property, each with that property's own birthday/newAge.
-      expect(component.entries()).toEqual([
-        {
-          entity: child,
-          birthday: expectedNextBirthday(child.dateOfBirth),
-          newAge: child.dateOfBirth.age + 1,
-        },
-        {
-          entity: child,
-          birthday: expectedNextBirthday(secondBirthday),
-          newAge: secondBirthday.age + 1,
-        },
-      ]);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should combine entries from multiple configured entity types", async () => {
+  it("should combine entries from multiple configured entity types, in entities() config order", async () => {
     vi.useFakeTimers();
     try {
       @DatabaseEntity("BirthdayComponentTestEntity")
-      class OtherEntity extends TestEntity {
-        static override ENTITY_TYPE = "BirthdayComponentTestEntity";
-      }
+      class OtherEntity extends TestEntity {}
 
-      const child = TestEntity.create("Child");
-      child.dateOfBirth = new DateWithAge(
-        moment().subtract(6, "years").add(3, "days").toDate(),
-      );
-      const other = new OtherEntity();
-      other.dateOfBirth = new DateWithAge(
-        moment().subtract(2, "years").add(9, "days").toDate(),
-      );
+      const childEntry: EntityWithBirthday = {
+        entity: TestEntity.create("Child"),
+        birthday: new Date(2026, 8, 1),
+        newAge: 8,
+      };
+      const otherEntry: EntityWithBirthday = {
+        entity: new OtherEntity(),
+        birthday: new Date(2026, 8, 5),
+        newAge: 3,
+      };
 
       mockIndexService.queryBirthdayIndex.mockResolvedValue(
         new Map([
-          [TestEntity.ENTITY_TYPE, [child]],
-          [OtherEntity.ENTITY_TYPE, [other]],
+          [OtherEntity.ENTITY_TYPE, [otherEntry]],
+          [TestEntity.ENTITY_TYPE, [childEntry]],
         ]),
       );
 
@@ -181,21 +87,52 @@ describe("BirthdayDashboardComponent", () => {
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.entries()).toEqual(
-        expect.arrayContaining([
-          {
-            entity: child,
-            birthday: expectedNextBirthday(child.dateOfBirth),
-            newAge: child.dateOfBirth.age + 1,
-          },
-          {
-            entity: other,
-            birthday: expectedNextBirthday(other.dateOfBirth),
-            newAge: other.dateOfBirth.age + 1,
-          },
+      // the component just concatenates the service's per-type results in entities()
+      // config order (TestEntity before OtherEntity here) - it does not recompute or
+      // reorder anything itself.
+      expect(component.entries()).toEqual([childEntry, otherEntry]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should pass through several entries for the same entity without further duplicating them", async () => {
+    vi.useFakeTimers();
+    try {
+      const child = TestEntity.create("Child With Two Birthdays");
+      const entryForBirthday: EntityWithBirthday = {
+        entity: child,
+        birthday: new Date(2026, 8, 1),
+        newAge: 8,
+      };
+      const entryForSecondBirthday: EntityWithBirthday = {
+        entity: child,
+        birthday: new Date(2026, 9, 15),
+        newAge: 20,
+      };
+
+      mockIndexService.queryBirthdayIndex.mockResolvedValue(
+        new Map([
+          [
+            TestEntity.ENTITY_TYPE,
+            [entryForBirthday, entryForSecondBirthday],
+          ],
         ]),
       );
-      expect(component.entries()).toHaveLength(2);
+
+      fixture.componentRef.setInput("entities", {
+        [TestEntity.ENTITY_TYPE]: ["dateOfBirth", "secondBirthday"],
+      });
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      // The component no longer re-derives entries per configured property - it only
+      // concatenates what the service (which owns the per-property matching) returns, so
+      // a real per-property entry pair from the service is not further multiplied here.
+      expect(component.entries()).toEqual([
+        entryForBirthday,
+        entryForSecondBirthday,
+      ]);
     } finally {
       vi.useRealTimers();
     }
@@ -244,13 +181,15 @@ describe("BirthdayDashboardComponent", () => {
     vi.useFakeTimers();
     try {
       const child = TestEntity.create("Late Arrival");
-      child.dateOfBirth = new DateWithAge(
-        moment().subtract(7, "years").add(4, "days").toDate(),
-      );
+      const childEntry: EntityWithBirthday = {
+        entity: child,
+        birthday: new Date(2026, 8, 20),
+        newAge: 15,
+      };
 
       mockIndexService.queryBirthdayIndex
         .mockResolvedValueOnce(new Map())
-        .mockResolvedValue(new Map([[TestEntity.ENTITY_TYPE, [child]]]));
+        .mockResolvedValue(new Map([[TestEntity.ENTITY_TYPE, [childEntry]]]));
 
       fixture.componentRef.setInput("entities", {
         [TestEntity.ENTITY_TYPE]: "dateOfBirth",
@@ -263,13 +202,7 @@ describe("BirthdayDashboardComponent", () => {
       await entityMapper.save(child);
       await vi.advanceTimersByTimeAsync(500);
 
-      expect(component.entries()).toEqual([
-        {
-          entity: child,
-          birthday: expectedNextBirthday(child.dateOfBirth),
-          newAge: child.dateOfBirth.age + 1,
-        },
-      ]);
+      expect(component.entries()).toEqual([childEntry]);
     } finally {
       vi.useRealTimers();
     }
