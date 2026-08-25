@@ -452,6 +452,7 @@ const CAUSE_GROUPED_ERROR_TYPES = [
   "SiteSettingsLoadError",
   "RegistryLookupError",
   "RegistryDuplicateError",
+  "EntityPermissionError",
 ];
 
 /**

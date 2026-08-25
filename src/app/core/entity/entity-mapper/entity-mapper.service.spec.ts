@@ -368,6 +368,16 @@ describe("EntityMapperService permission checks", () => {
     expect(mockAbility.cannot).toHaveBeenCalledWith("create", entity);
   });
 
+  it("should keep the entity id out of the EntityPermissionError message, so Sentry can group by it", async () => {
+    mockAbility.cannot.mockReturnValue(true);
+    const entity = new Entity("test-no-create");
+
+    const error = await entityMapper.save(entity).catch((e) => e);
+
+    expect(error.message).not.toContain(entity.getId());
+    expect(error.entityId).toBe(entity.getId());
+  });
+
   it("should throw EntityPermissionError when saving an existing entity without update permission", async () => {
     mockAbility.cannot.mockImplementation(
       (action: string) => action === "update",

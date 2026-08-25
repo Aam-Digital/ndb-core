@@ -480,6 +480,43 @@ describe("LoggingService", () => {
         expect(one.fingerprint).toEqual(other.fingerprint);
       });
 
+      it("should group EntityPermissionError by its stable message, not by the differing call-site stack", () => {
+        const permissionEvent = (frame: string) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "EntityPermissionError",
+                  value:
+                    'Current user is not permitted to "create" entity of type "Config"',
+                  stacktrace: { frames: [{ filename: frame }] },
+                },
+              ],
+            },
+          }) as any;
+
+        const fromAdminOverview = processSentryEvent(
+          permissionEvent("admin-overview.component.ts"),
+          {},
+        );
+        const fromUserRoles = processSentryEvent(
+          permissionEvent("user-role.component.ts"),
+          {},
+        );
+
+        // a fingerprint has to actually be set here - otherwise this and the
+        // assertion below would also pass without EntityPermissionError being
+        // cause-grouped, since Sentry's default (stack-based) grouping produces
+        // no explicit fingerprint at all (see the "generic errors" test above)
+        expect(fromAdminOverview.fingerprint).toEqual([
+          "EntityPermissionError",
+          'current user is not permitted to "create" entity of type "config"',
+        ]);
+        expect(fromAdminOverview.fingerprint).toEqual(
+          fromUserRoles.fingerprint,
+        );
+      });
+
       it("should group message-only events by their normalized message", () => {
         const one = processSentryEvent(
           { message: "Report failed after 12 rows" } as any,
