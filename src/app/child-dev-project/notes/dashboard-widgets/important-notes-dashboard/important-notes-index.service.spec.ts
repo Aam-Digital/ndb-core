@@ -70,7 +70,9 @@ describe("ImportantNotesIndexService", () => {
   });
 
   it("should paginate results using skip and limit", async () => {
-    const urgentNotes = Array.from({ length: 5 }, () => noteWithLevel("URGENT"));
+    const urgentNotes = Array.from({ length: 5 }, () =>
+      noteWithLevel("URGENT"),
+    );
     await entityMapper.saveAll(urgentNotes);
 
     await service.buildIndex(["URGENT"]);

@@ -96,7 +96,9 @@ export class DashboardListWidgetComponent<E> {
   pageLoader = input<(skip: number, limit: number) => Promise<E[]>>();
 
   private rawData = signal<E[] | undefined>(undefined);
-  private usesOwnLoading = computed(() => !!this.entityType() || !!this.pageLoader());
+  private usesOwnLoading = computed(
+    () => !!this.entityType() || !!this.pageLoader(),
+  );
   private data = computed(() => {
     const sourceData = this.usesOwnLoading() ? this.rawData() : this.entries();
     if (!sourceData) {
@@ -158,7 +160,8 @@ export class DashboardListWidgetComponent<E> {
         }
         const hasMore = page.length > pageSize;
         this.rawData.set(hasMore ? page.slice(0, pageSize) : page);
-        paginator.length = skip + Math.min(page.length, pageSize) + (hasMore ? pageSize : 0);
+        paginator.length =
+          skip + Math.min(page.length, pageSize) + (hasMore ? pageSize : 0);
       };
 
       this.rawData.set(undefined);
