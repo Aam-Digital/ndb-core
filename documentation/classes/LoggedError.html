@@ -992,12 +992,20 @@ function enrichSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent {
-  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
-  // so that details like entityId, status, reason are visible in Sentry&#x27;s &quot;Additional Data&quot;
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException,
+  // EntityPermissionError) so that details like entityId, status, reason are visible in
+  // Sentry&#x27;s &quot;Additional Data&quot; - even though (deliberately) not part of the message itself.
   const err &#x3D; hint.originalException;
   if (err &amp;&amp; typeof err &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
     const extras: Record&lt;string, unknown&gt; &#x3D; {};
-    for (const key of [&quot;entityId&quot;, &quot;status&quot;, &quot;reason&quot;, &quot;name&quot;]) {
+    for (const key of [
+      &quot;entityId&quot;,
+      &quot;status&quot;,
+      &quot;reason&quot;,
+      &quot;name&quot;,
+      &quot;action&quot;,
+      &quot;entityType&quot;,
+    ]) {
       if (key in err &amp;&amp; (err as any)[key] !&#x3D;&#x3D; undefined) {
         extras[key] &#x3D; (err as any)[key];
       }
