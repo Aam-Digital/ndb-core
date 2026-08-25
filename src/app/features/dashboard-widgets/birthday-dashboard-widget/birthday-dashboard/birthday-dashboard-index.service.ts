@@ -54,10 +54,15 @@ export class BirthdayDashboardIndexService {
   }
 
   /**
-   * Query the birthday index for entities of any configured type whose (cyclic)
-   * birthday falls within `threshold` days from today - padded by one day on each side
-   * to account for the index's reference-year-based approximation (e.g. around Feb 29
-   * in leap years).
+   * Query the birthday index for entities of any configured type whose (real calendar)
+   * birthday falls within `threshold` days from today.
+   *
+   * The underlying range query is padded by one day on each side to account for the
+   * index's reference-year-based cyclic-day-of-year approximation (e.g. around Feb 29
+   * in leap years). That padding can also pull in rows that don't actually belong (e.g.
+   * a birthday that was yesterday, or one day beyond the threshold), so the results are
+   * re-filtered afterward using the exact, real calendar day difference (see
+   * {@link daysUntil}) to drop those before returning.
    */
   async queryBirthdayIndex(
     entityConfig: EntityPropertyMap,
@@ -76,18 +81,20 @@ export class BirthdayDashboardIndexService {
       },
     );
 
-    return result.rows.map((row) => {
-      const entityType = Entity.extractTypeFromId(row.doc._id);
-      const entityConstructor = this.entityRegistry.get(entityType);
-      const entity = new entityConstructor("");
-      this.entitySchemaService.loadDataIntoEntity(entity, row.doc);
-      const dateOfBirth = new Date(row.value);
-      return {
-        entity,
-        birthday: this.getNextOccurrence(dateOfBirth, today),
-        newAge: calculateAge(dateOfBirth) + 1,
-      };
-    });
+    return result.rows
+      .filter((row) => this.daysUntil(new Date(row.value), today) <= threshold)
+      .map((row) => {
+        const entityType = Entity.extractTypeFromId(row.doc._id);
+        const entityConstructor = this.entityRegistry.get(entityType);
+        const entity = new entityConstructor("");
+        this.entitySchemaService.loadDataIntoEntity(entity, row.doc);
+        const dateOfBirth = new Date(row.value);
+        return {
+          entity,
+          birthday: this.getNextOccurrence(dateOfBirth, today),
+          newAge: calculateAge(dateOfBirth) + 1,
+        };
+      });
   }
 
   /**
@@ -100,6 +107,15 @@ export class BirthdayDashboardIndexService {
       next.setFullYear(next.getFullYear() + 1);
     }
     return next;
+  }
+
+  /**
+   * Exact number of real calendar days from `today` until the next occurrence of the
+   * given date's month/day.
+   */
+  private daysUntil(date: Date, today: Date): number {
+    const next = this.getNextOccurrence(date, today);
+    return Math.round((next.getTime() - today.getTime()) / 86400000);
   }
 
   /**

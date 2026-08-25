@@ -275,8 +275,8 @@ describe("BirthdayDashboardIndexService", () => {
       await expectBirthdayOffsetToBeIncluded(0, true);
     });
 
-    it("should include a birthday that was yesterday (index padding)", async () => {
-      await expectBirthdayOffsetToBeIncluded(-1, true);
+    it("should not include a birthday that was yesterday", async () => {
+      await expectBirthdayOffsetToBeIncluded(-1, false);
     });
 
     it("should not include a birthday from two days ago", async () => {
@@ -287,8 +287,8 @@ describe("BirthdayDashboardIndexService", () => {
       await expectBirthdayOffsetToBeIncluded(threshold, true);
     });
 
-    it("should include a birthday one day beyond the threshold (index padding)", async () => {
-      await expectBirthdayOffsetToBeIncluded(threshold + 1, true);
+    it("should not include a birthday one day beyond the threshold", async () => {
+      await expectBirthdayOffsetToBeIncluded(threshold + 1, false);
     });
 
     it("should not include a birthday two days beyond the threshold", async () => {
@@ -367,11 +367,11 @@ describe("BirthdayDashboardIndexService", () => {
       expect(data).toHaveLength(2);
     });
 
-    it("should not include a birthday from March 3, three days beyond the Feb 29 / March 1 boundary", async () => {
+    it("should not include a birthday from March 2, three days beyond the Feb 29 / March 1 boundary", async () => {
       const daysUntilMarch1 = daysUntilNextOccurrenceOf(3, 1);
 
       const child = new TestEntity();
-      child.dateOfBirth = new DateWithAge(moment("2001-03-03").toDate());
+      child.dateOfBirth = new DateWithAge(moment("2001-03-02").toDate());
       await entityMapper.save(child);
 
       await service.buildBirthdayIndex(entityConfig);
