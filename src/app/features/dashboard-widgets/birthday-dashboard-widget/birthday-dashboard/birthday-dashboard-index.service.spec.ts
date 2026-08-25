@@ -367,7 +367,7 @@ describe("BirthdayDashboardIndexService", () => {
       expect(data).toHaveLength(2);
     });
 
-    it("should not include a birthday from March 2, three days beyond the Feb 29 / March 1 boundary", async () => {
+    it("should not include a birthday from March 2, two days beyond the Feb 29 / March 1 boundary", async () => {
       const daysUntilMarch1 = daysUntilNextOccurrenceOf(3, 1);
 
       const child = new TestEntity();
