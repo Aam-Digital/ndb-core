@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   effect,
   inject,
   input,
@@ -41,9 +40,7 @@ interface BirthdayDashboardConfig {
 export class BirthdayDashboardComponent {
   private readonly birthdayIndex = inject(BirthdayDashboardIndexService);
   private readonly entityMapper = inject(EntityMapperService);
-  private readonly entitiesByType = signal<Map<string, EntityWithBirthday[]>>(
-    new Map(),
-  );
+  entries = signal<EntityWithBirthday[]>([]);
 
   static getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";
@@ -63,17 +60,6 @@ export class BirthdayDashboardComponent {
    * Default 32
    */
   threshold = input(32);
-
-  entries = computed(() => {
-    const dataByType = this.entitiesByType();
-    const entityConfig = this.entities();
-    const data: EntityWithBirthday[] = [];
-
-    for (const entityType of Object.keys(entityConfig)) {
-      data.push(...(dataByType.get(entityType) ?? []));
-    }
-    return data;
-  });
 
   subtitle = input<string>(
     $localize`:dashboard widget subtitle:Upcoming Birthdays`,
@@ -98,7 +84,7 @@ export class BirthdayDashboardComponent {
           )
           .then((res) => {
             if (isCurrent) {
-              this.entitiesByType.set(res);
+              this.entries.set(res);
             }
           });
 
