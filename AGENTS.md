@@ -204,6 +204,10 @@ When developing new functionality:
 ### Unit Testing (Vitest)
 
 - Write unit tests for all new components and services
+- Do not add unit tests for trivial changes (e.g. rewording an error message, renaming a
+  variable, adjusting a log string) unless the change also alters behavior. A test that
+  only pins down exact wording breaks on the next copy edit and adds no protection against
+  real regressions.
 - Run tests: `npm run test -- --watch=false --include='**/relevant-file.spec.ts'`
 - Run the full CI-style unit test suite with coverage: `npm run test-ci`
 - See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
