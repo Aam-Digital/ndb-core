@@ -253,6 +253,34 @@ describe("FilterComponent", () => {
     expect(categoryFilter.selectedOptionValues).toEqual(["someCategory"]);
   });
 
+  it("should keep other filters' defaults when the user selects a filter option", async () => {
+    await setComponentInputs({
+      entityType: Note,
+      useUrlQueryParams: true,
+      filterConfig: [{ id: "date", default: "0" }, { id: "category" }],
+    });
+
+    const categoryFilter = component
+      .filterSelections()
+      .find((f) => f.name === "category");
+    component.filterOptionSelected(categoryFilter, ["someCategory"]);
+
+    // the router has written the selection to the URL by the time the
+    // dropdown closing triggers another change event
+    activatedRouteMock.snapshot = {
+      queryParams: { category: "someCategory" },
+    };
+    component.filterOptionSelected(categoryFilter, ["someCategory"]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const dateFilter = component
+      .filterSelections()
+      .find((f) => f.name === "date");
+    expect(dateFilter.selectedOptionValues).toEqual(["0"]);
+  });
+
   it("should compute available category options and build filterObj", async () => {
     const t1 = defaultInteractionTypes[0];
     const t2 = defaultInteractionTypes[1];
