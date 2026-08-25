@@ -155,7 +155,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private async logSyncContext() {
     const lastSyncTime = localStorage.getItem(this.LAST_SYNC_KEY);
-    Logging.addContext("Aam Digital sync", {
+    // the context key includes the database name: every synced database (app,
+    // notifications, ...) writes its own block. With a shared key the last
+    // writer would overwrite the others, so a reported event could show the
+    // sync state of a different database than the one it is about.
+    Logging.addContext(`Aam Digital sync: ${this.dbName}`, {
       db: this.dbName,
       "last sync completed": lastSyncTime,
       "last sync docs pushed": this.lastSyncStats?.pushed,
