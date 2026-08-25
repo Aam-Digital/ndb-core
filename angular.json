@@ -121,9 +121,7 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "prebundle": false
-          },
+          "options": {},
           "configurations": {
             "production": {
               "buildTarget": "ndb-core:build:production"
