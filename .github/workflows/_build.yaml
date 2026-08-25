@@ -93,6 +93,8 @@ jobs:
             ${{ env.DOCKERHUB_IMAGE }}
             ${{ env.GHCR_IMAGE }}
           tags: ${{ inputs.docker_tags }}
+          flavor: |
+            latest=false
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

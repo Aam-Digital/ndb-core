@@ -23,18 +23,6 @@ export class TimePeriod extends Entity {
   end: Date;
 
   /**
-   * Returns true if this relation is currently active
-   */
-  override get isActive(): boolean {
-    if (this.inactive) {
-      // manual archiving of records takes precendence
-      return false;
-    }
-
-    return this.isActiveAt(new Date());
-  }
-
-  /**
    * Checks whether this relation was active on a specific date
    * @param date on which the active status should be checked
    */
@@ -43,10 +31,6 @@ export class TimePeriod extends Entity {
       (!this.start || moment(this.start).isSameOrBefore(date, "day")) &&
       (!this.end || moment(this.end).isSameOrAfter(date, "day"))
     );
-  }
-
-  override getColor(): string {
-    return this.isActive ? "#90ee9040" : "";
   }
 
   override assertValid() {

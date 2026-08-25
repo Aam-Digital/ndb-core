@@ -7,11 +7,13 @@
   ],
   "enabledManagers": [
     "npm",
-    "dockerfile"
+    "dockerfile",
+    "github-actions",
+    "custom.regex"
   ],
   "timezone": "Etc/UTC",
   "schedule": [
-    "after 00:00 and before 09:00 on Monday"
+    "* * * * 0"
   ],
   "dependencyDashboard": false,
   "prConcurrentLimit": 5,
@@ -39,6 +41,18 @@
   "constraints": {
     "npm": ">=11.0.0"
   },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Node.js and npm versions pinned for CI in _node-toolchain.yml, annotated with a '# renovate:' comment. No manager reads these, so without this they silently go stale.",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/_node-toolchain\\.yml$/"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+?)(?:\\s+versioning=(?<versioning>\\S+?))?\\s*\\n\\s*echo\\s+\"[a-z-]+=(?<currentValue>[^\"]+)\""
+      ]
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": [
@@ -76,6 +90,28 @@
         "patch"
       ],
       "groupName": "docker-base-image",
+      "automerge": false
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "github-actions",
+      "automerge": false
+    },
+    {
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "ci-toolchain",
       "automerge": false
     }
   ]

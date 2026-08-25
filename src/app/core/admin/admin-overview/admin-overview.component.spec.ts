@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminOverviewComponent } from "./admin-overview.component";
 import { BackupService } from "../backup/backup.service";
+import { SystemResetService } from "../system-reset/system-reset.service";
+import { LocalDeviceResetService } from "../../database/local-device-reset.service";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { SessionType } from "../../session/session-type";
@@ -20,10 +22,19 @@ describe("AdminComponent", () => {
     clearDatabase: vi.fn(),
     restoreData: vi.fn(),
   };
+  const mockLocalDeviceResetService = {
+    resetLocalDevice: vi.fn(),
+  };
+  const mockSystemResetService = {
+    emptyRecords: vi.fn(),
+    resetSystem: vi.fn(),
+  };
   let mockDownloadService: any;
 
   const confirmationDialogMock = {
     getConfirmation: vi.fn(),
+    getConfirmationWithKeyword: vi.fn(),
+    showProgressDialog: vi.fn().mockReturnValue({ close: vi.fn() }),
   };
 
   function createFileReaderMock(result: string = "") {
@@ -44,6 +55,9 @@ describe("AdminComponent", () => {
   }
 
   beforeEach(async () => {
+    // the mocks above are shared across tests, so their recorded calls have to be reset
+    vi.clearAllMocks();
+
     environment.session_type = SessionType.mock;
     mockDownloadService = {
       triggerDownload: vi.fn(),
@@ -53,6 +67,11 @@ describe("AdminComponent", () => {
       imports: [AdminOverviewComponent, MockedTestingModule.withState()],
       providers: [
         { provide: BackupService, useValue: mockBackupService },
+        { provide: SystemResetService, useValue: mockSystemResetService },
+        {
+          provide: LocalDeviceResetService,
+          useValue: mockLocalDeviceResetService,
+        },
         {
           provide: ConfirmationDialogService,
           useValue: confirmationDialogMock,
@@ -197,13 +216,22 @@ describe("AdminComponent", () => {
     expect(mockBackupService.restoreData).toHaveBeenCalled();
   });
 
-  it("should open dialog when clearing database", async () => {
-    mockBackupService.getDatabaseExport.mockResolvedValue([]);
-    confirmationDialogMock.getConfirmation.mockResolvedValue(true);
+  // detailed behavior of these bulk-delete actions is covered by SystemResetService's own spec
+  it("should delegate emptying records to the system reset service", async () => {
+    await component.emptyRecords();
 
-    await component.clearDatabase();
-    expect(mockBackupService.getDatabaseExport).toHaveBeenCalled();
-    expect(confirmationDialogMock.getConfirmation).toHaveBeenCalled();
-    expect(mockBackupService.clearDatabase).toHaveBeenCalled();
+    expect(mockSystemResetService.emptyRecords).toHaveBeenCalled();
+  });
+
+  it("should delegate resetting the system to the system reset service", async () => {
+    await component.resetSystem();
+
+    expect(mockSystemResetService.resetSystem).toHaveBeenCalled();
+  });
+
+  it("should delegate resetting the local device to the local device reset service", async () => {
+    await component.resetLocalDevice();
+
+    expect(mockLocalDeviceResetService.resetLocalDevice).toHaveBeenCalled();
   });
 });

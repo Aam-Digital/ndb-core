@@ -92,6 +92,23 @@ export abstract class Database {
   }
 
   /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * There might be differences in queries between a local PouchDB and the CouchDB.
+   *
+   * @param prefix of the entity to be queried
+   * @param query the Mango Query Language query
+   * @param page additional pagination options
+   * @param sort additional sorting options
+   */
+  abstract find(
+    prefix: string,
+    query: any,
+    page?: { limit?: number; skip?: number },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<any>;
+
+  /**
    * Query data from the database based on a more complex, indexed request.
    *
    * This is directly calling the PouchDB implementation of this function.
@@ -121,6 +138,30 @@ export abstract class Database {
       startkey: prefix,
       endkey: prefix + "\ufff0",
     });
+  }
+
+  /**
+   * Delete all documents of the database matching the given filter.
+   *
+   * Note that `getAll()` also returns the database's own "_design/..." index
+   * documents, so a filter that does not exclude them deletes the indices as well.
+   * They are only recreated when the app starts up again
+   * (see {@link DatabaseIndexingService}), so only delete them if the calling code
+   * reloads the app or restores the documents immediately afterwards.
+   *
+   * @param shouldDelete filter deciding for each document whether it is deleted.
+   *        Pass a specialized document type if the filter reads fields other than `_id`.
+   * @returns the number of deleted documents
+   */
+  async removeAll<T extends { _id: string }>(
+    shouldDelete: (doc: T) => boolean,
+  ): Promise<number> {
+    const allDocs: T[] = await this.getAll();
+    const docsToDelete = allDocs.filter(shouldDelete);
+    for (const doc of docsToDelete) {
+      await this.remove(doc);
+    }
+    return docsToDelete.length;
   }
 
   /**

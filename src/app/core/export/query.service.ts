@@ -8,6 +8,7 @@ import { AttendanceItem } from "#src/app/features/attendance/model/attendance-it
 import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
 import jsonQuery from "json-query";
 import { EntityRegistry } from "../entity/database-entity.decorator";
+import { TimePeriod } from "../entity-details/related-time-period-entities/time-period";
 
 /**
  * A query service which uses the json-query library (https://github.com/auditassistant/json-query).
@@ -102,6 +103,8 @@ export class QueryService {
       data: data,
       locals: {
         toArray: this.toArray,
+        filterActive: this.filterActive.bind(this),
+        filterInactive: this.filterInactive.bind(this),
         unique: this.unique,
         count: this.count,
         sum: this.sum,
@@ -212,6 +215,29 @@ export class QueryService {
    */
   private toArray(obj): any[] {
     return Object.values(obj);
+  }
+
+  /**
+   * Keep only the records that are currently active.
+   *
+   * A record counts as active if it has not been archived and, for records covering a time period,
+   * if today lies within that period.
+   * @param data the records to be filtered
+   */
+  private filterActive(data: Entity[]): Entity[] {
+    const today = new Date();
+    return (data ?? []).filter(
+      (e) => !e.inactive && (!(e instanceof TimePeriod) || e.isActiveAt(today)),
+    );
+  }
+
+  /**
+   * Keep only the records that are currently not active, the complement of `filterActive`.
+   * @param data the records to be filtered
+   */
+  private filterInactive(data: Entity[]): Entity[] {
+    const active = new Set(this.filterActive(data));
+    return (data ?? []).filter((e) => !active.has(e));
   }
 
   /**

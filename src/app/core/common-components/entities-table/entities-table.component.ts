@@ -11,6 +11,7 @@ import {
   OnInit,
   output,
   QueryList,
+  untracked,
   ViewChild,
 } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -29,6 +30,7 @@ import { EntityFieldViewComponent } from "../../entity/entity-field-view/entity-
 import { getEntityRuntimeRoute } from "../../entity/entity-config.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { DataFilter } from "../../filter/filters/filters";
+import { restrictToNotArchived } from "../../filter/not-archived-filter";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import {
@@ -45,7 +47,7 @@ import {
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -84,7 +86,7 @@ export class EntitiesTableComponent<T extends Entity>
   ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  recordsDataSource = input.required<InMemoryDataSource<T>>();
+  recordsDataSource = input.required<EntitiesTableDataSource<T>>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });
@@ -150,11 +152,11 @@ export class EntitiesTableComponent<T extends Entity>
   readonly effectiveFilter = computed<DataFilter<T>>(() => {
     const nextFilter = { ...this.filter() };
     if (this.showInactive()) {
-      delete nextFilter["isActive"];
-    } else {
-      nextFilter["isActive"] = true;
+      // the toggle overrides an archived condition that may come from the configured filter
+      delete nextFilter["inactive"];
+      return nextFilter;
     }
-    return nextFilter;
+    return restrictToNotArchived(nextFilter);
   });
 
   // --- Background color ---
@@ -181,6 +183,14 @@ export class EntitiesTableComponent<T extends Entity>
 
     effect(() => {
       this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
+    });
+    effect(() => {
+      this.recordsDataSource().dataFilter();
+      this.recordsDataSource().displayedData();
+      if (untracked(this.selectedRecords)?.length > 0) {
+        // reset selection if filter or input data changes
+        this.selectedRecords.set([]);
+      }
     });
   }
 

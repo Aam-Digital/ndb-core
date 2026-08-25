@@ -133,6 +133,29 @@ describe("AdminEntityFormComponent", () => {
     ]);
   });
 
+  it("should skip empty entries in a field group rather than fail (malformed config)", async () => {
+    const fieldsInView = ["date"];
+    fixture.componentRef.setInput("config", {
+      fieldGroups: [{ fields: [null, ...fieldsInView, undefined] }],
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const noteUserFacingFields = Array.from(TestEntity.schema.entries())
+      .filter(([key, value]) => !value.isInternalField)
+      .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
+      .map(([key]) => key);
+    // identical to a config without the empty entries: they are dropped, everything else still works
+    expect(component.availableFields()).toEqual([
+      component.createNewFieldPlaceholder,
+      component.createNewTextPlaceholder,
+      ...noteUserFacingFields.filter((x) => !fieldsInView.includes(x)),
+    ]);
+    expect(component.dummyForm()).toBeTruthy();
+    expect(component.fieldGroups()).toEqual([{ fields: fieldsInView }]);
+  });
+
   /**
    * Simulate dropping `field` into the drop list `to` (a field group's index or the toolbar).
    * Drags start from the toolbar unless `from` says otherwise.

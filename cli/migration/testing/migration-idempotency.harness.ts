@@ -96,6 +96,7 @@ const fakeOrg: SystemCredentials = {
 export function buildTestContext(
   store: DocStore,
   dryRun = false,
+  args: string[] = [],
 ): MigrationContext & { store: DocStore } {
   const stubCouchdb = buildStubCouchdb(store);
   const writes = { intended: 0, succeeded: 0, failed: 0 };
@@ -113,6 +114,7 @@ export function buildTestContext(
     couchdb: stubCouchdb,
     org: fakeOrg,
     dryRun,
+    args,
     log: silentLogger,
     validateJson,
     async put(path, data, db?, _headers?) {
@@ -139,14 +141,15 @@ export function buildTestContext(
 export async function runIdempotencyCheck(
   migration: MigrationDefinition,
   initialDocs: DocStore = {},
+  args: string[] = [],
 ): Promise<IdempotencyCheckResult> {
   const store1: DocStore = JSON.parse(JSON.stringify(initialDocs));
-  const ctx1 = buildTestContext(store1, false);
+  const ctx1 = buildTestContext(store1, false, args);
   const firstRunResult = await migration.run(ctx1);
   const stateAfterFirstRun: DocStore = JSON.parse(JSON.stringify(store1));
 
   const store2: DocStore = JSON.parse(JSON.stringify(stateAfterFirstRun));
-  const ctx2 = buildTestContext(store2, false);
+  const ctx2 = buildTestContext(store2, false, args);
   const secondRunResult = await migration.run(ctx2);
   const stateAfterSecondRun: DocStore = JSON.parse(JSON.stringify(store2));
 

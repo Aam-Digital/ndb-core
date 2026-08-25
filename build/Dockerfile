@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:alpine AS app
+FROM nginxinc/nginx-unprivileged:1.31.4-alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY ./dist/ /usr/share/nginx/html
 
@@ -12,7 +12,7 @@ ENV QUERY_URL="http://localhost:3000"
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 
 # content security policy headers
-# (also see Developer Documentation: https://aam-digital.github.io/ndb-core/documentation/additional-documentation/concepts/security.html)
+# (see ./README.md in this folder for what these do and how to change them)
 ENV CSP_REPORT_URI="https://o167951.ingest.sentry.io/api/1242399/security/"
 # overwrite the Content-Security-Policy rules (report-uri is added automatically)
 # default includes all required whitelists for production server
@@ -20,10 +20,15 @@ ENV CSP_REPORT_URI="https://o167951.ingest.sentry.io/api/1242399/security/"
 ENV CSP="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: blob: https://*.tile.openstreetmap.org/ https://matomo.aam-digital.org https://fcmregistrations.googleapis.com/v1/projects/* https://www.gstatic.com/firebasejs/* https://*.aam-digital.com https://*.aam-digital.net https://*.aam-digital.app https://api.github.com/repos/Aam-Digital/ https://aam-digital.github.io https://sentry.io https://raw.githubusercontent.com $CSP_REPORT_URI; style-src 'self' 'unsafe-inline'"
 # 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
+# additional origins that are allowed to embed the app in an iframe (space-separated),
+# e.g. "https://example.com https://www.example.com" to embed the app in another website.
+# The app's own origin is always allowed; empty (default) means only that origin.
+ENV CSP_EXTRA_FRAME_ANCESTORS=""
+
 # variables are inserted into the nginx config
 # RESOLVER is all IPv4 nameservers from /etc/resolv.conf, joined by spaces, used so nginx can
 # re-resolve the Nominatim upstream at runtime with IPv6 disabled (see default.conf).
 CMD export RESOLVER=$(awk '$$1=="nameserver" && $$2 !~ /:/ {print $$2}' /etc/resolv.conf | xargs) &&\
     if [ -z "$RESOLVER" ]; then export RESOLVER=8.8.8.8; fi &&\
-    envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$RESOLVER $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+    envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$RESOLVER $$CSP $$CSP_REPORT_URI $$CSP_EXTRA_FRAME_ANCESTORS' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'

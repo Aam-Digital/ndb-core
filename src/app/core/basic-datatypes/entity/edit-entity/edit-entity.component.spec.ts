@@ -219,8 +219,8 @@ describe("EditEntityComponent", () => {
   });
 
   it("shows inactive entities according to the includeInactive state", async () => {
-    test1Entities[0].isActive = false;
-    test1Entities[2].isActive = false;
+    test1Entities[0].inactive = true;
+    test1Entities[2].inactive = true;
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     fixture.detectChanges();
     await refreshAvailableEntities();
@@ -245,7 +245,7 @@ describe("EditEntityComponent", () => {
       test1Entities.length,
     );
 
-    test1Entities[2].isActive = true;
+    test1Entities[2].inactive = false;
     component.toggleIncludeInactive();
     fixture.detectChanges();
     await refreshAvailableEntities();

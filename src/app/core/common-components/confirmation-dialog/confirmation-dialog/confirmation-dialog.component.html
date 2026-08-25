@@ -6,12 +6,29 @@
 </h1>
 <div mat-dialog-content>
   <markdown>{{ data.text }}</markdown>
+
+  @if (data.confirmationKeyword) {
+    <mat-form-field class="full-width">
+      <mat-label i18n="Label of the input to confirm a critical action"
+        >Type "{{ data.confirmationKeyword }}" to confirm</mat-label
+      >
+      <input
+        #confirmationInput
+        matInput
+        cdkFocusInitial
+        autocomplete="off"
+        [value]="typedConfirmation()"
+        (input)="typedConfirmation.set(confirmationInput.value)"
+      />
+    </mat-form-field>
+  }
 </div>
 
 <div mat-dialog-actions>
   @for (button of data.buttons; track button.text) {
     <button
       mat-stroked-button
+      [disabled]="isBlocked(button)"
       (click)="button.click()"
       [mat-dialog-close]="button.dialogResult"
     >

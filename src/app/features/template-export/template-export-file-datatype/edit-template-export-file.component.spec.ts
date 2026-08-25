@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { CurrentUserSubject } from "#src/app/core/session/current-user-subject";
 import { SyncStateSubject } from "#src/app/core/session/session-type";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FileService } from "app/features/file/file.service";
@@ -47,6 +48,8 @@ describe("EditTemplateExportFileComponent", () => {
         { provide: TemplateExportService, useValue: mockTemplateExportService },
         EntityRegistry,
         SyncStateSubject,
+        // the component provides the real TemplateExportApiService as FileService (see its `providers`)
+        CurrentUserSubject,
       ],
     }).compileComponents();
 

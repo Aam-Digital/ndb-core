@@ -13,6 +13,11 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
 import { SessionSubject } from "../session/auth/session-info";
 import { TraceService } from "@sentry/angular";
+import {
+  CONNECTIVITY_ERROR_NAMES,
+  CONNECTIVITY_ERROR_STATUS,
+  isConnectivityErrorMessage,
+} from "#src/app/utils/connectivity-error";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -197,33 +202,26 @@ export class LoggingService {
     logLevel: LogLevel,
     ...context: any[]
   ) {
+    const extra: Record<string, unknown> = {};
+    if (context.length > 0) {
+      extra.context = context;
+    }
+    if (typeof message !== "string" && !(message instanceof Error)) {
+      // an object logged as the "message" only contributes its text to the
+      // report, so keep the whole of it available for debugging
+      extra.message = message;
+    }
+    const scope = {
+      extra: Object.keys(extra).length > 0 ? extra : undefined,
+    };
+
     if (logLevel === LogLevel.ERROR) {
-      // Prefer a real Error from context (e.g. Logging.error("message", err))
-      const errFromContext = context.find((c) => c instanceof Error);
-      if (message instanceof Error) {
-        Sentry.captureException(message, {
-          extra: context.length > 0 ? { context } : undefined,
-        });
-      } else if (errFromContext) {
-        Sentry.captureException(errFromContext, {
-          extra: { message, context },
-        });
-      } else {
-        Sentry.captureException(
-          new Error(message?.message ?? message?.error ?? String(message)),
-          { extra: context.length > 0 ? { context } : undefined },
-        );
-      }
+      Sentry.captureException(toReportedError(message, context), scope);
     } else {
-      Sentry.captureMessage(
-        typeof message === "string"
-          ? message
-          : String(message?.message ?? message),
-        {
-          level: this.translateLogLevel(logLevel),
-          extra: context.length > 0 ? { context } : undefined,
-        },
-      );
+      Sentry.captureMessage(messageText(message), {
+        ...scope,
+        level: this.translateLogLevel(logLevel),
+      });
     }
   }
 
@@ -285,6 +283,47 @@ interface SentryBreadcrumbHint {
 export const Logging = new LoggingService();
 
 /**
+ * Wrapper that {@link LoggingService.error} creates when an error is logged
+ * together with a descriptive message (`Logging.error("msg", err)`), so that the
+ * message - not the underlying error's own, often generic message - becomes the
+ * issue title and grouping key in remote monitoring.
+ *
+ * The original error is kept as `cause`, which Sentry links into the reported
+ * exception chain, so its stack trace is not lost.
+ */
+export class LoggedError extends Error {
+  constructor(message: string, cause?: unknown) {
+    super(message, { cause });
+    // Sentry reports `error.name` as the exception type. Keep the plain "Error"
+    // so titles read "Error: <our message>" rather than a class name that is
+    // minified in production builds anyway; the beforeSend hook recognizes this
+    // wrapper through `hint.originalException instanceof LoggedError` instead.
+    this.name = "Error";
+  }
+}
+
+/** The text of anything that was passed to the logger as its "message". */
+function messageText(message: any): string {
+  return typeof message === "string"
+    ? message
+    : String(message?.message ?? message?.error ?? message);
+}
+
+/**
+ * The Error to report for a log call: an error that was logged directly is
+ * reported as it is, anything else is wrapped in a {@link LoggedError}.
+ */
+export function toReportedError(message: any, context: any[]): Error {
+  if (message instanceof Error) {
+    return message;
+  }
+  return new LoggedError(
+    messageText(message),
+    context.find((c) => c instanceof Error),
+  );
+}
+
+/**
  * Maximum number of times an identical event is sent to remote logging
  * within one app session (page load).
  * Guards against error loops (e.g. an error thrown on every change detection
@@ -295,29 +334,24 @@ export const MAX_REPEATED_SENTRY_EVENTS = 5;
 const sentryEventCounts = new Map<string, number>();
 
 /**
- * Error message fragments produced by browsers (and our fetch wrapper)
- * when a request fails at the network layer.
- */
-const NETWORK_ERROR_PATTERNS = [
-  "Failed to fetch", // Chrome (also matches DatabaseException "Failed to fetch from DB")
-  "NetworkError when attempting to fetch resource", // Firefox
-  "Load failed", // Safari
-];
-
-/**
  * Sentry `beforeSend` hook: drops network failures of offline devices
  * and excessive repeats of an identical event,
  * and enriches the remaining events with structured extra data
  * and a stable grouping fingerprint.
+ *
+ * Grouping runs before the repeat cap because the cap is applied per issue,
+ * which is what the fingerprint defines (see {@link isExcessiveRepeat}).
  */
 export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event) || isExcessiveRepeat(event)) {
+  if (isOfflineNetworkError(event)) {
     return null;
   }
-  return fingerprintSentryEvent(enrichSentryEvent(event, hint));
+
+  const grouped = groupSentryEvent(enrichSentryEvent(event, hint), hint);
+  return isExcessiveRepeat(grouped) ? null : grouped;
 }
 
 /**
@@ -334,31 +368,24 @@ function isOfflineNetworkError(event: Sentry.ErrorEvent): boolean {
     event.message,
     ...(event.exception?.values?.map((v) => v.value) ?? []),
   ];
-  return messages.some(
-    (msg) => msg && NETWORK_ERROR_PATTERNS.some((p) => msg.includes(p)),
-  );
+  return messages.some((msg) => msg && isConnectivityErrorMessage(msg));
 }
 
 /**
  * Count occurrences of an event and check whether it exceeded the session cap.
  *
- * The key is deliberately coarse: error class + normalized message of the root
- * cause (`values[0]` is the deepest `cause` in the chain; the originally thrown,
- * outermost error is last), without any stack information.
- * Consequences:
- * - Same-message errors from different code paths share one budget,
- *   and all wrappers of a cascading failure are capped via their common
- *   root cause. This is a flood guard, not a grouping mechanism -
- *   see {@link fingerprintSentryEvent} for how issues are separated.
- * - Errors that interpolate data (e.g. entity IDs) into their message still
- *   share one budget, because the key is normalized the same way as the
- *   grouping fingerprint.
+ * The budget is one per issue (see {@link repeatKey}), so that a device running
+ * into several problems at once still reports each of them. Keying it more
+ * coarsely - by the root cause the issues have in common - starves them instead:
+ * in an offline-first app a single connectivity failure is the root cause of the
+ * config load, the permission rules, the sync and every file download alike, so
+ * whichever of them failed first would silence all the others for that session.
+ *
+ * Note that the cap therefore also limits how much an issue's event count says
+ * about the volume of a problem - it shows that it occurs, not how often.
  */
 function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
-  const exception = event.exception?.values?.[0];
-  const key = exception
-    ? `${exception.type}: ${normalizeErrorValue(exception.value)}`
-    : normalizeErrorValue(String(event.message ?? "unknown"));
+  const key = repeatKey(event);
 
   const count = (sentryEventCounts.get(key) ?? 0) + 1;
   sentryEventCounts.set(key, count);
@@ -371,6 +398,34 @@ function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
     return true;
   }
   return false;
+}
+
+/**
+ * The issue an event will end up in, as far as it is known here: the
+ * fingerprint is exactly what separates issues, and for the events that keep
+ * Sentry's stack-based grouping the thrown error is the closest stand-in
+ * (deliberately without any stack information, so that an error loop is capped
+ * even where the frames differ between occurrences).
+ */
+function repeatKey(event: Sentry.ErrorEvent): string {
+  // serialized as a tagged tuple so that neither the elements of a fingerprint
+  // nor the three kinds of key can collide with one another
+  if (event.fingerprint?.length) {
+    return JSON.stringify(["fingerprint", ...event.fingerprint]);
+  }
+
+  const values = event.exception?.values;
+  const thrownError = values?.[values.length - 1];
+  return thrownError
+    ? JSON.stringify([
+        "exception",
+        thrownError.type,
+        fingerprintKey(thrownError.value),
+      ])
+    : JSON.stringify([
+        "message",
+        fingerprintKey(String(event.message ?? "unknown")),
+      ]);
 }
 
 /**
@@ -391,6 +446,7 @@ function isExcessiveRepeat(event: Sentry.ErrorEvent): boolean {
  */
 const CAUSE_GROUPED_ERROR_TYPES = [
   "DatabaseException",
+  "SyncStalledError",
   "ConfigLoadError",
   "PermissionRulesLoadError",
   "SiteSettingsLoadError",
@@ -410,12 +466,19 @@ const VOLATILE_VALUE_PATTERNS: [RegExp, string][] = [
     "<uuid>",
   ],
   [/\b\d+-[0-9a-f]{32}\b/gi, "<rev>"],
+  // legacy entity ids that embed a username (e.g. `User:some.person`); the
+  // uuid-based ones are already masked above. Requires a non-space directly
+  // after the colon, so that an error prefix like "TypeError: ..." is kept.
+  [/\b[A-Z][A-Za-z]{2,}:[A-Za-z0-9._<>-]+/g, "<entityId>"],
   [/\d+/g, "<n>"],
 ];
 
 /**
  * Mask volatile details (ids, urls, numbers) so that different occurrences of
  * the same problem produce the same string.
+ *
+ * Stays human-readable, as it is also used to describe the root cause in the
+ * issue title (see {@link describeCause}).
  */
 function normalizeErrorValue(value: string | undefined): string {
   if (!value) {
@@ -429,9 +492,83 @@ function normalizeErrorValue(value: string | undefined): string {
 }
 
 /**
- * Group events of our own wrapper error classes (see
- * {@link CAUSE_GROUPED_ERROR_TYPES}) by their error chain instead of by stack
- * trace, so that one problem shows up as one issue.
+ * Reduce an error message to a grouping key.
+ *
+ * On top of {@link normalizeErrorValue} this also removes differences that
+ * carry no meaning but do split issues, as third-party libraries are not
+ * consistent about them: PouchDB reports both "Unauthorized" and
+ * "unauthorized", and both "Document update conflict" and "Document update
+ * conflict." (with a period) for the same failure.
+ */
+function fingerprintKey(value: string | undefined): string {
+  return normalizeErrorValue(value)
+    .toLowerCase()
+    .replace(/[.,;:!?]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Set an explicit grouping fingerprint where Sentry's default grouping splits
+ * one problem across many issues.
+ *
+ * Sentry groups by stack trace whenever one is available. That is the right
+ * default for a bug in application code, but not for a failure that is raised
+ * from one central place and reached from many components, routes and async
+ * call sites - the stack then differs per caller and even per build (releases
+ * without source maps report minified frames), so one problem scatters across a
+ * dozen issues that each have to be triaged separately, and archiving one of
+ * them does not silence the others.
+ *
+ * The cases are checked most-specific first: an error we recognize by name says
+ * more about what went wrong than the fact that a network request failed
+ * underneath it, so those keep their own issues instead of being absorbed into
+ * the shared network bucket.
+ */
+function groupSentryEvent(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): Sentry.ErrorEvent {
+  const values = event.exception?.values;
+  if (!values?.length) {
+    // captureMessage events group by their message. Normalizing it enforces the
+    // "keep message strings static" convention: a message that does interpolate
+    // variable data still produces one issue instead of one per value.
+    if (event.message) {
+      event.fingerprint = [fingerprintKey(event.message)];
+    }
+    return event;
+  }
+
+  const thrownError = values[values.length - 1];
+  const thrownType = thrownError.type ?? "";
+
+  if (
+    CAUSE_GROUPED_ERROR_TYPES.includes(thrownType) ||
+    hint?.originalException instanceof LoggedError
+  ) {
+    return groupByErrorChain(event, values);
+  }
+
+  if (values.some(isConnectivityException) || hasConnectivityStatus(event)) {
+    return groupAsNetworkError(event, thrownError);
+  }
+
+  if (!values.some((v) => v.stacktrace?.frames?.length)) {
+    // without a stack Sentry falls back to grouping by type and message, so an
+    // id or url interpolated into the message opens a new issue every time
+    event.fingerprint = [
+      thrownType || "Error",
+      fingerprintKey(thrownError.value),
+    ];
+  }
+
+  return event;
+}
+
+/**
+ * Group by the error chain instead of the stack trace, so that one problem
+ * shows up as one issue.
  *
  * `exception.values` is ordered innermost-first: `values[0]` is the deepest
  * `cause`, the originally thrown error is last. Both ends matter - the thrown
@@ -439,38 +576,141 @@ function normalizeErrorValue(value: string | undefined): string {
  * load failing because the device is offline is a different problem from the
  * same load failing because the user is unauthorized).
  *
+ * Because the root cause is part of the grouping key, it is also appended to
+ * the reported message: otherwise several issues share one title (a dozen
+ * "Failed to load configuration from the database." rows) and can only be told
+ * apart by opening each of them.
+ *
  * The route remains available as the `transaction` tag, so a failure can still
  * be filtered by where it happened without splitting it into separate issues.
  */
-function fingerprintSentryEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
-  const values = event.exception?.values;
-  if (!values?.length) {
-    // captureMessage events group by their message,
-    // which is kept free of variable data by convention
-    return event;
-  }
-
+function groupByErrorChain(
+  event: Sentry.ErrorEvent,
+  values: Sentry.Exception[],
+): Sentry.ErrorEvent {
   const thrownError = values[values.length - 1];
   const thrownType = thrownError.type ?? "";
-  if (!CAUSE_GROUPED_ERROR_TYPES.includes(thrownType)) {
-    return event;
-  }
-
-  const thrownValue = normalizeErrorValue(thrownError.value);
+  const thrownValue = groupingValue(thrownError);
   const fingerprint = [thrownType, thrownValue];
 
   const rootCause = values[0];
   const rootType = rootCause.type ?? "";
-  const rootValue = normalizeErrorValue(rootCause.value);
+  const rootValue = groupingValue(rootCause);
   // compared by content, not by identity: an error wrapping another error of
   // the same type and message describes one failure, not two, and has to match
-  // the fingerprint of the same failure reported without the extra wrapper
-  if (rootType !== thrownType || rootValue !== thrownValue) {
+  // the fingerprint of the same failure reported without the extra wrapper.
+  // Two links that are both network failures are one such case - which of them
+  // the chain happens to include says nothing about the problem.
+  const isDistinctCause =
+    !(thrownValue === NETWORK_FAILURE && rootValue === NETWORK_FAILURE) &&
+    (rootType !== thrownType || rootValue !== thrownValue);
+
+  if (isDistinctCause) {
     fingerprint.push(rootType, rootValue);
+    thrownError.value = `${thrownError.value} ${describeCause(rootCause)}`;
+  }
+
+  if (thrownValue === NETWORK_FAILURE) {
+    // the wordings collected here differ per browser, so use a stable title
+    reportAsUnreachableServer(event, thrownError);
   }
 
   event.fingerprint = fingerprint;
   return event;
+}
+
+/**
+ * Replace the reported message by one that does not depend on which browser
+ * (or library) sent the event, keeping the original one available as extra data.
+ */
+function reportAsUnreachableServer(
+  event: Sentry.ErrorEvent,
+  exception: Sentry.Exception,
+) {
+  event.extra = { ...event.extra, originalError: exception.value };
+  exception.value = "Failed to reach the server";
+}
+
+/**
+ * Placeholder for a connectivity failure, which every browser words differently
+ * ("Failed to fetch" / "Load failed" / ...) while describing one problem.
+ *
+ * Substituted wherever an error message is used as a grouping key or shown as
+ * the cause of another error, so that a mix of browsers neither splits an issue
+ * nor makes its title flip-flop between its events.
+ */
+const NETWORK_FAILURE = "network failure";
+
+/** The part of an error message that identifies the problem. */
+function groupingValue(exception: Sentry.Exception): string {
+  return isConnectivityException(exception)
+    ? NETWORK_FAILURE
+    : fingerprintKey(exception.value);
+}
+
+/** Human-readable, but stable across occurrences of the same problem. */
+function describeCause(rootCause: Sentry.Exception): string {
+  const cause = isConnectivityException(rootCause)
+    ? NETWORK_FAILURE
+    : normalizeErrorValue(rootCause.value);
+  return `(caused by ${rootCause.type ?? "Error"}: ${cause})`;
+}
+
+/**
+ * Collect all failures that are really "the app could not reach the server"
+ * into a single issue.
+ *
+ * These are raised by the browser (and by third-party libraries wrapping it) at
+ * whatever point a request happened to be made, so grouping them by stack trace
+ * produces an open-ended stream of near-identical issues that all have the same
+ * (non-)answer. They still have to be reported rather than dropped, because a
+ * server outage surfaces exactly this way - but as one issue whose event count
+ * is the interesting signal.
+ *
+ * The browsers' differing wordings ("Failed to fetch" / "Load failed" / ...)
+ * would make the title flip-flop between events of the merged issue, so it is
+ * replaced by a stable one and kept as a searchable tag instead.
+ */
+function groupAsNetworkError(
+  event: Sentry.ErrorEvent,
+  thrownError: Sentry.Exception,
+): Sentry.ErrorEvent {
+  const original = `${thrownError.type ?? "Error"}: ${normalizeErrorValue(thrownError.value)}`;
+
+  event.fingerprint = ["network-error"];
+  event.tags = {
+    ...event.tags,
+    // Sentry rejects tag values longer than 200 characters
+    network_error: original.slice(0, 200),
+  };
+
+  reportAsUnreachableServer(event, thrownError);
+  thrownError.type = "NetworkError";
+
+  return event;
+}
+
+/** Whether one link of a reported error chain is a connectivity failure. */
+function isConnectivityException(exception: Sentry.Exception): boolean {
+  return (
+    CONNECTIVITY_ERROR_NAMES.includes(exception.type ?? "") ||
+    isConnectivityErrorMessage(exception.value ?? "")
+  );
+}
+
+/**
+ * Whether the reported error carries the HTTP status of a request that never
+ * reached the backend - a gateway error names the problem in its status rather
+ * than in a message {@link isConnectivityException} could recognize.
+ *
+ * Event-level, because the status describes the error that was captured (it is
+ * attached by {@link enrichSentryEvent}) rather than one link of its chain.
+ */
+function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
+  const status = event.extra?.status;
+  return (
+    typeof status === "number" && CONNECTIVITY_ERROR_STATUS.includes(status)
+  );
 }
 
 /**
