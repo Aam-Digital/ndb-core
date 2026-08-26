@@ -88,28 +88,21 @@ describe("Schema data type: entity (advanced functionality)", () => {
     ).resolves.toBe(undefined);
   });
 
-  it("should anonymize entity recursively", async () => {
+  it("should remove the reference without anonymizing the referenced entity", async () => {
     const referencedEntity = new TestEntity("ref-1");
     referencedEntity.name = "test";
-
     await entityMapper.saveAll([referencedEntity]);
-    vi.spyOn(entityMapper, "save");
-    const removeService = TestBed.inject(EntityActionsService);
-
-    const testValue = referencedEntity.getId();
-    const testSchemaField: EntitySchemaField = {
-      additional: TestEntity.ENTITY_TYPE,
-      dataType: "entity",
-    };
 
     const anonymizedValue = await dataType.anonymize(
-      testValue,
-      testSchemaField,
+      referencedEntity.getId(),
+      { additional: TestEntity.ENTITY_TYPE, dataType: "entity" },
       null,
     );
 
-    expect(anonymizedValue).toEqual(testValue);
-    expect(removeService.anonymize).toHaveBeenCalledWith(referencedEntity);
+    expect(anonymizedValue).toBeUndefined();
+    expect(
+      entityMapper.get(TestEntity.ENTITY_TYPE, referencedEntity.getId()),
+    ).toEqual(referencedEntity);
   });
 
   // Orthogonal: the `additional` config accepts both the legacy plain-string form
