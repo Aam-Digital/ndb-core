@@ -15,6 +15,9 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { FeaturePermissionDialogComponent } from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
+import { environment } from "#src/environments/environment";
+import { SessionType } from "#src/app/core/session/session-type";
+import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -39,11 +42,11 @@ describe("EntityListComponent", () => {
     },
     filters: [
       {
-        id: "isActive",
+        id: "inactive",
         type: "boolean",
-        default: "true",
-        true: "Currently active children",
-        false: "Currently inactive children",
+        default: "false",
+        true: "Archived children",
+        false: "Currently active children",
       } as BooleanFilterConfig,
       {
         id: "category",
@@ -208,7 +211,7 @@ describe("EntityListComponent", () => {
       entityUpdates.next({ entity: entity, type: "new" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.dataSource.allRecords()).toEqual([entity]);
+      expect(component.recordsDataSource().allRecords()).toEqual([entity]);
     } finally {
       vi.useRealTimers();
     }
@@ -225,11 +228,11 @@ describe("EntityListComponent", () => {
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
 
-      component.dataSource.allRecords.set([entity]);
+      component.recordsDataSource().allRecords.set([entity]);
       entityUpdates.next({ entity: entity, type: "remove" });
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(component.dataSource.allRecords()).toEqual([]);
+      expect(component.recordsDataSource().allRecords()).toEqual([]);
     } finally {
       vi.useRealTimers();
     }
@@ -378,6 +381,19 @@ describe("EntityListComponent", () => {
       expect(queries(preselected)).not.toContain(".other");
     } finally {
       vi.useRealTimers();
+    }
+  });
+
+  it("should use the PaginatedDataSource and disable the freetext filter in online mode", () => {
+    const tmpSessionType = environment.session_type;
+    try {
+      environment.session_type = SessionType.online;
+      createComponent();
+
+      expect(component.showFreetextFilter()).toBe(false);
+      expect(component.recordsDataSource()).toBeInstanceOf(PaginatedDataSource);
+    } finally {
+      environment.session_type = tmpSessionType;
     }
   });
 });

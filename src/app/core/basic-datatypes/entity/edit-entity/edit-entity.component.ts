@@ -194,7 +194,7 @@ export class EditEntityComponent<
   currentlyMatchingInactive: Signal<number> = computed(() => {
     return this.allEntities
       .value()
-      .filter((e) => !e.isActive && this.autocompleteFilter()(e)).length;
+      .filter((e) => e.inactive && this.autocompleteFilter()(e)).length;
   });
 
   readonly isCreateDisabled = computed(() => {
@@ -256,7 +256,7 @@ export class EditEntityComponent<
         (e) =>
           params.values.includes(e.getId()) ||
           params.includeInactive ||
-          e.isActive,
+          !e.inactive,
       );
 
       for (const id of params.values) {

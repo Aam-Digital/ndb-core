@@ -7,6 +7,7 @@ import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Todo } from "../model/todo";
+import { TODO_NOT_COMPLETED_FILTER } from "../model/todo-filters";
 import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.component";
 
 describe("TodosRelatedToEntityComponent", () => {
@@ -56,10 +57,12 @@ describe("TodosRelatedToEntityComponent", () => {
 
     expect(indexSpy).toHaveBeenCalled();
     expect(component.filterObj()).toEqual({
-      relatedEntities: { $elemMatch: { $eq: child.getId() } },
-      isActive: true,
+      $and: [
+        TODO_NOT_COMPLETED_FILTER,
+        { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
+      ],
     });
-    expect(component.dataSource.allRecords()).toEqual([relatedTodo]);
+    expect(component.recordsDataSource().allRecords()).toEqual([relatedTodo]);
   });
 
   it("should load data with entity mapper when having multiple relations", waitForAsync(async () => {
@@ -91,24 +94,39 @@ describe("TodosRelatedToEntityComponent", () => {
     await new Promise((resolve) => setTimeout(resolve));
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expectArrayWithExactContents(component.dataSource.allRecords(), [
+    expectArrayWithExactContents(component.recordsDataSource().allRecords(), [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,
     ]);
     expect(component.filterObj()).toEqual({
-      $or: [
+      $and: [
+        TODO_NOT_COMPLETED_FILTER,
         {
-          assignedTo: { $elemMatch: { $eq: user.getId() } },
-        },
-        {
-          relatedEntities: { $elemMatch: { $eq: user.getId() } },
+          $or: [
+            {
+              assignedTo: { $elemMatch: { $eq: user.getId() } },
+            },
+            {
+              relatedEntities: { $elemMatch: { $eq: user.getId() } },
+            },
+          ],
         },
       ],
-      isActive: true,
     });
 
     relatedEntitiesSchema.additional = originalRelatedEntitiesAdditional;
     assignedToSchema.additional = originalAssignedToAdditional;
   }));
+
+  it("should not add an empty condition when no relation property resolves", () => {
+    // an empty $and branch would make a database query match no document at all
+    vi.spyOn(component as any, "getProperty").mockReturnValue([]);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("property", undefined);
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.detectChanges();
+
+    expect(component.filterObj()).toEqual(TODO_NOT_COMPLETED_FILTER);
+  });
 });

@@ -1,4 +1,4 @@
-import { Filter, SelectableFilter } from "./filters";
+import { combineFilterConditions, Filter, SelectableFilter } from "./filters";
 import { FilterService } from "../filter.service";
 import { BooleanFilter } from "./booleanFilter";
 import { StringFilter } from "./stringFilter";
@@ -97,13 +97,13 @@ describe("Filters", () => {
     const filter = new StringFilter("name", "Name");
 
     filter.selectedOptionValues = [];
-    expect(filter.getFilter()).toEqual({});
+    expect(filter.getFilter()).toBeUndefined();
 
     filter.selectedOptionValues = [""];
-    expect(filter.getFilter()).toEqual({});
+    expect(filter.getFilter()).toBeUndefined();
 
     filter.selectedOptionValues = ["   "];
-    expect(filter.getFilter()).toEqual({});
+    expect(filter.getFilter()).toBeUndefined();
   });
 
   it("should filter records containing the text (case-insensitive) with a string filter", () => {
@@ -149,5 +149,23 @@ describe("Filters", () => {
     ];
     const filteredData = testFilter(filter, testData, [testData[0]]);
     expect(filteredData[0].category).toBe(1);
+  });
+
+  it("should combine conditions without producing empty branches", () => {
+    const a = { name: "x" };
+    const b = { $or: [{ category: 1 }, { category: 2 }] };
+
+    expect(combineFilterConditions(), "no condition").toEqual({});
+    expect(combineFilterConditions({}, {}), "only empty conditions").toEqual(
+      {},
+    );
+    expect(combineFilterConditions(a, {}), "one relevant condition").toEqual(a);
+    expect(combineFilterConditions(a, b), "two relevant conditions").toEqual({
+      $and: [a, b],
+    });
+    expect(
+      combineFilterConditions(a, {}, b),
+      "empty condition in between",
+    ).toEqual({ $and: [a, b] });
   });
 });

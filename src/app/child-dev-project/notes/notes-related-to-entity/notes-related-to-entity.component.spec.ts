@@ -100,6 +100,7 @@ describe("NotesRelatedToEntityComponent", () => {
     relation.childId = ["Child:1", "Child:2"] as any; // assume entity config was overwritten to hold array
 
     fixture.componentRef.setInput("entity", relation);
+    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -142,6 +143,7 @@ describe("NotesRelatedToEntityComponent", () => {
       EntityWithRelations.ENTITY_TYPE,
     ];
     fixture.componentRef.setInput("entity", customEntity);
+    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
 
     const newNote = component.createNewRecordFactory()();

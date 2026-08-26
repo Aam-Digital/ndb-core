@@ -29,7 +29,7 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntitiesTableComponent } from "#src/app/core/common-components/entities-table/entities-table.component";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**

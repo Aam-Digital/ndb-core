@@ -110,22 +110,6 @@ describe("Entity", () => {
     expect(TestEntity.route).toBe("/custom-route");
   });
 
-  it("should determine isActive based on active or inactive property", () => {
-    const testEntity1 = new Entity();
-    expect(testEntity1.isActive, "default value").toBe(true);
-
-    testEntity1["active"] = false;
-    expect(testEntity1.isActive, "setting 'active'").toBe(false);
-
-    const testEntity2 = new Entity();
-    testEntity2["inactive"] = true;
-    expect(testEntity2.isActive, "setting 'inactive'").toBe(false);
-
-    const testEntity3 = new Entity();
-    testEntity3.isActive = false;
-    expect(testEntity3.isActive, "setting 'isActive'").toBe(false);
-  });
-
   it("should be 'isNew' if newly created before save", () => {
     const entity = new Entity();
     expect(entity.isNew).toBe(true);

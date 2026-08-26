@@ -48,7 +48,8 @@ export class EditPublicFormColumnsComponent
 
   @ViewChild(AdminEntityFormComponent) entityForm?: AdminEntityFormComponent;
 
-  entityConstructor: EntityConstructor;
+  /** not set for configs in the multi form format, which hold no top-level entity type */
+  entityConstructor?: EntityConstructor;
   formConfig: FormConfig;
   private originalFormConfig: FormConfig;
 
@@ -62,7 +63,10 @@ export class EditPublicFormColumnsComponent
   ngOnInit() {
     const entity = this.entity();
     if (entity) {
-      this.entityConstructor = this.entities.get(entity["entity"]);
+      // configs in the multi form format do not hold a top-level entity type
+      this.entityConstructor = entity["entity"]
+        ? this.entities.get(entity["entity"])
+        : undefined;
 
       const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
         columns: this.formControl.getRawValue(),

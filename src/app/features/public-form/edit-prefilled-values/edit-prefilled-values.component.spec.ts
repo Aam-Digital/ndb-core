@@ -11,6 +11,7 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { EditPrefilledValuesComponent } from "./edit-prefilled-values.component";
+import { PublicFormConfig } from "../public-form-config";
 
 describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
@@ -128,5 +129,40 @@ describe("EditPrefilledValuesComponent", () => {
       .setValue({ mode: "static", config: { value: "test" } });
 
     expect(component.formControl.pristine).toBe(true);
+  });
+
+  it("should not render value controls for a config without an entity type", () => {
+    // multi form configs hold no top-level entity type, and the controls below require one
+    const multiFormFixture = TestBed.createComponent(
+      EditPrefilledValuesComponent,
+    );
+    const multiFormConfig = new PublicFormConfig();
+    multiFormConfig.forms = [{ entity: TestEntity.ENTITY_TYPE, columns: [] }];
+    multiFormFixture.componentRef.setInput("entity", multiFormConfig);
+    const multiFormGroup = setupCustomFormControlEditComponent(
+      multiFormFixture.componentInstance,
+      "testProperty",
+      {},
+      multiFormFixture,
+    );
+    // a stored prefilled value, so a row exists that would render the controls
+    multiFormGroup
+      .get("testProperty")
+      .setValue({ name: { mode: "static", config: { value: "x" } } });
+
+    expect(() => multiFormFixture.detectChanges()).not.toThrow();
+    expect(
+      multiFormFixture.componentInstance.entityConstructor,
+    ).toBeUndefined();
+    expect(
+      multiFormFixture.componentInstance.prefilledValues.length,
+      "a row exists that would render the controls",
+    ).toBe(1);
+    expect(
+      multiFormFixture.nativeElement.querySelector("app-admin-default-value"),
+    ).toBeNull();
+    expect(
+      multiFormFixture.nativeElement.querySelector("app-entity-field-select"),
+    ).toBeNull();
   });
 });
