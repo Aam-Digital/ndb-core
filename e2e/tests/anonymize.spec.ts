@@ -1,4 +1,11 @@
-import { E2E_REF_DATE, expect, loadApp, Page, test } from "#e2e/fixtures.js";
+import {
+  argosScreenshot,
+  E2E_REF_DATE,
+  expect,
+  loadApp,
+  Page,
+  test,
+} from "#e2e/fixtures.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
 import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
@@ -10,6 +17,12 @@ const SUBJECT_SOLE_LINK = "<ANONYMIZE TEST RECORD>";
 const SUBJECT_SHARED_LINK = "<ANONYMIZE TEST SHARED RECORD>";
 const LINKED_USER_NAME = "<ANONYMIZE TEST USER>";
 const LINKED_USER_PHONE = "555-0100";
+
+// The confirmation snackbars of the preceding save and anonymize actions are
+// still on screen at the points captured below and auto-dismiss after 8s, so
+// whether they show up depends on how fast the run got there.
+const HIDE_SNACKBAR_CSS =
+  ".mat-mdc-snack-bar-container { display: none !important; }";
 
 /**
  * Set the anonymize mode of the note's user reference ("Team involved")
@@ -121,7 +134,15 @@ test("Anonymize cascades to a record's own notes but never to a linked user prof
 
   // the shared note is linked to another child as well, so it is left
   // unchanged and reported for manual review
-  await page.getByRole("dialog").getByRole("button", { name: "OK" }).click();
+  const reviewDialog = page.getByRole("dialog");
+  await expect(
+    reviewDialog.getByText("Related records may still contain personal data"),
+  ).toBeVisible();
+  await argosScreenshot(page, "anonymize-related-records-review", {
+    fullPage: false,
+    argosCSS: HIDE_SNACKBAR_CSS,
+  });
+  await reviewDialog.getByRole("button", { name: "OK" }).click();
 
   await expect(page.getByText("Anonymized & Archived")).toBeVisible();
 
@@ -154,6 +175,9 @@ test("Anonymize cascades to a record's own notes but never to a linked user prof
   await page.getByRole("dialog").getByRole("button", { name: "Yes" }).click();
 
   await expect(noteDialog.getByText(LINKED_USER_NAME)).toBeHidden();
+  await argosScreenshot(page, "note-anonymized-reference-cleared", {
+    argosCSS: HIDE_SNACKBAR_CSS,
+  });
   await noteDialog.getByRole("button", { name: "Cancel" }).click();
   await expect(noteDialog).toBeHidden();
 
