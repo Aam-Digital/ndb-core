@@ -112,7 +112,7 @@ export class Couchdb {
    */
   async putAttachment(
     path: string,
-    data: Uint8Array,
+    data: Buffer,
     contentType: string,
     db = "app-attachments",
   ): Promise<{ ok: boolean; id: string; rev: string }> {
@@ -125,7 +125,7 @@ export class Couchdb {
         Authorization: this.authHeader,
         "Content-Type": contentType,
       },
-      // Node's fetch accepts a Uint8Array body fine at runtime; the mismatch here is
+      // Node's fetch accepts a Buffer body fine at runtime; the mismatch here is
       // this project's DOM+Node lib combination disagreeing on BodyInit's generic
       // ArrayBuffer parameter, not an actual incompatibility.
       body: data as BodyInit,
