@@ -219,6 +219,10 @@ re-sync.</p>
                                     <span class="modifier">Async</span>
                                 <a href="#enforcePermissionsOnLocalData" >enforcePermissionsOnLocalData</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getLastEnforcedRules" >getLastEnforcedRules</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -302,6 +306,47 @@ re-sync.</p>
                             <div class="io-description">
                                 
                             </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getLastEnforcedRules"></a>
+                    <span class="name">
+                        <span ><b>getLastEnforcedRules</b></span>
+                        <a href="#getLastEnforcedRules"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getLastEnforcedRules()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:112</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The rules that were last successfully applied and enforced for the current
+user on this device (see <a href="enforcePermissionsOnLocalData">enforcePermissionsOnLocalData</a>).</p>
+<p><code>undefined</code> if there is no session or no rules have been enforced yet.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>[] | undefined</code>
+
+                        </div>
                 </td>
             </tr>
         </tbody>
@@ -461,6 +506,30 @@ export class PermissionEnforcerService {
 
     // update stored rules to check for future changes
     this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+  }
+
+  /**
+   * The rules that were last successfully applied and enforced for the current
+   * user on this device (see {@link enforcePermissionsOnLocalData}).
+   *
+   * &#x60;undefined&#x60; if there is no session or no rules have been enforced yet.
+   */
+  getLastEnforcedRules(): DatabaseRule[] | undefined {
+    if (!this.sessionInfo.value) {
+      return undefined;
+    }
+
+    const storedRules &#x3D; this.localStorage.getItem(this.getUserStorageKey());
+    if (!storedRules) {
+      return undefined;
+    }
+
+    try {
+      return JSON.parse(storedRules);
+    } catch (err) {
+      Logging.debug(&quot;Could not parse stored permission rules&quot;, err);
+      return undefined;
+    }
   }
 
   private userRulesChanged(newRules: string): boolean {

@@ -270,7 +270,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:52</a></div>
                             </td>
                         </tr>
 
@@ -305,8 +305,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="49"
-                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:49</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -501,7 +501,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:34</a></div>
                         </td>
                     </tr>
 
@@ -580,6 +580,8 @@ import { SessionInfo, SessionSubject } from &quot;../../session/auth/session-inf
 import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
 import { filter, firstValueFrom, merge } from &quot;rxjs&quot;;
 import { map } from &quot;rxjs/operators&quot;;
+import { HttpStatusCode } from &quot;@angular/common/http&quot;;
+import { isConnectivityError } from &quot;#src/app/utils/connectivity-error&quot;;
 
 /**
  * This service sets up the &#x60;EntityAbility&#x60; injectable with the JSON defined rules for the currently logged in user.
@@ -598,39 +600,123 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
 
   private currentRules: DatabaseRules;
 
+  /**
+   * Whether the state of the permission config is actually known, i.e. it was
+   * loaded from the database or the database confirmed it does not exist.
+   *
+   * &#x60;currentRules&#x60; alone cannot express this: it is &#x60;undefined&#x60; both for an
+   * instance that deliberately defines no permissions (-&gt; allow everything) and
+   * for a config we simply failed to load. Only the former is a fact about the
+   * instance that may be enforced on local data.
+   */
+  private rulesKnown &#x3D; false;
+
   constructor() {
     const entityMapper &#x3D; inject(EntityMapperService);
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.entityUpdated.subscribe((config) &#x3D;&gt; (this.currentRules &#x3D; config.data));
+    this.entityUpdated.subscribe((config) &#x3D;&gt; {
+      this.currentRules &#x3D; config.data;
+      // includes a deletion of the config (empty entity): that the rules are
+      // gone is a known state, unlike a failed load
+      this.rulesKnown &#x3D; true;
+    });
   }
 
   async initializeRules() {
     let initialPermissions: Config&lt;DatabaseRules&gt; | undefined;
     try {
       initialPermissions &#x3D; await super.startLoading();
+      // loaded, or confirmed to not exist (404)
+      this.rulesKnown &#x3D; true;
     } catch (err) {
-      const error &#x3D; new Error(&quot;Failed to load permission rules&quot;, {
-        cause: err,
-      });
-      error.name &#x3D; &quot;PermissionRulesLoadError&quot;;
-      Logging.error(error);
+      this.logRulesLoadFailure(err);
     }
 
     if (initialPermissions) {
       await this.updateAbilityWithUserRules(initialPermissions.data);
-    } else {
-      // as default fallback if no permission object is defined: allow everything
+    } else if (this.rulesKnown) {
+      // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: &quot;manage&quot;, subject: &quot;all&quot; }]);
       this.ability.initialized &#x3D; true;
+    } else {
+      this.applyLastKnownRules();
     }
 
     merge(
       this.entityUpdated.pipe(map((config) &#x3D;&gt; config.data)),
       this.sessionInfo.pipe(map(() &#x3D;&gt; this.currentRules)),
       this.currentUser.pipe(map(() &#x3D;&gt; this.currentRules)),
-    ).subscribe((rules) &#x3D;&gt; this.updateAbilityWithUserRules(rules));
+    ).subscribe((rules) &#x3D;&gt; {
+      if (this.rulesKnown) {
+        this.updateAbilityWithUserRules(rules);
+      } else {
+        // While the rules are unknown, a session or user change must not
+        // re-derive the permissive fallback and hand it to the enforcer: that
+        // would store &quot;allowed everything&quot; as the baseline for future
+        // comparisons, so the real rules arriving afterwards look like a
+        // permission change and trigger a full re-sync (or, on the legacy
+        // adapter, destroy the local database).
+        this.applyLastKnownRules();
+      }
+    });
+  }
+
+  /**
+   * Apply the rules of the previous session, while the actual rules could not
+   * be loaded (e.g. the server was unreachable).
+   *
+   * Falling through to &quot;allow everything&quot; here would grant full client-side
+   * permissions on a transient failure - at the moment the app is least able to
+   * notice. Re-using the rules that were last successfully applied for this user
+   * keeps the app usable without escalating access.
+   * If there are none (first session on this device) the permissive fallback
+   * still applies, so that instances which intentionally define no permissions
+   * keep working.
+   */
+  private applyLastKnownRules() {
+    const lastKnownRules &#x3D; this.permissionEnforcer.getLastEnforcedRules();
+    if (lastKnownRules) {
+      Logging.debug(&quot;Applying permission rules of the previous session&quot;);
+    }
+
+    // stored rules are already interpolated, so they are applied as they are
+    this.ability.update(
+      lastKnownRules ?? [{ action: &quot;manage&quot;, subject: &quot;all&quot; }],
+    );
+    this.ability.initialized &#x3D; true;
+  }
+
+  /**
+   * Report a failed load of the permission rules, unless the failure is an
+   * expected part of normal operation:
+   *
+   * - 401/403: the session may not read the rules config. Anonymous visitors of
+   *   a public form never can, and an expired session is already handled by the
+   *   database layer (which triggers re-login).
+   * - connectivity: offline, a request timeout or a 5xx from the server.
+   *
+   * Both are transient or by design and would otherwise drown out the failures
+   * that do indicate a problem.
+   */
+  private logRulesLoadFailure(err: any) {
+    const status &#x3D; err?.status ?? err?.statusCode;
+    if (
+      status &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized ||
+      status &#x3D;&#x3D;&#x3D; HttpStatusCode.Forbidden
+    ) {
+      Logging.debug(&quot;Permission rules not readable for this session&quot;, err);
+      return;
+    }
+    if (isConnectivityError(err)) {
+      Logging.debug(&quot;Could not load permission rules (connectivity)&quot;, err);
+      return;
+    }
+
+    const error &#x3D; new Error(&quot;Failed to load permission rules&quot;, { cause: err });
+    error.name &#x3D; &quot;PermissionRulesLoadError&quot;;
+    Logging.error(error);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise&lt;any&gt; {
