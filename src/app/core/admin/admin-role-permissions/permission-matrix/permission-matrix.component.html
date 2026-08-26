@@ -248,6 +248,7 @@
             <app-entity-type-select
               [value]="undefined"
               [showInternalTypes]="true"
+              [hiddenTypes]="existingSubjects()"
               (valueChange)="addSubject($event)"
             ></app-entity-type-select>
           </mat-form-field>

@@ -312,6 +312,11 @@ export class PermissionMatrixComponent {
     this.model().rows.some((r) => r.subject === "all"),
   );
 
+  /** record types already listed, so the add dropdown can omit them */
+  readonly existingSubjects = computed(() =>
+    this.model().rows.map((r) => r.subject),
+  );
+
   /** the base "_default" role has no fallback to itself, so its empty state differs */
   readonly isDefaultRole = computed(
     () => this.roleName() === DEFAULT_SECTION_KEY,

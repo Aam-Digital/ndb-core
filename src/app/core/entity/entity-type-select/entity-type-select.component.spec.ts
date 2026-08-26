@@ -19,4 +19,18 @@ describe("EntityTypeSelectComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("omits hiddenTypes from the available options", () => {
+    fixture.componentRef.setInput("showInternalTypes", true);
+    const all = component["optionsSource"]().map((t) => t.ENTITY_TYPE);
+    expect(all.length).toBeGreaterThan(0);
+
+    const hidden = all[0];
+    fixture.componentRef.setInput("hiddenTypes", [hidden]);
+    fixture.detectChanges();
+
+    const filtered = component["optionsSource"]().map((t) => t.ENTITY_TYPE);
+    expect(filtered).not.toContain(hidden);
+    expect(filtered.length).toBe(all.length - 1);
+  });
 });
