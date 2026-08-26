@@ -84,11 +84,15 @@ export class EntityAnonymizeService extends CascadingEntityAction {
 
     let anonymizedValue;
     if (entity.getSchema().get(key).isArray) {
-      anonymizedValue = await Promise.all(
+      const anonymizedValues = await Promise.all(
         asArray(entity[key]).map((v) =>
           dataType.anonymize(v, entity.getSchema().get(key), entity),
         ),
       );
+      // a datatype without partial anonymization returns nothing for a value.
+      // drop those entries instead of leaving empty slots in the array,
+      // which would be stored as `null` values in the database.
+      anonymizedValue = anonymizedValues.filter((v) => v !== undefined);
     } else {
       anonymizedValue = await dataType.anonymize(
         entity[key],

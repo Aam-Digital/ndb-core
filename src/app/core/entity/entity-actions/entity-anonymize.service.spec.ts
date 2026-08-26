@@ -201,6 +201,21 @@ describe("EntityAnonymizeService", () => {
     );
   });
 
+  it("should remove entity references in an array field, as the datatype has no partial anonymization", async () => {
+    const entity = new AnonymizableEntity();
+    entity.referencesToRetainAnonymized = [
+      "AnonymizableEntity:ref-1",
+      "AnonymizableEntity:ref-2",
+    ];
+
+    await service.anonymizeEntity(entity);
+
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
+      AnonymizableEntity.create({ referencesToRetainAnonymized: [] }),
+    );
+  });
+
   it("should partially anonymize string fields by keeping only the first character", async () => {
     const entity = new AnonymizableEntity();
     entity.retainAnonymizedText = "John";
