@@ -302,44 +302,10 @@ describe("PouchDatabase tests", () => {
     await expect(database.isEmpty()).resolves.toEqual(false);
   });
 
-  describe("find", () => {
-    beforeEach(async () => {
-      for (let i = 1; i <= 5; i++) {
-        await database.put({ _id: `Test:${i}` });
-      }
-    });
-
-    it("returns all matching docs when no pagination options are given", async () => {
-      const res = await database.find("Test", {});
-
-      expect(res.docs).toHaveLength(5);
-    });
-
-    it("emulates a bookmark cursor via skip for the local (non-CouchDB) adapter", async () => {
-      const page1 = await database.find("Test", {}, { limit: 2 });
-      expect(page1.docs).toHaveLength(2);
-      expect(page1.bookmark).toBeDefined();
-
-      const page2 = await database.find(
-        "Test",
-        {},
-        { limit: 2, bookmark: page1.bookmark },
-      );
-      expect(page2.docs).toHaveLength(2);
-
-      // no overlap between the two pages
-      const page1Ids = page1.docs.map((d) => d._id);
-      const page2Ids = page2.docs.map((d) => d._id);
-      expect(page1Ids.some((id) => page2Ids.includes(id))).toBe(false);
-
-      const page3 = await database.find(
-        "Test",
-        {},
-        { limit: 2, bookmark: page2.bookmark },
-      );
-      // only 1 doc left of the 5 total
-      expect(page3.docs).toHaveLength(1);
-    });
+  it("find() is not supported on the local/base implementation (only RemotePouchDatabase supports bookmark-based pagination)", async () => {
+    await expect(database.find("Test", {})).rejects.toThrow(
+      "only supported by RemotePouchDatabase",
+    );
   });
 
   describe("purge", () => {
