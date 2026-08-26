@@ -322,6 +322,15 @@ export class RemotePouchDatabase extends PouchDatabase {
     return collected;
   }
 
+  /**
+   * The HTTP adapter talks directly to CouchDB/the replication-backend,
+   * which supports a real Mango `bookmark` cursor (see {@link find} in the
+   * base class).
+   */
+  protected override supportsRealBookmark(): boolean {
+    return true;
+  }
+
   protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {
     if (
       existingDesignDoc.aam_version &&
