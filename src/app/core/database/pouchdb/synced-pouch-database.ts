@@ -376,7 +376,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     const purgedIds: string[] = [];
     const failedIds: string[] = [];
     let notPresentLocally = 0;
-    let firstError: any;
+    let firstError: unknown;
 
     for (const _id of reportedIds) {
       try {
