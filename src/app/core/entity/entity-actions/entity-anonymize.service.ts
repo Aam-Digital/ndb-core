@@ -26,6 +26,16 @@ export class EntityAnonymizeService extends CascadingEntityAction {
    * @private
    */
   async anonymizeEntity(entity: Entity): Promise<CascadingActionResult> {
+    if (entity.anonymized) {
+      // nothing left to remove; this also terminates the cascade if a cycle of
+      // related records leads back to an entity that has already been processed
+      // (deletion terminates naturally, because the record is gone by then)
+      Logging.debug("Anonymize for already anonymized entity skipped", {
+        entityId: entity.getId(),
+      });
+      return new CascadingActionResult();
+    }
+
     if (!entity.getConstructor().hasPII) {
       // entity types that are generally without PII by default retain all fields
       // this should only be called through a cascade action anyway
