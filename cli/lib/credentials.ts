@@ -59,17 +59,27 @@ export interface OrgFilter {
 
 /**
  * Whether a *raw*, not-yet-resolved credential entry could possibly survive
- * {@link OrgRunner.filterOrgs}'s later filtering by name/url/category. `url`
- * only counts as a match here when explicitly set — an entry that needs
- * DOMAIN to compute its url can't be matched against before that resolution
- * runs, but such an entry is also never what `--org <name>` means in practice.
+ * {@link OrgRunner.filterOrgs}'s later filtering by name/url/category. An
+ * explicit `url` is matched directly; an entry that instead relies on
+ * `domain` to derive its url (`${name}.${domain}`, mirroring the resolution
+ * in {@link getCredentials}) is matched against that derived value too, so
+ * `--org foo.example.com` still selects `{ name: "foo" }` when
+ * `DOMAIN=example.com`.
  */
-function matchesFilter(c: RawCredential, filter: OrgFilter): boolean {
+function matchesFilter(
+  c: RawCredential,
+  filter: OrgFilter,
+  domain: string,
+): boolean {
   if (filter.org) {
-    const names = filter.org.split(",").map((s) => s.trim());
-    const nameMatches = names.includes(c.name?.trim() ?? "");
-    const urlMatches = !!c.url?.trim() && names.includes(c.url.trim());
-    if (!nameMatches && !urlMatches) return false;
+    const names = new Set(filter.org.split(",").map((s) => s.trim()));
+    const name = c.name?.trim() ?? "";
+    const url = c.url?.trim();
+    const nameMatches = names.has(name);
+    const urlMatches = !!url && names.has(url);
+    const derivedUrlMatches =
+      !url && !!name && !!domain && names.has(`${name}.${domain}`);
+    if (!nameMatches && !urlMatches && !derivedUrlMatches) return false;
   }
   if (filter.category && (c.category?.trim() ?? "") !== filter.category) {
     return false;
@@ -108,14 +118,15 @@ export async function getCredentials(
     ? undefined
     : (parsed as { keycloak?: KeycloakConfig }).keycloak;
 
+  const domain = process.env["DOMAIN"] ?? "";
+
   // Indices are captured before filtering so error messages still point at
   // the entry's real position in the credentials file.
   const indexed = rawOrgs.map((c, index) => ({ c, index }));
   const selected = filter
-    ? indexed.filter(({ c }) => matchesFilter(c, filter))
+    ? indexed.filter(({ c }) => matchesFilter(c, filter, domain))
     : indexed;
 
-  const domain = process.env["DOMAIN"] ?? "";
   const orgs = selected.map(({ c, index }) => {
     if (!c.password) {
       throw new Error(

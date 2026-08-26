@@ -122,8 +122,8 @@ describe("getCredentials", () => {
     // touched, let alone abort the whole command.
     vi.stubEnv("DOMAIN", "");
     const raw = JSON.stringify([
-      { name: "codo-ksb-braunschweig", password: "pw1" },
-      { name: "famev", password: "pw2", url: "famev.example.com" },
+      { name: "org-a", password: "pw1" },
+      { name: "org-b", password: "pw2", url: "org-b.example.com" },
     ]);
     vi.mocked(fs.existsSync).mockImplementation((p) =>
       String(p).endsWith("credentials.json"),
@@ -131,12 +131,12 @@ describe("getCredentials", () => {
     vi.mocked(fs.readFileSync).mockReturnValue(raw);
 
     const { getCredentials } = await import("./credentials");
-    const result = await getCredentials(undefined, { org: "famev" });
+    const result = await getCredentials(undefined, { org: "org-b" });
 
     expect(result.orgs).toEqual([
       {
-        url: "famev.example.com",
-        name: "famev",
+        url: "org-b.example.com",
+        name: "org-b",
         password: "pw2",
         username: undefined,
         category: "",
@@ -146,7 +146,7 @@ describe("getCredentials", () => {
 
   it("still validates and throws for an org that the filter does select", async () => {
     vi.stubEnv("DOMAIN", "");
-    const raw = JSON.stringify([{ name: "famev", password: "pw" }]);
+    const raw = JSON.stringify([{ name: "org-b", password: "pw" }]);
     vi.mocked(fs.existsSync).mockImplementation((p) =>
       String(p).endsWith("credentials.json"),
     );
@@ -154,19 +154,43 @@ describe("getCredentials", () => {
 
     const { getCredentials } = await import("./credentials");
 
-    await expect(getCredentials(undefined, { org: "famev" })).rejects.toThrow(
+    await expect(getCredentials(undefined, { org: "org-b" })).rejects.toThrow(
       /DOMAIN env var is required/,
     );
+  });
+
+  it("matches a --org filter given as the DOMAIN-derived url against a name-only entry", async () => {
+    vi.stubEnv("DOMAIN", "example.com");
+    const raw = JSON.stringify([{ name: "foo", password: "pw" }]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+    const result = await getCredentials(undefined, {
+      org: "foo.example.com",
+    });
+
+    expect(result.orgs).toEqual([
+      {
+        url: "foo.example.com",
+        name: "foo",
+        password: "pw",
+        username: undefined,
+        category: "",
+      },
+    ]);
   });
 
   it("filters by category the same way, before resolving urls", async () => {
     vi.stubEnv("DOMAIN", "");
     const raw = JSON.stringify([
-      { name: "broken", password: "pw1", category: "codo" },
+      { name: "broken", password: "pw1", category: "internal" },
       {
-        name: "famev",
+        name: "org-b",
         password: "pw2",
-        url: "famev.example.com",
+        url: "org-b.example.com",
         category: "prod",
       },
     ]);
@@ -180,8 +204,8 @@ describe("getCredentials", () => {
 
     expect(result.orgs).toEqual([
       {
-        url: "famev.example.com",
-        name: "famev",
+        url: "org-b.example.com",
+        name: "org-b",
         password: "pw2",
         username: undefined,
         category: "prod",
@@ -193,7 +217,7 @@ describe("getCredentials", () => {
     vi.stubEnv("DOMAIN", "aam-digital.com");
     const raw = JSON.stringify([
       { name: "demo", password: "pw1" },
-      { name: "famev" }, // index 1 — missing password, and matches the filter
+      { name: "org-b" }, // index 1 — missing password, and matches the filter
     ]);
     vi.mocked(fs.existsSync).mockImplementation((p) =>
       String(p).endsWith("credentials.json"),
@@ -202,7 +226,7 @@ describe("getCredentials", () => {
 
     const { getCredentials } = await import("./credentials");
 
-    await expect(getCredentials(undefined, { org: "famev" })).rejects.toThrow(
+    await expect(getCredentials(undefined, { org: "org-b" })).rejects.toThrow(
       /org at index 1 is missing "password"/,
     );
   });
