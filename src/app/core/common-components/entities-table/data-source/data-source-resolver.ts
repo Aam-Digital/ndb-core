@@ -25,6 +25,11 @@ function getDataSource(
   dataSource?: DataSourceType,
   loaderMethod?: LoaderMethod,
 ) {
+  if (environment.session_type !== SessionType.online) {
+    // server-side pagination does not work against the local database
+    return InMemoryDataSource;
+  }
+
   if (dataSource && availableDataSources[dataSource]) {
     // an explicit config for this list takes precedence over any default
     return availableDataSources[dataSource];
@@ -35,13 +40,8 @@ function getDataSource(
     return InMemoryDataSource;
   }
 
-  const systemDefault = availableDataSources[environment.default_data_source];
-  if (systemDefault) {
-    return systemDefault;
-  }
-
-  // without a system-wide default, only online-only mode paginates server-side
-  return environment.session_type === SessionType.online
-    ? availableDataSources.paginated
-    : InMemoryDataSource;
+  return (
+    availableDataSources[environment.default_data_source] ??
+    availableDataSources.paginated
+  );
 }

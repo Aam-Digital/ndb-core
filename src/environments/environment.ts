@@ -72,11 +72,14 @@ export const environment = {
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 
   /**
-   * Default data source used for all lists, regardless of the session type.
-   * Set to "in-memory" via config.json to load all records upfront for every list,
-   * or to "paginated" to always page through the database query.
-   * When unset, lists page in online-only mode and load everything upfront otherwise.
-   * An explicit `dataSource` in a list's config always takes precedence over this default.
+   * Default data source used for all lists in online-only mode (see session_type).
+   * Set to "in-memory" via config.json to load all records of a list upfront,
+   * instead of the default of paging through the database query.
+   * ("paginated" is therefore redundant - it is already the online-only default.)
+   * An explicit `dataSource` in a list's config takes precedence over this default.
+   *
+   * This has no effect outside of online-only mode: the paginated data source
+   * cannot query the local database, so synced sessions always load records upfront.
    */
   default_data_source: undefined as DataSourceType | undefined,
 

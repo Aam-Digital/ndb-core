@@ -58,22 +58,21 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(PaginatedDataSource);
   });
 
-  it("should use the system-wide default data source outside of online mode as well", () => {
+  it("should ignore a paginated system-wide default outside of online mode", () => {
     environment.session_type = SessionType.synced;
     environment.default_data_source = "paginated";
 
     const dataSource = resolveDataSource<Entity>(injector);
 
-    expect(dataSource).toBeInstanceOf(PaginatedDataSource);
+    expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
-  it("should let a list's own dataSource config overwrite the system-wide default outside of online mode", () => {
+  it("should ignore a paginated dataSource configured for a list outside of online mode", () => {
     environment.session_type = SessionType.synced;
-    environment.default_data_source = "in-memory";
 
     const dataSource = resolveDataSource<Entity>(injector, "paginated");
 
-    expect(dataSource).toBeInstanceOf(PaginatedDataSource);
+    expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
   it("should use the system-wide default data source in online mode when no dataSource is configured for the list", () => {
@@ -107,7 +106,7 @@ describe("resolveDataSource", () => {
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
-  it("should use the InMemoryDataSource outside of online mode without a system-wide default, regardless of loaderMethod", () => {
+  it("should always use the InMemoryDataSource outside of online mode, regardless of loaderMethod", () => {
     environment.session_type = SessionType.mock;
 
     const dataSource = resolveDataSource<Entity>(
