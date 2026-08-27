@@ -11,4 +11,8 @@
       </mat-option>
     }
   </mat-select>
+
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
 </mat-form-field>
