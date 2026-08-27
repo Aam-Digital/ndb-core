@@ -196,9 +196,10 @@ export class RolePermissionsService {
    * @throws when the role could not be deleted in the authentication server
    */
   async deleteRole(name: string) {
+    const config = await this.loadPermissionsConfig();
+
     await firstValueFrom(this.userAdminService.deleteRole(name));
 
-    const config = await this.loadPermissionsConfig();
     const data = { ...(config.data ?? {}) };
     delete data[name];
     await this.saveWithBackup(config, data);
