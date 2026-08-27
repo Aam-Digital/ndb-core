@@ -4,7 +4,7 @@ import { FilterComponent } from "./filter.component";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { StringFilter } from "../filters/stringFilter";
 
@@ -19,7 +19,6 @@ describe("FilterComponent", () => {
   let fixture: ComponentFixture<FilterComponent>;
 
   let activatedRouteMock = new ActivatedRouteMock();
-  let router: Router;
 
   beforeEach(async () => {
     activatedRouteMock.snapshot = {
@@ -35,7 +34,6 @@ describe("FilterComponent", () => {
         },
       ],
     }).compileComponents();
-    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(FilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -285,8 +283,12 @@ describe("FilterComponent", () => {
     component.filterOptionSelected(avilableOptions, [t1.id]);
 
     // a single condition needs no $and wrapper
+    expect(emittedFilterObj).toEqual({ "category.id": t1.id } as any);
+
+    component.filterOptionSelected(avilableOptions, [t1.id, t2.id]);
+
     expect(emittedFilterObj).toEqual({
-      $or: [{ "category.id": t1.id }],
+      $or: [{ "category.id": t1.id }, { "category.id": t2.id }],
     } as any);
   });
 });

@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AbilityService } from "./ability.service";
@@ -72,6 +73,7 @@ describe("AbilityService", () => {
           provide: PermissionEnforcerService,
           useValue: {
             enforcePermissionsOnLocalData: vi.fn(),
+            getLastEnforcedRules: vi.fn(),
           },
         },
         { provide: EntityMapperService, useValue: entityMapper },
@@ -500,5 +502,97 @@ describe("AbilityService", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  describe("failed rules load", () => {
+    /** run initializeRules() with a load that rejects with the given error */
+    async function initWithLoadError(err: any) {
+      entityMapper.load.mockRejectedValue(err);
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+    }
+
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it("should not report an expected permission denial as an error", async () => {
+      // anonymous visitors of a public form may not read the rules config
+      const errorSpy = vi.spyOn(Logging, "error");
+
+      await initWithLoadError({ status: 401, message: "unauthorized" });
+
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not report a connectivity failure as an error", async () => {
+      const errorSpy = vi.spyOn(Logging, "error");
+
+      await initWithLoadError(new Error("Failed to fetch from DB"));
+
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    it("should not hand the permissive fallback to the enforcer while the rules are unknown", async () => {
+      // otherwise "allowed everything" is stored as the baseline, so the real
+      // rules arriving later look like a permission change
+      await initWithLoadError(new Error("something unexpected"));
+
+      TestBed.inject(SessionSubject).next({
+        name: "some-user",
+        id: "1",
+        roles: ["user_app"],
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(
+        TestBed.inject(PermissionEnforcerService).enforcePermissionsOnLocalData,
+      ).not.toHaveBeenCalled();
+    });
+
+    it("should enforce the real rules once they arrive after a failed load", async () => {
+      await initWithLoadError(new Error("something unexpected"));
+
+      entityUpdates.next({
+        entity: new Config(Config.PERMISSION_KEY, rules),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(
+        TestBed.inject(PermissionEnforcerService).enforcePermissionsOnLocalData,
+      ).toHaveBeenCalledWith(rules["user_app"]);
+    });
+
+    it("should apply the rules of the previous session if they cannot be loaded", async () => {
+      // a transient failure must not escalate the user to full permissions
+      const lastKnownRules: DatabaseRule[] = [
+        { subject: TestEntity.ENTITY_TYPE, action: "read" },
+      ];
+      (
+        TestBed.inject(PermissionEnforcerService)
+          .getLastEnforcedRules as unknown as Mock
+      ).mockReturnValue(lastKnownRules);
+
+      await initWithLoadError(new Error("Failed to fetch from DB"));
+
+      expect(ability.rules).toEqual(lastKnownRules);
+    });
+
+    it("should allow everything if no rules were ever applied on this device", async () => {
+      // instances that intentionally define no permissions must keep working
+      await initWithLoadError(new Error("Failed to fetch from DB"));
+
+      expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
+    });
+
+    it("should report an unexpected failure as PermissionRulesLoadError", async () => {
+      const errorSpy = vi.spyOn(Logging, "error");
+
+      await initWithLoadError(new Error("something unexpected"));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "PermissionRulesLoadError" }),
+      );
+    });
   });
 });

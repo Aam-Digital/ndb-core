@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:1.31.3-alpine AS app
+FROM nginxinc/nginx-unprivileged:1.31.4-alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY ./dist/ /usr/share/nginx/html
 
@@ -12,7 +12,7 @@ ENV QUERY_URL="http://localhost:3000"
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 
 # content security policy headers
-# (also see Developer Documentation: https://aam-digital.github.io/ndb-core/documentation/additional-documentation/concepts/security.html)
+# (see ./README.md in this folder for what these do and how to change them)
 ENV CSP_REPORT_URI="https://o167951.ingest.sentry.io/api/1242399/security/"
 # overwrite the Content-Security-Policy rules (report-uri is added automatically)
 # default includes all required whitelists for production server

@@ -19,6 +19,8 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { filter, firstValueFrom, merge, Observable } from "rxjs";
 import { map } from "rxjs/operators";
+import { HttpStatusCode } from "@angular/common/http";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -38,6 +40,17 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   private currentRules: DatabaseRules;
 
   /**
+   * Whether the state of the permission config is actually known, i.e. it was
+   * loaded from the database or the database confirmed it does not exist.
+   *
+   * `currentRules` alone cannot express this: it is `undefined` both for an
+   * instance that deliberately defines no permissions (-> allow everything) and
+   * for a config we simply failed to load. Only the former is a fact about the
+   * instance that may be enforced on local data.
+   */
+  private rulesKnown = false;
+
+  /**
    * The rules of every loaded version of the permissions document, brought into
    * the current format once here, so that the rest of the service only deals
    * with the underscore-prefixed reserved section keys.
@@ -52,36 +65,109 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     this.rulesUpdated = this.entityUpdated.pipe(
       map((config) => migrateLegacySectionKeys(config.data)),
     );
-    this.rulesUpdated.subscribe((rules) => (this.currentRules = rules));
+    this.rulesUpdated.subscribe((rules) => {
+      this.currentRules = rules;
+      // includes a deletion of the config (empty entity): that the rules are
+      // gone is a known state, unlike a failed load
+      this.rulesKnown = true;
+    });
   }
 
   async initializeRules() {
     let initialPermissions: Config<DatabaseRules> | undefined;
     try {
       initialPermissions = await super.startLoading();
+      // loaded, or confirmed to not exist (404)
+      this.rulesKnown = true;
     } catch (err) {
-      const error = new Error("Failed to load permission rules", {
-        cause: err,
-      });
-      error.name = "PermissionRulesLoadError";
-      Logging.error(error);
+      this.logRulesLoadFailure(err);
     }
 
     if (initialPermissions) {
       await this.updateAbilityWithUserRules(
         migrateLegacySectionKeys(initialPermissions.data),
       );
-    } else {
-      // as default fallback if no permission object is defined: allow everything
+    } else if (this.rulesKnown) {
+      // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: "manage", subject: "all" }]);
       this.ability.initialized = true;
+    } else {
+      this.applyLastKnownRules();
     }
 
     merge(
       this.rulesUpdated,
       this.sessionInfo.pipe(map(() => this.currentRules)),
       this.currentUser.pipe(map(() => this.currentRules)),
-    ).subscribe((rules) => this.updateAbilityWithUserRules(rules));
+    ).subscribe((rules) => {
+      if (this.rulesKnown) {
+        this.updateAbilityWithUserRules(rules);
+      } else {
+        // While the rules are unknown, a session or user change must not
+        // re-derive the permissive fallback and hand it to the enforcer: that
+        // would store "allowed everything" as the baseline for future
+        // comparisons, so the real rules arriving afterwards look like a
+        // permission change and trigger a full re-sync (or, on the legacy
+        // adapter, destroy the local database).
+        this.applyLastKnownRules();
+      }
+    });
+  }
+
+  /**
+   * Apply the rules of the previous session, while the actual rules could not
+   * be loaded (e.g. the server was unreachable).
+   *
+   * Falling through to "allow everything" here would grant full client-side
+   * permissions on a transient failure - at the moment the app is least able to
+   * notice. Re-using the rules that were last successfully applied for this user
+   * keeps the app usable without escalating access.
+   * If there are none (first session on this device) the permissive fallback
+   * still applies, so that instances which intentionally define no permissions
+   * keep working.
+   */
+  private applyLastKnownRules() {
+    const lastKnownRules = this.permissionEnforcer.getLastEnforcedRules();
+    if (lastKnownRules) {
+      Logging.debug("Applying permission rules of the previous session");
+    }
+
+    // stored rules are already interpolated, so they are applied as they are
+    this.ability.update(
+      lastKnownRules ?? [{ action: "manage", subject: "all" }],
+    );
+    this.ability.initialized = true;
+  }
+
+  /**
+   * Report a failed load of the permission rules, unless the failure is an
+   * expected part of normal operation:
+   *
+   * - 401/403: the session may not read the rules config. Anonymous visitors of
+   *   a public form never can, and an expired session is already handled by the
+   *   database layer (which triggers re-login).
+   * - connectivity: offline, a request timeout or a 5xx from the server.
+   *
+   * Both are transient or by design and would otherwise drown out the failures
+   * that do indicate a problem.
+   */
+  private logRulesLoadFailure(err: any) {
+    const status = err?.status ?? err?.statusCode;
+    if (
+      status === HttpStatusCode.Unauthorized ||
+      status === HttpStatusCode.Forbidden
+    ) {
+      Logging.debug("Permission rules not readable for this session", err);
+      return;
+    }
+    if (isConnectivityError(err)) {
+      Logging.debug("Could not load permission rules (connectivity)", err);
+      return;
+    }
+
+    const error = new Error("Failed to load permission rules", { cause: err });
+    error.name = "PermissionRulesLoadError";
+    Logging.error(error);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {

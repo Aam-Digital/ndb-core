@@ -21,6 +21,16 @@ and - depending on their configured role - may be updated or anonymized as well.
 The logic follows the scenarios shown below:
 ![Cascading delete/anonymize scenarios](https://raw.githubusercontent.com/Aam-Digital/ndb-core/master/doc/images/cascading-delete.png)
 
+The cascade only follows records that reference the anonymized/deleted entity
+through a field with `entityReferenceRole: "composite"`,
+i.e. records that are "part of" it.
+
+It never goes the other way:
+the records that the anonymized entity references itself are always independent
+records and are left untouched (a linked user profile, for example).
+For such a field, `anonymize: "retain-anonymized"` behaves like any other
+datatype without partial anonymization and simply removes the reference.
+
 ## Data Protection & GDPR regarding anonymization / pseudonomyzation
 
 The "anonymize" function is implemented specifically for data protection rules requiring to delete personal data.
