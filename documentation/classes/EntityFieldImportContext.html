@@ -208,7 +208,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="434" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:434</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="426" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:426</a></div>
                             </td>
                         </tr>
 
@@ -285,7 +285,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="443" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:443</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="435" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:435</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -307,7 +307,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="447" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:447</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="439" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:439</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -363,7 +363,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="454" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:454</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="446" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:446</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -385,7 +385,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="458" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:458</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="450" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:450</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -434,7 +434,6 @@
 import { StringDatatype } from &quot;../string/string.datatype&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
-import { EntityActionsService } from &quot;../../entity/entity-actions/entity-actions.service&quot;;
 import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
 import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
@@ -458,7 +457,6 @@ import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot
 @Injectable()
 export class EntityDatatype extends StringDatatype {
   private entityMapper &#x3D; inject(EntityMapperService);
-  private removeService &#x3D; inject(EntityActionsService);
   private schemaService &#x3D; inject(EntitySchemaService);
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
 
@@ -746,7 +744,12 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Recursively calls anonymize on the referenced entity and saves it.
+   * An entity reference points to an independent record, which must not be affected
+   * by anonymizing the record that holds the reference. The reference is removed instead,
+   * as for any other datatype that does not support partial anonymization.
+   *
+   * (this overrides StringDatatype, which would otherwise retain the first character of the id)
+   *
    * @param value
    * @param schemaField
    * @param parent
@@ -755,19 +758,8 @@ export class EntityDatatype extends StringDatatype {
     value,
     schemaField: EntitySchemaField,
     parent,
-  ): Promise&lt;string&gt; {
-    const referencedEntity &#x3D; await this.entityMapper.load(
-      schemaField.additional,
-      value,
-    );
-
-    if (!referencedEntity) {
-      // TODO: remove broken references?
-      return value;
-    }
-
-    await this.removeService.anonymize(referencedEntity);
-    return value;
+  ): Promise&lt;string | undefined&gt; {
+    return undefined;
   }
 
   private async loadRelatedEntitiesToString(

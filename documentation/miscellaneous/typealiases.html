@@ -938,9 +938,11 @@ For example usage check the <a href="../injectables/EntityMapperService.html">En
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Specifies the role of an entity reference where
+                    <div class="io-description"><p>Specifies the role of an entity reference, seen from the entity containing the field, where
    &quot;aggregate&quot; = &quot;has a&quot; relationship where both entities have meaning independent of each other;
-   &quot;composite&quot; = &quot;part of&quot; relationship where the referenced entity should not exist without the referenced entity.</p>
+   &quot;composite&quot; = &quot;part of&quot; relationship where the entity containing this field should not exist
+                 without the referenced entity, so that deleting or anonymizing the referenced
+                 entity cascades to the entity containing this field.</p>
 <p>Default is treated as &quot;aggregate&quot;.</p>
 <p>(role names following the UML association types)</p>
 </div>

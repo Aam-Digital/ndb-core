@@ -611,6 +611,16 @@ export class EntityAnonymizeService extends CascadingEntityAction {
    * @private
    */
   async anonymizeEntity(entity: Entity): Promise&lt;CascadingActionResult&gt; {
+    if (entity.anonymized) {
+      // nothing left to remove; this also terminates the cascade if a cycle of
+      // related records leads back to an entity that has already been processed
+      // (deletion terminates naturally, because the record is gone by then)
+      Logging.debug(&quot;Anonymize for already anonymized entity skipped&quot;, {
+        entityId: entity.getId(),
+      });
+      return new CascadingActionResult();
+    }
+
     if (!entity.getConstructor().hasPII) {
       // entity types that are generally without PII by default retain all fields
       // this should only be called through a cascade action anyway
@@ -659,11 +669,15 @@ export class EntityAnonymizeService extends CascadingEntityAction {
 
     let anonymizedValue;
     if (entity.getSchema().get(key).isArray) {
-      anonymizedValue &#x3D; await Promise.all(
+      const anonymizedValues &#x3D; await Promise.all(
         asArray(entity[key]).map((v) &#x3D;&gt;
           dataType.anonymize(v, entity.getSchema().get(key), entity),
         ),
       );
+      // a datatype without partial anonymization returns nothing for a value.
+      // drop those entries instead of leaving empty slots in the array,
+      // which would be stored as &#x60;null&#x60; values in the database.
+      anonymizedValue &#x3D; anonymizedValues.filter((v) &#x3D;&gt; v !&#x3D;&#x3D; undefined);
     } else {
       anonymizedValue &#x3D; await dataType.anonymize(
         entity[key],
