@@ -6276,6 +6276,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
   userSupportEnabled: false,
   use_indexeddb_adapter: false,
   translationsCdnUrl: &quot;https://aam-digital.github.io/ndb-core/locale&quot;,
+  default_data_source: undefined as DataSourceType | undefined,
   session_type_choice: true,
 }</code>
                     </td>
@@ -6354,6 +6355,18 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
 
   /** CDN URL for loading translation files at runtime. Empty string disables CDN loading. */
   translationsCdnUrl: &quot;https://aam-digital.github.io/ndb-core/locale&quot;,
+
+  /**
+   * Default data source used for all lists in online-only mode (see session_type).
+   * Set to &quot;in-memory&quot; via config.json to load all records of a list upfront,
+   * instead of the default of paging through the database query.
+   * (&quot;paginated&quot; is therefore redundant - it is already the online-only default.)
+   * An explicit &#x60;dataSource&#x60; in a list&#x27;s config takes precedence over this default.
+   *
+   * This has no effect outside of online-only mode: the paginated data source
+   * cannot query the local database, so synced sessions always load records upfront.
+   */
+  default_data_source: undefined as DataSourceType | undefined,
 
   /**
    * Whether users are allowed to choose between synced and online-only mode on the login page.
