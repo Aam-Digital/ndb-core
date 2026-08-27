@@ -22,7 +22,7 @@ function asSingle(entity: Entity | Entity[]): Entity | undefined {
  */
 @NgModule({})
 export class ChangeHistoryModule {
-  static routes = changeHistoryRoutes;
+  static readonly routes = changeHistoryRoutes;
 
   private readonly entityActionsMenu = inject(EntityActionsMenuService);
   private readonly dialog = inject(MatDialog);
