@@ -41,7 +41,7 @@ describe("permission-matrix", () => {
       { subject: "Child", action: "read", conditions: { center: "x" } },
     ]);
 
-    expect(model.rows.length).toBe(1);
+    expect(model.rows).toHaveLength(1);
     expect(model.rows[0].cells.read).toEqual({
       allowed: true,
       conditions: { center: "x" },

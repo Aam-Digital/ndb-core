@@ -233,7 +233,7 @@ describe("RolePermissionsService", () => {
     await service.saveRules("user_app", [{ subject: "Child", action: "read" }]);
 
     const saved = mockEntityMapper.save.mock.calls.map(([e]) => e);
-    expect(saved.length).toBe(2);
+    expect(saved).toHaveLength(2);
     expect(saved[0].getId()).toMatch(/^Config:Permissions:/);
     expect(saved[0].data).toEqual({
       user_app: [{ subject: "all", action: "manage" }],

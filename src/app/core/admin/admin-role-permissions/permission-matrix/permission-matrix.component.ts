@@ -15,6 +15,8 @@ import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
+import { asArray } from "#src/app/utils/asArray";
+
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { describeConditionFragment } from "../../../common-components/entity-form/dynamic-form-validators/permission-condition-validators";
@@ -291,15 +293,13 @@ export class PermissionMatrixComponent {
     }
     return this.inheritedRules().some((rule) => {
       if (rule.inverted) return false;
-      const subjects = Array.isArray(rule.subject)
-        ? rule.subject
-        : [rule.subject];
+      const subjects = asArray(rule.subject);
       // the wildcard row itself is only covered by a default rule that applies
       // to every record type, not by one for a single type
       const matchesSubject =
         subjects.includes("all") ||
         (subject !== "all" && subjects.includes(subject));
-      const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
+      const actions = asArray(rule.action);
       return (
         matchesSubject &&
         (actions.includes(action) || actions.includes("manage"))

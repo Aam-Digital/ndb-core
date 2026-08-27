@@ -53,7 +53,7 @@ describe("PermissionMatrixComponent", () => {
 
   it("renders one row per subject and summarizes conditions as a readable chip", () => {
     const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
-    expect(rows.length).toBe(2);
+    expect(rows).toHaveLength(2);
 
     const text = fixture.nativeElement.textContent;
     expect(text).toContain("Child");
@@ -65,7 +65,7 @@ describe("PermissionMatrixComponent", () => {
     const checkedBoxes = childRow.querySelectorAll(
       "mat-checkbox.mat-mdc-checkbox-checked",
     );
-    expect(checkedBoxes.length).toBe(5);
+    expect(checkedBoxes).toHaveLength(5);
     // the condition is shown as a readable chip next to its checkbox
     const chip = childRow.querySelector(".cell-condition-chip");
     expect(chip).not.toBeNull();
@@ -78,7 +78,7 @@ describe("PermissionMatrixComponent", () => {
 
     const boxes = allRow.querySelectorAll("mat-checkbox");
     // 4 action columns + the manage column, all checked and disabled
-    expect(boxes.length).toBe(5);
+    expect(boxes).toHaveLength(5);
     boxes.forEach((box: HTMLElement) => {
       expect(box.classList).toContain("mat-mdc-checkbox-checked");
       expect(box.classList).toContain("mat-mdc-checkbox-disabled");
@@ -111,7 +111,7 @@ describe("PermissionMatrixComponent", () => {
     expect(emitted[4].rows[2].cells.read).toEqual({ allowed: true });
 
     component.addSubject("Child");
-    expect(emitted.length).toBe(5);
+    expect(emitted).toHaveLength(5);
   });
 
   it("adds a new row with read access only, including the all wildcard row", async () => {
@@ -297,13 +297,13 @@ describe("PermissionMatrixComponent", () => {
 
     mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
     component.openConditionDialog(0, "read");
-    expect(emitted.length).toBe(2);
+    expect(emitted).toHaveLength(2);
 
     // the shared close button closes with an empty string; this must be
     // treated as "cancel", not as removing the condition
     mockDialog.open.mockReturnValue({ afterClosed: () => of("") });
     component.openConditionDialog(0, "read");
-    expect(emitted.length).toBe(2);
+    expect(emitted).toHaveLength(2);
   });
 
   it("keeps a cell's extra properties when its condition is edited via the dialog", () => {

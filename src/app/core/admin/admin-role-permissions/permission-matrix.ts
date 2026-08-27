@@ -1,3 +1,5 @@
+import { asArray } from "#src/app/utils/asArray";
+
 import {
   DatabaseRule,
   EntityActionPermission,
@@ -61,11 +63,10 @@ const MATRIX_ACTIONS: EntityActionPermission[] = [
 function isSupported(rule: DatabaseRule): boolean {
   if (rule.inverted || rule.fields) return false;
 
-  const subjects = Array.isArray(rule.subject) ? rule.subject : [rule.subject];
+  const subjects = asArray(rule.subject);
   if (subjects.some((s) => typeof s !== "string")) return false;
 
-  const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
-  return actions.every((a) =>
+  return asArray(rule.action).every((a) =>
     MATRIX_ACTIONS.includes(a as EntityActionPermission),
   );
 }
@@ -92,12 +93,8 @@ export function rulesToMatrix(rules: DatabaseRule[]): MatrixModel {
       return;
     }
 
-    const subjects = (
-      Array.isArray(rule.subject) ? rule.subject : [rule.subject]
-    ) as string[];
-    const actions = (
-      Array.isArray(rule.action) ? rule.action : [rule.action]
-    ) as EntityActionPermission[];
+    const subjects = asArray(rule.subject) as string[];
+    const actions = asArray(rule.action) as EntityActionPermission[];
     const extra = extractExtra(rule);
 
     for (const subject of subjects) {

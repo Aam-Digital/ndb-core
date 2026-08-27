@@ -31,6 +31,6 @@ describe("EntityTypeSelectComponent", () => {
 
     const filtered = component["optionsSource"]().map((t) => t.ENTITY_TYPE);
     expect(filtered).not.toContain(hidden);
-    expect(filtered.length).toBe(all.length - 1);
+    expect(filtered).toHaveLength(all.length - 1);
   });
 });
