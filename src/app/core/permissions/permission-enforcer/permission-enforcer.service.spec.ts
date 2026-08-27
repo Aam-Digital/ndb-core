@@ -154,11 +154,16 @@ describe("PermissionEnforcerService", () => {
   });
 
   describe("online session (no local database)", () => {
+    let hasLocalDatabaseSpy: Mock;
+
     beforeEach(() => {
-      vi.spyOn(
-        TestBed.inject(DatabaseResolverService),
-        "hasLocalDatabase",
-      ).mockReturnValue(false);
+      hasLocalDatabaseSpy = vi
+        .spyOn(TestBed.inject(DatabaseResolverService), "hasLocalDatabase")
+        .mockReturnValue(false);
+    });
+
+    afterEach(() => {
+      hasLocalDatabaseSpy.mockRestore();
     });
 
     it("should not purge, destroy/reload, or resetSync", async () => {
