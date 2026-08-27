@@ -12,6 +12,7 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 import { ConditionsEditorComponent } from "../../../common-components/conditions-editor/conditions-editor.component";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -40,6 +41,7 @@ export interface PermissionConditionDialogData {
     MatDialogModule,
     MatButtonModule,
     MatButtonToggleModule,
+    MatTooltipModule,
     ConditionsEditorComponent,
     DialogCloseComponent,
   ],
@@ -80,6 +82,10 @@ export class PermissionConditionDialogComponent {
       ? $localize`Records match if any one of the conditions applies ("or" conditions).`
       : $localize`Records match only if all conditions apply ("and" conditions).`,
   );
+
+  /** spelled out on hover, because "Any" / "All" alone are easy to misread */
+  readonly anyTooltip = $localize`A record matches as soon as one of the conditions below applies ("or").`;
+  readonly allTooltip = $localize`A record matches only if every one of the conditions below applies ("and").`;
 
   /**
    * Full "<role> can <action> <entity> only where…" sentence as a single

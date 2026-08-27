@@ -10,6 +10,25 @@
 <mat-dialog-content>
   <p>{{ conditionSentence }}</p>
 
+  <!-- the combinator comes before the conditions it applies to, so the dialog
+       reads as one sentence: "<role> can read <type> only where …
+       [Any|All] of the following conditions match: …" -->
+  <div class="flex-row align-center gap-regular margin-bottom-regular" i18n>
+    <mat-button-toggle-group
+      [value]="combinator()"
+      (change)="combinator.set($event.value)"
+      hideSingleSelectionIndicator
+    >
+      <mat-button-toggle value="any" [matTooltip]="anyTooltip">
+        Any
+      </mat-button-toggle>
+      <mat-button-toggle value="all" [matTooltip]="allTooltip">
+        All
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+    of the following conditions match
+  </div>
+
   <app-conditions-editor
     [conditions]="editorConditions"
     [entityConstructor]="entityConstructor"
@@ -17,20 +36,6 @@
     [showInternalIdField]="true"
     (conditionsChange)="onConditionsChange($event)"
   ></app-conditions-editor>
-
-  <div class="flex-row align-center gap-regular margin-top-regular">
-    <span class="text-secondary" i18n>
-      Records match if this applies to&hellip;
-    </span>
-    <mat-button-toggle-group
-      [value]="combinator()"
-      (change)="combinator.set($event.value)"
-      hideSingleSelectionIndicator
-    >
-      <mat-button-toggle value="any" i18n>Any</mat-button-toggle>
-      <mat-button-toggle value="all" i18n>All</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
