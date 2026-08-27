@@ -25,6 +25,30 @@ const EXPECTED_4XX_STATUSES: number[] = [
 ];
 
 /**
+ * Extract the diagnostic fields of a fetch `Response` into a plain object.
+ *
+ * `Response` keeps its state in internal slots rather than own enumerable
+ * properties, so passing one to the logger (or to `JSON.stringify`) yields an
+ * empty object - the reported event then carries no status at all, which is the
+ * one thing needed to tell e.g. a conflict from a rate limit
+ * (see AAM-DIGITAL-77H, whose `context` reads `[{}]` for every event).
+ */
+export function describeResponse(response: Response | undefined): {
+  status?: number;
+  statusText?: string;
+  responseUrl?: string;
+} {
+  if (!response) {
+    return {};
+  }
+  return {
+    status: response.status,
+    statusText: response.statusText,
+    responseUrl: response.url,
+  };
+}
+
+/**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
@@ -172,7 +196,7 @@ export class RemotePouchDatabase extends PouchDatabase {
       throw new DatabaseException({
         message: "Failed to fetch from DB",
         requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(result),
+        actualResponse: JSON.stringify(describeResponse(result)),
         actualResponseBody: await result?.text(),
       });
     }
@@ -186,9 +210,15 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
         // expired session (401), permission-filtered doc (403) and missing doc (404)
         // are part of normal operation and handled by callers
-        Logging.debug("Failed to fetch from DB with 40X error", result);
+        Logging.debug(
+          "Failed to fetch from DB with 40X error",
+          describeResponse(result),
+        );
       } else {
-        Logging.warn("Failed to fetch from DB with 40X error", result);
+        Logging.warn("Failed to fetch from DB with 40X error", {
+          ...describeResponse(result),
+          requestedUrl: remoteUrl,
+        });
       }
     }
 

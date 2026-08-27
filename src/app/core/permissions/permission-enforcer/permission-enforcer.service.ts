@@ -103,6 +103,30 @@ export class PermissionEnforcerService {
     this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
   }
 
+  /**
+   * The rules that were last successfully applied and enforced for the current
+   * user on this device (see {@link enforcePermissionsOnLocalData}).
+   *
+   * `undefined` if there is no session or no rules have been enforced yet.
+   */
+  getLastEnforcedRules(): DatabaseRule[] | undefined {
+    if (!this.sessionInfo.value) {
+      return undefined;
+    }
+
+    const storedRules = this.localStorage.getItem(this.getUserStorageKey());
+    if (!storedRules) {
+      return undefined;
+    }
+
+    try {
+      return JSON.parse(storedRules);
+    } catch (err) {
+      Logging.debug("Could not parse stored permission rules", err);
+      return undefined;
+    }
+  }
+
   private userRulesChanged(newRules: string): boolean {
     const storedRules = this.localStorage.getItem(this.getUserStorageKey());
     return storedRules !== newRules;
