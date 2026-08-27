@@ -93,18 +93,6 @@ export class DatabaseResolverService {
   }
 
   /**
-   * Whether the current session has any local database at all (`synced` or
-   * `local`) that could hold stale/inaccessible data worth checking.
-   *
-   * `online` sessions talk directly to the remote CouchDB without any local
-   * storage - there is nothing to purge or invalidate client-side, and the
-   * server already enforces permissions live on every request.
-   */
-  hasLocalDatabase(): boolean {
-    return this.sessionType !== SessionType.online;
-  }
-
-  /**
    * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
    */

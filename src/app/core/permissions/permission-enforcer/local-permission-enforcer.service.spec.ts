@@ -1,6 +1,7 @@
 import type { Mock } from "vitest";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
+import { LocalPermissionEnforcerService } from "./local-permission-enforcer.service";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseRule } from "../permission-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -17,8 +18,8 @@ import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
-describe("PermissionEnforcerService", () => {
-  let service: PermissionEnforcerService;
+describe("LocalPermissionEnforcerService", () => {
+  let service: LocalPermissionEnforcerService;
   const userRules: DatabaseRule[] = [
     { subject: "all", action: "manage" },
     { subject: TestEntity.ENTITY_TYPE, action: "read", inverted: true },
@@ -41,9 +42,12 @@ describe("PermissionEnforcerService", () => {
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
-      providers: [{ provide: LOCATION_TOKEN, useValue: mockLocation }],
+      providers: [
+        LocalPermissionEnforcerService,
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+      ],
     });
-    service = TestBed.inject(PermissionEnforcerService);
+    service = TestBed.inject(LocalPermissionEnforcerService);
 
     entityMapper = TestBed.inject(EntityMapperService);
     (entityMapper as MockEntityMapperService).clearAllData();
@@ -151,63 +155,6 @@ describe("PermissionEnforcerService", () => {
     } finally {
       vi.useRealTimers();
     }
-  });
-
-  describe("online session (no local database)", () => {
-    let hasLocalDatabaseSpy: Mock;
-
-    beforeEach(() => {
-      hasLocalDatabaseSpy = vi
-        .spyOn(TestBed.inject(DatabaseResolverService), "hasLocalDatabase")
-        .mockReturnValue(false);
-    });
-
-    afterEach(() => {
-      hasLocalDatabaseSpy.mockRestore();
-    });
-
-    it("should not purge, destroy/reload, or resetSync", async () => {
-      vi.useFakeTimers();
-      try {
-        entityMapper.save(new TestEntity());
-        await vi.advanceTimersByTimeAsync(0);
-
-        // clear calls from the initial (pre-mock) enforcement in the outer
-        // beforeEach, so the assertions below only reflect the call below
-        mockDb.purge.mockClear();
-        destroySpy.mockClear();
-        mockLocation.reload.mockClear();
-        resetSyncSpy.mockClear();
-
-        updateRulesAndTriggerEnforcer(userRules);
-        await vi.advanceTimersByTimeAsync(0);
-
-        expect(mockDb.purge).not.toHaveBeenCalled();
-        expect(destroySpy).not.toHaveBeenCalled();
-        expect(mockLocation.reload).not.toHaveBeenCalled();
-        expect(resetSyncSpy).not.toHaveBeenCalled();
-      } finally {
-        vi.useRealTimers();
-      }
-    });
-
-    it("should not persist enforced rules to local storage", async () => {
-      // clear whatever the initial (pre-mock) enforcement in the outer
-      // beforeEach already wrote, so this only reflects the call below
-      window.localStorage.removeItem(
-        TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
-      );
-
-      vi.useFakeTimers();
-      try {
-        updateRulesAndTriggerEnforcer(userRules);
-        await vi.advanceTimersByTimeAsync(0);
-
-        expect(service.getLastEnforcedRules()).toBeUndefined();
-      } finally {
-        vi.useRealTimers();
-      }
-    });
   });
 
   describe("indexeddb adapter (purge supported)", () => {
