@@ -1,7 +1,6 @@
 import { Routes } from "@angular/router";
 import { UserRoleGuard } from "../../core/permissions/permission-guard/user-role.guard";
 import { ADMIN_APP_ROLE } from "../../core/permissions/permission-types";
-import { ChangeLogComponent } from "./change-log/change-log.component";
 
 /**
  * Routes of the change log, mounted by the app at `/changelog`.
@@ -14,7 +13,13 @@ import { ChangeLogComponent } from "./change-log/change-log.component";
 export const changeHistoryRoutes: Routes = [
   {
     path: "",
-    component: ChangeLogComponent,
+    // loaded on demand: this module itself stays eager, because its constructor
+    // registers the per-record history action for every entity details view,
+    // but the log is a rarely visited admin screen and need not be bundled with it
+    loadComponent: () =>
+      import("./change-log/change-log.component").then(
+        (c) => c.ChangeLogComponent,
+      ),
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: [ADMIN_APP_ROLE],

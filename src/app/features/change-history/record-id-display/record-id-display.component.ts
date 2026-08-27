@@ -38,16 +38,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
       >
     }
   `,
-  styles: [
-    `
-      .record-id {
-        display: inline-block;
-        max-width: 100%;
-        font-size: 85%;
-        opacity: 0.75;
-      }
-    `,
-  ],
+  styleUrl: "./record-id-display.component.scss",
 })
 export class RecordIdDisplayComponent {
   private readonly clipboard = inject(Clipboard);
