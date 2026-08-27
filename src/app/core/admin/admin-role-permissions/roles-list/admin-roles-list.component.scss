@@ -1,9 +1,11 @@
 @use "mixins/list-table";
 
+// same table styling as the user accounts list
 @include list-table.container-and-table;
 @include list-table.footer;
 @include list-table.clickable-row;
 
-:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
-  justify-content: flex-start;
+.protected-role-icon {
+  font-size: 11px;
+  opacity: 0.7;
 }
