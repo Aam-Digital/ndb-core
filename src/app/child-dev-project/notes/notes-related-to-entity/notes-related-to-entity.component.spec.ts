@@ -8,6 +8,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { FilterService } from "../../../core/filter/filter.service";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -37,6 +38,23 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("should not filter out notes linked to a non-Child entity through relatedEntities", async () => {
+    // the loader returns notes related through any of the linking properties,
+    // so the display filter must not narrow this down to a single property (#4330)
+    const relation = new ChildSchoolRelation();
+    fixture.componentRef.setInput("entity", relation);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const relatedNote = new Note();
+    relatedNote.relatedEntities = [relation.getId()];
+    const matchesFilter = TestBed.inject(FilterService).getFilterPredicate(
+      component.filterObj(),
+    );
+
+    expect(matchesFilter(relatedNote)).toBe(true);
+  });
+
   it("should use the attendance color function when passing a child", () => {
     const note = new Note();
     vi.spyOn(note, "getColorForId");
@@ -53,7 +71,6 @@ describe("NotesRelatedToEntityComponent", () => {
     let entity: Entity = createEntityOfType("Child");
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput("filter", undefined);
-    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
     let note = component.createNewRecordFactory()();
@@ -63,7 +80,6 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = createEntityOfType("School");
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput("filter", undefined);
-    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
@@ -73,7 +89,6 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = createEntityOfType("User");
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput("filter", undefined);
-    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
@@ -85,7 +100,6 @@ describe("NotesRelatedToEntityComponent", () => {
     entity["schoolId"] = `School:someSchool`;
     fixture.componentRef.setInput("entity", entity);
     fixture.componentRef.setInput("filter", undefined);
-    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
@@ -100,7 +114,6 @@ describe("NotesRelatedToEntityComponent", () => {
     relation.childId = ["Child:1", "Child:2"] as any; // assume entity config was overwritten to hold array
 
     fixture.componentRef.setInput("entity", relation);
-    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -143,7 +156,6 @@ describe("NotesRelatedToEntityComponent", () => {
       EntityWithRelations.ENTITY_TYPE,
     ];
     fixture.componentRef.setInput("entity", customEntity);
-    fixture.componentRef.setInput("property", undefined);
     fixture.detectChanges();
 
     const newNote = component.createNewRecordFactory()();
