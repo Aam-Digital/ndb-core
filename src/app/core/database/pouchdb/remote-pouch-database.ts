@@ -140,8 +140,10 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     let result: Response;
     try {
+      console.log("requesting", remoteUrl, opts);
       result = await this.fetchWithTimeout(remoteUrl, opts);
     } catch (err) {
+      console.log("tried requesting", remoteUrl, opts);
       Logging.debug("Failed initial fetch from DB", err);
       Logging.debug("navigator.onLine", navigator.onLine);
       this.showConnectionIssueAlert();
