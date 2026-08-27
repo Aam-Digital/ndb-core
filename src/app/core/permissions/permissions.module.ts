@@ -24,9 +24,9 @@ import { serviceProvider } from "../../utils/utils";
     LocalPermissionEnforcerService,
     NoopPermissionEnforcerService,
     serviceProvider(PermissionEnforcerService, (injector: Injector) =>
+      // No local data to purge in online-mode
       environment.session_type === SessionType.online
-        ? // No local data to purge
-          injector.get(NoopPermissionEnforcerService)
+        ? injector.get(NoopPermissionEnforcerService)
         : injector.get(LocalPermissionEnforcerService),
     ),
   ],
