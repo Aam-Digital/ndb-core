@@ -93,7 +93,9 @@ export class PaginatedDataSource<
     this.bookmark = undefined;
     this.reachedEnd = false;
     if (super.paginator) {
+      // setting page index manually to not trigger the change event which would result in duplicate fetch
       super.paginator.pageIndex = 0;
+      this.page.index = 0;
       this.setRecords();
     }
   }
