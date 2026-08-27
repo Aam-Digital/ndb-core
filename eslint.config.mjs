@@ -135,7 +135,7 @@ export default defineConfig([
     // Test host components are fixtures, not user-facing UI. The Angular 22
     // migration added an explicit change detection strategy to these to preserve
     // their pre-v22 behaviour, which would otherwise trip the OnPush rule.
-    files: ["**/*.spec.ts", "**/*.stories.ts"],
+    files: ["src/**/*.spec.ts", "src/**/*.stories.ts"],
     rules: {
       "@angular-eslint/prefer-on-push-component-change-detection": "off",
     },
