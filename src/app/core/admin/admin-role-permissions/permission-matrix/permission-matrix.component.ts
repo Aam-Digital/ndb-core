@@ -32,8 +32,9 @@ import {
   DatabaseRule,
   DEFAULT_SECTION_KEY,
   EntityActionPermission,
-  RESERVED_RULE_CONFIG_KEYS,
+  inheritsDefaultRules,
 } from "../../../permissions/permission-types";
+import { DEFAULT_ROLE } from "../../../permissions/reserved-roles";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
 import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
 
@@ -195,7 +196,7 @@ export class PermissionMatrixComponent {
       row,
       modelIndex: -1,
       isDefaultRow: true,
-      label: $localize`:Default permissions row label:Default`,
+      label: this.defaultRole.label,
       icon: undefined,
       isInternal: false,
       conditionsEditable: false,
@@ -217,7 +218,7 @@ export class PermissionMatrixComponent {
       editable: false,
       hasCondition: false,
       summary: "",
-      lockTooltip: $localize`:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the "Default" role.`,
+      lockTooltip: $localize`:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the "${this.defaultRole.label}" role.`,
     };
   }
 
@@ -269,7 +270,7 @@ export class PermissionMatrixComponent {
       case "wildcard":
         return $localize`Already granted by the "All record types" row of this role.`;
       case "default":
-        return $localize`Already granted to every logged-in user by the "Default" role, so it cannot be revoked for a single role here.`;
+        return $localize`Already granted to every logged-in user by the "${this.defaultRole.label}" role, so it cannot be revoked for a single role here.`;
     }
   }
 
@@ -323,18 +324,18 @@ export class PermissionMatrixComponent {
 
   /**
    * Whether users of this role also receive the shared "_default" rules.
-   * False for the reserved roles: "_default" cannot inherit from itself and
-   * "_public" applies to visitors who are not logged in, who never receive the
-   * "_default" rules (see AbilityService.getRulesForUser). Also drives the note
-   * below the matrix, which must not appear on those two roles.
+   * Also drives the note below the matrix, which must not appear on roles
+   * that do not inherit them.
    */
-  readonly inheritsFromDefaultRole = computed(
-    () => !RESERVED_RULE_CONFIG_KEYS.includes(this.roleName()),
+  readonly inheritsFromDefaultRole = computed(() =>
+    inheritsDefaultRules(this.roleName()),
   );
 
-  /** the "_default" role, named and linked in the note below the matrix */
-  readonly defaultRoleName = DEFAULT_SECTION_KEY;
-  readonly defaultRoleLink = [ROLES_ADMIN_ROUTE, DEFAULT_SECTION_KEY];
+  /** name, description and icon of the "_default" role, shared with the other permission views */
+  readonly defaultRole = DEFAULT_ROLE;
+
+  /** details link of the "_default" role, named in the note below the matrix */
+  readonly defaultRoleLink = [ROLES_ADMIN_ROUTE, DEFAULT_ROLE.key];
 
   /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */
   private describeConditions(conditions: any, subject: string): string {

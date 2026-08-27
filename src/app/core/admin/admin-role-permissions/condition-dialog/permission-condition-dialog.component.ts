@@ -19,6 +19,7 @@ import { DialogCloseComponent } from "../../../common-components/dialog-close/di
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { EntityActionPermission } from "../../../permissions/permission-types";
+import { roleDisplayName } from "../../../permissions/reserved-roles";
 
 export interface PermissionConditionDialogData {
   roleName: string;
@@ -83,10 +84,6 @@ export class PermissionConditionDialogComponent {
       : $localize`Records match only if all conditions apply ("and" conditions).`,
   );
 
-  /** spelled out on hover, because "Any" / "All" alone are easy to misread */
-  readonly anyTooltip = $localize`A record matches as soon as one of the conditions below applies ("or").`;
-  readonly allTooltip = $localize`A record matches only if every one of the conditions below applies ("and").`;
-
   /**
    * Full "<role> can <action> <entity> only where…" sentence as a single
    * localized message per action, so translators can reorder role/entity.
@@ -94,7 +91,8 @@ export class PermissionConditionDialogComponent {
   readonly conditionSentence: string = this.buildConditionSentence();
 
   private buildConditionSentence(): string {
-    const role = this.data.roleName;
+    // reserved roles are referred to by their readable name (e.g. "Default")
+    const role = roleDisplayName(this.data.roleName);
     const entity = this.entityLabel;
     switch (this.data.action) {
       case "read":

@@ -13,20 +13,30 @@
   <!-- the combinator comes before the conditions it applies to, so the dialog
        reads as one sentence: "<role> can read <type> only where …
        [Any|All] of the following conditions match: …" -->
-  <div class="flex-row align-center gap-regular margin-bottom-regular" i18n>
+  <div class="flex-row align-center gap-regular margin-bottom-regular">
     <mat-button-toggle-group
       [value]="combinator()"
       (change)="combinator.set($event.value)"
       hideSingleSelectionIndicator
     >
-      <mat-button-toggle value="any" [matTooltip]="anyTooltip">
+      <mat-button-toggle
+        value="any"
+        matTooltip='A record matches as soon as one of the conditions below applies ("or").'
+        i18n-matTooltip
+        i18n
+      >
         Any
       </mat-button-toggle>
-      <mat-button-toggle value="all" [matTooltip]="allTooltip">
+      <mat-button-toggle
+        value="all"
+        matTooltip='A record matches only if every one of the conditions below applies ("and").'
+        i18n-matTooltip
+        i18n
+      >
         All
       </mat-button-toggle>
     </mat-button-toggle-group>
-    of the following conditions match
+    <span i18n>of the following conditions match</span>
   </div>
 
   <app-conditions-editor

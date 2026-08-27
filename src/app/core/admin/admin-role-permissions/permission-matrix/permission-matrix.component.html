@@ -19,12 +19,12 @@
           @if (v.isDefaultRow) {
             <div class="flex-row align-center gap-regular">
               <div class="wildcard-badge">
-                <fa-icon icon="lock"></fa-icon>
+                <fa-icon [icon]="defaultRole.icon"></fa-icon>
               </div>
               <div>
                 <div>{{ v.label }}</div>
-                <div class="text-secondary wildcard-subtitle" i18n>
-                  applies to any logged-in user, in addition to their roles
+                <div class="text-secondary wildcard-subtitle">
+                  {{ defaultRole.appliesTo }}
                 </div>
               </div>
             </div>
@@ -264,7 +264,7 @@
   @if (inheritsFromDefaultRole()) {
     <div class="table-footer-note text-secondary" i18n>
       Logged-in users also always have the permissions defined in the
-      <a [routerLink]="defaultRoleLink">{{ defaultRoleName }}</a> role.
+      <a [routerLink]="defaultRoleLink">{{ defaultRole.key }}</a> role.
     </div>
   }
 </div>

@@ -76,11 +76,12 @@
               other {{{ role.rules.length }} rules}
             }
           </span>
-        } @else if (role.name === publicRole || role.name === defaultRole) {
+        } @else if (role.isVirtual) {
           <span class="text-secondary" i18n>No permissions defined</span>
         } @else {
           <span class="text-secondary" i18n>
-            No permissions defined, falls back to the base role
+            No permissions defined, falls back to the "{{ defaultRole.label }}"
+            role
           </span>
         }
       </td>

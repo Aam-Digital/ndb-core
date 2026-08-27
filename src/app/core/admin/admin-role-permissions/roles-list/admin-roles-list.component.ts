@@ -18,10 +18,7 @@ import { firstValueFrom } from "rxjs";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { Logging } from "../../../logging/logging.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
-import {
-  DEFAULT_SECTION_KEY,
-  PUBLIC_SECTION_KEY,
-} from "../../../permissions/permission-types";
+import { DEFAULT_ROLE } from "../../../permissions/reserved-roles";
 import {
   RolePermissionsService,
   RoleWithPermissions,
@@ -64,8 +61,8 @@ export class AdminRolesListComponent implements OnInit {
 
   readonly displayedColumns = ["name", "description", "permissions"];
 
-  readonly publicRole = PUBLIC_SECTION_KEY;
-  readonly defaultRole = DEFAULT_SECTION_KEY;
+  /** name and description of the "_default" role, which roles without own rules fall back to */
+  readonly defaultRole = DEFAULT_ROLE;
 
   /** whether the user may create/delete roles in the authentication server (reactive) */
   readonly canManageRoles = this.rolePermissionsService.canManageRoles;

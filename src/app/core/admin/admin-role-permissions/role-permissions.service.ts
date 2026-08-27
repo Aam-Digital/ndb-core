@@ -11,13 +11,11 @@ import { SessionSubject } from "../../session/auth/session-info";
 import {
   DatabaseRule,
   DatabaseRules,
-  DEFAULT_SECTION_KEY,
-  LEGACY_DEFAULT_KEY,
-  LEGACY_PUBLIC_KEY,
-  PUBLIC_SECTION_KEY,
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from "../../permissions/permission-types";
+import { migrateLegacySectionKeys } from "../../permissions/permissions-config-migration";
+import { RESERVED_ROLES } from "../../permissions/reserved-roles";
 import { Role } from "../../user/user-admin-service/user-account";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 
@@ -123,28 +121,20 @@ export class RolePermissionsService {
    * followed by all other config keys and remaining realm roles.
    */
   async loadRoles(): Promise<RoleWithPermissions[]> {
-    const rules: DatabaseRules =
-      (await this.loadPermissionsConfig()).data ?? {};
+    const rules: DatabaseRules = migrateLegacySectionKeys(
+      (await this.loadPermissionsConfig()).data ?? {},
+    );
     const keycloakRoles: Role[] = await firstValueFrom(
       this.userAdminService.getAllRoles().pipe(catchError(() => of([]))),
     );
 
-    const roles: RoleWithPermissions[] = [
-      {
-        name: DEFAULT_SECTION_KEY,
-        isVirtual: true,
-        isProtected: true,
-        description: $localize`Base permissions that apply to every logged-in user, combined with their other roles`,
-        rules: rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY],
-      },
-      {
-        name: PUBLIC_SECTION_KEY,
-        isVirtual: true,
-        isProtected: true,
-        description: $localize`Permissions that apply before login (e.g. public registration forms)`,
-        rules: rules[PUBLIC_SECTION_KEY] ?? rules[LEGACY_PUBLIC_KEY],
-      },
-    ];
+    const roles: RoleWithPermissions[] = RESERVED_ROLES.map((reservedRole) => ({
+      name: reservedRole.key,
+      isVirtual: true,
+      isProtected: true,
+      description: reservedRole.description,
+      rules: rules[reservedRole.key],
+    }));
 
     for (const key of Object.keys(rules)) {
       if (isReservedRuleConfigKey(key)) continue;
