@@ -391,7 +391,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:58</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:82</a></div>
                             </td>
                         </tr>
 
@@ -502,7 +502,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:41</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -800,8 +800,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="319"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:319</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="349"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:349</a></div>
                         </td>
                     </tr>
 
@@ -849,7 +849,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:76</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:100</a></code>
 </div>
                         </td>
                     </tr>
@@ -949,7 +949,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:325</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:355</a></code>
 </div>
                         </td>
                     </tr>
@@ -1026,7 +1026,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:348</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:378</a></code>
 </div>
                         </td>
                     </tr>
@@ -1082,7 +1082,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:217</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:247</a></code>
 </div>
                         </td>
                     </tr>
@@ -2639,6 +2639,30 @@ const EXPECTED_4XX_STATUSES: number[] &#x3D; [
 ];
 
 /**
+ * Extract the diagnostic fields of a fetch &#x60;Response&#x60; into a plain object.
+ *
+ * &#x60;Response&#x60; keeps its state in internal slots rather than own enumerable
+ * properties, so passing one to the logger (or to &#x60;JSON.stringify&#x60;) yields an
+ * empty object - the reported event then carries no status at all, which is the
+ * one thing needed to tell e.g. a conflict from a rate limit
+ * (see AAM-DIGITAL-77H, whose &#x60;context&#x60; reads &#x60;[{}]&#x60; for every event).
+ */
+export function describeResponse(response: Response | undefined): {
+  status?: number;
+  statusText?: string;
+  responseUrl?: string;
+} {
+  if (!response) {
+    return {};
+  }
+  return {
+    status: response.status,
+    statusText: response.statusText,
+    responseUrl: response.url,
+  };
+}
+
+/**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
@@ -2784,7 +2808,7 @@ export class RemotePouchDatabase extends PouchDatabase {
       throw new DatabaseException({
         message: &quot;Failed to fetch from DB&quot;,
         requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(result),
+        actualResponse: JSON.stringify(describeResponse(result)),
         actualResponseBody: await result?.text(),
       });
     }
@@ -2798,9 +2822,15 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
         // expired session (401), permission-filtered doc (403) and missing doc (404)
         // are part of normal operation and handled by callers
-        Logging.debug(&quot;Failed to fetch from DB with 40X error&quot;, result);
+        Logging.debug(
+          &quot;Failed to fetch from DB with 40X error&quot;,
+          describeResponse(result),
+        );
       } else {
-        Logging.warn(&quot;Failed to fetch from DB with 40X error&quot;, result);
+        Logging.warn(&quot;Failed to fetch from DB with 40X error&quot;, {
+          ...describeResponse(result),
+          requestedUrl: remoteUrl,
+        });
       }
     }
 

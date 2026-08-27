@@ -296,6 +296,9 @@
                             <a href="#describeConditionFragment" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeConditionFragment</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#describeResponse" title="src/app/core/database/pouchdb/remote-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeResponse</b>&nbsp;&nbsp;&nbsp;(src/.../remote-pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#descriptionForAgeValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/age-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>descriptionForAgeValidator</b>&nbsp;&nbsp;&nbsp;(src/.../age-validators.ts)</span></a>
                         </li>
                         <li>
@@ -9524,6 +9527,73 @@ reported as it is, anything else is wrapped in a <a href="../classes/LoggedError
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Error</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/remote-pouch-database.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="describeResponse"></a>
+                    <span class="name">
+                        <span ><b>describeResponse</b></span>
+                        <a href="#describeResponse"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>describeResponse(response)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Extract the diagnostic fields of a fetch <code>Response</code> into a plain object.</p>
+<p><code>Response</code> keeps its state in internal slots rather than own enumerable
+properties, so passing one to the logger (or to <code>JSON.stringify</code>) yields an
+empty object - the reported event then carries no status at all, which is the
+one thing needed to tell e.g. a conflict from a rate limit
+(see AAM-DIGITAL-77H, whose <code>context</code> reads <code>[{}]</code> for every event).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>response</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{ status?: number; statusText?: string; responseUrl?: string }</code>
 
                         </div>
                             <div class="io-description">
