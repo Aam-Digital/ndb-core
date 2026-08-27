@@ -223,7 +223,7 @@ The rules defined in &#39;_public&#39; (legacy &#39;public&#39;) are used if a u
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/permissions/permission-types.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/permission-types.ts:92</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -270,7 +270,7 @@ The rules defined in &#39;_public&#39; (legacy &#39;public&#39;) are used if a u
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/permissions/permission-types.ts:68</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/permissions/permission-types.ts:90</a></div>
                                 </td>
                             </tr>
 
@@ -314,7 +314,7 @@ The rules defined in &#39;_public&#39; (legacy &#39;public&#39;) are used if a u
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/permissions/permission-types.ts:67</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/permissions/permission-types.ts:89</a></div>
                                 </td>
                             </tr>
 
@@ -358,7 +358,7 @@ The rules defined in &#39;_public&#39; (legacy &#39;public&#39;) are used if a u
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/permissions/permission-types.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/permission-types.ts:92</a></div>
                                 </td>
                             </tr>
 
@@ -402,7 +402,7 @@ The rules defined in &#39;_public&#39; (legacy &#39;public&#39;) are used if a u
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/permissions/permission-types.ts:69</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/permissions/permission-types.ts:91</a></div>
                                 </td>
                             </tr>
 
@@ -464,6 +464,9 @@ export const RESERVED_ROLE_PREFIX &#x3D; &quot;_&quot;;
 /**
  * All section keys (current and legacy) that must never be resolved as if they
  * were user role names, even if a realm role with the same name exists.
+ *
+ * A new key added here does not automatically stop inheriting the &quot;_default&quot;
+ * rules; see {@link inheritsDefaultRules}.
  */
 export const RESERVED_RULE_CONFIG_KEYS: string[] &#x3D; [
   DEFAULT_SECTION_KEY,
@@ -471,6 +474,25 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] &#x3D; [
   LEGACY_DEFAULT_KEY,
   LEGACY_PUBLIC_KEY,
 ];
+
+/**
+ * Whether users of the given role also receive the shared &quot;_default&quot; rules.
+ * False for &quot;_default&quot;, which cannot inherit from itself, and for &quot;_public&quot;,
+ * which applies to visitors who are not logged in and never get the &quot;_default&quot;
+ * rules (see AbilityService.getRulesForUser).
+ *
+ * The excluded keys are listed explicitly instead of taken from
+ * {@link RESERVED_RULE_CONFIG_KEYS}, because a future reserved role that
+ * applies to logged-in users would inherit the &quot;_default&quot; rules as usual.
+ */
+export function inheritsDefaultRules(roleName: string): boolean {
+  return ![
+    DEFAULT_SECTION_KEY,
+    PUBLIC_SECTION_KEY,
+    LEGACY_DEFAULT_KEY,
+    LEGACY_PUBLIC_KEY,
+  ].includes(roleName);
+}
 
 /**
  * The format of the JSON object which defines the rules for each role.

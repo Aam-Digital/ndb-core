@@ -441,8 +441,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:62</a></div>
                         </td>
                     </tr>
 
@@ -516,8 +516,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="32"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:32</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -583,6 +583,7 @@ import {
   LEGACY_PUBLIC_KEY,
   PUBLIC_SECTION_KEY,
 } from &quot;../../core/permissions/permission-types&quot;;
+import { migrateLegacySectionKeys } from &quot;../../core/permissions/permissions-config-migration&quot;;
 import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
 
@@ -640,8 +641,7 @@ export class PublicFormPermissionService {
         return false; // No permissions config means &quot;public&quot; users have no access
       }
       const publicRules &#x3D;
-        permissionsConfig.data[PUBLIC_SECTION_KEY] ??
-        permissionsConfig.data[LEGACY_PUBLIC_KEY] ??
+        migrateLegacySectionKeys(permissionsConfig.data)[PUBLIC_SECTION_KEY] ??
         [];
       return publicRules.some(
         (rule) &#x3D;&gt;
@@ -770,7 +770,10 @@ export class PublicFormPermissionService {
     }
 
     // migrate any legacy section key to the underscore-prefixed name so we
-    // never write both spellings (the read path prefers the new key)
+    // never write both spellings (the read path prefers the new key).
+    // Kept inline instead of using migrateLegacySectionKeys(): this is a write
+    // path, so it also removes the legacy key and must not touch any section
+    // other than the one this form needs.
     const migratedLegacyPublic &#x3D; LEGACY_PUBLIC_KEY in permissionsConfig.data;
     if (
       permissionsConfig.data[LEGACY_PUBLIC_KEY] &amp;&amp;

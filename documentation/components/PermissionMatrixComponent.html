@@ -1,0 +1,2743 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  PermissionMatrixComponent</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Display a role&#39;s permission rules as a matrix of
+record types (rows) and actions (columns).
+Conditions restricting an action are shown as a readable summary under the record type.</p>
+
+    </p>
+
+
+
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+            <tr>
+                <td class="col-md-3">changeDetection</td>
+                <td class="col-md-9"><code>ChangeDetectionStrategy.OnPush</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-permission-matrix</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                        <div>    <code>MatTableModule</code>
+</div>
+                        <div>    <code>MatCheckboxModule</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>        <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/HintBoxComponent.html" target="_self" >HintBoxComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/EntityTypeSelectComponent.html" target="_self" >EntityTypeSelectComponent</a></code>
+</div>
+                        <div>        <code><a href="https://angular.dev/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./permission-matrix.component.scss</code></td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./permission-matrix.component.html</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">styleUrl</td>
+                <td class="col-md-9"><code>./permission-matrix.component.scss</code></td>
+            </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/AdminRoleDetailsComponent.html" target="_self" >AdminRoleDetailsComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatTableModule</code>
+                                </li>
+                                <li>
+                                        <code>MatCheckboxModule</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/IconComponent.html" target="_self" >FaIconComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/HintBoxComponent.html" target="_self" >HintBoxComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityTypeSelectComponent.html" target="_self" >EntityTypeSelectComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="https://angular.dev/api/router/RouterLink" target="_blank" >RouterLink</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#addPickerOpen" >addPickerOpen</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#addSelectVisible" >addSelectVisible</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#crudActions" >crudActions</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#crudColumns" >crudColumns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#defaultRole" >defaultRole</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#defaultRoleLink" >defaultRoleLink</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#displayedColumns" >displayedColumns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#existingSubjects" >existingSubjects</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasAllSubject" >hasAllSubject</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#inheritsFromDefaultRole" >inheritsFromDefaultRole</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#manageColLabel" >manageColLabel</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#viewRows" >viewRows</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#addSubject" >addSubject</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#openConditionDialog" >openConditionDialog</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#removeCondition" >removeCondition</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#removeRow" >removeRow</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#setCellAllowed" >setCellAllowed</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#setManage" >setManage</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#editable" >editable</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#inheritedRules" >inheritedRules</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#model" >model</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">I</span><a href="#roleName" >roleName</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Outputs</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">O</span><a href="#modelChange" >modelChange</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+</section>
+
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="editable"></a>
+                        <b>editable</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:113</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="inheritedRules"></a>
+                        <b>inheritedRules</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Database.html" target="_self" >DatabaseRule[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="121" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:121</a></div>
+                            </td>
+                        </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <div class="io-description"><p>Rules of the shared &quot;_default&quot; role, which apply to every logged-in user on
+top of their own roles. Shown as already granted here, because revoking them
+for a single role would require an inverted rule.</p>
+</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="model"></a>
+                        <b>model</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/MatrixModel.html" target="_self" >MatrixModel</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Required : </i>&nbsp;<b>true</b>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:112</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="roleName"></a>
+                        <b>roleName</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;&quot;</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:114</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-outputs">
+    <h3 id="outputs">Outputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="modelChange"></a>
+                        <b>modelChange</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/MatrixModel.html" target="_self" >MatrixModel</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="122" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:122</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addSubject"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>addSubject</b></span>
+                        <a href="#addSubject"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>addSubject(selected: string | string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="554"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:554</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>selected</td>
+                                            <td>
+                                                        <code>string | string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openConditionDialog"></a>
+                    <span class="name">
+                        <span ><b>openConditionDialog</b></span>
+                        <a href="#openConditionDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>openConditionDialog(rowIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, action: <a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self">EntityActionPermission</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="513"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:513</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rowIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeCondition"></a>
+                    <span class="name">
+                        <span ><b>removeCondition</b></span>
+                        <a href="#removeCondition"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeCondition(rowIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, action: <a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self">EntityActionPermission</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="492"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:492</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>clear the condition of an action, keeping the action itself allowed</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rowIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeRow"></a>
+                    <span class="name">
+                        <span ><b>removeRow</b></span>
+                        <a href="#removeRow"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeRow(rowIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="487"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:487</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rowIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setCellAllowed"></a>
+                    <span class="name">
+                        <span ><b>setCellAllowed</b></span>
+                        <a href="#setCellAllowed"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setCellAllowed(rowIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, action: <a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self">EntityActionPermission</a>, allowed: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="444"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:444</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rowIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allowed</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setManage"></a>
+                    <span class="name">
+                        <span ><b>setManage</b></span>
+                        <a href="#setManage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setManage(rowIndex: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, checked: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="465"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:465</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>&quot;Manage (all)&quot; is the CASL wildcard action: it grants every action
+(including any beyond the four listed). It is a permission of its own,
+not derived from the individual action checkboxes, so toggling it does
+not add or remove the individual action rules.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rowIndex</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>checked</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addPickerOpen"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>addPickerOpen</b></span>
+                        <a href="#addPickerOpen"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="544" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:544</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>whether the record-type picker is shown instead of the &quot;Add Permission&quot; button</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addSelectVisible"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>addSelectVisible</b></span>
+                        <a href="#addSelectVisible"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(true)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="552" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:552</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Toggled off-then-on after each selection to force Angular to destroy and
+re-create the record-type dropdown. <code>app-entity-type-select</code> keeps its
+chosen value in internal state that rebinding <code>[value]</code> does not clear,
+so a remount is the reliable way to reset it to empty for the next add.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="crudActions"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>crudActions</b></span>
+                        <a href="#crudActions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#CrudAction" target="_self" >CrudAction[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.crudColumns.map((c) &#x3D;&gt; c.key)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="131" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:131</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="crudColumns"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>crudColumns</b></span>
+                        <a href="#crudColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#CrudAction" target="_self" >{ key: CrudAction; label: string }[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+    { key: &quot;read&quot;, label: $localize&#x60;Read&#x60; },
+    { key: &quot;create&quot;, label: $localize&#x60;Create&#x60; },
+    { key: &quot;update&quot;, label: $localize&#x60;Update&#x60; },
+    { key: &quot;delete&quot;, label: $localize&#x60;Delete&#x60; },
+  ]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:125</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>CRUD columns with their headers baked in, so the template needs no per-cell method call</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="defaultRole"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>defaultRole</b></span>
+                        <a href="#defaultRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>DEFAULT_ROLE</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="368" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:368</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>name, description and icon of the &quot;_default&quot; role, shared with the other permission views</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="defaultRoleLink"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>defaultRoleLink</b></span>
+                        <a href="#defaultRoleLink"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[ROLES_ADMIN_ROUTE, DEFAULT_ROLE.key]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="371" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:371</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>details link of the &quot;_default&quot; role, named in the note below the matrix</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="displayedColumns"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>displayedColumns</b></span>
+                        <a href="#displayedColumns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+    &quot;subject&quot;,
+    &quot;read&quot;,
+    &quot;create&quot;,
+    &quot;update&quot;,
+    &quot;delete&quot;,
+    &quot;manage&quot;,
+    &quot;rowActions&quot;,
+  ]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="136" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:136</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="existingSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>existingSubjects</b></span>
+                        <a href="#existingSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.model().rows.map((r) &#x3D;&gt; r.subject),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="354" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:354</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>record types already listed, so the add dropdown can omit them</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasAllSubject"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasAllSubject</b></span>
+                        <a href="#hasAllSubject"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.model().rows.some((r) &#x3D;&gt; r.subject &#x3D;&#x3D;&#x3D; &quot;all&quot;),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="349" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:349</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>whether the &quot;all&quot; wildcard row is already present (drives the add options)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="inheritsFromDefaultRole"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>inheritsFromDefaultRole</b></span>
+                        <a href="#inheritsFromDefaultRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    inheritsDefaultRules(this.roleName()),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="363" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:363</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether users of this role also receive the shared &quot;_default&quot; rules.
+Also drives the note below the matrix, which must not appear on roles
+that do not inherit them.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="manageColLabel"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>manageColLabel</b></span>
+                        <a href="#manageColLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;Manage (all)&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="132" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:132</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="viewRows"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>viewRows</b></span>
+                        <a href="#viewRows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const rows &#x3D; this.model().rows.map((row, modelIndex) &#x3D;&gt;
+      this.toViewRow(row, modelIndex),
+    );
+    const defaultRow &#x3D; this.defaultViewRow();
+    return defaultRow ? [defaultRow, ...rows] : rows;
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="156" class="link-to-prism">src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts:156</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>rows with subject label/icon and per-action cell states, resolved once per
+model change. The shared &quot;_default&quot; role is prepended as a read-only row,
+so it is visible what every logged-in user may do on top of this role.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from &quot;@angular/core&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatTableModule } from &quot;@angular/material/table&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { RouterLink } from &quot;@angular/router&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
+
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+
+import { ConfirmationDialogService } from &quot;../../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { FaDynamicIconComponent } from &quot;../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
+import { describeConditionFragment } from &quot;../../../common-components/entity-form/dynamic-form-validators/permission-condition-validators&quot;;
+import { HintBoxComponent } from &quot;../../../common-components/hint-box/hint-box.component&quot;;
+import { EntityRegistry } from &quot;../../../entity/database-entity.decorator&quot;;
+import { EntityTypeSelectComponent } from &quot;../../../entity/entity-type-select/entity-type-select.component&quot;;
+import {
+  PermissionConditionDialogComponent,
+  PermissionConditionDialogData,
+} from &quot;../condition-dialog/permission-condition-dialog.component&quot;;
+import {
+  DatabaseRule,
+  DEFAULT_SECTION_KEY,
+  EntityActionPermission,
+  inheritsDefaultRules,
+} from &quot;../../../permissions/permission-types&quot;;
+import { DEFAULT_ROLE } from &quot;../../../permissions/reserved-roles&quot;;
+import { MatrixModel, MatrixRow, RuleConditions } from &quot;../permission-matrix&quot;;
+import { ROLES_ADMIN_ROUTE } from &quot;../role-permissions.service&quot;;
+
+/** the four individual CRUD actions shown as their own matrix columns (&quot;manage&quot; is separate) */
+type CrudAction &#x3D; &quot;read&quot; | &quot;create&quot; | &quot;update&quot; | &quot;delete&quot;;
+
+/**
+ * Where an action is granted from, if not by an own rule of its row:
+ * the row&#x27;s own &quot;manage&quot;, the &quot;all record types&quot; row of this same role,
+ * or the shared &quot;_default&quot; role that applies to every logged-in user.
+ */
+type GrantedBy &#x3D; &quot;manage&quot; | &quot;wildcard&quot; | &quot;default&quot;;
+
+/** display state of one action cell */
+interface CellState {
+  /** shown as granted, either by an own rule of this row or by a broader one */
+  allowed: boolean;
+  /** granted by an own rule of this row, so a condition can be attached to it */
+  ownAllowed: boolean;
+  /** whether the checkbox may be changed on this row */
+  editable: boolean;
+  hasCondition: boolean;
+  /** readable summary of the condition, empty when none */
+  summary: string;
+  /** why the checkbox cannot be changed; empty when it is editable */
+  lockTooltip: string;
+  /**
+   * id of the hidden element repeating {@link lockTooltip} for screen readers,
+   * which do not announce the tooltip of a checkbox they cannot change.
+   * Empty when the cell is editable.
+   */
+  lockDescriptionId: string;
+}
+
+/**
+ * Stable id of the hidden element describing why a cell&#x27;s checkbox is locked.
+ * Derived from subject and action rather than a row index, so it stays the same
+ * when rows are added or removed.
+ */
+function lockDescriptionId(
+  subject: string,
+  action: EntityActionPermission,
+): string {
+  return &#x60;perm-lock-${subject}-${action}&#x60;;
+}
+
+/**
+ * Display a role&#x27;s permission rules as a matrix of
+ * record types (rows) and actions (columns).
+ * Conditions restricting an action are shown as a readable summary under the record type.
+ */
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: &quot;app-permission-matrix&quot;,
+  imports: [
+    MatTableModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    FaIconComponent,
+    FaDynamicIconComponent,
+    HintBoxComponent,
+    EntityTypeSelectComponent,
+    RouterLink,
+  ],
+  templateUrl: &quot;./permission-matrix.component.html&quot;,
+  styleUrl: &quot;./permission-matrix.component.scss&quot;,
+})
+export class PermissionMatrixComponent {
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly dialog &#x3D; inject(MatDialog);
+  private readonly confirmation &#x3D; inject(ConfirmationDialogService);
+
+  readonly model &#x3D; input.required&lt;MatrixModel&gt;();
+  readonly editable &#x3D; input(false);
+  readonly roleName &#x3D; input(&quot;&quot;);
+
+  /**
+   * Rules of the shared &quot;_default&quot; role, which apply to every logged-in user on
+   * top of their own roles. Shown as already granted here, because revoking them
+   * for a single role would require an inverted rule.
+   */
+  readonly inheritedRules &#x3D; input&lt;DatabaseRule[]&gt;([]);
+  readonly modelChange &#x3D; output&lt;MatrixModel&gt;();
+
+  /** CRUD columns with their headers baked in, so the template needs no per-cell method call */
+  readonly crudColumns: { key: CrudAction; label: string }[] &#x3D; [
+    { key: &quot;read&quot;, label: $localize&#x60;Read&#x60; },
+    { key: &quot;create&quot;, label: $localize&#x60;Create&#x60; },
+    { key: &quot;update&quot;, label: $localize&#x60;Update&#x60; },
+    { key: &quot;delete&quot;, label: $localize&#x60;Delete&#x60; },
+  ];
+  readonly crudActions: CrudAction[] &#x3D; this.crudColumns.map((c) &#x3D;&gt; c.key);
+  readonly manageColLabel &#x3D; $localize&#x60;Manage (all)&#x60;;
+
+  // rowActions column is always present (empty in view mode)
+  // so that column positions do not shift when toggling edit mode
+  readonly displayedColumns &#x3D; [
+    &quot;subject&quot;,
+    &quot;read&quot;,
+    &quot;create&quot;,
+    &quot;update&quot;,
+    &quot;delete&quot;,
+    &quot;manage&quot;,
+    &quot;rowActions&quot;,
+  ];
+
+  /** the &quot;all record types&quot; row of this role, which grants its actions for every type */
+  private readonly wildcardRow &#x3D; computed(() &#x3D;&gt;
+    this.model().rows.find((row) &#x3D;&gt; row.subject &#x3D;&#x3D;&#x3D; &quot;all&quot;),
+  );
+
+  /**
+   * rows with subject label/icon and per-action cell states, resolved once per
+   * model change. The shared &quot;_default&quot; role is prepended as a read-only row,
+   * so it is visible what every logged-in user may do on top of this role.
+   */
+  readonly viewRows &#x3D; computed(() &#x3D;&gt; {
+    const rows &#x3D; this.model().rows.map((row, modelIndex) &#x3D;&gt;
+      this.toViewRow(row, modelIndex),
+    );
+    const defaultRow &#x3D; this.defaultViewRow();
+    return defaultRow ? [defaultRow, ...rows] : rows;
+  });
+
+  private toViewRow(row: MatrixRow, modelIndex: number) {
+    // &quot;manage&quot; grants every action, so the individual actions are shown as
+    // covered (checked, not individually editable) when it is set
+    const manageAllowed &#x3D; !!row.cells.manage?.allowed;
+    return {
+      row,
+      /** index in the edited model; -1 for the read-only &quot;Default&quot; row */
+      modelIndex,
+      isDefaultRow: false,
+      label: this.subjectLabel(row.subject),
+      icon: this.subjectIcon(row.subject),
+      isInternal: this.isInternalSubject(row.subject),
+      conditionsEditable: this.canHaveConditions(row.subject),
+      manageAllowed,
+      manageState: this.cellState(row, &quot;manage&quot;, manageAllowed),
+      actionStates: Object.fromEntries(
+        this.crudActions.map((action) &#x3D;&gt; [
+          action,
+          this.cellState(row, action, manageAllowed),
+        ]),
+      ) as Record&lt;CrudAction, CellState&gt;,
+    };
+  }
+
+  /**
+   * The shared &quot;_default&quot; role as a read-only row, listing what it grants for
+   * every record type. Absent while editing that role itself and when it grants
+   * nothing across all record types.
+   */
+  private readonly defaultViewRow &#x3D; computed(() &#x3D;&gt; {
+    if (!this.inheritsFromDefaultRole()) {
+      return undefined;
+    }
+
+    // only what the default role grants for every record type is shown here;
+    // grants for a single type lock that type&#x27;s row instead
+    const cells: MatrixRow[&quot;cells&quot;] &#x3D; {};
+    for (const action of [...this.crudActions, &quot;manage&quot; as const]) {
+      if (this.inheritedGrantsForAllTypes(action)) {
+        cells[action] &#x3D; { allowed: true };
+      }
+    }
+    if (Object.keys(cells).length &#x3D;&#x3D;&#x3D; 0) {
+      // nothing granted to everyone, so the row would only add noise
+      return undefined;
+    }
+
+    const row: MatrixRow &#x3D; { subject: DEFAULT_SECTION_KEY, cells };
+    const manageAllowed &#x3D; !!cells.manage?.allowed;
+    return {
+      row,
+      modelIndex: -1,
+      isDefaultRow: true,
+      label: this.defaultRole.label,
+      icon: undefined,
+      isInternal: false,
+      conditionsEditable: false,
+      manageAllowed,
+      manageState: this.defaultRowCellState(&quot;manage&quot;, manageAllowed),
+      actionStates: Object.fromEntries(
+        this.crudActions.map((action) &#x3D;&gt; [
+          action,
+          this.defaultRowCellState(
+            action,
+            manageAllowed || !!cells[action]?.allowed,
+          ),
+        ]),
+      ) as Record&lt;CrudAction, CellState&gt;,
+    };
+  });
+
+  private defaultRowCellState(
+    action: EntityActionPermission,
+    allowed: boolean,
+  ): CellState {
+    return {
+      allowed,
+      ownAllowed: false,
+      editable: false,
+      hasCondition: false,
+      summary: &quot;&quot;,
+      lockTooltip: $localize&#x60;:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the &quot;${this.defaultRole.label}&quot; role.&#x60;,
+      lockDescriptionId: lockDescriptionId(DEFAULT_SECTION_KEY, action),
+    };
+  }
+
+  private cellState(
+    row: MatrixRow,
+    action: EntityActionPermission,
+    manageAllowed: boolean,
+  ): CellState {
+    const cell &#x3D; row.cells[action];
+    const grantedBy &#x3D; this.grantedBy(row, action, manageAllowed);
+    return {
+      allowed: !!cell?.allowed || !!grantedBy,
+      ownAllowed: !!cell?.allowed,
+      editable: !grantedBy,
+      hasCondition: !!cell?.conditions,
+      summary: cell?.conditions
+        ? this.describeConditions(cell.conditions, row.subject)
+        : &quot;&quot;,
+      lockTooltip: grantedBy ? this.grantedByTooltip(grantedBy) : &quot;&quot;,
+      lockDescriptionId: grantedBy
+        ? lockDescriptionId(row.subject, action)
+        : &quot;&quot;,
+    };
+  }
+
+  /**
+   * Whether a broader rule already grants this action, so it cannot be taken
+   * away on this row: the row&#x27;s own &quot;manage&quot;, the role&#x27;s &quot;all record types&quot;
+   * row, or the shared &quot;_default&quot; role.
+   */
+  private grantedBy(
+    row: MatrixRow,
+    action: EntityActionPermission,
+    manageAllowed: boolean,
+  ): GrantedBy | undefined {
+    if (manageAllowed &amp;&amp; action !&#x3D;&#x3D; &quot;manage&quot;) {
+      return &quot;manage&quot;;
+    }
+    if (row.subject !&#x3D;&#x3D; &quot;all&quot; &amp;&amp; this.rowGrants(this.wildcardRow(), action)) {
+      return &quot;wildcard&quot;;
+    }
+    if (this.inheritedGrants(row.subject, action)) {
+      return &quot;default&quot;;
+    }
+    return undefined;
+  }
+
+  private grantedByTooltip(grantedBy: GrantedBy): string {
+    switch (grantedBy) {
+      case &quot;manage&quot;:
+        return $localize&#x60;Already granted by &quot;Manage (all)&quot; for this record type.&#x60;;
+      case &quot;wildcard&quot;:
+        return $localize&#x60;Already granted by the &quot;All record types&quot; row of this role.&#x60;;
+      case &quot;default&quot;:
+        return $localize&#x60;Already granted to every logged-in user by the &quot;${this.defaultRole.label}&quot; role, so it cannot be revoked for a single role here.&#x60;;
+    }
+  }
+
+  /** whether a matrix row grants the action, directly or through its &quot;manage&quot; */
+  private rowGrants(
+    row: MatrixRow | undefined,
+    action: EntityActionPermission,
+  ): boolean {
+    if (!row) return false;
+    return !!row.cells.manage?.allowed || !!row.cells[action]?.allowed;
+  }
+
+  /** whether the shared &quot;_default&quot; rules grant the action for every record type */
+  private inheritedGrantsForAllTypes(action: EntityActionPermission): boolean {
+    return this.inheritedGrants(&quot;all&quot;, action);
+  }
+
+  /** whether the shared &quot;_default&quot; rules grant the action for this record type */
+  private inheritedGrants(
+    subject: string,
+    action: EntityActionPermission,
+  ): boolean {
+    if (!this.inheritsFromDefaultRole()) {
+      return false;
+    }
+    return this.inheritedRules().some((rule) &#x3D;&gt; {
+      if (rule.inverted) return false;
+      // a conditional default rule only grants the action for some records, so
+      // it must not lock the checkbox as if the action were granted outright
+      if (rule.conditions &amp;&amp; Object.keys(rule.conditions).length &gt; 0) {
+        return false;
+      }
+      const subjects &#x3D; asArray(rule.subject);
+      // the wildcard row itself is only covered by a default rule that applies
+      // to every record type, not by one for a single type
+      const matchesSubject &#x3D;
+        subjects.includes(&quot;all&quot;) ||
+        (subject !&#x3D;&#x3D; &quot;all&quot; &amp;&amp; subjects.includes(subject));
+      const actions &#x3D; asArray(rule.action);
+      return (
+        matchesSubject &amp;&amp;
+        (actions.includes(action) || actions.includes(&quot;manage&quot;))
+      );
+    });
+  }
+
+  /** whether the &quot;all&quot; wildcard row is already present (drives the add options) */
+  readonly hasAllSubject &#x3D; computed(() &#x3D;&gt;
+    this.model().rows.some((r) &#x3D;&gt; r.subject &#x3D;&#x3D;&#x3D; &quot;all&quot;),
+  );
+
+  /** record types already listed, so the add dropdown can omit them */
+  readonly existingSubjects &#x3D; computed(() &#x3D;&gt;
+    this.model().rows.map((r) &#x3D;&gt; r.subject),
+  );
+
+  /**
+   * Whether users of this role also receive the shared &quot;_default&quot; rules.
+   * Also drives the note below the matrix, which must not appear on roles
+   * that do not inherit them.
+   */
+  readonly inheritsFromDefaultRole &#x3D; computed(() &#x3D;&gt;
+    inheritsDefaultRules(this.roleName()),
+  );
+
+  /** name, description and icon of the &quot;_default&quot; role, shared with the other permission views */
+  readonly defaultRole &#x3D; DEFAULT_ROLE;
+
+  /** details link of the &quot;_default&quot; role, named in the note below the matrix */
+  readonly defaultRoleLink &#x3D; [ROLES_ADMIN_ROUTE, DEFAULT_ROLE.key];
+
+  /** human-readable summary of a CASL conditions object, e.g. &quot;Center: Alipore and Gender: male&quot; */
+  private describeConditions(
+    conditions: RuleConditions,
+    subject: string,
+  ): string {
+    if (!conditions || typeof conditions !&#x3D;&#x3D; &quot;object&quot;) return &quot;&quot;;
+    const ctor &#x3D; this.entityRegistry.has(subject)
+      ? this.entityRegistry.get(subject)
+      : undefined;
+    const fieldLabel &#x3D; (key: string) &#x3D;&gt; ctor?.schema.get(key)?.label ?? key;
+    const describeObject &#x3D; (obj: unknown): string &#x3D;&gt;
+      typeof obj &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; obj !&#x3D;&#x3D; null
+        ? Object.entries(obj)
+            .map(
+              ([key, value]) &#x3D;&gt;
+                &#x60;${fieldLabel(key)}: ${describeConditionFragment(value)}&#x60;,
+            )
+            .join($localize&#x60; and &#x60;)
+        : &quot;&quot;;
+
+    const query &#x3D; conditions as Record&lt;string, unknown&gt;;
+    if (Array.isArray(query.$or)) {
+      return query.$or.map(describeObject).join($localize&#x60; or &#x60;);
+    }
+    if (Array.isArray(query.$and)) {
+      return query.$and.map(describeObject).join($localize&#x60; and &#x60;);
+    }
+    return describeObject(conditions);
+  }
+
+  private subjectLabel(subject: string): string {
+    if (subject &#x3D;&#x3D;&#x3D; &quot;all&quot;) {
+      return $localize&#x60;All record types&#x60;;
+    }
+    if (this.entityRegistry.has(subject)) {
+      // internal types have no user-facing label; prettify their raw key
+      // (e.g. &quot;ConfigurableEnum&quot; -&gt; &quot;Configurable Enum&quot;) so it stays readable
+      return (
+        this.entityRegistry.get(subject).label ?? this.prettifyKey(subject)
+      );
+    }
+    return subject;
+  }
+
+  private prettifyKey(key: string): string {
+    return key
+      .replace(/[_-]+/g, &quot; &quot;)
+      .replace(/([a-z0-9])([A-Z])/g, &quot;$1 $2&quot;)
+      .replace(/\s+/g, &quot; &quot;)
+      .trim();
+  }
+
+  private subjectIcon(subject: string): string | undefined {
+    return this.entityRegistry.has(subject)
+      ? this.entityRegistry.get(subject).icon
+      : undefined;
+  }
+
+  /**
+   * Internal/system entity types are only defined in code to store system data
+   * and are not meant for user customization (they carry no user-facing label).
+   * They are shown greyed out to signal that permissions on them are advanced.
+   */
+  private isInternalSubject(subject: string): boolean {
+    if (subject &#x3D;&#x3D;&#x3D; &quot;all&quot; || !this.entityRegistry.has(subject)) {
+      return false;
+    }
+    const type &#x3D; this.entityRegistry.get(subject);
+    return !!type.isInternalEntity || !type.label;
+  }
+
+  setCellAllowed(
+    rowIndex: number,
+    action: EntityActionPermission,
+    allowed: boolean,
+  ) {
+    this.emitUpdated((m) &#x3D;&gt; {
+      const cells &#x3D; m.rows[rowIndex].cells;
+      if (allowed) {
+        cells[action] &#x3D; { allowed: true };
+      } else {
+        delete cells[action];
+      }
+    });
+  }
+
+  /**
+   * &quot;Manage (all)&quot; is the CASL wildcard action: it grants every action
+   * (including any beyond the four listed). It is a permission of its own,
+   * not derived from the individual action checkboxes, so toggling it does
+   * not add or remove the individual action rules.
+   */
+  setManage(rowIndex: number, checked: boolean) {
+    if (!checked) {
+      this.setCellAllowed(rowIndex, &quot;manage&quot;, false);
+      return;
+    }
+
+    this.emitUpdated((m) &#x3D;&gt; {
+      const cells &#x3D; m.rows[rowIndex].cells;
+      cells.manage &#x3D; { allowed: true };
+      // &quot;manage&quot; already implies the individual actions, so drop the plain ones:
+      // otherwise they silently stay behind when &quot;manage&quot; is removed again.
+      // Cells carrying a condition or properties this matrix does not model
+      // (e.g. a rule managed by the backend) are kept untouched.
+      for (const action of this.crudActions) {
+        const cell &#x3D; cells[action];
+        if (cell &amp;&amp; !cell.conditions &amp;&amp; !cell.extra) {
+          delete cells[action];
+        }
+      }
+    });
+  }
+
+  removeRow(rowIndex: number) {
+    this.emitUpdated((m) &#x3D;&gt; m.rows.splice(rowIndex, 1));
+  }
+
+  /** clear the condition of an action, keeping the action itself allowed */
+  removeCondition(rowIndex: number, action: EntityActionPermission) {
+    this.emitUpdated((m) &#x3D;&gt; {
+      const cell &#x3D; m.rows[rowIndex].cells[action];
+      if (cell) delete cell.conditions;
+    });
+  }
+
+  /**
+   * Conditions can only be edited visually for entity types
+   * that have user-facing fields to define conditions on.
+   */
+  private canHaveConditions(subject: string): boolean {
+    if (subject &#x3D;&#x3D;&#x3D; &quot;all&quot; || !this.entityRegistry.has(subject)) {
+      return false;
+    }
+    const schema &#x3D; this.entityRegistry.get(subject).schema;
+    return [...schema.values()].some(
+      (field) &#x3D;&gt; !field.isInternalField &amp;&amp; !!field.label,
+    );
+  }
+
+  openConditionDialog(rowIndex: number, action: EntityActionPermission) {
+    const row &#x3D; this.model().rows[rowIndex];
+    this.dialog
+      .open(PermissionConditionDialogComponent, {
+        width: &quot;600px&quot;,
+        data: {
+          roleName: this.roleName(),
+          action,
+          subject: row.subject,
+          conditions: row.cells[action]?.conditions,
+        } satisfies PermissionConditionDialogData,
+      })
+      .afterClosed()
+      .subscribe((result) &#x3D;&gt; {
+        // the dialog only returns a real result on Apply (a conditions object)
+        // or &quot;Remove condition&quot; (null); cancelling / closing (undefined or the
+        // shared close button&#x27;s empty string) must leave the cell untouched
+        if (result !&#x3D;&#x3D; null &amp;&amp; typeof result !&#x3D;&#x3D; &quot;object&quot;) return;
+        this.emitUpdated((m) &#x3D;&gt; {
+          // keep any unmodelled properties (e.g. reason) that the cell carried
+          const { extra } &#x3D; m.rows[rowIndex].cells[action] ?? {};
+          m.rows[rowIndex].cells[action] &#x3D; {
+            allowed: true,
+            ...(result ? { conditions: result } : {}),
+            ...(extra ? { extra } : {}),
+          };
+        });
+      });
+  }
+
+  /** whether the record-type picker is shown instead of the &quot;Add Permission&quot; button */
+  readonly addPickerOpen &#x3D; signal(false);
+
+  /**
+   * Toggled off-then-on after each selection to force Angular to destroy and
+   * re-create the record-type dropdown. &#x60;app-entity-type-select&#x60; keeps its
+   * chosen value in internal state that rebinding &#x60;[value]&#x60; does not clear,
+   * so a remount is the reliable way to reset it to empty for the next add.
+   */
+  readonly addSelectVisible &#x3D; signal(true);
+
+  async addSubject(selected: string | string[]) {
+    const subject &#x3D; Array.isArray(selected) ? selected[0] : selected;
+    this.addPickerOpen.set(false);
+    this.resetAddSelect();
+    if (!subject || this.model().rows.some((r) &#x3D;&gt; r.subject &#x3D;&#x3D;&#x3D; subject)) {
+      return;
+    }
+
+    if (subject &#x3D;&#x3D;&#x3D; &quot;all&quot;) {
+      const confirmed &#x3D; await this.confirmation.getConfirmation(
+        $localize&#x60;Add permissions for all record types?&#x60;,
+        $localize&#x60;Whatever you allow here applies to every record type, also to types added later. Those actions can then no longer be revoked for an individual record type.&#x60;,
+      );
+      if (confirmed !&#x3D;&#x3D; true) {
+        return;
+      }
+    }
+    // every new row starts with read only, including the &quot;all&quot; wildcard row:
+    // a wildcard may grant just some actions, with the remaining ones added
+    // per record type
+    const cells: MatrixRow[&quot;cells&quot;] &#x3D; { read: { allowed: true } };
+    this.emitUpdated((m) &#x3D;&gt; m.rows.push({ subject, cells }));
+  }
+
+  private resetAddSelect() {
+    this.addSelectVisible.set(false);
+    setTimeout(() &#x3D;&gt; this.addSelectVisible.set(true));
+  }
+
+  private emitUpdated(mutate: (model: MatrixModel) &#x3D;&gt; void) {
+    const updated &#x3D; structuredClone(this.model());
+    mutate(updated);
+    this.modelChange.emit(updated);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">@if (model().unsupportedRules.length &gt; 0) {
+  &lt;app-hint-box i18n&gt;
+    {model().unsupportedRules.length, plural,
+      one {1 advanced rule is}
+      other {{{ model().unsupportedRules.length }} advanced rules are}
+    }
+    not shown in this matrix and only editable via JSON.
+  &lt;/app-hint-box&gt;
+}
+
+&lt;div class&#x3D;&quot;table-container&quot;&gt;
+  &lt;div class&#x3D;&quot;table-scroll&quot;&gt;
+    &lt;table mat-table [dataSource]&#x3D;&quot;viewRows()&quot; class&#x3D;&quot;full-width table&quot;&gt;
+      &lt;ng-container matColumnDef&#x3D;&quot;subject&quot;&gt;
+        &lt;th mat-header-cell *matHeaderCellDef class&#x3D;&quot;subject-col&quot; i18n&gt;
+          Record type
+        &lt;/th&gt;
+        &lt;td mat-cell *matCellDef&#x3D;&quot;let v&quot; class&#x3D;&quot;subject-col&quot;&gt;
+          @if (v.isDefaultRow) {
+            &lt;div class&#x3D;&quot;flex-row align-center gap-regular&quot;&gt;
+              &lt;div class&#x3D;&quot;wildcard-badge&quot;&gt;
+                &lt;fa-icon [icon]&#x3D;&quot;defaultRole.icon&quot;&gt;&lt;/fa-icon&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;div&gt;{{ v.label }}&lt;/div&gt;
+                &lt;div class&#x3D;&quot;text-secondary wildcard-subtitle&quot;&gt;
+                  {{ defaultRole.appliesTo }}
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          } @else if (v.row.subject &#x3D;&#x3D;&#x3D; &quot;all&quot;) {
+            &lt;div class&#x3D;&quot;flex-row align-center gap-regular&quot;&gt;
+              &lt;div class&#x3D;&quot;wildcard-badge&quot;&gt;
+                &lt;fa-icon icon&#x3D;&quot;asterisk&quot;&gt;&lt;/fa-icon&gt;
+              &lt;/div&gt;
+              &lt;div&gt;
+                &lt;div&gt;{{ v.label }}&lt;/div&gt;
+                &lt;div class&#x3D;&quot;text-secondary wildcard-subtitle&quot; i18n&gt;
+                  applies to every record type, also to types added later
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          } @else {
+            &lt;div
+              class&#x3D;&quot;flex-row align-center gap-small&quot;
+              [class.text-secondary]&#x3D;&quot;v.isInternal&quot;
+            &gt;
+              @if (v.icon) {
+                &lt;app-fa-dynamic-icon [icon]&#x3D;&quot;v.icon&quot;&gt;&lt;/app-fa-dynamic-icon&gt;
+              }
+              &lt;span&gt;{{ v.label }}&lt;/span&gt;
+              @if (v.isInternal) {
+                &lt;fa-icon
+                  icon&#x3D;&quot;lock&quot;
+                  class&#x3D;&quot;internal-type-icon&quot;
+                  i18n-matTooltip
+                  matTooltip&#x3D;&quot;Internal system type, not meant for regular customization&quot;
+                &gt;&lt;/fa-icon&gt;
+              }
+            &lt;/div&gt;
+          }
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+
+      @for (col of crudColumns; track col.key) {
+        &lt;ng-container [matColumnDef]&#x3D;&quot;col.key&quot;&gt;
+          &lt;th mat-header-cell *matHeaderCellDef class&#x3D;&quot;action-col&quot;&gt;
+            {{ col.label }}
+          &lt;/th&gt;
+          &lt;td mat-cell *matCellDef&#x3D;&quot;let v&quot; class&#x3D;&quot;action-col&quot;&gt;
+            &lt;div class&#x3D;&quot;cell-stack&quot;&gt;
+              &lt;!-- the tooltip sits on the checkbox itself (not a wrapper), so
+                   &quot;disabledInteractive&quot; keeps it hoverable and focusable while
+                   disabled; the hidden description makes the same reason
+                   available to screen readers --&gt;
+              &lt;mat-checkbox
+                [checked]&#x3D;&quot;v.actionStates[col.key].allowed&quot;
+                [disabled]&#x3D;&quot;!editable() || !v.actionStates[col.key].editable&quot;
+                [disabledInteractive]&#x3D;&quot;!!v.actionStates[col.key].lockTooltip&quot;
+                [matTooltip]&#x3D;&quot;v.actionStates[col.key].lockTooltip&quot;
+                [matTooltipDisabled]&#x3D;&quot;!v.actionStates[col.key].lockTooltip&quot;
+                [attr.aria-label]&#x3D;&quot;col.label + &#x27; – &#x27; + v.label&quot;
+                [aria-describedby]&#x3D;&quot;
+                  v.actionStates[col.key].lockDescriptionId || null
+                &quot;
+                (change)&#x3D;&quot;setCellAllowed(v.modelIndex, col.key, $event.checked)&quot;
+              &gt;&lt;/mat-checkbox&gt;
+              @if (v.actionStates[col.key].lockTooltip) {
+                &lt;span
+                  class&#x3D;&quot;visually-hidden&quot;
+                  [id]&#x3D;&quot;v.actionStates[col.key].lockDescriptionId&quot;
+                  &gt;{{ v.actionStates[col.key].lockTooltip }}&lt;/span
+                &gt;
+              }
+
+              @if (v.actionStates[col.key].hasCondition) {
+                &lt;!-- condition chip: editable only for subjects whose conditions
+                     can be edited visually, read-only otherwise --&gt;
+                &lt;span
+                  class&#x3D;&quot;cell-condition-chip&quot;
+                  [class.readonly]&#x3D;&quot;
+                    !(
+                      editable() &amp;&amp;
+                      v.conditionsEditable &amp;&amp;
+                      v.actionStates[col.key].editable
+                    )
+                  &quot;
+                  [attr.role]&#x3D;&quot;
+                    editable() &amp;&amp;
+                    v.conditionsEditable &amp;&amp;
+                    v.actionStates[col.key].editable
+                      ? &#x27;button&#x27;
+                      : null
+                  &quot;
+                  [attr.tabindex]&#x3D;&quot;
+                    editable() &amp;&amp;
+                    v.conditionsEditable &amp;&amp;
+                    v.actionStates[col.key].editable
+                      ? 0
+                      : null
+                  &quot;
+                  [matTooltip]&#x3D;&quot;v.actionStates[col.key].summary&quot;
+                  (click)&#x3D;&quot;
+                    editable() &amp;&amp;
+                      v.conditionsEditable &amp;&amp;
+                      openConditionDialog(v.modelIndex, col.key)
+                  &quot;
+                  (keydown.enter)&#x3D;&quot;
+                    editable() &amp;&amp;
+                      v.conditionsEditable &amp;&amp;
+                      openConditionDialog(v.modelIndex, col.key)
+                  &quot;
+                  (keydown.space)&#x3D;&quot;
+                    $event.preventDefault();
+                    editable() &amp;&amp;
+                      v.conditionsEditable &amp;&amp;
+                      openConditionDialog(v.modelIndex, col.key)
+                  &quot;
+                &gt;
+                  &lt;fa-icon icon&#x3D;&quot;filter&quot;&gt;&lt;/fa-icon&gt;
+                  &lt;span class&#x3D;&quot;cell-condition-text&quot;&gt;{{
+                    v.actionStates[col.key].summary
+                  }}&lt;/span&gt;
+                  @if (editable()) {
+                    &lt;fa-icon
+                      icon&#x3D;&quot;xmark&quot;
+                      class&#x3D;&quot;cell-condition-remove&quot;
+                      role&#x3D;&quot;button&quot;
+                      tabindex&#x3D;&quot;0&quot;
+                      i18n-matTooltip
+                      matTooltip&#x3D;&quot;Remove condition&quot;
+                      (click)&#x3D;&quot;
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
+                      &quot;
+                      (keydown.enter)&#x3D;&quot;
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
+                      &quot;
+                      (keydown.space)&#x3D;&quot;
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
+                      &quot;
+                    &gt;&lt;/fa-icon&gt;
+                  }
+                &lt;/span&gt;
+              } @else if (
+                editable() &amp;&amp;
+                v.actionStates[col.key].ownAllowed &amp;&amp;
+                v.actionStates[col.key].editable &amp;&amp;
+                v.conditionsEditable
+              ) {
+                &lt;button
+                  class&#x3D;&quot;cell-condition-link&quot;
+                  (click)&#x3D;&quot;openConditionDialog(v.modelIndex, col.key)&quot;
+                &gt;
+                  &lt;fa-icon icon&#x3D;&quot;filter&quot;&gt;&lt;/fa-icon&gt;
+                  &lt;span i18n&gt;only where&amp;hellip;&lt;/span&gt;
+                &lt;/button&gt;
+              }
+            &lt;/div&gt;
+          &lt;/td&gt;
+        &lt;/ng-container&gt;
+      }
+
+      &lt;ng-container matColumnDef&#x3D;&quot;manage&quot;&gt;
+        &lt;th mat-header-cell *matHeaderCellDef class&#x3D;&quot;action-col manage-col&quot;&gt;
+          {{ manageColLabel }}
+        &lt;/th&gt;
+        &lt;td mat-cell *matCellDef&#x3D;&quot;let v&quot; class&#x3D;&quot;action-col manage-col&quot;&gt;
+          &lt;mat-checkbox
+            [checked]&#x3D;&quot;v.manageState.allowed&quot;
+            [disabled]&#x3D;&quot;!editable() || !v.manageState.editable&quot;
+            [disabledInteractive]&#x3D;&quot;!!v.manageState.lockTooltip&quot;
+            [matTooltip]&#x3D;&quot;v.manageState.lockTooltip&quot;
+            [matTooltipDisabled]&#x3D;&quot;!v.manageState.lockTooltip&quot;
+            [attr.aria-label]&#x3D;&quot;manageColLabel + &#x27; – &#x27; + v.label&quot;
+            [aria-describedby]&#x3D;&quot;v.manageState.lockDescriptionId || null&quot;
+            (change)&#x3D;&quot;setManage(v.modelIndex, $event.checked)&quot;
+          &gt;&lt;/mat-checkbox&gt;
+          @if (v.manageState.lockTooltip) {
+            &lt;span
+              class&#x3D;&quot;visually-hidden&quot;
+              [id]&#x3D;&quot;v.manageState.lockDescriptionId&quot;
+              &gt;{{ v.manageState.lockTooltip }}&lt;/span
+            &gt;
+          }
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+
+      &lt;ng-container matColumnDef&#x3D;&quot;rowActions&quot;&gt;
+        &lt;th mat-header-cell *matHeaderCellDef class&#x3D;&quot;row-actions-col&quot;&gt;&lt;/th&gt;
+        &lt;td mat-cell *matCellDef&#x3D;&quot;let v&quot; class&#x3D;&quot;row-actions-col&quot;&gt;
+          @if (editable() &amp;&amp; !v.isDefaultRow) {
+            &lt;button
+              mat-icon-button
+              (click)&#x3D;&quot;removeRow(v.modelIndex)&quot;
+              i18n-matTooltip
+              matTooltip&#x3D;&quot;Remove all permissions for this record type&quot;
+            &gt;
+              &lt;fa-icon icon&#x3D;&quot;trash&quot;&gt;&lt;/fa-icon&gt;
+            &lt;/button&gt;
+          }
+        &lt;/td&gt;
+      &lt;/ng-container&gt;
+
+      &lt;tr mat-header-row *matHeaderRowDef&#x3D;&quot;displayedColumns&quot;&gt;&lt;/tr&gt;
+      &lt;tr
+        mat-row
+        *matRowDef&#x3D;&quot;let row; columns: displayedColumns&quot;
+        [class.wildcard-row]&#x3D;&quot;row.row.subject &#x3D;&#x3D;&#x3D; &#x27;all&#x27;&quot;
+        [class.default-row]&#x3D;&quot;row.isDefaultRow&quot;
+      &gt;&lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+
+  @if (viewRows().length &#x3D;&#x3D;&#x3D; 0) {
+    &lt;div class&#x3D;&quot;empty-state text-secondary padding-regular&quot;&gt;
+      @if (editable()) {
+        &lt;span i18n&gt;No permissions yet. Add one below.&lt;/span&gt;
+      } @else {
+        &lt;!-- what such a role still inherits is stated in the note below,
+             which is shown whether or not the matrix has any rows --&gt;
+        &lt;span i18n&gt;No permissions defined for this role yet.&lt;/span&gt;
+      }
+    &lt;/div&gt;
+  }
+
+  @if (editable()) {
+    &lt;div class&#x3D;&quot;flex-row align-center gap-regular padding-regular&quot;&gt;
+      @if (!addPickerOpen()) {
+        &lt;button mat-button color&#x3D;&quot;accent&quot; (click)&#x3D;&quot;addPickerOpen.set(true)&quot;&gt;
+          &lt;fa-icon icon&#x3D;&quot;plus&quot; class&#x3D;&quot;standard-icon-with-text&quot;&gt;&lt;/fa-icon&gt;
+          &lt;span i18n&gt;Add Permission&lt;/span&gt;
+        &lt;/button&gt;
+      } @else {
+        @if (addSelectVisible()) {
+          &lt;mat-form-field class&#x3D;&quot;add-permission-field&quot;&gt;
+            &lt;mat-label i18n&gt;Add permission for record type&lt;/mat-label&gt;
+            &lt;app-entity-type-select
+              [value]&#x3D;&quot;undefined&quot;
+              [showInternalTypes]&#x3D;&quot;true&quot;
+              [hiddenTypes]&#x3D;&quot;existingSubjects()&quot;
+              (valueChange)&#x3D;&quot;addSubject($event)&quot;
+            &gt;&lt;/app-entity-type-select&gt;
+          &lt;/mat-form-field&gt;
+        }
+
+        @if (!hasAllSubject()) {
+          &lt;button mat-stroked-button (click)&#x3D;&quot;addSubject(&#x27;all&#x27;)&quot;&gt;
+            &lt;fa-icon icon&#x3D;&quot;asterisk&quot; class&#x3D;&quot;standard-icon-with-text&quot;&gt;&lt;/fa-icon&gt;
+            &lt;span i18n&gt;All record types (wildcard)&lt;/span&gt;
+          &lt;/button&gt;
+        }
+      }
+    &lt;/div&gt;
+  }
+
+  @if (inheritsFromDefaultRole()) {
+    &lt;div class&#x3D;&quot;table-footer-note text-secondary&quot; i18n&gt;
+      Logged-in users also always have the permissions defined in the
+      &lt;a [routerLink]&#x3D;&quot;defaultRoleLink&quot;&gt;{{ defaultRole.key }}&lt;/a&gt; role.
+    &lt;/div&gt;
+  }
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./permission-matrix.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+@use &quot;mixins/list-table&quot;;
+
+// same container/table styling as the user accounts and roles lists
+@include list-table.container-and-table;
+
+// on small screens the table keeps its minimum width and scrolls horizontally
+.table-scroll {
+  overflow-x: auto;
+}
+
+.action-col {
+  text-align: center;
+}
+
+// give each row vertical breathing room so a stacked condition chip
+// does not sit flush against the row divider, and top-align every cell
+// so the checkboxes line up across columns even when one column is taller
+// (a condition chip / &quot;only where…&quot; affordance stacked under its checkbox)
+td.mat-mdc-cell {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  vertical-align: top;
+}
+
+// visually separate the manage wildcard column from the individual actions
+.manage-col {
+  border-left: 1px solid colors.$grey-transparent;
+}
+
+// stacked cell: checkbox on top, condition affordance below.
+// capped width so a long condition summary cannot overflow across the row.
+.cell-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 150px;
+}
+
+// subtle &quot;only where…&quot; link revealed under a ticked cell
+.cell-condition-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 11px;
+  color: colors.$muted;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &amp;:hover {
+    color: colors.$accent;
+  }
+}
+
+// chip showing the configured condition in plain words
+.cell-condition-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 140px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background-color: colors.$background-secondary;
+  color: colors.$accent;
+  cursor: pointer;
+
+  &amp;:hover {
+    filter: brightness(0.95);
+  }
+
+  // read-only (view mode): same look, not interactive
+  &amp;.readonly {
+    cursor: default;
+
+    &amp;:hover {
+      filter: none;
+    }
+  }
+}
+
+.cell-condition-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.cell-condition-remove {
+  cursor: pointer;
+  opacity: 0.7;
+
+  &amp;:hover {
+    opacity: 1;
+  }
+}
+
+// internal/system entity types are greyed out via the global &quot;text-secondary&quot;
+// class; only the small lock icon needs a local size tweak
+.internal-type-icon {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.wildcard-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: colors.$background-secondary;
+  color: colors.$primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wildcard-subtitle {
+  font-size: 12px;
+}
+
+.wildcard-row {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.add-permission-field {
+  width: 280px;
+}
+
+.empty-state {
+  text-align: center;
+}
+
+// permanent footnote below the matrix, naming what every logged-in user
+// additionally receives from the shared &quot;_default&quot; role
+.table-footer-note {
+  padding: 8px 16px;
+  font-size: 12px;
+  border-top: 1px solid colors.$grey-transparent;
+}
+
+/* the shared &quot;_default&quot; role, listed above the role&#x27;s own rules */
+.default-row {
+  background: rgba(0, 0, 0, 0.02);
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div>@if (model().unsupportedRules.length > 0) {  <app-hint-box i18n>    {model().unsupportedRules.length, plural,      one {1 advanced rule is}      other {{{ model().unsupportedRules.length }} advanced rules are}    }    not shown in this matrix and only editable via JSON.  </app-hint-box>}<div class="table-container">  <div class="table-scroll">    <table mat-table [dataSource]="viewRows()" class="full-width table">      <ng-container matColumnDef="subject">        <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>          Record type        </th>        <td mat-cell *matCellDef="let v" class="subject-col">          @if (v.isDefaultRow) {            <div class="flex-row align-center gap-regular">              <div class="wildcard-badge">                <fa-icon [icon]="defaultRole.icon"></fa-icon>              </div>              <div>                <div>{{ v.label }}</div>                <div class="text-secondary wildcard-subtitle">                  {{ defaultRole.appliesTo }}                </div>              </div>            </div>          } @else if (v.row.subject === "all") {            <div class="flex-row align-center gap-regular">              <div class="wildcard-badge">                <fa-icon icon="asterisk"></fa-icon>              </div>              <div>                <div>{{ v.label }}</div>                <div class="text-secondary wildcard-subtitle" i18n>                  applies to every record type, also to types added later                </div>              </div>            </div>          } @else {            <div              class="flex-row align-center gap-small"              [class.text-secondary]="v.isInternal"            >              @if (v.icon) {                <app-fa-dynamic-icon [icon]="v.icon"></app-fa-dynamic-icon>              }              <span>{{ v.label }}</span>              @if (v.isInternal) {                <fa-icon                  icon="lock"                  class="internal-type-icon"                  i18n-matTooltip                  matTooltip="Internal system type, not meant for regular customization"                ></fa-icon>              }            </div>          }        </td>      </ng-container>      @for (col of crudColumns; track col.key) {        <ng-container [matColumnDef]="col.key">          <th mat-header-cell *matHeaderCellDef class="action-col">            {{ col.label }}          </th>          <td mat-cell *matCellDef="let v" class="action-col">            <div class="cell-stack">              <!-- the tooltip sits on the checkbox itself (not a wrapper), so                   "disabledInteractive" keeps it hoverable and focusable while                   disabled; the hidden description makes the same reason                   available to screen readers -->              <mat-checkbox                [checked]="v.actionStates[col.key].allowed"                [disabled]="!editable() || !v.actionStates[col.key].editable"                [disabledInteractive]="!!v.actionStates[col.key].lockTooltip"                [matTooltip]="v.actionStates[col.key].lockTooltip"                [matTooltipDisabled]="!v.actionStates[col.key].lockTooltip"                [attr.aria-label]="col.label + \' – \' + v.label"                [aria-describedby]="                  v.actionStates[col.key].lockDescriptionId || null                "                (change)="setCellAllowed(v.modelIndex, col.key, $event.checked)"              ></mat-checkbox>              @if (v.actionStates[col.key].lockTooltip) {                <span                  class="visually-hidden"                  [id]="v.actionStates[col.key].lockDescriptionId"                  >{{ v.actionStates[col.key].lockTooltip }}</span                >              }              @if (v.actionStates[col.key].hasCondition) {                <!-- condition chip: editable only for subjects whose conditions                     can be edited visually, read-only otherwise -->                <span                  class="cell-condition-chip"                  [class.readonly]="                    !(                      editable() &&                      v.conditionsEditable &&                      v.actionStates[col.key].editable                    )                  "                  [attr.role]="                    editable() &&                    v.conditionsEditable &&                    v.actionStates[col.key].editable                      ? \'button\'                      : null                  "                  [attr.tabindex]="                    editable() &&                    v.conditionsEditable &&                    v.actionStates[col.key].editable                      ? 0                      : null                  "                  [matTooltip]="v.actionStates[col.key].summary"                  (click)="                    editable() &&                      v.conditionsEditable &&                      openConditionDialog(v.modelIndex, col.key)                  "                  (keydown.enter)="                    editable() &&                      v.conditionsEditable &&                      openConditionDialog(v.modelIndex, col.key)                  "                  (keydown.space)="                    $event.preventDefault();                    editable() &&                      v.conditionsEditable &&                      openConditionDialog(v.modelIndex, col.key)                  "                >                  <fa-icon icon="filter"></fa-icon>                  <span class="cell-condition-text">{{                    v.actionStates[col.key].summary                  }}</span>                  @if (editable()) {                    <fa-icon                      icon="xmark"                      class="cell-condition-remove"                      role="button"                      tabindex="0"                      i18n-matTooltip                      matTooltip="Remove condition"                      (click)="                        $event.stopPropagation();                        removeCondition(v.modelIndex, col.key)                      "                      (keydown.enter)="                        $event.stopPropagation();                        removeCondition(v.modelIndex, col.key)                      "                      (keydown.space)="                        $event.preventDefault();                        $event.stopPropagation();                        removeCondition(v.modelIndex, col.key)                      "                    ></fa-icon>                  }                </span>              } @else if (                editable() &&                v.actionStates[col.key].ownAllowed &&                v.actionStates[col.key].editable &&                v.conditionsEditable              ) {                <button                  class="cell-condition-link"                  (click)="openConditionDialog(v.modelIndex, col.key)"                >                  <fa-icon icon="filter"></fa-icon>                  <span i18n>only where&hellip;</span>                </button>              }            </div>          </td>        </ng-container>      }      <ng-container matColumnDef="manage">        <th mat-header-cell *matHeaderCellDef class="action-col manage-col">          {{ manageColLabel }}        </th>        <td mat-cell *matCellDef="let v" class="action-col manage-col">          <mat-checkbox            [checked]="v.manageState.allowed"            [disabled]="!editable() || !v.manageState.editable"            [disabledInteractive]="!!v.manageState.lockTooltip"            [matTooltip]="v.manageState.lockTooltip"            [matTooltipDisabled]="!v.manageState.lockTooltip"            [attr.aria-label]="manageColLabel + \' – \' + v.label"            [aria-describedby]="v.manageState.lockDescriptionId || null"            (change)="setManage(v.modelIndex, $event.checked)"          ></mat-checkbox>          @if (v.manageState.lockTooltip) {            <span              class="visually-hidden"              [id]="v.manageState.lockDescriptionId"              >{{ v.manageState.lockTooltip }}</span            >          }        </td>      </ng-container>      <ng-container matColumnDef="rowActions">        <th mat-header-cell *matHeaderCellDef class="row-actions-col"></th>        <td mat-cell *matCellDef="let v" class="row-actions-col">          @if (editable() && !v.isDefaultRow) {            <button              mat-icon-button              (click)="removeRow(v.modelIndex)"              i18n-matTooltip              matTooltip="Remove all permissions for this record type"            >              <fa-icon icon="trash"></fa-icon>            </button>          }        </td>      </ng-container>      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>      <tr        mat-row        *matRowDef="let row; columns: displayedColumns"        [class.wildcard-row]="row.row.subject === \'all\'"        [class.default-row]="row.isDefaultRow"      ></tr>    </table>  </div>  @if (viewRows().length === 0) {    <div class="empty-state text-secondary padding-regular">      @if (editable()) {        <span i18n>No permissions yet. Add one below.</span>      } @else {        <!-- what such a role still inherits is stated in the note below,             which is shown whether or not the matrix has any rows -->        <span i18n>No permissions defined for this role yet.</span>      }    </div>  }  @if (editable()) {    <div class="flex-row align-center gap-regular padding-regular">      @if (!addPickerOpen()) {        <button mat-button color="accent" (click)="addPickerOpen.set(true)">          <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>          <span i18n>Add Permission</span>        </button>      } @else {        @if (addSelectVisible()) {          <mat-form-field class="add-permission-field">            <mat-label i18n>Add permission for record type</mat-label>            <app-entity-type-select              [value]="undefined"              [showInternalTypes]="true"              [hiddenTypes]="existingSubjects()"              (valueChange)="addSubject($event)"            ></app-entity-type-select>          </mat-form-field>        }        @if (!hasAllSubject()) {          <button mat-stroked-button (click)="addSubject(\'all\')">            <fa-icon icon="asterisk" class="standard-icon-with-text"></fa-icon>            <span i18n>All record types (wildcard)</span>          </button>        }      }    </div>  }  @if (inheritsFromDefaultRole()) {    <div class="table-footer-note text-secondary" i18n>      Logged-in users also always have the permissions defined in the      <a [routerLink]="defaultRoleLink">{{ defaultRole.key }}</a> role.    </div>  }</div></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionConditionDialogComponent', 'selector': 'app-permission-condition-dialog'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'KeepPanelOpenOnSelectDirective', 'selector': 'input[appKeepPanelOpenOnSelect]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'PermissionMatrixComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'PermissionMatrixComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

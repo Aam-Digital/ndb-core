@@ -207,7 +207,7 @@ E.g. for checking required roles or accessing the unique user identifier.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/session/auth/session-info.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/session/auth/session-info.ts:56</a></div>
                             </td>
                         </tr>
 
@@ -262,6 +262,13 @@ export interface SessionInfo {
    * Email address of a user
    */
   email?: string;
+
+  /**
+   * Roles of the Keycloak &quot;realm-management&quot; client the user holds
+   * (e.g. &quot;manage-realm&quot;, &quot;manage-users&quot;). Only present if the auth server&#x27;s
+   * token includes client roles; undefined otherwise (capability unknown).
+   */
+  realmManagementRoles?: string[];
 }
 
 /**

@@ -270,7 +270,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:52</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:58</a></div>
                             </td>
                         </tr>
 
@@ -305,8 +305,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="67"
-                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:67</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -501,7 +501,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:34</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -563,12 +563,11 @@ import {
   DatabaseRule,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
-  LEGACY_DEFAULT_KEY,
-  LEGACY_PUBLIC_KEY,
   PUBLIC_SECTION_KEY,
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from &quot;../permission-types&quot;;
+import { migrateLegacySectionKeys } from &quot;../permissions-config-migration&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { PermissionEnforcerService } from &quot;../permission-enforcer/permission-enforcer.service&quot;;
 import { EntityAbility } from &quot;./entity-ability&quot;;
@@ -578,7 +577,7 @@ import { get, has } from &quot;lodash-es&quot;;
 import { LatestEntityLoader } from &quot;../../entity/latest-entity-loader&quot;;
 import { SessionInfo, SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
-import { filter, firstValueFrom, merge } from &quot;rxjs&quot;;
+import { filter, firstValueFrom, merge, Observable } from &quot;rxjs&quot;;
 import { map } from &quot;rxjs/operators&quot;;
 import { HttpStatusCode } from &quot;@angular/common/http&quot;;
 import { isConnectivityError } from &quot;#src/app/utils/connectivity-error&quot;;
@@ -611,13 +610,23 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
    */
   private rulesKnown &#x3D; false;
 
+  /**
+   * The rules of every loaded version of the permissions document, brought into
+   * the current format once here, so that the rest of the service only deals
+   * with the underscore-prefixed reserved section keys.
+   */
+  private readonly rulesUpdated: Observable&lt;DatabaseRules&gt;;
+
   constructor() {
     const entityMapper &#x3D; inject(EntityMapperService);
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.entityUpdated.subscribe((config) &#x3D;&gt; {
-      this.currentRules &#x3D; config.data;
+    this.rulesUpdated &#x3D; this.entityUpdated.pipe(
+      map((config) &#x3D;&gt; migrateLegacySectionKeys(config.data)),
+    );
+    this.rulesUpdated.subscribe((rules) &#x3D;&gt; {
+      this.currentRules &#x3D; rules;
       // includes a deletion of the config (empty entity): that the rules are
       // gone is a known state, unlike a failed load
       this.rulesKnown &#x3D; true;
@@ -635,7 +644,9 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
     }
 
     if (initialPermissions) {
-      await this.updateAbilityWithUserRules(initialPermissions.data);
+      await this.updateAbilityWithUserRules(
+        migrateLegacySectionKeys(initialPermissions.data),
+      );
     } else if (this.rulesKnown) {
       // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: &quot;manage&quot;, subject: &quot;all&quot; }]);
@@ -645,7 +656,7 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
     }
 
     merge(
-      this.entityUpdated.pipe(map((config) &#x3D;&gt; config.data)),
+      this.rulesUpdated,
       this.sessionInfo.pipe(map(() &#x3D;&gt; this.currentRules)),
       this.currentUser.pipe(map(() &#x3D;&gt; this.currentRules)),
     ).subscribe((rules) &#x3D;&gt; {
@@ -736,12 +747,11 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const sessionInfo &#x3D; this.sessionInfo.value;
     if (!sessionInfo) {
-      return rules[PUBLIC_SECTION_KEY] ?? rules[LEGACY_PUBLIC_KEY] ?? [];
+      return rules[PUBLIC_SECTION_KEY] ?? [];
     }
 
     const rawUserRules: DatabaseRule[] &#x3D; [];
-    const defaultRules &#x3D;
-      rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY];
+    const defaultRules &#x3D; rules[DEFAULT_SECTION_KEY];
     if (defaultRules) {
       rawUserRules.push(...defaultRules);
     }

@@ -801,6 +801,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AdminRelatedEntityDetailsComponent.html" data-type="entity-link" >AdminRelatedEntityDetailsComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/AdminRoleDetailsComponent.html" data-type="entity-link" >AdminRoleDetailsComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/AdminRolesListComponent.html" data-type="entity-link" >AdminRolesListComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/AdminSearchableCheckboxComponent.html" data-type="entity-link" >AdminSearchableCheckboxComponent</a>
                             </li>
                             <li class="link">
@@ -808,9 +814,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/AdminTabsComponent.html" data-type="entity-link" >AdminTabsComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/AdminUserRolesComponent.html" data-type="entity-link" >AdminUserRolesComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/AdminWidgetDialogComponent.html" data-type="entity-link" >AdminWidgetDialogComponent</a>
@@ -1387,6 +1390,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/ParsedFileInputComponent.html" data-type="entity-link" >ParsedFileInputComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/PermissionConditionDialogComponent.html" data-type="entity-link" >PermissionConditionDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/PermissionMatrixComponent.html" data-type="entity-link" >PermissionMatrixComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/PillComponent.html" data-type="entity-link" >PillComponent</a>
@@ -2166,6 +2175,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/QueryService.html" data-type="entity-link" >QueryService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/RolePermissionsService.html" data-type="entity-link" >RolePermissionsService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/RoutePermissionsService.html" data-type="entity-link" >RoutePermissionsService</a>
                                 </li>
                                 <li class="link">
@@ -2263,6 +2275,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                         <ul class="links collapse " ${ isNormalMode ? ' id="interfaces-links"' : 'id="xs-interfaces-links"' }>
                             <li class="link">
                                 <a href="interfaces/AccountMergeDecision.html" data-type="entity-link" >AccountMergeDecision</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ActionGroup.html" data-type="entity-link" >ActionGroup</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ActionMeta.html" data-type="entity-link" >ActionMeta</a>
@@ -2371,6 +2386,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/CalculateReportOptions.html" data-type="entity-link" >CalculateReportOptions</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/CellState.html" data-type="entity-link" >CellState</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ChangeEvent.html" data-type="entity-link" >ChangeEvent</a>
@@ -2727,6 +2745,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/MatchingSideConfig.html" data-type="entity-link" >MatchingSideConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/MatrixCell.html" data-type="entity-link" >MatrixCell</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/MatrixModel.html" data-type="entity-link" >MatrixModel</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/MatrixRow.html" data-type="entity-link" >MatrixRow</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/MenuItem.html" data-type="entity-link" >MenuItem</a>
                             </li>
                             <li class="link">
@@ -2770,6 +2797,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ParsedJWT.html" data-type="entity-link" >ParsedJWT</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/PermissionConditionDialogData.html" data-type="entity-link" >PermissionConditionDialogData</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/PrebuiltFilterConfig.html" data-type="entity-link" >PrebuiltFilterConfig&lt;T&gt;</a>
@@ -2817,7 +2847,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ReportRow.html" data-type="entity-link" >ReportRow</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ReservedRoleInfo.html" data-type="entity-link" >ReservedRoleInfo</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/Role.html" data-type="entity-link" >Role</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RoleWithPermissions.html" data-type="entity-link" >RoleWithPermissions</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RuleFragment.html" data-type="entity-link" >RuleFragment</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/RuleWithConditions.html" data-type="entity-link" >RuleWithConditions</a>

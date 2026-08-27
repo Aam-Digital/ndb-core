@@ -170,6 +170,9 @@
                             <a href="#ConfigurableEnumConfig" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum.types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConfigurableEnumConfig</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum.types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#CrudAction" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>CrudAction</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#DashboardTheme" title="src/app/core/dashboard/dashboard-widget/dashboard-widget.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>DashboardTheme</b>&nbsp;&nbsp;&nbsp;(src/.../dashboard-widget.component.ts)</span></a>
                         </li>
                         <li>
@@ -239,6 +242,9 @@
                             <a href="#GetOptions" title="src/app/core/database/database.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>GetOptions</b>&nbsp;&nbsp;&nbsp;(src/.../database.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#GrantedBy" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>GrantedBy</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#IsDesktop" title="src/app/utils/media/screen-size-observer.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>IsDesktop</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</span></a>
                         </li>
                         <li>
@@ -276,6 +282,12 @@
                         </li>
                         <li>
                             <a href="#ReportEntity" title="src/app/features/reporting/report-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ReportEntity</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#RuleConditions" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>RuleConditions</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#RuleExtraProperties" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>RuleExtraProperties</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
                         </li>
                         <li>
                             <a href="#SchemaEmbeddedType" title="src/app/core/entity/schema/entity-schema.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SchemaEmbeddedType</b>&nbsp;&nbsp;&nbsp;(src/.../entity-schema.ts)</span></a>
@@ -583,6 +595,55 @@ as stored in the config database</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>Array&lt;T&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CrudAction"></a>
+                    <span class="name "><b>CrudAction</b><a href="#CrudAction"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>the four individual CRUD actions shown as their own matrix columns (&quot;manage&quot; is separate)</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;read&quot; | &quot;create&quot; | &quot;update&quot; | &quot;delete&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="GrantedBy"></a>
+                    <span class="name "><b>GrantedBy</b><a href="#GrantedBy"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Where an action is granted from, if not by an own rule of its row:
+the row&#39;s own &quot;manage&quot;, the &quot;all record types&quot; row of this same role,
+or the shared &quot;_default&quot; role that applies to every logged-in user.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;manage&quot; | &quot;wildcard&quot; | &quot;default&quot;</code>
 </code>
                 </td>
             </tr>
@@ -1455,6 +1516,54 @@ Use this instead of the {@class ReportConfig}</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>AggregationReport | ExportingReport | SqlReport</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/admin/admin-role-permissions/permission-matrix.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RuleConditions"></a>
+                    <span class="name "><b>RuleConditions</b><a href="#RuleConditions"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>CASL mongo-query conditions restricting a permission, as stored on a rule</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../miscellaneous/typealiases.html#DatabaseRule" target="_self" >DatabaseRule</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RuleExtraProperties"></a>
+                    <span class="name "><b>RuleExtraProperties</b><a href="#RuleExtraProperties"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Properties of a rule beyond subject/action/conditions (e.g. <code>reason</code>) that the
+matrix does not model directly but preserves verbatim.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>Record&lt;string | unknown&gt;</code>
 </code>
                 </td>
             </tr>

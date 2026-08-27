@@ -249,7 +249,17 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                <a href="#createRole" >createRole</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#createUser" >createUser</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#deleteRole" >deleteRole</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -285,6 +295,11 @@
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#resendInvitation" >resendInvitation</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#updateRole" >updateRole</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -351,8 +366,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="357"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:357</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="408"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:408</a></div>
                         </td>
                     </tr>
 
@@ -410,6 +425,81 @@
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createRole"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>createRole</b></span>
+                        <a href="#createRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createRole(role: <a href="../interfaces/Role.html" target="_self">Pick&lt;Role, &quot;name&quot; | &quot;description&quot;&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:288</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>role</td>
+                                            <td>
+                                                            <code><a href="../interfaces/Role.html" target="_self" >Pick&lt;Role, &quot;name&quot; | &quot;description&quot;&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;void&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -522,6 +612,81 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="deleteRole"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>deleteRole</b></span>
+                        <a href="#deleteRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteRole(roleName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:327</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>roleName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="deleteRoles"></a>
                     <span class="name">
                         <span ><b>deleteRoles</b></span>
@@ -538,8 +703,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="370"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:370</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="421"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:421</a></div>
                         </td>
                     </tr>
 
@@ -750,7 +915,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:291</a></code>
+                                <div class="io-line">        <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:342</a></code>
 </div>
                         </td>
                     </tr>
@@ -789,8 +954,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="344"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:344</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="395"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-admin.service.ts:395</a></div>
                         </td>
                     </tr>
 
@@ -1031,6 +1196,93 @@
                                                 <td>userAccountId</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateRole"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>updateRole</b></span>
+                        <a href="#updateRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateRole(roleName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, update: <a href="../interfaces/Role.html" target="_self">Pick&lt;Role, &quot;description&quot;&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/UserAdminService.html" target="_self" >UserAdminService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/UserAdminService.html#source" target="_self" >UserAdminService:312</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>roleName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>update</td>
+                                            <td>
+                                                            <code><a href="../interfaces/Role.html" target="_self" >Pick&lt;Role, &quot;description&quot;&gt;</a></code>
                                             </td>
 
                                             <td>
@@ -1530,6 +1782,57 @@ export class KeycloakAdminService extends UserAdminService {
     return this.http
       .get&lt;Role[]&gt;(&#x60;${this.keycloakUrl}/roles&#x60;)
       .pipe(map((roles) &#x3D;&gt; this.filterNonTechnicalRoles(roles)));
+  }
+
+  override createRole(
+    role: Pick&lt;Role, &quot;name&quot; | &quot;description&quot;&gt;,
+  ): Observable&lt;void&gt; {
+    return this.http
+      .post(&#x60;${this.keycloakUrl}/roles&#x60;, {
+        name: role.name,
+        description: role.description,
+      })
+      .pipe(
+        map(() &#x3D;&gt; undefined),
+        catchError((originalError) &#x3D;&gt;
+          throwError(() &#x3D;&gt; {
+            if (originalError?.status &#x3D;&#x3D;&#x3D; 409) {
+              return new UserAdminApiError(
+                409,
+                $localize&#x60;:User API error:A role with this name already exists.&#x60;,
+              );
+            }
+            return this.transformStandardError(originalError);
+          }),
+        ),
+      );
+  }
+
+  override updateRole(
+    roleName: string,
+    update: Pick&lt;Role, &quot;description&quot;&gt;,
+  ): Observable&lt;void&gt; {
+    return this.http
+      .put(&#x60;${this.keycloakUrl}/roles/${roleName}&#x60;, {
+        name: roleName,
+        description: update.description,
+      })
+      .pipe(
+        map(() &#x3D;&gt; undefined),
+        catchError((err) &#x3D;&gt; throwError(() &#x3D;&gt; this.transformStandardError(err))),
+      );
+  }
+
+  override deleteRole(roleName: string): Observable&lt;void&gt; {
+    return this.http.delete(&#x60;${this.keycloakUrl}/roles/${roleName}&#x60;).pipe(
+      map(() &#x3D;&gt; undefined),
+      catchError((err) &#x3D;&gt; {
+        // a role that no longer exists in the realm is treated as already deleted,
+        // so config-only (&quot;orphan&quot;) roles can still be cleaned up
+        if (err?.status &#x3D;&#x3D;&#x3D; 404) return of(undefined);
+        return throwError(() &#x3D;&gt; this.transformStandardError(err));
+      }),
+    );
   }
 
   /**

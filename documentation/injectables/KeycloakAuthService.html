@@ -291,8 +291,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="298"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:298</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="300"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:300</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="334"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:334</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="336"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:336</a></div>
                         </td>
                     </tr>
 
@@ -402,8 +402,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="341"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:341</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="343"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:343</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="324"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:324</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="326"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:326</a></div>
                         </td>
                     </tr>
 
@@ -480,8 +480,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="349"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:349</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="351"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:351</a></div>
                         </td>
                     </tr>
 
@@ -519,8 +519,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="315"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:315</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="317"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:317</a></div>
                         </td>
                     </tr>
 
@@ -1014,6 +1014,8 @@ export class KeycloakAuthService {
       // TODO: access from resource_access.app.roles and also resource_access.realm-management.roles &#x3D;&#x3D;&#x3D; manage-users ?
       roles: parsedToken[&quot;_couchdb.roles&quot;],
       email: parsedToken.email,
+      realmManagementRoles:
+        parsedToken.resource_access?.[&quot;realm-management&quot;]?.roles,
     };
 
     if (parsedToken.username) {

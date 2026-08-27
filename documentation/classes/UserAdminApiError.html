@@ -222,7 +222,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:116</a></div>
                             </td>
                         </tr>
 
@@ -296,7 +296,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:94</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/user/user-admin-service/user-admin.service.ts:116</a></div>
                         </td>
                     </tr>
 
@@ -404,6 +404,28 @@ export abstract class UserAdminService {
    * Get all available roles of the server
    */
   abstract getAllRoles(): Observable&lt;Role[]&gt;;
+
+  /**
+   * Create a new realm role in the authentication server
+   * @throws {@link UserAdminApiError} status&#x3D;409 if the role already exists
+   */
+  abstract createRole(
+    role: Pick&lt;Role, &quot;name&quot; | &quot;description&quot;&gt;,
+  ): Observable&lt;void&gt;;
+
+  /**
+   * Update the description of an existing realm role
+   */
+  abstract updateRole(
+    roleName: string,
+    update: Pick&lt;Role, &quot;description&quot;&gt;,
+  ): Observable&lt;void&gt;;
+
+  /**
+   * Delete a realm role from the authentication server.
+   * Users currently having the role lose it.
+   */
+  abstract deleteRole(roleName: string): Observable&lt;void&gt;;
 
   /**
    * Get all users registered in the authentication server (Keycloak) for this realm
