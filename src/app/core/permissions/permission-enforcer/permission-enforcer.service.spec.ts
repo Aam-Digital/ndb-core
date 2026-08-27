@@ -153,6 +153,58 @@ describe("PermissionEnforcerService", () => {
     }
   });
 
+  describe("online session (no local database)", () => {
+    beforeEach(() => {
+      vi.spyOn(
+        TestBed.inject(DatabaseResolverService),
+        "hasLocalDatabase",
+      ).mockReturnValue(false);
+    });
+
+    it("should not purge, destroy/reload, or resetSync", async () => {
+      vi.useFakeTimers();
+      try {
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        // clear calls from the initial (pre-mock) enforcement in the outer
+        // beforeEach, so the assertions below only reflect the call below
+        mockDb.purge.mockClear();
+        destroySpy.mockClear();
+        mockLocation.reload.mockClear();
+        resetSyncSpy.mockClear();
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(mockDb.purge).not.toHaveBeenCalled();
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+        expect(resetSyncSpy).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should not persist enforced rules to local storage", async () => {
+      // clear whatever the initial (pre-mock) enforcement in the outer
+      // beforeEach already wrote, so this only reflects the call below
+      window.localStorage.removeItem(
+        TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
+      );
+
+      vi.useFakeTimers();
+      try {
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(service.getLastEnforcedRules()).toBeUndefined();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
   describe("indexeddb adapter (purge supported)", () => {
     // isIndexedDbAdapterSpy defaults to true from beforeEach
 

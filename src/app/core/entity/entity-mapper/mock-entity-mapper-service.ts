@@ -20,6 +20,7 @@ export function mockEntityMapperProvider(
   customDatabaseResolverService: DatabaseResolverService | {} = {
     resetSync: () => Promise.resolve(),
     isIndexedDbAdapterSupported: () => false,
+    hasLocalDatabase: () => true,
     getDatabase: () => ({ purge: () => Promise.resolve(false) }),
   },
 ): Provider[] {

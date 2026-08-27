@@ -153,6 +153,25 @@ describe("DatabaseResolverService", () => {
     expect(defaultDb.init).toHaveBeenCalledWith("test-user-app");
   });
 
+  describe("hasLocalDatabase", () => {
+    it("should return false for online (remote-only) sessions", () => {
+      // @ts-ignore - forcing this for stable test conditions
+      service["sessionType"] = SessionType.online;
+
+      expect(service.hasLocalDatabase()).toBe(false);
+    });
+
+    it.each([SessionType.synced, SessionType.local, SessionType.mock])(
+      "should return true for %s sessions",
+      (sessionType) => {
+        // @ts-ignore - forcing this for stable test conditions
+        service["sessionType"] = sessionType;
+
+        expect(service.hasLocalDatabase()).toBe(true);
+      },
+    );
+  });
+
   describe("storage persistence", () => {
     /**
      * Set up a service instance with a mocked navigator.storage.

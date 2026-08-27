@@ -16,6 +16,11 @@ import { Logging } from "../../logging/logging.service";
  * This service checks whether the relevant rules for the current user changed
  * and reacts accordingly.
  *
+ * Only relevant for session types with a local database (`synced`/`local`) -
+ * see {@link DatabaseResolverService.hasLocalDatabase}. `online` sessions have
+ * no local cache to purge or invalidate (the server already enforces
+ * permissions live on every request), so this is a no-op for them.
+ *
  * **`indexeddb` adapter (PouchDB 8+):**
  * Scans locally-cached entities of restricted types and purges any that the
  * current CASL rules deny reading. Immediately updates the UI without a page
@@ -48,6 +53,11 @@ export class PermissionEnforcerService {
   async enforcePermissionsOnLocalData(
     userRules: DatabaseRule[],
   ): Promise<void> {
+    if (!this.dbResolver.hasLocalDatabase()) {
+      // nothing to do
+      return;
+    }
+
     Logging.debug(
       "Checking for updated permissions [PermissionEnforcerService]",
     );
