@@ -69,19 +69,29 @@
           </th>
           <td mat-cell *matCellDef="let v" class="action-col">
             <div class="cell-stack">
-              <span
+              <!-- the tooltip sits on the checkbox itself (not a wrapper), so
+                   "disabledInteractive" keeps it hoverable and focusable while
+                   disabled; the hidden description makes the same reason
+                   available to screen readers -->
+              <mat-checkbox
+                [checked]="v.actionStates[col.key].allowed"
+                [disabled]="!editable() || !v.actionStates[col.key].editable"
+                [disabledInteractive]="!!v.actionStates[col.key].lockTooltip"
                 [matTooltip]="v.actionStates[col.key].lockTooltip"
                 [matTooltipDisabled]="!v.actionStates[col.key].lockTooltip"
-              >
-                <mat-checkbox
-                  [checked]="v.actionStates[col.key].allowed"
-                  [disabled]="!editable() || !v.actionStates[col.key].editable"
-                  [attr.aria-label]="col.label + ' – ' + v.label"
-                  (change)="
-                    setCellAllowed(v.modelIndex, col.key, $event.checked)
-                  "
-                ></mat-checkbox>
-              </span>
+                [attr.aria-label]="col.label + ' – ' + v.label"
+                [aria-describedby]="
+                  v.actionStates[col.key].lockDescriptionId || null
+                "
+                (change)="setCellAllowed(v.modelIndex, col.key, $event.checked)"
+              ></mat-checkbox>
+              @if (v.actionStates[col.key].lockTooltip) {
+                <span
+                  class="visually-hidden"
+                  [id]="v.actionStates[col.key].lockDescriptionId"
+                  >{{ v.actionStates[col.key].lockTooltip }}</span
+                >
+              }
 
               @if (v.actionStates[col.key].hasCondition) {
                 <!-- condition chip: editable only for subjects whose conditions
@@ -179,17 +189,23 @@
           {{ manageColLabel }}
         </th>
         <td mat-cell *matCellDef="let v" class="action-col manage-col">
-          <span
+          <mat-checkbox
+            [checked]="v.manageState.allowed"
+            [disabled]="!editable() || !v.manageState.editable"
+            [disabledInteractive]="!!v.manageState.lockTooltip"
             [matTooltip]="v.manageState.lockTooltip"
             [matTooltipDisabled]="!v.manageState.lockTooltip"
-          >
-            <mat-checkbox
-              [checked]="v.manageState.allowed"
-              [disabled]="!editable() || !v.manageState.editable"
-              [attr.aria-label]="manageColLabel + ' – ' + v.label"
-              (change)="setManage(v.modelIndex, $event.checked)"
-            ></mat-checkbox>
-          </span>
+            [attr.aria-label]="manageColLabel + ' – ' + v.label"
+            [aria-describedby]="v.manageState.lockDescriptionId || null"
+            (change)="setManage(v.modelIndex, $event.checked)"
+          ></mat-checkbox>
+          @if (v.manageState.lockTooltip) {
+            <span
+              class="visually-hidden"
+              [id]="v.manageState.lockDescriptionId"
+              >{{ v.manageState.lockTooltip }}</span
+            >
+          }
         </td>
       </ng-container>
 

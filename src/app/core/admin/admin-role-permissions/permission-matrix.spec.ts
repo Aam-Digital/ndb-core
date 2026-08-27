@@ -49,7 +49,7 @@ describe("permission-matrix", () => {
     expect(model.rows[0].cells.update).toEqual({ allowed: true });
   });
 
-  it("collects inverted and field-restricted rules as unsupported and re-emits them unchanged", () => {
+  it("collects inverted and field-restricted rules as unsupported and re-emits them unchanged after the matrix rules", () => {
     const inverted: DatabaseRule = {
       subject: "Child",
       action: "delete",
@@ -70,27 +70,31 @@ describe("permission-matrix", () => {
     expect(model.unsupportedRules).toEqual([inverted, fieldRestricted]);
     expect(model.rows.map((r) => r.subject)).toEqual(["Child"]);
 
-    const rules = matrixToRules(model);
-    expect(rules).toContainEqual(inverted);
-    expect(rules).toContainEqual(fieldRestricted);
+    expect(matrixToRules(model)).toEqual([
+      { subject: "Child", action: "read" },
+      inverted,
+      fieldRestricted,
+    ]);
   });
 
-  it("keeps an inverted rule ahead of the matrix rules when it came first", () => {
-    // an inverted (restricting) rule placed before an allow rule must not move
-    // after it on round-trip, or CASL precedence would flip
-    const inverted: DatabaseRule = {
-      subject: "Child",
-      action: "read",
-      inverted: true,
+  it("merges permissions that an unsupported rule originally separated", () => {
+    // order is irrelevant for the plain "allow" rules the matrix models, so the
+    // matrix rules can be grouped freely and the unsupported ones simply follow
+    const fieldRestricted: DatabaseRule = {
+      subject: "Note",
+      action: "update",
+      fields: ["text"],
     };
     const rules: DatabaseRule[] = [
-      inverted,
       { subject: "Child", action: "read" },
+      fieldRestricted,
+      { subject: "School", action: "read" },
     ];
 
-    const result = matrixToRules(rulesToMatrix(rules));
-
-    expect(result[0]).toEqual(inverted);
+    expect(matrixToRules(rulesToMatrix(rules))).toEqual([
+      { subject: ["Child", "School"], action: "read" },
+      fieldRestricted,
+    ]);
   });
 
   it("round-trips typical grouped config rules without changing them", () => {

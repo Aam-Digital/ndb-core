@@ -109,10 +109,24 @@ export class RolePermissionsService {
     );
   });
 
+  /**
+   * The permissions config document, or an empty one if it does not exist yet.
+   *
+   * Only an explicit "not found" is treated as "no permissions configured".
+   * Any other load failure (e.g. offline, or a temporary server error) is
+   * propagated: treating it as an empty config would make the callers below
+   * save a document that silently drops every already configured role.
+   */
   loadPermissionsConfig(): Promise<Config<DatabaseRules>> {
     return this.entityMapper
       .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
-      .catch(() => new Config(Config.PERMISSION_KEY, {}));
+      .catch((err) => {
+        const error = err as { status?: number; name?: string } | null;
+        if (error?.status === 404 || error?.name === "not_found") {
+          return new Config(Config.PERMISSION_KEY, {});
+        }
+        throw err;
+      });
   }
 
   /**

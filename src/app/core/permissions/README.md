@@ -69,6 +69,7 @@ Both repos use CASL v6.8.1. Key facts:
 - **Deny-by-default**: If no rule matches a subject/action pair, access is denied.
 - **No specificity**: CASL does not rank rules by how specific they are. Instead, it uses **last matching rule wins** — the last rule in the array that matches the subject/action/conditions determines the result, regardless of whether earlier rules are more specific.
 - **Inverted rules**: A rule with `inverted: true` works as a deny, not a grant. This can be confusing with multiple roles; use with care.
+  - The Admin UI does not ensure the order or rules is kept, so inverted rules effects might change!
 - **Conditions**: Rules can specify MongoDB-style conditions to restrict access to specific documents or fields. Conditions are only evaluated if the document is passed to `ability.can(subject, doc)` — not just the subject type string.
 - **`cannot()`**: Calling `ability.cannot(action, subject)` is literally `!ability.can(action, subject)`.
 

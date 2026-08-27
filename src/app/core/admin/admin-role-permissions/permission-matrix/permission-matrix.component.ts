@@ -35,7 +35,7 @@ import {
   inheritsDefaultRules,
 } from "../../../permissions/permission-types";
 import { DEFAULT_ROLE } from "../../../permissions/reserved-roles";
-import { MatrixModel, MatrixRow } from "../permission-matrix";
+import { MatrixModel, MatrixRow, RuleConditions } from "../permission-matrix";
 import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
 
 /** the four individual CRUD actions shown as their own matrix columns ("manage" is separate) */
@@ -61,6 +61,24 @@ interface CellState {
   summary: string;
   /** why the checkbox cannot be changed; empty when it is editable */
   lockTooltip: string;
+  /**
+   * id of the hidden element repeating {@link lockTooltip} for screen readers,
+   * which do not announce the tooltip of a checkbox they cannot change.
+   * Empty when the cell is editable.
+   */
+  lockDescriptionId: string;
+}
+
+/**
+ * Stable id of the hidden element describing why a cell's checkbox is locked.
+ * Derived from subject and action rather than a row index, so it stays the same
+ * when rows are added or removed.
+ */
+function lockDescriptionId(
+  subject: string,
+  action: EntityActionPermission,
+): string {
+  return `perm-lock-${subject}-${action}`;
 }
 
 /**
@@ -201,17 +219,23 @@ export class PermissionMatrixComponent {
       isInternal: false,
       conditionsEditable: false,
       manageAllowed,
-      manageState: this.defaultRowCellState(!!cells.manage?.allowed),
+      manageState: this.defaultRowCellState("manage", manageAllowed),
       actionStates: Object.fromEntries(
         this.crudActions.map((action) => [
           action,
-          this.defaultRowCellState(manageAllowed || !!cells[action]?.allowed),
+          this.defaultRowCellState(
+            action,
+            manageAllowed || !!cells[action]?.allowed,
+          ),
         ]),
       ) as Record<CrudAction, CellState>,
     };
   });
 
-  private defaultRowCellState(allowed: boolean): CellState {
+  private defaultRowCellState(
+    action: EntityActionPermission,
+    allowed: boolean,
+  ): CellState {
     return {
       allowed,
       ownAllowed: false,
@@ -219,6 +243,7 @@ export class PermissionMatrixComponent {
       hasCondition: false,
       summary: "",
       lockTooltip: $localize`:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the "${this.defaultRole.label}" role.`,
+      lockDescriptionId: lockDescriptionId(DEFAULT_SECTION_KEY, action),
     };
   }
 
@@ -238,6 +263,9 @@ export class PermissionMatrixComponent {
         ? this.describeConditions(cell.conditions, row.subject)
         : "",
       lockTooltip: grantedBy ? this.grantedByTooltip(grantedBy) : "",
+      lockDescriptionId: grantedBy
+        ? lockDescriptionId(row.subject, action)
+        : "",
     };
   }
 
@@ -298,6 +326,11 @@ export class PermissionMatrixComponent {
     }
     return this.inheritedRules().some((rule) => {
       if (rule.inverted) return false;
+      // a conditional default rule only grants the action for some records, so
+      // it must not lock the checkbox as if the action were granted outright
+      if (rule.conditions && Object.keys(rule.conditions).length > 0) {
+        return false;
+      }
       const subjects = asArray(rule.subject);
       // the wildcard row itself is only covered by a default rule that applies
       // to every record type, not by one for a single type
@@ -338,25 +371,31 @@ export class PermissionMatrixComponent {
   readonly defaultRoleLink = [ROLES_ADMIN_ROUTE, DEFAULT_ROLE.key];
 
   /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */
-  private describeConditions(conditions: any, subject: string): string {
+  private describeConditions(
+    conditions: RuleConditions,
+    subject: string,
+  ): string {
     if (!conditions || typeof conditions !== "object") return "";
     const ctor = this.entityRegistry.has(subject)
       ? this.entityRegistry.get(subject)
       : undefined;
     const fieldLabel = (key: string) => ctor?.schema.get(key)?.label ?? key;
-    const describeObject = (obj: any): string =>
-      Object.entries(obj)
-        .map(
-          ([key, value]) =>
-            `${fieldLabel(key)}: ${describeConditionFragment(value)}`,
-        )
-        .join($localize` and `);
+    const describeObject = (obj: unknown): string =>
+      typeof obj === "object" && obj !== null
+        ? Object.entries(obj)
+            .map(
+              ([key, value]) =>
+                `${fieldLabel(key)}: ${describeConditionFragment(value)}`,
+            )
+            .join($localize` and `)
+        : "";
 
-    if (Array.isArray(conditions.$or)) {
-      return conditions.$or.map(describeObject).join($localize` or `);
+    const query = conditions as Record<string, unknown>;
+    if (Array.isArray(query.$or)) {
+      return query.$or.map(describeObject).join($localize` or `);
     }
-    if (Array.isArray(conditions.$and)) {
-      return conditions.$and.map(describeObject).join($localize` and `);
+    if (Array.isArray(query.$and)) {
+      return query.$and.map(describeObject).join($localize` and `);
     }
     return describeObject(conditions);
   }
@@ -491,7 +530,7 @@ export class PermissionMatrixComponent {
         if (result !== null && typeof result !== "object") return;
         this.emitUpdated((m) => {
           // keep any unmodelled properties (e.g. reason) that the cell carried
-          const extra = m.rows[rowIndex].cells[action]?.extra;
+          const { extra } = m.rows[rowIndex].cells[action] ?? {};
           m.rows[rowIndex].cells[action] = {
             allowed: true,
             ...(result ? { conditions: result } : {}),

@@ -117,6 +117,28 @@ describe("RolePermissionsService", () => {
     ]);
   });
 
+  it("does not overwrite the existing roles when the config cannot be loaded", async () => {
+    // anything other than "the document does not exist" (e.g. a temporary
+    // server error) must not be read as "no permissions configured", which
+    // would save a config holding only the edited role
+    mockEntityMapper.load.mockRejectedValue({ status: 500 });
+    mockUserAdmin.deleteRole.mockReturnValue(of(undefined));
+
+    await expect(
+      service.saveRules("field_supervisor", [
+        { subject: "Child", action: "read" },
+      ]),
+    ).rejects.toEqual({ status: 500 });
+    await expect(service.deleteRole("field_supervisor")).rejects.toEqual({
+      status: 500,
+    });
+
+    const savedConfig = mockEntityMapper.save.mock.calls
+      .map(([e]) => e)
+      .find((e) => e.getId() === "Config:Permissions");
+    expect(savedConfig).toBeUndefined();
+  });
+
   it("lists config-only roles even when keycloak roles cannot be loaded", async () => {
     mockEntityMapper.load.mockResolvedValue(
       new Config(Config.PERMISSION_KEY, { user_app: [] }),

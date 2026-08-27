@@ -25,19 +25,28 @@
         <span i18n>Edit</span>
       </button>
       @if (role() && !isProtected()) {
-        <span
+        <!-- tooltip on the button itself, kept hoverable while disabled via
+             "disabledInteractive"; the hidden description states the same
+             reason for screen readers -->
+        <button
+          mat-stroked-button
+          [disabled]="!canManageRoles()"
+          [disabledInteractive]="!canManageRoles()"
           [matTooltip]="deleteDisabledTooltip"
           [matTooltipDisabled]="canManageRoles()"
+          [attr.aria-describedby]="
+            canManageRoles() ? null : 'role-delete-disabled-reason'
+          "
+          (click)="deleteRole()"
         >
-          <button
-            mat-stroked-button
-            [disabled]="!canManageRoles()"
-            (click)="deleteRole()"
-          >
-            <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
-            <span i18n>Delete</span>
-          </button>
-        </span>
+          <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Delete</span>
+        </button>
+        @if (!canManageRoles()) {
+          <span class="visually-hidden" id="role-delete-disabled-reason">{{
+            deleteDisabledTooltip
+          }}</span>
+        }
       }
     }
   </div>

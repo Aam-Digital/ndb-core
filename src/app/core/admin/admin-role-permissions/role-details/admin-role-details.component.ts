@@ -263,6 +263,10 @@ export class AdminRoleDetailsComponent implements OnInit {
   }
 
   async deleteRole() {
+    // the disabled Delete button stays interactive (so its tooltip can explain
+    // why), which means it still emits clicks
+    if (!this.canManageRoles()) return;
+
     const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Delete role?`,
       $localize`This permanently removes the role "${this.roleName()}" and its permissions. Users currently having this role lose the access it granted. This cannot be undone.`,

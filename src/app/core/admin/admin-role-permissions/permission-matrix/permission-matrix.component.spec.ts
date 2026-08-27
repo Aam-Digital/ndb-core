@@ -32,10 +32,12 @@ describe("PermissionMatrixComponent", () => {
   const mockDialog = { open: vi.fn() };
   const mockConfirmation = { getConfirmation: vi.fn().mockResolvedValue(true) };
 
-  const entityRegistry = new EntityRegistry();
+  // re-created per test, so a type registered by one test cannot leak into others
+  let entityRegistry: EntityRegistry;
 
   beforeEach(async () => {
     vi.clearAllMocks();
+    entityRegistry = new EntityRegistry();
     await TestBed.configureTestingModule({
       imports: [PermissionMatrixComponent],
       providers: [
@@ -246,11 +248,60 @@ describe("PermissionMatrixComponent", () => {
     expect(defaultBoxes[0].classList).toContain("mat-mdc-checkbox-checked");
     expect(defaultBoxes[0].classList).toContain("mat-mdc-checkbox-disabled");
 
+    // the reason is also readable for screen readers, on the default row itself
+    const defaultInput = rows[0].querySelector("mat-checkbox input");
+    const describedBy = defaultInput.getAttribute("aria-describedby");
+    expect(
+      fixture.nativeElement.querySelector(`#${describedBy}`).textContent,
+    ).toContain("every logged-in user");
+
     // what it grants is locked on the role's own rows, the rest stays editable
     const childBoxes = rows[1].querySelectorAll("mat-checkbox");
     expect(childBoxes[0].classList).toContain("mat-mdc-checkbox-checked");
     expect(childBoxes[0].classList).toContain("mat-mdc-checkbox-disabled");
     expect(childBoxes[1].classList).not.toContain("mat-mdc-checkbox-disabled");
+  });
+
+  it("does not lock a cell that the default role only grants conditionally", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [{ subject: "Child", cells: {} }],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    // a conditional default rule only grants read for some records, so read
+    // still has to be grantable outright for this role
+    fixture.componentRef.setInput("inheritedRules", [
+      { subject: "all", action: "read", conditions: { center: "x" } },
+    ]);
+    fixture.detectChanges();
+
+    // nothing is granted to everyone, so no read-only "Default" row is shown
+    const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
+    expect(rows).toHaveLength(1);
+
+    const readBox = rows[0].querySelectorAll("mat-checkbox")[0];
+    expect(readBox.classList).not.toContain("mat-mdc-checkbox-checked");
+    expect(readBox.classList).not.toContain("mat-mdc-checkbox-disabled");
+  });
+
+  it("keeps a locked checkbox hoverable and describes the reason for screen readers", () => {
+    fixture.componentRef.setInput("model", {
+      rows: [{ subject: "Child", cells: { manage: { allowed: true } } }],
+      unsupportedRules: [],
+    } satisfies MatrixModel);
+    fixture.componentRef.setInput("editable", true);
+    fixture.detectChanges();
+
+    const readInput = fixture.nativeElement.querySelector(
+      "tr[mat-row] mat-checkbox input",
+    );
+    // disabled but still interactive, so the explaining tooltip can be reached
+    expect(readInput.disabled).toBe(false);
+    expect(readInput.getAttribute("aria-disabled")).toBe("true");
+
+    const describedBy = readInput.getAttribute("aria-describedby");
+    const description = fixture.nativeElement.querySelector(`#${describedBy}`);
+    expect(description.textContent).toContain("Manage (all)");
   });
 
   it("always links to the _default role below the matrix", () => {

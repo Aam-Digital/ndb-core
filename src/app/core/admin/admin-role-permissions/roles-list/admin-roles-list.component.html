@@ -4,21 +4,30 @@
   </div>
 
   <div class="flex-row gap-small align-center">
-    <span
+    <!-- tooltip on the button itself, kept hoverable while disabled via
+         "disabledInteractive"; the null routerLink keeps the interactive
+         disabled button from navigating -->
+    <button
+      mat-stroked-button
+      color="accent"
+      class="standard-add-button"
+      [routerLink]="canManageRoles() ? 'new' : null"
+      [disabled]="!canManageRoles()"
+      [disabledInteractive]="!canManageRoles()"
       [matTooltip]="addDisabledTooltip"
       [matTooltipDisabled]="canManageRoles()"
+      [attr.aria-describedby]="
+        canManageRoles() ? null : 'role-add-disabled-reason'
+      "
     >
-      <button
-        mat-stroked-button
-        color="accent"
-        class="standard-add-button"
-        [routerLink]="canManageRoles() ? 'new' : null"
-        [disabled]="!canManageRoles()"
-      >
-        <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
-        <span i18n>Add New Role</span>
-      </button>
-    </span>
+      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Add New Role</span>
+    </button>
+    @if (!canManageRoles()) {
+      <span class="visually-hidden" id="role-add-disabled-reason">{{
+        addDisabledTooltip
+      }}</span>
+    }
 
     <button
       mat-icon-button

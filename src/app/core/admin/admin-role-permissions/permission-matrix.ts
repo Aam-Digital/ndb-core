@@ -5,6 +5,15 @@ import {
   EntityActionPermission,
 } from "../../permissions/permission-types";
 
+/** CASL mongo-query conditions restricting a permission, as stored on a rule */
+export type RuleConditions = DatabaseRule["conditions"];
+
+/**
+ * Properties of a rule beyond subject/action/conditions (e.g. `reason`) that the
+ * matrix does not model directly but preserves verbatim.
+ */
+export type RuleExtraProperties = Record<string, unknown>;
+
 /**
  * State of one action for a subject in the permission matrix.
  */
@@ -12,13 +21,13 @@ export interface MatrixCell {
   allowed: boolean;
 
   /** CASL mongo-query conditions restricting the permission, undefined = unconditional */
-  conditions?: any;
+  conditions?: RuleConditions;
 
   /**
    * Any further properties of the original rule that the matrix does not model
    * directly (e.g. `reason`). Preserved so they survive an edit round-trip.
    */
-  extra?: Record<string, any>;
+  extra?: RuleExtraProperties;
 }
 
 /**
@@ -39,17 +48,10 @@ export interface MatrixModel {
 
   /**
    * Rules the matrix cannot represent (inverted, field-restricted or
-   * non-string subjects). Preserved verbatim and re-emitted on save.
+   * non-string subjects). Preserved verbatim and re-emitted on save,
+   * see {@link matrixToRules} on why their position is not tracked.
    */
   unsupportedRules: DatabaseRule[];
-
-  /**
-   * Original index of each {@link unsupportedRules} entry within the source
-   * rule list, so they can be re-inserted at their original position on save.
-   * CASL applies later rules with higher precedence, so keeping an inverted
-   * rule ahead of (or behind) an allow rule preserves the intended outcome.
-   */
-  unsupportedRuleIndices?: number[];
 }
 
 const MATRIX_ACTIONS: EntityActionPermission[] = [
@@ -72,8 +74,8 @@ function isSupported(rule: DatabaseRule): boolean {
 }
 
 /** properties of a rule beyond subject/action/conditions (e.g. reason), or undefined if none */
-function extractExtra(rule: DatabaseRule): Record<string, any> | undefined {
-  const { subject, action, conditions, ...extra } = rule as any;
+function extractExtra(rule: DatabaseRule): RuleExtraProperties | undefined {
+  const { subject, action, conditions, ...extra } = rule;
   return Object.keys(extra).length > 0 ? extra : undefined;
 }
 
@@ -84,12 +86,10 @@ function extractExtra(rule: DatabaseRule): Record<string, any> | undefined {
 export function rulesToMatrix(rules: DatabaseRule[]): MatrixModel {
   const rows: MatrixRow[] = [];
   const unsupportedRules: DatabaseRule[] = [];
-  const unsupportedRuleIndices: number[] = [];
 
-  (rules ?? []).forEach((rule, index) => {
+  (rules ?? []).forEach((rule) => {
     if (!isSupported(rule)) {
       unsupportedRules.push(rule);
-      unsupportedRuleIndices.push(index);
       return;
     }
 
@@ -115,19 +115,20 @@ export function rulesToMatrix(rules: DatabaseRule[]): MatrixModel {
     }
   });
 
-  return { rows, unsupportedRules, unsupportedRuleIndices };
+  return { rows, unsupportedRules };
 }
 
 /**
  * Convert the matrix model back into minimal permission rules:
  * actions of one subject sharing identical conditions (and extra properties)
  * become one rule, and subjects with completely identical permissions are
- * grouped into one rule. Unsupported rules are appended unchanged.
+ * grouped into one rule. The unsupported rules are appended unchanged at the
+ * end (see {@link matrixToRules}).
  */
 interface ActionGroup {
   actions: EntityActionPermission[];
-  conditions?: any;
-  extra?: Record<string, any>;
+  conditions?: RuleConditions;
+  extra?: RuleExtraProperties;
 }
 
 interface RuleFragment extends ActionGroup {
@@ -155,9 +156,21 @@ function groupAllowedActions(row: MatrixRow): Map<string, ActionGroup> {
   return byKey;
 }
 
+function fragmentToRule(fragment: RuleFragment): DatabaseRule {
+  return {
+    subject:
+      fragment.subjects.length === 1 ? fragment.subjects[0] : fragment.subjects,
+    action:
+      fragment.actions.length === 1 ? fragment.actions[0] : fragment.actions,
+    ...(fragment.conditions !== undefined
+      ? { conditions: fragment.conditions }
+      : {}),
+    ...(fragment.extra ?? {}),
+  } as DatabaseRule;
+}
+
 export function matrixToRules(model: MatrixModel): DatabaseRule[] {
   const fragments: RuleFragment[] = [];
-
   for (const row of model.rows) {
     for (const [key, group] of groupAllowedActions(row)) {
       // merge with a previous subject's fragment that has identical actions + key
@@ -172,41 +185,14 @@ export function matrixToRules(model: MatrixModel): DatabaseRule[] {
     }
   }
 
-  const rules: DatabaseRule[] = fragments.map(
-    (f) =>
-      ({
-        subject: f.subjects.length === 1 ? f.subjects[0] : f.subjects,
-        action: f.actions.length === 1 ? f.actions[0] : f.actions,
-        ...(f.conditions !== undefined ? { conditions: f.conditions } : {}),
-        ...(f.extra ?? {}),
-      }) as DatabaseRule,
-  );
-
-  return withUnsupportedRules(rules, model);
-}
-
-/**
- * Re-insert the model's unsupported rules near their original positions so
- * their CASL precedence relative to the matrix rules is preserved (an inverted
- * rule that came before an allow rule must not suddenly win after a round-trip).
- */
-function withUnsupportedRules(
-  rules: DatabaseRule[],
-  model: MatrixModel,
-): DatabaseRule[] {
-  const unsupported = model.unsupportedRules ?? [];
-  const indices = model.unsupportedRuleIndices;
-  if (!indices || indices.length !== unsupported.length) {
-    // no position info (e.g. freshly built model): append last
-    return [...rules, ...unsupported];
-  }
-
-  const result = [...rules];
-  unsupported
-    .map((rule, i) => ({ rule, index: indices[i] }))
-    .sort((a, b) => a.index - b.index)
-    .forEach(({ rule, index }) =>
-      result.splice(Math.min(index, result.length), 0, rule),
-    );
-  return result;
+  // Rule order does not matter for the permissions we use: CASL grants an action
+  // as soon as any rule matches it, so a list of plain "allow" rules has the same
+  // effect however it is sorted. Only an inverted ("cannot") rule is
+  // order-sensitive, and we do not use those. Appending the unsupported rules
+  // therefore keeps the meaning of every role we have.
+  //
+  // Should a role ever carry an inverted rule after all, coming last makes it
+  // restrict rather than be overridden - the safe direction, but it also means a
+  // matrix checkbox ticked for an action such a rule denies has no effect.
+  return [...fragments.map(fragmentToRule), ...(model.unsupportedRules ?? [])];
 }
