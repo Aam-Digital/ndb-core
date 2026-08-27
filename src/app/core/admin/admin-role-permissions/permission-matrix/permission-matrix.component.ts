@@ -13,6 +13,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 import { asArray } from "#src/app/utils/asArray";
@@ -34,6 +35,7 @@ import {
   RESERVED_RULE_CONFIG_KEYS,
 } from "../../../permissions/permission-types";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
+import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
 
 /** the four individual CRUD actions shown as their own matrix columns ("manage" is separate) */
 type CrudAction = "read" | "create" | "update" | "delete";
@@ -78,6 +80,7 @@ interface CellState {
     FaDynamicIconComponent,
     HintBoxComponent,
     EntityTypeSelectComponent,
+    RouterLink,
   ],
   templateUrl: "./permission-matrix.component.html",
   styleUrl: "./permission-matrix.component.scss",
@@ -322,12 +325,16 @@ export class PermissionMatrixComponent {
    * Whether users of this role also receive the shared "_default" rules.
    * False for the reserved roles: "_default" cannot inherit from itself and
    * "_public" applies to visitors who are not logged in, who never receive the
-   * "_default" rules (see AbilityService.getRulesForUser). Their empty state
-   * therefore differs as well, having no base role to fall back to.
+   * "_default" rules (see AbilityService.getRulesForUser). Also drives the note
+   * below the matrix, which must not appear on those two roles.
    */
   readonly inheritsFromDefaultRole = computed(
     () => !RESERVED_RULE_CONFIG_KEYS.includes(this.roleName()),
   );
+
+  /** the "_default" role, named and linked in the note below the matrix */
+  readonly defaultRoleName = DEFAULT_SECTION_KEY;
+  readonly defaultRoleLink = [ROLES_ADMIN_ROUTE, DEFAULT_SECTION_KEY];
 
   /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */
   private describeConditions(conditions: any, subject: string): string {

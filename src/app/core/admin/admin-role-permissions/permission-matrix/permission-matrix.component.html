@@ -223,13 +223,10 @@
     <div class="empty-state text-secondary padding-regular">
       @if (editable()) {
         <span i18n>No permissions yet. Add one below.</span>
-      } @else if (!inheritsFromDefaultRole()) {
-        <span i18n>No permissions defined for this role yet.</span>
       } @else {
-        <span i18n>
-          No permissions defined for this role yet. Users with this role only
-          have the permissions of the base role.
-        </span>
+        <!-- what such a role still inherits is stated in the note below,
+             which is shown whether or not the matrix has any rows -->
+        <span i18n>No permissions defined for this role yet.</span>
       }
     </div>
   }
@@ -261,6 +258,13 @@
           </button>
         }
       }
+    </div>
+  }
+
+  @if (inheritsFromDefaultRole()) {
+    <div class="table-footer-note text-secondary" i18n>
+      Logged-in users also always have the permissions defined in the
+      <a [routerLink]="defaultRoleLink">{{ defaultRoleName }}</a> role.
     </div>
   }
 </div>

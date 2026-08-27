@@ -33,6 +33,12 @@ function isReservedRuleConfigKey(key: string): boolean {
 }
 
 /**
+ * Base route of the role management admin UI, to link to a role's details
+ * from elsewhere. Mirrors the "user-roles" paths registered in admin.routing.ts.
+ */
+export const ROLES_ADMIN_ROUTE = "/admin/user-roles";
+
+/**
  * Technical roles that serve a special function in the authentication server
  * (e.g. granting account-management API access, or opting a user out of
  * email 2FA). They must not be deleted from this admin UI, and their

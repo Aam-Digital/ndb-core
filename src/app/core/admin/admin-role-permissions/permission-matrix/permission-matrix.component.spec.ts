@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatDialog } from "@angular/material/dialog";
+import { provideRouter } from "@angular/router";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { of } from "rxjs";
@@ -41,6 +42,7 @@ describe("PermissionMatrixComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: mockDialog },
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
+        provideRouter([]),
       ],
     }).compileComponents();
 
@@ -250,6 +252,26 @@ describe("PermissionMatrixComponent", () => {
     expect(childBoxes[0].classList).toContain("mat-mdc-checkbox-disabled");
     expect(childBoxes[1].classList).not.toContain("mat-mdc-checkbox-disabled");
   });
+
+  it("always links to the _default role below the matrix", () => {
+    const note = fixture.nativeElement.querySelector(".table-footer-note");
+    expect(note.textContent).toContain("_default");
+    expect(note.querySelector("a").getAttribute("href")).toBe(
+      "/admin/user-roles/_default",
+    );
+  });
+
+  it.each(["_default", "_public"])(
+    "omits the inherited-permissions note on the reserved role %s",
+    (roleName) => {
+      fixture.componentRef.setInput("roleName", roleName);
+      fixture.detectChanges();
+
+      expect(
+        fixture.nativeElement.querySelector(".table-footer-note"),
+      ).toBeNull();
+    },
+  );
 
   it.each(["_default", "_public"])(
     "shows no inherited default permissions on the reserved role %s",

@@ -133,6 +133,14 @@ td.mat-mdc-cell {
   text-align: center;
 }
 
+// permanent footnote below the matrix, naming what every logged-in user
+// additionally receives from the shared "_default" role
+.table-footer-note {
+  padding: 8px 16px;
+  font-size: 12px;
+  border-top: 1px solid colors.$grey-transparent;
+}
+
 /* the shared "_default" role, listed above the role's own rules */
 .default-row {
   background: rgba(0, 0, 0, 0.02);
