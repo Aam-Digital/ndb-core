@@ -16,6 +16,8 @@
  */
 
 import { SessionType } from "../app/core/session/session-type";
+// type-only, so that the data source classes do not enter the module graph here
+import type { DataSourceType } from "../app/core/common-components/entities-table/data-source/available-data-sources";
 
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
@@ -68,6 +70,15 @@ export const environment = {
 
   /** CDN URL for loading translation files at runtime. Empty string disables CDN loading. */
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
+
+  /**
+   * Default data source used for all lists, regardless of the session type.
+   * Set to "in-memory" via config.json to load all records upfront for every list,
+   * or to "paginated" to always page through the database query.
+   * When unset, lists page in online-only mode and load everything upfront otherwise.
+   * An explicit `dataSource` in a list's config always takes precedence over this default.
+   */
+  default_data_source: undefined as DataSourceType | undefined,
 
   /**
    * Whether users are allowed to choose between synced and online-only mode on the login page.
