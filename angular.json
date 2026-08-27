@@ -12,98 +12,11 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "tsConfig": "tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
-            "i18nMissingTranslation": "warning",
-            "assets": [
-              "src/assets",
-              "src/manifest.webmanifest",
-              "src/firebase-messaging-sw.js",
-              {
-                "glob": "**/*",
-                "input": "node_modules/leaflet/dist/images/",
-                "output": "./assets"
-              }
-            ],
-            "styles": [
-              "src/styles/styles.scss",
-              "src/styles/themes/ndb-theme.scss",
-              "node_modules/leaflet/dist/leaflet.css",
-              "node_modules/leaflet.markercluster/dist/MarkerCluster.css",
-              "node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "node_modules/",
-                "src/styles"
-              ]
-            },
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ],
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
-              "outputHashing": "all",
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
-            },
-            "development": {},
-            "testing": {
-              "aot": false,
-              "polyfills": [
-                "@angular/localize/init",
-                "zone.js",
-                "zone.js/testing",
-                "src/polyfills.test.ts"
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.spec.ts"
-                }
-              ]
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "build-test": {
           "builder": "@angular/build:application",
           "options": {
             "outputPath": {
-              "base": "dist-test"
+              "base": "dist",
+              "browser": ""
             },
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -138,7 +51,29 @@
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+              "@aytek/material-color-picker",
+              "double-ended-queue",
+              "events",
+              "exceljs",
+              "hammerjs",
+              "json-query",
+              "leaflet",
+              "leaflet.markercluster",
+              "level-codec",
+              "levelup",
+              "ltgt",
+              "md5",
+              "memdown",
+              "moment",
+              "papaparse",
+              "readable-stream",
+              "reflect-metadata",
+              "spark-md5",
+              "through2",
+              "vuvuzela"
+            ]
           },
           "configurations": {
             "production": {
@@ -187,7 +122,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {},
           "configurations": {
             "production": {
@@ -200,7 +135,7 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "ndb-core:build"
           }
@@ -208,7 +143,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "ndb-core:build-test:testing",
+            "buildTarget": "ndb-core:build:testing",
             "tsConfig": "tsconfig.spec.json",
             "runner": "vitest",
             "runnerConfig": true,

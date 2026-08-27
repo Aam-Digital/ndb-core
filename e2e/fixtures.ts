@@ -1,3 +1,6 @@
+// provides the global $localize function for the app code imported below;
+// in the browser build this comes from the polyfills bundle instead
+import "@angular/localize/init";
 // eslint-disable-next-line no-restricted-imports
 import { Download, Page, test as base } from "@playwright/test";
 // eslint-disable-next-line no-restricted-imports

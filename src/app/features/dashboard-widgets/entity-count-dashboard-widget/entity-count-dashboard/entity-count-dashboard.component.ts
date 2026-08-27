@@ -97,14 +97,14 @@ export class EntityCountDashboardComponent {
 
   entityDefinition = computed(() => this.entities.get(this.entityType()));
   totalEntities = computed(
-    () => this.rawEntities().filter((entity) => entity.isActive).length,
+    () => this.rawEntities().filter((entity) => !entity.inactive).length,
   );
 
   entityGroupCounts = computed<Record<string, GroupCountRow[]>>(() => {
     const result: Record<string, GroupCountRow[]> = {};
     const entityDefinition = this.entityDefinition();
     const activeEntities = this.rawEntities().filter(
-      (entity) => entity.isActive,
+      (entity) => !entity.inactive,
     );
 
     for (const groupByField of this.groupBy()) {

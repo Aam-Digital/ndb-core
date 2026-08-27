@@ -68,7 +68,7 @@ export function generateNotes(params: {
   const notes = [];
 
   for (const child of params.children) {
-    if (!child.isActive) {
+    if (child.inactive) {
       continue;
     }
 

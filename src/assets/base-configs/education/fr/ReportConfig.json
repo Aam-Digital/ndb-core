@@ -4,7 +4,7 @@
     "title": "Rapport de base",
     "reportDefinition": [
       {
-        "query": "Child:toArray[*isActive=true]",
+        "query": "Child:toArray:filterActive",
         "label": "Tous les enfants",
         "groupBy": [
           "gender"
@@ -16,14 +16,14 @@
         "aggregations": [
           {
             "label": "Enfants fréquentant une école",
-            "query": ":getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId:unique"
+            "query": ":getRelated(ChildSchoolRelation, schoolId):filterActive.childId:unique"
           },
           {
             "label": "Écoles publiques",
             "query": "[*privateSchool!=true]"
           },
           {
-            "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId::unique:toEntities(Child)",
+            "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId):filterActive.childId::unique:toEntities(Child)",
             "label": "Enfants fréquentant une école publique",
             "groupBy": [
               "gender"
@@ -34,7 +34,7 @@
             "query": "[*privateSchool=true]"
           },
           {
-            "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId)[*isActive=true].childId::unique:toEntities(Child)",
+            "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId):filterActive.childId::unique:toEntities(Child)",
             "label": "Enfants fréquentant une école privée",
             "groupBy": [
               "gender"
@@ -86,7 +86,7 @@
                 "query": ".participant:toEntities(Child).name"
               },
               {
-                "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId)[*isActive=true]",
+                "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId):filterActive",
                 "subQueries": [
                   {
                     "label": "Classe",

@@ -22,13 +22,16 @@ import { RelatedEntitiesComponent } from "../related-entities/related-entities.c
 import { TimePeriod } from "./time-period";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
+/** highlight color for the entry that covers the current date */
+export const CURRENTLY_ACTIVE_COLOR = "#90ee9040";
+
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
- * which can be active or past/inactive.
+ * which cover a time period.
  *
  * This component is similar to RelatedEntities but provides some additional UI to help users
- * create a new entry if no currently active entry exists and
- * show/hide inactive entries from the list.
+ * create a new entry if no currently active entry exists.
+ * Past entries stay visible like a history, the entry covering today is highlighted.
  */
 @DynamicComponent("RelatedTimePeriodEntities")
 @Component({
@@ -53,24 +56,20 @@ export class RelatedTimePeriodEntitiesComponent<
 
   single = input(true);
 
-  backgroundColorFn = (r: E) => r.getColor();
+  backgroundColorFn = (r: E) =>
+    r.isActiveAt(new Date()) ? CURRENTLY_ACTIVE_COLOR : "";
 
   readonly hasCurrentlyActiveEntry = computed(
     () =>
-      this.dataSource.allRecords()?.some((record) => record.isActive) ?? false,
+      this.recordsDataSource()
+        .allRecords()
+        ?.some((record) => record.isActiveAt(new Date())) ?? false,
   );
-
-  constructor() {
-    super();
-    if (this.showInactive() === undefined) {
-      this.showInactive.set(false);
-    }
-  }
 
   override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
-      const currentData = this.dataSource.allRecords();
+      const currentData = this.recordsDataSource().allRecords();
 
       newRelation.start =
         currentData?.length && currentData[0].end
@@ -88,24 +87,24 @@ export class RelatedTimePeriodEntitiesComponent<
       return [
         { id: "start", visibleFrom: "md" },
         { id: "end", visibleFrom: "md" },
-        isActiveIndicator,
+        currentlyActiveIndicator,
       ];
     }
     return [
       ...value.map((column) => toFormFieldConfig(column)),
-      isActiveIndicator,
+      currentlyActiveIndicator,
     ];
   }
 }
 
-export const isActiveIndicator: FormFieldConfig = {
-  id: "isActive",
+export const currentlyActiveIndicator: FormFieldConfig = {
+  id: "currentlyActive",
   label: $localize`:Label for the currently active status|e.g. Currently active:Currently`,
   viewComponent: "ReadonlyFunction",
   hideFromTable: true,
   description: $localize`:Tooltip for the status of currently active or not:Only added to linked record if active. Change the start or end date to modify this status.`,
   additional: (csr: ChildSchoolRelation) =>
-    csr.isActive
+    csr.isActiveAt(new Date())
       ? $localize`:Indication for the currently active status of an entry:active`
       : $localize`:Indication for the currently inactive status of an entry:not active`,
 };

@@ -59,7 +59,7 @@ describe("SelectReportComponent", () => {
   it("should hide date range filter for a non-sql report without date placeholders", () => {
     const report = new ReportEntity();
     report.mode = "reporting";
-    report.reportDefinition = [{ query: "Child:toArray[*isActive=true]" }];
+    report.reportDefinition = [{ query: "Child:toArray:filterActive" }];
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 

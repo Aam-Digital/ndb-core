@@ -1,4 +1,4 @@
-@if (displayEntity() && !displayEntity()?.isActive) {
+@if (displayEntity() && displayEntity()?.inactive) {
   <mat-card appearance="outlined" class="card">
     <mat-card-header class="card-header">
       <div mat-card-avatar class="card-icon">

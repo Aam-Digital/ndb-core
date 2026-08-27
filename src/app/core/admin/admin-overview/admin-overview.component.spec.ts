@@ -12,6 +12,8 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { JsonEditorService } from "../json-editor/json-editor.service";
+import { of } from "rxjs";
 
 describe("AdminComponent", () => {
   let component: AdminOverviewComponent;
@@ -35,6 +37,9 @@ describe("AdminComponent", () => {
     getConfirmation: vi.fn(),
     getConfirmationWithKeyword: vi.fn(),
     showProgressDialog: vi.fn().mockReturnValue({ close: vi.fn() }),
+  };
+  const mockJsonEditorService = {
+    openJsonEditorDialog: vi.fn(),
   };
 
   function createFileReaderMock(result: string = "") {
@@ -77,6 +82,7 @@ describe("AdminComponent", () => {
           useValue: confirmationDialogMock,
         },
         { provide: DownloadService, useValue: mockDownloadService },
+        { provide: JsonEditorService, useValue: mockJsonEditorService },
       ],
     }).compileComponents();
   });
@@ -201,6 +207,80 @@ describe("AdminComponent", () => {
       expect.any(Object),
     );
     expect(component.isUploadingConfig()).toBe(false);
+  });
+
+  it("should save a backup and the edited configuration when the JSON editor is confirmed", async () => {
+    mockJsonEditorService.openJsonEditorDialog.mockReturnValue(
+      of({ some: "updated data" }),
+    );
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const saveSpy = vi.spyOn(entityMapper, "save").mockResolvedValue(null);
+    const saveConfigSpy = vi
+      .spyOn(TestBed.inject(ConfigService), "saveConfig")
+      .mockResolvedValue(null);
+
+    component.editConfig();
+
+    await vi.waitFor(() => expect(saveConfigSpy).toHaveBeenCalled());
+    expect(saveSpy).toHaveBeenCalled();
+    expect(saveConfigSpy).toHaveBeenCalledWith({ some: "updated data" });
+  });
+
+  it("should not save anything when the JSON editor is cancelled", async () => {
+    mockJsonEditorService.openJsonEditorDialog.mockReturnValue(of(undefined));
+    const saveConfigSpy = vi.spyOn(TestBed.inject(ConfigService), "saveConfig");
+
+    component.editConfig();
+    await Promise.resolve();
+
+    expect(saveConfigSpy).not.toHaveBeenCalled();
+  });
+
+  it("should show an error snackbar instead of failing silently when saving the edited configuration fails", async () => {
+    mockJsonEditorService.openJsonEditorDialog.mockReturnValue(
+      of({ some: "updated data" }),
+    );
+    vi.spyOn(TestBed.inject(EntityMapperService), "save").mockResolvedValue(
+      null,
+    );
+    vi.spyOn(TestBed.inject(ConfigService), "saveConfig").mockRejectedValue(
+      new Error("not permitted"),
+    );
+    const snackBarSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
+
+    component.editConfig();
+
+    await vi.waitFor(() =>
+      expect(snackBarSpy).toHaveBeenCalledWith(
+        expect.stringContaining("failed"),
+        undefined,
+        expect.any(Object),
+      ),
+    );
+  });
+
+  it("should still close the progress dialog when reverting a configuration change fails", async () => {
+    mockJsonEditorService.openJsonEditorDialog.mockReturnValue(
+      of({ some: "updated data" }),
+    );
+    vi.spyOn(TestBed.inject(EntityMapperService), "save").mockResolvedValue(
+      null,
+    );
+    vi.spyOn(TestBed.inject(ConfigService), "saveConfig")
+      .mockResolvedValueOnce(null) // initial save while editing
+      .mockRejectedValueOnce(new Error("not permitted")); // revert on undo
+    const progressDialogRef = { close: vi.fn() };
+    confirmationDialogMock.showProgressDialog.mockReturnValue(
+      progressDialogRef,
+    );
+    // simulate the user clicking "Undo" as soon as the snackbar appears
+    vi.spyOn(TestBed.inject(MatSnackBar), "open").mockReturnValue({
+      onAction: () => of(undefined),
+    } as any);
+
+    component.editConfig();
+
+    await vi.waitFor(() => expect(progressDialogRef.close).toHaveBeenCalled());
   });
 
   it("should open dialog and call backup service when loading backup", async () => {

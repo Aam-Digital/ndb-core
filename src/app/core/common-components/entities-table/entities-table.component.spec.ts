@@ -8,7 +8,8 @@ import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { toFormFieldConfig } from "../entity-form/FormConfig";
 import { FilterService } from "../../filter/filter.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { DataFilter } from "../../filter/filters/filters";
+import { NOT_ARCHIVED_FILTER } from "../../filter/not-archived-filter";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
@@ -17,7 +18,7 @@ import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -34,11 +35,7 @@ describe("EntitiesTableComponent", () => {
     );
 
     await TestBed.configureTestingModule({
-      imports: [
-        EntitiesTableComponent,
-        CoreTestingModule,
-        NoopAnimationsModule,
-      ],
+      imports: [EntitiesTableComponent, CoreTestingModule],
       providers: [
         { provide: EntitySpecialLoaderService, useValue: undefined },
         InMemoryDataSource,
@@ -237,6 +234,26 @@ describe("EntitiesTableComponent", () => {
     expect(shiftClick.defaultPrevented).toBe(true);
   });
 
+  it("should reset the selection if the filter or data changes", () => {
+    const entities = [1, 2, 3, 4].map(TestEntity.create);
+    fixture.componentRef.setInput("selectable", true);
+    fixture.detectChanges();
+
+    component.selectedRecords.set(entities);
+    fixture.componentRef.setInput("filter", { name: 1 });
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+
+    component.selectedRecords.set(entities);
+    component.recordsDataSource().allRecords.set([entities[0]]);
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+  });
+
   it("should filter data based on filter definition", () => {
     const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
@@ -296,13 +313,44 @@ describe("EntitiesTableComponent", () => {
   it("should only show active relations by default", async () => {
     const active1 = new Entity();
     active1.inactive = false;
+    // records that were never archived do not have the property at all
+    const neverArchived = new Entity();
     const inactive = new Entity();
     inactive.inactive = true;
 
-    component.recordsDataSource().allRecords.set([active1, inactive]);
+    component
+      .recordsDataSource()
+      .allRecords.set([active1, neverArchived, inactive]);
     fixture.detectChanges();
 
-    expect(component.recordsDataSource().data).toEqual([{ record: active1 }]);
+    expect(component.recordsDataSource().data).toEqual([
+      { record: active1 },
+      { record: neverArchived },
+    ]);
+  });
+
+  it("should keep an $or of the configured filter when hiding archived records", () => {
+    const configuredFilter = {
+      $or: [{ category: "a" }, { category: "b" }],
+    } as DataFilter<Entity>;
+    fixture.componentRef.setInput("filter", configuredFilter);
+    fixture.detectChanges();
+
+    expect(component.effectiveFilter()).toEqual({
+      $and: [NOT_ARCHIVED_FILTER, configuredFilter],
+    });
+
+    component.showInactive.set(true);
+    fixture.detectChanges();
+
+    expect(component.effectiveFilter()).toEqual(configuredFilter);
+  });
+
+  it("should not wrap an empty filter, which a database query would match nothing for", () => {
+    fixture.componentRef.setInput("filter", undefined);
+    fixture.detectChanges();
+
+    expect(component.effectiveFilter()).toEqual(NOT_ARCHIVED_FILTER);
   });
 
   it("should overwrite entity schema fields with customColumn config", async () => {
@@ -345,5 +393,17 @@ describe("EntitiesTableComponent", () => {
       "/c/test-entity",
       child.getId(true),
     ]);
+  });
+
+  it("should go to first page if filter is changed", () => {
+    const fpSpy = vi.spyOn(
+      component.recordsDataSource().paginator,
+      "firstPage",
+    );
+
+    fixture.componentRef.setInput("filter", { name: "" });
+    TestBed.tick();
+
+    expect(fpSpy).toHaveBeenCalled();
   });
 });

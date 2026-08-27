@@ -302,7 +302,7 @@ export class RollCallComponent {
 
       attendanceMap[participantId] = attendanceItem;
 
-      if (participant.isActive) {
+      if (!participant.inactive) {
         active.push(participant);
         validAttendanceItems.push(attendanceItem);
       } else {

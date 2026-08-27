@@ -1,0 +1,13 @@
+@if (isMultiFormConfig()) {
+  <app-hint-box type="warning" class="margin-bottom-regular">
+    <div>
+      <strong i18n>This form uses the newer multi-step format</strong>
+      <p i18n>
+        Forms that create several records at once cannot be configured here yet.
+        The form itself keeps working for the people filling it in, but the
+        fields below do not show its actual setup and saving this page can break
+        it. Please contact your technical support team if you need changes.
+      </p>
+    </div>
+  </app-hint-box>
+}

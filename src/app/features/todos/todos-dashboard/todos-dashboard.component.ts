@@ -50,7 +50,7 @@ export class TodosDashboardComponent {
   filterEntries = (todo: Todo) => {
     return (
       !todo.completed &&
-      todo.isActive &&
+      !todo.inactive &&
       todo.assignedTo.includes(this.currentUser.value?.getId()) &&
       moment(todo.startDate).isSameOrBefore(moment(), "days")
     );

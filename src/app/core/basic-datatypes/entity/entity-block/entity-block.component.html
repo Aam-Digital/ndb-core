@@ -28,7 +28,7 @@
   <span
     class="block-height truncate-text"
     [class.clickable]="!linkDisabled()"
-    [class.inactive]="!entityResource.value()?.isActive"
+    [class.inactive]="entityResource.value()?.inactive"
     (click)="showDetailsPage()"
     [appTemplateTooltip]="tooltip"
     [tooltipDisabled]="!entityBlockConfig()"

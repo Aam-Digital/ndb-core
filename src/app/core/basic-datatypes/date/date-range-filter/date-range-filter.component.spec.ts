@@ -46,7 +46,7 @@ describe("DateRangeFilterComponent", () => {
 
     dateFilter.selectedOptionValues = ["9"];
     fixture.componentRef.setInput("filterConfig", dateFilter);
-    expect(component.filterConfig().getFilter()).toEqual({});
+    expect(component.filterConfig().getFilter()).toEqual(undefined);
 
     vi.setSystemTime(moment("2023-05-18").toDate());
     dateFilter.selectedOptionValues = ["0"];
@@ -71,7 +71,7 @@ describe("DateRangeFilterComponent", () => {
 
     dateFilter.selectedOptionValues = [];
     fixture.componentRef.setInput("filterConfig", dateFilter);
-    expect(component.filterConfig().getFilter()).toEqual({});
+    expect(component.filterConfig().getFilter()).toEqual(undefined);
     vi.useRealTimers();
   });
 
@@ -80,11 +80,11 @@ describe("DateRangeFilterComponent", () => {
 
     dateFilter.selectedOptionValues = ["1", "2", "3"];
     fixture.componentRef.setInput("filterConfig", dateFilter);
-    expect(component.filterConfig().getFilter()).toEqual({});
+    expect(component.filterConfig().getFilter()).toEqual(undefined);
 
     dateFilter.selectedOptionValues = [];
     fixture.componentRef.setInput("filterConfig", dateFilter);
-    expect(component.filterConfig().getFilter()).toEqual({});
+    expect(component.filterConfig().getFilter()).toEqual(undefined);
 
     dateFilter.selectedOptionValues = ["2022-9-18", ""];
     fixture.componentRef.setInput("filterConfig", dateFilter);
@@ -119,7 +119,12 @@ describe("DateRangeFilterComponent", () => {
     dateFilter.selectedOptionValues = [EMPTY_FILTER_OPTION_KEY];
     fixture.componentRef.setInput("filterConfig", dateFilter);
     expect(component.filterConfig().getFilter()).toEqual({
-      $or: [{ test: undefined }, { test: null }, { test: "" }],
+      $or: [
+        { test: undefined },
+        { test: null },
+        { test: "" },
+        { test: { $exists: false } },
+      ],
     });
   });
 
