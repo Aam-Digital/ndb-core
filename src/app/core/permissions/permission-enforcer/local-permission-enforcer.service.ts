@@ -33,14 +33,14 @@ import { Logging } from "../../logging/logging.service";
 @Injectable()
 export class LocalPermissionEnforcerService extends PermissionEnforcerService {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
-  private sessionInfo = inject(SessionSubject);
-  private ability = inject(EntityAbility);
-  private entityMapper = inject(EntityMapperService);
-  private dbResolver = inject(DatabaseResolverService);
-  private analyticsService = inject(AnalyticsService);
-  private entities = inject(EntityRegistry);
-  private location = inject<Location>(LOCATION_TOKEN);
-  private configService = inject(ConfigService);
+  private readonly sessionInfo = inject(SessionSubject);
+  private readonly ability = inject(EntityAbility);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly dbResolver = inject(DatabaseResolverService);
+  private readonly analyticsService = inject(AnalyticsService);
+  private readonly entities = inject(EntityRegistry);
+  private readonly location = inject<Location>(LOCATION_TOKEN);
+  private readonly configService = inject(ConfigService);
 
   async enforcePermissionsOnLocalData(
     userRules: DatabaseRule[],
