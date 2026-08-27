@@ -93,7 +93,7 @@ export class PaginatedDataSource<
     this.bookmark = undefined;
     this.reachedEnd = false;
     if (super.paginator) {
-      super.paginator.pageIndex = 1;
+      super.paginator.pageIndex = 0;
       this.setRecords();
     }
   }
