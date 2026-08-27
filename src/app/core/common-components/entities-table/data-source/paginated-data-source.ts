@@ -5,6 +5,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { effect, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
+import { merge } from "rxjs";
 
 /**
  * Number of documents fetched per request when loading the complete dataset
@@ -41,26 +42,14 @@ export class PaginatedDataSource<
       this.sortState = { prop: active, dir: direction };
     }
     this.resetPaginationCache();
-    this.setRecords();
   }
 
   private page: { size?: number; index?: number } = {};
   override set paginator(paginator: MatPaginator) {
     super.paginator = paginator;
-    paginator.initialized.subscribe(() => {
+    merge(paginator.initialized, paginator.page).subscribe(() => {
       this.page.size = paginator.pageSize;
       this.page.index = paginator.pageIndex;
-      this.setRecords();
-    });
-    paginator.page.subscribe((val) => {
-      this.page.size = val.pageSize;
-      if (val.pageSize !== this.page.size) {
-        // a different page size invalidates the cache: pages loaded under the
-        // old size no longer align with the new page boundaries
-        this.resetPaginationCache();
-      } else {
-        this.page.index = val.pageIndex;
-      }
       this.setRecords();
     });
   }
@@ -83,6 +72,16 @@ export class PaginatedDataSource<
   /** Whether the last fetch returned fewer records than requested, i.e. all matching records are already loaded. */
   private reachedEnd = false;
 
+  constructor() {
+    super();
+    effect(() => {
+      this.effectiveFilter = this.processFilterForDB(this.dataFilter());
+      if (this.loadRecordConfig()) {
+        this.resetPaginationCache();
+      }
+    });
+  }
+
   /**
    * Discard all loaded records/cursor state and move back to the first page.
    * Necessary whenever the query itself changes (filter, sort, page size) or
@@ -94,19 +93,9 @@ export class PaginatedDataSource<
     this.bookmark = undefined;
     this.reachedEnd = false;
     if (super.paginator) {
-      super.paginator.firstPage();
+      super.paginator.pageIndex = 1;
+      this.setRecords();
     }
-  }
-
-  constructor() {
-    super();
-    effect(() => {
-      this.effectiveFilter = this.processFilterForDB(this.dataFilter());
-      if (this.loadRecordConfig()) {
-        this.resetPaginationCache();
-        this.setRecords();
-      }
-    });
   }
 
   protected override async loadRecords() {
@@ -127,19 +116,15 @@ export class PaginatedDataSource<
         { limit: deficit, bookmark: this.bookmark },
         this.sortState,
       );
-      // build a new array rather than mutating in place, so the signal
-      // update is actually detected (mutate-then-set-same-reference would be
-      // a no-op under the default Object.is equality check)
+      // update signal to trigger effect for data update in super-class
       this.filteredRecords.update((records) => [...records, ...res.records]);
       this.bookmark = res.bookmark;
       this.reachedEnd = res.records.length < deficit;
     }
 
     const totalLoaded = this.filteredRecords().length;
-    const shownSoFar = Math.min(totalLoaded, start + this.page.size);
-    this.hasUnknownTotalCount.set(totalLoaded > shownSoFar);
-    // `this.allRecords` stays empty; the base class's default pagination
-    // slices out the current page (and excludes the trailing probe record)
+    this.hasUnknownTotalCount.set(totalLoaded > start + this.page.size);
+    // `this.allRecords` stays empty;
   }
 
   override async getAllData(filtered = false): Promise<T[]> {
@@ -171,8 +156,6 @@ export class PaginatedDataSource<
   protected override async processEntityUpdate() {
     // We don't really know how it might affect the pages -> full reload
     this.resetPaginationCache();
-    // TODO necessary or does reset already trigger reload over paginator?
-    // await this.setRecords();
   }
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
