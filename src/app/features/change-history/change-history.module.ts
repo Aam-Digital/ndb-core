@@ -4,6 +4,7 @@ import { EntityActionsMenuService } from "../../core/entity-details/entity-actio
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeHistoryService } from "./change-history.service";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
+import { changeHistoryRoutes } from "./change-history.routing";
 
 export { AUDIT_RECORD_SUBJECT } from "./change-history.service";
 
@@ -21,6 +22,8 @@ function asSingle(entity: Entity | Entity[]): Entity | undefined {
  */
 @NgModule({})
 export class ChangeHistoryModule {
+  static routes = changeHistoryRoutes;
+
   private readonly entityActionsMenu = inject(EntityActionsMenuService);
   private readonly dialog = inject(MatDialog);
   private readonly changeHistory = inject(ChangeHistoryService);

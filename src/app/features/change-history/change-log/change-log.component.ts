@@ -2,15 +2,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   resource,
   signal,
+  SkipSelf,
 } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { MatTableModule } from "@angular/material/table";
-import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
+import {
+  MatPaginatorIntl,
+  MatPaginatorModule,
+  PageEvent,
+} from "@angular/material/paginator";
+import { UnknownTotalPaginatorIntl } from "../../../core/common-components/entities-table/list-paginator/unknown-total-paginator-intl";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
@@ -37,6 +44,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { ChangeLogEntry, FILTERABLE_ACTIONS } from "../change-history.types";
 import { authorEntityId } from "../change-log-query";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
+import { RecordIdDisplayComponent } from "../record-id-display/record-id-display.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 
 /**
@@ -103,14 +111,29 @@ export const CHANGE_LOG_DATE_RANGES: DateRangeFilterConfigOption[] = [
     DateRangeFilterComponent,
     NotificationTimePipe,
     ChangeHistoryActionBadgeComponent,
+    RecordIdDisplayComponent,
   ],
   templateUrl: "./change-log.component.html",
   styleUrl: "./change-log.component.scss",
+  providers: [
+    {
+      // component-scoped so the "10+" range label affects only this paginator,
+      // delegating every other (translated) label to the app-wide intl. Same
+      // wiring as the shared list paginator of the entity tables.
+      provide: MatPaginatorIntl,
+      useFactory: (parent: MatPaginatorIntl) =>
+        new UnknownTotalPaginatorIntl(parent),
+      deps: [[new SkipSelf(), MatPaginatorIntl]],
+    },
+  ],
 })
 export class ChangeLogComponent {
   private readonly service = inject(ChangeHistoryService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly route = inject(ActivatedRoute);
+  private readonly paginatorIntl = inject(
+    MatPaginatorIntl,
+  ) as UnknownTotalPaginatorIntl;
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
 
@@ -257,20 +280,36 @@ export class ChangeLogComponent {
     })),
   );
 
+  /** whether the backend reported at least one more page after this one */
+  private readonly hasFurtherPages = computed(
+    () => this.pageResource.value()?.hasMore === true,
+  );
+
   /**
    * Length reported to the paginator: everything paged through so far, plus one
-   * if the backend reported a further page, which is what keeps "next" enabled.
-   * `_find` gives no total count, so the real total stays unknown (hence no
-   * last-page button).
+   * if a further page exists, which is what keeps "next" enabled. `_find` gives
+   * no total count, so this is not a real total until the last page (hence no
+   * last-page button, and the "10+" range label until then).
    */
   readonly pageLengthHint = computed(() => {
     const seen = this.pageIndex() * this.pageSize() + this.entries().length;
-    return this.pageResource.value()?.hasMore ? seen + 1 : seen;
+    return this.hasFurtherPages() ? seen + 1 : seen;
   });
 
   constructor() {
     // the flag fetch is lazy, so nothing loads until a change-history UI asks
     this.service.loadAuditFeatureFlag();
+
+    // `_find` reports no total, so the range label shows a lower bound ("10+")
+    // for as long as a further page exists
+    effect(() => {
+      const unknown = this.hasFurtherPages();
+      if (this.paginatorIntl.hasUnknownTotalCount !== unknown) {
+        this.paginatorIntl.hasUnknownTotalCount = unknown;
+        // MatPaginator re-renders its range label off this stream
+        this.paginatorIntl.changes.next();
+      }
+    });
   }
 
   setEntityTypeFilter(entityType: string | undefined) {

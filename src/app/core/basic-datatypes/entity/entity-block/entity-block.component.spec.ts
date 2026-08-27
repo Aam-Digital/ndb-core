@@ -198,7 +198,7 @@ describe("EntityBlockComponent", () => {
   it("shows the raw id instead of 'not available' when asked to", async () => {
     mockEntityMapper.load.mockRejectedValue(new Error("not found"));
     fixture.componentRef.setInput("entityId", `${TestEntity.ENTITY_TYPE}:404`);
-    fixture.componentRef.setInput("showIdEntityId", true);
+    fixture.componentRef.setInput("showEntityId", true);
     fixture.detectChanges();
 
     await vi.waitFor(() => expect(component.notFound()).toBe(true));

@@ -23,6 +23,7 @@ import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
+import { ChangeHistoryModule } from "./features/change-history/change-history.module";
 import { AttendanceModule } from "./features/attendance/attendance.module";
 import { DeDuplicationModule } from "./features/de-duplication/de-duplication-module";
 import { NotificationModule } from "./features/notification/notification.module";
@@ -67,6 +68,11 @@ export const allRoutes: Routes = [
     path: "attendance",
     canActivate: [AuthGuard],
     children: AttendanceModule.routes,
+  },
+  {
+    path: "changelog",
+    canActivate: [AuthGuard],
+    children: ChangeHistoryModule.routes,
   },
   {
     path: "import",

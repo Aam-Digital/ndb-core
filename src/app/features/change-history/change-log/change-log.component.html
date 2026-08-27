@@ -185,13 +185,19 @@
 
       <table mat-table [dataSource]="entries()" class="full-width table">
         <ng-container matColumnDef="when">
-          <th mat-header-cell *matHeaderCellDef i18n="Change log column">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="when-cell"
+            i18n="Change log column"
+          >
             When
           </th>
-          <td mat-cell *matCellDef="let entry">
+          <td mat-cell *matCellDef="let entry" class="when-cell">
             <div class="flex-column">
               <span>{{ entry.at | customDate: "short" }}</span>
-              <span class="text-secondary">{{
+              <!-- how long ago, quieter than the date so the two read apart -->
+              <span class="elapsed text-secondary">{{
                 entry.at | notificationTime | async
               }}</span>
             </div>
@@ -227,14 +233,9 @@
                 <app-entity-block
                   [entityId]="entry.entityId"
                 ></app-entity-block>
-                <!-- the id below the title, because a title identifies a record
-                     only by convention: records generated from one template
-                     share theirs (every event of a recurring activity), and
-                     rows would otherwise read as repeats of a single record.
-                     It is also exactly what the related-record filter takes. -->
-                <span class="text-secondary record-id" [title]="entry.entityId">
-                  {{ entry.entityId }}
-                </span>
+                <app-record-id-display
+                  [recordId]="entry.entityId"
+                ></app-record-id-display>
               </div>
             } @else {
               <span>-</span>
@@ -261,7 +262,7 @@
             @if (entry.byEntityId) {
               <app-entity-block
                 [entityId]="entry.byEntityId"
-                [showIdEntityId]="true"
+                [showEntityId]="true"
               ></app-entity-block>
             } @else {
               <span>{{ entry.by || "-" }}</span>

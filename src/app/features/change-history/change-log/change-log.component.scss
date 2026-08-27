@@ -27,17 +27,6 @@
   min-width: 260px;
 }
 
-/* the id under the record title: readable enough to tell two same-titled
-   records apart and to be copied into the related-record filter, quiet enough
-   not to compete with the title. Truncated rather than wrapped — the full id
-   stays in the DOM, so it is still selectable and shown as a hover tooltip */
-.record-id {
-  font-size: 85%;
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 /* a row opens the record's full change history; rows of a record type that is
    no longer registered cannot, and stay unstyled so they don't invite a click.
@@ -68,4 +57,15 @@
 
 :host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
   justify-content: flex-start;
+}
+
+/* the full date on one line: it is the column readers scan first, and wrapping
+   it mid-date made rows hard to compare */
+.when-cell {
+  min-width: 120px;
+}
+
+/* the elapsed time is context for the date above it, not a second value */
+.elapsed {
+  font-size: 85%;
 }

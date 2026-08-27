@@ -26,6 +26,7 @@ import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { ChangeHistoryService } from "../change-history.service";
 import { ChangeEvent } from "../change-history.types";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
+import { RecordIdDisplayComponent } from "../record-id-display/record-id-display.component";
 import { RecordDiffComponent } from "../record-diff/record-diff.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
@@ -61,6 +62,7 @@ export interface ChangeHistoryDialogData {
     CustomDatePipe,
     NotificationTimePipe,
     ChangeHistoryActionBadgeComponent,
+    RecordIdDisplayComponent,
     RecordDiffComponent,
   ],
   templateUrl: "./change-history-dialog.component.html",

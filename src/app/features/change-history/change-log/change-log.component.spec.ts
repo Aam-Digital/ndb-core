@@ -1,5 +1,7 @@
 import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatPaginatorIntl } from "@angular/material/paginator";
+import { UnknownTotalPaginatorIntl } from "../../../core/common-components/entities-table/list-paginator/unknown-total-paginator-intl";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ActivatedRoute, convertToParamMap, Router } from "@angular/router";
@@ -311,6 +313,25 @@ it("returns to the first page when a filter or the page size changes", async () 
   expect(component.pageIndex()).toBe(0);
   expect(callArgs()[1]).toBe(25);
   expect(callArgs()[2]).toBe(0);
+});
+
+it("labels the total as a lower bound while a further page exists", async () => {
+  await setup();
+  // component-scoped provider, so it is not on the module injector
+  const intl = fixture.debugElement.injector.get(
+    MatPaginatorIntl,
+  ) as UnknownTotalPaginatorIntl;
+
+  queryChangeLog.mockResolvedValue(page(10, true));
+  component.setEntityTypeFilter("Child");
+  await settle();
+  expect(intl.hasUnknownTotalCount).toBe(true);
+
+  // the last page knows the real total, so it must not read as "10+"
+  queryChangeLog.mockResolvedValue(page(4, false));
+  component.setEntityTypeFilter("School");
+  await settle();
+  expect(intl.hasUnknownTotalCount).toBe(false);
 });
 
 it("offers a further page only when the backend reported one", async () => {

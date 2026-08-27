@@ -7,12 +7,13 @@
 </h2>
 <!-- which record this history belongs to, so the dialog is identifiable at a
      glance when it was opened from a list of many records -->
-<div class="record-subtitle text-secondary margin-bottom-small">
+<div class="record-subtitle text-secondary margin-bottom-small flex-column">
   <app-entity-block
     [entity]="entity"
     [linkDisabled]="true"
-    [showIdEntityId]="true"
+    [showEntityId]="true"
   ></app-entity-block>
+  <app-record-id-display [recordId]="entity.getId()"></app-record-id-display>
 </div>
 
 <mat-dialog-content>

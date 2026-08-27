@@ -15,6 +15,7 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -127,7 +128,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
    */
   readonly canViewChangeLog = toSignal(
     this.sessionSubject.pipe(
-      map((session) => session?.roles?.includes("admin_app") ?? false),
+      map((session) => session?.roles?.includes(ADMIN_APP_ROLE) ?? false),
     ),
     { initialValue: false },
   );

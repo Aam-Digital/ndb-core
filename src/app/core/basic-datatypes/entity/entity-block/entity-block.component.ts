@@ -63,7 +63,7 @@ export class EntityBlockComponent {
    * to identify *which* record is gone (e.g. an audit log of deletions) rather
    * than only that one is missing.
    */
-  showIdEntityId = input(false);
+  showEntityId = input(false);
 
   entityResource = resourceWithRetention({
     params: () => ({ entity: this.entity(), entityId: this.entityId() }),
