@@ -559,18 +559,24 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/PermissionsModule.html" data-type="entity-link" >PermissionsModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-PermissionsModule-3c9f4c8c029c07e4e14b009cbe967c6d0c1325bcbad0299a44d8da7acfa870a0f12f7269557a44bc3dadc81ab9a934a6224079b65e65c6d0a8c72aec6bcf56aa"' : 'data-bs-target="#xs-injectables-links-module-PermissionsModule-3c9f4c8c029c07e4e14b009cbe967c6d0c1325bcbad0299a44d8da7acfa870a0f12f7269557a44bc3dadc81ab9a934a6224079b65e65c6d0a8c72aec6bcf56aa"' }>
+                                        'data-bs-target="#injectables-links-module-PermissionsModule-a8b35ee91c5f53ccbb483b97c0961a1be9f37604e095ae0cc0d0d1d527753c0d8988e6f7d1ae3b17dea0a5ff3ce9b6abe01168150ecf2c3cba00f4c144f81c4b"' : 'data-bs-target="#xs-injectables-links-module-PermissionsModule-a8b35ee91c5f53ccbb483b97c0961a1be9f37604e095ae0cc0d0d1d527753c0d8988e6f7d1ae3b17dea0a5ff3ce9b6abe01168150ecf2c3cba00f4c144f81c4b"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-PermissionsModule-3c9f4c8c029c07e4e14b009cbe967c6d0c1325bcbad0299a44d8da7acfa870a0f12f7269557a44bc3dadc81ab9a934a6224079b65e65c6d0a8c72aec6bcf56aa"' :
-                                        'id="xs-injectables-links-module-PermissionsModule-3c9f4c8c029c07e4e14b009cbe967c6d0c1325bcbad0299a44d8da7acfa870a0f12f7269557a44bc3dadc81ab9a934a6224079b65e65c6d0a8c72aec6bcf56aa"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-PermissionsModule-a8b35ee91c5f53ccbb483b97c0961a1be9f37604e095ae0cc0d0d1d527753c0d8988e6f7d1ae3b17dea0a5ff3ce9b6abe01168150ecf2c3cba00f4c144f81c4b"' :
+                                        'id="xs-injectables-links-module-PermissionsModule-a8b35ee91c5f53ccbb483b97c0961a1be9f37604e095ae0cc0d0d1d527753c0d8988e6f7d1ae3b17dea0a5ff3ce9b6abe01168150ecf2c3cba00f4c144f81c4b"' }>
                                         <li class="link">
                                             <a href="injectables/AbilityService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >AbilityService</a>
                                         </li>
                                         <li class="link">
                                             <a href="injectables/EntityAbility.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >EntityAbility</a>
+                                        </li>
+                                        <li class="link">
+                                            <a href="injectables/LocalPermissionEnforcerService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >LocalPermissionEnforcerService</a>
+                                        </li>
+                                        <li class="link">
+                                            <a href="injectables/NoopPermissionEnforcerService.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >NoopPermissionEnforcerService</a>
                                         </li>
                                         <li class="link">
                                             <a href="injectables/UserRoleGuard.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >UserRoleGuard</a>

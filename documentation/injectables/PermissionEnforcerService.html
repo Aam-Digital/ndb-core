@@ -152,36 +152,38 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>This service checks whether the relevant rules for the current user changed
-and reacts accordingly.</p>
-<p><strong><code>indexeddb</code> adapter (PouchDB 8+):</strong>
-Scans locally-cached entities of restricted types and purges any that the
-current CASL rules deny reading. Immediately updates the UI without a page
-reload. Also calls <code>resetSync()</code> so the next sync cycle can receive a
-<code>lostPermissions</code> list from the replication proxy for any remaining docs
-that haven&#39;t been synced yet.</p>
-<p><strong>Legacy <code>idb</code> adapter (PouchDB &lt; 8, purge not supported):</strong>
-Falls back to the classic behaviour — if any inaccessible entity is found
-locally, calls <code>destroyDatabases()</code> + <code>location.reload()</code> to force a clean
-re-sync.</p>
+                <p>Reacts to changes in the current user&#39;s permission rules by invalidating
+or purging any locally cached data the user is no longer allowed to read.</p>
+<p>The concrete implementation is selected in <a href="../modules/PermissionsModule.html">PermissionsModule</a>.</p>
 
             </p>
 
 
-        <section data-compodoc="block-metadata">
-            <h3>Metadata</h3>
-            <table class="table table-sm table-hover metadata">
-                <tbody>
-                    <tr>
-                        <td class="col-md-3">providedIn</td>
-                        <td class="col-md-9"><code>root</code></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
 
 
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../injectables/LocalPermissionEnforcerService.html" target="_self" >LocalPermissionEnforcerService</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../injectables/NoopPermissionEnforcerService.html" target="_self" >NoopPermissionEnforcerService</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
             </div>
+        </section>
+    </div>
 
     <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
@@ -216,11 +218,12 @@ re-sync.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
+                                    <span class="modifier">Abstract</span>
                                 <a href="#enforcePermissionsOnLocalData" >enforcePermissionsOnLocalData</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Abstract</span>
                                 <a href="#getLastEnforcedRules" >getLastEnforcedRules</a>
                             </li>
                         </ul>
@@ -247,7 +250,7 @@ re-sync.</p>
                 <td class="col-md-4">
                     <a name="enforcePermissionsOnLocalData"></a>
                     <span class="name">
-                            <span class="modifier">Async</span>
+                            <span class="modifier">Abstract</span>
                         <span ><b>enforcePermissionsOnLocalData</b></span>
                         <a href="#enforcePermissionsOnLocalData"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -263,8 +266,8 @@ re-sync.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="17"
+                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -316,6 +319,7 @@ re-sync.</p>
                 <td class="col-md-4">
                     <a name="getLastEnforcedRules"></a>
                     <span class="name">
+                            <span class="modifier">Abstract</span>
                         <span ><b>getLastEnforcedRules</b></span>
                         <a href="#getLastEnforcedRules"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -323,15 +327,16 @@ re-sync.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>getLastEnforcedRules()</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getLastEnforcedRules()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -384,7 +389,7 @@ user on this device (see <a href="enforcePermissionsOnLocalData">enforcePermissi
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:46</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/permissions/permission-enforcer/permission-enforcer.service.ts:15</a></div>
                         </td>
                     </tr>
 
@@ -403,110 +408,25 @@ user on this device (see <a href="enforcePermissionsOnLocalData">enforcePermissi
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
 import { DatabaseRule } from &quot;../permission-types&quot;;
-import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
-import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
-import { LOCATION_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
-import { AnalyticsService } from &quot;../../analytics/analytics.service&quot;;
-import { EntityAbility } from &quot;../ability/entity-ability&quot;;
-import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
-import { ConfigService } from &quot;../../config/config.service&quot;;
-import { firstValueFrom } from &quot;rxjs&quot;;
-import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
-import { DatabaseResolverService } from &quot;../../database/database-resolver.service&quot;;
-import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /**
- * This service checks whether the relevant rules for the current user changed
- * and reacts accordingly.
+ * Reacts to changes in the current user&#x27;s permission rules by invalidating
+ * or purging any locally cached data the user is no longer allowed to read.
  *
- * **&#x60;indexeddb&#x60; adapter (PouchDB 8+):**
- * Scans locally-cached entities of restricted types and purges any that the
- * current CASL rules deny reading. Immediately updates the UI without a page
- * reload. Also calls &#x60;resetSync()&#x60; so the next sync cycle can receive a
- * &#x60;lostPermissions&#x60; list from the replication proxy for any remaining docs
- * that haven&#x27;t been synced yet.
- *
- * **Legacy &#x60;idb&#x60; adapter (PouchDB &lt; 8, purge not supported):**
- * Falls back to the classic behaviour — if any inaccessible entity is found
- * locally, calls &#x60;destroyDatabases()&#x60; + &#x60;location.reload()&#x60; to force a clean
- * re-sync.
+ * The concrete implementation is selected in {@link PermissionsModule}.
  */
-@Injectable({ providedIn: &quot;root&quot; })
-export class PermissionEnforcerService {
-  private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
-  private sessionInfo &#x3D; inject(SessionSubject);
-  private ability &#x3D; inject(EntityAbility);
-  private entityMapper &#x3D; inject(EntityMapperService);
-  private dbResolver &#x3D; inject(DatabaseResolverService);
-  private analyticsService &#x3D; inject(AnalyticsService);
-  private entities &#x3D; inject(EntityRegistry);
-  private location &#x3D; inject&lt;Location&gt;(LOCATION_TOKEN);
-  private configService &#x3D; inject(ConfigService);
-
+@Injectable()
+export abstract class PermissionEnforcerService {
   /**
    * This is a suffix used to persist the user-relevant rules in local storage to later check for changes.
    */
   static readonly LOCALSTORAGE_KEY &#x3D; &quot;RULES&quot;;
 
-  async enforcePermissionsOnLocalData(
+  abstract enforcePermissionsOnLocalData(
     userRules: DatabaseRule[],
-  ): Promise&lt;void&gt; {
-    Logging.debug(
-      &quot;Checking for updated permissions [PermissionEnforcerService]&quot;,
-    );
-
-    const userRulesString &#x3D; JSON.stringify(userRules);
-    if (!this.sessionInfo.value || !this.userRulesChanged(userRulesString)) {
-      return;
-    }
-
-    if (this.dbResolver.isIndexedDbAdapterSupported()) {
-      // indexeddb adapter: purge inaccessible entities locally first (immediate UI update),
-      // then reset sync so the server-side lostPermissions flow also runs.
-      Logging.debug(
-        &quot;Detected changed permissions for user. Purging inaccessible entities and resetting sync ...&quot;,
-      );
-      this.analyticsService.eventTrack(
-        &quot;re-sync triggered due to changed permissions&quot;,
-        { category: &quot;Migration&quot; },
-      );
-      const subjects &#x3D; this.getSubjectsWithReadRestrictions(userRules);
-      // First pass: purge immediately so the UI updates without waiting for sync.
-      await this.purgeEntitiesWithoutPermissions(subjects);
-      // Sync so the server can also process access changes and provide lostPermissions.
-      // NOTE: the sync may temporarily re-add entities that were purged above if the
-      // concurrent push (user entity change) hasn&#x27;t been processed by the server yet.
-      await this.dbResolver.resetSync();
-      // Second pass: purge any entities that were re-synced before the server
-      // processed the access change (handles push/pull race condition).
-      await this.purgeEntitiesWithoutPermissions(subjects);
-    } else {
-      // Legacy idb adapter: purge() not available — fall back to destroy + reload when needed.
-      const subjects &#x3D; this.getSubjectsWithReadRestrictions(userRules);
-      if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
-        // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
-        Logging.warn(
-          &quot;Detected changed permissions for user. Destroying local db due to lost permissions ...&quot;,
-        );
-        this.analyticsService.eventTrack(
-          &quot;destroying local db due to lost permissions&quot;,
-          { category: &quot;Migration&quot; },
-        );
-        await this.dbResolver.destroyDatabases();
-        this.location.reload();
-      } else {
-        Logging.debug(
-          &quot;Detected changed permissions for user. Resetting sync ...&quot;,
-        );
-        await this.dbResolver.resetSync();
-      }
-    }
-
-    // update stored rules to check for future changes
-    this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
-  }
+  ): Promise&lt;void&gt;;
 
   /**
    * The rules that were last successfully applied and enforced for the current
@@ -514,126 +434,7 @@ export class PermissionEnforcerService {
    *
    * &#x60;undefined&#x60; if there is no session or no rules have been enforced yet.
    */
-  getLastEnforcedRules(): DatabaseRule[] | undefined {
-    if (!this.sessionInfo.value) {
-      return undefined;
-    }
-
-    const storedRules &#x3D; this.localStorage.getItem(this.getUserStorageKey());
-    if (!storedRules) {
-      return undefined;
-    }
-
-    try {
-      return JSON.parse(storedRules);
-    } catch (err) {
-      Logging.debug(&quot;Could not parse stored permission rules&quot;, err);
-      return undefined;
-    }
-  }
-
-  private userRulesChanged(newRules: string): boolean {
-    const storedRules &#x3D; this.localStorage.getItem(this.getUserStorageKey());
-    return storedRules !&#x3D;&#x3D; newRules;
-  }
-
-  private getUserStorageKey() {
-    return &#x60;${this.sessionInfo.value.id}-${PermissionEnforcerService.LOCALSTORAGE_KEY}&#x60;;
-  }
-
-  private getSubjectsWithReadRestrictions(
-    rules: DatabaseRule[],
-  ): EntityConstructor[] {
-    const subjects &#x3D; new Set&lt;string&gt;(this.entities.keys());
-    rules
-      .filter((rule) &#x3D;&gt; this.isReadRule(rule))
-      .forEach((rule) &#x3D;&gt; this.collectSubjectsFromRule(rule, subjects));
-
-    return (
-      [...subjects]
-        .map((subj) &#x3D;&gt; this.entities.get(subj))
-        // TODO: there is some problem doing this for NotificationEvents (but those are not relevant for permissions anyway)
-        .filter((subj) &#x3D;&gt; !!subj &amp;&amp; subj.DATABASE &#x3D;&#x3D;&#x3D; Entity.DATABASE)
-    );
-  }
-
-  private collectSubjectsFromRule(rule: DatabaseRule, subjects: Set&lt;string&gt;) {
-    const relevantSubjects &#x3D; this.getRelevantSubjects(rule);
-    if (rule.inverted || rule.conditions) {
-      // Add subject if the rule can prevent someone from having access
-      relevantSubjects.forEach((subject) &#x3D;&gt; subjects.add(subject));
-    } else {
-      // Remove subject if rule gives access
-      relevantSubjects.forEach((subject) &#x3D;&gt; subjects.delete(subject));
-    }
-  }
-
-  private isReadRule(rule: DatabaseRule): boolean {
-    return (
-      rule.action &#x3D;&#x3D;&#x3D; &quot;read&quot; ||
-      rule.action.includes(&quot;read&quot;) ||
-      rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;
-    );
-  }
-
-  private getRelevantSubjects(rule: DatabaseRule): string[] {
-    let subjects: string[];
-    if (rule.subject &#x3D;&#x3D;&#x3D; &quot;all&quot;) {
-      subjects &#x3D; [...this.entities.keys()];
-    } else if (Array.isArray(rule.subject)) {
-      subjects &#x3D; rule.subject;
-    } else {
-      subjects &#x3D; [rule.subject];
-    }
-    // Only return valid entities
-    return subjects.filter((sub) &#x3D;&gt; this.entities.has(sub));
-  }
-
-  private async purgeEntitiesWithoutPermissions(
-    subjects: EntityConstructor[],
-  ): Promise&lt;void&gt; {
-    // wait for config service to be ready before using the entity mapper
-    await firstValueFrom(this.configService.configUpdates);
-    let purgedCount &#x3D; 0;
-    for (const subject of subjects) {
-      const entities &#x3D; await this.entityMapper.loadType(subject);
-      for (const entity of entities) {
-        if (this.ability.cannot(&quot;read&quot;, entity)) {
-          try {
-            await this.dbResolver.getDatabase().purge(entity.getId());
-            purgedCount++;
-            Logging.debug(
-              &#x60;Purged locally inaccessible entity: ${entity.getId()}&#x60;,
-            );
-          } catch (err) {
-            Logging.warn(&#x60;Error trying to purge entity&#x60;, entity.getId(), err);
-          }
-        }
-      }
-    }
-
-    if (purgedCount &gt; 0) {
-      // deleting local data based on changed permission rules - log for traceability of possible data loss
-      Logging.warn(
-        &quot;Purged local entities that current permission rules deny reading&quot;,
-        { count: purgedCount },
-      );
-    }
-  }
-
-  private async dbHasEntitiesWithoutPermissions(
-    subjects: EntityConstructor[],
-  ): Promise&lt;boolean&gt; {
-    // wait for config service to be ready before using the entity mapper
-    await firstValueFrom(this.configService.configUpdates);
-    for (const subject of subjects) {
-      const entities &#x3D; await this.entityMapper.loadType(subject);
-      if (entities.some((entity) &#x3D;&gt; this.ability.cannot(&quot;read&quot;, entity))) {
-        return true;
-      }
-    }
-    return false;
-  }
+  abstract getLastEnforcedRules(): DatabaseRule[] | undefined;
 }
 </code></pre>
     </div>
