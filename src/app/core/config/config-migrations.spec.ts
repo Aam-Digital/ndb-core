@@ -236,6 +236,91 @@ describe("applyConfigMigrations", () => {
     });
   });
 
+  describe("removeIsActiveFilters", () => {
+    it("removes the isActive condition from a configured filter", () => {
+      const old = {
+        component: "RelatedEntities",
+        config: {
+          entityType: "RecurringActivity",
+          filter: { "category.id": "SCHOOL_CLASS", isActive: true },
+        },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        component: "RelatedEntities",
+        config: {
+          entityType: "RecurringActivity",
+          filter: { "category.id": "SCHOOL_CLASS" },
+        },
+      });
+    });
+
+    it("removes an isActive condition selecting archived records, which cannot be expressed anymore", () => {
+      const old = { filter: { isActive: false, center: "alpha" } };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        filter: { center: "alpha" },
+      });
+    });
+
+    it("removes the isActive condition from prefilters and prebuilt filter options", () => {
+      const old = {
+        leftSide: { prefilter: { isActive: true } },
+        filters: [
+          {
+            id: "status",
+            type: "prebuilt",
+            options: [
+              { key: "current", filter: { isActive: true, status: "open" } },
+            ],
+          },
+        ],
+      };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        leftSide: { prefilter: {} },
+        filters: [
+          {
+            id: "status",
+            type: "prebuilt",
+            options: [{ key: "current", filter: { status: "open" } }],
+          },
+        ],
+      });
+    });
+
+    it("drops branches of a logical operator that only held the isActive condition", () => {
+      const old = {
+        filter: {
+          $or: [{ isActive: true }, { center: "alpha" }],
+          $and: [{ isActive: true }],
+        },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        filter: { $or: [{ center: "alpha" }] },
+      });
+    });
+
+    it("leaves filters without an isActive condition unchanged", () => {
+      const old = {
+        filter: { center: "alpha", $or: [{ a: 1 }, { b: 2 }], tags: [] },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        filter: { center: "alpha", $or: [{ a: 1 }, { b: 2 }], tags: [] },
+      });
+    });
+
+    it("keeps an isActive value that is not part of a filter config", () => {
+      const old = { config: { isActive: true } };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        config: { isActive: true },
+      });
+    });
+  });
+
   it("drops stored options of the prebuilt todo filter", () => {
     const old = {
       filters: [
