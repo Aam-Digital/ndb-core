@@ -31,6 +31,7 @@ import {
   DatabaseRule,
   DEFAULT_SECTION_KEY,
   EntityActionPermission,
+  RESERVED_RULE_CONFIG_KEYS,
 } from "../../../permissions/permission-types";
 import { MatrixModel, MatrixRow } from "../permission-matrix";
 
@@ -168,7 +169,7 @@ export class PermissionMatrixComponent {
    * nothing across all record types.
    */
   private readonly defaultViewRow = computed(() => {
-    if (this.isDefaultRole()) {
+    if (!this.inheritsFromDefaultRole()) {
       return undefined;
     }
 
@@ -288,7 +289,7 @@ export class PermissionMatrixComponent {
     subject: string,
     action: EntityActionPermission,
   ): boolean {
-    if (this.isDefaultRole()) {
+    if (!this.inheritsFromDefaultRole()) {
       return false;
     }
     return this.inheritedRules().some((rule) => {
@@ -317,9 +318,15 @@ export class PermissionMatrixComponent {
     this.model().rows.map((r) => r.subject),
   );
 
-  /** the base "_default" role has no fallback to itself, so its empty state differs */
-  readonly isDefaultRole = computed(
-    () => this.roleName() === DEFAULT_SECTION_KEY,
+  /**
+   * Whether users of this role also receive the shared "_default" rules.
+   * False for the reserved roles: "_default" cannot inherit from itself and
+   * "_public" applies to visitors who are not logged in, who never receive the
+   * "_default" rules (see AbilityService.getRulesForUser). Their empty state
+   * therefore differs as well, having no base role to fall back to.
+   */
+  readonly inheritsFromDefaultRole = computed(
+    () => !RESERVED_RULE_CONFIG_KEYS.includes(this.roleName()),
   );
 
   /** human-readable summary of a CASL conditions object, e.g. "Center: Alipore and Gender: male" */

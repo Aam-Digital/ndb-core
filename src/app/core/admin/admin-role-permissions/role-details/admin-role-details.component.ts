@@ -36,6 +36,7 @@ import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.s
 import {
   DatabaseRule,
   DEFAULT_SECTION_KEY,
+  RESERVED_RULE_CONFIG_KEYS,
 } from "../../../permissions/permission-types";
 
 /** fresh empty matrix model; a factory (not a shared const) so callers can never alias a mutable object */
@@ -139,15 +140,19 @@ export class AdminRoleDetailsComponent implements OnInit {
 
   /**
    * Rules of the shared "_default" role, which every logged-in user has on top
-   * of their own roles. Empty while editing that role itself, which cannot
-   * inherit from itself.
+   * of their own roles. Empty for the reserved roles: "_default" cannot inherit
+   * from itself and "_public" applies to visitors who are not logged in, who
+   * never receive the "_default" rules (see AbilityService.getRulesForUser).
    */
   readonly inheritedRules = signal<DatabaseRule[]>([]);
 
   private setInheritedRules(roles: RoleWithPermissions[]) {
-    const isDefaultRole = this.roleName() === DEFAULT_SECTION_KEY;
+    if (RESERVED_RULE_CONFIG_KEYS.includes(this.roleName())) {
+      this.inheritedRules.set([]);
+      return;
+    }
     const defaultRole = roles.find((r) => r.name === DEFAULT_SECTION_KEY);
-    this.inheritedRules.set(isDefaultRole ? [] : (defaultRole?.rules ?? []));
+    this.inheritedRules.set(defaultRole?.rules ?? []);
   }
 
   /** whether the user may create/delete/update roles in the authentication server (reactive) */

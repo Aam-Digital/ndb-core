@@ -223,7 +223,7 @@
     <div class="empty-state text-secondary padding-regular">
       @if (editable()) {
         <span i18n>No permissions yet. Add one below.</span>
-      } @else if (isDefaultRole()) {
+      } @else if (!inheritsFromDefaultRole()) {
         <span i18n>No permissions defined for this role yet.</span>
       } @else {
         <span i18n>

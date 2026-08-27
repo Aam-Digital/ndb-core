@@ -251,6 +251,33 @@ describe("PermissionMatrixComponent", () => {
     expect(childBoxes[1].classList).not.toContain("mat-mdc-checkbox-disabled");
   });
 
+  it.each(["_default", "_public"])(
+    "shows no inherited default permissions on the reserved role %s",
+    (roleName) => {
+      fixture.componentRef.setInput("model", {
+        rows: [{ subject: "Child", cells: {} }],
+        unsupportedRules: [],
+      } satisfies MatrixModel);
+      fixture.componentRef.setInput("editable", true);
+      fixture.componentRef.setInput("roleName", roleName);
+      // _public applies before login, where the _default rules never apply,
+      // so nothing may be shown as already granted here
+      fixture.componentRef.setInput("inheritedRules", [
+        { subject: "all", action: "read" },
+      ]);
+      fixture.detectChanges();
+
+      const rows = fixture.nativeElement.querySelectorAll("tr[mat-row]");
+      expect(rows).toHaveLength(1);
+
+      const childBoxes = rows[0].querySelectorAll("mat-checkbox");
+      expect(childBoxes[0].classList).not.toContain("mat-mdc-checkbox-checked");
+      expect(childBoxes[0].classList).not.toContain(
+        "mat-mdc-checkbox-disabled",
+      );
+    },
+  );
+
   it("keeps the four actions independent and does not merge them into manage-all", () => {
     fixture.componentRef.setInput("model", {
       rows: [

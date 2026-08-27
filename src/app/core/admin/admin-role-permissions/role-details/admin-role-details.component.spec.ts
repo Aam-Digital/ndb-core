@@ -15,6 +15,7 @@ import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.s
 describe("AdminRoleDetailsComponent", () => {
   let component: AdminRoleDetailsComponent;
   let fixture: ComponentFixture<AdminRoleDetailsComponent>;
+  const defaultRules = [{ subject: "all", action: "read" }];
   const mockRolePermissions = {
     loadRoles: vi.fn(),
     saveRules: vi.fn().mockResolvedValue(undefined),
@@ -102,6 +103,33 @@ describe("AdminRoleDetailsComponent", () => {
       "No permissions defined",
     );
   });
+
+  it("inherits the _default rules for a normal role", async () => {
+    mockRolePermissions.loadRoles.mockResolvedValue([
+      { name: "_default", isVirtual: true, rules: defaultRules },
+      { name: "user_app", isVirtual: false, rules: [] },
+    ]);
+    component.roleName.set("user_app");
+    await component.loadRole();
+
+    expect(component.inheritedRules()).toEqual(defaultRules);
+  });
+
+  it.each(["_default", "_public"])(
+    "does not inherit the _default rules for the reserved role %s",
+    async (roleName) => {
+      // _public applies to visitors who are not logged in and therefore never
+      // receive the _default rules, and _default cannot inherit from itself
+      mockRolePermissions.loadRoles.mockResolvedValue([
+        { name: "_default", isVirtual: true, rules: defaultRules },
+        { name: "_public", isVirtual: true, rules: [] },
+      ]);
+      component.roleName.set(roleName);
+      await component.loadRole();
+
+      expect(component.inheritedRules()).toEqual([]);
+    },
+  );
 
   it("tracks unsaved changes while editing and saves the working model as rules", async () => {
     await fixture.whenStable();
