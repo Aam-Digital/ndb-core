@@ -201,6 +201,21 @@ describe("EntityAnonymizeService", () => {
     );
   });
 
+  it("should remove entity references in an array field, as the datatype has no partial anonymization", async () => {
+    const entity = new AnonymizableEntity();
+    entity.referencesToRetainAnonymized = [
+      "AnonymizableEntity:ref-1",
+      "AnonymizableEntity:ref-2",
+    ];
+
+    await service.anonymizeEntity(entity);
+
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
+      AnonymizableEntity.create({ referencesToRetainAnonymized: [] }),
+    );
+  });
+
   it("should partially anonymize string fields by keeping only the first character", async () => {
     const entity = new AnonymizableEntity();
     entity.retainAnonymizedText = "John";
@@ -283,6 +298,35 @@ describe("EntityAnonymizeService", () => {
 
     expectAllUnchangedExcept(expectedToGetAnonymized, entityMapper);
   }
+
+  it("should terminate the cascade on records referencing each other as 'composite'", async () => {
+    const a = EntityWithAnonRelations.create("A");
+    const b = EntityWithAnonRelations.create("B", {
+      refComposite: [a.getId()],
+    });
+    a.refComposite = [b.getId()];
+    await entityMapper.saveAll([a, b]);
+
+    await service.anonymizeEntity(a);
+
+    for (const id of [a.getId(), b.getId()]) {
+      expect(
+        entityMapper.get(EntityWithAnonRelations.ENTITY_TYPE, id).anonymized,
+      ).toBe(true);
+    }
+  });
+
+  it("should not anonymize an already anonymized entity again", async () => {
+    const entity = EntityWithAnonRelations.create("already anonymized");
+    entity.anonymized = true;
+    await entityMapper.saveAll([entity]);
+    vi.spyOn(entityMapper, "save");
+
+    const result = await service.anonymizeEntity(entity);
+
+    expect(entityMapper.save).not.toHaveBeenCalled();
+    expect(result.originalEntitiesBeforeChange).toEqual([]);
+  });
 
   it("should not cascade anonymize the related entity if the entity holding the reference is anonymized", async () => {
     // for direct references (e.g. x.referencesToRetainAnonymized --> recursively calls anonymize on referenced entities)
