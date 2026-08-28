@@ -302,6 +302,19 @@ describe("applyConfigMigrations", () => {
       });
     });
 
+    it("drops nested branches that only held the isActive condition", () => {
+      const old = {
+        filter: {
+          children: { $elemMatch: "some-id" },
+          $and: [{ $or: [{ isActive: true }] }],
+        },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        filter: { children: { $elemMatch: "some-id" } },
+      });
+    });
+
     it("leaves filters without an isActive condition unchanged", () => {
       const old = {
         filter: { center: "alpha", $or: [{ a: 1 }, { b: 2 }], tags: [] },
