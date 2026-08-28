@@ -10,7 +10,9 @@
     [disabled]="!enabled()"
     readonly
     [value]="
-      valueSignal()?.locationString ?? valueSignal()?.geoLookup?.display_name
+      valueSignal()?.locationString ??
+      valueSignal()?.geoLookup?.display_name ??
+      ''
     "
     rows="3"
   ></textarea>
