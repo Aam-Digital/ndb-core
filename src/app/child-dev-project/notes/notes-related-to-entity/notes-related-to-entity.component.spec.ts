@@ -41,6 +41,17 @@ describe("NotesRelatedToEntityComponent", () => {
   it("should not filter out notes linked to a non-Child entity through relatedEntities", async () => {
     // the loader returns notes related through any of the linking properties,
     // so the display filter must not narrow this down to a single property (#4330)
+    fixture.componentRef.setInput("entity", new ChildSchoolRelation());
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // the mocked config load (triggered above) replaces Note's schema fields once
+    // the component has stabilized, discarding any override applied earlier - so
+    // it needs to be (re-)applied here, followed by a new "entity" reference to
+    // trigger recomputation of the component's filter with the corrected schema
+    Note.schema.get("relatedEntities").additional = [
+      ChildSchoolRelation.ENTITY_TYPE,
+    ];
     const relation = new ChildSchoolRelation();
     fixture.componentRef.setInput("entity", relation);
     fixture.detectChanges();
@@ -48,11 +59,14 @@ describe("NotesRelatedToEntityComponent", () => {
 
     const relatedNote = new Note();
     relatedNote.relatedEntities = [relation.getId()];
+    const unrelatedNote = new Note();
+    unrelatedNote.relatedEntities = ["ChildSchoolRelation:other"];
     const matchesFilter = TestBed.inject(FilterService).getFilterPredicate(
       component.filterObj(),
     );
 
     expect(matchesFilter(relatedNote)).toBe(true);
+    expect(matchesFilter(unrelatedNote)).toBe(false);
   });
 
   it("should use the attendance color function when passing a child", () => {
