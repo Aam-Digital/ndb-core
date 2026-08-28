@@ -393,15 +393,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>loadDataFor&lt;E&gt;(loaderMethod: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entity: <a href="../classes/Entity.html" target="_self">Entity</a>, property?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>loadDataFor&lt;E&gt;(loaderMethod: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, entity: <a href="../classes/Entity.html" target="_self">Entity</a>, property?: string | string[])</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="62"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:62</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -416,6 +416,9 @@
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><b>Example :</b><div><pre class="line-numbers"><code class="language-none">   or several candidates if it cannot be determined unambiguously.
+   Each loader decides for itself whether and how it needs this.
+</code></pre></div></div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -426,6 +429,7 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -440,6 +444,8 @@
                                             </td>
 
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>entity</td>
@@ -452,11 +458,13 @@
                                             </td>
 
 
+                                            <td>
+                                            </td>
                                         </tr>
                                         <tr>
                                                 <td>property</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        <code>string | string[]</code>
                                             </td>
 
                                             <td>
@@ -464,6 +472,12 @@
                                             </td>
 
 
+                                            <td>
+                                                    <p>the property of the loaded entity type that links to the given entity,
+or several candidates if it cannot be determined unambiguously.
+Each loader decides for itself whether and how it needs this.</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -547,10 +561,15 @@ export class EntitySpecialLoaderService {
     return updatedEntity;
   }
 
+  /**
+   * @param property the property of the loaded entity type that links to the given entity,
+   *        or several candidates if it cannot be determined unambiguously.
+   *        Each loader decides for itself whether and how it needs this.
+   */
   loadDataFor&lt;E extends Entity &#x3D; Entity&gt;(
     loaderMethod: LoaderMethod,
     entity: Entity,
-    property?: string,
+    property?: string | string[],
   ): Promise&lt;E[]&gt; {
     switch (loaderMethod) {
       case LoaderMethod.HistoricalDataService:

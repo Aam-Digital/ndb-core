@@ -765,8 +765,8 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="316"
-                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:316</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="314"
+                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:314</a></div>
                         </td>
                     </tr>
 
@@ -804,8 +804,8 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="333"
-                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:333</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="331"
+                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:331</a></div>
                         </td>
                     </tr>
 
@@ -873,8 +873,8 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="329"
-                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:329</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="327"
+                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:327</a></div>
                         </td>
                     </tr>
 
@@ -912,8 +912,8 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="190"
-                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:190</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="188"
+                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:188</a></div>
                         </td>
                     </tr>
 
@@ -954,8 +954,8 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="235"
+                                    class="link-to-prism">src/app/core/entity-details/related-entities/related-entities.component.ts:235</a></div>
                         </td>
                     </tr>
 
@@ -1424,15 +1424,13 @@ export class RelatedEntitiesComponent&lt;E extends Entity&gt; {
     });
 
     effect(() &#x3D;&gt; {
+      // each loader decides for itself how to handle an ambiguous relation property
       const config: LoadRecordConfig&lt;E&gt; &#x3D; {
         entityCtr: this.entityCtr(),
         forEntity: this.entity(),
+        relationProperty: this.relationProperty(),
+        loaderMethod: this.loaderMethod(),
       };
-      if (!Array.isArray(this.relationProperty())) {
-        // Only when a single relation property is defined/exists, a loader method can be used
-        config.relationProperty &#x3D; this.relationProperty() as keyof Entity;
-        config.loaderMethod &#x3D; this.loaderMethod();
-      }
       this.recordsDataSource().loadRecordConfig.set(config);
     });
   }

@@ -365,6 +365,12 @@
                             <a href="#fileComponents" title="src/app/features/file/file-components.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>fileComponents</b>&nbsp;&nbsp;&nbsp;(src/.../file-components.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#FILTER_CONFIG_KEYS" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FILTER_CONFIG_KEYS</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#FILTER_LOGICAL_OPERATORS" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FILTER_LOGICAL_OPERATORS</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#FULL_LOAD_PAGE_SIZE" title="src/app/core/common-components/entities-table/data-source/paginated-data-source.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>FULL_LOAD_PAGE_SIZE</b>&nbsp;&nbsp;&nbsp;(src/.../paginated-data-source.ts)</span></a>
                         </li>
                         <li>
@@ -648,6 +654,9 @@
                         </li>
                         <li>
                             <a href="#removeExportConfig" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>removeExportConfig</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#removeIsActiveFilters" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>removeIsActiveFilters</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
                             <a href="#removeOutdatedTodoViews" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>removeOutdatedTodoViews</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
@@ -2836,6 +2845,7 @@ reload-loop and flood error monitoring.</p>
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
   migrateIsActiveReportQueries,
+  removeIsActiveFilters,
   migrateTodoDueStatusFilter,
   migrateShortcutDashboardLinks,
   migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs
@@ -2848,6 +2858,72 @@ reload-loop and flood error monitoring.</p>
                     <div class="io-description"><p>All temporary config migrations that fix legacy data formats.
 Applied by both ConfigService (Angular app) and the admin CLI.
 Order matters: earlier migrations may produce output consumed by later ones.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FILTER_CONFIG_KEYS"></a>
+                    <span class="name">
+                        <span ><b>FILTER_CONFIG_KEYS</b></span>
+                        <a href="#FILTER_CONFIG_KEYS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;filter&quot;, &quot;prefilter&quot;]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Config keys whose value is a filter object (MongoDB-style query) defined by admins,
+e.g. the fixed <code>filter</code> of a RelatedEntities view, the <code>filter</code> of a prebuilt filter option
+or the <code>prefilter</code> of a matching view&#39;s side.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FILTER_LOGICAL_OPERATORS"></a>
+                    <span class="name">
+                        <span ><b>FILTER_LOGICAL_OPERATORS</b></span>
+                        <a href="#FILTER_LOGICAL_OPERATORS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;$and&quot;, &quot;$or&quot;, &quot;$nor&quot;]</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Filter operators whose value is a list of nested filter conditions.</p>
 </div>
                 </td>
             </tr>
@@ -4037,6 +4113,51 @@ Drop the stored options so the definition provided by the app is used.</p>
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeIsActiveFilters"></a>
+                    <span class="name">
+                        <span ><b>removeIsActiveFilters</b></span>
+                        <a href="#removeIsActiveFilters"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ConfigMigration" target="_self" >ConfigMigration</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(key, configPart) &#x3D;&gt; {
+  if (!FILTER_CONFIG_KEYS.includes(key)) {
+    return configPart;
+  }
+
+  return removeIsActiveCondition(configPart);
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Entities do not provide a calculated &quot;isActive&quot; property anymore,
+so a configured filter selecting on it cannot match anything.</p>
+<p><code>isActive: true</code> is simply dropped: lists exclude archived records by default now
+(see NOT_ARCHIVED_FILTER), which is exactly what the condition used to express.</p>
+<p><code>isActive: false</code> (i.e. archived records only) is dropped as well. It has no equivalent in a
+configured filter anymore, because the default not-archived condition is combined with <code>$and</code>
+and any explicit &quot;archived&quot; condition would make such a filter match no record at all.
+Users can include archived records through the list&#39;s &quot;show inactive&quot; toggle instead.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>

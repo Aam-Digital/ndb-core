@@ -232,8 +232,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="42"
-                                    class="link-to-prism">src/app/features/todos/todo.service.ts:42</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">src/app/features/todos/todo.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -294,15 +294,15 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getTodosFor(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, relationProperty: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>getTodosFor(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, relationProperty?: string | string[])</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="23"
-                                    class="link-to-prism">src/app/features/todos/todo.service.ts:23</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/features/todos/todo.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -311,6 +311,9 @@
                 <td class="col-md-4">
                         <div class="io-description"><p>Load Todo entities related to the given entity through a database index on
 the given relation property (ordered by deadline).</p>
+<p>The index can only be built on one specific property. If the property linking to the given
+entity is not unambiguous, all Todos are loaded instead and the caller&#39;s filter narrows them
+down (see RelatedEntitiesComponent).</p>
 </div>
 
                             <div class="io-description">
@@ -340,11 +343,11 @@ the given relation property (ordered by deadline).</p>
                                         <tr>
                                                 <td>relationProperty</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        <code>string | string[]</code>
                                             </td>
 
                                             <td>
-                                                    No
+                                                    Yes
                                             </td>
 
 
@@ -385,8 +388,8 @@ the given relation property (ordered by deadline).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/features/todos/todo.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="83"
+                                    class="link-to-prism">src/app/features/todos/todo.service.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -460,8 +463,19 @@ export class TodoService {
   /**
    * Load Todo entities related to the given entity through a database index on
    * the given relation property (ordered by deadline).
+   *
+   * The index can only be built on one specific property. If the property linking to the given
+   * entity is not unambiguous, all Todos are loaded instead and the caller&#x27;s filter narrows them
+   * down (see RelatedEntitiesComponent).
    */
-  async getTodosFor(entity: Entity, relationProperty: string): Promise&lt;Todo[]&gt; {
+  async getTodosFor(
+    entity: Entity,
+    relationProperty?: string | string[],
+  ): Promise&lt;Todo[]&gt; {
+    if (typeof relationProperty !&#x3D;&#x3D; &quot;string&quot;) {
+      return this.entityMapper.loadType(Todo);
+    }
+
     // TODO: move this generic index creation into schema
     this.dbIndexing.generateIndexOnProperty(
       &quot;todo_index&quot;,
