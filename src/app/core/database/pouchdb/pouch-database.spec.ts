@@ -302,6 +302,12 @@ describe("PouchDatabase tests", () => {
     await expect(database.isEmpty()).resolves.toEqual(false);
   });
 
+  it("find() is not supported on the local/base implementation (only RemotePouchDatabase supports bookmark-based pagination)", async () => {
+    await expect(database.find("Test", {})).rejects.toThrow(
+      "only supported by RemotePouchDatabase",
+    );
+  });
+
   describe("purge", () => {
     it("should purge doc and emit changes deletion event", async () => {
       await database.put({ _id: "Child:2", name: "test" });

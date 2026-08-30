@@ -387,50 +387,25 @@ export class PouchDatabase extends Database {
     this.databaseInitialized = new Subject();
   }
 
+  /**
+   * Bookmark-based pagination (see {@link Database.find}) relies on CouchDB's
+   * real Mango `bookmark` cursor, which only exists when talking directly to
+   * a remote CouchDB / the replication-backend over HTTP. PouchDB's local
+   * Mango query engine has no bookmark support at all - it always reports
+   * "nil" (see pouchdb-find/lib/index.js) - so there is no correct local
+   * implementation to fall back to.
+   * Local pagination could be implemented using `skip` and `limit`. But is
+   * currently not needed.
+   */
   async find(
-    prefix = "",
-    query = {},
-    page?: { limit: number; skip: number },
-    sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<any> {
-    const findOptions: PouchDB.Find.FindRequest<any> = {
-      selector: {
-        ...query,
-        _id: { $lt: `${prefix}:\ufff0`, $gte: `${prefix}:` },
-      },
-    };
-    if (Number.isInteger(page?.limit)) {
-      findOptions.limit = page.limit;
-    }
-    if (Number.isInteger(page?.skip)) {
-      findOptions.skip = page.skip;
-    }
-    const pouchDB = await this.getPouchDBOnceReady();
-    if (sort?.prop) {
-      // TODO delete indexes at one point? e.g. when column is removed
-      const indexRes = await pouchDB
-        .createIndex({
-          index: {
-            name: prefix + "_" + sort.prop,
-            partial_filter_selector: {
-              _id: findOptions.selector._id,
-            },
-            fields: [sort.prop],
-          },
-        })
-        .catch((err) => {
-          throw new DatabaseException(err);
-        });
-      // deleted because already included in partial_filter_selector
-      delete findOptions.selector._id;
-      findOptions.sort = [{ [sort.prop]: sort.dir }];
-      findOptions.use_index = indexRes["id"];
-    }
-    return this.withReadRetry(() => pouchDB.find(findOptions))
-      .then((res) => res.docs)
-      .catch((err) => {
-        throw new DatabaseException(err);
-      });
+    _prefix?: string,
+    _query?: any,
+    _page?: { limit?: number; bookmark?: string },
+    _sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<{ docs: any[]; bookmark?: string }> {
+    throw new Error(
+      "find() is only supported by RemotePouchDatabase (bookmark-based pagination requires a real remote CouchDB connection)",
+    );
   }
 
   /**

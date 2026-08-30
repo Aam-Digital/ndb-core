@@ -563,6 +563,60 @@ describe("RemotePouchDatabase tests", () => {
     });
   });
 
+  describe("find", () => {
+    it("sends limit and bookmark to the _find endpoint and returns the response's docs and bookmark", async () => {
+      database.init("");
+
+      let requestBody: any;
+      (PouchDB.fetch as Mock).mockImplementation(async (url: string, opts) => {
+        if (typeof url === "string" && url.includes("/_find")) {
+          requestBody = JSON.parse(opts.body as string);
+          return new Response(
+            JSON.stringify({
+              docs: [{ _id: "Test:3" }],
+              bookmark: "next-bookmark",
+            }),
+            { status: HttpStatusCode.Ok },
+          );
+        }
+        return new Response("{}", { status: HttpStatusCode.Ok });
+      });
+
+      const res = await (database as RemotePouchDatabase).find(
+        "Test",
+        {},
+        { limit: 1, bookmark: "prev-bookmark" },
+      );
+
+      expect(requestBody).toEqual(
+        expect.objectContaining({ limit: 1, bookmark: "prev-bookmark" }),
+      );
+      expect(res).toEqual({
+        docs: [{ _id: "Test:3" }],
+        bookmark: "next-bookmark",
+      });
+    });
+
+    it("does not send a bookmark for the first page", async () => {
+      database.init("");
+
+      let requestBody: any;
+      (PouchDB.fetch as Mock).mockImplementation(async (url: string, opts) => {
+        if (typeof url === "string" && url.includes("/_find")) {
+          requestBody = JSON.parse(opts.body as string);
+          return new Response(JSON.stringify({ docs: [], bookmark: "bm1" }), {
+            status: HttpStatusCode.Ok,
+          });
+        }
+        return new Response("{}", { status: HttpStatusCode.Ok });
+      });
+
+      await (database as RemotePouchDatabase).find("Test", {}, { limit: 5 });
+
+      expect(requestBody.bookmark).toBeUndefined();
+    });
+  });
+
   describe("shouldSkipIndexUpdate", () => {
     it("should skip update if existing design doc has a newer aam_version", () => {
       const remoteDb = database as RemotePouchDatabase;
