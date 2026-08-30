@@ -1144,7 +1144,7 @@ export abstract class EntitiesTableDataSource&lt;
     const load &#x3D; this.loadRecords()
       .catch((err) &#x3D;&gt; {
         Logging.error(
-          &#x60;Error loading data in datasource with config ${this.loadRecordConfig}: ${err}&#x60;,
+          &#x60;Error loading data in datasource with config ${this.loadRecordConfig()}: ${err}&#x60;,
         );
         return [];
       })
