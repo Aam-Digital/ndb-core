@@ -263,13 +263,18 @@ describe("FilterComponent", () => {
     const categoryFilter = component
       .filterSelections()
       .find((f) => f.name === "category");
+    // In the real app, selecting an option writes it to the URL (async router
+    // navigation) and the dropdown closing then fires another change event,
+    // which used to read the URL back and clear all other filters.
+    // The mocked ActivatedRoute is static and never reflects the component's
+    // own navigation, so both steps are simulated manually here:
     component.filterOptionSelected(categoryFilter, ["someCategory"]);
 
-    // the router has written the selection to the URL by the time the
-    // dropdown closing triggers another change event
+    // 1. the router has now written the selection to the URL
     activatedRouteMock.snapshot = {
       queryParams: { category: "someCategory" },
     };
+    // 2. the follow-up change event from the closing dropdown
     component.filterOptionSelected(categoryFilter, ["someCategory"]);
     fixture.detectChanges();
     await fixture.whenStable();
