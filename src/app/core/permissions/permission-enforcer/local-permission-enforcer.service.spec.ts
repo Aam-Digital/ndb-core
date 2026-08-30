@@ -1,6 +1,7 @@
 import type { Mock } from "vitest";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
+import { LocalPermissionEnforcerService } from "./local-permission-enforcer.service";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseRule } from "../permission-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -17,8 +18,8 @@ import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
-describe("PermissionEnforcerService", () => {
-  let service: PermissionEnforcerService;
+describe("LocalPermissionEnforcerService", () => {
+  let service: LocalPermissionEnforcerService;
   const userRules: DatabaseRule[] = [
     { subject: "all", action: "manage" },
     { subject: TestEntity.ENTITY_TYPE, action: "read", inverted: true },
@@ -41,9 +42,12 @@ describe("PermissionEnforcerService", () => {
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
-      providers: [{ provide: LOCATION_TOKEN, useValue: mockLocation }],
+      providers: [
+        LocalPermissionEnforcerService,
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+      ],
     });
-    service = TestBed.inject(PermissionEnforcerService);
+    service = TestBed.inject(LocalPermissionEnforcerService);
 
     entityMapper = TestBed.inject(EntityMapperService);
     (entityMapper as MockEntityMapperService).clearAllData();

@@ -3,12 +3,11 @@ import {
   DatabaseRule,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
-  LEGACY_DEFAULT_KEY,
-  LEGACY_PUBLIC_KEY,
   PUBLIC_SECTION_KEY,
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from "../permission-types";
+import { migrateLegacySectionKeys } from "../permissions-config-migration";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
@@ -18,7 +17,7 @@ import { get, has } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { filter, firstValueFrom, merge } from "rxjs";
+import { filter, firstValueFrom, merge, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
@@ -51,13 +50,23 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
    */
   private rulesKnown = false;
 
+  /**
+   * The rules of every loaded version of the permissions document, brought into
+   * the current format once here, so that the rest of the service only deals
+   * with the underscore-prefixed reserved section keys.
+   */
+  private readonly rulesUpdated: Observable<DatabaseRules>;
+
   constructor() {
     const entityMapper = inject(EntityMapperService);
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.entityUpdated.subscribe((config) => {
-      this.currentRules = config.data;
+    this.rulesUpdated = this.entityUpdated.pipe(
+      map((config) => migrateLegacySectionKeys(config.data)),
+    );
+    this.rulesUpdated.subscribe((rules) => {
+      this.currentRules = rules;
       // includes a deletion of the config (empty entity): that the rules are
       // gone is a known state, unlike a failed load
       this.rulesKnown = true;
@@ -75,7 +84,9 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     }
 
     if (initialPermissions) {
-      await this.updateAbilityWithUserRules(initialPermissions.data);
+      await this.updateAbilityWithUserRules(
+        migrateLegacySectionKeys(initialPermissions.data),
+      );
     } else if (this.rulesKnown) {
       // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: "manage", subject: "all" }]);
@@ -85,7 +96,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     }
 
     merge(
-      this.entityUpdated.pipe(map((config) => config.data)),
+      this.rulesUpdated,
       this.sessionInfo.pipe(map(() => this.currentRules)),
       this.currentUser.pipe(map(() => this.currentRules)),
     ).subscribe((rules) => {
@@ -176,12 +187,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const sessionInfo = this.sessionInfo.value;
     if (!sessionInfo) {
-      return rules[PUBLIC_SECTION_KEY] ?? rules[LEGACY_PUBLIC_KEY] ?? [];
+      return rules[PUBLIC_SECTION_KEY] ?? [];
     }
 
     const rawUserRules: DatabaseRule[] = [];
-    const defaultRules =
-      rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY];
+    const defaultRules = rules[DEFAULT_SECTION_KEY];
     if (defaultRules) {
       rawUserRules.push(...defaultRules);
     }

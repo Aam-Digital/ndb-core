@@ -49,6 +49,9 @@ export const RESERVED_ROLE_PREFIX = "_";
 /**
  * All section keys (current and legacy) that must never be resolved as if they
  * were user role names, even if a realm role with the same name exists.
+ *
+ * A new key added here does not automatically stop inheriting the "_default"
+ * rules; see {@link inheritsDefaultRules}.
  */
 export const RESERVED_RULE_CONFIG_KEYS: string[] = [
   DEFAULT_SECTION_KEY,
@@ -56,6 +59,25 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] = [
   LEGACY_DEFAULT_KEY,
   LEGACY_PUBLIC_KEY,
 ];
+
+/**
+ * Whether users of the given role also receive the shared "_default" rules.
+ * False for "_default", which cannot inherit from itself, and for "_public",
+ * which applies to visitors who are not logged in and never get the "_default"
+ * rules (see AbilityService.getRulesForUser).
+ *
+ * The excluded keys are listed explicitly instead of taken from
+ * {@link RESERVED_RULE_CONFIG_KEYS}, because a future reserved role that
+ * applies to logged-in users would inherit the "_default" rules as usual.
+ */
+export function inheritsDefaultRules(roleName: string): boolean {
+  return ![
+    DEFAULT_SECTION_KEY,
+    PUBLIC_SECTION_KEY,
+    LEGACY_DEFAULT_KEY,
+    LEGACY_PUBLIC_KEY,
+  ].includes(roleName);
+}
 
 /**
  * The format of the JSON object which defines the rules for each role.

@@ -26,9 +26,10 @@ export interface LoadRecordConfig<T extends Entity> {
    */
   forEntity?: Entity;
   /**
-   * Property through which the relation can be resolved
+   * Property through which the relation to `forEntity` can be resolved,
+   * or several candidates if it cannot be determined unambiguously
    */
-  relationProperty?: keyof Entity;
+  relationProperty?: string | string[];
   /**
    * Select if a special loader method should be used for this entity
    */
