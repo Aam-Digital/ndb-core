@@ -656,7 +656,7 @@ export class ListFilterComponent&lt;E extends Entity&gt; {
     this.autocompleteControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((values) &#x3D;&gt; {
-        const selectedValues &#x3D; asArray(values);
+        const selectedValues &#x3D; asArray(values ?? []);
         this.selectedValues.set(selectedValues);
         this.filterConfig().selectedOptionChange.emit(selectedValues);
       });

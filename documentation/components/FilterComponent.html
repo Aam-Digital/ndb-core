@@ -711,8 +711,8 @@ default <code>false</code>.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="252"
-                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:252</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="258"
+                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:258</a></div>
                         </td>
                     </tr>
 
@@ -748,8 +748,8 @@ default <code>false</code>.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="138"
-                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:138</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/core/filter/filter/filter.component.ts:144</a></div>
                         </td>
                     </tr>
 
@@ -1039,9 +1039,15 @@ export class FilterComponent&lt;T extends Entity &#x3D; Entity&gt; {
 
   constructor() {
     effect(() &#x3D;&gt; {
-      const selectionsWithUrlParams &#x3D; this.loadUrlParams(
-        this.filterSelections(),
-      );
+      const selections &#x3D; this.filterSelections();
+      // Only sync state from the URL for freshly generated selections
+      // (initial load or data change). During user interaction the URL
+      // trails the state and reading it back would clear the selections
+      // of other filters (e.g. their configured defaults).
+      const selectionsWithUrlParams &#x3D;
+        selections &#x3D;&#x3D;&#x3D; this.generatedFilterSelections.value()
+          ? this.loadUrlParams(selections)
+          : selections;
       this.applyFilterSelections(selectionsWithUrlParams);
     });
 
