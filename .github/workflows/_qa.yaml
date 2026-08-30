@@ -75,7 +75,7 @@ jobs:
       - run: npm ci --no-progress
 
       - name: Cache angular
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .angular/cache
           key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
@@ -109,7 +109,7 @@ jobs:
       - run: npm install --ci
       - name: Cache playwright
         id: cache-playwright
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
@@ -118,7 +118,7 @@ jobs:
         run: npx playwright install chromium
 
       - name: Cache angular
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .angular/cache
           key: angular-v1-devel-${{ hashFiles('package-lock.json') }}
