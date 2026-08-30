@@ -142,7 +142,7 @@ export abstract class EntitiesTableDataSource<
     const load = this.loadRecords()
       .catch((err) => {
         Logging.error(
-          `Error loading data in datasource with config ${this.loadRecordConfig}: ${err}`,
+          `Error loading data in datasource with config ${this.loadRecordConfig()}: ${err}`,
         );
         return [];
       })
