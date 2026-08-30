@@ -212,7 +212,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="192" class="link-to-prism">src/app/core/database/database.ts:192</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/core/database/database.ts:200</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -259,7 +259,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="192" class="link-to-prism">src/app/core/database/database.ts:192</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/core/database/database.ts:200</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="190" class="link-to-prism">src/app/core/database/database.ts:190</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="198" class="link-to-prism">src/app/core/database/database.ts:198</a></div>
                                 </td>
                             </tr>
 
@@ -337,7 +337,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="191" class="link-to-prism">src/app/core/database/database.ts:191</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/core/database/database.ts:199</a></div>
                                 </td>
                             </tr>
 
@@ -429,6 +429,14 @@ export abstract class Database {
    * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
    * There might be differences in queries between a local PouchDB and the CouchDB.
    *
+   * Pagination uses an opaque &#x60;bookmark&#x60; cursor rather than &#x60;skip&#x60;: passing the
+   * &#x60;bookmark&#x60; returned by a previous call continues right after those
+   * results. Unlike &#x60;skip&#x60;, this also works correctly when the remote CouchDB
+   * applies permission filtering to the query (see
+   * {@link https://github.com/Aam-Digital/replication-backend/pull/330}).
+   * A bookmark is forward-only - it cannot be used to jump backwards - so
+   * callers that need to revisit earlier pages must cache them themselves.
+   *
    * @param prefix of the entity to be queried
    * @param query the Mango Query Language query
    * @param page additional pagination options
@@ -437,9 +445,9 @@ export abstract class Database {
   abstract find(
     prefix: string,
     query: any,
-    page?: { limit?: number; skip?: number },
+    page?: { limit?: number; bookmark?: string },
     sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
-  ): Promise&lt;any&gt;;
+  ): Promise&lt;{ docs: any[]; bookmark?: string }&gt;;
 
   /**
    * Query data from the database based on a more complex, indexed request.

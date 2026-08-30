@@ -992,7 +992,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>, page?: { limit: number; skip: number }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                    <code>find(_prefix?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, _query?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, _page?: { limit?: number; bookmark?: string }, _sort?: { prop?: string; dir?: "asc" | "desc" })</code>
                 </td>
             </tr>
 
@@ -1005,7 +1005,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:390</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:400</a></code>
 </div>
                         </td>
                     </tr>
@@ -1013,6 +1013,15 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Bookmark-based pagination (see <a href="Database.find">Database.find</a>) relies on CouchDB&#39;s
+real Mango <code>bookmark</code> cursor, which only exists when talking directly to
+a remote CouchDB / the replication-backend over HTTP. PouchDB&#39;s local
+Mango query engine has no bookmark support at all - it always reports
+&quot;nil&quot; (see pouchdb-find/lib/index.js) - so there is no correct local
+implementation to fall back to.
+Local pagination could be implemented using <code>skip</code> and <code>limit</code>. But is
+currently not needed.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -1023,56 +1032,47 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
-                                                <td>Default value</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>prefix</td>
+                                                <td>_prefix</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>&quot;&quot;</code>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>query</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>{}</code>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>page</td>
-                                            <td>
-                                                        <code>{ limit: number; skip: number }</code>
                                             </td>
 
                                             <td>
                                                     Yes
                                             </td>
 
-                                            <td>
-                                            </td>
 
                                         </tr>
                                         <tr>
-                                                <td>sort</td>
+                                                <td>_query</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>_page</td>
+                                            <td>
+                                                        <code>{ limit?: number; bookmark?: string }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>_sort</td>
                                             <td>
                                                         <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
                                             </td>
@@ -1081,15 +1081,13 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                                                     Yes
                                             </td>
 
-                                            <td>
-                                            </td>
 
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+                            <b>Returns : </b>    <code>Promise&lt;{ docs: any[]; bookmark?: string }&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -1431,7 +1429,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:568</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:543</a></code>
 </div>
                         </td>
                     </tr>
@@ -1782,7 +1780,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:446</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:421</a></code>
 </div>
                         </td>
                     </tr>
@@ -2009,7 +2007,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:468</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:443</a></code>
 </div>
                         </td>
                     </tr>
@@ -2093,7 +2091,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:514</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:489</a></code>
 </div>
                         </td>
                     </tr>
@@ -2308,7 +2306,7 @@ run exactly once and are never routed through it.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:135</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:143</a></code>
 </div>
                         </td>
                     </tr>
@@ -2394,7 +2392,7 @@ run exactly once and are never routed through it.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:156</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:164</a></code>
 </div>
                         </td>
                     </tr>

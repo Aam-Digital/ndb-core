@@ -257,6 +257,12 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#find" >find</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#init" >init</a>
                             </li>
                             <li>
@@ -292,11 +298,6 @@
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#destroy" >destroy</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#find" >find</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -825,6 +826,141 @@ and resets the internal list.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="find"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>find</b></span>
+                        <a href="#find"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>, page?: { limit?: number; bookmark?: string }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:370</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Uses the PouchDB-find plugin <a href="https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find">https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find</a>
+to query the remote CouchDB (via the replication-backend) using the Mango
+Query Language <a href="https://pouchdb.com/guides/mango-queries.html#query-language">https://pouchdb.com/guides/mango-queries.html#query-language</a>.</p>
+<p>Pagination uses CouchDB&#39;s real <code>bookmark</code> cursor: pass the <code>bookmark</code>
+returned by a previous call to continue right after those results. This
+is forward-only - there is no way to jump back to an earlier page - and
+(unlike <code>skip</code>) it also works correctly when the server applies
+permission filtering to the query (see
+<a href="https://github.com/Aam-Digital/replication-backend/pull/330">https://github.com/Aam-Digital/replication-backend/pull/330</a>).</p>
+<p>Only implemented here: PouchDB&#39;s local Mango query engine has no
+bookmark support at all (see <a href="PouchDatabase.find">PouchDatabase.find</a>).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;&quot;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit?: number; bookmark?: string }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;{ docs: any[]; bookmark?: string }&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="init"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -949,7 +1085,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:355</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:423</a></code>
 </div>
                         </td>
                     </tr>
@@ -1026,7 +1162,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:378</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:446</a></code>
 </div>
                         </td>
                     </tr>
@@ -1327,128 +1463,6 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                             <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
 
                         </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="find"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>find</b></span>
-                        <a href="#find"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>, page?: { limit: number; skip: number }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:390</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>prefix</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>&quot;&quot;</code>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>query</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>{}</code>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>page</td>
-                                            <td>
-                                                        <code>{ limit: number; skip: number }</code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                                <td>sort</td>
-                                            <td>
-                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
                 </td>
             </tr>
         </tbody>
@@ -1785,7 +1799,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:568</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:543</a></code>
 </div>
                         </td>
                     </tr>
@@ -2136,7 +2150,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:446</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:421</a></code>
 </div>
                         </td>
                     </tr>
@@ -2363,7 +2377,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:468</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:443</a></code>
 </div>
                         </td>
                     </tr>
@@ -2445,7 +2459,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:135</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:143</a></code>
 </div>
                         </td>
                     </tr>
@@ -2531,7 +2545,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:156</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:164</a></code>
 </div>
                         </td>
                     </tr>
@@ -2964,6 +2978,74 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected &#x3D; this.pendingLostPermissions;
     this.pendingLostPermissions &#x3D; [];
     return collected;
+  }
+
+  /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * to query the remote CouchDB (via the replication-backend) using the Mango
+   * Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}.
+   *
+   * Pagination uses CouchDB&#x27;s real &#x60;bookmark&#x60; cursor: pass the &#x60;bookmark&#x60;
+   * returned by a previous call to continue right after those results. This
+   * is forward-only - there is no way to jump back to an earlier page - and
+   * (unlike &#x60;skip&#x60;) it also works correctly when the server applies
+   * permission filtering to the query (see
+   * {@link https://github.com/Aam-Digital/replication-backend/pull/330}).
+   *
+   * Only implemented here: PouchDB&#x27;s local Mango query engine has no
+   * bookmark support at all (see {@link PouchDatabase.find}).
+   */
+  override async find(
+    prefix &#x3D; &quot;&quot;,
+    query &#x3D; {},
+    page?: { limit?: number; bookmark?: string },
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;{ docs: any[]; bookmark?: string }&gt; {
+    // the installed @types/pouchdb-find does not declare &#x60;bookmark&#x60;, although
+    // both CouchDB and pouchdb-find&#x27;s own request/response objects support it
+    const findOptions: PouchDB.Find.FindRequest&lt;any&gt; &amp; { bookmark?: string } &#x3D; {
+      selector: {
+        ...query,
+        _id: { $lt: &#x60;${prefix}:￰&#x60;, $gte: &#x60;${prefix}:&#x60; },
+      },
+    };
+    if (Number.isInteger(page?.limit)) {
+      findOptions.limit &#x3D; page.limit;
+    }
+    if (page?.bookmark) {
+      findOptions.bookmark &#x3D; page.bookmark;
+    }
+    const pouchDB &#x3D; await this.getPouchDBOnceReady();
+    if (sort?.prop) {
+      // TODO delete indexes at one point? e.g. when column is removed
+      const indexRes &#x3D; await pouchDB
+        .createIndex({
+          index: {
+            name: prefix + &quot;_&quot; + sort.prop,
+            partial_filter_selector: {
+              _id: findOptions.selector._id,
+            },
+            fields: [sort.prop],
+          },
+        })
+        .catch((err) &#x3D;&gt; {
+          throw new DatabaseException(err);
+        });
+      // deleted because already included in partial_filter_selector
+      delete findOptions.selector._id;
+      findOptions.sort &#x3D; [{ [sort.prop]: sort.dir }];
+      findOptions.use_index &#x3D; indexRes[&quot;id&quot;];
+    }
+    return this.withReadRetry(
+      () &#x3D;&gt;
+        pouchDB.find(findOptions) as Promise&lt;
+          PouchDB.Find.FindResponse&lt;any&gt; &amp; { bookmark?: string }
+        &gt;,
+    )
+      .then((res) &#x3D;&gt; ({ docs: res.docs, bookmark: res.bookmark }))
+      .catch((err) &#x3D;&gt; {
+        throw new DatabaseException(err);
+      });
   }
 
   protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {

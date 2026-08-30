@@ -489,8 +489,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="250"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:250</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="252"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:252</a></div>
                         </td>
                     </tr>
 
@@ -664,7 +664,7 @@ and loaded. This is not to be used to mock database/anything related to the Sche
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>findType&lt;T&gt;(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>, filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, page?: { limit: number; skip: number }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                    <code>findType&lt;T&gt;(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>, filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, page?: { limit: number; bookmark?: string }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
                 </td>
             </tr>
 
@@ -739,7 +739,7 @@ and loaded. This is not to be used to mock database/anything related to the Sche
                                         <tr>
                                                 <td>page</td>
                                             <td>
-                                                        <code>{ limit: number; skip: number }</code>
+                                                        <code>{ limit: number; bookmark?: string }</code>
                                             </td>
 
                                             <td>
@@ -768,7 +768,7 @@ and loaded. This is not to be used to mock database/anything related to the Sche
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+                            <b>Returns : </b>    <code>Promise&lt;{ records: T[]; bookmark?: string }&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -962,8 +962,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="240"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:240</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="242"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:242</a></div>
                         </td>
                     </tr>
 
@@ -1191,7 +1191,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:225</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:227</a></code>
 </div>
                         </td>
                     </tr>
@@ -1274,7 +1274,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:220</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:222</a></code>
 </div>
                         </td>
                     </tr>
@@ -1358,7 +1358,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:209</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:211</a></code>
 </div>
                         </td>
                     </tr>
@@ -1460,7 +1460,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:216</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:218</a></code>
 </div>
                         </td>
                     </tr>
@@ -1535,7 +1535,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:115</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:125</a></code>
 </div>
                         </td>
                     </tr>
@@ -1613,7 +1613,7 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:256</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:266</a></code>
 </div>
                         </td>
                     </tr>
@@ -1696,7 +1696,7 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:288</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:298</a></code>
 </div>
                         </td>
                     </tr>
@@ -1905,9 +1905,9 @@ export class MockEntityMapperService extends EntityMapperService {
   override async findType&lt;T extends Entity&gt;(
     entityType: EntityConstructor&lt;T&gt; | string,
     filter: DataFilter&lt;T&gt; &#x3D; {},
-    page?: { limit: number; skip: number },
+    page?: { limit: number; bookmark?: string },
     sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
-  ): Promise&lt;T[]&gt; {
+  ): Promise&lt;{ records: T[]; bookmark?: string }&gt; {
     let records &#x3D; await this.loadType&lt;T&gt;(entityType);
 
     // filter
@@ -1919,12 +1919,14 @@ export class MockEntityMapperService extends EntityMapperService {
       records &#x3D; this.sortRecords(records, sort.prop, sort.dir);
     }
 
-    // paginate
+    // paginate: emulate a bookmark cursor as the number of docs already skipped
     if (page) {
-      records &#x3D; records.slice(page.skip, page.skip + page.limit);
+      const skip &#x3D; Number(page.bookmark) || 0;
+      const paged &#x3D; records.slice(skip, skip + page.limit);
+      return { records: paged, bookmark: String(skip + paged.length) };
     }
 
-    return records;
+    return { records };
   }
 
   private sortRecords&lt;T extends Entity&gt;(

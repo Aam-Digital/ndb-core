@@ -255,16 +255,6 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
-                                <a href="#_pageData" >_pageData</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier"></span>
-                                <a href="#_updatePaginator" >_updatePaginator</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#getAllData" >getAllData</a>
                             </li>
@@ -336,7 +326,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:79</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:73</a></div>
                             </td>
                         </tr>
 
@@ -374,7 +364,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:77</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -759,152 +749,6 @@ filtered, sorted and reduced to the current page.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="_pageData"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>_pageData</b></span>
-                        <a href="#_pageData"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>_pageData(data: <a href="../interfaces/TableRow.html" target="_self">TableRow&lt;T&gt;[]</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:136</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Records are already paginated by the database query,
-so the MatTableDataSource base class must not slice them again by page index.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>data</td>
-                                            <td>
-                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/TableRow.html" target="_self" >TableRow[]</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="_updatePaginator"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span ><b>_updatePaginator</b></span>
-                        <a href="#_updatePaginator"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>_updatePaginator(_filteredDataLength: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="146"
-                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:146</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>The MatTableDataSource base class updates the paginator with the length of the
-loaded data (deferred, after every data change) - which here is only a single page.
-Report the overall total from the database query instead,
-otherwise the base class would overwrite paginator.length right after setRecords().</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>_filteredDataLength</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="getAllData"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -930,7 +774,7 @@ otherwise the base class would overwrite paginator.length right after setRecords
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:109</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:132</a></code>
 </div>
                         </td>
                     </tr>
@@ -1011,7 +855,7 @@ otherwise the base class would overwrite paginator.length right after setRecords
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:91</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:103</a></code>
 </div>
                         </td>
                     </tr>
@@ -1058,7 +902,7 @@ otherwise the base class would overwrite paginator.length right after setRecords
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:150</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:158</a></code>
 </div>
                         </td>
                     </tr>
@@ -1270,7 +1114,7 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:62</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:56</a></div>
                                 </td>
                             </tr>
 
@@ -1281,7 +1125,7 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:49</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:48</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1333,7 +1177,7 @@ import { MatPaginator } from &quot;@angular/material/paginator&quot;;
 import { effect, signal } from &quot;@angular/core&quot;;
 import { EntityFilter } from &quot;#src/app/core/filter/filters/entityFilter&quot;;
 import { EntitiesTableDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/entities-table-data-source&quot;;
-import { TableRow } from &quot;#src/app/core/common-components/entities-table/table-row&quot;;
+import { merge } from &quot;rxjs&quot;;
 
 /**
  * Number of documents fetched per request when loading the complete dataset
@@ -1369,33 +1213,21 @@ export class PaginatedDataSource&lt;
     } else {
       this.sortState &#x3D; { prop: active, dir: direction };
     }
-    this.setRecords();
+    this.resetPaginationCache();
   }
 
   private page: { size?: number; index?: number } &#x3D; {};
-  private paginatorRef: MatPaginator;
   override set paginator(paginator: MatPaginator) {
-    this.paginatorRef &#x3D; paginator;
-    this.paginatorRef.initialized.subscribe(() &#x3D;&gt; {
-      this.page.size &#x3D; this.paginatorRef.pageSize;
-      this.page.index &#x3D; this.paginatorRef.pageIndex;
-      this.setRecords();
-    });
-    this.paginatorRef.page.subscribe((val) &#x3D;&gt; {
-      this.page.size &#x3D; val.pageSize;
-      this.page.index &#x3D; val.pageIndex;
+    super.paginator &#x3D; paginator;
+    merge(paginator.initialized, paginator.page).subscribe(() &#x3D;&gt; {
+      this.page.size &#x3D; paginator.pageSize;
+      this.page.index &#x3D; paginator.pageIndex;
       this.setRecords();
     });
   }
   override get paginator(): MatPaginator {
-    return this.paginatorRef;
+    return super.paginator;
   }
-
-  /**
-   * Total number of records reported to the paginator
-   * (loaded pages plus at least one more record, if it exists).
-   */
-  private totalCount &#x3D; 0;
 
   /**
    * Whether the reported total is only a lower bound because there are more
@@ -1406,32 +1238,67 @@ export class PaginatedDataSource&lt;
 
   private effectiveFilter: DataFilter&lt;T&gt; &#x3D; {};
 
+  /** The DB cursor to continue fetching right after the records already in {@link filteredRecords}. */
+  private bookmark: string | undefined;
+
+  /** Whether the last fetch returned fewer records than requested, i.e. all matching records are already loaded. */
+  private reachedEnd &#x3D; false;
+
   constructor() {
     super();
     effect(() &#x3D;&gt; {
       this.effectiveFilter &#x3D; this.processFilterForDB(this.dataFilter());
       if (this.loadRecordConfig()) {
-        this.setRecords();
+        this.resetPaginationCache();
       }
     });
   }
 
-  protected override async loadRecords() {
-    if (!this.loadRecordConfig()) return [];
+  /**
+   * Discard all loaded records/cursor state and move back to the first page.
+   * Necessary whenever the query itself changes (filter, sort, page size) or
+   * the underlying data may have changed (entity update) - in all these
+   * cases the existing bookmark chain is no longer valid.
+   */
+  private resetPaginationCache() {
+    this.filteredRecords.set([]);
+    this.bookmark &#x3D; undefined;
+    this.reachedEnd &#x3D; false;
+    if (super.paginator) {
+      // setting page index manually to not trigger the change event which would result in duplicate fetch
+      super.paginator.pageIndex &#x3D; 0;
+      this.page.index &#x3D; 0;
+      this.setRecords();
+    }
+  }
 
-    const res &#x3D; await this.entityMapper.findType(
-      this.loadRecordConfig().entityCtr,
-      this.effectiveFilter,
-      { skip: this.page.index * this.page.size, limit: this.page.size + 1 },
-      this.sortState,
-    );
-    // an extra record beyond the page size was loaded as a probe:
-    // if it exists, there are more records than we can currently count
-    const hasMoreRecords &#x3D; res.length &gt; this.page.size;
-    this.hasUnknownTotalCount.set(hasMoreRecords);
-    this.totalCount &#x3D; this.page.size * this.page.index + res.length;
-    // &#x60;this.allRecords&#x60; stays empty
-    this.filteredRecords.set(res.slice(0, this.page.size));
+  protected override async loadRecords() {
+    if (!this.loadRecordConfig() || !super.paginator) {
+      return [];
+    }
+
+    const start &#x3D; this.page.size * this.page.index;
+    // +1: a probe beyond the current page, to detect whether further pages exist
+    const requiredLength &#x3D; start + this.page.size + 1;
+    const loadedLength &#x3D; this.filteredRecords().length;
+
+    if (loadedLength &lt; requiredLength &amp;&amp; !this.reachedEnd) {
+      const deficit &#x3D; requiredLength - loadedLength;
+      const res &#x3D; await this.entityMapper.findType(
+        this.loadRecordConfig().entityCtr,
+        this.effectiveFilter,
+        { limit: deficit, bookmark: this.bookmark },
+        this.sortState,
+      );
+      // update signal to trigger effect for data update in super-class
+      this.filteredRecords.update((records) &#x3D;&gt; [...records, ...res.records]);
+      this.bookmark &#x3D; res.bookmark;
+      this.reachedEnd &#x3D; res.records.length &lt; deficit;
+    }
+
+    const totalLoaded &#x3D; this.filteredRecords().length;
+    this.hasUnknownTotalCount.set(totalLoaded &gt; start + this.page.size);
+    // &#x60;this.allRecords&#x60; stays empty;
   }
 
   override async getAllData(filtered &#x3D; false): Promise&lt;T[]&gt; {
@@ -1443,41 +1310,26 @@ export class PaginatedDataSource&lt;
     // CouchDB&#x27;s _find returns only 25 documents when no limit is given, so we
     // page through the results explicitly until a page is not completely filled.
     const allRecords: T[] &#x3D; [];
+    let exportBookmark: string | undefined;
     let page: T[];
     do {
-      page &#x3D; await this.entityMapper.findType(
+      const res &#x3D; await this.entityMapper.findType(
         entityCtr,
         filter,
-        { skip: allRecords.length, limit: FULL_LOAD_PAGE_SIZE },
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark: exportBookmark },
         this.sortState,
       );
+      page &#x3D; res.records;
+      exportBookmark &#x3D; res.bookmark;
       allRecords.push(...page);
     } while (page.length &#x3D;&#x3D;&#x3D; FULL_LOAD_PAGE_SIZE);
 
     return allRecords;
   }
 
-  /**
-   * Records are already paginated by the database query,
-   * so the MatTableDataSource base class must not slice them again by page index.
-   */
-  override _pageData(data: TableRow&lt;T&gt;[]): TableRow&lt;T&gt;[] {
-    return data;
-  }
-
-  /**
-   * The MatTableDataSource base class updates the paginator with the length of the
-   * loaded data (deferred, after every data change) - which here is only a single page.
-   * Report the overall total from the database query instead,
-   * otherwise the base class would overwrite paginator.length right after setRecords().
-   */
-  override _updatePaginator(_filteredDataLength: number): void {
-    super._updatePaginator(this.totalCount);
-  }
-
   protected override async processEntityUpdate() {
     // We don&#x27;t really know how it might affect the pages -&gt; full reload
-    await this.setRecords();
+    this.resetPaginationCache();
   }
 
   private processFilterForDB(filter: DataFilter&lt;T&gt;): EntityFilter&lt;T&gt; {
