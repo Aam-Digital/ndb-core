@@ -333,6 +333,32 @@ describe("PouchDatabase tests", () => {
       expect((await tracked())[0][0]).toBe("overwritten");
     });
 
+    it("does not count a conflict when the write that would resolve it fails", async () => {
+      // the overwrite can conflict again (another writer got in between), and
+      // then the retry reports its own outcome - counting up front would count
+      // a save that never happened, and count one conflict twice
+      const pouchDB = (database as any).pouchDB;
+      const realPut = pouchDB.put.bind(pouchDB);
+      let puts = 0;
+      vi.spyOn(pouchDB, "put").mockImplementation(
+        (doc: any, ...rest: any[]) => {
+          puts++;
+          // 1st is the caller's forced put (conflicts), 2nd the overwrite attempt
+          return puts === 2
+            ? Promise.reject(Object.assign(new Error("nope"), { status: 500 }))
+            : realPut(doc, ...rest);
+        },
+      );
+
+      await expect(database.put({ ...STALE }, true)).rejects.toBeInstanceOf(
+        DatabaseException,
+      );
+
+      // analytics resolves asynchronously, so give it the chance to be called
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(eventTrack).not.toHaveBeenCalled();
+    });
+
     it("still saves when analytics is unavailable", async () => {
       database.analytics = () => Promise.resolve(null);
 

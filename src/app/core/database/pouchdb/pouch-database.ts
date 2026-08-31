@@ -543,15 +543,18 @@ export class PouchDatabase extends Database {
       Logging.debug(
         "resolved document conflict automatically (" + resolvedObject._id + ")",
       );
+      // counted only once the write actually went through - see reportConflict
+      const result = await this.put(resolvedObject);
       this.reportConflict("merged", newObject._id);
-      return this.put(resolvedObject);
+      return result;
     } else if (overwriteChanges) {
       Logging.debug(
         "overwriting conflicting document version (" + newObject._id + ")",
       );
-      this.reportConflict("overwritten", newObject._id);
       newObject._rev = existingObject._rev;
-      return this.put(newObject);
+      const result = await this.put(newObject);
+      this.reportConflict("overwritten", newObject._id);
+      return result;
     } else {
       this.reportConflict("unresolved", newObject._id);
       // the document's ID is passed as entityId rather than appended to the
@@ -579,6 +582,11 @@ export class PouchDatabase extends Database {
    *
    * Deliberately not awaited by its callers, and total: counting a conflict must
    * neither delay a save nor be the reason one fails.
+   *
+   * `merged` and `overwritten` are reported only after the write that resolved
+   * the conflict succeeded. That write can conflict again (another writer got in
+   * between), in which case the retry reports its own outcome - so reporting up
+   * front would count a save that never happened, and count one conflict twice.
    */
   private reportConflict(outcome: ConflictOutcome, docId: string) {
     this.analytics?.()
