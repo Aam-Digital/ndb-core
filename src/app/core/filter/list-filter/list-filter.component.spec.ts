@@ -27,4 +27,16 @@ describe("ListFilterComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should emit an empty selection when the autocomplete resets its value to undefined", () => {
+    // basic-autocomplete emits undefined when a cleared single-select dropdown is closed
+    const emittedValues: string[][] = [];
+    component
+      .filterConfig()
+      .selectedOptionChange.subscribe((values) => emittedValues.push(values));
+
+    component.autocompleteControl.setValue(undefined);
+
+    expect(emittedValues).toEqual([[]]);
+  });
 });

@@ -6,6 +6,7 @@ import {
   OnInit,
   inject,
   computed,
+  input,
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -48,6 +49,12 @@ export class ConditionsEditorComponent implements OnInit {
   @Input() entityConstructor?: EntityConstructor;
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
+
+  /** optional text replacing the default "any one criteria matches" explanation */
+  readonly hint = input<string>();
+
+  /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
+  readonly showInternalIdField = input(false);
 
   @Output() conditionsChange = new EventEmitter<any>();
 
