@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
@@ -292,6 +293,42 @@ describe("PouchDatabase tests", () => {
         expect.objectContaining({ status: 409 }),
       ],
     ]);
+  });
+
+  describe("counting document update conflicts", () => {
+    const STALE = { _id: "Child:1", name: "Rudolph", _rev: "1-invalid_rev" };
+    let conflictReporter: Mock;
+
+    beforeEach(async () => {
+      conflictReporter = vi.fn();
+      database.conflictReporter = conflictReporter;
+      await database.put({ _id: "Child:1", name: "Rudolph" });
+    });
+
+    it("counts a conflict that could not be resolved, by entity type only", async () => {
+      // the document ID must not be passed on - see #4174
+      await expect(database.put({ ...STALE })).rejects.toBeInstanceOf(
+        DatabaseException,
+      );
+
+      expect(conflictReporter).toHaveBeenCalledWith("unresolved", "Child");
+    });
+
+    it("counts a conflict that was overwritten on the caller's request", async () => {
+      await database.put({ ...STALE }, true);
+
+      expect(conflictReporter).toHaveBeenCalledWith("overwritten", "Child");
+    });
+
+    it("still saves when counting the conflict fails", async () => {
+      conflictReporter.mockImplementation(() => {
+        throw new Error("analytics unavailable");
+      });
+
+      await expect(database.put({ ...STALE }, true)).resolves.toEqual(
+        expect.objectContaining({ ok: true }),
+      );
+    });
   });
 
   it("should correctly determine if database is empty", async () => {

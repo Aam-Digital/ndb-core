@@ -25,6 +25,49 @@ const EXPECTED_4XX_STATUSES: number[] = [
 ];
 
 /**
+ * Names for the 4XX statuses that are reported to remote monitoring.
+ *
+ * Remote monitoring groups a reported message by its normalized text, and that
+ * normalization masks numbers (see `fingerprintKey` in the logging service). A
+ * status interpolated as a number would therefore collapse every unexpected
+ * response into one issue - which is exactly the mixed bucket this replaces: in
+ * AAM-DIGITAL-77H a rejected write, a malformed query and a replication
+ * checkpoint read were all reported under one title, so none of them could be
+ * told apart or triaged. Naming the status keeps the message text static (as the
+ * logging conventions require) while giving each root cause its own issue and a
+ * title that says what actually happened.
+ */
+const UNEXPECTED_STATUS_NAMES: Record<number, string> = {
+  [HttpStatusCode.BadRequest]: "bad request",
+  [HttpStatusCode.MethodNotAllowed]: "method not allowed",
+  [HttpStatusCode.NotAcceptable]: "not acceptable",
+  [HttpStatusCode.PreconditionFailed]: "precondition failed",
+  [HttpStatusCode.PayloadTooLarge]: "payload too large",
+  [HttpStatusCode.UnsupportedMediaType]: "unsupported media type",
+  [HttpStatusCode.TooManyRequests]: "too many requests",
+};
+
+/**
+ * The message reported for an unexpected 4XX response from the database.
+ *
+ * Deliberately does not mention "fetch": the same code path carries reads and
+ * writes, and calling a rejected write a failed fetch is what sent the first
+ * analysis of AAM-DIGITAL-77H down the wrong path.
+ *
+ * A status without a name falls into one shared bucket - digit-free so that it
+ * is not mangled by the number masking described on {@link UNEXPECTED_STATUS_NAMES} -
+ * and still carries the numeric status in the logged context.
+ */
+function unexpectedResponseMessage(status: number): string {
+  return `Unexpected DB response: ${UNEXPECTED_STATUS_NAMES[status] ?? "unnamed client error"}`;
+}
+
+/** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
+function requestMethod(opts: RequestInit | undefined): string {
+  return (opts?.method ?? "GET").toUpperCase();
+}
+
+/**
  * Extract the diagnostic fields of a fetch `Response` into a plain object.
  *
  * `Response` keeps its state in internal slots rather than own enumerable
@@ -32,16 +75,28 @@ const EXPECTED_4XX_STATUSES: number[] = [
  * empty object - the reported event then carries no status at all, which is the
  * one thing needed to tell e.g. a conflict from a rate limit
  * (see AAM-DIGITAL-77H, whose `context` reads `[{}]` for every event).
+ *
+ * The `method` is not part of the `Response` and has to be passed in, but it
+ * decides how a report should be read: the same status means different things
+ * for a read and for a write (a 409 on a `PUT` is a rejected save, on a
+ * `_local` checkpoint it is replication housekeeping), so without it an event
+ * cannot be classified at all - which is why the AAM-DIGITAL-77H events from
+ * before this was recorded remain unclassifiable.
  */
-export function describeResponse(response: Response | undefined): {
+export function describeResponse(
+  response: Response | undefined,
+  method?: string,
+): {
+  method?: string;
   status?: number;
   statusText?: string;
   responseUrl?: string;
 } {
   if (!response) {
-    return {};
+    return { method };
   }
   return {
+    method,
     status: response.status,
     statusText: response.statusText,
     responseUrl: response.url,
@@ -188,19 +243,22 @@ export class RemotePouchDatabase extends PouchDatabase {
       }
     }
 
+    const method = requestMethod(opts);
+
     if (!result || result.status >= 500) {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
       throw new DatabaseException({
         message: "Failed to fetch from DB",
         requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(describeResponse(result)),
+        actualResponse: JSON.stringify(describeResponse(result, method)),
         actualResponseBody: await result?.text(),
       });
     }
 
     // additional output for debugging
     if (result?.status >= 400) {
+      const response = describeResponse(result, method);
       if (this.isNotificationsDatabase() && result.status === 404) {
         Logging.debug(
           "Notifications database not found (404) - may be expected",
@@ -208,13 +266,23 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
         // expired session (401), permission-filtered doc (403) and missing doc (404)
         // are part of normal operation and handled by callers
-        Logging.debug(
-          "Failed to fetch from DB with 40X error",
-          describeResponse(result),
-        );
+        Logging.debug("Expected 4XX response from DB", response);
+      } else if (result.status === HttpStatusCode.Conflict) {
+        // A 409 is CouchDB rejecting a write whose revision is out of date. This
+        // layer cannot tell whether that cost anyone anything, but whoever made
+        // the request always can:
+        //  - remote-only session: the write came from PouchDatabase.put(), and
+        //    PouchDatabase.resolveConflict() decides between merging,
+        //    overwriting and failing - and counts the outcome it chose.
+        //  - synced session: writes go to the local database, so the only 409s
+        //    reaching here are replication's own `PUT /_local/<checkpoint>`
+        //    races between concurrent tabs, which PouchDB retries internally.
+        // Reporting it here would therefore be an alert nobody can act on, and
+        // it is what buried the genuinely unexpected statuses in the same issue.
+        Logging.debug("Document update conflict from DB", response);
       } else {
-        Logging.warn("Failed to fetch from DB with 40X error", {
-          ...describeResponse(result),
+        Logging.warn(unexpectedResponseMessage(result.status), {
+          ...response,
           requestedUrl: remoteUrl,
         });
       }
@@ -286,7 +354,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     url: string,
     opts: RequestInit,
   ): Promise<Response> {
-    const method = (opts.method ?? "GET").toUpperCase();
+    const method = requestMethod(opts);
     const isSafeMethod = method === "GET" || method === "HEAD";
 
     if (!isSafeMethod) {

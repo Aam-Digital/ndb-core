@@ -488,7 +488,6 @@ describe("RemotePouchDatabase tests", () => {
   });
 
   describe("4XX logging", () => {
-    const MESSAGE = "Failed to fetch from DB with 40X error";
     let warn: Mock;
 
     beforeEach(() => {
@@ -506,36 +505,62 @@ describe("RemotePouchDatabase tests", () => {
       );
     });
 
-    /** The 40X warnings logged, ignoring anything else the app logs. */
+    /** The DB response warnings logged, ignoring anything else the app logs. */
     const warningsLogged = () =>
-      warn.mock.calls.filter(([message]) => message === MESSAGE);
+      warn.mock.calls.filter(([message]) =>
+        String(message).startsWith("Unexpected DB response"),
+      );
 
-    const fetch4xx = async (status: number) => {
+    const fetch4xx = async (status: number, method?: string) => {
       database.init("");
       (PouchDB.fetch as Mock).mockReturnValue(
         Promise.resolve(new Response("{}", { status })),
       );
       await (database as any).defaultFetch(
         `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-        { headers: {} },
+        { headers: {}, method },
       );
     };
 
-    it("should report the status of an unexpected 4XX, not an unserializable Response", async () => {
+    it("should report the status and method of an unexpected 4XX, not an unserializable Response", async () => {
       // Reproduces AAM-DIGITAL-77H: passing the Response itself logged `context: [{}]`,
       // because a Response has no own enumerable properties - so the status,
       // the only thing distinguishing these failures, never reached monitoring.
-      await fetch4xx(HttpStatusCode.Conflict);
+      await fetch4xx(HttpStatusCode.BadRequest);
 
       const [, context] = warningsLogged()[0];
       expect(context).toEqual(
-        expect.objectContaining({ status: HttpStatusCode.Conflict }),
+        expect.objectContaining({
+          status: HttpStatusCode.BadRequest,
+          method: "GET",
+        }),
       );
-      expect(JSON.stringify(context)).toContain("409");
+      expect(JSON.stringify(context)).toContain("400");
+    });
+
+    it("should name the status in the message, so that monitoring reports one issue per root cause", async () => {
+      // a number would be masked away by the monitoring service's grouping,
+      // merging unrelated failures back into a single issue
+      await fetch4xx(HttpStatusCode.BadRequest);
+      await fetch4xx(HttpStatusCode.TooManyRequests);
+
+      expect(warningsLogged().map(([message]) => message)).toEqual([
+        "Unexpected DB response: bad request",
+        "Unexpected DB response: too many requests",
+      ]);
     });
 
     it("should not report expected 4XX statuses as warnings", async () => {
       await fetch4xx(HttpStatusCode.Forbidden);
+
+      expect(warningsLogged()).toEqual([]);
+    });
+
+    it("should not report a conflict as a warning, as only the caller knows its outcome", async () => {
+      // a 409 is always surfaced to whoever made the write - either
+      // PouchDatabase.resolveConflict or PouchDB's own replication - so warning
+      // here alerts on something nobody can act on
+      await fetch4xx(HttpStatusCode.Conflict, "PUT");
 
       expect(warningsLogged()).toEqual([]);
     });
@@ -558,8 +583,21 @@ describe("RemotePouchDatabase tests", () => {
       });
     });
 
+    it("should include the request method, which the Response does not carry", () => {
+      // without it a status cannot be classified: a 409 on a PUT is a rejected
+      // save, on a replication checkpoint it is internal housekeeping
+      expect(
+        describeResponse(
+          new Response("{}", { status: HttpStatusCode.Conflict }),
+          "PUT",
+        ),
+      ).toEqual(expect.objectContaining({ method: "PUT" }));
+    });
+
     it("should handle a missing response", () => {
       expect(describeResponse(undefined)).toEqual({});
+      // a write that never got a response is the case most in need of the method
+      expect(describeResponse(undefined, "PUT")).toEqual({ method: "PUT" });
     });
   });
 

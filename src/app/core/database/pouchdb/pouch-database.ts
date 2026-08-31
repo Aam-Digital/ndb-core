@@ -18,6 +18,12 @@ PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
 
 /**
+ * What happened to a document whose update was rejected as a conflict
+ * (see {@link PouchDatabase.resolveConflict}).
+ */
+export type ConflictOutcome = "merged" | "overwritten" | "unresolved";
+
+/**
  * Wrapper for a PouchDB instance to decouple the code from
  * that external library.
  *
@@ -55,6 +61,15 @@ export class PouchDatabase extends Database {
    * Default: "indexeddb" (the newer adapter). Use "idb" for the legacy adapter.
    */
   adapter: string = "indexeddb";
+
+  /**
+   * Optional hook to count document update conflicts in usage statistics
+   * (see {@link reportConflict}).
+   *
+   * Assigned by `DatabaseFactoryService` rather than injected: the database
+   * classes are constructed manually and have no access to Angular DI.
+   */
+  conflictReporter?: (outcome: ConflictOutcome, entityType: string) => void;
 
   constructor(
     dbName: string,
@@ -515,19 +530,46 @@ export class PouchDatabase extends Database {
       Logging.debug(
         "resolved document conflict automatically (" + resolvedObject._id + ")",
       );
+      this.reportConflict("merged", newObject._id);
       return this.put(resolvedObject);
     } else if (overwriteChanges) {
       Logging.debug(
         "overwriting conflicting document version (" + newObject._id + ")",
       );
+      this.reportConflict("overwritten", newObject._id);
       newObject._rev = existingObject._rev;
       return this.put(newObject);
     } else {
+      this.reportConflict("unresolved", newObject._id);
       // the document's ID is passed as entityId rather than appended to the
       // message: remote monitoring groups by message, so an ID in there would
       // fragment one recurring problem into a separate issue per document
       existingError.message = `${existingError.message} (unable to resolve)`;
       throw new DatabaseException(existingError, newObject._id);
+    }
+  }
+
+  /**
+   * Count a document update conflict in usage statistics.
+   *
+   * Two users editing the same record is normal operation for an offline-first
+   * app, not a fault, so conflicts are counted rather than reported as errors:
+   * how often they happen (and for which record types) is the signal worth
+   * having, while an alert per occurrence only buries the failures that do need
+   * attention - which is what happened in AAM-DIGITAL-77H. A user whose save was
+   * rejected is told so by the form that attempted it, so nothing is silently
+   * swallowed here.
+   *
+   * Only the entity type is passed on, never the document ID: the point is to
+   * see which record types collide, and record identifiers have no place in
+   * monitoring (see #4174).
+   */
+  private reportConflict(outcome: ConflictOutcome, docId: string) {
+    try {
+      this.conflictReporter?.(outcome, docId?.split(":")[0]);
+    } catch (err) {
+      // counting a conflict must never be the reason a save fails
+      Logging.debug("could not report document update conflict", err);
     }
   }
 
