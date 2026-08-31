@@ -231,8 +231,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -298,8 +298,8 @@ depending on context and environment configuration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="68"
-                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:68</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/app/core/database/database-factory.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -355,6 +355,7 @@ depending on context and environment configuration.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Injector, NgZone } from &quot;@angular/core&quot;;
 import { Database } from &quot;./database&quot;;
 import { PouchDatabase } from &quot;./pouchdb/pouch-database&quot;;
+import type { AnalyticsService } from &quot;../analytics/analytics.service&quot;;
 import { KeycloakAuthService } from &quot;../session/auth/keycloak/keycloak-auth.service&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import {
@@ -386,11 +387,20 @@ export class DatabaseFactoryService {
   private readonly alertService &#x3D; inject(AlertService);
   private readonly injector &#x3D; inject(Injector);
 
+  private analyticsServicePromise?: Promise&lt;AnalyticsService | null&gt;;
+
   createDatabase(dbName: string): Database {
     // only the &quot;primary&quot; (app) database should manage the global login state
     const syncState &#x3D;
       dbName &#x3D;&#x3D;&#x3D; Entity.DATABASE ? this.syncState : new SyncStateSubject();
 
+    return this.withAnalytics(this.instantiateDatabase(dbName, syncState));
+  }
+
+  private instantiateDatabase(
+    dbName: string,
+    syncState: SyncStateSubject,
+  ): PouchDatabase {
     if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.synced) {
       return new SyncedPouchDatabase(
         dbName,
@@ -432,7 +442,35 @@ export class DatabaseFactoryService {
       this.alertService,
     );
     db.init(dbName);
+    return this.withAnalytics(db);
+  }
+
+  /**
+   * Give a database access to usage analytics, which it cannot inject itself
+   * (see {@link PouchDatabase.analytics}).
+   */
+  private withAnalytics(db: PouchDatabase): PouchDatabase {
+    db.analytics &#x3D; () &#x3D;&gt; this.getAnalyticsService();
     return db;
+  }
+
+  /**
+   * Lazily resolves AnalyticsService, so that it is only reached once something
+   * is actually tracked. Injecting it here would close a circular dependency at
+   * bootstrap: AnalyticsService -&gt; ConfigService -&gt; EntityMapperService -&gt;
+   * DatabaseResolver -&gt; DatabaseFactoryService.
+   * (IndexeddbMigrationService uses the same pattern for the same reason.)
+   */
+  private getAnalyticsService(): Promise&lt;AnalyticsService | null&gt; {
+    if (this.analyticsServicePromise &#x3D;&#x3D;&#x3D; undefined) {
+      this.analyticsServicePromise &#x3D; import(&quot;../analytics/analytics.service&quot;)
+        .then(({ AnalyticsService }) &#x3D;&gt;
+          this.injector.get&lt;AnalyticsService | null&gt;(AnalyticsService, null),
+        )
+        .catch(() &#x3D;&gt; null);
+    }
+
+    return this.analyticsServicePromise;
   }
 }
 </code></pre>

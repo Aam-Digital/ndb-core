@@ -227,6 +227,9 @@
                             <a href="#configMigrations" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>configMigrations</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#CONFLICT_MESSAGE" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CONFLICT_MESSAGE</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#CONFLICT_RESOLUTION_STRATEGY" title="src/app/features/conflict-resolution/auto-resolution/conflict-resolution-strategy.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>CONFLICT_RESOLUTION_STRATEGY</b>&nbsp;&nbsp;&nbsp;(src/.../conflict-resolution-strategy.ts)</span></a>
                         </li>
                         <li>
@@ -747,6 +750,9 @@
                         </li>
                         <li>
                             <a href="#TOKEN_REFRESH_RETRY_DELAYS_MS" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>TOKEN_REFRESH_RETRY_DELAYS_MS</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#UNEXPECTED_STATUS_NAMES" title="src/app/core/logging/http-response-logging.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>UNEXPECTED_STATUS_NAMES</b>&nbsp;&nbsp;&nbsp;(src/.../http-response-logging.ts)</span></a>
                         </li>
                         <li>
                             <a href="#UNIQUE_PROPERTY_ERROR_KEY" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>UNIQUE_PROPERTY_ERROR_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</span></a>
@@ -2288,6 +2294,38 @@ and archiving one of them does not silence the others.</p>
 their own, so that the stack adds nothing but noise. Generic errors (<code>Error</code>,
 <code>TypeError</code>, ...) must keep the default grouping - for those the stack trace
 is the only thing telling two unrelated bugs apart.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CONFLICT_MESSAGE"></a>
+                    <span class="name">
+                        <span ><b>CONFLICT_MESSAGE</b></span>
+                        <a href="#CONFLICT_MESSAGE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;document update conflict&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>How PouchDB words a rejected write, after <a href="../miscellaneous/functions.html#fingerprintKey">fingerprintKey</a> normalization.</p>
 </div>
                 </td>
             </tr>
@@ -9940,6 +9978,62 @@ every single keystroke.</p>
 so records without the property and records holding null both have to be matched.
 Each branch is an object (rather than a plain null value) so that the filter can also be
 used as the initial filter of a list, where FilterService inspects it to prefill new records.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/logging/http-response-logging.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="UNEXPECTED_STATUS_NAMES"></a>
+                    <span class="name">
+                        <span ><b>UNEXPECTED_STATUS_NAMES</b></span>
+                        <a href="#UNEXPECTED_STATUS_NAMES"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  [HttpStatusCode.BadRequest]: &quot;bad request&quot;,
+  [HttpStatusCode.PayloadTooLarge]: &quot;payload too large&quot;,
+  [HttpStatusCode.TooManyRequests]: &quot;too many requests&quot;,
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Names for the response statuses that are reported to remote monitoring.</p>
+<p>Monitoring groups a reported message by its normalized text, and that
+normalization masks numbers (see <code>fingerprintKey</code>), so a status interpolated
+as a number would collapse every unexpected response into one issue - the
+mixed bucket this exists to prevent. In AAM-DIGITAL-77H a rejected write, a
+malformed query and a replication checkpoint read all shared one title, and
+none of them could be told apart or triaged. Naming the status keeps the
+message text static (as the logging conventions require) while giving each
+root cause its own issue and a title that says what happened.</p>
+<p>Only statuses that plausibly occur are listed, because each one here should
+mean a different response:</p>
+<ul>
+<li>400 a malformed request (a bad query, or a proxy mangling the url)</li>
+<li>413 a payload over the reverse proxy&#39;s limit, e.g. a large attachment</li>
+<li>429 throttling
+Anything else shares one bucket via <a href="../miscellaneous/functions.html#unexpectedResponseMessage">unexpectedResponseMessage</a> and is
+still reported with its numeric status in the logged context.</li>
+</ul>
 </div>
                 </td>
             </tr>

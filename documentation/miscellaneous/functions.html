@@ -296,7 +296,7 @@
                             <a href="#describeConditionFragment" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeConditionFragment</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#describeResponse" title="src/app/core/database/pouchdb/remote-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeResponse</b>&nbsp;&nbsp;&nbsp;(src/.../remote-pouch-database.ts)</span></a>
+                            <a href="#describeResponse" title="src/app/core/logging/http-response-logging.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeResponse</b>&nbsp;&nbsp;&nbsp;(src/.../http-response-logging.ts)</span></a>
                         </li>
                         <li>
                             <a href="#descriptionForAgeValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/age-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>descriptionForAgeValidator</b>&nbsp;&nbsp;&nbsp;(src/.../age-validators.ts)</span></a>
@@ -569,6 +569,9 @@
                             <a href="#isConnectivityException" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isConnectivityException</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isDocumentUpdateConflict" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isDocumentUpdateConflict</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isDuplicate" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isDuplicate</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</span></a>
                         </li>
                         <li>
@@ -785,6 +788,9 @@
                             <a href="#reportUsesDateRange" title="src/app/features/reporting/report-config.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>reportUsesDateRange</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#requestMethod" title="src/app/core/database/pouchdb/remote-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>requestMethod</b>&nbsp;&nbsp;&nbsp;(src/.../remote-pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#resetPWAInstallListener" title="src/bootstrap-pwa-install.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resetPWAInstallListener</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-pwa-install.ts)</span></a>
                         </li>
                         <li>
@@ -888,6 +894,9 @@
                         </li>
                         <li>
                             <a href="#TranslatableMatPaginator" title="src/app/core/language/TranslatableMatPaginator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>TranslatableMatPaginator</b>&nbsp;&nbsp;&nbsp;(src/.../TranslatableMatPaginator.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#unexpectedResponseMessage" title="src/app/core/logging/http-response-logging.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>unexpectedResponseMessage</b>&nbsp;&nbsp;&nbsp;(src/.../http-response-logging.ts)</span></a>
                         </li>
                         <li>
                             <a href="#uniquePropertyValidator" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>uniquePropertyValidator</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</span></a>
@@ -9184,6 +9193,82 @@ attached by <a href="../miscellaneous/functions.html#enrichSentryEvent">enrichSe
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="isDocumentUpdateConflict"></a>
+                    <span class="name">
+                        <span ><b>isDocumentUpdateConflict</b></span>
+                        <a href="#isDocumentUpdateConflict"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isDocumentUpdateConflict(event, hint)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the reported error is a rejected write whose revision was out of date.</p>
+<p>Two users editing one record is normal operation for an offline-first app, not
+a fault: the save is rejected, the user is told so by the form that attempted
+it, and the occurrence is counted in usage analytics instead (see
+<code>PouchDatabase.reportConflict</code>). Reporting it here on top of that produced a
+steady stream of issues nobody could act on - at <em>error</em> level, so louder than
+the failures that do need attention.</p>
+<p>The trade-off is deliberate: how often conflicts happen is now only visible in
+usage analytics, not in error monitoring.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>hint</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="isExcessiveRepeat"></a>
                     <span class="name">
                         <span ><b>isExcessiveRepeat</b></span>
@@ -9707,7 +9792,7 @@ reported as it is, anything else is wrapped in a <a href="../classes/LoggedError
         </tbody>
     </table>
 </section>
-    <h3>src/app/core/database/pouchdb/remote-pouch-database.ts</h3>
+    <h3>src/app/core/logging/http-response-logging.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
         <tbody>
@@ -9722,7 +9807,7 @@ reported as it is, anything else is wrapped in a <a href="../classes/LoggedError
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>describeResponse(response)</code>
+<code>describeResponse(response, method?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -9737,6 +9822,12 @@ properties, so passing one to the logger (or to <code>JSON.stringify</code>) yie
 empty object - the reported event then carries no status at all, which is the
 one thing needed to tell e.g. a conflict from a rate limit
 (see AAM-DIGITAL-77H, whose <code>context</code> reads <code>[{}]</code> for every event).</p>
+<p>The <code>method</code> is not part of the <code>Response</code> and has to be passed in, but it
+decides how a report should be read: the same status means different things
+for a read and for a write (a 409 on a <code>PUT</code> is a rejected save, on a
+<code>_local</code> checkpoint it is replication housekeeping), so without it an event
+cannot be classified at all - which is why the AAM-DIGITAL-77H events from
+before this was recorded remain unclassifiable.</p>
 </div>
 
                             <div class="io-description">
@@ -9746,12 +9837,95 @@ one thing needed to tell e.g. a conflict from a rate limit
                                     <thead>
                                         <tr>
                                             <td>Name</td>
+                                                <td>Type</td>
                                             <td>Optional</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                                 <td>response</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>method</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{ method?: string; status?: number; statusText?: string; responseUrl?: string }</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="unexpectedResponseMessage"></a>
+                    <span class="name">
+                        <span ><b>unexpectedResponseMessage</b></span>
+                        <a href="#unexpectedResponseMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>unexpectedResponseMessage(status: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The message to report for an unexpected response from a database request.</p>
+<p>Deliberately says &quot;response&quot; rather than &quot;fetch&quot;: one code path carries both
+reads and writes, and calling a rejected write a failed fetch is what sent
+the first analysis of AAM-DIGITAL-77H down the wrong path.</p>
+<p>The fallback is digit-free so that it is not mangled by the number masking
+described on <a href="../miscellaneous/variables.html#UNEXPECTED_STATUS_NAMES">UNEXPECTED_STATUS_NAMES</a>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
 
                                             <td>
                                                     No
@@ -9763,7 +9937,7 @@ one thing needed to tell e.g. a conflict from a rate limit
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>{ status?: number; statusText?: string; responseUrl?: string }</code>
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">
@@ -17746,6 +17920,68 @@ that are randomized (in case there are many parallel requests to be spread out).
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>MonoTypeOperatorFunction&lt;T&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/remote-pouch-database.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="requestMethod"></a>
+                    <span class="name">
+                        <span ><b>requestMethod</b></span>
+                        <a href="#requestMethod"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>requestMethod(opts)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The HTTP method of a fetch request, defaulting the way <code>fetch</code> itself does.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>opts</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">

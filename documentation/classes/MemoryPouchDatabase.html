@@ -208,6 +208,11 @@ not persisting any data after the page is closed.</p>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#analytics" >analytics</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#changesFeed" >changesFeed</a>
                             </li>
@@ -477,7 +482,7 @@ not persisting any data after the page is closed.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:57</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:65</a></code>
 </div>
                         </td>
                     </tr>
@@ -487,6 +492,51 @@ not persisting any data after the page is closed.</p>
                     <div class="io-description"><p>The PouchDB adapter to use for local storage.
 Set by the factory/resolver before calling init().
 Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the legacy adapter.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="analytics"></a>
+                    <span class="name">
+                            <span class="modifier">Optional</span>
+                        <span ><b>analytics</b></span>
+                        <a href="#analytics"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:76</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Optional accessor for usage analytics (see <a href="reportConflict">reportConflict</a>).</p>
+<p>Assigned by <code>DatabaseFactoryService</code> rather than injected: the database
+classes are constructed manually and have no access to Angular DI. It
+resolves lazily, and only once something is actually tracked, so that
+bootstrap never closes the cycle AnalyticsService -&gt; ConfigService -&gt;
+EntityMapperService -&gt; DatabaseResolver -&gt; DatabaseFactoryService.</p>
 </div>
                 </td>
             </tr>
@@ -519,7 +569,7 @@ Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the 
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:45</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:53</a></code>
 </div>
                         </td>
                     </tr>
@@ -565,7 +615,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:47</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:55</a></code>
 </div>
                         </td>
                     </tr>
@@ -605,7 +655,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:50</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:58</a></code>
 </div>
                         </td>
                     </tr>
@@ -650,7 +700,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:38</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -690,7 +740,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:32</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:40</a></code>
 </div>
                         </td>
                     </tr>
@@ -822,7 +872,7 @@ See <a href="https://github.com/pouchdb/pouchdb/tree/master/packages/node_module
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:160</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:179</a></code>
 </div>
                         </td>
                     </tr>
@@ -906,7 +956,7 @@ because that will make your code tightly coupled with PouchDB rather than any ot
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:318</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:346</a></code>
 </div>
                         </td>
                     </tr>
@@ -958,7 +1008,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:370</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:398</a></code>
 </div>
                         </td>
                     </tr>
@@ -1005,7 +1055,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:400</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:428</a></code>
 </div>
                         </td>
                     </tr>
@@ -1125,7 +1175,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:129</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:148</a></code>
 </div>
                         </td>
                     </tr>
@@ -1246,7 +1296,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:104</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:123</a></code>
 </div>
                         </td>
                     </tr>
@@ -1293,7 +1343,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:94</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:113</a></code>
 </div>
                         </td>
                     </tr>
@@ -1336,7 +1386,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:307</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:335</a></code>
 </div>
                         </td>
                     </tr>
@@ -1384,7 +1434,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:90</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -1429,7 +1479,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:543</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:613</a></code>
 </div>
                         </td>
                     </tr>
@@ -1478,7 +1528,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:267</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:295</a></code>
 </div>
                         </td>
                     </tr>
@@ -1570,7 +1620,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:181</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:200</a></code>
 </div>
                         </td>
                     </tr>
@@ -1675,7 +1725,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:204</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:223</a></code>
 </div>
                         </td>
                     </tr>
@@ -1780,7 +1830,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:421</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:449</a></code>
 </div>
                         </td>
                     </tr>
@@ -1879,7 +1929,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:243</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:271</a></code>
 </div>
                         </td>
                     </tr>
@@ -1962,7 +2012,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:382</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:410</a></code>
 </div>
                         </td>
                     </tr>
@@ -2007,7 +2057,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:443</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:471</a></code>
 </div>
                         </td>
                     </tr>
@@ -2091,7 +2141,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:489</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:517</a></code>
 </div>
                         </td>
                     </tr>
@@ -2171,7 +2221,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:328</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:356</a></code>
 </div>
                         </td>
                     </tr>
@@ -2217,7 +2267,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:137</a></code>
 </div>
                         </td>
                     </tr>

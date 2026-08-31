@@ -220,6 +220,11 @@ should be implemented in the abstract <a href="../classes/Database.html">Databas
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#analytics" >analytics</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Protected</span>
                                 <a href="#changesFeed" >changesFeed</a>
                             </li>
@@ -391,7 +396,7 @@ should be implemented in the abstract <a href="../classes/Database.html">Databas
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:57</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:76</a></div>
                             </td>
                         </tr>
 
@@ -482,7 +487,7 @@ should be implemented in the abstract <a href="../classes/Database.html">Databas
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:57</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:65</a></div>
                         </td>
                     </tr>
 
@@ -491,6 +496,44 @@ should be implemented in the abstract <a href="../classes/Database.html">Databas
                     <div class="io-description"><p>The PouchDB adapter to use for local storage.
 Set by the factory/resolver before calling init().
 Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the legacy adapter.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="analytics"></a>
+                    <span class="name">
+                            <span class="modifier">Optional</span>
+                        <span ><b>analytics</b></span>
+                        <a href="#analytics"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:76</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Optional accessor for usage analytics (see <a href="reportConflict">reportConflict</a>).</p>
+<p>Assigned by <code>DatabaseFactoryService</code> rather than injected: the database
+classes are constructed manually and have no access to Angular DI. It
+resolves lazily, and only once something is actually tracked, so that
+bootstrap never closes the cycle AnalyticsService -&gt; ConfigService -&gt;
+EntityMapperService -&gt; DatabaseResolver -&gt; DatabaseFactoryService.</p>
 </div>
                 </td>
             </tr>
@@ -517,7 +560,7 @@ Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the 
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -556,7 +599,7 @@ This change can come from the current user or remotely from the (live) synchroni
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -589,7 +632,7 @@ This change can come from the current user or remotely from the (live) synchroni
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -627,7 +670,7 @@ This change can come from the current user or remotely from the (live) synchroni
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -660,7 +703,7 @@ This change can come from the current user or remotely from the (live) synchroni
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -708,7 +751,7 @@ This change can come from the current user or remotely from the (live) synchroni
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:160</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:179</a></code>
 </div>
                         </td>
                     </tr>
@@ -792,7 +835,7 @@ because that will make your code tightly coupled with PouchDB rather than any ot
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:318</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:346</a></code>
 </div>
                         </td>
                     </tr>
@@ -844,7 +887,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:370</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:398</a></code>
 </div>
                         </td>
                     </tr>
@@ -891,7 +934,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:400</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:428</a></code>
 </div>
                         </td>
                     </tr>
@@ -1011,7 +1054,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:129</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:148</a></code>
 </div>
                         </td>
                     </tr>
@@ -1126,8 +1169,8 @@ currently not needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="104"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:104</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="123"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:123</a></div>
                         </td>
                     </tr>
 
@@ -1167,8 +1210,8 @@ currently not needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="94"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:94</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="113"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:113</a></div>
                         </td>
                     </tr>
 
@@ -1210,7 +1253,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:74</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:93</a></code>
 </div>
                         </td>
                     </tr>
@@ -1323,7 +1366,7 @@ See {link <a href="https://github.com/pouchdb/pouchdb/tree/master/packages/node_
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:307</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:335</a></code>
 </div>
                         </td>
                     </tr>
@@ -1371,7 +1414,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:90</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -1410,8 +1453,8 @@ Returns true if there are no documents in the database</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="543"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:543</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="613"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:613</a></div>
                         </td>
                     </tr>
 
@@ -1459,7 +1502,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:267</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:295</a></code>
 </div>
                         </td>
                     </tr>
@@ -1551,7 +1594,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:181</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:200</a></code>
 </div>
                         </td>
                     </tr>
@@ -1656,7 +1699,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:204</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:223</a></code>
 </div>
                         </td>
                     </tr>
@@ -1761,7 +1804,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:421</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:449</a></code>
 </div>
                         </td>
                     </tr>
@@ -1860,7 +1903,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:243</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:271</a></code>
 </div>
                         </td>
                     </tr>
@@ -1943,7 +1986,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:382</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:410</a></code>
 </div>
                         </td>
                     </tr>
@@ -1988,7 +2031,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:443</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:471</a></code>
 </div>
                         </td>
                     </tr>
@@ -2066,8 +2109,8 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="489"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:489</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="517"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:517</a></div>
                         </td>
                     </tr>
 
@@ -2140,8 +2183,8 @@ overwriting indexes created by a newer app version on a shared server.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="328"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:328</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="356"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:356</a></div>
                         </td>
                     </tr>
 
@@ -2180,8 +2223,8 @@ overwriting indexes created by a newer app version on a shared server.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="118"
-                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:118</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/core/database/pouchdb/pouch-database.ts:137</a></div>
                         </td>
                     </tr>
 
@@ -2450,10 +2493,18 @@ import { environment } from &quot;environments/environment&quot;;
 import { SyncState } from &quot;app/core/session/session-states/sync-state.enum&quot;;
 import { SyncStateSubject } from &quot;app/core/session/session-type&quot;;
 import { NotificationEvent } from &quot;#src/app/features/notification/model/notification-event&quot;;
+// type-only, so the database layer gains no runtime dependency on analytics
+import type { AnalyticsService } from &quot;../../analytics/analytics.service&quot;;
 
 // Register the newer &quot;indexeddb&quot; adapter alongside the default &quot;idb&quot; adapter
 PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
+
+/**
+ * What happened to a document whose update was rejected as a conflict
+ * (see {@link PouchDatabase.resolveConflict}).
+ */
+export type ConflictOutcome &#x3D; &quot;merged&quot; | &quot;overwritten&quot; | &quot;unresolved&quot;;
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -2493,6 +2544,17 @@ export class PouchDatabase extends Database {
    * Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the legacy adapter.
    */
   adapter: string &#x3D; &quot;indexeddb&quot;;
+
+  /**
+   * Optional accessor for usage analytics (see {@link reportConflict}).
+   *
+   * Assigned by &#x60;DatabaseFactoryService&#x60; rather than injected: the database
+   * classes are constructed manually and have no access to Angular DI. It
+   * resolves lazily, and only once something is actually tracked, so that
+   * bootstrap never closes the cycle AnalyticsService -&gt; ConfigService -&gt;
+   * EntityMapperService -&gt; DatabaseResolver -&gt; DatabaseFactoryService.
+   */
+  analytics?: () &#x3D;&gt; Promise&lt;AnalyticsService | null&gt;;
 
   constructor(
     dbName: string,
@@ -2656,11 +2718,20 @@ export class PouchDatabase extends Database {
           forceOverwrite,
           result,
         ).catch((e) &#x3D;&gt; {
-          Logging.warn(
-            &quot;error during putAll&quot;,
-            e,
-            objects.map((x) &#x3D;&gt; x._id),
-          );
+          if (e?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Conflict) {
+            // counted by reportConflict and still returned to the caller below,
+            // so alerting on it here would only repeat what the single-document
+            // path deliberately stopped reporting
+            Logging.debug(&quot;could not resolve conflict during putAll&quot;, e);
+          } else {
+            Logging.warn(&quot;error during putAll&quot;, e, {
+              // entity types only - a list of document IDs has no place in
+              // remote monitoring (see #4174)
+              entityTypes: [
+                ...new Set(objects.map((x) &#x3D;&gt; x._id?.split(&quot;:&quot;)[0])),
+              ],
+            });
+          }
           return new DatabaseException(e);
         });
       }
@@ -2953,20 +3024,62 @@ export class PouchDatabase extends Database {
       Logging.debug(
         &quot;resolved document conflict automatically (&quot; + resolvedObject._id + &quot;)&quot;,
       );
-      return this.put(resolvedObject);
+      // counted only once the write actually went through - see reportConflict
+      const result &#x3D; await this.put(resolvedObject);
+      this.reportConflict(&quot;merged&quot;, newObject._id);
+      return result;
     } else if (overwriteChanges) {
       Logging.debug(
         &quot;overwriting conflicting document version (&quot; + newObject._id + &quot;)&quot;,
       );
       newObject._rev &#x3D; existingObject._rev;
-      return this.put(newObject);
+      const result &#x3D; await this.put(newObject);
+      this.reportConflict(&quot;overwritten&quot;, newObject._id);
+      return result;
     } else {
+      this.reportConflict(&quot;unresolved&quot;, newObject._id);
       // the document&#x27;s ID is passed as entityId rather than appended to the
       // message: remote monitoring groups by message, so an ID in there would
       // fragment one recurring problem into a separate issue per document
       existingError.message &#x3D; &#x60;${existingError.message} (unable to resolve)&#x60;;
       throw new DatabaseException(existingError, newObject._id);
     }
+  }
+
+  /**
+   * Count a document update conflict in usage statistics.
+   *
+   * Two users editing the same record is normal operation for an offline-first
+   * app, not a fault, so conflicts are counted rather than reported as errors:
+   * how often they happen (and for which record types) is the signal worth
+   * having, while an alert per occurrence only buries the failures that do need
+   * attention - which is what happened in AAM-DIGITAL-77H. A user whose save was
+   * rejected is told so by the form that attempted it, so nothing is silently
+   * swallowed here.
+   *
+   * Only the entity type is reported, never the document ID: the point is to
+   * see which record types collide, and record identifiers have no place in
+   * monitoring (see #4174).
+   *
+   * Deliberately not awaited by its callers, and total: counting a conflict must
+   * neither delay a save nor be the reason one fails.
+   *
+   * &#x60;merged&#x60; and &#x60;overwritten&#x60; are reported only after the write that resolved
+   * the conflict succeeded. That write can conflict again (another writer got in
+   * between), in which case the retry reports its own outcome - so reporting up
+   * front would count a save that never happened, and count one conflict twice.
+   */
+  private reportConflict(outcome: ConflictOutcome, docId: string) {
+    this.analytics?.()
+      .then((analytics) &#x3D;&gt;
+        analytics?.eventTrack(outcome, {
+          category: &quot;document_update_conflict&quot;,
+          label: docId?.split(&quot;:&quot;)[0],
+        }),
+      )
+      .catch((err) &#x3D;&gt;
+        Logging.debug(&quot;could not report document update conflict&quot;, err),
+      );
   }
 
   private mergeObjects(_existingObject: any, _newObject: any) {

@@ -265,8 +265,8 @@ that allows developers to monitor and analyse problems.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="107"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:107</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:108</a></div>
                         </td>
                     </tr>
 
@@ -382,8 +382,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="132"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:132</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -472,8 +472,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="158"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:158</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:159</a></div>
                         </td>
                     </tr>
 
@@ -553,8 +553,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -595,8 +595,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:141</a></div>
                         </td>
                     </tr>
 
@@ -664,8 +664,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -745,8 +745,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:38</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:39</a></div>
                         </td>
                     </tr>
 
@@ -817,8 +817,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="168"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:168</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="169"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:169</a></div>
                         </td>
                     </tr>
 
@@ -931,8 +931,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="123"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:123</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:124</a></div>
                         </td>
                     </tr>
 
@@ -1003,8 +1003,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="149"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:149</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:150</a></div>
                         </td>
                     </tr>
 
@@ -1085,6 +1085,7 @@ import {
   provideAppInitializer,
   EnvironmentProviders,
 } from &quot;@angular/core&quot;;
+import { HttpStatusCode } from &quot;@angular/common/http&quot;;
 import { Router } from &quot;@angular/router&quot;;
 import { LoginState } from &quot;../session/session-states/login-state.enum&quot;;
 import { LoginStateSubject } from &quot;../session/session-type&quot;;
@@ -1423,13 +1424,51 @@ export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event)) {
+  if (isOfflineNetworkError(event) || isDocumentUpdateConflict(event, hint)) {
     return null;
   }
 
   const grouped &#x3D; groupSentryEvent(enrichSentryEvent(event, hint), hint);
   return isExcessiveRepeat(grouped) ? null : grouped;
 }
+
+/**
+ * Whether the reported error is a rejected write whose revision was out of date.
+ *
+ * Two users editing one record is normal operation for an offline-first app, not
+ * a fault: the save is rejected, the user is told so by the form that attempted
+ * it, and the occurrence is counted in usage analytics instead (see
+ * &#x60;PouchDatabase.reportConflict&#x60;). Reporting it here on top of that produced a
+ * steady stream of issues nobody could act on - at *error* level, so louder than
+ * the failures that do need attention.
+ *
+ * The trade-off is deliberate: how often conflicts happen is now only visible in
+ * usage analytics, not in error monitoring.
+ */
+function isDocumentUpdateConflict(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): boolean {
+  const thrown &#x3D; hint?.originalException as { status?: unknown } | undefined;
+  if (
+    thrown &amp;&amp;
+    typeof thrown &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+    thrown.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Conflict
+  ) {
+    return true;
+  }
+
+  // the status is not always preserved (e.g. an error rebuilt from a
+  // &#x60;_bulk_docs&#x60; result), so fall back to the message - normalized, because
+  // PouchDB words it both with and without a trailing period
+  return [
+    event.message,
+    ...(event.exception?.values?.map((v) &#x3D;&gt; v.value) ?? []),
+  ].some((msg) &#x3D;&gt; msg &amp;&amp; fingerprintKey(msg).includes(CONFLICT_MESSAGE));
+}
+
+/** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
+const CONFLICT_MESSAGE &#x3D; &quot;document update conflict&quot;;
 
 /**
  * Whether the event is a network-layer fetch failure that occurred while the

@@ -260,7 +260,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="269" class="link-to-prism">src/app/core/logging/logging.service.ts:269</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="270" class="link-to-prism">src/app/core/logging/logging.service.ts:270</a></div>
                                 </td>
                             </tr>
 
@@ -311,7 +311,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="271" class="link-to-prism">src/app/core/logging/logging.service.ts:271</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="272" class="link-to-prism">src/app/core/logging/logging.service.ts:272</a></div>
                                 </td>
                             </tr>
 
@@ -350,7 +350,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="276" class="link-to-prism">src/app/core/logging/logging.service.ts:276</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="277" class="link-to-prism">src/app/core/logging/logging.service.ts:277</a></div>
                                 </td>
                             </tr>
 
@@ -400,7 +400,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="279" class="link-to-prism">src/app/core/logging/logging.service.ts:279</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="280" class="link-to-prism">src/app/core/logging/logging.service.ts:280</a></div>
                                 </td>
                             </tr>
 
@@ -444,7 +444,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="278" class="link-to-prism">src/app/core/logging/logging.service.ts:278</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="279" class="link-to-prism">src/app/core/logging/logging.service.ts:279</a></div>
                                 </td>
                             </tr>
 
@@ -488,7 +488,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="280" class="link-to-prism">src/app/core/logging/logging.service.ts:280</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="281" class="link-to-prism">src/app/core/logging/logging.service.ts:281</a></div>
                                 </td>
                             </tr>
 
@@ -509,6 +509,7 @@ import {
   provideAppInitializer,
   EnvironmentProviders,
 } from &quot;@angular/core&quot;;
+import { HttpStatusCode } from &quot;@angular/common/http&quot;;
 import { Router } from &quot;@angular/router&quot;;
 import { LoginState } from &quot;../session/session-states/login-state.enum&quot;;
 import { LoginStateSubject } from &quot;../session/session-type&quot;;
@@ -847,13 +848,51 @@ export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event)) {
+  if (isOfflineNetworkError(event) || isDocumentUpdateConflict(event, hint)) {
     return null;
   }
 
   const grouped &#x3D; groupSentryEvent(enrichSentryEvent(event, hint), hint);
   return isExcessiveRepeat(grouped) ? null : grouped;
 }
+
+/**
+ * Whether the reported error is a rejected write whose revision was out of date.
+ *
+ * Two users editing one record is normal operation for an offline-first app, not
+ * a fault: the save is rejected, the user is told so by the form that attempted
+ * it, and the occurrence is counted in usage analytics instead (see
+ * &#x60;PouchDatabase.reportConflict&#x60;). Reporting it here on top of that produced a
+ * steady stream of issues nobody could act on - at *error* level, so louder than
+ * the failures that do need attention.
+ *
+ * The trade-off is deliberate: how often conflicts happen is now only visible in
+ * usage analytics, not in error monitoring.
+ */
+function isDocumentUpdateConflict(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): boolean {
+  const thrown &#x3D; hint?.originalException as { status?: unknown } | undefined;
+  if (
+    thrown &amp;&amp;
+    typeof thrown &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+    thrown.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Conflict
+  ) {
+    return true;
+  }
+
+  // the status is not always preserved (e.g. an error rebuilt from a
+  // &#x60;_bulk_docs&#x60; result), so fall back to the message - normalized, because
+  // PouchDB words it both with and without a trailing period
+  return [
+    event.message,
+    ...(event.exception?.values?.map((v) &#x3D;&gt; v.value) ?? []),
+  ].some((msg) &#x3D;&gt; msg &amp;&amp; fingerprintKey(msg).includes(CONFLICT_MESSAGE));
+}
+
+/** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
+const CONFLICT_MESSAGE &#x3D; &quot;document update conflict&quot;;
 
 /**
  * Whether the event is a network-layer fetch failure that occurred while the

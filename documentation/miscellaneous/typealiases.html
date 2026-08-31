@@ -170,6 +170,9 @@
                             <a href="#ConfigurableEnumConfig" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum.types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConfigurableEnumConfig</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum.types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#ConflictOutcome" title="src/app/core/database/pouchdb/pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConflictOutcome</b>&nbsp;&nbsp;&nbsp;(src/.../pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#CrudAction" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>CrudAction</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
                         </li>
                         <li>
@@ -595,6 +598,32 @@ as stored in the config database</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>Array&lt;T&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/pouch-database.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ConflictOutcome"></a>
+                    <span class="name "><b>ConflictOutcome</b><a href="#ConflictOutcome"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>What happened to a document whose update was rejected as a conflict
+(see <a href="PouchDatabase.resolveConflict">PouchDatabase.resolveConflict</a>).</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;merged&quot; | &quot;overwritten&quot; | &quot;unresolved&quot;</code>
 </code>
                 </td>
             </tr>
