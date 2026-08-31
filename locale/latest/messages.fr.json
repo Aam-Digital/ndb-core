@@ -1717,5 +1717,7 @@
   "4721179452903715645": "Base permissions that apply to every logged-in user, combined with their other roles",
   "8928816882866356838": "Public",
   "7130290349340923540": "applies to visitors who are not logged in",
-  "5669831863904333260": "Permissions that apply before login (e.g. public registration forms)"
+  "5669831863904333260": "Permissions that apply before login (e.g. public registration forms)",
+  "7059147185536314223": "Could not load the list. Please check your internet connection.",
+  "7934833136974560675": "Retry"
 }
