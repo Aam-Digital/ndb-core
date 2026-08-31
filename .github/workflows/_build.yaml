@@ -50,7 +50,7 @@ jobs:
             src/environments/environment*.ts
 
       - name: Cache angular
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .angular/cache
           key: angular-v1-prod-${{ hashFiles('package-lock.json') }}
