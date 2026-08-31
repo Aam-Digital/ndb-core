@@ -12,6 +12,10 @@ import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import {
+  describeResponse,
+  unexpectedResponseMessage,
+} from "../../logging/http-response-logging";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -24,83 +28,9 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.NotFound,
 ];
 
-/**
- * Names for the 4XX statuses that are reported to remote monitoring.
- *
- * Remote monitoring groups a reported message by its normalized text, and that
- * normalization masks numbers (see `fingerprintKey` in the logging service). A
- * status interpolated as a number would therefore collapse every unexpected
- * response into one issue - which is exactly the mixed bucket this replaces: in
- * AAM-DIGITAL-77H a rejected write, a malformed query and a replication
- * checkpoint read were all reported under one title, so none of them could be
- * told apart or triaged. Naming the status keeps the message text static (as the
- * logging conventions require) while giving each root cause its own issue and a
- * title that says what actually happened.
- */
-const UNEXPECTED_STATUS_NAMES: Record<number, string> = {
-  [HttpStatusCode.BadRequest]: "bad request",
-  [HttpStatusCode.MethodNotAllowed]: "method not allowed",
-  [HttpStatusCode.NotAcceptable]: "not acceptable",
-  [HttpStatusCode.PreconditionFailed]: "precondition failed",
-  [HttpStatusCode.PayloadTooLarge]: "payload too large",
-  [HttpStatusCode.UnsupportedMediaType]: "unsupported media type",
-  [HttpStatusCode.TooManyRequests]: "too many requests",
-};
-
-/**
- * The message reported for an unexpected 4XX response from the database.
- *
- * Deliberately does not mention "fetch": the same code path carries reads and
- * writes, and calling a rejected write a failed fetch is what sent the first
- * analysis of AAM-DIGITAL-77H down the wrong path.
- *
- * A status without a name falls into one shared bucket - digit-free so that it
- * is not mangled by the number masking described on {@link UNEXPECTED_STATUS_NAMES} -
- * and still carries the numeric status in the logged context.
- */
-function unexpectedResponseMessage(status: number): string {
-  return `Unexpected DB response: ${UNEXPECTED_STATUS_NAMES[status] ?? "unnamed client error"}`;
-}
-
 /** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
 function requestMethod(opts: RequestInit | undefined): string {
   return (opts?.method ?? "GET").toUpperCase();
-}
-
-/**
- * Extract the diagnostic fields of a fetch `Response` into a plain object.
- *
- * `Response` keeps its state in internal slots rather than own enumerable
- * properties, so passing one to the logger (or to `JSON.stringify`) yields an
- * empty object - the reported event then carries no status at all, which is the
- * one thing needed to tell e.g. a conflict from a rate limit
- * (see AAM-DIGITAL-77H, whose `context` reads `[{}]` for every event).
- *
- * The `method` is not part of the `Response` and has to be passed in, but it
- * decides how a report should be read: the same status means different things
- * for a read and for a write (a 409 on a `PUT` is a rejected save, on a
- * `_local` checkpoint it is replication housekeeping), so without it an event
- * cannot be classified at all - which is why the AAM-DIGITAL-77H events from
- * before this was recorded remain unclassifiable.
- */
-export function describeResponse(
-  response: Response | undefined,
-  method?: string,
-): {
-  method?: string;
-  status?: number;
-  statusText?: string;
-  responseUrl?: string;
-} {
-  if (!response) {
-    return { method };
-  }
-  return {
-    method,
-    status: response.status,
-    statusText: response.statusText,
-    responseUrl: response.url,
-  };
 }
 
 /**

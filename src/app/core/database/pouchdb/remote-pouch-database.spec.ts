@@ -2,7 +2,7 @@ import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
-import { describeResponse, RemotePouchDatabase } from "./remote-pouch-database";
+import { RemotePouchDatabase } from "./remote-pouch-database";
 import { Logging } from "../../logging/logging.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { environment } from "environments/environment";
@@ -538,24 +538,22 @@ describe("RemotePouchDatabase tests", () => {
       expect(JSON.stringify(context)).toContain("400");
     });
 
-    it("should name the status in the message, so that monitoring reports one issue per root cause", async () => {
-      // a number would be masked away by the monitoring service's grouping,
-      // merging unrelated failures back into a single issue
+    it("should report each status under its own message, so monitoring separates the root causes", async () => {
+      // the wording itself is covered by the http-response-logging spec; what
+      // matters here is that two statuses do not end up in one bucket
       await fetch4xx(HttpStatusCode.BadRequest);
       await fetch4xx(HttpStatusCode.TooManyRequests);
 
-      expect(warningsLogged().map(([message]) => message)).toEqual([
-        "Unexpected DB response: bad request",
-        "Unexpected DB response: too many requests",
-      ]);
+      const [first, second] = warningsLogged().map(([message]) => message);
+      expect(first).not.toEqual(second);
     });
 
-    it("should collect statuses without a name into one bucket, keeping the number in the context", async () => {
+    it("should keep the numeric status in the context of an unnamed 4XX", async () => {
       await fetch4xx(423); // Locked - not one we expect from CouchDB
 
-      const [message, context] = warningsLogged()[0];
-      expect(message).toBe("Unexpected DB response: unnamed client error");
-      expect(context).toEqual(expect.objectContaining({ status: 423 }));
+      expect(warningsLogged()[0][1]).toEqual(
+        expect.objectContaining({ status: 423 }),
+      );
     });
 
     it("should not report expected 4XX statuses as warnings", async () => {
@@ -571,41 +569,6 @@ describe("RemotePouchDatabase tests", () => {
       await fetch4xx(HttpStatusCode.Conflict, "PUT");
 
       expect(warningsLogged()).toEqual([]);
-    });
-  });
-
-  describe("describeResponse", () => {
-    it("should extract fields that JSON.stringify(response) drops", () => {
-      const response = new Response("{}", {
-        status: HttpStatusCode.TooManyRequests,
-        statusText: "Too Many Requests",
-      });
-
-      // the behaviour this helper exists to work around
-      expect(JSON.stringify(response)).toBe("{}");
-
-      expect(describeResponse(response)).toEqual({
-        status: HttpStatusCode.TooManyRequests,
-        statusText: "Too Many Requests",
-        responseUrl: "",
-      });
-    });
-
-    it("should include the request method, which the Response does not carry", () => {
-      // without it a status cannot be classified: a 409 on a PUT is a rejected
-      // save, on a replication checkpoint it is internal housekeeping
-      expect(
-        describeResponse(
-          new Response("{}", { status: HttpStatusCode.Conflict }),
-          "PUT",
-        ),
-      ).toEqual(expect.objectContaining({ method: "PUT" }));
-    });
-
-    it("should handle a missing response", () => {
-      expect(describeResponse(undefined)).toEqual({});
-      // a write that never got a response is the case most in need of the method
-      expect(describeResponse(undefined, "PUT")).toEqual({ method: "PUT" });
     });
   });
 
