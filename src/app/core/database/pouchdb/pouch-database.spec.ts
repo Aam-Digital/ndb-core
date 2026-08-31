@@ -359,6 +359,37 @@ describe("PouchDatabase tests", () => {
       expect(eventTrack).not.toHaveBeenCalled();
     });
 
+    it("counts a conflict once, not twice, when the overwrite conflicts again", async () => {
+      // the retry reports "unresolved" itself, so reporting "overwritten" up
+      // front would count the same conflict under two outcomes
+      const pouchDB = (database as any).pouchDB;
+      const realPut = pouchDB.put.bind(pouchDB);
+      let puts = 0;
+      vi.spyOn(pouchDB, "put").mockImplementation(
+        (doc: any, ...rest: any[]) => {
+          puts++;
+          // another writer wins the race on the overwrite attempt too
+          return puts === 2
+            ? Promise.reject(
+                Object.assign(new Error("conflict"), { status: 409 }),
+              )
+            : realPut(doc, ...rest);
+        },
+      );
+
+      await expect(database.put({ ...STALE }, true)).rejects.toBeInstanceOf(
+        DatabaseException,
+      );
+
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(eventTrack.mock.calls).toEqual([
+        [
+          "unresolved",
+          { category: "document_update_conflict", label: "Child" },
+        ],
+      ]);
+    });
+
     it("still saves when analytics is unavailable", async () => {
       database.analytics = () => Promise.resolve(null);
 
