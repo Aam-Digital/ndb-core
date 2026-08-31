@@ -24,91 +24,91 @@
 <title>cluster_CoreTestingModule</title>
 <polygon fill="none" stroke="black" stroke-dasharray="1,5" points="8,-70 8,-195 1087,-195 1087,-70 8,-70"/>
 </g>
-<g id="clust3" class="cluster">
-<title>cluster_CoreTestingModule_imports</title>
-<polygon fill="none" stroke="black" points="792,-78 792,-130 1079,-130 1079,-78 792,-78"/>
-</g>
 <g id="clust6" class="cluster">
 <title>cluster_CoreTestingModule_providers</title>
-<polygon fill="none" stroke="black" points="16,-78 16,-130 784,-130 784,-78 16,-78"/>
+<polygon fill="none" stroke="black" points="311,-78 311,-130 1079,-130 1079,-78 311,-78"/>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_CoreTestingModule_imports</title>
+<polygon fill="none" stroke="black" points="16,-78 16,-130 303,-130 303,-78 16,-78"/>
 </g>
 <!-- ConfigurableEnumModule -->
 <g id="node1" class="node">
 <title>ConfigurableEnumModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="1071.36,-122 1068.36,-126 1047.36,-126 1044.36,-122 904.64,-122 904.64,-86 1071.36,-86 1071.36,-122"/>
-<text text-anchor="middle" x="988" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigurableEnumModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="295.36,-122 292.36,-126 271.36,-126 268.36,-122 128.64,-122 128.64,-86 295.36,-86 295.36,-122"/>
+<text text-anchor="middle" x="212" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigurableEnumModule</text>
 </g>
 <!-- CoreTestingModule -->
 <g id="node3" class="node">
 <title>CoreTestingModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="629.25,-187 626.25,-191 605.25,-191 602.25,-187 500.75,-187 500.75,-151 629.25,-151 629.25,-187"/>
-<text text-anchor="middle" x="565" y="-164.8" font-family="Times,serif" font-size="14.00">CoreTestingModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="557.25,-187 554.25,-191 533.25,-191 530.25,-187 428.75,-187 428.75,-151 557.25,-151 557.25,-187"/>
+<text text-anchor="middle" x="493" y="-164.8" font-family="Times,serif" font-size="14.00">CoreTestingModule</text>
 </g>
 <!-- ConfigurableEnumModule&#45;&gt;CoreTestingModule -->
 <g id="edge1" class="edge">
 <title>ConfigurableEnumModule&#45;&gt;CoreTestingModule</title>
-<path fill="none" stroke="black" d="M988,-122.28C988,-143.32 988,-175 988,-175 988,-175 639.71,-175 639.71,-175"/>
-<polygon fill="black" stroke="black" points="639.71,-171.5 629.71,-175 639.71,-178.5 639.71,-171.5"/>
+<path fill="none" stroke="black" d="M212,-122.02C212,-139.37 212,-163 212,-163 212,-163 418.53,-163 418.53,-163"/>
+<polygon fill="black" stroke="black" points="418.53,-166.5 428.53,-163 418.53,-159.5 418.53,-166.5"/>
 </g>
 <!-- CoreModule -->
 <g id="node2" class="node">
 <title>CoreModule</title>
-<polygon fill="#8dd3c7" stroke="black" points="886.26,-122 883.26,-126 862.26,-126 859.26,-122 799.74,-122 799.74,-86 886.26,-86 886.26,-122"/>
-<text text-anchor="middle" x="843" y="-99.8" font-family="Times,serif" font-size="14.00">CoreModule</text>
+<polygon fill="#8dd3c7" stroke="black" points="110.26,-122 107.26,-126 86.26,-126 83.26,-122 23.74,-122 23.74,-86 110.26,-86 110.26,-122"/>
+<text text-anchor="middle" x="67" y="-99.8" font-family="Times,serif" font-size="14.00">CoreModule</text>
 </g>
 <!-- CoreModule&#45;&gt;CoreTestingModule -->
 <g id="edge2" class="edge">
 <title>CoreModule&#45;&gt;CoreTestingModule</title>
-<path fill="none" stroke="black" d="M843,-122.02C843,-139.37 843,-163 843,-163 843,-163 639.48,-163 639.48,-163"/>
-<polygon fill="black" stroke="black" points="639.48,-159.5 629.48,-163 639.48,-166.5 639.48,-159.5"/>
+<path fill="none" stroke="black" d="M67,-122.28C67,-143.32 67,-175 67,-175 67,-175 418.3,-175 418.3,-175"/>
+<polygon fill="black" stroke="black" points="418.3,-178.5 428.3,-175 418.3,-171.5 418.3,-178.5"/>
 </g>
 <!-- ConfigurableEnumService -->
 <g id="node4" class="node">
 <title>ConfigurableEnumService</title>
-<ellipse fill="#fdb462" stroke="black" cx="662" cy="-104" rx="114.03" ry="18"/>
-<text text-anchor="middle" x="662" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigurableEnumService</text>
+<ellipse fill="#fdb462" stroke="black" cx="957" cy="-104" rx="114.03" ry="18"/>
+<text text-anchor="middle" x="957" y="-99.8" font-family="Times,serif" font-size="14.00">ConfigurableEnumService</text>
 </g>
 <!-- ConfigurableEnumService&#45;&gt;CoreTestingModule -->
 <g id="edge3" class="edge">
 <title>ConfigurableEnumService&#45;&gt;CoreTestingModule</title>
-<path fill="none" stroke="black" d="M588.68,-117.78C588.68,-117.78 588.68,-140.55 588.68,-140.55"/>
-<polygon fill="black" stroke="black" points="585.18,-140.55 588.68,-150.55 592.18,-140.55 585.18,-140.55"/>
+<path fill="none" stroke="black" d="M957,-122.28C957,-143.32 957,-175 957,-175 957,-175 567.52,-175 567.52,-175"/>
+<polygon fill="black" stroke="black" points="567.52,-171.5 557.52,-175 567.52,-178.5 567.52,-171.5"/>
 </g>
 <!-- EntityAbility -->
 <g id="node5" class="node">
 <title>EntityAbility</title>
-<ellipse fill="#fdb462" stroke="black" cx="468" cy="-104" rx="62.01" ry="18"/>
-<text text-anchor="middle" x="468" y="-99.8" font-family="Times,serif" font-size="14.00">EntityAbility</text>
+<ellipse fill="#fdb462" stroke="black" cx="763" cy="-104" rx="62.01" ry="18"/>
+<text text-anchor="middle" x="763" y="-99.8" font-family="Times,serif" font-size="14.00">EntityAbility</text>
 </g>
 <!-- EntityAbility&#45;&gt;CoreTestingModule -->
 <g id="edge4" class="edge">
 <title>EntityAbility&#45;&gt;CoreTestingModule</title>
-<path fill="none" stroke="black" d="M515.31,-115.92C515.31,-115.92 515.31,-140.77 515.31,-140.77"/>
-<polygon fill="black" stroke="black" points="511.81,-140.77 515.31,-150.77 518.81,-140.77 511.81,-140.77"/>
+<path fill="none" stroke="black" d="M763,-122.02C763,-139.37 763,-163 763,-163 763,-163 567.33,-163 567.33,-163"/>
+<polygon fill="black" stroke="black" points="567.33,-159.5 557.33,-163 567.33,-166.5 567.33,-159.5"/>
 </g>
 <!-- EntitySchemaService -->
 <g id="node6" class="node">
 <title>EntitySchemaService</title>
-<ellipse fill="#fdb462" stroke="black" cx="294" cy="-104" rx="94.34" ry="18"/>
-<text text-anchor="middle" x="294" y="-99.8" font-family="Times,serif" font-size="14.00">EntitySchemaService</text>
+<ellipse fill="#fdb462" stroke="black" cx="589" cy="-104" rx="94.34" ry="18"/>
+<text text-anchor="middle" x="589" y="-99.8" font-family="Times,serif" font-size="14.00">EntitySchemaService</text>
 </g>
 <!-- EntitySchemaService&#45;&gt;CoreTestingModule -->
 <g id="edge5" class="edge">
 <title>EntitySchemaService&#45;&gt;CoreTestingModule</title>
-<path fill="none" stroke="black" d="M294,-122.02C294,-139.37 294,-163 294,-163 294,-163 490.43,-163 490.43,-163"/>
-<polygon fill="black" stroke="black" points="490.43,-166.5 500.43,-163 490.43,-159.5 490.43,-166.5"/>
+<path fill="none" stroke="black" d="M526.1,-117.47C526.1,-117.47 526.1,-140.86 526.1,-140.86"/>
+<polygon fill="black" stroke="black" points="522.6,-140.86 526.1,-150.86 529.6,-140.86 522.6,-140.86"/>
 </g>
 <!-- SyncStateSubject -->
 <g id="node7" class="node">
 <title>SyncStateSubject</title>
-<ellipse fill="#fdb462" stroke="black" cx="103" cy="-104" rx="78.75" ry="18"/>
-<text text-anchor="middle" x="103" y="-99.8" font-family="Times,serif" font-size="14.00">SyncStateSubject</text>
+<ellipse fill="#fdb462" stroke="black" cx="398" cy="-104" rx="78.75" ry="18"/>
+<text text-anchor="middle" x="398" y="-99.8" font-family="Times,serif" font-size="14.00">SyncStateSubject</text>
 </g>
 <!-- SyncStateSubject&#45;&gt;CoreTestingModule -->
 <g id="edge6" class="edge">
 <title>SyncStateSubject&#45;&gt;CoreTestingModule</title>
-<path fill="none" stroke="black" d="M103,-122.28C103,-143.32 103,-175 103,-175 103,-175 490.27,-175 490.27,-175"/>
-<polygon fill="black" stroke="black" points="490.27,-178.5 500.27,-175 490.27,-171.5 490.27,-178.5"/>
+<path fill="none" stroke="black" d="M452.62,-117.15C452.62,-117.15 452.62,-140.69 452.62,-140.69"/>
+<polygon fill="black" stroke="black" points="449.12,-140.69 452.62,-150.69 456.12,-140.69 449.12,-140.69"/>
 </g>
 </g>
 </svg>
