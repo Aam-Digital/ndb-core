@@ -233,11 +233,20 @@ export class PouchDatabase extends Database {
           forceOverwrite,
           result,
         ).catch((e) => {
-          Logging.warn(
-            "error during putAll",
-            e,
-            objects.map((x) => x._id),
-          );
+          if (e?.status === HttpStatusCode.Conflict) {
+            // counted by reportConflict and still returned to the caller below,
+            // so alerting on it here would only repeat what the single-document
+            // path deliberately stopped reporting
+            Logging.debug("could not resolve conflict during putAll", e);
+          } else {
+            Logging.warn("error during putAll", e, {
+              // entity types only - a list of document IDs has no place in
+              // remote monitoring (see #4174)
+              entityTypes: [
+                ...new Set(objects.map((x) => x._id?.split(":")[0])),
+              ],
+            });
+          }
           return new DatabaseException(e);
         });
       }
