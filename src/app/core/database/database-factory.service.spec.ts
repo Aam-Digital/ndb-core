@@ -61,69 +61,25 @@ describe("DatabaseFactoryService", () => {
     expect(db.adapter).toBe("indexeddb");
   });
 
-  describe("conflict tracking", () => {
-    let eventTrack: Mock;
-
-    beforeEach(() => {
-      eventTrack = vi.fn();
+  describe("analytics access", () => {
+    // what a database reports through it is covered by the pouch-database spec;
+    // here only the wiring matters, as a database cannot inject the service
+    it("should give a database from either entry point an analytics accessor", async () => {
+      const analytics = { eventTrack: vi.fn() };
       // stubbed rather than provided: AnalyticsService is resolved lazily to
       // break a DI cycle, and importing it here would defeat that
-      vi.spyOn<any, any>(service, "getAnalyticsService").mockResolvedValue({
-        eventTrack,
-      });
-    });
-
-    it("should count a conflict as a usage event, by entity type and outcome", async () => {
-      environment.session_type = SessionType.mock;
-      const db = service.createDatabase("test-db") as PouchDatabase;
-
-      db.conflictReporter("unresolved", "Child");
-
-      await vi.waitFor(() =>
-        expect(eventTrack).toHaveBeenCalledWith("unresolved", {
-          category: "document_update_conflict",
-          label: "Child",
-        }),
-      );
-    });
-
-    it("should also track conflicts on a remote database", async () => {
-      const db = service.createRemoteDatabase(
-        "test-remote-db",
-      ) as PouchDatabase;
-
-      expect(db.conflictReporter).toBeDefined();
-      db.conflictReporter("overwritten", "Note");
-
-      await vi.waitFor(() =>
-        expect(eventTrack).toHaveBeenCalledWith("overwritten", {
-          category: "document_update_conflict",
-          label: "Note",
-        }),
-      );
-    });
-
-    it("should not fail a save when analytics is unavailable", async () => {
       vi.spyOn<any, any>(service, "getAnalyticsService").mockResolvedValue(
-        null,
+        analytics,
       );
       environment.session_type = SessionType.mock;
-      const db = service.createDatabase("test-db") as PouchDatabase;
 
-      expect(() => db.conflictReporter("unresolved", "Child")).not.toThrow();
-      await expect(
-        (service as any).trackConflict("unresolved", "Child"),
-      ).resolves.toBeUndefined();
-    });
-
-    it("should swallow an analytics failure, so counting never breaks the save", async () => {
-      eventTrack.mockImplementation(() => {
-        throw new Error("matomo unreachable");
-      });
-
-      await expect(
-        (service as any).trackConflict("unresolved", "Child"),
-      ).resolves.toBeUndefined();
+      // easy to wire on one entry point and forget on the other
+      for (const db of [
+        service.createDatabase("test-db") as PouchDatabase,
+        service.createRemoteDatabase("test-remote-db") as PouchDatabase,
+      ]) {
+        await expect(db.analytics()).resolves.toBe(analytics);
+      }
     });
   });
 

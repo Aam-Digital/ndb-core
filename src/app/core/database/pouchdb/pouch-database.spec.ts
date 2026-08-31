@@ -298,33 +298,51 @@ describe("PouchDatabase tests", () => {
 
   describe("counting document update conflicts", () => {
     const STALE = { _id: "Child:1", name: "Rudolph", _rev: "1-invalid_rev" };
-    let conflictReporter: Mock;
+    let eventTrack: Mock;
+
+    /** The tracked events, once analytics has resolved asynchronously. */
+    const tracked = () =>
+      vi.waitFor(() => {
+        expect(eventTrack).toHaveBeenCalled();
+        return eventTrack.mock.calls;
+      });
 
     beforeEach(async () => {
-      conflictReporter = vi.fn();
-      database.conflictReporter = conflictReporter;
+      eventTrack = vi.fn();
+      database.analytics = () => Promise.resolve({ eventTrack } as any);
       await database.put({ _id: "Child:1", name: "Rudolph" });
     });
 
     it("counts a conflict that could not be resolved, by entity type only", async () => {
-      // the document ID must not be passed on - see #4174
       await expect(database.put({ ...STALE })).rejects.toBeInstanceOf(
         DatabaseException,
       );
 
-      expect(conflictReporter).toHaveBeenCalledWith("unresolved", "Child");
+      // the document ID must never be reported - see #4174
+      expect(await tracked()).toEqual([
+        [
+          "unresolved",
+          { category: "document_update_conflict", label: "Child" },
+        ],
+      ]);
     });
 
     it("counts a conflict that was overwritten on the caller's request", async () => {
       await database.put({ ...STALE }, true);
 
-      expect(conflictReporter).toHaveBeenCalledWith("overwritten", "Child");
+      expect((await tracked())[0][0]).toBe("overwritten");
+    });
+
+    it("still saves when analytics is unavailable", async () => {
+      database.analytics = () => Promise.resolve(null);
+
+      await expect(database.put({ ...STALE }, true)).resolves.toEqual(
+        expect.objectContaining({ ok: true }),
+      );
     });
 
     it("still saves when counting the conflict fails", async () => {
-      conflictReporter.mockImplementation(() => {
-        throw new Error("analytics unavailable");
-      });
+      database.analytics = () => Promise.reject(new Error("analytics is down"));
 
       await expect(database.put({ ...STALE }, true)).resolves.toEqual(
         expect.objectContaining({ ok: true }),
@@ -338,7 +356,7 @@ describe("PouchDatabase tests", () => {
       // the batch still rejects, so the caller is not left thinking it saved
       await expect(database.putAll([{ ...STALE }])).rejects.toBeTruthy();
 
-      expect(conflictReporter).toHaveBeenCalledWith("unresolved", "Child");
+      expect((await tracked())[0][0]).toBe("unresolved");
       expect(
         warn.mock.calls.filter(
           ([message]) => message === "error during putAll",

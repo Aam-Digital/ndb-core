@@ -12,6 +12,8 @@ import { environment } from "environments/environment";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
+// type-only, so the database layer gains no runtime dependency on analytics
+import type { AnalyticsService } from "../../analytics/analytics.service";
 
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
@@ -63,13 +65,15 @@ export class PouchDatabase extends Database {
   adapter: string = "indexeddb";
 
   /**
-   * Optional hook to count document update conflicts in usage statistics
-   * (see {@link reportConflict}).
+   * Optional accessor for usage analytics (see {@link reportConflict}).
    *
    * Assigned by `DatabaseFactoryService` rather than injected: the database
-   * classes are constructed manually and have no access to Angular DI.
+   * classes are constructed manually and have no access to Angular DI. It
+   * resolves lazily, and only once something is actually tracked, so that
+   * bootstrap never closes the cycle AnalyticsService -> ConfigService ->
+   * EntityMapperService -> DatabaseResolver -> DatabaseFactoryService.
    */
-  conflictReporter?: (outcome: ConflictOutcome, entityType: string) => void;
+  analytics?: () => Promise<AnalyticsService | null>;
 
   constructor(
     dbName: string,
@@ -569,17 +573,24 @@ export class PouchDatabase extends Database {
    * rejected is told so by the form that attempted it, so nothing is silently
    * swallowed here.
    *
-   * Only the entity type is passed on, never the document ID: the point is to
+   * Only the entity type is reported, never the document ID: the point is to
    * see which record types collide, and record identifiers have no place in
    * monitoring (see #4174).
+   *
+   * Deliberately not awaited by its callers, and total: counting a conflict must
+   * neither delay a save nor be the reason one fails.
    */
   private reportConflict(outcome: ConflictOutcome, docId: string) {
-    try {
-      this.conflictReporter?.(outcome, docId?.split(":")[0]);
-    } catch (err) {
-      // counting a conflict must never be the reason a save fails
-      Logging.debug("could not report document update conflict", err);
-    }
+    this.analytics?.()
+      .then((analytics) =>
+        analytics?.eventTrack(outcome, {
+          category: "document_update_conflict",
+          label: docId?.split(":")[0],
+        }),
+      )
+      .catch((err) =>
+        Logging.debug("could not report document update conflict", err),
+      );
   }
 
   private mergeObjects(_existingObject: any, _newObject: any) {

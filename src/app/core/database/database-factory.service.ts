@@ -1,6 +1,6 @@
 import { inject, Injectable, Injector, NgZone } from "@angular/core";
 import { Database } from "./database";
-import { ConflictOutcome, PouchDatabase } from "./pouchdb/pouch-database";
+import { PouchDatabase } from "./pouchdb/pouch-database";
 import type { AnalyticsService } from "../analytics/analytics.service";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { environment } from "../../../environments/environment";
@@ -16,7 +16,6 @@ import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { Entity } from "../entity/model/entity";
 import { AlertService } from "../alerts/alert.service";
 import { PouchdbCorruptionRecoveryService } from "./pouchdb/pouchdb-corruption-recovery.service";
-import { Logging } from "../logging/logging.service";
 
 /**
  * Provides a method to generate Database instances
@@ -41,9 +40,7 @@ export class DatabaseFactoryService {
     const syncState =
       dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
 
-    return this.withConflictTracking(
-      this.instantiateDatabase(dbName, syncState),
-    );
+    return this.withAnalytics(this.instantiateDatabase(dbName, syncState));
   }
 
   private instantiateDatabase(
@@ -91,38 +88,21 @@ export class DatabaseFactoryService {
       this.alertService,
     );
     db.init(dbName);
-    return this.withConflictTracking(db);
+    return this.withAnalytics(db);
   }
 
   /**
-   * Let a database count the document update conflicts it resolves
-   * (see {@link PouchDatabase.reportConflict}).
+   * Give a database access to usage analytics, which it cannot inject itself
+   * (see {@link PouchDatabase.analytics}).
    */
-  private withConflictTracking(db: PouchDatabase): PouchDatabase {
-    db.conflictReporter = (outcome, entityType) => {
-      // deliberately not awaited: counting a conflict must neither delay nor
-      // fail the save that hit it, so the promise is settled inside
-      // trackConflict rather than handed back to the database layer
-      void this.trackConflict(outcome, entityType);
-    };
+  private withAnalytics(db: PouchDatabase): PouchDatabase {
+    db.analytics = () => this.getAnalyticsService();
     return db;
   }
 
-  private async trackConflict(outcome: ConflictOutcome, entityType: string) {
-    try {
-      const analytics = await this.getAnalyticsService();
-      analytics?.eventTrack(outcome, {
-        category: "document_update_conflict",
-        label: entityType,
-      });
-    } catch (err) {
-      Logging.debug("could not report document update conflict", err);
-    }
-  }
-
   /**
-   * Lazily resolves AnalyticsService, so that it is only reached once a conflict
-   * actually occurs. Injecting it here would close a circular dependency at
+   * Lazily resolves AnalyticsService, so that it is only reached once something
+   * is actually tracked. Injecting it here would close a circular dependency at
    * bootstrap: AnalyticsService -> ConfigService -> EntityMapperService ->
    * DatabaseResolver -> DatabaseFactoryService.
    * (IndexeddbMigrationService uses the same pattern for the same reason.)
