@@ -34,12 +34,16 @@ import {
   EntityActionPermission,
   inheritsDefaultRules,
 } from "../../../permissions/permission-types";
+import {
+  CRUD_ACTION_COLUMNS,
+  CRUD_ACTIONS,
+  CrudAction,
+  grantedByDefaultRoleTooltip,
+  MANAGE_ALL_LABEL,
+} from "../../../permissions/permission-action-labels";
 import { DEFAULT_ROLE } from "../../../permissions/reserved-roles";
 import { MatrixModel, MatrixRow, RuleConditions } from "../permission-matrix";
 import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
-
-/** the four individual CRUD actions shown as their own matrix columns ("manage" is separate) */
-type CrudAction = "read" | "create" | "update" | "delete";
 
 /**
  * Where an action is granted from, if not by an own rule of its row:
@@ -122,14 +126,12 @@ export class PermissionMatrixComponent {
   readonly modelChange = output<MatrixModel>();
 
   /** CRUD columns with their headers baked in, so the template needs no per-cell method call */
-  readonly crudColumns: { key: CrudAction; label: string }[] = [
-    { key: "read", label: $localize`Read` },
-    { key: "create", label: $localize`Create` },
-    { key: "update", label: $localize`Update` },
-    { key: "delete", label: $localize`Delete` },
-  ];
-  readonly crudActions: CrudAction[] = this.crudColumns.map((c) => c.key);
-  readonly manageColLabel = $localize`Manage (all)`;
+  readonly crudColumns = CRUD_ACTION_COLUMNS.map((column) => ({
+    key: column.action,
+    label: column.label,
+  }));
+  readonly crudActions: CrudAction[] = [...CRUD_ACTIONS];
+  readonly manageColLabel = MANAGE_ALL_LABEL;
 
   // rowActions column is always present (empty in view mode)
   // so that column positions do not shift when toggling edit mode
@@ -298,7 +300,7 @@ export class PermissionMatrixComponent {
       case "wildcard":
         return $localize`Already granted by the "All record types" row of this role.`;
       case "default":
-        return $localize`Already granted to every logged-in user by the "${this.defaultRole.label}" role, so it cannot be revoked for a single role here.`;
+        return grantedByDefaultRoleTooltip();
     }
   }
 

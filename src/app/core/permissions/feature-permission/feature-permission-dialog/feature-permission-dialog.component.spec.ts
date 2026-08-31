@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { provideRouter } from "@angular/router";
 import { of, throwError } from "rxjs";
 import { FeaturePermissionDialogComponent } from "./feature-permission-dialog.component";
+import { DEFAULT_ROLE } from "../../reserved-roles";
 import {
   FeatureAction,
   FeaturePermissionService,
@@ -69,7 +70,6 @@ describe("FeaturePermissionDialogComponent", () => {
           editable: true,
         },
       ],
-      hasComplexRules: true,
     };
   }
 
@@ -137,7 +137,7 @@ describe("FeaturePermissionDialogComponent", () => {
         .rows()
         .map((row) => [row.role, row.label, row.isDefaultRow, row.description]),
     ).toEqual([
-      ["_default", "Default", true, "(applies to any logged-in user)"],
+      ["_default", DEFAULT_ROLE.label, true, DEFAULT_ROLE.appliesTo],
       ["user_app", "user_app", false, "App user"],
       ["assistant_app", "assistant_app", false, undefined],
     ]);
@@ -145,7 +145,6 @@ describe("FeaturePermissionDialogComponent", () => {
       ENTITY_TYPE,
       ["user_app", "assistant_app"],
     );
-    expect(component.hasComplexRules()).toBe(true);
   });
 
   it("should merge roles that only exist in the permissions config when the auth server is unavailable", async () => {

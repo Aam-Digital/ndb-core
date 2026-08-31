@@ -31,7 +31,14 @@ export type FeatureAction = (typeof FEATURE_ACTIONS)[number];
 export type PermissionLockReason =
   /** granted to everyone by the shared `_default` section */
   | "default"
-  /** the role's access comes from a rule this UI must not rewrite */
+  /**
+   * The role's access comes from a rule this UI must not rewrite, because
+   * changing it would affect other roles or entity types:
+   * an `all` wildcard subject (the most common case, e.g. `admin_app`),
+   * a grouped subject (`subject: ["A", "B"]`), a rule carrying `conditions`,
+   * an inverted (deny) rule, or a rule the server manages itself
+   * (marked with {@link SYSTEM_DEFAULT_RULE_REASON}).
+   */
   | "advanced-rule";
 
 /** the state of a single action checkbox in one row */
@@ -75,17 +82,6 @@ export interface FeaturePermissionState {
   defaultRules: RoleFeaturePermission;
 
   roles: RoleFeaturePermission[];
-
-  /**
-   * true if at least one role's access is decided by rules this UI cannot edit
-   * (wildcards, grouped subjects, conditions or inverted rules) - i.e. some rows
-   * are read-only.
-   *
-   * When true the UI points admins to the advanced (raw JSON) permissions editor
-   * for the full picture. Editing here stays safe either way:
-   * {@link FeaturePermissionService.setPermissions} never mutates those rules.
-   */
-  hasComplexRules: boolean;
 }
 
 /** the actions of one row as sent back to {@link FeaturePermissionService.setPermissions} */
@@ -103,9 +99,8 @@ export interface RoleFeaturePermissionUpdate {
  * arbitrarily complex CASL rules, this service only ever reads and writes rules
  * that it "owns" for the exact entity type (single string subject, no conditions,
  * only feature actions). Any other rule - grouped subjects, conditions, wildcards
- * or inverted rules - is preserved untouched, and surfaced via
- * {@link FeaturePermissionState.hasComplexRules} so the UI can defer to the
- * advanced editor.
+ * or inverted rules - is preserved untouched, and the roles it affects are
+ * reported as not editable, so the UI can defer to the role administration.
  */
 @Injectable({ providedIn: "root" })
 export class FeaturePermissionService {
@@ -148,7 +143,6 @@ export class FeaturePermissionService {
         editable: false,
       },
       roles,
-      hasComplexRules: roles.some((role) => !role.editable),
     };
   }
 

@@ -83,8 +83,8 @@ Admins edit this document to control what each role can do.
 
 **In the Aam Digital app:**
 
-- Go to Admin > Application Configuration > Edit permissions config
-- This opens the `Config:Permissions` document in the app's JSON editor
+- Go to Admin > User Roles & Permissions to edit the rules of each role
+- The same screen offers the raw `Config:Permissions` document through its "Edit JSON" menu entry
 
 **Directly in the database:**
 
@@ -92,7 +92,7 @@ Admins edit this document to control what each role can do.
 
 **Per feature, from its admin list view:**
 
-- On an internal "feature" type (e.g. Export Templates, Email Templates, Public Forms) use the "Configure Permissions" button next to "Add New"
+- On an internal "feature" type (e.g. Export Templates, Email Templates, Public Forms) use the "Configure Permissions" button
 - See [Feature permission dialog](#feature-permission-dialog) below for what this can and cannot change
 
 ### Permission structure
@@ -147,72 +147,37 @@ Permissions use JSON format with a role → rules mapping:
 
 ### Feature permission dialog
 
-Instead of editing raw JSON, admins can review and change who has access to one
-entity type directly from its list view. It is offered as a button next to
-"Add New" on internal "feature" types (`isInternalEntity`, e.g. `TemplateExport`,
-`EmailTemplate`, `PublicFormConfig`, `ReportConfig`); on mobile, where the header
-has no room, the same action sits in the list's overflow (`⋮`) menu. Regular
-entity types do not offer it - their list menu is already crowded, and their
-permissions are managed in the advanced editor.
-
-It shows one row per user role with a checkbox per action:
-
-| Checkbox   | Action written |
-| ---------- | -------------- |
-| **Add**    | `create`       |
-| **Read**   | `read`         |
-| **Update** | `update`       |
-| **Delete** | `delete`       |
+From the list view of an internal "feature" entity type (`isInternalEntity`, e.g.
+`TemplateExport`, `EmailTemplate`, `PublicFormConfig`) admins can grant each role
+the individual actions for that one entity type, without editing raw JSON.
 
 The selected actions are stored as a single rule for this entity type: a plain
-string for one action, an array for several and `"manage"` when all four are
-selected (keeping the shape an admin would write by hand).
-
-**The shared `_default` row.** The `_default` section applies to every logged-in
-user on top of their roles, so it is listed as a read-only first row. An action it
-grants is shown checked and disabled on every role row: it cannot be revoked for a
-single role here (that would require an inverted rule), and it is never duplicated
-into a role's own rules when saving. Other actions of the same role stay editable.
+string for one action, an array for several and `"manage"` when all of them are
+selected, keeping the shape an admin would write by hand.
 
 **What it will not touch.** Checkboxes cannot represent arbitrary CASL rules, so
 the dialog only ever adds or removes rules whose `subject` is _exactly_ this one
-entity type with plain feature actions. Everything else is read (to display the
-effective state) but never written:
+entity type with plain actions. Everything else is read (to display the effective
+state) but never written:
 
 - grouped subjects (`subject: ["A", "B"]`) and the `all` wildcard
 - rules with `conditions` or `inverted: true`
 - the shared `_default` and `_public` sections (and their legacy `default` / `public` spellings)
 - managed `[system-default]` rules written by the backend
 
-A role whose access is decided by one of those rules is shown **read-only** for the
-whole row with a lock icon, because the dialog cannot change such a rule without
-affecting other roles or entity types. In the default config `user_app` and
-`admin_app` hold `{ subject: "all", action: "manage" }`, so both appear locked.
-
-The checkboxes show what a role can actually do, resolved the way CASL does it: of
-all rules matching this entity type and action, the **last matching one wins**. So a
-grant followed by an `"inverted": true` rule renders as unchecked, and a granting
-rule after that inverted one renders as checked again.
-
-The dialog always links to the advanced (JSON) editor, and says explicitly when at
-least one row is read-only.
-
-Every save first stores a timestamped backup document (`Config:Permissions:<timestamp>`)
-and offers an "Undo" action.
+A role whose access is decided by one of those rules is shown read-only, because
+changing such a rule here would affect other roles or entity types. Actions granted
+by `_default` are shown as granted on every role and never duplicated into a role's
+own rules.
 
 The one case in which the dialog writes a `_default` section is the very first save on
 an instance that has no permissions config at all: an absent config means "everyone may
 do everything", so `_default: [{ subject: "all", action: "manage" }]` is seeded alongside
 the new rules to avoid locking every logged-in user out of everything else.
 
-Who may open the dialog is derived from CASL (`update` on `Config`), not from a hardcoded
-role name, so an instance that grants permission editing to a role other than `admin_app`
-gets the same UI.
-
 _Key files:_ `feature-permission/feature-permission.service.ts` (rule reading/writing),
 `feature-permission/feature-permission-dialog/`, `permissions-config.service.ts`
-(shared loading, backup/undo and admin check), `entity-list/entity-list.component.html`
-(where the dialog is offered).
+(shared loading, backup/undo and admin check).
 
 ### Restricting access (inverted rules)
 

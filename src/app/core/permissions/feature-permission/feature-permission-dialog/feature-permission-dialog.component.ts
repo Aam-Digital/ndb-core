@@ -24,6 +24,13 @@ import { DialogCloseComponent } from "../../../common-components/dialog-close/di
 import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.component";
 import { UserAdminService } from "../../../user/user-admin-service/user-admin.service";
 import { Logging } from "../../../logging/logging.service";
+import { ROLES_ADMIN_ROUTE } from "../../../admin/admin-role-permissions/role-permissions.service";
+import {
+  CRUD_ACTION_LABELS,
+  grantedByAdvancedRuleTooltip,
+  grantedByDefaultRoleTooltip,
+} from "../../permission-action-labels";
+import { DEFAULT_ROLE } from "../../reserved-roles";
 import { PermissionsConfigService } from "../../permissions-config.service";
 import {
   FEATURE_ACTIONS,
@@ -47,7 +54,6 @@ export interface FeaturePermissionDialogData {
 interface ActionColumn {
   action: FeatureAction;
   label: string;
-  tooltip: string;
 }
 
 /** one checkbox of a row, with everything the template needs precomputed */
@@ -80,7 +86,6 @@ interface RolePermissionRow {
 /** what the dialog loads before it can display anything */
 interface FeaturePermissionRows {
   rows: RolePermissionRow[];
-  hasComplexRules: boolean;
 }
 
 /**
@@ -115,32 +120,20 @@ export class FeaturePermissionDialogComponent {
   private readonly userAdminService = inject(UserAdminService);
   private readonly snackBar = inject(MatSnackBar);
 
+  /** where to manage the roles and their rules in full */
+  readonly rolesAdminRoute = ROLES_ADMIN_ROUTE;
+
   readonly entityType = this.data.entityType;
   readonly entityLabel = this.data.entityLabel ?? this.data.entityType;
 
-  /** the checkbox columns, in display order */
-  readonly actionColumns: ActionColumn[] = [
-    {
-      action: "create",
-      label: $localize`:Permission column header:Add`,
-      tooltip: $localize`:Add permission tooltip:Create new records of this feature.`,
-    },
-    {
-      action: "read",
-      label: $localize`:Permission column header:Read`,
-      tooltip: $localize`:Read permission tooltip:View the records of this feature and use it.`,
-    },
-    {
-      action: "update",
-      label: $localize`:Permission column header:Update`,
-      tooltip: $localize`:Update permission tooltip:Edit existing records of this feature.`,
-    },
-    {
-      action: "delete",
-      label: $localize`:Permission column header:Delete`,
-      tooltip: $localize`:Delete permission tooltip:Delete records of this feature.`,
-    },
-  ];
+  /**
+   * the checkbox columns, in display order, labelled like the columns of the
+   * permission matrix in the role administration
+   */
+  readonly actionColumns: ActionColumn[] = FEATURE_ACTIONS.map((action) => ({
+    action,
+    label: CRUD_ACTION_LABELS[action],
+  }));
 
   readonly permissionRows = resource<FeaturePermissionRows, unknown>({
     loader: () => this.loadPermissionRows(),
@@ -150,13 +143,6 @@ export class FeaturePermissionDialogComponent {
   readonly rows = linkedSignal(() =>
     // value() throws while the resource is in an error state
     this.permissionRows.hasValue() ? this.permissionRows.value().rows : [],
-  );
-
-  /** whether some rows are read-only because rules this dialog cannot edit apply */
-  readonly hasComplexRules = computed(
-    () =>
-      this.permissionRows.hasValue() &&
-      this.permissionRows.value().hasComplexRules,
   );
 
   readonly saving = signal(false);
@@ -175,13 +161,12 @@ export class FeaturePermissionDialogComponent {
     );
 
     return {
-      hasComplexRules: state.hasComplexRules,
       rows: [
         this.toRow(
           state.defaultRules,
-          $localize`:Default permissions row label:Default`,
+          DEFAULT_ROLE.label,
           true,
-          $localize`:Default permissions row description:(applies to any logged-in user)`,
+          DEFAULT_ROLE.appliesTo,
         ),
         ...state.roles.map((role) =>
           this.toRow(role, role.role, false, descriptions.get(role.role)),
@@ -231,7 +216,7 @@ export class FeaturePermissionDialogComponent {
     permission: RoleFeaturePermission,
   ): string {
     if (isDefaultRow) {
-      return $localize`:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the advanced permissions editor.`;
+      return grantedByDefaultRoleTooltip();
     }
     return this.cellLockTooltip(permission.actions.read);
   }
@@ -240,9 +225,9 @@ export class FeaturePermissionDialogComponent {
   private cellLockTooltip(permission: FeatureActionPermission): string {
     switch (permission.lockedBy) {
       case "default":
-        return $localize`:Permission locked by default rules tooltip:Granted to all logged-in users by the default permissions, so it cannot be changed for a single role here.`;
+        return grantedByDefaultRoleTooltip();
       case "advanced-rule":
-        return $localize`:Permission locked by advanced rule tooltip:This role's access comes from an advanced permission rule and can only be changed in the advanced permissions editor.`;
+        return grantedByAdvancedRuleTooltip();
       default:
         return "";
     }

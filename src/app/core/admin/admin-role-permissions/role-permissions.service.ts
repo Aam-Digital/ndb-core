@@ -1,34 +1,20 @@
 import { Injectable, Signal, computed, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import moment from "moment";
 import { firstValueFrom, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import { Config } from "../../config/config";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { PermissionsConfigService } from "../../permissions/permissions-config.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import {
   DatabaseRule,
   DatabaseRules,
-  RESERVED_ROLE_PREFIX,
-  RESERVED_RULE_CONFIG_KEYS,
+  isReservedRuleConfigKey,
 } from "../../permissions/permission-types";
 import { migrateLegacySectionKeys } from "../../permissions/permissions-config-migration";
 import { RESERVED_ROLES } from "../../permissions/reserved-roles";
 import { Role } from "../../user/user-admin-service/user-account";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
-
-/**
- * Whether a key of the permissions config carries special semantics instead of
- * naming a user role, so it must never be listed as an ordinary, deletable role.
- */
-function isReservedRuleConfigKey(key: string): boolean {
-  return (
-    key.startsWith(RESERVED_ROLE_PREFIX) ||
-    RESERVED_RULE_CONFIG_KEYS.includes(key)
-  );
-}
 
 /**
  * Base route of the role management admin UI, to link to a role's details
@@ -85,9 +71,8 @@ export interface RoleWithPermissions {
  */
 @Injectable({ providedIn: "root" })
 export class RolePermissionsService {
-  private readonly entityMapper = inject(EntityMapperService);
   private readonly userAdminService = inject(UserAdminService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly sessionInfo = inject(SessionSubject);
 
   private readonly session = toSignal(this.sessionInfo);
@@ -117,16 +102,11 @@ export class RolePermissionsService {
    * propagated: treating it as an empty config would make the callers below
    * save a document that silently drops every already configured role.
    */
-  loadPermissionsConfig(): Promise<Config<DatabaseRules>> {
-    return this.entityMapper
-      .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
-      .catch((err) => {
-        const error = err as { status?: number; name?: string } | null;
-        if (error?.status === 404 || error?.name === "not_found") {
-          return new Config(Config.PERMISSION_KEY, {});
-        }
-        throw err;
-      });
+  async loadPermissionsConfig(): Promise<Config<DatabaseRules>> {
+    return (
+      (await this.permissionsConfig.load()) ??
+      new Config<DatabaseRules>(Config.PERMISSION_KEY, {})
+    );
   }
 
   /**
@@ -240,24 +220,7 @@ export class RolePermissionsService {
     config: Config<DatabaseRules>,
     newData: DatabaseRules,
   ) {
-    const previousConfigBackup = new Config(
-      Config.PERMISSION_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
-      config.data,
-    );
-    await this.entityMapper.save(previousConfigBackup);
-
-    config.data = newData;
-    await this.entityMapper.save(config);
-
-    const snackBarRef = this.snackBar.open(
-      $localize`Permissions updated`,
-      $localize`Undo`,
-      { duration: 8000 },
-    );
-    snackBarRef.onAction().subscribe(async () => {
-      config.data = previousConfigBackup.data;
-      await this.entityMapper.save(config);
-      await this.entityMapper.remove(previousConfigBackup);
-    });
+    const backup = await this.permissionsConfig.saveWithBackup(config, newData);
+    this.permissionsConfig.offerUndo(backup, $localize`Permissions updated`);
   }
 }

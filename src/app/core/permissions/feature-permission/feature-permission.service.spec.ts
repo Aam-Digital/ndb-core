@@ -101,7 +101,6 @@ describe("FeaturePermissionService", () => {
     const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
 
     expect(summarize(state.roles[0])).toEqual(allActions("-/editable"));
-    expect(state.hasComplexRules).toBe(false);
   });
 
   it("should read granted actions from scalar, array and manage rules", async () => {
@@ -127,7 +126,6 @@ describe("FeaturePermissionService", () => {
       create: "granted/editable",
     });
     expect(summarize(state.roles[2])).toEqual(allActions("granted/editable"));
-    expect(state.hasComplexRules).toBe(false);
   });
 
   it.each([
@@ -158,7 +156,6 @@ describe("FeaturePermissionService", () => {
 
       expect(summarize(state.roles[0])).toEqual(allActions("granted/locked"));
       expect(state.roles[0].editable).toBe(false);
-      expect(state.hasComplexRules).toBe(true);
     },
   );
 
@@ -209,7 +206,6 @@ describe("FeaturePermissionService", () => {
     });
     // a default grant alone does not make the row read-only
     expect(state.roles[0].editable).toBe(true);
-    expect(state.hasComplexRules).toBe(false);
   });
 
   it("should read the legacy 'default' section as the shared default", async () => {

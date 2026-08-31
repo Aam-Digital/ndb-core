@@ -10,11 +10,11 @@
     <app-hint-box type="warning">
       <span i18n>
         Could not load the list of user roles. Please try again later or edit
-        permissions in the advanced settings.
+        permissions in the user role administration.
       </span>
     </app-hint-box>
   } @else {
-    <app-hint-box type="warning" class="permission-hint">
+    <app-hint-box class="permission-hint">
       <p i18n="Feature permission dialog explanation">
         Select which user roles can use or manage this feature.
       </p>
@@ -22,19 +22,13 @@
         Give at least <strong>Read</strong> permissions, if users should be able
         to use the feature (i.e. create files).
       </p>
-      @if (hasComplexRules()) {
-        <p i18n="Feature permission dialog complex rules hint">
-          Some permissions are shown read-only because they come from the
-          default or an advanced permission rule.
-        </p>
-      }
       <a
         mat-button
         color="accent"
-        routerLink="/admin/user-roles"
+        [routerLink]="rolesAdminRoute"
         mat-dialog-close
-        i18n="Open advanced permissions editor link"
-        >Open advanced editor</a
+        i18n="Manage user roles link"
+        >Manage user roles</a
       >
     </app-hint-box>
 
@@ -43,9 +37,7 @@
         <tr>
           <th i18n="Role column header">Role</th>
           @for (column of actionColumns; track column.action) {
-            <th class="checkbox-col" [matTooltip]="column.tooltip">
-              {{ column.label }}
-            </th>
+            <th class="checkbox-col">{{ column.label }}</th>
           }
         </tr>
       </thead>
