@@ -26,8 +26,7 @@ export const environment = {
   use_indexeddb_adapter: false,
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 
-  // TODO: remove default_data_source value for production again (forcing default to old "in-memory" mode until latest bugfixes are ready)
-  default_data_source: "in-memory" as DataSourceType | undefined,
+  default_data_source: undefined as DataSourceType | undefined,
 
   session_type_choice: true,
 };
