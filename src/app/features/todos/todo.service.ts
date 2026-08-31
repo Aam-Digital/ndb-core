@@ -19,8 +19,19 @@ export class TodoService {
   /**
    * Load Todo entities related to the given entity through a database index on
    * the given relation property (ordered by deadline).
+   *
+   * The index can only be built on one specific property. If the property linking to the given
+   * entity is not unambiguous, all Todos are loaded instead and the caller's filter narrows them
+   * down (see RelatedEntitiesComponent).
    */
-  async getTodosFor(entity: Entity, relationProperty: string): Promise<Todo[]> {
+  async getTodosFor(
+    entity: Entity,
+    relationProperty?: string | string[],
+  ): Promise<Todo[]> {
+    if (typeof relationProperty !== "string") {
+      return this.entityMapper.loadType(Todo);
+    }
+
     // TODO: move this generic index creation into schema
     this.dbIndexing.generateIndexOnProperty(
       "todo_index",

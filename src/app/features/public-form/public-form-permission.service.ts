@@ -9,6 +9,7 @@ import {
   PUBLIC_SECTION_KEY,
   ruleCoversAction,
 } from "../../core/permissions/permission-types";
+import { migrateLegacySectionKeys } from "../../core/permissions/permissions-config-migration";
 import { PermissionsConfigService } from "../../core/permissions/permissions-config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
@@ -47,9 +48,7 @@ export class PublicFormPermissionService {
       return false; // No permissions config means "public" users have no access
     }
     const publicRules =
-      permissionsConfig.data[PUBLIC_SECTION_KEY] ??
-      permissionsConfig.data[LEGACY_PUBLIC_KEY] ??
-      [];
+      migrateLegacySectionKeys(permissionsConfig.data)[PUBLIC_SECTION_KEY] ?? [];
     return publicRules.some((rule) =>
       ruleCoversAction(rule, entityType, "create"),
     );
@@ -170,7 +169,10 @@ export class PublicFormPermissionService {
     );
 
     // migrate any legacy section key to the underscore-prefixed name so we
-    // never write both spellings (the read path prefers the new key)
+    // never write both spellings (the read path prefers the new key).
+    // Kept inline instead of using migrateLegacySectionKeys(): this is a write
+    // path, so it also removes the legacy key and must not touch any section
+    // other than the one this form needs.
     const migratedLegacyPublic = LEGACY_PUBLIC_KEY in updatedData;
     if (updatedData[LEGACY_PUBLIC_KEY] && !updatedData[PUBLIC_SECTION_KEY]) {
       updatedData[PUBLIC_SECTION_KEY] = updatedData[LEGACY_PUBLIC_KEY];

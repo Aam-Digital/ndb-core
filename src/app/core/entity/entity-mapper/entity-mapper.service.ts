@@ -89,7 +89,12 @@ export class EntityMapperService {
   }
 
   /**
-   * Similar to loadType but allows supports filtering, pagination and sorting
+   * Similar to loadType but allows supports filtering, pagination and sorting.
+   *
+   * Pagination uses a `bookmark` cursor (see {@link Database.find}): pass the
+   * `bookmark` returned by the previous call to continue after those results.
+   * It is forward-only - there is no way to jump back to an earlier page.
+   *
    * @param entityType class for which results should be returned
    * @param filter a valid Mango Query Syntax query
    * @param page optional pagination options
@@ -98,14 +103,19 @@ export class EntityMapperService {
   public async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T>,
-    page?: { limit: number; skip: number },
+    page?: { limit: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<T[]> {
+  ): Promise<{ records: T[]; bookmark?: string }> {
     const ctor = this.resolveConstructor(entityType);
-    const records = await this.dbResolver
+    const result = await this.dbResolver
       .getDatabase(ctor.DATABASE)
       .find(ctor.ENTITY_TYPE, filter, page, sort);
-    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+    return {
+      records: result.docs.map((rec) =>
+        this.transformToEntityFormat(rec, ctor),
+      ),
+      bookmark: result.bookmark,
+    };
   }
 
   /**

@@ -19,7 +19,6 @@ import { inject, Injectable } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Logging } from "app/core/logging/logging.service";
 import { ImportProcessingContext } from "../../import/import-processing-context";
 import { splitArrayValue } from "../../import/split-array-value";
@@ -43,7 +42,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 @Injectable()
 export class EntityDatatype extends StringDatatype {
   private entityMapper = inject(EntityMapperService);
-  private removeService = inject(EntityActionsService);
   private schemaService = inject(EntitySchemaService);
   private readonly entityRegistry = inject(EntityRegistry);
 
@@ -331,7 +329,12 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Recursively calls anonymize on the referenced entity and saves it.
+   * An entity reference points to an independent record, which must not be affected
+   * by anonymizing the record that holds the reference. The reference is removed instead,
+   * as for any other datatype that does not support partial anonymization.
+   *
+   * (this overrides StringDatatype, which would otherwise retain the first character of the id)
+   *
    * @param value
    * @param schemaField
    * @param parent
@@ -340,19 +343,8 @@ export class EntityDatatype extends StringDatatype {
     value,
     schemaField: EntitySchemaField,
     parent,
-  ): Promise<string> {
-    const referencedEntity = await this.entityMapper.load(
-      schemaField.additional,
-      value,
-    );
-
-    if (!referencedEntity) {
-      // TODO: remove broken references?
-      return value;
-    }
-
-    await this.removeService.anonymize(referencedEntity);
-    return value;
+  ): Promise<string | undefined> {
+    return undefined;
   }
 
   private async loadRelatedEntitiesToString(
