@@ -12,6 +12,11 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  TextOnlySnackBar,
+} from "@angular/material/snack-bar";
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -46,6 +51,10 @@ export abstract class EntitiesTableDataSource<
   private readonly destroyRef = inject(DestroyRef);
   protected readonly entityMapper = inject(EntityMapperService);
   private readonly bulkOperationState = inject(BulkOperationStateService);
+  private readonly snackBar = inject(MatSnackBar);
+
+  /** Reference to the currently shown "could not load data" toast, if any. */
+  private loadErrorSnackBarRef?: MatSnackBarRef<TextOnlySnackBar>;
 
   dataFilter = signal<DataFilter<T>>({});
   sortValueFns = signal<SortValueFns<T>>({});
@@ -140,17 +149,42 @@ export abstract class EntitiesTableDataSource<
     const reload = this.pendingReload;
     this.pendingReload = undefined;
     const load = this.loadRecords()
+      .then((data) => {
+        // a previous failure has now recovered
+        this.loadErrorSnackBarRef?.dismiss();
+        this.loadErrorSnackBarRef = undefined;
+        return data;
+      })
       .catch((err) => {
         Logging.error(
           "Error loading data in datasource",
           err,
           this.loadRecordConfig(),
         );
+        this.showLoadErrorToast();
         return [];
       })
       .finally(() => this.isLoading.set(false));
     // let awaiters (e.g. bulk operations) adopt the actual load's outcome
     reload?.resolve(load);
+  }
+
+  /**
+   * Notify the user that the list could not be loaded and offer a manual retry.
+   * The retry routes through {@link setRecords} so it reuses the normal
+   * (debounced, `isLoading`-tracked) reload path.
+   */
+  private showLoadErrorToast(): void {
+    this.loadErrorSnackBarRef?.dismiss();
+    this.loadErrorSnackBarRef = this.snackBar.open(
+      $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`,
+      $localize`:Retry loading table data:Retry`,
+      { duration: 3600000 },
+    );
+    this.loadErrorSnackBarRef
+      .onAction()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.setRecords());
   }
 
   /** Actually (re)load the records. Implemented by the concrete data source. */
