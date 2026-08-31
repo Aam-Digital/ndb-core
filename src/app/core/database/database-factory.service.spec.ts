@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { environment } from "../../../environments/environment";
 import {
@@ -58,5 +59,82 @@ describe("DatabaseFactoryService", () => {
     environment.session_type = SessionType.synced;
     const db = service.createDatabase("test-db") as SyncedPouchDatabase;
     expect(db.adapter).toBe("indexeddb");
+  });
+
+  describe("conflict tracking", () => {
+    let eventTrack: Mock;
+
+    beforeEach(() => {
+      eventTrack = vi.fn();
+      // stubbed rather than provided: AnalyticsService is resolved lazily to
+      // break a DI cycle, and importing it here would defeat that
+      vi.spyOn<any, any>(service, "getAnalyticsService").mockResolvedValue({
+        eventTrack,
+      });
+    });
+
+    it("should count a conflict as a usage event, by entity type and outcome", async () => {
+      environment.session_type = SessionType.mock;
+      const db = service.createDatabase("test-db") as PouchDatabase;
+
+      db.conflictReporter("unresolved", "Child");
+
+      await vi.waitFor(() =>
+        expect(eventTrack).toHaveBeenCalledWith("unresolved", {
+          category: "document_update_conflict",
+          label: "Child",
+        }),
+      );
+    });
+
+    it("should also track conflicts on a remote database", async () => {
+      const db = service.createRemoteDatabase(
+        "test-remote-db",
+      ) as PouchDatabase;
+
+      expect(db.conflictReporter).toBeDefined();
+      db.conflictReporter("overwritten", "Note");
+
+      await vi.waitFor(() =>
+        expect(eventTrack).toHaveBeenCalledWith("overwritten", {
+          category: "document_update_conflict",
+          label: "Note",
+        }),
+      );
+    });
+
+    it("should not fail a save when analytics is unavailable", async () => {
+      vi.spyOn<any, any>(service, "getAnalyticsService").mockResolvedValue(
+        null,
+      );
+      environment.session_type = SessionType.mock;
+      const db = service.createDatabase("test-db") as PouchDatabase;
+
+      expect(() => db.conflictReporter("unresolved", "Child")).not.toThrow();
+      await expect(
+        (service as any).trackConflict("unresolved", "Child"),
+      ).resolves.toBeUndefined();
+    });
+
+    it("should swallow an analytics failure, so counting never breaks the save", async () => {
+      eventTrack.mockImplementation(() => {
+        throw new Error("matomo unreachable");
+      });
+
+      await expect(
+        (service as any).trackConflict("unresolved", "Child"),
+      ).resolves.toBeUndefined();
+    });
+  });
+
+  it("should resolve analytics lazily to null when it is not available, and only once", async () => {
+    // the lazy resolution is what keeps the AnalyticsService -> ConfigService ->
+    // EntityMapperService -> DatabaseResolver -> DatabaseFactoryService cycle
+    // from being closed during bootstrap
+    const first = (service as any).getAnalyticsService();
+    const second = (service as any).getAnalyticsService();
+
+    expect(second).toBe(first);
+    await expect(first).resolves.toBeNull();
   });
 });

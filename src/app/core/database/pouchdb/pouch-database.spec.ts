@@ -19,6 +19,7 @@ import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
+import { Logging } from "../../logging/logging.service";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -328,6 +329,21 @@ describe("PouchDatabase tests", () => {
       await expect(database.put({ ...STALE }, true)).resolves.toEqual(
         expect.objectContaining({ ok: true }),
       );
+    });
+
+    it("counts a conflict during putAll without alerting on it", async () => {
+      const warn = vi.spyOn(Logging, "warn") as unknown as Mock;
+      warn.mockClear();
+
+      // the batch still rejects, so the caller is not left thinking it saved
+      await expect(database.putAll([{ ...STALE }])).rejects.toBeTruthy();
+
+      expect(conflictReporter).toHaveBeenCalledWith("unresolved", "Child");
+      expect(
+        warn.mock.calls.filter(
+          ([message]) => message === "error during putAll",
+        ),
+      ).toEqual([]);
     });
   });
 

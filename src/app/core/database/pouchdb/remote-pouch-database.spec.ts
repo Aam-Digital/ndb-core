@@ -550,6 +550,14 @@ describe("RemotePouchDatabase tests", () => {
       ]);
     });
 
+    it("should collect statuses without a name into one bucket, keeping the number in the context", async () => {
+      await fetch4xx(423); // Locked - not one we expect from CouchDB
+
+      const [message, context] = warningsLogged()[0];
+      expect(message).toBe("Unexpected DB response: unnamed client error");
+      expect(context).toEqual(expect.objectContaining({ status: 423 }));
+    });
+
     it("should not report expected 4XX statuses as warnings", async () => {
       await fetch4xx(HttpStatusCode.Forbidden);
 
