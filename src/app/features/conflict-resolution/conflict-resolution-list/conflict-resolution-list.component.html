@@ -3,7 +3,7 @@
 <p i18n>conflicts to resolve:</p>
 
 <div class="mat-elevation-z1">
-  @if ($safeNavigationMigration(dataSource?.loading$) | async) {
+  @if (dataSource?.loading$ | async) {
     <div>
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>

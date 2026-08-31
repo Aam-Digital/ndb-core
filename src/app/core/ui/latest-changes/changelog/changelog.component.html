@@ -50,16 +50,13 @@
       <div class="padding-bottom-regular">
         <span
           ><fa-icon icon="calendar-alt"></fa-icon>
-          {{
-            $safeNavigationMigration(changelog?.published_at)
-              | customDate: "shortDate"
-          }}</span
+          {{ changelog?.published_at | customDate: "shortDate" }}</span
         >
         <span class="padding-left-small"
           ><fa-icon icon="tag"></fa-icon> {{ changelog?.tag_name }}</span
         >
       </div>
-      <markdown [data]="$safeNavigationMigration(changelog?.body)"></markdown>
+      <markdown [data]="changelog?.body"></markdown>
       @if (showAdvancedDetails) {
         <a
           mat-stroked-button

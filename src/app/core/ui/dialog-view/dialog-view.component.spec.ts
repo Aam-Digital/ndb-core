@@ -2,13 +2,12 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DialogViewComponent } from "./dialog-view.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 @Component({
   template: ``,
-  changeDetection: ChangeDetectionStrategy.Eager,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })

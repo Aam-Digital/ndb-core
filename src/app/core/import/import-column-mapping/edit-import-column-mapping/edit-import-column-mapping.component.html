@@ -4,7 +4,7 @@
     <app-entity-field-select
       [entityType]="entityCtor()"
       [hideOption]="hideOption"
-      [ngModel]="$safeNavigationMigration(columnMapping()?.propertyName)"
+      [ngModel]="columnMapping()?.propertyName"
       (ngModelChange)="onFieldSelected($event)"
     />
   </mat-form-field>

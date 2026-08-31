@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DashboardListWidgetComponent } from "./dashboard-list-widget.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component } from "@angular/core";
 import { By } from "@angular/platform-browser";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Subject } from "rxjs";
@@ -25,7 +25,6 @@ import { MatTableModule } from "@angular/material/table";
       <tr mat-row *matRowDef="let row; columns: ['name']"></tr>
     </table>
   </app-dashboard-list-widget>`,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [DashboardListWidgetComponent, MatTableModule],
 })
 export class DashboardWidgetTestComponent {

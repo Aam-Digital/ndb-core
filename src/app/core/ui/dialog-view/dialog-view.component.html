@@ -1,7 +1,7 @@
 <div mat-dialog-title>
   <div class="margin-top-regular">
     <ng-container
-      *ngTemplateOutlet="$safeNavigationMigration(viewContext?.title?.template)"
+      *ngTemplateOutlet="viewContext?.title?.template"
     ></ng-container>
   </div>
   <div style="width: 24px"><!-- spacer for dialog close button--></div>
@@ -20,6 +20,6 @@
 
 <mat-dialog-actions>
   <ng-container
-    *ngTemplateOutlet="$safeNavigationMigration(viewContext?.actions?.template)"
+    *ngTemplateOutlet="viewContext?.actions?.template"
   ></ng-container>
 </mat-dialog-actions>

@@ -1,18 +1,11 @@
 import { TestBed } from "@angular/core/testing";
-import {
-  ChangeDetectorRef,
-  Component,
-  ViewContainerRef,
-  input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { ChangeDetectorRef, Component, ViewContainerRef, input } from "@angular/core";
 import { DynamicComponentDirective } from "./dynamic-component.directive";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-test-signal-input",
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: "",
 })
 class TestSignalInputComponent {

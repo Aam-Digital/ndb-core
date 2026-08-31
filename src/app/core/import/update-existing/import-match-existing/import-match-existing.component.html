@@ -17,7 +17,7 @@
     <app-entity-field-select
       [multi]="true"
       [entityType]="entityType()"
-      [value]="$safeNavigationMigration(settings()?.matchExistingByFields)"
+      [value]="settings()?.matchExistingByFields"
       (valueChange)="updateMatchFields($event)"
       [showInternalIdField]="true"
     ></app-entity-field-select>
@@ -29,7 +29,7 @@
 
   <div class="flex-row gap-regular align-center">
     <mat-slide-toggle
-      [ngModel]="$safeNavigationMigration(settings()?.strictMatching)"
+      [ngModel]="settings()?.strictMatching"
       (ngModelChange)="updateStrictMatching($event)"
       i18n
       >Strict matching</mat-slide-toggle

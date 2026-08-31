@@ -49,7 +49,7 @@
         <div
           i18n-matTooltip="Tooltip help text for button"
           matTooltip="Please select a file first"
-          [matTooltipDisabled]="$safeNavigationMigration(data()?.length) > 0"
+          [matTooltipDisabled]="data()?.length > 0"
         >
           <button
             [disabled]="!data()?.length"

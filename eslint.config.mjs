@@ -131,15 +131,6 @@ export default defineConfig([
     ],
     rules: { "@angular-eslint/template/i18n": "off" },
   },
-  {
-    // Test host components are fixtures, not user-facing UI. The Angular 22
-    // migration added an explicit change detection strategy to these to preserve
-    // their pre-v22 behaviour, which would otherwise trip the OnPush rule.
-    files: ["src/**/*.spec.ts", "src/**/*.stories.ts"],
-    rules: {
-      "@angular-eslint/prefer-on-push-component-change-detection": "off",
-    },
-  },
   ...storybook.configs["flat/recommended"],
   {
     files: ["**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],

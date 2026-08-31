@@ -1,6 +1,6 @@
 <ng-container
   [appDynamicComponent]="{
-    component: $safeNavigationMigration(formFieldConfig()?.editComponent),
+    component: formFieldConfig()?.editComponent,
     config: {
       ngControl: ngControl,
       formFieldConfig: formFieldConfig(),

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AdminConfigCleanupComponent } from "./admin-config-cleanup.component";
@@ -6,7 +6,6 @@ import { ConfigurableEnumCleanupComponent } from "./configurable-enum-cleanup/co
 
 @Component({
   selector: "app-configurable-enum-cleanup",
-  changeDetection: ChangeDetectionStrategy.Eager,
   template: "",
 })
 class MockConfigurableEnumCleanupComponent {}

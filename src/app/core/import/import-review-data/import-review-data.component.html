@@ -20,8 +20,7 @@
     </app-help-button>
   </div>
 
-  @let skippedRows =
-    $safeNavigationMigration(rawData?.length) - dataSource.allRecords().length;
+  @let skippedRows = rawData?.length - dataSource.allRecords().length;
   @if (skippedRows > 0) {
     <app-hint-box i18n>
       {{ skippedRows }} row(s) were skipped because no mappable data was found

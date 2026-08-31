@@ -70,7 +70,7 @@
         <!-- Conditions -->
         <app-conditions-editor
           [disabled]="!value()?.entityType"
-          [conditions]="$safeNavigationMigration(form.get('conditions')?.value)"
+          [conditions]="form.get('conditions')?.value"
           [entityConstructor]="entityConstructor()"
           (conditionsChange)="onConditionsChange($event)"
         ></app-conditions-editor>

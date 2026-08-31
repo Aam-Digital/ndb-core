@@ -3,14 +3,8 @@
     Overall Attendance
   </h4>
   <p class="summary-period">
-    {{
-      $safeNavigationMigration(attendance()?.periodFrom)
-        | customDate: "shortDate"
-    }}
-    -
-    {{
-      $safeNavigationMigration(attendance()?.periodTo) | customDate: "shortDate"
-    }}
+    {{ attendance()?.periodFrom | customDate: "shortDate" }} -
+    {{ attendance()?.periodTo | customDate: "shortDate" }}
   </p>
   <table class="summary-table">
     @for (col of _columns(); track col.id) {

@@ -17,7 +17,7 @@
       mat-icon-button
       (click)="save(); $event.stopPropagation()"
       angulartics2On="click"
-      [angularticsCategory]="$safeNavigationMigration(row()?.record?.getType())"
+      [angularticsCategory]="row()?.record?.getType()"
       angularticsAction="subrecord_inlineedit_save"
     >
       <fa-icon i18n-aria-label aria-label="save" icon="check-circle"></fa-icon>
@@ -26,7 +26,7 @@
       mat-icon-button
       (click)="resetChanges(); $event.stopPropagation()"
       angulartics2On="click"
-      [angularticsCategory]="$safeNavigationMigration(row()?.record?.getType())"
+      [angularticsCategory]="row()?.record?.getType()"
       angularticsAction="subrecord_inlineedit_cancel"
     >
       <fa-icon
@@ -43,7 +43,7 @@
       }"
       (click)="delete(); $event.stopPropagation()"
       angulartics2On="click"
-      [angularticsCategory]="$safeNavigationMigration(row()?.record?.getType())"
+      [angularticsCategory]="row()?.record?.getType()"
       angularticsAction="subrecord_inlineedit_delete"
     >
       <fa-icon i18n-aria-label aria-label="delete" icon="trash"></fa-icon>

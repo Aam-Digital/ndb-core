@@ -3,18 +3,13 @@
   [appTemplateTooltip]="tooltip"
 >
   @if (
-    $safeNavigationMigration(
-      attendanceData()?.getAttendancePercentage(forChild() || "")
-    ) !== null &&
-    $safeNavigationMigration(
-      attendanceData()?.getAttendancePercentage(forChild() || "")
-    ) !== undefined
+    attendanceData()?.getAttendancePercentage(forChild() || "") !== null &&
+    attendanceData()?.getAttendancePercentage(forChild() || "") !== undefined
   ) {
     <span>
       {{
-        $safeNavigationMigration(
-          attendanceData()?.getAttendancePercentage(forChild() || "")
-        ) | percent: "1.0-0"
+        attendanceData()?.getAttendancePercentage(forChild() || "")
+          | percent: "1.0-0"
       }}
     </span>
   } @else {
@@ -25,15 +20,8 @@
 <ng-template #tooltip>
   <div class="attendance-tooltip-container">
     <strong>
-      {{
-        $safeNavigationMigration(attendanceData()?.periodFrom)
-          | customDate: "shortDate"
-      }}
-      -
-      {{
-        $safeNavigationMigration(attendanceData()?.periodTo)
-          | customDate: "shortDate"
-      }}
+      {{ attendanceData()?.periodFrom | customDate: "shortDate" }} -
+      {{ attendanceData()?.periodTo | customDate: "shortDate" }}
       {{ attendanceData()?.activity?.title }}
     </strong>
 
@@ -53,9 +41,9 @@
       </em>
     }
     <app-attendance-calendar
-      [records]="$safeNavigationMigration(attendanceData()?.events)"
+      [records]="attendanceData()?.events"
       [highlightForChild]="forChild()"
-      [activity]="$safeNavigationMigration(attendanceData()?.activity)"
+      [activity]="attendanceData()?.activity"
     >
     </app-attendance-calendar>
   </div>

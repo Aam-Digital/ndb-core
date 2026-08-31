@@ -16,10 +16,8 @@
     >
     @let pct =
       forChild()
-        ? $safeNavigationMigration(
-            entity()?.getAttendancePercentage(forChild())
-          )
-        : $safeNavigationMigration(entity()?.getAttendancePercentageAverage());
+        ? entity()?.getAttendancePercentage(forChild())
+        : entity()?.getAttendancePercentageAverage();
     @if (pct !== undefined) {
       {{ pct | percent: "1.0-0" }}
     } @else {
