@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:28</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:32</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:36</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:41</a></div>
                                 </td>
                             </tr>
 
@@ -393,7 +393,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:37</a></div>
                                 </td>
                             </tr>
 
@@ -425,6 +425,11 @@ import { debounceTime } from &quot;rxjs/operators&quot;;
 import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-actions/bulk-operation-state.service&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  TextOnlySnackBar,
+} from &quot;@angular/material/snack-bar&quot;;
 
 /**
  * Configuration object that is necessary if data should be loaded by the datasource
@@ -459,6 +464,10 @@ export abstract class EntitiesTableDataSource&lt;
   private readonly destroyRef &#x3D; inject(DestroyRef);
   protected readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly bulkOperationState &#x3D; inject(BulkOperationStateService);
+  private readonly snackBar &#x3D; inject(MatSnackBar);
+
+  /** Reference to the currently shown &quot;could not load data&quot; toast, if any. */
+  private loadErrorSnackBarRef?: MatSnackBarRef&lt;TextOnlySnackBar&gt;;
 
   dataFilter &#x3D; signal&lt;DataFilter&lt;T&gt;&gt;({});
   sortValueFns &#x3D; signal&lt;SortValueFns&lt;T&gt;&gt;({});
@@ -553,15 +562,42 @@ export abstract class EntitiesTableDataSource&lt;
     const reload &#x3D; this.pendingReload;
     this.pendingReload &#x3D; undefined;
     const load &#x3D; this.loadRecords()
+      .then((data) &#x3D;&gt; {
+        // a previous failure has now recovered
+        this.loadErrorSnackBarRef?.dismiss();
+        this.loadErrorSnackBarRef &#x3D; undefined;
+        return data;
+      })
       .catch((err) &#x3D;&gt; {
         Logging.error(
-          &#x60;Error loading data in datasource with config ${this.loadRecordConfig()}: ${err}&#x60;,
+          &quot;Error loading data in datasource&quot;,
+          err,
+          this.loadRecordConfig(),
         );
+        this.showLoadErrorToast();
         return [];
       })
       .finally(() &#x3D;&gt; this.isLoading.set(false));
     // let awaiters (e.g. bulk operations) adopt the actual load&#x27;s outcome
     reload?.resolve(load);
+  }
+
+  /**
+   * Notify the user that the list could not be loaded and offer a manual retry.
+   * The retry routes through {@link setRecords} so it reuses the normal
+   * (debounced, &#x60;isLoading&#x60;-tracked) reload path.
+   */
+  private showLoadErrorToast(): void {
+    this.loadErrorSnackBarRef?.dismiss();
+    this.loadErrorSnackBarRef &#x3D; this.snackBar.open(
+      $localize&#x60;:Table data loading failed:Could not load the list. Please check your internet connection.&#x60;,
+      $localize&#x60;:Retry loading table data:Retry&#x60;,
+      { duration: 3600000 },
+    );
+    this.loadErrorSnackBarRef
+      .onAction()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() &#x3D;&gt; this.setRecords());
   }
 
   /** Actually (re)load the records. Implemented by the concrete data source. */
