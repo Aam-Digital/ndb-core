@@ -1,0 +1,37 @@
+<div style="padding: 16px">
+  <div style="margin-bottom: 32px">
+    <h3 i18n>Record Type to Count</h3>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Select Record Type</mat-label>
+      <app-entity-type-select
+        [ngModel]="entityType()"
+        (ngModelChange)="entityType.set($event)"
+      ></app-entity-type-select>
+    </mat-form-field>
+    <mat-hint i18n
+      >Select which record type to count and display statistics for</mat-hint
+    >
+  </div>
+
+  <div>
+    <h3 i18n>
+      Category Field
+      <span
+        matTooltip="The count is disaggregated by the options of this field. It has to be a dropdown (configurable-enum) field, e.g. the category of a note."
+        i18n-matTooltip
+      >
+        <fa-icon icon="question-circle"></fa-icon>
+      </span>
+    </h3>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Select Category Field</mat-label>
+      <app-entity-field-select
+        [entityType]="entityType()"
+        [ngModel]="groupBy()"
+        (ngModelChange)="groupBy.set($event)"
+        [placeholder]="'Select Category Field'"
+        i18n-placeholder
+      ></app-entity-field-select>
+    </mat-form-field>
+  </div>
+</div>

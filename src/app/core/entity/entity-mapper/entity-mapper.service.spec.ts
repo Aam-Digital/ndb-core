@@ -407,3 +407,48 @@ describe("EntityMapperService permission checks", () => {
     expect(mockAbility.cannot).toHaveBeenCalledWith("delete", entity);
   });
 });
+
+describe("EntityMapperService findType", () => {
+  let entityMapper: EntityMapperService;
+  let mockDb: { find: Mock };
+
+  beforeEach(() => {
+    mockDb = {
+      find: vi.fn().mockResolvedValue({ docs: [], bookmark: "next" }),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        EntityMapperService,
+        EntitySchemaService,
+        { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => mockDb },
+        },
+        CurrentUserSubject,
+      ],
+    });
+    entityMapper = TestBed.inject(EntityMapperService);
+  });
+
+  it("forwards pagination, sort and options (e.g. idOnly) to Database.find", async () => {
+    const res = await entityMapper.findType(
+      TestEntity,
+      { category: "X" },
+      { limit: 5, bookmark: "bm" },
+      { prop: "name", dir: "asc" },
+      { idOnly: true },
+    );
+
+    expect(mockDb.find).toHaveBeenCalledWith(
+      "TestEntity",
+      { category: "X" },
+      { limit: 5, bookmark: "bm" },
+      { prop: "name", dir: "asc" },
+      { idOnly: true },
+    );
+    expect(res.bookmark).toBe("next");
+    expect(res.records).toEqual([]);
+  });
+});

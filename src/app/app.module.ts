@@ -87,6 +87,7 @@ import { APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES } from "./core/config/config.a
 import { ImportModule } from "./core/import/import.module";
 import { ShortcutDashboardWidgetModule } from "./features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module";
 import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-widget.module";
+import { EntityRemoteCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-remote-count-dashboard-widget/entity-remote-count-dashboard-widget.module";
 import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-widget.module";
 import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
 import { LoginStateSubject } from "./core/session/session-type";
@@ -147,6 +148,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     ProgressDashboardWidgetModule,
     ShortcutDashboardWidgetModule,
     EntityCountDashboardWidgetModule,
+    EntityRemoteCountDashboardWidgetModule,
     BirthdayDashboardWidgetModule,
     ReportingModule,
     TodosModule,

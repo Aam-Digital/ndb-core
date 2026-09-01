@@ -1,4 +1,5 @@
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { FindOptions } from "../database";
 import { environment } from "../../../../environments/environment";
 import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
@@ -370,6 +371,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     query = {},
     page?: { limit?: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
+    options?: FindOptions,
   ): Promise<{ docs: any[]; bookmark?: string }> {
     // the installed @types/pouchdb-find does not declare `bookmark`, although
     // both CouchDB and pouchdb-find's own request/response objects support it
@@ -384,6 +386,12 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
     if (page?.bookmark) {
       findOptions.bookmark = page.bookmark;
+    }
+    if (options?.idOnly) {
+      // Mango has no `include_docs` flag; projecting to only the `_id` is the
+      // equivalent when the caller just needs the number (or ids) of matches.
+      // Keep the sort field in the projection so a sorted result stays coherent.
+      findOptions.fields = sort?.prop ? ["_id", sort.prop] : ["_id"];
     }
     const pouchDB = await this.getPouchDBOnceReady();
     if (sort?.prop) {
