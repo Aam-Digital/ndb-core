@@ -22,6 +22,7 @@ import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/
 import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
 import { EmailDatatype } from "./basic-datatypes/string/email.datatype";
 import { SchemaEmbedDatatype } from "./basic-datatypes/schema-embed/schema-embed.datatype";
+import { EntityActionsService } from "./entity/entity-actions/entity-actions.service";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -55,5 +56,9 @@ export class CoreModule {
     const components = inject(ComponentRegistry);
 
     components.addAll(coreComponents);
+
+    // Force this to be instantiated so it registers its actions (archive, anonymize, delete, duplicate)
+    // regardless of whether some other component happens to inject it first (#4345).
+    inject(EntityActionsService);
   }
 }
