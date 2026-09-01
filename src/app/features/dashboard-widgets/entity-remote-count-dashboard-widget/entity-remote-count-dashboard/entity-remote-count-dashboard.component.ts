@@ -214,7 +214,7 @@ export class EntityRemoteCountDashboardComponent {
         entityDefinition,
         filter,
         { limit: FULL_LOAD_PAGE_SIZE, bookmark },
-        { prop: this.groupBy() },
+        undefined,
         { idOnly: true },
       );
       lastPageSize = res.records.length;
