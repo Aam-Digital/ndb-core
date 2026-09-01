@@ -17,8 +17,9 @@ import { UserListComponent } from "../user/user-list/user-list.component";
 import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primary-action.component";
 import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
 import { AdminConfigCleanupComponent } from "./config-cleanup/admin-config-cleanup.component";
+import { ADMIN_APP_ROLE } from "../permissions/permission-types";
 
-const ROLE_MANAGEMENT_ROLES = ["account_manager", "admin_app"];
+const ROLE_MANAGEMENT_ROLES = ["account_manager", ADMIN_APP_ROLE];
 
 export const adminRoutes: Routes = [
   {
@@ -26,7 +27,7 @@ export const adminRoutes: Routes = [
     component: AdminOverviewComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -73,7 +74,7 @@ export const adminRoutes: Routes = [
     component: UserListComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -81,7 +82,7 @@ export const adminRoutes: Routes = [
     component: SubscriptionInfoComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -89,7 +90,7 @@ export const adminRoutes: Routes = [
     component: AdvancedFeaturesComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -97,7 +98,7 @@ export const adminRoutes: Routes = [
     component: DataPrivacyComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -184,7 +185,7 @@ export const adminRoutes: Routes = [
     component: ConflictResolutionListComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -192,7 +193,7 @@ export const adminRoutes: Routes = [
     component: AdminAiAgentComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
   {
@@ -200,7 +201,7 @@ export const adminRoutes: Routes = [
     component: AdminConfigCleanupComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: [ADMIN_APP_ROLE],
     },
   },
 ];
