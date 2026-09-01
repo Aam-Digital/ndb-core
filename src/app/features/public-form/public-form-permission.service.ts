@@ -48,7 +48,8 @@ export class PublicFormPermissionService {
       return false; // No permissions config means "public" users have no access
     }
     const publicRules =
-      migrateLegacySectionKeys(permissionsConfig.data)[PUBLIC_SECTION_KEY] ?? [];
+      migrateLegacySectionKeys(permissionsConfig.data)[PUBLIC_SECTION_KEY] ??
+      [];
     return publicRules.some((rule) =>
       ruleCoversAction(rule, entityType, "create"),
     );
