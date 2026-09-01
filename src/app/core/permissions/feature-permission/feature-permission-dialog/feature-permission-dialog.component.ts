@@ -27,6 +27,7 @@ import { Logging } from "../../../logging/logging.service";
 import { ROLES_ADMIN_ROUTE } from "../../../admin/admin-role-permissions/role-permissions.service";
 import {
   CRUD_ACTION_LABELS,
+  CRUD_ACTIONS,
   grantedByAdvancedRuleTooltip,
   grantedByDefaultRoleTooltip,
 } from "../../permission-action-labels";
@@ -130,7 +131,7 @@ export class FeaturePermissionDialogComponent {
    * the checkbox columns, in display order, labelled like the columns of the
    * permission matrix in the role administration
    */
-  readonly actionColumns: ActionColumn[] = FEATURE_ACTIONS.map((action) => ({
+  readonly actionColumns: ActionColumn[] = CRUD_ACTIONS.map((action) => ({
     action,
     label: CRUD_ACTION_LABELS[action],
   }));
