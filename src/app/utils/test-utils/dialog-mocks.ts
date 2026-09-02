@@ -94,21 +94,9 @@ export function mockMatDialogRef(
   };
 }
 
-export type MatSnackBarMock = { open: Mock; dismiss: Mock };
-
-/**
- * A MatSnackBar whose `open()` returns a ref with no action taken.
- *
- * Override `open`'s return value where the test needs the user to press the action button:
- * `snackBar.open.mockReturnValue({ onAction: () => of(undefined), dismiss: vi.fn() })`
+/*
+ * Deliberately no MatSnackBar mock. Almost every spec that mocks it uses a bare
+ * `{ open: vi.fn() }`, where `open()` returns undefined - the few that need a ref back build
+ * exactly the one they assert on. A shared version returning a ref would change what those
+ * specs get from `open()`, for no shape worth sharing.
  */
-export function mockMatSnackBar(): MatSnackBarMock {
-  return {
-    open: vi.fn().mockReturnValue({
-      onAction: () => of(),
-      afterDismissed: () => of({ dismissedByAction: false }),
-      dismiss: vi.fn(),
-    }),
-    dismiss: vi.fn(),
-  };
-}

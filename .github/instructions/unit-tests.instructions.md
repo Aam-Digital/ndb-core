@@ -125,7 +125,6 @@ right and gives the setup a name that says what it does.
 | `mockConfirmationDialog(confirmed?)`            | `{ getConfirmation: vi.fn().mockResolvedValue(...) }`            |
 | `mockMatDialog(result?)`                        | a `MatDialog` whose `open()` returns a ref closing with `result` |
 | `mockMatDialogRef(result?)`                     | `MatDialogRef` for the component _inside_ a dialog               |
-| `mockMatSnackBar()`                             | `MatSnackBar` whose `open()` returns a ref with no action taken  |
 | `mockEntityMapperProvider(entities?)`           | providers for a seeded in-memory `EntityMapperService`           |
 | `setupCustomFormControlEditComponent(...)`      | form-control wiring for `edit-*` components                      |
 | `testDatatype(...)` / `testEntitySubclass(...)` | a whole spec for a datatype or entity subclass                   |
