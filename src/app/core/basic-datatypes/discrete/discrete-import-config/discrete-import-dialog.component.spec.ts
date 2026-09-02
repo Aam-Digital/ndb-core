@@ -10,6 +10,7 @@ import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("DiscreteImportDialogComponent", () => {
   let component: DiscreteImportDialogComponent;
@@ -33,7 +34,7 @@ describe("DiscreteImportDialogComponent", () => {
         { provide: MatDialogRef, useValue: { close: () => undefined } },
         {
           provide: ConfirmationDialogService,
-          useValue: { getConfirmation: vi.fn().mockResolvedValue(true) },
+          useValue: mockConfirmationDialog(),
         },
       ],
     }).compileComponents();

@@ -10,6 +10,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { GeoLocation, enrichGeoLocation } from "../geo-location";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;
@@ -54,7 +55,7 @@ describe("MapPopupComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: { mapClick, displayedProperties: {} },
         },
-        { provide: MatDialogRef, useValue: { close: vi.fn() } },
+        { provide: MatDialogRef, useValue: mockMatDialogRef() },
         { provide: ConfigService, useValue: { getConfig: () => undefined } },
         { provide: GeoService, useValue: mockGeoService },
         {

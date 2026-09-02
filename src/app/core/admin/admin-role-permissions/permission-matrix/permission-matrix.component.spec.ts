@@ -10,6 +10,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { MatrixModel } from "../permission-matrix";
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("PermissionMatrixComponent", () => {
   let component: PermissionMatrixComponent;
@@ -30,7 +31,7 @@ describe("PermissionMatrixComponent", () => {
   };
 
   const mockDialog = { open: vi.fn() };
-  const mockConfirmation = { getConfirmation: vi.fn().mockResolvedValue(true) };
+  const mockConfirmation = mockConfirmationDialog();
 
   // re-created per test, so a type registered by one test cannot leak into others
   let entityRegistry: EntityRegistry;

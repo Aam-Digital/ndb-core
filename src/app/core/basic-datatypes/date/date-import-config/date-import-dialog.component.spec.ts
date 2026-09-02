@@ -7,6 +7,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import moment from "moment";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("DateImportDialogComponent", () => {
   let component: DateImportDialogComponent;
@@ -32,7 +33,7 @@ describe("DateImportDialogComponent", () => {
         { provide: MatDialogRef, useValue: { close: () => undefined } },
         {
           provide: ConfirmationDialogService,
-          useValue: { getConfirmation: vi.fn().mockResolvedValue(true) },
+          useValue: mockConfirmationDialog(),
         },
       ],
     }).compileComponents();

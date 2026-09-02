@@ -8,17 +8,11 @@ import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { GeoLocation, enrichGeoLocation } from "../geo-location";
 import type { Mock } from "vitest";
+import { ConfirmationDialogMock } from "#src/app/utils/test-utils/dialog-mocks";
 
 type GeoServiceMock = Pick<GeoService, "lookup" | "reverseLookup"> & {
   lookup: Mock;
   reverseLookup: Mock;
-};
-
-type ConfirmationDialogMock = Pick<
-  ConfirmationDialogService,
-  "getConfirmation"
-> & {
-  getConfirmation: Mock;
 };
 
 describe("AddressEditComponent", () => {

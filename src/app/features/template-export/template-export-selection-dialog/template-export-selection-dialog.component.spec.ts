@@ -25,6 +25,7 @@ import { TemplateExport } from "../template-export.entity";
 import { TemplateExportService } from "../template-export-service/template-export.service";
 import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
 import type { Mock } from "vitest";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 type DialogRefMock = {
   close: Mock;
@@ -114,9 +115,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       addInfo: vi.fn(),
       addWarning: vi.fn(),
     };
-    mockDialogRef = {
-      close: vi.fn(),
-    };
+    mockDialogRef = mockMatDialogRef();
     mockTemplateExportService = {
       isExportServerEnabled: vi.fn(),
     };

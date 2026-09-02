@@ -20,6 +20,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { of, throwError } from "rxjs";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import type { Mock } from "vitest";
+import {
+  mockConfirmationDialog,
+  mockMatDialog,
+} from "#src/app/utils/test-utils/dialog-mocks";
 
 @DatabaseEntity("TestEntityWithAccounts")
 class TestEntityWithAccounts extends Entity {
@@ -69,8 +73,8 @@ describe("BulkMergeService", () => {
     deleteUser: Mock;
     updateUser: Mock;
   };
-  let mockMatDialog: { open: Mock };
-  let mockConfirmationDialog: { getConfirmation: Mock };
+  let matDialog: { open: Mock };
+  let confirmationDialog: { getConfirmation: Mock };
 
   let recordA: TestEntity;
   let recordB: TestEntity;
@@ -81,22 +85,18 @@ describe("BulkMergeService", () => {
       deleteUser: vi.fn().mockReturnValue(of({ userDeleted: true })),
       updateUser: vi.fn().mockReturnValue(of({ userUpdated: true })),
     };
-    mockMatDialog = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }),
-    };
-    mockConfirmationDialog = {
-      getConfirmation: vi.fn().mockResolvedValue(true),
-    };
+    matDialog = mockMatDialog();
+    confirmationDialog = mockConfirmationDialog();
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, NoopAnimationsModule],
       providers: [
         ...mockEntityMapperProvider(),
         { provide: UserAdminService, useValue: mockUserAdminService },
-        { provide: MatDialog, useValue: mockMatDialog },
+        { provide: MatDialog, useValue: matDialog },
         {
           provide: ConfirmationDialogService,
-          useValue: mockConfirmationDialog,
+          useValue: confirmationDialog,
         },
       ],
     });
@@ -113,12 +113,12 @@ describe("BulkMergeService", () => {
 
   it("should show an error dialog and return false when executeAction is called with != 2 entities", async () => {
     const result = await service.executeAction([recordA]);
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();
+    expect(confirmationDialog.getConfirmation).toHaveBeenCalled();
     expect(result).toBe(false);
   });
 
   it("should return false when merge dialog is closed without confirming", async () => {
-    mockMatDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+    matDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
     const result = await service.showMergeDialog(
       [recordA, recordB],
       TestEntity,
@@ -128,7 +128,7 @@ describe("BulkMergeService", () => {
 
   it("should open dialog with no reordering when no accounts exist", async () => {
     await service.showMergeDialog([recordA, recordB], TestEntity);
-    const dialogData = mockMatDialog.open.mock.calls[0][1].data;
+    const dialogData = matDialog.open.mock.calls[0][1].data;
     expect(dialogData.entitiesToMerge[0].getId()).toBe(recordA.getId());
   });
 
@@ -300,7 +300,7 @@ describe("BulkMergeService", () => {
     it("should open dialog for entities with user accounts enabled", async () => {
       await service.showMergeDialog([entityA, entityB], TestEntityWithAccounts);
 
-      expect(mockMatDialog.open).toHaveBeenCalled();
+      expect(matDialog.open).toHaveBeenCalled();
     });
   });
 });

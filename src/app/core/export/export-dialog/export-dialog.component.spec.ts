@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { DownloadService } from "../download-service/download.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("ExportDialogComponent", () => {
   let component: ExportDialogComponent;
@@ -28,7 +29,7 @@ describe("ExportDialogComponent", () => {
     mockDownloadService = {
       triggerDownload: vi.fn().mockResolvedValue(undefined),
     };
-    mockDialogRef = { close: vi.fn() };
+    mockDialogRef = mockMatDialogRef();
 
     await TestBed.configureTestingModule({
       imports: [

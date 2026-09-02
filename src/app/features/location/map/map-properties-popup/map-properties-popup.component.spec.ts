@@ -15,6 +15,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("MapPropertiesPopupComponent", () => {
   let component: MapPropertiesPopupComponent;
@@ -44,9 +45,7 @@ describe("MapPropertiesPopupComponent", () => {
       dataType: "location",
     });
     properties[TestEntity.ENTITY_TYPE] = ["address"];
-    mockDialogRef = {
-      close: vi.fn(),
-    };
+    mockDialogRef = mockMatDialogRef();
     await TestBed.configureTestingModule({
       imports: [
         MapPropertiesPopupComponent,

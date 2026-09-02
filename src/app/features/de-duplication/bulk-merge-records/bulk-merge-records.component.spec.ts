@@ -10,7 +10,10 @@ import { UserAdminService } from "app/core/user/user-admin-service/user-admin.se
 import { of, throwError } from "rxjs";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
-
+import {
+  mockConfirmationDialog,
+  mockMatDialogRef,
+} from "#src/app/utils/test-utils/dialog-mocks";
 @DatabaseEntity("TestEntityWithUserAccountsComp")
 class TestEntityWithUserAccounts extends Entity {
   static override readonly enableUserAccounts = true;
@@ -34,7 +37,7 @@ describe("BulkMergeRecordsComponent", () => {
       imports: [CommonModule, BulkMergeRecordsComponent],
       providers: [
         FormBuilder,
-        { provide: MatDialogRef, useValue: { close: vi.fn() } },
+        { provide: MatDialogRef, useValue: mockMatDialogRef() },
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
@@ -69,7 +72,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
   const mergeTestEntity2 = new TestEntity();
   const mockAccount = { id: "kc-1", email: "a@test.com", enabled: true };
 
-  let mockConfirmationDialog: any;
+  let confirmationDialog: any;
   let mockDialogRef: any;
   let fixture: ComponentFixture<BulkMergeRecordsComponent<TestEntity>>;
 
@@ -86,10 +89,8 @@ describe("BulkMergeRecordsComponent account warning", () => {
       entityConstructor?: any;
     } = {},
   ) {
-    mockConfirmationDialog = {
-      getConfirmation: vi.fn().mockResolvedValue(true),
-    };
-    mockDialogRef = { close: vi.fn() };
+    confirmationDialog = mockConfirmationDialog();
+    mockDialogRef = mockMatDialogRef();
 
     const entityConstructor =
       options.entityConstructor ?? TestEntityWithUserAccounts;
@@ -119,7 +120,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
         },
         {
           provide: ConfirmationDialogService,
-          useValue: mockConfirmationDialog,
+          useValue: confirmationDialog,
         },
       ],
     }).compileComponents();
@@ -140,7 +141,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
 
     await fixture.componentInstance.confirmAndMergeRecords();
 
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledWith(
+    expect(confirmationDialog.getConfirmation).toHaveBeenCalledWith(
       expect.stringContaining("Warning"),
       expect.any(String),
     );
@@ -153,7 +154,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
         return throwError(() => ({ status: 404 }));
       }),
     });
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+    confirmationDialog.getConfirmation.mockResolvedValue(false);
 
     const result = await fixture.componentInstance.confirmAndMergeRecords();
 
@@ -179,7 +180,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
 
     await fixture.componentInstance.confirmAndMergeRecords();
 
-    const calls = mockConfirmationDialog.getConfirmation.mock.calls;
+    const calls = confirmationDialog.getConfirmation.mock.calls;
     const accountWarningCall = calls.find((c: string[]) =>
       c[0]?.includes("Warning"),
     );
@@ -193,7 +194,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
 
     await fixture.componentInstance.confirmAndMergeRecords();
 
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledWith(
+    expect(confirmationDialog.getConfirmation).toHaveBeenCalledWith(
       expect.stringContaining("Warning"),
       expect.stringContaining("account"),
     );
@@ -203,7 +204,7 @@ describe("BulkMergeRecordsComponent account warning", () => {
     await setupModule({
       getUser: vi.fn().mockReturnValue(throwError(() => ({ status: 500 }))),
     });
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+    confirmationDialog.getConfirmation.mockResolvedValue(false);
 
     const result = await fixture.componentInstance.confirmAndMergeRecords();
 

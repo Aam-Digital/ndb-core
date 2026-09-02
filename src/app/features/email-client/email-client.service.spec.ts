@@ -13,6 +13,7 @@ import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import type { Observable } from "rxjs";
 import type { Mock } from "vitest";
+import { ConfirmationDialogMock } from "#src/app/utils/test-utils/dialog-mocks";
 
 type DialogRefMock = {
   afterClosed: () => Observable<unknown>;
@@ -27,15 +28,11 @@ type WindowMock = {
   location: { href: string };
 };
 
-type ConfirmationDialogServiceMock = {
-  getConfirmation: Mock;
-};
-
 describe("EmailClientService", () => {
   let service: EmailClientService;
   let mockDialog: MatDialogMock;
   let mockWindow: WindowMock;
-  let mockConfirmationDialog: ConfirmationDialogServiceMock;
+  let mockConfirmationDialog: ConfirmationDialogMock;
 
   class EntityWithEmail extends Entity {
     @DatabaseField({ dataType: EmailDatatype.dataType })

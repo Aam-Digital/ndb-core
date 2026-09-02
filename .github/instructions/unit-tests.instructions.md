@@ -115,6 +115,37 @@ await TestBed.configureTestingModule({
 }).compileComponents();
 ```
 
+## Shared mocks
+
+Before hand-building a mock, check whether a shared one exists - reusing it keeps the shape
+right and gives the setup a name that says what it does.
+
+| Helper                                          | Replaces                                                         |
+| ----------------------------------------------- | ---------------------------------------------------------------- |
+| `mockConfirmationDialog(confirmed?)`            | `{ getConfirmation: vi.fn().mockResolvedValue(...) }`            |
+| `mockMatDialog(result?)`                        | a `MatDialog` whose `open()` returns a ref closing with `result` |
+| `mockMatDialogRef(result?)`                     | `MatDialogRef` for the component _inside_ a dialog               |
+| `mockMatSnackBar()`                             | `MatSnackBar` whose `open()` returns a ref with no action taken  |
+| `mockEntityMapperProvider(entities?)`           | providers for a seeded in-memory `EntityMapperService`           |
+| `setupCustomFormControlEditComponent(...)`      | form-control wiring for `edit-*` components                      |
+| `testDatatype(...)` / `testEntitySubclass(...)` | a whole spec for a datatype or entity subclass                   |
+
+The dialog mocks live in `src/app/utils/test-utils/dialog-mocks.ts`. Take the default and
+override the one `vi.fn()` the test cares about:
+
+```typescript
+const confirmationDialog = mockConfirmationDialog();
+// ... { provide: ConfirmationDialogService, useValue: confirmationDialog }
+
+it("does not delete when the user cancels", async () => {
+  confirmationDialog.getConfirmation.mockResolvedValue(false);
+  ...
+});
+```
+
+Note the naming: the _factory_ is `mockX()`, so name the variable it produces `x` rather than
+`mockX` - otherwise the local shadows the import.
+
 ## Entity Mapper Mocking
 
 Use `mockEntityMapperProvider()` for entity-related tests:
