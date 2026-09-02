@@ -271,6 +271,30 @@ Deleting 22% of the spec files removes 3.8% of the tests and buys 10% of wall ti
 4-worker machine, or 24% of the CPU. On CI — coverage on, more CPU-bound — the real saving
 sits nearer the upper figure.
 
+### What they were worth in coverage
+
+The obvious objection to deleting a construction check is that it still executes code, so
+deleting it must cost coverage. Measured, on the twelve deleted specs with the most setup
+(merged from five sharded lcov runs):
+
+| | Lines | Branches |
+| --- | ---: | ---: |
+| Suite without those 12 specs | 83.89% (18,524/22,082) | 69.23% |
+| Suite with them | 84.65% (18,693/22,082) | 69.96% |
+| **Difference** | **+0.76 pp** | **+0.73 pp** |
+
+Under a percentage point — and **none of it assertion-backed**: those lines are executed by a
+constructor and one change detection, with nothing checking what they produced.
+
+Per file the loss is concentrated rather than diffuse, which is the more useful way to read
+it. `edit-new-match-action` drops from 80% to 7% and `admin-entity-general-settings` from 75%
+to 18%, while `attendance-manager` (100%), `note-details` (77%) and
+`admin-default-value-static` (93%) do not move at all, because other specs render them
+anyway. Where a number falls a long way, it was measuring reachability, not correctness.
+
+The setup those files recorded stays recoverable from git history when someone writes a real
+test for one of those components: `git show 3b46e1b6f^:<path-to-spec>`.
+
 ### The worst of them
 
 Cost per assertion, including the per-file toll:
