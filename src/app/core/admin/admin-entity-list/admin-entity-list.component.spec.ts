@@ -1,0 +1,73 @@
+/*
+ * Kept for its setup, not its assertion.
+ *
+ * This component needs real providers or inputs to be constructed at all, so it cannot join
+ * the sweep in `src/app/component-smoke.spec.ts`, and working out what it depends on is the
+ * expensive part of writing a test for it. The construction check below is a placeholder:
+ * the component has enough logic to deserve real assertions, so add them here rather than
+ * starting a new file.
+ */
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+
+import { AdminEntityListComponent } from "./admin-entity-list.component";
+import { FilterGeneratorService } from "../../filter/filter-generator/filter-generator.service";
+import { FilterService } from "../../filter/filter.service";
+import { ActivatedRoute } from "@angular/router";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Entity } from "../../entity/model/entity";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
+import { toFormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { SyncStateSubject } from "../../session/session-type";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+
+describe("AdminEntityListComponent", () => {
+  let component: AdminEntityListComponent;
+  let fixture: ComponentFixture<AdminEntityListComponent>;
+  let mockFormService: any;
+
+  beforeEach(async () => {
+    mockFormService = {
+      extendFormFieldConfig: vi.fn(),
+    };
+    mockFormService.extendFormFieldConfig.mockImplementation((c) =>
+      toFormFieldConfig(c),
+    );
+    await TestBed.configureTestingModule({
+      imports: [
+        AdminEntityListComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: FilterGeneratorService, useValue: {} },
+        { provide: FilterService, useValue: {} },
+        { provide: ActivatedRoute, useValue: {} },
+        { provide: EntityFormService, useValue: mockFormService },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        SyncStateSubject,
+        CurrentUserSubject,
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AdminEntityListComponent);
+    component = fixture.componentInstance;
+
+    fixture.componentRef.setInput("entityConstructor", Entity);
+    fixture.componentRef.setInput("config", {
+      entityType: Entity.ENTITY_TYPE,
+      filters: [],
+      columns: [],
+    } as any);
+
+    fixture.detectChanges();
+  });
+
+  it("should create", () => {
+    expect(component).toBeTruthy();
+  });
+});

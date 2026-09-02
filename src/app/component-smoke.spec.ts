@@ -70,7 +70,7 @@ import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common
 import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component";
 
 /**
- * One sweep replacing the 101 spec files that only asserted `expect(component).toBeTruthy()`.
+ * One sweep replacing the 89 spec files that only asserted `expect(component).toBeTruthy()`.
  *
  * Each of those files paid a full jsdom environment (~1.3s of CI) to construct one component.
  * Doing it in a single file costs that once, and covers more than the old files did: the
@@ -80,6 +80,10 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
  * the same worker has already evaluated part of its import cycle. That is one of the seven
  * circular dependencies `npm run check-circular-deps` reports for the app itself, not a
  * problem with this sweep - add it back once the cycle is broken.
+ *
+ * Twelve components whose old spec carried real provider setup keep their own file instead:
+ * they cannot be constructed from the bare providers below, and working out what they depend
+ * on is the expensive part of writing a test for them. Those files say so at the top.
  *
  * A component belongs here only while it has no behaviour worth asserting. As soon as it
  * grows branching logic, give it its own spec that tests that logic - and drop it from here

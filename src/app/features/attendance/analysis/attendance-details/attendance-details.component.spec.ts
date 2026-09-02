@@ -1,0 +1,68 @@
+/*
+ * Kept for its setup, not its assertion.
+ *
+ * This component needs real providers or inputs to be constructed at all, so it cannot join
+ * the sweep in `src/app/component-smoke.spec.ts`, and working out what it depends on is the
+ * expensive part of writing a test for it. The construction check below is a placeholder:
+ * the component has enough logic to deserve real assertions, so add them here rather than
+ * starting a new file.
+ */
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+
+import { AttendanceDetailsComponent } from "./attendance-details.component";
+import { ActivityAttendance } from "../../model/activity-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
+import { AttendanceLogicalStatus } from "../../model/attendance-status";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+
+describe("AttendanceDetailsComponent", () => {
+  let component: AttendanceDetailsComponent;
+  let fixture: ComponentFixture<AttendanceDetailsComponent>;
+
+  beforeEach(waitForAsync(() => {
+    const entity = ActivityAttendance.create(new Date(), [
+      TestEventEntity.generateEventWithAttendance(
+        [
+          ["1", AttendanceLogicalStatus.PRESENT],
+          ["2", AttendanceLogicalStatus.PRESENT],
+          ["3", AttendanceLogicalStatus.ABSENT],
+        ],
+        new Date("2020-01-01"),
+      ),
+      TestEventEntity.generateEventWithAttendance(
+        [
+          ["1", AttendanceLogicalStatus.PRESENT],
+          ["2", AttendanceLogicalStatus.ABSENT],
+        ],
+        new Date("2020-01-02"),
+      ),
+    ]);
+    entity.activity = TestEntity.create("Test Activity");
+
+    TestBed.configureTestingModule({
+      imports: [AttendanceDetailsComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            attendance: new ActivityAttendance(),
+            forChild: undefined,
+          },
+        },
+      ],
+    }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AttendanceDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it("should create", () => {
+    expect(component).toBeTruthy();
+  });
+});
