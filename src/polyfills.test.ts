@@ -1,6 +1,5 @@
 import "zone.js";
 import "zone.js/testing";
-import "hammerjs";
 import * as buffer from "buffer";
 
 // Required by PouchDB in tests.

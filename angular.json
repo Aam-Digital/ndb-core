@@ -107,6 +107,8 @@
               "aot": false,
               "polyfills": [
                 "@angular/localize/init",
+                "zone.js",
+                "zone.js/testing",
                 "src/polyfills.test.ts"
               ],
               "fileReplacements": [

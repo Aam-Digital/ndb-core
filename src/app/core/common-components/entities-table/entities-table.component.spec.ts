@@ -402,7 +402,7 @@ describe("EntitiesTableComponent", () => {
     );
 
     fixture.componentRef.setInput("filter", { name: "" });
-    fixture.detectChanges();
+    TestBed.tick();
 
     expect(fpSpy).toHaveBeenCalled();
   });

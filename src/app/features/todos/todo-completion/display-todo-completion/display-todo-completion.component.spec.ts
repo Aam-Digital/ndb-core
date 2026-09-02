@@ -59,7 +59,9 @@ describe("DisplayTodoCompletionComponent", () => {
         completedBy: completingChild.getId(),
         completedAt: new Date(),
       });
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
 
       expect(component.completedBy.value()).toEqual(completingChild);
     } finally {
