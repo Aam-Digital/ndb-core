@@ -180,6 +180,12 @@ when you need to work with continuous updates of a specific entity from the data
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#destroyRef" >destroyRef</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#entityUpdated" >entityUpdated</a>
                             </li>
                         </ul>
@@ -235,7 +241,7 @@ when you need to work with continuous updates of a specific entity from the data
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:24</a></div>
                             </td>
                         </tr>
 
@@ -318,6 +324,48 @@ when you need to work with continuous updates of a specific entity from the data
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="destroyRef"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>destroyRef</b></span>
+                        <a href="#destroyRef"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(DestroyRef)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:24</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Stops the live-updates subscription once this service&#39;s injector is destroyed.
+Without this, every instance created by a fresh injector (e.g. a new TestBed
+per test) keeps reacting to entity updates forever, accumulating across the
+process&#39;s lifetime.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="entityUpdated"></a>
                     <span class="name">
                         <span ><b>entityUpdated</b></span>
@@ -338,7 +386,7 @@ when you need to work with continuous updates of a specific entity from the data
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:16</a></div>
                         </td>
                     </tr>
 
@@ -380,8 +428,8 @@ when you need to work with continuous updates of a specific entity from the data
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:74</a></div>
                         </td>
                     </tr>
 
@@ -425,8 +473,8 @@ a domain-specific error so that monitoring tools (e.g. Sentry) can group them pr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="45"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:45</a></div>
                         </td>
                     </tr>
 
@@ -466,8 +514,8 @@ a domain-specific error so that monitoring tools (e.g. Sentry) can group them pr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="41"
-                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:41</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/core/entity/latest-entity-loader.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -502,6 +550,8 @@ import { filter } from &quot;rxjs/operators&quot;;
 import { Entity, EntityConstructor } from &quot;./model/entity&quot;;
 import { HttpStatusCode } from &quot;@angular/common/http&quot;;
 import { Subject } from &quot;rxjs&quot;;
+import { DestroyRef, inject } from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
 
 /**
  * Implement an Angular Service extending this base class
@@ -511,6 +561,14 @@ import { Subject } from &quot;rxjs&quot;;
 export abstract class LatestEntityLoader&lt;T extends Entity&gt; {
   /** subscribe to this and execute any actions required when the entity changes */
   entityUpdated &#x3D; new Subject&lt;T&gt;();
+
+  /**
+   * Stops the live-updates subscription once this service&#x27;s injector is destroyed.
+   * Without this, every instance created by a fresh injector (e.g. a new TestBed
+   * per test) keeps reacting to entity updates forever, accumulating across the
+   * process&#x27;s lifetime.
+   */
+  protected readonly destroyRef &#x3D; inject(DestroyRef);
 
   protected constructor(
     private entityCtor: EntityConstructor&lt;T&gt;,
@@ -545,6 +603,7 @@ export abstract class LatestEntityLoader&lt;T extends Entity&gt; {
       .pipe(
         filter(({ type }) &#x3D;&gt; this.emitDeletions || type !&#x3D;&#x3D; &quot;remove&quot;),
         filter(({ entity }) &#x3D;&gt; entity.getId(true) &#x3D;&#x3D;&#x3D; this.entityID),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ entity }) &#x3D;&gt; this.entityUpdated.next(entity));
 

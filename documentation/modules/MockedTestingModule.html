@@ -282,8 +282,8 @@ The EntityMapper can be initialized with Entities that are passed as the second 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/utils/mocked-testing.module.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="80"
+                                    class="link-to-prism">src/app/utils/mocked-testing.module.ts:80</a></div>
                         </td>
                     </tr>
 
@@ -381,6 +381,7 @@ import { TestEntity } from &quot;./test-utils/TestEntity&quot;;
 import {
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from &quot;@angular/common/http&quot;;
 import { getDefaultConfigEntity } from &quot;app/core/config/testing-config-service&quot;;
 import { getDefaultEnumEntities } from &quot;../core/basic-datatypes/configurable-enum/configurable-enum-testing&quot;;
@@ -427,7 +428,7 @@ import { parse, unparse } from &quot;papaparse&quot;;
         unparse: (...args: Parameters&lt;typeof unparse&gt;) &#x3D;&gt; unparse(...args),
       },
     },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideHttpClientTesting(),
   ],
 })
