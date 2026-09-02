@@ -16,10 +16,6 @@ describe("DisplayEntityComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should handle single value and array value", () => {
     fixture.componentRef.setInput("value", "id-1");
     expect(component.entityIds()).toEqual(["id-1"]);

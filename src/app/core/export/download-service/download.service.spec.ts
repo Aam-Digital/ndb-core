@@ -88,10 +88,6 @@ describe("DownloadService", () => {
     service = TestBed.inject(DownloadService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("opens download link when pressing button", async () => {
     const link = document.createElement("a");
     const clickSpy = vi.spyOn(link, "click");

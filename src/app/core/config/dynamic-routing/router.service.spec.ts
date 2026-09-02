@@ -40,10 +40,6 @@ describe("RouterService", () => {
     service = TestBed.inject(RouterService);
   }));
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should keep additional routes when reloading router config", () => {
     const testRoutes = [{ path: "user", component: TestComponent }];
     const router = TestBed.inject<Router>(Router);

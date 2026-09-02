@@ -61,10 +61,6 @@ describe("AppVersionComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should be created", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load currentVersion", () => {
     const testVersion = "1.9.9";
     latestChangesDialogService.getCurrentVersion.mockReturnValue(testVersion);

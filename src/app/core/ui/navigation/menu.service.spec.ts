@@ -37,10 +37,6 @@ describe("MenuService", () => {
     service = TestBed.inject(MenuService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should parse EntityMenuItem and keep simple MenuItem unchanged", async () => {
     vi.useFakeTimers();
     try {

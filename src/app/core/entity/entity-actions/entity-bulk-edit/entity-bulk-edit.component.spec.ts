@@ -91,9 +91,6 @@ describe("EntityBulkEditComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create the component", () => {
-    expect(component).toBeTruthy();
-  });
   it("should initialize form controls", () => {
     expect(component.selectedFieldFormControl).toBeDefined();
     expect(component.selectedFieldFormControl.validator).toBeDefined();

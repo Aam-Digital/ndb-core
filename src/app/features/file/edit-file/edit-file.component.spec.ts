@@ -55,10 +55,6 @@ describe("EditFileComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should use acceptedFileTypes from field config", () => {
     setupComponent();
     fixture.componentRef.setInput("formFieldConfig", {

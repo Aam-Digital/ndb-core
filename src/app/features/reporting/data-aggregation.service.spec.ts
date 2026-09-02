@@ -26,10 +26,6 @@ describe("DataAggregationService", () => {
     service = TestBed.inject(DataAggregationService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should run the aggregation queries and return the results", async () => {
     const baseQuery = `Child:toArray`;
     const christiansQuery = "[*religion=christian]";

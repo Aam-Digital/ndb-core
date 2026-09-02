@@ -47,10 +47,6 @@ describe("AdminInheritedFieldComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should create inherit options for entity reference fields with multiple additional types", () => {
     fixture.componentRef.setInput("entityType", TestEntity);
 

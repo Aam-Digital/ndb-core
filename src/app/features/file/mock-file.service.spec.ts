@@ -39,10 +39,6 @@ describe("MockFileService", () => {
     service = TestBed.inject(MockFileService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should allow to open a file that has been uploaded before", async () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("object.url");
     vi.spyOn(window, "open");

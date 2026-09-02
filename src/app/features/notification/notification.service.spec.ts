@@ -47,10 +47,6 @@ describe("NotificationService", () => {
     service = TestBed.inject(NotificationService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("isDeviceRegistered should return false when firebase is not configured", async () => {
     mockFireMessaging.getToken = of(throwError(() => "API error"));
     const result = await service.isDeviceRegistered();

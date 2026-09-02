@@ -99,10 +99,6 @@ describe("DashboardComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only display widgets for which a user has permissions", async () => {
     const widgets: DynamicComponentConfig[] = [
       {

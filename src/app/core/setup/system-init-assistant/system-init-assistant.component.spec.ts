@@ -71,10 +71,6 @@ describe("SystemInitAssistantComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should preselect use case from route param and initialize system", async () => {
     const mockConfigs = [{ id: "basic_setup" }] as any;
     vi.spyOn(

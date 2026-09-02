@@ -18,6 +18,7 @@ import {
 } from "../../../entity/database-entity.decorator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("ConfigureEnumPopupComponent", () => {
   let component: ConfigureEnumPopupComponent;
@@ -38,7 +39,7 @@ describe("ConfigureEnumPopupComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         {
           provide: ConfirmationDialogService,
-          useValue: { getConfirmation: vi.fn().mockResolvedValue(true) },
+          useValue: mockConfirmationDialog(),
         },
       ],
     }).compileComponents();
@@ -50,10 +51,6 @@ describe("ConfigureEnumPopupComponent", () => {
     entityMapper = TestBed.inject(
       EntityMapperService,
     ) as MockEntityMapperService;
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should show a popup if user tries to delete an enum that is still in use", async () => {

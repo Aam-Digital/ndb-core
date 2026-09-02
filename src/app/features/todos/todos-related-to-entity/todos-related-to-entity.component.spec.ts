@@ -31,10 +31,6 @@ describe("TodosRelatedToEntityComponent", () => {
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load data from index when having a single relation", async () => {
     const child = createEntityOfType("Child");
     const relatedTodo = new Todo();

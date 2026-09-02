@@ -30,10 +30,6 @@ describe("PwaInstallService", () => {
     resetPWAInstallListener();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return install instructions for IOS devices on safari", () => {
     mockWindow.navigator.userAgent = "iphone safari";
     mockWindow.innerWidth = 1000;

@@ -17,10 +17,6 @@ describe("EntityImportConfigComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize available properties from referenced entity", () => {
     const col: ColumnMapping = {
       column: "test",

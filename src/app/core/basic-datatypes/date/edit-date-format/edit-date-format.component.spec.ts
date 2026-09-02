@@ -20,10 +20,6 @@ describe("EditDateFormatComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should return predefined formats when value is empty", () => {
     expect(component.formatOptions()).toEqual(component.predefinedFormats);
   });

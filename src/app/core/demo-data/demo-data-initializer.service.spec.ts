@@ -19,6 +19,7 @@ import { DatabaseResolverService } from "../database/database-resolver.service";
 import { MemoryPouchDatabase } from "../database/pouchdb/memory-pouch-database";
 import { Entity } from "../entity/model/entity";
 import type { Mock } from "vitest";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 type DemoDataServiceMock = Pick<DemoDataService, "publishDemoData"> & {
   publishDemoData: Mock;
@@ -76,9 +77,7 @@ describe("DemoDataInitializerService", () => {
     mockDialog = {
       open: vi.fn(),
     };
-    mockDialog.open.mockReturnValue({
-      close: vi.fn(),
-    } as DialogRefMock);
+    mockDialog.open.mockReturnValue(mockMatDialogRef() as DialogRefMock);
     mockLocalAuth = {
       saveUser: vi.fn(),
     };
@@ -115,10 +114,6 @@ describe("DemoDataInitializerService", () => {
     const tmpDB2 = new MemoryPouchDatabase(adminDBName, syncStateSubject);
     tmpDB2.init();
     await tmpDB2.destroy();
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should save the default users", () => {

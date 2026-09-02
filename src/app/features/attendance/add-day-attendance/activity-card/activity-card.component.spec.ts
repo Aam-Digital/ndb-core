@@ -50,10 +50,6 @@ describe("ActivityCardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("warningLevel should be 'ok' when all attendance statuses are set", () => {
     const event = Note.create(new Date());
     event.childrenAttendance = [

@@ -81,10 +81,6 @@ describe("NavigationComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should be created", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("marks items that require admin rights", async () => {
     vi.useFakeTimers();
     try {

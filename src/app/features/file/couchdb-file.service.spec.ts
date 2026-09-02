@@ -136,10 +136,6 @@ describe("CouchdbFileService", () => {
     }
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should delete the files of a deleted record", async () => {
     mockHttp.get.mockReturnValue(of({ _rev: "test_rev" }));
     mockHttp.delete.mockReturnValue(of({ ok: true }));

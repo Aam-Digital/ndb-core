@@ -30,10 +30,6 @@ describe("DynamicPlaceholderValueService", () => {
     defaultValueService = TestBed.inject(DefaultValueService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should do nothing, if value is not a valid PLACEHOLDER", () => {
     return testDefaultValueCase(
       defaultValueService,

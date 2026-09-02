@@ -10,6 +10,7 @@ import { defaultDateFilters } from "./date-range-filter-panel/date-range-filter-
 import moment from "moment";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
+import { mockMatDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;
@@ -18,9 +19,7 @@ describe("DateRangeFilterComponent", () => {
   let dialogMock: any;
 
   beforeEach(async () => {
-    dialogMock = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(null) }),
-    };
+    dialogMock = mockMatDialog(null);
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule, NoopAnimationsModule],
       providers: [{ provide: MatDialog, useValue: dialogMock }],
@@ -35,10 +34,6 @@ describe("DateRangeFilterComponent", () => {
     );
 
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should set the correct date filter when a new option is selected", () => {

@@ -39,10 +39,6 @@ describe("BackupService", () => {
     await db.destroy();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("clearDatabase should remove all records but the config", async () => {
     await db.put({ _id: "Test:1", test: 1 });
     await db.put({ _id: "Config:CONFIG_ENTITY", data: {} });

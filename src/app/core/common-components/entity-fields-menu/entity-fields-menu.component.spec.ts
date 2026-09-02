@@ -26,10 +26,6 @@ describe("EntityFieldsMenuComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should let a custom field override a default field", () => {
     fixture.componentRef.setInput("availableFields", [
       "name",

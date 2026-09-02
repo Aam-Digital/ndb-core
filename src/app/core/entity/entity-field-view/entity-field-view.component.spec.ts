@@ -28,10 +28,6 @@ describe("EntityFieldViewComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should be created", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should get component from schema if not given", () => {
     fixture.componentRef.setInput("field", { id: testProperty });
 

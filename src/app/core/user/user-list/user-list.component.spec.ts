@@ -129,10 +129,6 @@ describe("UserListComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should format role names correctly", () => {
     const roleNames = component.getRoleNames(mockUsers[0]);
     expect(roleNames).toBe("user_app");

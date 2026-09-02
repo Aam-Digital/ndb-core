@@ -24,10 +24,6 @@ describe("IconInputComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("marks unknown icons as invalid", () => {
     component.iconControl.setValue("not-a-real-icon");
     component.iconControl.updateValueAndValidity();

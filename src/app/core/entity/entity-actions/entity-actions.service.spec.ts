@@ -20,6 +20,10 @@ import { CascadingActionResult } from "./cascading-entity-action";
 import { PublicFormsService } from "app/features/public-form/public-forms.service";
 import { BulkOperationStateService } from "./bulk-operation-state.service";
 import type { Mock } from "vitest";
+import {
+  ConfirmationDialogMock,
+  mockMatDialogRef,
+} from "#src/app/utils/test-utils/dialog-mocks";
 
 type EntityMapperMock = {
   save: Mock;
@@ -38,11 +42,6 @@ type SnackBarRefMock = Pick<
 
 type MatSnackBarMock = {
   open: Mock;
-};
-
-type ConfirmationDialogMock = {
-  getConfirmation: Mock;
-  showProgressDialog: Mock;
 };
 
 type EntityDeleteServiceMock = {
@@ -123,9 +122,9 @@ describe("EntityActionsService", () => {
       showProgressDialog: vi.fn(),
     };
     mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
-    mockConfirmationDialog.showProgressDialog.mockReturnValue({
-      close: vi.fn(),
-    });
+    mockConfirmationDialog.showProgressDialog.mockReturnValue(
+      mockMatDialogRef(),
+    );
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],

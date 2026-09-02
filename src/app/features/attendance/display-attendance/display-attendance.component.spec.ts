@@ -26,10 +26,6 @@ describe("DisplayAttendanceComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should calculate percentage from attendance items", () => {
     fixture.componentRef.setInput("value", [
       new AttendanceItem(makeStatus(AttendanceLogicalStatus.PRESENT, "P")),

@@ -28,10 +28,6 @@ describe("FilterService", () => {
     service = TestBed.inject(FilterService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should patch entities with values from filters", () => {
     const filter: DataFilter<Note> = {
       subject: "Test",

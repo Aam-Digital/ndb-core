@@ -56,10 +56,6 @@ describe("DateRangeFilterPanelComponent", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should highlight the currently selected option", () => {
     expect(component.selectedOption()).toEqual(defaultDateFilters[1]);
   });

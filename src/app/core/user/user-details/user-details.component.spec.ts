@@ -16,6 +16,10 @@ import { CoreTestingModule } from "#src/app/utils/core-testing.module";
 import { Angulartics2Module } from "angulartics2";
 import type { SessionInfo } from "../../session/auth/session-info";
 import type { Mock } from "vitest";
+import {
+  ConfirmationDialogMock,
+  mockConfirmationDialog,
+} from "#src/app/utils/test-utils/dialog-mocks";
 
 type UserAdminServiceMock = {
   getAllRoles: Mock;
@@ -43,10 +47,6 @@ type DialogRefMock = {
   close: Mock;
 };
 
-type ConfirmationDialogMock = {
-  getConfirmation: Mock;
-};
-
 describe("UserDetailsComponent", () => {
   let component: UserDetailsComponent;
   let fixture: ComponentFixture<UserDetailsComponent>;
@@ -57,7 +57,7 @@ describe("UserDetailsComponent", () => {
   let mockSessionSubject: BehaviorSubject<SessionInfo | null>;
   let mockCurrentUserSubject: BehaviorSubject<UserAccount | null>;
   let mockDialogRef: DialogRefMock;
-  let mockConfirmationDialog: ConfirmationDialogMock;
+  let confirmationDialog: ConfirmationDialogMock;
 
   const mockRole: Role = {
     id: "test-role",
@@ -113,9 +113,7 @@ describe("UserDetailsComponent", () => {
       close: vi.fn().mockName("MatDialogRef.close"),
     };
 
-    mockConfirmationDialog = {
-      getConfirmation: vi.fn().mockResolvedValue(true),
-    };
+    confirmationDialog = mockConfirmationDialog();
 
     await TestBed.configureTestingModule({
       imports: [
@@ -134,7 +132,7 @@ describe("UserDetailsComponent", () => {
         { provide: CurrentUserSubject, useValue: mockCurrentUserSubject },
         {
           provide: ConfirmationDialogService,
-          useValue: mockConfirmationDialog,
+          useValue: confirmationDialog,
         },
       ],
     }).compileComponents();
@@ -144,10 +142,6 @@ describe("UserDetailsComponent", () => {
     fixture = TestBed.createComponent(UserDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should populate form when userAccount input is set", async () => {

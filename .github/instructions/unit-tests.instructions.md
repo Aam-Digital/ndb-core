@@ -4,6 +4,26 @@ applyTo: "**/*.spec.ts"
 
 # Unit Testing Patterns (Vitest)
 
+## What to test, and how much
+
+Before adding a spec file, check that it is the right shape of test:
+
+- **Test behaviour, not existence.** Cover logic that can be wrong: branches,
+  transformations, error paths, edge cases. `expect(component).toBeTruthy()` asserts only
+  that Angular can construct a class — the production build and the e2e suite already
+  establish that, and `src/app/component-smoke.spec.ts` sweeps every registered component
+  for it in a single file. Add a component to that sweep's list instead of writing a new
+  spec file whose only assertion is construction.
+- **A spec file must earn its environment.** Each one costs a fresh jsdom (~1.3s of CI
+  whether it holds one test or thirty) and a reviewer's attention. Prefer adding a case to
+  an existing spec over creating a new file.
+- **Three or more tests sharing a body shape become one `it.each` table** (see below).
+- **Name the invariant, not the scenario.** If a test name needs "and", it is two tests or
+  one table.
+- **Drive the subject through its public API.** No `(component as any).privateMethod()`.
+- **Assert what the user sees** — roles and visible text, never framework-internal class
+  names such as `mat-mdc-checkbox-checked`.
+
 ## Test Module Setup
 
 Prefer to mock all dependencies to have isolated unit tests.
@@ -26,11 +46,37 @@ describe("MyComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  it("hides the archived hint until the record is archived", () => {
+    fixture.componentRef.setInput("entity", TestEntity.create({ inactive: true }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain("archived");
   });
 });
 ```
+
+## Table-driven tests
+
+When several tests differ only in their inputs and expected result, write them as one
+`it.each` table. The table shows the whole contract at a glance and makes a missing case
+visible; the same cases written out longhand hide it behind near-identical blocks.
+
+```typescript
+it.each([
+  [":count", [1, 2, 3, 4, 5], 5],
+  [":count", [], 0],
+  [":sum", [1, 2, 3, 4], 10],
+  [":sum", ["1", "invalid", "3", null], 4],
+  [":avg", [10, 20, 30], "20"],
+  [":avg(2)", [10, 20, 25], "18.33"],
+])("%s over %j returns %s", (expression, data, expected) => {
+  expect(service.queryData(expression, null, null, data)).toBe(expected);
+});
+```
+
+For a whole family of implementations that share one contract, extract a harness instead —
+see `testDatatype()` in `entity-schema.service.test-utils.ts`, which covers 140 tests across
+17 tiny spec files.
 
 You can pass initial login state and seed entities:
 
@@ -68,6 +114,36 @@ await TestBed.configureTestingModule({
   providers: [{ provide: EntityMapperService, useValue: mockService }],
 }).compileComponents();
 ```
+
+## Shared mocks
+
+Before hand-building a mock, check whether a shared one exists - reusing it keeps the shape
+right and gives the setup a name that says what it does.
+
+| Helper                                          | Replaces                                                         |
+| ----------------------------------------------- | ---------------------------------------------------------------- |
+| `mockConfirmationDialog(confirmed?)`            | `{ getConfirmation: vi.fn().mockResolvedValue(...) }`            |
+| `mockMatDialog(result?)`                        | a `MatDialog` whose `open()` returns a ref closing with `result` |
+| `mockMatDialogRef(result?)`                     | `MatDialogRef` for the component _inside_ a dialog               |
+| `mockEntityMapperProvider(entities?)`           | providers for a seeded in-memory `EntityMapperService`           |
+| `setupCustomFormControlEditComponent(...)`      | form-control wiring for `edit-*` components                      |
+| `testDatatype(...)` / `testEntitySubclass(...)` | a whole spec for a datatype or entity subclass                   |
+
+The dialog mocks live in `src/app/utils/test-utils/dialog-mocks.ts`. Take the default and
+override the one `vi.fn()` the test cares about:
+
+```typescript
+const confirmationDialog = mockConfirmationDialog();
+// ... { provide: ConfirmationDialogService, useValue: confirmationDialog }
+
+it("does not delete when the user cancels", async () => {
+  confirmationDialog.getConfirmation.mockResolvedValue(false);
+  ...
+});
+```
+
+Note the naming: the _factory_ is `mockX()`, so name the variable it produces `x` rather than
+`mockX` - otherwise the local shadows the import.
 
 ## Entity Mapper Mocking
 

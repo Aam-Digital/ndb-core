@@ -64,10 +64,6 @@ describe("EditProgressDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should contain the initial state from the data", () => {
     expect(component.parts.value).toEqual(mockDialogData.parts);
     expect(component.parts.valid).toBe(true);

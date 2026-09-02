@@ -38,10 +38,6 @@ describe("AssistantService", () => {
     service = TestBed.inject(AssistantService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should open the assistant dialog with correct configuration", async () => {
     mockDialogRef.afterClosed.mockReturnValue(of(undefined));
     mockDialog.open.mockReturnValue(mockDialogRef);

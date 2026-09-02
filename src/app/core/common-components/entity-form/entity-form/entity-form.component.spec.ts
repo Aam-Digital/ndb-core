@@ -53,10 +53,6 @@ describe("EntityFormComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should remove fields without read permissions when entity is not new", async () => {
     const existingEntity = new TestEntity();
     existingEntity._rev = "foo";

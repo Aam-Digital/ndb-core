@@ -16,10 +16,6 @@ describe("AuthGuard", () => {
     loginState = TestBed.inject(LoginStateSubject);
   });
 
-  it("should be created", () => {
-    expect(AuthGuard).toBeTruthy();
-  });
-
   it("should return true if user is logged in", () => {
     loginState.next(LoginState.LOGGED_IN);
 

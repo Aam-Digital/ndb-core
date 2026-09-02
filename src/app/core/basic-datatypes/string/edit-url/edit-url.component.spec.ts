@@ -22,10 +22,6 @@ describe("EditUrlComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should be invalid for value that is not a complete URL", () => {
     component.formControl.setValue("example");
     fixture.detectChanges();

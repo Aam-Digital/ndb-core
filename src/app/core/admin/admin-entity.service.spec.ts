@@ -24,10 +24,6 @@ describe("AdminEntityService", () => {
     service = TestBed.inject(AdminEntityService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should create and return empty object if entity config key is missing", async () => {
     const config: any = { data: {} };
     const entityConstructor: any = { ENTITY_TYPE: "NewTestEntity" };

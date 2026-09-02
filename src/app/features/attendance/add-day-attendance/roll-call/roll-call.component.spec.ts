@@ -155,10 +155,6 @@ describe("RollCallComponent", () => {
     fixture.detectChanges();
   }));
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];
     mockEnumService.getEnumValues.mockReturnValue(options);

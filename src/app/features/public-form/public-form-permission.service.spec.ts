@@ -27,10 +27,6 @@ describe("PublicFormPermissionService", () => {
     service = TestBed.inject(PublicFormPermissionService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should allow access when permissions config cannot be loaded", async () => {
     mockEntityMapper.load.mockRejectedValue(new Error("Config not found"));
 
