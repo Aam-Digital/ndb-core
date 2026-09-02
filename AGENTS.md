@@ -203,7 +203,29 @@ When developing new functionality:
 
 ### Unit Testing (Vitest)
 
-- Write unit tests for all new components and services
+- **Test behaviour, not existence.** Write unit tests for logic that can be wrong: branches,
+  transformations, error paths, edge cases. A component or service with no branching logic
+  does not need a spec — `expect(component).toBeTruthy()` asserts only that Angular can
+  construct a class, which the production build and the e2e suite already establish.
+  `src/app/component-smoke.spec.ts` sweeps every registered component for that in one file;
+  add a component to its list rather than creating a new spec file for it.
+- **A spec file must earn its environment.** Every spec file costs a fresh jsdom (~1.3s of CI,
+  regardless of how many tests it holds) and a reviewer's attention. Prefer adding a case to
+  an existing spec over creating a new file, the same way we prefer extending an e2e scenario
+  over adding a new one.
+- **Three or more tests sharing a body shape become one `it.each` table.** A table shows the
+  whole contract at a glance and makes a gap in the cases visible; the same cases written out
+  longhand hide it behind fifty lines of near-identical arrange/act/assert. See
+  `src/app/core/export/query.service.spec.ts` for the pattern, or the shared
+  `testDatatype()` harness for a more elaborate one.
+- **Name the invariant, not the scenario.** `it("keeps the wildcard row editable when the
+  default role only covers single record types")` beats a name that restates the setup. If a
+  name needs "and", it is two tests or one table.
+- **Drive the subject through its public API.** No `(component as any).privateMethod()` — if
+  a behaviour is only reachable through a private, test it through the caller that reaches it.
+- **Assert what the user sees.** Query by role or visible text, never by framework-internal
+  class names such as `mat-mdc-checkbox-checked`, which change on Angular Material upgrades
+  and say nothing about behaviour.
 - Do not add unit tests for trivial changes (e.g. rewording an error message, renaming a
   variable, adjusting a log string) unless the change also alters behavior. A test that
   only pins down exact wording breaks on the next copy edit and adds no protection against
