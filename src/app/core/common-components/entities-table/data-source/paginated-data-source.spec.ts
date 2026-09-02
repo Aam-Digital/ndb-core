@@ -60,10 +60,6 @@ describe("PaginatedDataSource", () => {
     );
   });
 
-  it("should create", () => {
-    expect(dataSource).toBeTruthy();
-  });
-
   describe("processFilterForDB", () => {
     function processFilter(filter: object) {
       return (dataSource as any).processFilterForDB(filter);
@@ -390,78 +386,58 @@ describe("PaginatedDataSource", () => {
         return paginator;
       }
 
-      it("should empty filteredRecords, move the paginator back to page 0, and refetch from scratch when the filter changes", async () => {
-        const paginator = await setUpPageOneWithTwoPages();
-
-        const filteredPage0 = [new TestEntity("filtered-0")];
-        findTypeSpy.mockResolvedValueOnce({
-          records: filteredPage0,
-          bookmark: "bm-filtered",
-        });
-
-        dataSource.dataFilter.set({ name: "test" } as any);
-        TestBed.tick();
-        await flush();
-
-        expect(paginator.pageIndex).toBe(0);
-        expect(findTypeSpy).toHaveBeenCalledWith(
-          TestEntity,
+      /**
+       * Filter, sort and an incoming entity update all invalidate the bookmark chain, so
+       * each has to restart paging from page 0. They are one table to keep that shared
+       * invariant in one place - only the trigger and the resulting query differ.
+       */
+      it.each([
+        [
+          "the filter changes",
+          (ds: PaginatedDataSource<Entity>) => {
+            ds.dataFilter.set({ name: "test" } as any);
+            TestBed.tick();
+          },
           { name: "test" },
-          { limit: 11, bookmark: undefined },
           {},
-        );
-        expect(dataSource.filteredRecords()).toEqual(filteredPage0);
-      });
-
-      it("should empty filteredRecords, move the paginator back to page 0, and refetch from scratch when the sort order changes", async () => {
-        const paginator = await setUpPageOneWithTwoPages();
-
-        const sortedPage0 = Array.from(
-          { length: 11 },
-          (_, i) => new TestEntity(`sorted-${i}`),
-        );
-        findTypeSpy.mockResolvedValueOnce({
-          records: sortedPage0,
-          bookmark: "bm-sorted",
-        });
-
-        (dataSource as any).updateSort("name", "asc");
-        await flush();
-
-        expect(paginator.pageIndex).toBe(0);
-        expect(findTypeSpy).toHaveBeenCalledWith(
-          TestEntity,
+        ],
+        [
+          "the sort order changes",
+          (ds: PaginatedDataSource<Entity>) =>
+            (ds as any).updateSort("name", "asc"),
           {},
-          { limit: 11, bookmark: undefined },
           { prop: "name", dir: "asc" },
-        );
-        expect(dataSource.filteredRecords()).toEqual(sortedPage0);
-      });
-
-      it("should empty filteredRecords, move the paginator back to page 0, and refetch from scratch when an entity update is received", async () => {
-        const paginator = await setUpPageOneWithTwoPages();
-
-        const reloadedPage0 = Array.from(
-          { length: 11 },
-          (_, i) => new TestEntity(`reloaded-${i}`),
-        );
-        findTypeSpy.mockResolvedValueOnce({
-          records: reloadedPage0,
-          bookmark: "bm-reloaded",
-        });
-
-        await (dataSource as any).processEntityUpdate();
-        await flush();
-
-        expect(paginator.pageIndex).toBe(0);
-        expect(findTypeSpy).toHaveBeenCalledWith(
-          TestEntity,
+        ],
+        [
+          "an entity update is received",
+          (ds: PaginatedDataSource<Entity>) =>
+            (ds as any).processEntityUpdate(),
           {},
-          { limit: 11, bookmark: undefined },
           {},
-        );
-        expect(dataSource.filteredRecords()).toEqual(reloadedPage0);
-      });
+        ],
+      ])(
+        "empties filteredRecords and refetches page 0 when %s",
+        async (_trigger, applyTrigger, expectedFilter, expectedSort) => {
+          const paginator = await setUpPageOneWithTwoPages();
+          const refetchedPage0 = [new TestEntity("refetched-0")];
+          findTypeSpy.mockResolvedValueOnce({
+            records: refetchedPage0,
+            bookmark: "bm-refetched",
+          });
+
+          await applyTrigger(dataSource);
+          await flush();
+
+          expect(paginator.pageIndex).toBe(0);
+          expect(findTypeSpy).toHaveBeenCalledWith(
+            TestEntity,
+            expectedFilter,
+            { limit: 11, bookmark: undefined },
+            expectedSort,
+          );
+          expect(dataSource.filteredRecords()).toEqual(refetchedPage0);
+        },
+      );
 
       it("should clear filteredRecords immediately, even before a paginator is bound", () => {
         dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
