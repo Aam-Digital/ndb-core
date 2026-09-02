@@ -206,6 +206,7 @@ export class EntityRemoteCountDashboardComponent {
     entityDefinition: EntityConstructor,
     filter: DataFilter<Entity>,
   ): Promise<number> {
+    const pageSize = 10000;
     let count = 0;
     let bookmark: string | undefined;
     let lastPageSize: number;
@@ -213,14 +214,14 @@ export class EntityRemoteCountDashboardComponent {
       const res = await this.entityMapper.findType(
         entityDefinition,
         filter,
-        { limit: FULL_LOAD_PAGE_SIZE, bookmark },
+        { limit: pageSize, bookmark },
         { prop: this.groupBy(), dir: "asc" },
         { idOnly: true },
       );
       lastPageSize = res.records.length;
       bookmark = res.bookmark;
       count += lastPageSize;
-    } while (lastPageSize === FULL_LOAD_PAGE_SIZE);
+    } while (lastPageSize === pageSize);
     return count;
   }
 }
