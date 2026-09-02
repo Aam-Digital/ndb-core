@@ -136,6 +136,42 @@ describe("LoggingService", () => {
       expect(processSentryEvent(other, {})).not.toBeNull();
     });
 
+    describe("document update conflicts", () => {
+      // normal operation for an offline-first app: the user is told the save was
+      // rejected, and the occurrence is counted in usage analytics instead
+      const dbFailure = (value: string, hint: Sentry.EventHint = {}) =>
+        processSentryEvent(
+          {
+            exception: { values: [{ type: "DatabaseException", value }] },
+          } as any,
+          hint,
+        );
+
+      it("should drop a conflict identified by its status", () => {
+        expect(
+          dbFailure("whatever PouchDB said", {
+            originalException: { status: 409 },
+          }),
+        ).toBeNull();
+      });
+
+      it("should drop a conflict identified by its message, however PouchDB worded it", () => {
+        expect(
+          dbFailure("Document update conflict. (unable to resolve)"),
+        ).toBeNull();
+        expect(
+          dbFailure("Document update conflict (unable to resolve)"),
+        ).toBeNull();
+        expect(dbFailure("document update conflict")).toBeNull();
+      });
+
+      it("should still report other database failures", () => {
+        expect(
+          dbFailure("not_found", { originalException: { status: 404 } }),
+        ).not.toBeNull();
+      });
+    });
+
     it("should count message-only events (captureMessage) separately by message", () => {
       const messageEvent = () => ({ message: "repeated warning C" }) as any;
 
@@ -176,6 +212,11 @@ describe("LoggingService", () => {
         ({
           // Sentry orders the chain innermost-first: the thrown error is last
           exception: { values: [rootCause, thrown] },
+        }) as any;
+
+      const deniedEvent = (value: string) =>
+        ({
+          exception: { values: [{ type: "DatabaseException", value }] },
         }) as any;
 
       it("should group our wrapper errors by thrown error and root cause", () => {
@@ -316,7 +357,7 @@ describe("LoggingService", () => {
                 {
                   type: "DatabaseException",
                   value:
-                    'Document update conflict. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
+                    'missing: no document found. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
                 },
               ],
             },
@@ -330,7 +371,7 @@ describe("LoggingService", () => {
                 {
                   type: "DatabaseException",
                   value:
-                    'Document update conflict. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
+                    'missing: no document found. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
                 },
               ],
             },
@@ -342,21 +383,18 @@ describe("LoggingService", () => {
       });
 
       it("should ignore punctuation and casing, which third-party errors are inconsistent about", () => {
-        const conflictEvent = (value: string) =>
-          ({
-            exception: { values: [{ type: "DatabaseException", value }] },
-          }) as any;
-
+        // PouchDB reports the same failure as both "Unauthorized" and
+        // "unauthorized", with and without a trailing period
         const withPeriod = processSentryEvent(
-          conflictEvent("Document update conflict. (unable to resolve)"),
+          deniedEvent("Unauthorized. (name or password is incorrect)"),
           {},
         );
         const withoutPeriod = processSentryEvent(
-          conflictEvent("Document update conflict (unable to resolve)"),
+          deniedEvent("Unauthorized (name or password is incorrect)"),
           {},
         );
         const lowercased = processSentryEvent(
-          conflictEvent("document update conflict (unable to resolve)"),
+          deniedEvent("unauthorized (name or password is incorrect)"),
           {},
         );
 
