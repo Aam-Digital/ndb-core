@@ -25,10 +25,6 @@ describe("EntityFieldSelectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should merge the explicitly given options with the fields inferred from the entity schema", () => {
     fixture.componentRef.setInput("entityType", TestEntity);
     fixture.componentRef.setInput("options", [

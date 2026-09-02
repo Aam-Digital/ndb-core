@@ -48,10 +48,6 @@ describe("ExportDialogComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should default to csv format and filtered scope", () => {
     expect(component.format()).toBe("csv");
     expect(component.scope()).toBe("filtered");

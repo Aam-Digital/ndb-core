@@ -44,10 +44,6 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should remove unchanged default values before emitting output", () => {
     // set up
     const testFormValues = {

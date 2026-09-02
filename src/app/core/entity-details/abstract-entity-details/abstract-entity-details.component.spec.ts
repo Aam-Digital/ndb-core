@@ -70,10 +70,6 @@ describe("AbstractEntityDetailsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load the correct entity on init", async () => {
     vi.useFakeTimers();
     try {

@@ -37,10 +37,6 @@ describe("DateRangeFilterComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should set the correct date filter when a new option is selected", () => {
     const dateFilter = new DateFilter("test", "Test", defaultDateFilters);
 

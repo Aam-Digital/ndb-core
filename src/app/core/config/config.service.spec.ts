@@ -61,10 +61,6 @@ describe("ConfigService", () => {
     }
   }
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should load the config from the entity mapper", async () => {
     vi.useFakeTimers();
     try {

@@ -68,10 +68,6 @@ describe("EntityFieldLabelComponent", () => {
     schemaUpdateSubject.complete();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should display the correct label for a given field object", () => {
     const fieldConfig: FormFieldConfig = {
       id: "testField",

@@ -46,10 +46,6 @@ describe("PublicFormLinkingService", () => {
     service = TestBed.inject(PublicFormLinkingService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   describe("handleUrlParameterLinking", () => {
     it("should not process URL parameters when none are provided", () => {
       const entries: PublicFormEntry[] = [

@@ -32,10 +32,6 @@ describe("ViewDistanceComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should display a dash if no address is set", () => {
     entity["address"] = undefined;
     compareCoordinates.next([{ lat: 52.0001, lon: 13 }]);

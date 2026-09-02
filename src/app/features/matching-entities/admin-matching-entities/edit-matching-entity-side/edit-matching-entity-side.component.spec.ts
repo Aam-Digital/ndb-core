@@ -42,10 +42,6 @@ describe("EditMatchingEntitySideComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should offer the special columns 'distance' and record preview for selection", () => {
     const columnsManager = fixture.debugElement.queryAll(
       By.directive(AdminListManagerComponent),

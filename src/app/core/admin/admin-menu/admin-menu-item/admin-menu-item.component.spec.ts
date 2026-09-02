@@ -45,10 +45,6 @@ describe("AdminMenuItemComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show warning when item has no link and no sub-items", () => {
     fixture.componentRef.setInput("item", {
       uniqueId: "1",

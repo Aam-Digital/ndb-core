@@ -52,10 +52,6 @@ describe("LanguageSelectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should switch locale", () => {
     component.changeLocale("de");
     expect(mockLanguageService.switchLocale).toHaveBeenCalledWith("de");

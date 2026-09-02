@@ -42,10 +42,6 @@ describe("DateImportDialogComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should parse dates with entered format", async () => {
     vi.useFakeTimers();
     try {

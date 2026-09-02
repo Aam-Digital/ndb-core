@@ -111,10 +111,6 @@ describe("BulkMergeService", () => {
     entityMapper.addAll([recordA, recordB]);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should show an error dialog and return false when executeAction is called with != 2 entities", async () => {
     const result = await service.executeAction([recordA]);
     expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalled();

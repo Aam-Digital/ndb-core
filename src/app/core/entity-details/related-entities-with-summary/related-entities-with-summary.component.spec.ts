@@ -73,10 +73,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     return (component as any).summary() as { sum: string; avg: string };
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   function setRecordsAndGenerateSummary(
     ...records: Partial<TestEntityWithAmount>[]
   ) {

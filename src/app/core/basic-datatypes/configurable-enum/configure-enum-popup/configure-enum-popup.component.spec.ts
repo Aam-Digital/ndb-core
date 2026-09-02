@@ -52,10 +52,6 @@ describe("ConfigureEnumPopupComponent", () => {
     ) as MockEntityMapperService;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show a popup if user tries to delete an enum that is still in use", async () => {
     component.enumEntity = new ConfigurableEnum("genders");
     component.enumEntity.values = genders;

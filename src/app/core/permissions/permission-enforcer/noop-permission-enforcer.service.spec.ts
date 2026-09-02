@@ -7,10 +7,6 @@ describe("NoopPermissionEnforcerService", () => {
     service = new NoopPermissionEnforcerService();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should resolve without doing anything", async () => {
     await expect(
       service.enforcePermissionsOnLocalData([

@@ -93,10 +93,6 @@ describe("EntityDetailsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("sets the panels config with child and creating status", async () => {
     vi.useFakeTimers();
     try {

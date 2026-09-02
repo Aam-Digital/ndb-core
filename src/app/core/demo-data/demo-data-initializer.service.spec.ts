@@ -117,10 +117,6 @@ describe("DemoDataInitializerService", () => {
     await tmpDB2.destroy();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should save the default users", () => {
     service.logInDemoUser();
 

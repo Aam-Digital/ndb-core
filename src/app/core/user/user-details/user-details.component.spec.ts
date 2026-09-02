@@ -146,10 +146,6 @@ describe("UserDetailsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should populate form when userAccount input is set", async () => {
     fixture.componentRef.setInput("userAccount", mockUserAccount);
     fixture.detectChanges();

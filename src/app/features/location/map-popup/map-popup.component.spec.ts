@@ -69,10 +69,6 @@ describe("MapPopupComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should set new location upon map clicks (if enabled)", async () => {
     vi.useFakeTimers();
     try {

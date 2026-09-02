@@ -51,10 +51,6 @@ describe("EditLegacyAttendanceComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show the child meeting note attendance component when the event is a meeting", () => {
     categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
     fixture.detectChanges();

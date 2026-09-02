@@ -18,10 +18,6 @@ describe("LoggingService", () => {
     vi.spyOn(loggingService as any, "logToRemoteMonitoring");
   });
 
-  it("should be created", () => {
-    expect(loggingService).toBeTruthy();
-  });
-
   it("should log a debug message with additional context", function () {
     loggingService.debug(testMessage, "extra context");
 

@@ -20,10 +20,6 @@ describe("HistoricalDataService", () => {
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should load data related to a entity", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const entity = new Entity();

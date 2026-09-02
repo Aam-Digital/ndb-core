@@ -50,10 +50,6 @@ describe("EntityInlineEditActionsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should create a formGroup when editing a row", async () => {
     const child = new InlineEditEntity();
     child.name = "Child Name";

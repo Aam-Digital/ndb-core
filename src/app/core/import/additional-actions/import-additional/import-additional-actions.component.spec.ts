@@ -51,10 +51,6 @@ describe("ImportAdditionalActionsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should hide actions unless the user can update at least one target type", () => {
     const ability = TestBed.inject(EntityAbility);
     ability.update([

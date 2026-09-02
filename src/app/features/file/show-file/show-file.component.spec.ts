@@ -23,10 +23,6 @@ describe("ShowFileComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should open link in new tab when clicking the button", async () => {
     vi.spyOn(window, "open");
     const button = await loader.getHarness(MatButtonHarness);

@@ -97,10 +97,6 @@ describe("AdminComponent", () => {
     vi.unstubAllGlobals();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should call backup service for json export", async () => {
     mockBackupService.getDatabaseExport.mockResolvedValue([]);
     await component.saveBackup();

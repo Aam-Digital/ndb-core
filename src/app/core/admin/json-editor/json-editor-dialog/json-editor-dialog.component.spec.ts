@@ -27,10 +27,6 @@ describe("JsonEditorDialogComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize jsonDataControl with provided data", () => {
     expect(component.jsonDataControl.value).toEqual({ key: "value" });
   });

@@ -48,10 +48,6 @@ describe("RoutePermissionsService", () => {
     service = TestBed.inject(RoutePermissionsService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should filter menu-items where user doesn't have permission for its link", async () => {
     const itemPermitted: MenuItem = {
       label: "Visible Item",

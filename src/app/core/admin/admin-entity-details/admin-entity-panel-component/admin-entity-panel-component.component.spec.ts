@@ -40,10 +40,6 @@ describe("AdminEntityPanelComponentComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should handle undefined columns when creating new related entity section", () => {
     fixture.componentRef.setInput("config", {
       component: "RelatedEntities",

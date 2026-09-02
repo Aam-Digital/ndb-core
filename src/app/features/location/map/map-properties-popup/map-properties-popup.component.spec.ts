@@ -69,10 +69,6 @@ describe("MapPropertiesPopupComponent", () => {
     TestEntity.schema.delete("address");
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should display all available properties with their labels", () => {
     expect(component.entityProperties).toEqual([
       {

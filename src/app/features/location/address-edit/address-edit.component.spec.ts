@@ -68,10 +68,6 @@ describe("AddressEditComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should clear selected location when clicking 'Remove'", async () => {
     fixture.componentRef.setInput("selectedLocation", {
       locationString: "some value",

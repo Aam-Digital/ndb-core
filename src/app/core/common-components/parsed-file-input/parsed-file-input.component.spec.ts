@@ -31,10 +31,6 @@ describe("ParsedFileInputComponent", () => {
     vi.restoreAllMocks();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only allow files that have a .csv extension when set to fileType csv", async () => {
     mockFileReader();
 

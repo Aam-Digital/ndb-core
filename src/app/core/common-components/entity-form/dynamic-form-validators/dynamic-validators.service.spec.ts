@@ -31,10 +31,6 @@ describe("DynamicValidatorsService", () => {
     service = TestBed.inject(DynamicValidatorsService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   async function testValidator(
     validator: ValidatorFn | AsyncValidatorFn,
     successState: any,

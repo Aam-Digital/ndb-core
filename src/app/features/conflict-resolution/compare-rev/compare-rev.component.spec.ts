@@ -71,10 +71,6 @@ describe("CompareRevComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load and analyse the given doc revision", async () => {
     component.onPanelOpen();
     fixture.detectChanges();

@@ -76,10 +76,6 @@ describe("EmailClientService", () => {
     service = TestBed.inject(EmailClientService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should show warning and return false if email field exists but value is missing", async () => {
     const fakeEntity = new EntityWithEmail();
     fakeEntity.email = undefined;

@@ -11,10 +11,6 @@ describe("ImportColumnMappingService", () => {
     service = TestBed.inject(ImportColumnMappingService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   //1st test case
   it("should map columns to their respective property names automatically", () => {
     const testMapping: ColumnMapping[] = [

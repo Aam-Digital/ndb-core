@@ -17,10 +17,6 @@ describe("ConfigurableEnum", () => {
     testEnum.values = JSON.parse(JSON.stringify(sampleValues));
   });
 
-  it("should create", () => {
-    expect(testEnum).toBeTruthy();
-  });
-
   it("should add option from value object", () => {
     const newOption: ConfigurableEnumValue = {
       id: "3",

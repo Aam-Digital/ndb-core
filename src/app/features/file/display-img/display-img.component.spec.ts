@@ -24,10 +24,6 @@ describe("DisplayImgComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should reset picture if child has none", async () => {
     const withPicture = new TestEntity();
     withPicture["photo"] = "some-picture";

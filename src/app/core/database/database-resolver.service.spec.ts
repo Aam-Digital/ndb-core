@@ -68,10 +68,6 @@ describe("DatabaseResolverService", () => {
     environment.session_type = originalSessionType;
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should clear last-sync markers before intentionally destroying databases", async () => {
     localStorage.setItem("LAST_SYNC_test-db", "2024-01-01T00:00:00.000Z");
     localStorage.setItem("other", "value");

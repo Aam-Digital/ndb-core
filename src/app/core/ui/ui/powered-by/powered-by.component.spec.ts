@@ -15,10 +15,6 @@ describe("PoweredByComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should display the Aam Digital logo", () => {
     const img: HTMLImageElement = fixture.nativeElement.querySelector(
       "img.powered-by-logo",

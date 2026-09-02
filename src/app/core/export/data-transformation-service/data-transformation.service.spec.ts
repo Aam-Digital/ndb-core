@@ -47,10 +47,6 @@ describe("DataTransformationService", () => {
     );
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should export only properties mentioned in config", async () => {
     const testObject1 = {
       name: "foo",

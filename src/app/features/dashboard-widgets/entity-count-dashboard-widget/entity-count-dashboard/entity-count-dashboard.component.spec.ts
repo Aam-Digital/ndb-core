@@ -46,10 +46,6 @@ describe("EntityCountDashboardComponent", () => {
     ) as MockEntityMapperService;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should calculate totalChildren correctly", async () => {
     entityMapper.add(createChild({ id: "a", label: "CenterA" }));
     entityMapper.add(createChild({ id: "b", label: "CenterB" }));

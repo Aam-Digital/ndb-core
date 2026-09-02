@@ -48,10 +48,6 @@ describe("EditAttendanceComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show attendance status selects for each participant", () => {
     const elements = fixture.debugElement.queryAll(
       By.directive(EditConfigurableEnumComponent),

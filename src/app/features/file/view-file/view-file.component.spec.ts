@@ -31,10 +31,6 @@ describe("ViewFileComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show file when clicking the button", async () => {
     const button = await loader.getHarness(MatButtonHarness);
 

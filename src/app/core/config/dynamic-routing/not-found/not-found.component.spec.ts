@@ -41,10 +41,6 @@ describe("NotFoundComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should call logging service with current route", () => {
     expect(Logging.debug).toHaveBeenCalledWith(
       "Could not find route: /some/path",

@@ -36,10 +36,6 @@ describe("AttendancePermissionGuard", () => {
     guard = TestBed.inject(AttendancePermissionGuard);
   });
 
-  it("should be created", () => {
-    expect(guard).toBeTruthy();
-  });
-
   it("should complete without hanging when ability is not yet initialized and on('updated') fires immediately", async () => {
     const uninitializedAbility = {
       initialized: false,

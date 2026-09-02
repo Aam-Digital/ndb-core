@@ -44,10 +44,6 @@ describe("TemplateExportService", () => {
     service = TestBed.inject(TemplateExportService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should open dialog with given entity", async () => {
     const data = new TestEntity();
     const result = await service.generateFile(data);

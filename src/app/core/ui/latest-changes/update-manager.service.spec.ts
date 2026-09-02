@@ -118,10 +118,6 @@ describe("UpdateManagerService", () => {
 
   afterEach(() => localStorage.clear());
 
-  it("should create", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should show a snackBar that allows to reload the page when an update is available", () => {
     service.listenToAppUpdates();
     // notify about new update

@@ -53,10 +53,6 @@ describe("BirthdayDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only show birthdays in the next 31 days", async () => {
     vi.useFakeTimers();
     try {

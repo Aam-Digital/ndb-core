@@ -44,10 +44,6 @@ describe("DisplayParticipantsCountComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should count correct number of active students for school", async () => {
     await fixture.whenStable();
     expect(component.participantRelationsCount()).toBe(3);

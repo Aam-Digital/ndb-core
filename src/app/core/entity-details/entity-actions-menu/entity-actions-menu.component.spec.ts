@@ -23,10 +23,6 @@ describe("EntityActionsMenuComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should emit actionTriggered Output upon action", async () => {
     vi.useFakeTimers();
     try {

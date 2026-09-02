@@ -87,10 +87,6 @@ describe("AbilityService", () => {
     entityUpdates.complete();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should fetch the rules object from the database", () => {
     service.initializeRules();
     expect(entityMapper.load).toHaveBeenCalledWith(

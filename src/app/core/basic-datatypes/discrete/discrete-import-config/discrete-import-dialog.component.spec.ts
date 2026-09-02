@@ -47,10 +47,6 @@ describe("DiscreteImportDialogComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should use the edit component for the selected property", () => {
     expect(component.component).toBe(enumDataType.editComponent);
     expect(component.schema).toBe(TestEntity.schema.get("category"));

@@ -137,10 +137,6 @@ describe("NotificationSettingComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should add a new notification rule to the config", async () => {
     await initializeComponent();
     const initialLength =
