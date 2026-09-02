@@ -42,7 +42,11 @@ jobs:
     env:
       TZ: Europe/Berlin
       FORCE_COLOR: 1
-    timeout-minutes: 10
+    # The Angular 22 upgrade made the ~470-file suite noticeably heavier
+    # (extra TestBed.tick() flushes, ApplicationRef.afterTick subscription).
+    # 10 minutes was no longer enough for it to finish - it got cancelled
+    # with ~90% of files done, so give it more headroom.
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
