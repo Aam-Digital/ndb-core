@@ -238,12 +238,12 @@ file's assertions take 0.41s.
 
 ---
 
-## 5. The cheapest deletion available: 104 smoke-only files
+## 5. The cheapest deletion available: 101 smoke-only files
 
-There are **401** assertions of the form `should create` / `should be created` — 14% of all
-tests; 252 are literally `expect(component).toBeTruthy()`. That alone is a readability
-problem. The speed problem is where they live: **104 spec files — 22% of the unit suite —
-contain nothing else.** Between them they hold 107 assertions.
+There are **339** assertions whose name is exactly `should create` / `should be created` or
+a close variant — 12% of all tests. That alone is a readability problem. The speed problem is
+where they live: **101 spec files — 21% of the unit suite — contain nothing else.** Between
+them they hold 101 assertions across 3,491 lines.
 
 | Kind | Files | Example |
 | --- | ---: | --- |
@@ -254,7 +254,7 @@ contain nothing else.** Between them they hold 107 assertions.
 | Dashboard widget settings | 8 | `features/dashboard-widgets/birthday-dashboard-settings…` |
 | Services | 4 | `core/admin/json-editor/json-editor.service.spec.ts` |
 | Directives | 1 | `core/common-components/border-highlight/…` |
-| **Total** | **104** | 22% of files, 3.8% of tests, 3,655 LOC |
+| **Total** | **101** | 21% of files, 3.7% of tests, 3,491 LOC |
 
 ### What they cost
 
@@ -265,7 +265,7 @@ the marginal one — the same suite with and without them, everything else held 
 | --- | ---: | ---: | ---: | ---: |
 | Baseline | 469 | 2,814 | 83.16s | 800.8s |
 | Smoke-only files excluded | 365 | 2,707 | 75.02s | 607.9s |
-| **Delta** | **−104** | **−107** | **−9.8%** | **−24.1%** |
+| **Delta** | **−101** | **−101** | **−9.8%** | **−24.1%** |
 
 Deleting 22% of the spec files removes 3.8% of the tests and buys 10% of wall time on a
 4-worker machine, or 24% of the CPU. On CI — coverage on, more CPU-bound — the real saving
@@ -289,17 +289,17 @@ hand-rolled mocks (`ConfigService`, `EntityRelationsService`, `EntityFormService
 `expect(component).toBeTruthy()`. Every mock is a hostage to future refactors; none is
 checked against the real service's shape.
 
-Fifteen of the 104 go further and import `MockedTestingModule.withState()`, which imports
+Fifteen of the 101 go further and import `MockedTestingModule.withState()`, which imports
 the entire `AppModule` — every feature module, `RouterModule.forRoot(allRoutes)`,
 `ServiceWorkerModule`, AngularFire, Angulartics — to reach that one-line assertion.
 
 ---
 
-## 6. Why the 104 smoke files exist, and why they will regrow
+## 6. Why the 101 smoke files exist, and why they will regrow
 
 Every new component gets a spec file, and every spec file is born as a smoke test, because
 that is what the canonical template in `.github/instructions/unit-tests.instructions.md`
-shows. Some grow real assertions later; 104 never did. **Deleting the 104 without changing
+shows. Some grow real assertions later; 101 never did. **Deleting the 101 without changing
 the template just schedules them to regrow** — see section 3.
 
 Credit where due: `AGENTS.md` already contains the right instinct a paragraph after the
@@ -415,12 +415,14 @@ files makes the suite both shorter to read and faster to run.
 
    Each is mechanically checkable with a lint rule later if it does not stick on its own.
 
-4. **Replace the 104 smoke-only files with one registry sweep.**
-   Delete all 104; add a single spec that walks `componentRegistry` and instantiates every
-   registered component against the real provider set. Keeps the only thing they bought — a
-   DI-wiring and template-compilation check — and pays the per-file toll once instead of 104
-   times. One commit, separate from anything else, per the repo's refactoring rule.
-   _Measured: −9.8% wall, −24.1% worker-CPU, −3,655 LOC, −22% of files in review._
+4. **Replace the 101 smoke-only files with one component sweep.** _(done — see
+   `src/app/component-smoke.spec.ts`)_
+   Delete all 101; add a single spec that resolves every entry in every module's
+   `ComponentTuple[]` list and constructs the components that need no bespoke setup. Keeps
+   the only thing they bought — a DI-wiring and template-compilation check — and pays the
+   per-file toll once instead of 101 times, while adding registry-resolution coverage that
+   nothing had before.
+   _Measured: 469 spec files → 369, worker-CPU 801s → 726s._
 
 5. **Stop importing `AppModule` into unit tests.**
    `MockedTestingModule` pulls in the entire application module and 80 spec files import it.
@@ -436,7 +438,7 @@ files makes the suite both shorter to read and faster to run.
    _Estimate: ~40s worker-CPU. Risk: low — failures would be immediate and obvious._
 
 7. **Housekeeping.**
-   Raise `timeout-minutes` past the observed 10m23s, or shard the job. Drop the 294 redundant
+   Raise `timeout-minutes` past the observed 10m23s, or shard the job. Drop the 238 redundant
    `should create` tests inside otherwise-useful files. Fix or delete the 7 skipped tests.
    Silence the deliberately-provoked error logs so a green run looks green.
 
@@ -458,7 +460,7 @@ provider/database test refactors (#4197, #4189), so mechanically rewritten lines
 attributed to their original author rather than to 2026. Per-PR figures are per squashed merge
 commit on `master`. Per-file timings from Vitest's JSON reporter; phase
 totals from its own end-of-run summary. The with/without comparison was produced by excluding
-the 104 files via config and re-running the full suite, everything else unchanged. CI figures
+the smoke-only files via config and re-running the full suite, everything else unchanged. CI figures
 are from the most recent green `Pull Request - Update` run on `Aam-Digital/ndb-core`.
 
 **Caveats.** 2026 covers eight months, so its monthly rate is comparable but its annual total
