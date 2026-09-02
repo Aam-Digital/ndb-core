@@ -7,7 +7,6 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatButtonHarness } from "@angular/material/button/testing";
 
 describe("ShowFileComponent", () => {
-  let component: ShowFileComponent;
   let fixture: ComponentFixture<ShowFileComponent>;
   let loader: HarnessLoader;
 
@@ -18,7 +17,6 @@ describe("ShowFileComponent", () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(ShowFileComponent);
-    component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
   });

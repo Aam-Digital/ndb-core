@@ -219,7 +219,7 @@ When developing new functionality:
   `src/app/core/export/query.service.spec.ts` for the pattern, or the shared
   `testDatatype()` harness for a more elaborate one.
 - **Name the invariant, not the scenario.** `it("keeps the wildcard row editable when the
-  default role only covers single record types")` beats a name that restates the setup. If a
+default role only covers single record types")` beats a name that restates the setup. If a
   name needs "and", it is two tests or one table.
 - **Drive the subject through its public API.** No `(component as any).privateMethod()` — if
   a behaviour is only reachable through a private, test it through the caller that reaches it.

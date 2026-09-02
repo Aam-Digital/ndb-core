@@ -12,7 +12,6 @@ import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manage
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 
 describe("EditMatchingEntitySideComponent", () => {
-  let component: EditMatchingEntitySideComponent;
   let fixture: ComponentFixture<EditMatchingEntitySideComponent>;
 
   beforeEach(async () => {
@@ -31,7 +30,6 @@ describe("EditMatchingEntitySideComponent", () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditMatchingEntitySideComponent);
-    component = fixture.componentInstance;
 
     fixture.componentRef.setInput("sideConfig", {
       entityType: TestEntity.ENTITY_TYPE,

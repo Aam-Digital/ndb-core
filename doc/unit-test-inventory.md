@@ -15,16 +15,16 @@ and `--ignore-revs-file` covering the three mechanical refactors that rewrote ex
 wholesale (the Vitest migration #3771 and the provider/database test cleanups #4197, #4189) —
 gives the vintage of the suite as it stands today:
 
-| Year authored | LOC in HEAD | Share | Tests | Share | Avg test-name length |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 2020 and earlier | 2,209 | 3.2% | 92 | 3.4% | 30 ch |
-| 2021 | 3,556 | 5.2% | 165 | 6.0% | 41 ch |
-| 2022 | 4,848 | 7.1% | 233 | 8.5% | 45 ch |
-| 2023 | 8,214 | 12.0% | 323 | 11.8% | 53 ch |
-| 2024 | 6,887 | 10.1% | 236 | 8.6% | 48 ch |
-| 2025 | 12,214 | 17.9% | 410 | 15.0% | 49 ch |
-| **2026 (8 months)** | **30,263** | **44.4%** | **1,277** | **46.7%** | **62 ch** |
-| **Total** | **68,191** | **100%** | **2,736** | **100%** | |
+| Year authored       | LOC in HEAD |     Share |     Tests |     Share | Avg test-name length |
+| ------------------- | ----------: | --------: | --------: | --------: | -------------------: |
+| 2020 and earlier    |       2,209 |      3.2% |        92 |      3.4% |                30 ch |
+| 2021                |       3,556 |      5.2% |       165 |      6.0% |                41 ch |
+| 2022                |       4,848 |      7.1% |       233 |      8.5% |                45 ch |
+| 2023                |       8,214 |     12.0% |       323 |     11.8% |                53 ch |
+| 2024                |       6,887 |     10.1% |       236 |      8.6% |                48 ch |
+| 2025                |      12,214 |     17.9% |       410 |     15.0% |                49 ch |
+| **2026 (8 months)** |  **30,263** | **44.4%** | **1,277** | **46.7%** |            **62 ch** |
+| **Total**           |  **68,191** |  **100%** | **2,736** |  **100%** |                      |
 
 - **Write rate:** ~3,780 test LOC/month in 2026 vs ~1,018/month in 2025 — **3.7x**.
 - **Median test diff per PR:** **92 LOC** in 2026-Q3, against 22–38 through all of 2023–2025.
@@ -36,16 +36,16 @@ there are roughly twice as many PRs. Review load from tests alone is up four- to
 
 ### Reviewer burden per pull request
 
-| Quarter | PRs touching tests | Median +test LOC | Largest +test LOC | test : source |
-| --- | ---: | ---: | ---: | ---: |
-| 2024-Q3 | 40 | 35 | 1,187 | 0.63x |
-| 2025-Q1 | 43 | 29 | 1,223 | 0.50x |
-| 2025-Q2 | 40 | 22 | 539 | 0.42x |
-| 2025-Q3 | 55 | 38 | 626 | 0.34x |
-| 2025-Q4 | 39 | 22 | 834 | 0.45x |
-| 2026-Q1 | 84 | 52 | 11,660 | 1.91x |
-| 2026-Q2 | 97 | 63 | 1,564 | 0.60x |
-| **2026-Q3** | **80** | **92** | **1,569** | **0.88x** |
+| Quarter     | PRs touching tests | Median +test LOC | Largest +test LOC | test : source |
+| ----------- | -----------------: | ---------------: | ----------------: | ------------: |
+| 2024-Q3     |                 40 |               35 |             1,187 |         0.63x |
+| 2025-Q1     |                 43 |               29 |             1,223 |         0.50x |
+| 2025-Q2     |                 40 |               22 |               539 |         0.42x |
+| 2025-Q3     |                 55 |               38 |               626 |         0.34x |
+| 2025-Q4     |                 39 |               22 |               834 |         0.45x |
+| 2026-Q1     |                 84 |               52 |            11,660 |         1.91x |
+| 2026-Q2     |                 97 |               63 |             1,564 |         0.60x |
+| **2026-Q3** |             **80** |           **92** |         **1,569** |     **0.88x** |
 
 The 11,660-line outlier in Q1 is the Vitest migration — mechanical, and reviewable as such.
 The 1,569-line entry in Q3 is not: `feat(admin): structured UI to manage user role
@@ -67,13 +67,13 @@ where they could be tabulated** — plus four specific habits that make a diff s
 
 ### Style drift, per 100 lines of test code by year authored
 
-| Year | `as any` casts | `toHaveBeenCalled` | Names > 80 chars | Near-duplicate name pairs |
-| --- | ---: | ---: | ---: | ---: |
-| 2022 | 0.25 | 2.08 | 6% | 19 |
-| 2023 | 0.30 | 1.68 | 11% | 22 |
-| 2024 | 0.18 | 1.61 | 8% | 25 |
-| 2025 | 0.58 | 1.03 | 10% | 43 |
-| **2026** | **1.01** | **1.77** | **16%** | **114** |
+| Year     | `as any` casts | `toHaveBeenCalled` | Names > 80 chars | Near-duplicate name pairs |
+| -------- | -------------: | -----------------: | ---------------: | ------------------------: |
+| 2022     |           0.25 |               2.08 |               6% |                        19 |
+| 2023     |           0.30 |               1.68 |              11% |                        22 |
+| 2024     |           0.18 |               1.61 |               8% |                        25 |
+| 2025     |           0.58 |               1.03 |              10% |                        43 |
+| **2026** |       **1.01** |           **1.77** |          **16%** |                   **114** |
 
 ### a. Enumeration where a table belongs
 
@@ -105,16 +105,16 @@ describe(":sum", () => {
 ```typescript
 // as a table — ~15 lines, same coverage
 it.each([
-  [":count",  [1, 2, 3, 4, 5],        5],
-  [":count",  [],                     0],
-  [":sum",    [1, 2, 3, 4],          10],
-  [":sum",    ["1", "2", "3"],        6],
-  [":sum",    ["1", "x", "3", null],  4],
-  [":sum",    [],                     0],
-  [":avg",    [10, 20, 30],        "20"],
-  [":avg",    ["10", "x", "30"],   "20"],
-  [":avg",    [],                   "0"],
-  [":avg(2)", [10, 20, 25],     "18.33"],
+  [":count", [1, 2, 3, 4, 5], 5],
+  [":count", [], 0],
+  [":sum", [1, 2, 3, 4], 10],
+  [":sum", ["1", "2", "3"], 6],
+  [":sum", ["1", "x", "3", null], 4],
+  [":sum", [], 0],
+  [":avg", [10, 20, 30], "20"],
+  [":avg", ["10", "x", "30"], "20"],
+  [":avg", [], "0"],
+  [":avg(2)", [10, 20, 25], "18.33"],
 ])("%s over %j -> %s", (expr, data, expected) => {
   expect(service.queryData(expr, null, null, data)).toBe(expected);
 });
@@ -224,7 +224,7 @@ $ time npm run test-ci        # total wall 198s, of which vitest:
 ```
 
 Coverage instrumentation makes test bodies more expensive, so their share rises from 24% to
-32% — and jsdom setup is *still* the largest line at 37%. Under either configuration
+32% — and jsdom setup is _still_ the largest line at 37%. Under either configuration
 **roughly two thirds of the work is not running tests**. Only ~27 of those 198 seconds were
 the Angular build; the rest is the suite itself.
 
@@ -245,27 +245,27 @@ a close variant — 12% of all tests. That alone is a readability problem. The s
 where they live: **101 spec files — 21% of the unit suite — contain nothing else.** Between
 them they hold 101 assertions across 3,491 lines.
 
-| Kind | Files | Example |
-| --- | ---: | --- |
-| Dialogs, buttons, panels | 47 | `core/common-components/pill/pill.component.spec.ts` |
-| Admin config UI | 24 | `features/matching-entities/admin-matching-entities/…` |
-| `edit-*` field editors | 10 | `core/basic-datatypes/string/edit-text/…` |
-| `display-*` renderers | 10 | `core/basic-datatypes/string/display-text/…` |
-| Dashboard widget settings | 8 | `features/dashboard-widgets/birthday-dashboard-settings…` |
-| Services | 4 | `core/admin/json-editor/json-editor.service.spec.ts` |
-| Directives | 1 | `core/common-components/border-highlight/…` |
-| **Total** | **101** | 21% of files, 3.7% of tests, 3,491 LOC |
+| Kind                      |   Files | Example                                                   |
+| ------------------------- | ------: | --------------------------------------------------------- |
+| Dialogs, buttons, panels  |      47 | `core/common-components/pill/pill.component.spec.ts`      |
+| Admin config UI           |      24 | `features/matching-entities/admin-matching-entities/…`    |
+| `edit-*` field editors    |      10 | `core/basic-datatypes/string/edit-text/…`                 |
+| `display-*` renderers     |      10 | `core/basic-datatypes/string/display-text/…`              |
+| Dashboard widget settings |       8 | `features/dashboard-widgets/birthday-dashboard-settings…` |
+| Services                  |       4 | `core/admin/json-editor/json-editor.service.spec.ts`      |
+| Directives                |       1 | `core/common-components/border-highlight/…`               |
+| **Total**                 | **101** | 21% of files, 3.7% of tests, 3,491 LOC                    |
 
 ### What they cost
 
 Run on their own: **27.01s wall / 298s worker-CPU** for 107 assertions. The honest number is
 the marginal one — the same suite with and without them, everything else held constant:
 
-| Run | Files | Tests | Wall | Worker-CPU |
-| --- | ---: | ---: | ---: | ---: |
-| Baseline | 469 | 2,814 | 83.16s | 800.8s |
-| Smoke-only files excluded | 365 | 2,707 | 75.02s | 607.9s |
-| **Delta** | **−101** | **−101** | **−9.8%** | **−24.1%** |
+| Run                       |    Files |    Tests |      Wall | Worker-CPU |
+| ------------------------- | -------: | -------: | --------: | ---------: |
+| Baseline                  |      469 |    2,814 |    83.16s |     800.8s |
+| Smoke-only files excluded |      365 |    2,707 |    75.02s |     607.9s |
+| **Delta**                 | **−101** | **−101** | **−9.8%** | **−24.1%** |
 
 Deleting 22% of the spec files removes 3.8% of the tests and buys 10% of wall time on a
 4-worker machine, or 24% of the CPU. On CI — coverage on, more CPU-bound — the real saving
@@ -277,11 +277,11 @@ The obvious objection to deleting a construction check is that it still executes
 deleting it must cost coverage. Measured, on the twelve deleted specs with the most setup
 (merged from five sharded lcov runs):
 
-| | Lines | Branches |
-| --- | ---: | ---: |
-| Suite without those 12 specs | 83.89% (18,524/22,082) | 69.23% |
-| Suite with them | 84.65% (18,693/22,082) | 69.96% |
-| **Difference** | **+0.76 pp** | **+0.73 pp** |
+|                              |                  Lines |     Branches |
+| ---------------------------- | ---------------------: | -----------: |
+| Suite without those 12 specs | 83.89% (18,524/22,082) |       69.23% |
+| Suite with them              | 84.65% (18,693/22,082) |       69.96% |
+| **Difference**               |           **+0.76 pp** | **+0.73 pp** |
 
 Under a percentage point — and **none of it assertion-backed**: those lines are executed by a
 constructor and one change detection, with nothing checking what they produced.
@@ -299,13 +299,13 @@ test for one of those components: `git show 3b46e1b6f^:<path-to-spec>`.
 
 Cost per assertion, including the per-file toll:
 
-| Spec file | Tests | LOC | s/test |
-| --- | ---: | ---: | ---: |
-| `features/matching-entities/admin-matching-entities/admin-matching-entities.component.spec.ts` | 1 | 112 | 1.77 |
-| `core/admin/json-editor/edit-json/edit-json.component.spec.ts` | 1 | 31 | 1.67 |
-| `core/admin/admin-entity/admin-entity-general-settings/…spec.ts` | 1 | 71 | 1.64 |
-| `core/user/profile/profile.component.spec.ts` | 1 | 52 | 1.57 |
-| `core/form-dialog/row-details/row-details.component.spec.ts` | 1 | 66 | 1.50 |
+| Spec file                                                                                      | Tests | LOC | s/test |
+| ---------------------------------------------------------------------------------------------- | ----: | --: | -----: |
+| `features/matching-entities/admin-matching-entities/admin-matching-entities.component.spec.ts` |     1 | 112 |   1.77 |
+| `core/admin/json-editor/edit-json/edit-json.component.spec.ts`                                 |     1 |  31 |   1.67 |
+| `core/admin/admin-entity/admin-entity-general-settings/…spec.ts`                               |     1 |  71 |   1.64 |
+| `core/user/profile/profile.component.spec.ts`                                                  |     1 |  52 |   1.57 |
+| `core/form-dialog/row-details/row-details.component.spec.ts`                                   |     1 |  66 |   1.50 |
 
 `admin-matching-entities.component.spec.ts` is the clearest case: 112 lines building five
 hand-rolled mocks (`ConfigService`, `EntityRelationsService`, `EntityFormService`,
@@ -339,11 +339,11 @@ and pairing with a volume ceiling.
 The premise was that Playwright coverage might make component UI unit tests redundant. It
 largely does not, because this suite is not really testing UI.
 
-| | |
-| --- | ---: |
-| Component specs | 273 |
-| …that assert on rendered DOM (`nativeElement` / `By.css` / `querySelector`) | **22 (8%)** |
-| …that touch neither DOM nor interaction — pure class logic via TestBed | **162 (59%)** |
+|                                                                             |               |
+| --------------------------------------------------------------------------- | ------------: |
+| Component specs                                                             |           273 |
+| …that assert on rendered DOM (`nativeElement` / `By.css` / `querySelector`) |   **22 (8%)** |
+| …that touch neither DOM nor interaction — pure class logic via TestBed      | **162 (59%)** |
 
 Only 22 component specs make an assertion about rendered markup. The majority instantiate a
 component purely to reach its class logic — sorting rules, config mapping, form state — then
@@ -365,7 +365,7 @@ Where component specs are substantial they are **complementary, not duplicative*
 > to reclaim.
 
 The comparison does raise a separate point in e2e's favour: 42 scenarios in 5m08s
-*including a full application build* is better value per scenario than the unit suite, and
+_including a full application build_ is better value per scenario than the unit suite, and
 it exercises the wiring unit tests deliberately mock away. If test budget moves anywhere it
 should move toward e2e — not toward more component specs.
 
@@ -376,14 +376,14 @@ should move toward e2e — not toward more component specs.
 A pruning exercise is only credible if it says what not to touch. Several of these are 2026
 work, and among the best-designed tests in the repo.
 
-| Cluster | Tests | Why it earns its place |
-| --- | ---: | --- |
-| `system-reset.service` | 17 | Every name states an invariant with its reason, on a feature that deletes all of a customer's data. Exactly what unit tests are for. |
-| `config.service` + `config-migrations` | 34 + … | 24 of them pin individual config migrations, which run against documents written by real deployments. A regression is silent and unrecoverable. Pure functions, near-zero cost. |
-| `logging.service` | 38 | Sentry fingerprinting, repeat-capping, network-error bucketing. Invisible to e2e, subtle enough that nobody would notice it breaking until an incident. |
-| `entities-table`, `entity-list`, `paginated-data-source` | 51 | Combinatorial sort / filter / selection / pagination semantics. e2e can afford one path through the matrix; these cover the corners. |
-| `query`, `data-aggregation`, `download`, `data-transformation` | ~80 | Data transformation with many input shapes — csv escaping, enum labels, date formats, referenced entities. Textbook unit-test territory. |
-| `*.datatype.spec.ts` | 140 | 17 files, 140 tests, **2.3s total** via a shared `testDatatype()` harness. The best cost-to-coverage ratio in the codebase and the model the rest should follow. |
+| Cluster                                                        |  Tests | Why it earns its place                                                                                                                                                          |
+| -------------------------------------------------------------- | -----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `system-reset.service`                                         |     17 | Every name states an invariant with its reason, on a feature that deletes all of a customer's data. Exactly what unit tests are for.                                            |
+| `config.service` + `config-migrations`                         | 34 + … | 24 of them pin individual config migrations, which run against documents written by real deployments. A regression is silent and unrecoverable. Pure functions, near-zero cost. |
+| `logging.service`                                              |     38 | Sentry fingerprinting, repeat-capping, network-error bucketing. Invisible to e2e, subtle enough that nobody would notice it breaking until an incident.                         |
+| `entities-table`, `entity-list`, `paginated-data-source`       |     51 | Combinatorial sort / filter / selection / pagination semantics. e2e can afford one path through the matrix; these cover the corners.                                            |
+| `query`, `data-aggregation`, `download`, `data-transformation` |    ~80 | Data transformation with many input shapes — csv escaping, enum labels, date formats, referenced entities. Textbook unit-test territory.                                        |
+| `*.datatype.spec.ts`                                           |    140 | 17 files, 140 tests, **2.3s total** via a shared `testDatatype()` harness. The best cost-to-coverage ratio in the codebase and the model the rest should follow.                |
 
 ### Smaller things that are simply wrong
 
