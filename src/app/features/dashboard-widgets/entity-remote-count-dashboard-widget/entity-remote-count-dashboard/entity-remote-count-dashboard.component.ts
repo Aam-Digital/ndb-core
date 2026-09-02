@@ -24,8 +24,17 @@ import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
-import { FULL_LOAD_PAGE_SIZE } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 import { Logging } from "#src/app/core/logging/logging.service";
+
+/**
+ * Number of ids fetched per request while counting a group. Larger than the
+ * paginated table's page size because the `idOnly` responses are tiny, so fewer
+ * round-trips is the better trade-off here.
+ */
+export const REMOTE_COUNT_BATCH_SIZE = 10000;
+
+/** row id used for the "value set, but not a known option" aggregate row */
+const INVALID_OPTION_ROW_ID = "__invalid__";
 
 /**
  * Configuration (stored in the Config document in the DB) for the dashboard widget.
@@ -48,6 +57,9 @@ interface RemoteCountRow {
 
   color?: string;
 
+  /** true for the aggregate row of records whose value matches no known option */
+  isInvalidOption?: boolean;
+
   /** entity instance carrying the option value, for the display component */
   entity?: Entity;
 
@@ -65,6 +77,10 @@ interface RemoteCountRow {
  * projection, so only the matching document ids - not their contents - are
  * transferred. This keeps the amount of transferred data small even for entity
  * types with a large number of records.
+ *
+ * Besides one row per configured option it also reports an aggregate row for
+ * records whose stored value is not (or no longer) a configured option, and one
+ * for records where the field is not set at all.
  *
  * Because it relies on the database `find` API it only works against a remote
  * CouchDB connection (same constraint as {@link PaginatedDataSource}).
@@ -153,8 +169,10 @@ export class EntityRemoteCountDashboardComponent {
   }
 
   /**
-   * Load one row per option of the given configurable-enum field, each holding
-   * the server-calculated number of matching records.
+   * Load one row per option of the given configurable-enum field (each holding
+   * the server-calculated number of matching records), plus two aggregate rows:
+   * one for records whose value is not a currently configured option and one
+   * for records where the field is not set at all.
    */
   private async loadGroupCounts(
     entityDefinition: EntityConstructor,
@@ -171,29 +189,60 @@ export class EntityRemoteCountDashboardComponent {
     const enumValues = this.configurableEnum.getEnumValues(
       field.additional as string,
     );
+    // sorting by the grouped field lets find() build/use a Mango index on it
+    const fieldSort = { prop: fieldName, dir: "asc" as const };
 
-    return Promise.all(
-      enumValues.map(async (option) => {
-        const value = await this.countMatchingRecords(entityDefinition, {
-          [fieldName]: option.id,
-        });
+    // Derive the "invalid" and "not set" counts from two type-wide counts
+    // instead of `$exists` / `$nin` queries, so both stay index-friendly:
+    // - allDocs: every record of this type (`_id` range)
+    // - withValue: records holding any non-empty value (indexed range on the field)
+    const [optionRows, allDocsCount, withValueCount] = await Promise.all([
+      Promise.all(
+        enumValues.map(async (option) => {
+          const value = await this.countMatchingRecords(
+            entityDefinition,
+            { [fieldName]: option.id },
+            fieldSort,
+          );
 
-        const entity = new entityDefinition();
-        entity[fieldName] = option;
+          const entity = new entityDefinition();
+          entity[fieldName] = option;
 
-        const row: RemoteCountRow = {
-          label: option.label,
-          id: option.id,
-          value,
-          fieldName,
-          entity,
-        };
-        if (option.color !== undefined) {
-          row.color = option.color;
-        }
-        return row;
-      }),
-    );
+          const row: RemoteCountRow = {
+            label: option.label,
+            id: option.id,
+            value,
+            fieldName,
+            entity,
+          };
+          if (option.color !== undefined) {
+            row.color = option.color;
+          }
+          return row;
+        }),
+      ),
+      this.countMatchingRecords(entityDefinition, {}),
+      this.countMatchingRecords(
+        entityDefinition,
+        { [fieldName]: { $gt: "" } },
+        fieldSort,
+      ),
+    ]);
+
+    const validCount = optionRows.reduce((sum, row) => sum + row.value, 0);
+    const invalidCount = Math.max(0, withValueCount - validCount);
+    const notSetCount = Math.max(0, allDocsCount - withValueCount);
+
+    return [
+      ...optionRows,
+      { label: undefined, id: "", value: notSetCount, fieldName },
+      {
+        label: undefined,
+        id: INVALID_OPTION_ROW_ID,
+        value: invalidCount,
+        isInvalidOption: true,
+      },
+    ];
   }
 
   /**
@@ -205,8 +254,8 @@ export class EntityRemoteCountDashboardComponent {
   private async countMatchingRecords(
     entityDefinition: EntityConstructor,
     filter: DataFilter<Entity>,
+    sort?: { prop?: string; dir?: "asc" | "desc" },
   ): Promise<number> {
-    const pageSize = 10000;
     let count = 0;
     let bookmark: string | undefined;
     let lastPageSize: number;
@@ -214,14 +263,14 @@ export class EntityRemoteCountDashboardComponent {
       const res = await this.entityMapper.findType(
         entityDefinition,
         filter,
-        { limit: pageSize, bookmark },
-        { prop: this.groupBy(), dir: "asc" },
+        { limit: REMOTE_COUNT_BATCH_SIZE, bookmark },
+        sort,
         { idOnly: true },
       );
       lastPageSize = res.records.length;
       bookmark = res.bookmark;
       count += lastPageSize;
-    } while (lastPageSize === pageSize);
+    } while (lastPageSize === REMOTE_COUNT_BATCH_SIZE);
     return count;
   }
 }
