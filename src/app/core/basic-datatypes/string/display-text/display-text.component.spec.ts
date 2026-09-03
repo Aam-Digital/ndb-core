@@ -38,6 +38,13 @@ describe("DisplayTextComponent", () => {
 
     const text = fixture.nativeElement.textContent.trim();
     expect(text).not.toContain("[object Object]");
-    expect(text).toBe(JSON.stringify([{ foo: "bar" }, { baz: "qux" }]));
+    expect(text).toBe(`{"foo":"bar"},{"baz":"qux"}`);
+  });
+
+  it("should keep an array of primitives in its plain comma-separated form", () => {
+    fixture.componentRef.setInput("value", ["startup", "referral"]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent.trim()).toBe("startup,referral");
   });
 });

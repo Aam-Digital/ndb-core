@@ -14,11 +14,18 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   template: `{{ displayValue() }}`,
   standalone: true,
 })
-export class DisplayTextComponent extends ViewDirective<string> {
-  readonly displayValue = computed(() => {
-    const value = this.value();
-    return value !== null && typeof value === "object"
-      ? JSON.stringify(value)
-      : value;
-  });
+export class DisplayTextComponent extends ViewDirective<unknown> {
+  readonly displayValue = computed(() => format(this.value()));
+}
+/**
+ * Primitives (and arrays of them) already stringify readably, only objects need
+ * explicit formatting - otherwise they would render as "[object Object]".
+ */
+function format(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(format).join(",");
+  }
+  return value !== null && typeof value === "object"
+    ? JSON.stringify(value)
+    : value;
 }
