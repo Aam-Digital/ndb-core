@@ -14,6 +14,7 @@ import memory from "pouchdb-adapter-memory";
 import PouchDB from "pouchdb-browser";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { computeDbNames } from "../database/db-name-helpers";
+import { ADMIN_APP_ROLE } from "../permissions/permission-types";
 
 /**
  * This service handles everything related to the demo-mode
@@ -43,7 +44,7 @@ export class DemoDataInitializerService {
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     id: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: ["user_app", "admin_app"],
+    roles: ["user_app", ADMIN_APP_ROLE],
     entityId: `User:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
 

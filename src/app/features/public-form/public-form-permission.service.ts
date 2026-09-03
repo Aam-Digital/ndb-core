@@ -3,6 +3,7 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { inject, Injectable } from "@angular/core";
 import { Config } from "../../core/config/config";
 import {
+  ADMIN_APP_ROLE,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
   LEGACY_PUBLIC_KEY,
@@ -174,7 +175,7 @@ export class PublicFormPermissionService {
    */
   hasAdminPermission(): boolean {
     const userRoles = this.sessionInfo.value?.roles || [];
-    return userRoles.includes("admin_app");
+    return userRoles.includes(ADMIN_APP_ROLE);
   }
 
   /**
