@@ -158,8 +158,8 @@ describe("Entity", () => {
   it("should resolve a multi-lingual configured text in toStringAttributes (#3862)", () => {
     @DatabaseEntity("TestEntityMultiLingualToString")
     class TestEntityMultiLingualToString extends Entity {
-      static override toStringAttributes = ["title"];
-      static override label = "TestMultiLingual";
+      static override readonly toStringAttributes = ["title"];
+      static override readonly label = "TestMultiLingual";
       title: any = { "en-US": "Example form", de: "Beispielformular" };
     }
 
@@ -177,8 +177,8 @@ describe("Entity", () => {
   it("should leave values that are not translation maps untouched", () => {
     @DatabaseEntity("TestEntityNonTranslatableToString")
     class TestEntityNonTranslatableToString extends Entity {
-      static override toStringAttributes = ["plain", "notALocaleMap"];
-      static override label = "TestNonTranslatable";
+      static override readonly toStringAttributes = ["plain", "notALocaleMap"];
+      static override readonly label = "TestNonTranslatable";
       plain = "Plain";
       // keys that are not locale ids must not be treated as translations
       notALocaleMap: any = { label: "FromLabel" };
