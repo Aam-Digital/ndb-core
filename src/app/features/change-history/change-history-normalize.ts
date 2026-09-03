@@ -42,6 +42,36 @@ function isHidden(field: string): boolean {
 }
 
 /**
+ * The names of the fields one audit record changed, read directly from its raw
+ * `diff`, without replaying the entity's full document state.
+ *
+ * This is what the system-wide change log needs: a top-level jsondiffpatch
+ * delta is already keyed by field name, so the *names* (unlike the before/after
+ * *values*, see {@link buildChangeEvents}) need no prior state. That makes a row
+ * renderable from its own audit doc alone, so the log can page over records of
+ * many different entities without loading a history per entity.
+ *
+ * A `delete` returns no fields on purpose: PouchDB pushes a tombstone stripped
+ * of its content, so the delta would list every field of the record as removed
+ * rather than the one thing that happened.
+ */
+export function changedFieldsOf(doc: RawAuditDoc): string[] {
+  if (doc.operation === "delete") {
+    return [];
+  }
+
+  const changed =
+    doc.operation === "create" || doc.operation === "baseline"
+      ? snapshotOf(doc)
+      : doc.diff;
+
+  if (!changed || typeof changed !== "object") {
+    return [];
+  }
+  return Object.keys(changed).filter((field) => !isHidden(field));
+}
+
+/**
  * Build the displayable change history for one entity from its raw audit docs.
  *
  * A jsondiffpatch update-delta only encodes *what changed* (e.g. items added to

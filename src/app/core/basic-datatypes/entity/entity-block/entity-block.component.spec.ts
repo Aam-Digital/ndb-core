@@ -10,6 +10,7 @@ import {
   EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
+import { Entity } from "../../../entity/model/entity";
 describe("EntityBlockComponent", () => {
   let component: EntityBlockComponent;
   let fixture: ComponentFixture<EntityBlockComponent>;
@@ -115,6 +116,98 @@ describe("EntityBlockComponent", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain("not available");
+  });
+
+  it("names the record type when its type configures no display value", async () => {
+    // a config-defined type whose config sets no toStringAttributes keeps the
+    // default ["entityId"], so toString() is the bare uuid: unreadable on its own
+    class IdOnlyEntity extends Entity {
+      static override readonly ENTITY_TYPE = "IdOnly";
+      static override readonly label = "Literacy Test";
+    }
+    const record = new IdOnlyEntity("5e69d648-c2c7-441d-8da6-5543251dd917");
+    mockEntityMapper.load.mockResolvedValue(record);
+
+    fixture.componentRef.setInput("entityId", record.getId());
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(component.showsOnlyId()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain("Literacy Test Record");
+    expect(fixture.nativeElement.textContent).not.toContain("5e69d648-c2c7");
+    // still reachable on hover, for support and debugging
+    expect(fixture.nativeElement.querySelector("span[title]").title).toBe(
+      record.getId(),
+    );
+  });
+
+  it("keeps a deliberately chosen id, which is itself the display value", async () => {
+    // a User's id is its username, so "displays its id" does not mean
+    // "displays something meaningless" (regression: this rendered "User Record")
+    class ChosenIdEntity extends Entity {
+      static override readonly ENTITY_TYPE = "User";
+      static override readonly label = "User";
+    }
+    mockEntityMapper.load.mockResolvedValue(new ChosenIdEntity("demo-admin"));
+
+    fixture.componentRef.setInput("entityId", "User:demo-admin");
+    fixture.detectChanges();
+    await vi.waitFor(() =>
+      expect(component.entityResource.value()).toBeTruthy(),
+    );
+    fixture.detectChanges();
+
+    expect(component.showsOnlyId()).toBe(false);
+    expect(fixture.nativeElement.textContent).toContain("demo-admin");
+    expect(fixture.nativeElement.textContent).not.toContain("User Record");
+  });
+
+  it("falls back to the type key when such a type has no label either", async () => {
+    class UnlabelledIdOnlyEntity extends Entity {
+      static override readonly ENTITY_TYPE = "Aser";
+    }
+    mockEntityMapper.load.mockResolvedValue(
+      new UnlabelledIdOnlyEntity("01740708-ead4-4580-abfc-678321075393"),
+    );
+
+    fixture.componentRef.setInput(
+      "entityId",
+      "Aser:01740708-ead4-4580-abfc-678321075393",
+    );
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(component.showsOnlyId()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain("Aser Record");
+  });
+
+  it("keeps the configured display value for a type that has one", async () => {
+    testEntity.name = "Chandani Marar";
+    fixture.componentRef.setInput("entity", testEntity);
+    fixture.detectChanges();
+    await vi.waitFor(() =>
+      expect(component.entityResource.value()).toEqual(testEntity),
+    );
+    fixture.detectChanges();
+
+    expect(component.showsOnlyId()).toBe(false);
+    expect(fixture.nativeElement.textContent).toContain("Chandani Marar");
+    expect(fixture.nativeElement.textContent).not.toContain("Record");
+  });
+
+  it("shows the raw id instead of 'not available' when asked to", async () => {
+    mockEntityMapper.load.mockRejectedValue(new Error("not found"));
+    fixture.componentRef.setInput("entityId", `${TestEntity.ENTITY_TYPE}:404`);
+    fixture.componentRef.setInput("showEntityId", true);
+    fixture.detectChanges();
+
+    await vi.waitFor(() => expect(component.notFound()).toBe(true));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      `${TestEntity.ENTITY_TYPE}:404`,
+    );
+    expect(fixture.nativeElement.textContent).not.toContain("not available");
   });
 
   it("renders the not-found fallback instead of throwing when entityId is not a string", async () => {

@@ -22,6 +22,7 @@ import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
 import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { validate as isGeneratedId } from "uuid";
 
 /**
  * Display an inline block representing an entity.
@@ -55,6 +56,14 @@ export class EntityBlockComponent {
   entityId = input<string>();
 
   linkDisabled = input(false);
+
+  /**
+   * Show the raw entity id instead of the generic "not available" when the
+   * referenced record cannot be loaded. Opt-in, for lists where the reader needs
+   * to identify *which* record is gone (e.g. an audit log of deletions) rather
+   * than only that one is missing.
+   */
+  showEntityId = input(false);
 
   entityResource = resourceWithRetention({
     params: () => ({ entity: this.entity(), entityId: this.entityId() }),
@@ -121,6 +130,39 @@ export class EntityBlockComponent {
   readonly notFoundIcon = computed(
     () => this.missingEntityType()?.icon || "diamond",
   );
+
+  /**
+   * Whether the record has nothing to display but a generated id.
+   *
+   * A type that configures no `toStringAttributes` keeps the default
+   * `["entityId"]`, so `toString()` returns the bare id. That alone is not a
+   * problem: an id chosen deliberately is usually the best name a record has
+   * (a `User`'s id is their username). Only a generated one says nothing, so
+   * the id must also be a uuid, as `Entity`'s constructor defaults to.
+   */
+  readonly showsOnlyId = computed(() => {
+    const entity = this.entityResource.value();
+    if (!entity) {
+      return false;
+    }
+    const id = entity.getId(true);
+    // `isGeneratedId` from the same package `Entity` generates ids with, so the
+    // two can never drift apart
+    return entity.toString() === id && isGeneratedId(id);
+  });
+
+  /**
+   * What to show instead of that bare uuid: the kind of record it is, which is
+   * the one thing actually known about it. The full id stays on the element's
+   * `title`, and callers with room for a second line (e.g. the change log) show
+   * it themselves; this block is a single-line inline element everywhere else.
+   */
+  readonly idOnlyLabel = computed(() => {
+    const type = this.entityResource.value()?.getConstructor();
+    // an unlabelled config-defined type still names itself through its key
+    const typeName = type?.label || type?.ENTITY_TYPE;
+    return $localize`:Entity block label for a record with no display value:${typeName}:type: Record`;
+  });
 
   readonly entityBlockConfig = computed(() => {
     return this.entityResource.value()?.getConstructor()

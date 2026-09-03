@@ -1,0 +1,8 @@
+/* understated on purpose: a reader looking for a record by name should not have
+   their attention pulled to a string that means nothing to them */
+.record-id {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 85%;
+  opacity: 0.75;
+}

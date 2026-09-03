@@ -26,11 +26,17 @@ import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { ChangeHistoryService } from "../change-history.service";
 import { ChangeEvent } from "../change-history.types";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
+import { RecordIdDisplayComponent } from "../record-id-display/record-id-display.component";
 import { RecordDiffComponent } from "../record-diff/record-diff.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 export interface ChangeHistoryDialogData {
   entity: Entity;
+  /**
+   * the audit record to open right away, so arriving from a change-log row
+   * lands on that row's entry instead of a collapsed list to search through
+   */
+  expandEventId?: string;
 }
 
 /**
@@ -56,6 +62,7 @@ export interface ChangeHistoryDialogData {
     CustomDatePipe,
     NotificationTimePipe,
     ChangeHistoryActionBadgeComponent,
+    RecordIdDisplayComponent,
     RecordDiffComponent,
   ],
   templateUrl: "./change-history-dialog.component.html",
@@ -67,9 +74,10 @@ export class ChangeHistoryDialogComponent {
   static open(
     dialog: MatDialog,
     entity: Entity,
+    expandEventId?: string,
   ): MatDialogRef<ChangeHistoryDialogComponent> {
     return dialog.open(ChangeHistoryDialogComponent, {
-      data: { entity } satisfies ChangeHistoryDialogData,
+      data: { entity, expandEventId } satisfies ChangeHistoryDialogData,
       // near-fullscreen for the wide diff table; maxWidth must be raised too,
       // else Material's default maxWidth (80vw) caps the 98vw width
       width: "98vw",
@@ -82,6 +90,8 @@ export class ChangeHistoryDialogComponent {
 
   readonly entity: Entity = this.data.entity;
   readonly entityType: EntityConstructor = this.entity.getConstructor();
+  /** see {@link ChangeHistoryDialogData.expandEventId} */
+  readonly expandEventId: string | undefined = this.data.expandEventId;
 
   /**
    * The entity's own created / last-updated metadata. Pure entity state, so it

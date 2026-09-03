@@ -43,6 +43,12 @@ export const PUBLIC_SECTION_KEY = "_public";
 export const LEGACY_DEFAULT_KEY = "default";
 export const LEGACY_PUBLIC_KEY = "public";
 
+/**
+ * The realm role that grants access to the administration features, as checked
+ * by the admin routes' {@link UserRoleGuard} configuration.
+ */
+export const ADMIN_APP_ROLE = "admin_app";
+
 /** A user role starting with this prefix is reserved and never resolved. */
 export const RESERVED_ROLE_PREFIX = "_";
 
