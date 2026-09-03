@@ -97,11 +97,10 @@ export class AutomatedFieldMappingComponent {
       return [];
     }
 
-    const enumEntity = this.configurableEnumService.getEnum(
+    // labels resolved for display; the option ids stay untouched below
+    const values = this.configurableEnumService.getEnumValues(
       this.sourceValueFieldSchema().additional,
     );
-
-    const values = enumEntity?.values ?? [];
     return values.map((sourceValue) => {
       const sourceValueRaw = sourceValue.id; // database format of the source value
 

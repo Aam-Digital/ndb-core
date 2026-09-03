@@ -4,6 +4,8 @@ import { Aggregation } from "./data-aggregation.service";
 import { ExportColumnConfig } from "../../core/export/data-transformation-service/export-column-config";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
+import { TranslatableTextDatatype } from "../../core/config/translatable-text.datatype";
+import { TranslatableText } from "../../core/config/multi-lingual-config";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
@@ -22,12 +24,13 @@ class ReportConfig extends Entity {
   static override readonly route = "admin/report-config";
   static override readonly icon: IconName = "chart-line";
 
-  /** human-readable title of the report */
+  /** human-readable title of the report (may be a per-language map, #3862) */
   @DatabaseField({
     label: $localize`:ReportConfig:Title`,
+    dataType: TranslatableTextDatatype.dataType,
     validators: { required: true },
   })
-  title: string;
+  title: TranslatableText;
 
   /** longer description documenting the purpose and usage of this report */
   @DatabaseField({

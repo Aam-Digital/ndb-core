@@ -15,9 +15,23 @@
         matIconPrefix
         class="grab-icon margin-right-small"
       ></fa-icon>
-      <input matInput [(ngModel)]="v.label" />
+      <app-translatable-text-input
+        #labelInput
+        [(ngModel)]="v.label"
+        [showTranslationsButton]="false"
+      ></app-translatable-text-input>
 
       <div matSuffix class="flex-row gap-small">
+        <button
+          mat-icon-button
+          type="button"
+          (click)="labelInput.openTranslations($event)"
+          matTooltip="Configure this text in other languages"
+          i18n-matTooltip
+        >
+          <fa-icon icon="language"></fa-icon>
+        </button>
+
         <app-color-input
           [value]="v.color"
           (valueChange)="v.color = $event"

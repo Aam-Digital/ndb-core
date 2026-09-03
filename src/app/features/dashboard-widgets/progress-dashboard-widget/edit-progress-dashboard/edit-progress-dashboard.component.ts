@@ -26,9 +26,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { TypedFormGroup } from "#src/app/core/common-components/entity-form/entity-form";
+import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
+import { TranslatableTextInputComponent } from "#src/app/core/config/translatable-text-input/translatable-text-input.component";
 
 export interface EditProgressDashboardComponentData {
-  title: string;
+  title: TranslatableText;
   parts: ProgressDashboardPart[];
 }
 
@@ -46,6 +48,7 @@ export interface EditProgressDashboardComponentData {
     MatButtonModule,
     FontAwesomeModule,
     MatTooltipModule,
+    TranslatableTextInputComponent,
   ],
 })
 export class EditProgressDashboardComponent implements OnInit {
