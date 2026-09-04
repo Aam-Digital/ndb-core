@@ -76,8 +76,9 @@ describe("FeaturePermissionDialogComponent", () => {
       },
       roles: [
         {
+          // access comes from a rule this UI does not own, so nothing of its own
           role: "user_app",
-          actions: permissions(ALL_ACTIONS, [], "advanced-rule"),
+          actions: permissions(ALL_ACTIONS, [], "advanced-rule", []),
           editable: false,
         },
         {
@@ -298,7 +299,7 @@ describe("FeaturePermissionDialogComponent", () => {
     const state = defaultState();
     state.defaultRules = {
       role: "_default",
-      actions: permissions(ALL_ACTIONS, [], "advanced-rule"),
+      actions: permissions(ALL_ACTIONS, [], "advanced-rule", []),
       editable: false,
     };
     mockPermissionService.getPermissions.mockResolvedValue(state);

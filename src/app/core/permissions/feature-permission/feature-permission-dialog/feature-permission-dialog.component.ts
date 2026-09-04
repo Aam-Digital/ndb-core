@@ -61,12 +61,18 @@ interface ActionColumn {
 interface PermissionCell {
   action: FeatureAction;
   /**
-   * In {@link FeaturePermissionDialogComponent.rows} the row's *own* grant, as
-   * edited through the checkbox; in
-   * {@link FeaturePermissionDialogComponent.displayRows} the effective grant,
-   * including what the `_default` row adds on top.
+   * What the checkbox shows: the effective access where another rule decides it,
+   * and otherwise the row's own grant as edited here - with what the `_default`
+   * row adds on top layered in by
+   * {@link FeaturePermissionDialogComponent.displayRows}.
    */
   granted: boolean;
+  /**
+   * What is written for this action, i.e. the row's own grant. It differs from
+   * {@link granted} where an uneditable rule decides the checkbox, so that such
+   * a rule is neither duplicated into the row nor silently dropped from it.
+   */
+  grantedByOwnRule: boolean;
   /**
    * In `rows` whether an advanced rule leaves this checkbox editable at all; in
    * `displayRows` additionally `false` while `_default` grants the action.
@@ -280,9 +286,13 @@ export class FeaturePermissionDialogComponent {
     const lockedByAdvancedRule = permission.lockedBy === "advanced-rule";
     return {
       action: column.action,
-      // the row's own grant, not the effective one: what `_default` adds is
-      // layered on in `displayRows`, so unticking it there reveals this again
-      granted: permission.grantedByOwnRule,
+      // a checkbox an uneditable rule decides shows that rule's effect; an
+      // editable one shows the row's own grant, so that unticking `_default`
+      // in `displayRows` reveals it again instead of discarding it
+      granted: lockedByAdvancedRule
+        ? permission.granted
+        : permission.grantedByOwnRule,
+      grantedByOwnRule: permission.grantedByOwnRule,
       editable: !lockedByAdvancedRule,
       lockTooltip: lockedByAdvancedRule ? grantedByAdvancedRuleTooltip() : "",
       ariaLabel: $localize`:Permission checkbox aria label:${column.label} ${this.entityLabel} as ${rowLabel}`,
@@ -351,7 +361,13 @@ export class FeaturePermissionDialogComponent {
           actions: Object.fromEntries(
             FEATURE_ACTIONS.map((action) => [
               action,
-              row.cells.some((cell) => cell.action === action && cell.granted),
+              row.cells.some(
+                (cell) =>
+                  cell.action === action &&
+                  // a checkbox decided by an uneditable rule keeps whatever the
+                  // row itself grants, rather than what that rule displays
+                  (cell.editable ? cell.granted : cell.grantedByOwnRule),
+              ),
             ]),
           ) as Record<FeatureAction, boolean>,
         }));

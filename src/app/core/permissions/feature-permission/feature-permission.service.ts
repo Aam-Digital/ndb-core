@@ -68,14 +68,16 @@ export interface RoleFeaturePermission {
   /**
    * Whether any checkbox of this row can be edited.
    *
-   * `false` for a row whose access to this feature is decided by a rule this UI
-   * does not own - a wildcard `all` subject, a grouped subject, a conditioned
-   * rule or an inverted (deny) rule. Such a row shows its *effective* access
-   * read-only, because the rule cannot be changed without affecting other entity
-   * types or roles; the admin must use the role administration instead.
+   * `false` only when *every* action is decided by a rule this UI does not own -
+   * a wildcard `all` subject, a grouped subject, a conditioned rule or an
+   * inverted (deny) rule - because such rules cannot be changed without
+   * affecting other entity types or roles.
    *
-   * This applies to the `_default` row just like to a role row: it is editable
-   * whenever the shared section holds no rule that this UI cannot express.
+   * A rule covering only some actions locks just those checkboxes and leaves the
+   * rest of the row editable, so a shared "read these four types" rule does not
+   * stop an admin from granting the remaining actions for this feature.
+   *
+   * This applies to the `_default` row just like to a role row.
    */
   editable: boolean;
 }
@@ -165,59 +167,65 @@ export class FeaturePermissionService {
     grantedByDefault: Record<FeatureAction, boolean>,
     entityType: string,
   ): RoleFeaturePermission {
-    // access decided by a rule this UI does not own (wildcard, grouped subject,
-    // condition or inverted rule) cannot be changed here -> show the effective
-    // state of the whole row read-only.
-    const hasAdvancedRule = roleRules.some(
-      (rule) =>
-        this.affectsFeature(rule, entityType) &&
-        !this.isOwnedRule(rule, entityType),
+    // An inverted rule revokes access granted before it and cannot be expressed
+    // through checkboxes. Because CASL resolves the rules in order, adding a
+    // rule next to it could silently do nothing, so the row stays read-only.
+    const hasInvertedRule = roleRules.some(
+      (rule) => rule.inverted && this.affectsFeature(rule, entityType),
     );
-
-    if (hasAdvancedRule) {
-      const effectiveRules = [...defaultRules, ...roleRules];
-      return {
-        role,
-        actions: this.mapActions((action) => {
-          const granted = this.hasEffectiveAccess(
-            effectiveRules,
-            entityType,
-            action,
-          );
-          // the row cannot be edited at all, so there is no separate "own" state
-          return {
-            granted,
-            grantedByOwnRule: granted,
-            editable: false,
-            lockedBy: "advanced-rule",
-          };
-        }),
-        editable: false,
-      };
-    }
-
+    const effectiveRules = [...defaultRules, ...roleRules];
     const ownedRules = roleRules.filter((rule) =>
       this.isOwnedRule(rule, entityType),
     );
+    // wildcard subjects, grouped subjects, conditions and rules the server
+    // manages: kept as they are, because rewriting one would affect other
+    // entity types or roles
+    const unownedRules = roleRules.filter(
+      (rule) => !this.isOwnedRule(rule, entityType),
+    );
+
+    const actions = this.mapActions<FeatureActionPermission>((action) => {
+      const grantedByOwnRule = ownedRules.some((rule) =>
+        ruleCoversAction(rule, entityType, action),
+      );
+
+      // a rule this UI cannot rewrite decides this single action - the other
+      // actions of the same row stay editable, so that e.g. a shared
+      // "read these four types" rule does not block granting "delete" here
+      if (
+        hasInvertedRule ||
+        unownedRules.some((rule) => ruleCoversAction(rule, entityType, action))
+      ) {
+        return {
+          granted: this.hasEffectiveAccess(effectiveRules, entityType, action),
+          grantedByOwnRule,
+          editable: false,
+          lockedBy: "advanced-rule",
+        };
+      }
+
+      // an action granted to everyone through `_default` cannot be revoked for a
+      // single role here (that would need an inverted rule), so it is locked
+      if (grantedByDefault[action]) {
+        return {
+          granted: true,
+          grantedByOwnRule,
+          editable: false,
+          lockedBy: "default",
+        };
+      }
+
+      return { granted: grantedByOwnRule, grantedByOwnRule, editable: true };
+    });
+
     return {
       role,
-      actions: this.mapActions((action) => {
-        const grantedByOwnRule = ownedRules.some((rule) =>
-          ruleCoversAction(rule, entityType, action),
-        );
-        // an action granted to everyone through `_default` cannot be revoked for a
-        // single role here (that would need an inverted rule), so it is locked
-        if (grantedByDefault[action]) {
-          return {
-            granted: true,
-            grantedByOwnRule,
-            editable: false,
-            lockedBy: "default",
-          };
-        }
-        return { granted: grantedByOwnRule, grantedByOwnRule, editable: true };
-      }),
-      editable: true,
+      actions,
+      // only a row that is decided by uneditable rules throughout is read-only;
+      // a lock coming from `_default` is lifted again by unticking it there
+      editable: FEATURE_ACTIONS.some(
+        (action) => actions[action].lockedBy !== "advanced-rule",
+      ),
     };
   }
 

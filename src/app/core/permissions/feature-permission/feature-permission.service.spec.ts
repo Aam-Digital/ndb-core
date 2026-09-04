@@ -209,7 +209,7 @@ describe("FeaturePermissionService", () => {
     expect(state.roles[0].editable).toBe(true);
   });
 
-  it("should show the shared default section read-only when an advanced rule decides it", async () => {
+  it("should show the shared default section read-only when an advanced rule decides every action", async () => {
     mockConfig({ _default: [{ subject: "all", action: "manage" }] });
 
     const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
@@ -217,6 +217,23 @@ describe("FeaturePermissionService", () => {
     expect(summarize(state.defaultRules)).toEqual(allActions("granted/locked"));
     expect(state.defaultRules.editable).toBe(false);
     expect(state.defaultRules.actions.read.lockedBy).toBe("advanced-rule");
+  });
+
+  it("should lock only the actions a grouped-subject rule grants, leaving the rest of the row editable", async () => {
+    // the shape the shipped base config uses for the shared section
+    mockConfig({
+      _default: [{ subject: ["Config", ENTITY_TYPE], action: "read" }],
+      user_app: [],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(summarize(state.defaultRules)).toEqual({
+      ...allActions("-/editable"),
+      read: "granted/locked",
+    });
+    expect(state.defaultRules.editable).toBe(true);
+    expect(state.roles[0].editable).toBe(true);
   });
 
   it("should report a role's own grant separately from what the default section adds", async () => {
@@ -237,8 +254,9 @@ describe("FeaturePermissionService", () => {
 
     const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
 
+    // the wildcard rule decides "read" only, the other actions stay editable
     expect(summarize(state.defaultRules)).toEqual({
-      ...allActions("-/locked"),
+      ...allActions("-/editable"),
       read: "granted/locked",
     });
   });
