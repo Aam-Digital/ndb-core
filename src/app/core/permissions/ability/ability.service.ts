@@ -7,7 +7,6 @@ import {
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from "../permission-types";
-import { migrateLegacySectionKeys } from "../permissions-config-migration";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
@@ -63,9 +62,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.rulesUpdated = this.entityUpdated.pipe(
-      map((config) => migrateLegacySectionKeys(config.data)),
-    );
+    this.rulesUpdated = this.entityUpdated.pipe(map((config) => config.data));
     this.rulesUpdated
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((rules) => {
@@ -87,9 +84,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     }
 
     if (initialPermissions) {
-      await this.updateAbilityWithUserRules(
-        migrateLegacySectionKeys(initialPermissions.data),
-      );
+      await this.updateAbilityWithUserRules(initialPermissions.data);
     } else if (this.rulesKnown) {
       // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: "manage", subject: "all" }]);
