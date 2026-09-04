@@ -11,52 +11,54 @@
   "
   [paginationPageSize]="4"
 >
-  <div class="flex-row navigation-controls">
-    <button
-      mat-icon-button
-      matTooltip="Previous Grouping"
-      i18n-matTooltip
-      i18n-caption
-      caption="Previous"
-      i18n-aria-label
-      aria-label="Previous grouping"
-      (click)="getPrev()"
-      [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
-      [style.transform]="'scale(0.75)'"
-    >
-      <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
-    </button>
-
-    <span
-      class="flex-grow groupby-label"
-      i18n="category of disagregation in EntityCountDashboard"
-    >
-      by
-      <app-entity-field-label
-        [entityType]="entityDefinition()"
-        [field]="currentGroupField()"
+  @if (currentGroupField(); as groupField) {
+    <div class="flex-row navigation-controls">
+      <button
+        mat-icon-button
+        matTooltip="Previous Grouping"
+        i18n-matTooltip
+        i18n-caption
+        caption="Previous"
+        i18n-aria-label
+        aria-label="Previous grouping"
+        (click)="getPrev()"
+        [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
+        [style.transform]="'scale(0.75)'"
       >
-      </app-entity-field-label>
-      :
-    </span>
+        <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
+      </button>
 
-    <button
-      mat-icon-button
-      matTooltip="Next Grouping"
-      i18n-matTooltip
-      i18n-caption
-      caption="Next"
-      i18n-aria-label
-      aria-label="Next grouping"
-      (click)="getNext()"
-      [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
-      [style.transform]="'scale(0.75)'"
-    >
-      <fa-icon icon="circle-chevron-right"></fa-icon>
-    </button>
-  </div>
+      <span
+        class="flex-grow groupby-label"
+        i18n="category of disagregation in EntityCountDashboard"
+      >
+        by
+        <app-entity-field-label
+          [entityType]="entityDefinition()"
+          [field]="groupField"
+        >
+        </app-entity-field-label>
+        :
+      </span>
 
-  <div class="label-separator"></div>
+      <button
+        mat-icon-button
+        matTooltip="Next Grouping"
+        i18n-matTooltip
+        i18n-caption
+        caption="Next"
+        i18n-aria-label
+        aria-label="Next grouping"
+        (click)="getNext()"
+        [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
+        [style.transform]="'scale(0.75)'"
+      >
+        <fa-icon icon="circle-chevron-right"></fa-icon>
+      </button>
+    </div>
+
+    <div class="label-separator"></div>
+  }
 
   <div class="table-wrapper">
     <table
