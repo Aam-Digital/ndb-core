@@ -402,7 +402,7 @@ describe("AbilityService", () => {
       ];
       const config = new Config<DatabaseRules>(
         Config.PERMISSION_KEY,
-        Object.assign({ default: defaultRules } as DatabaseRules, rules),
+        Object.assign({ _default: defaultRules } as DatabaseRules, rules),
       );
 
       entityUpdates.next({ entity: config, type: "update" });
@@ -450,30 +450,6 @@ describe("AbilityService", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should still read the legacy default section of a document that has not been migrated yet", async () => {
-    vi.useFakeTimers();
-    try {
-      service.initializeRules();
-      await vi.advanceTimersByTimeAsync(0);
-      const legacyDefaultRules: DatabaseRule[] = [
-        { subject: "Config", action: "read" },
-      ];
-      const config = new Config<DatabaseRules>(
-        Config.PERMISSION_KEY,
-        Object.assign({ default: legacyDefaultRules } as DatabaseRules, rules),
-      );
-
-      entityUpdates.next({ entity: config, type: "update" });
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(ability.rules).toEqual(
-        legacyDefaultRules.concat(...rules.user_app),
-      );
     } finally {
       vi.useRealTimers();
     }

@@ -5,10 +5,8 @@ import { Config } from "../../core/config/config";
 import {
   DatabaseRules,
   DEFAULT_SECTION_KEY,
-  LEGACY_PUBLIC_KEY,
   PUBLIC_SECTION_KEY,
 } from "../../core/permissions/permission-types";
-import { migrateLegacySectionKeys } from "../../core/permissions/permissions-config-migration";
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
@@ -65,9 +63,7 @@ export class PublicFormPermissionService {
       if (!permissionsConfig?.data) {
         return false; // No permissions config means "public" users have no access
       }
-      const publicRules =
-        migrateLegacySectionKeys(permissionsConfig.data)[PUBLIC_SECTION_KEY] ??
-        [];
+      const publicRules = permissionsConfig.data[PUBLIC_SECTION_KEY] ?? [];
       return publicRules.some(
         (rule) =>
           this.subjectMatches(rule.subject, entityType) &&
@@ -194,21 +190,6 @@ export class PublicFormPermissionService {
       permissionsConfig.data = {};
     }
 
-    // migrate any legacy section key to the underscore-prefixed name so we
-    // never write both spellings (the read path prefers the new key).
-    // Kept inline instead of using migrateLegacySectionKeys(): this is a write
-    // path, so it also removes the legacy key and must not touch any section
-    // other than the one this form needs.
-    const migratedLegacyPublic = LEGACY_PUBLIC_KEY in permissionsConfig.data;
-    if (
-      permissionsConfig.data[LEGACY_PUBLIC_KEY] &&
-      !permissionsConfig.data[PUBLIC_SECTION_KEY]
-    ) {
-      permissionsConfig.data[PUBLIC_SECTION_KEY] =
-        permissionsConfig.data[LEGACY_PUBLIC_KEY];
-    }
-    delete permissionsConfig.data[LEGACY_PUBLIC_KEY];
-
     if (!permissionsConfig.data[PUBLIC_SECTION_KEY]) {
       permissionsConfig.data[PUBLIC_SECTION_KEY] = [];
     }
@@ -261,8 +242,7 @@ export class PublicFormPermissionService {
       });
     }
 
-    // also persist when we only migrated a legacy section (no new rule added)
-    if (migratedLegacyPublic || !createExists || !formReadExists) {
+    if (!createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
     }
   }
