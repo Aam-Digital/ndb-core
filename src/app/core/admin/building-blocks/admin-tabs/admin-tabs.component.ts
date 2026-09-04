@@ -25,6 +25,8 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import { resolveActiveText } from "../../../language/active-locale";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -79,6 +81,12 @@ export class AdminTabsComponent<
     }
     return tabs[0].hasOwnProperty("name") ? "name" : "title";
   });
+
+  /** the tab's title as text - a translatable title may hold a per-language map */
+  tabTitle(tab: E): string {
+    const title: TranslatableText = tab[this.tabTitleProperty()];
+    return resolveActiveText(title) ?? "";
+  }
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })
   tabTemplate: TemplateRef<any>;

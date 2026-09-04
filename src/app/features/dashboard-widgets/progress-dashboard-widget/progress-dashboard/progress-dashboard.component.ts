@@ -22,6 +22,7 @@ import { Logging } from "../../../../core/logging/logging.service";
 import { waitForChangeTo } from "../../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../../../../core/session/session-type";
+import { resolveActiveText } from "../../../../core/language/active-locale";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 
@@ -60,6 +61,15 @@ export class ProgressDashboardComponent {
   );
 
   overallPercentage = computed(() => this.getOverallProgressPercentage());
+
+  // display only - `data` keeps the raw values because it is what gets saved (#3862)
+  readonly displayTitle = computed(() => resolveActiveText(this.data().title));
+  readonly displayParts = computed(() =>
+    (this.data().parts ?? []).map((part) => ({
+      ...part,
+      label: resolveActiveText(part.label),
+    })),
+  );
 
   constructor() {
     effect((onCleanup) => {

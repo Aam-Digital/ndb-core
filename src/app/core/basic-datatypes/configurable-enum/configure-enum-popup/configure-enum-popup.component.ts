@@ -34,6 +34,7 @@ import {
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ColorInputComponent } from "#src/app/core/common-components/color-input/color-input.component";
+import { TranslatableTextInputComponent } from "#src/app/core/config/translatable-text-input/translatable-text-input.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,6 +53,7 @@ import { ColorInputComponent } from "#src/app/core/common-components/color-input
     MatButtonModule,
     MatTooltipModule,
     ColorInputComponent,
+    TranslatableTextInputComponent,
   ],
 })
 export class ConfigureEnumPopupComponent {

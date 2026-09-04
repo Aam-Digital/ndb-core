@@ -5,6 +5,11 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { Logging } from "../../logging/logging.service";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
+import { resolveActiveText } from "../../language/active-locale";
+
+function displayLabel(label: ConfigurableEnumValue["label"]): string {
+  return (resolveActiveText(label) ?? "").trim().toLowerCase();
+}
 
 @DatabaseEntity("ConfigurableEnum")
 export class ConfigurableEnum extends Entity {
@@ -39,13 +44,9 @@ export class ConfigurableEnum extends Entity {
       return;
     }
 
-    // check for duplicates
-    if (
-      this.values.some(
-        (v) =>
-          v.label.trim().toLowerCase() === option.label.trim().toLowerCase(),
-      )
-    ) {
+    // check for duplicates by the text of the active language (#3862)
+    const newLabel = displayLabel(option.label);
+    if (this.values.some((v) => displayLabel(v.label) === newLabel)) {
       throw new DuplicateEnumOptionException(newOptionInput);
     }
     if (this.values.some((v) => v.id === option.id)) {

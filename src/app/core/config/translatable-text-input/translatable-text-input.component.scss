@@ -13,6 +13,8 @@
 
 .text-field {
   flex: 1 1 auto;
+  min-width: 0; // let it shrink instead of overflowing under the suffix icons
+  width: 100%;
   border: none;
   background: transparent;
   // `inherit` would pick up the form field's muted label colour
