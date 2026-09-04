@@ -43,7 +43,7 @@ describe("CoreModule", () => {
     });
   });
 
-  it("registers the default entity actions (archive, anonymize, delete, duplicate) on startup (#4345)", async () => {
+  it("registers the default entity actions (archive, anonymize, delete, duplicate) on startup", async () => {
     // Simply importing CoreModule (as AppModule does on every app startup) must be
     // enough to register these actions - they must not depend on some other,
     // unrelated component happening to inject EntityActionsService first.

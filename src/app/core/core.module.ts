@@ -58,7 +58,7 @@ export class CoreModule {
     components.addAll(coreComponents);
 
     // Force this to be instantiated so it registers its actions (archive, anonymize, delete, duplicate)
-    // regardless of whether some other component happens to inject it first (#4345).
+    // regardless of whether some other component happens to inject it first.
     inject(EntityActionsService);
   }
 }

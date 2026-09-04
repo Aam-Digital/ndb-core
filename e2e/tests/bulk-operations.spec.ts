@@ -144,7 +144,7 @@ test("Bulk-merge two records combines them into one", async ({ page }) => {
 const ARCHIVE_CHILD_A_NAME = "<ARCHIVE CHILD A>";
 const ARCHIVE_CHILD_B_NAME = "<ARCHIVE CHILD B>";
 
-test("Bulk-archive selected records hides them from the default list (#4345)", async ({
+test("Bulk-archive selected records hides them from the default list", async ({
   page,
 }) => {
   const users = generateUsers();
@@ -156,8 +156,7 @@ test("Bulk-archive selected records hides them from the default list (#4345)", a
   await page.getByRole("navigation").getByText("Children").click();
 
   // Enter bulk-actions mode directly from the list, without ever opening any
-  // entity's details view first — "Archive" must be available as a bulk action
-  // regardless (#4345).
+  // entity's details view first — "Archive" must be available as a bulk action.
   await page.locator("button[mat-icon-button][color='primary']").click();
   await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
 
@@ -181,6 +180,7 @@ test("Bulk-archive selected records hides them from the default list (#4345)", a
 
   // A snackbar confirms the bulk archive.
   await expect(page.getByText(/archived/)).toBeVisible();
+  await argosScreenshot(page, "bulk-archive-confirmation");
 
   // Both records are hidden from the default (active-only) list.
   await expect(
