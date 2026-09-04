@@ -1,14 +1,16 @@
 import { TestBed } from "@angular/core/testing";
+import { firstValueFrom } from "rxjs";
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { KeycloakAdminService } from "./keycloak-admin.service";
-import { environment } from "../../../../environments/environment.spec";
+import { environment } from "../../../../environments/environment";
 import { Role } from "./user-account";
 import { UserAdminApiError, UserAdminService } from "./user-admin.service";
 import { Logging } from "app/core/logging/logging.service";
 import { SessionSubject } from "../../session/auth/session-info";
+import { SessionType } from "../../session/session-type";
 
 describe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
@@ -18,6 +20,8 @@ describe("KeycloakAdminService", () => {
   const BASE_URL = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
 
   beforeEach(() => {
+    // the service only talks to the auth server outside of demo/mock mode
+    environment.session_type = SessionType.synced;
     sessionSubject = new SessionSubject();
     sessionSubject.next({
       id: "admin",
@@ -39,6 +43,7 @@ describe("KeycloakAdminService", () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    environment.session_type = SessionType.mock;
   });
 
   it("should be created", () => {
@@ -236,6 +241,17 @@ describe("KeycloakAdminService", () => {
     const req = httpTestingController.expectOne(`${BASE_URL}/roles`);
     expect(req.request.method).toEqual("GET");
     req.flush(mockRoles);
+  });
+
+  it("should not contact the auth server without one, e.g. in a demo deployment", async () => {
+    // the placeholder auth server URL points at localhost, where a request
+    // would make the browser ask the user for local network access
+    environment.session_type = SessionType.mock;
+
+    const roles = await firstValueFrom(service.getAllRoles());
+
+    expect(roles).toEqual([]);
+    httpTestingController.expectNone(`${BASE_URL}/roles`);
   });
 
   it("should handle network error when server is unreachable", async () => {

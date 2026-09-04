@@ -3,9 +3,8 @@ import {
   DatabaseRule,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
+  isReservedRuleConfigKey,
   PUBLIC_SECTION_KEY,
-  RESERVED_ROLE_PREFIX,
-  RESERVED_RULE_CONFIG_KEYS,
 } from "../permission-types";
 import { migrateLegacySectionKeys } from "../permissions-config-migration";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -202,10 +201,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     }
     sessionInfo.roles.forEach((role) => {
       // reserved section keys and underscore-prefixed names never resolve as roles
-      if (
-        role.startsWith(RESERVED_ROLE_PREFIX) ||
-        RESERVED_RULE_CONFIG_KEYS.includes(role)
-      ) {
+      if (isReservedRuleConfigKey(role)) {
         return;
       }
       const rulesForRole = rules[role] || [];

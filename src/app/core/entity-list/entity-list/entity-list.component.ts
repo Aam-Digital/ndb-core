@@ -13,6 +13,7 @@ import {
   untracked,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { toSignal } from "@angular/core/rxjs-interop";
 import {
   ColumnGroupsConfig,
   FilterConfig,
@@ -57,6 +58,11 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
+import {
+  FeaturePermissionDialogComponent,
+  FeaturePermissionDialogData,
+} from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
+import { PermissionsConfigService } from "../../permissions/permissions-config.service";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
@@ -115,6 +121,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly publicFormsService = inject(PublicFormsService);
   private readonly ability = inject(EntityAbility);
+  private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly injector = inject(Injector);
 
   public publicFormConfigs: PublicFormConfig[] = [];
@@ -135,6 +142,21 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.ability.can("create", ImportMetadata)
     );
   });
+
+  /** whether the current user may review and edit who can access this entity type */
+  readonly canManagePermissions = toSignal(
+    this.permissionsConfig.canManagePermissions$,
+    { initialValue: false },
+  );
+
+  /**
+   * Internal entity types are "features" (e.g. Email Templates) that exist only to
+   * be configured by admins, so their permissions get a dedicated button here.
+   * For regular entity types the same dialog is offered in the overflow menu.
+   */
+  readonly isFeatureType = computed(
+    () => !!this.entityConstructor()?.isInternalEntity,
+  );
 
   entityType = input<string>();
   entityConstructor = model<EntityConstructor<T>>();
@@ -254,6 +276,22 @@ export class EntityListComponent<T extends Entity> implements OnInit {
           this.entityConstructor()?.ENTITY_TYPE?.toLowerCase(),
     );
     this.cdr.markForCheck();
+  }
+
+  /** Review and edit which user roles have access to this entity type. */
+  openPermissionsDialog() {
+    const entityConstructor = this.entityConstructor();
+    if (!entityConstructor) {
+      return;
+    }
+
+    this.dialog.open(FeaturePermissionDialogComponent, {
+      data: {
+        entityType: entityConstructor.ENTITY_TYPE,
+        entityLabel: entityConstructor.labelPlural,
+      } as FeaturePermissionDialogData,
+      maxWidth: "720px",
+    });
   }
 
   async copyPublicFormLinkForEntityType(config: PublicFormConfig) {
