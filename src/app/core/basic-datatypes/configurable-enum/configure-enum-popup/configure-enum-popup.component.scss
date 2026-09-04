@@ -1,4 +1,9 @@
+@use "variables/colors";
+
 .grab-icon {
   cursor: grab;
   padding-left: 5px;
+}
+.translations-button.is-multi-lingual {
+  color: colors.$accent;
 }

@@ -25,6 +25,8 @@
         <button
           mat-icon-button
           type="button"
+          class="translations-button"
+          [class.is-multi-lingual]="labelInput.isMultiLingual()"
           (click)="labelInput.openTranslations($event)"
           matTooltip="Configure this text in other languages"
           i18n-matTooltip
