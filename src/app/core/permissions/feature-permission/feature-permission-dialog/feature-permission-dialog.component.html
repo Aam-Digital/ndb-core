@@ -42,7 +42,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (row of rows(); track row.role) {
+        @for (row of displayRows(); track row.role) {
           <tr
             [class.readonly-row]="!row.editable"
             [class.default-row]="row.isDefaultRow"

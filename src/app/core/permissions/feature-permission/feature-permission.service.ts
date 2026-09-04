@@ -43,7 +43,16 @@ export type PermissionLockReason =
 
 /** the state of a single action checkbox in one row */
 export interface FeatureActionPermission {
+  /** the effective access, i.e. what the checkbox shows when the dialog opens */
   granted: boolean;
+  /**
+   * Whether the row's *own* rules for this entity type grant the action, ignoring
+   * what the shared `_default` section adds on top.
+   *
+   * The dialog keeps this as the row's own intent, so that unticking an action on
+   * the `_default` row reveals a role's own rule again instead of discarding it.
+   */
+  grantedByOwnRule: boolean;
   editable: boolean;
   lockedBy?: PermissionLockReason;
 }
@@ -59,12 +68,14 @@ export interface RoleFeaturePermission {
   /**
    * Whether any checkbox of this row can be edited.
    *
-   * `false` for the `_default` row and for roles whose access to this feature is
-   * decided by a rule this UI does not own - a wildcard `all` subject, a grouped
-   * subject, a conditioned rule or an inverted (deny) rule. Such a row shows the
-   * role's *effective* access read-only, because the rule cannot be changed
-   * without affecting other entity types or roles; the admin must use the
-   * advanced (raw JSON) editor instead.
+   * `false` for a row whose access to this feature is decided by a rule this UI
+   * does not own - a wildcard `all` subject, a grouped subject, a conditioned
+   * rule or an inverted (deny) rule. Such a row shows its *effective* access
+   * read-only, because the rule cannot be changed without affecting other entity
+   * types or roles; the admin must use the role administration instead.
+   *
+   * This applies to the `_default` row just like to a role row: it is editable
+   * whenever the shared section holds no rule that this UI cannot express.
    */
   editable: boolean;
 }
@@ -76,8 +87,9 @@ export interface FeaturePermissionState {
   entityType: string;
 
   /**
-   * The shared `_default` section, shown as a read-only first row so that
-   * checkboxes disabled on the role rows have a visible reason.
+   * The shared `_default` section, shown as the first row so that checkboxes
+   * disabled on the role rows have a visible reason - and editable like any
+   * other row, matching the role administration (Admin > Roles).
    */
   defaultRules: RoleFeaturePermission;
 
@@ -133,15 +145,15 @@ export class FeaturePermissionService {
 
     return {
       entityType,
-      defaultRules: {
-        role: DEFAULT_SECTION_KEY,
-        actions: this.mapActions((action) => ({
-          granted: grantedByDefault[action],
-          editable: false,
-          lockedBy: "default",
-        })),
-        editable: false,
-      },
+      // the shared section is read and written like any other row; it cannot
+      // inherit from itself, so nothing is locked as "granted by default" here
+      defaultRules: this.getRolePermission(
+        DEFAULT_SECTION_KEY,
+        defaultRules,
+        [],
+        this.mapActions(() => false),
+        entityType,
+      ),
       roles,
     };
   }
@@ -166,11 +178,20 @@ export class FeaturePermissionService {
       const effectiveRules = [...defaultRules, ...roleRules];
       return {
         role,
-        actions: this.mapActions((action) => ({
-          granted: this.hasEffectiveAccess(effectiveRules, entityType, action),
-          editable: false,
-          lockedBy: "advanced-rule",
-        })),
+        actions: this.mapActions((action) => {
+          const granted = this.hasEffectiveAccess(
+            effectiveRules,
+            entityType,
+            action,
+          );
+          // the row cannot be edited at all, so there is no separate "own" state
+          return {
+            granted,
+            grantedByOwnRule: granted,
+            editable: false,
+            lockedBy: "advanced-rule",
+          };
+        }),
         editable: false,
       };
     }
@@ -181,27 +202,31 @@ export class FeaturePermissionService {
     return {
       role,
       actions: this.mapActions((action) => {
+        const grantedByOwnRule = ownedRules.some((rule) =>
+          ruleCoversAction(rule, entityType, action),
+        );
         // an action granted to everyone through `_default` cannot be revoked for a
         // single role here (that would need an inverted rule), so it is locked
         if (grantedByDefault[action]) {
-          return { granted: true, editable: false, lockedBy: "default" };
+          return {
+            granted: true,
+            grantedByOwnRule,
+            editable: false,
+            lockedBy: "default",
+          };
         }
-        return {
-          granted: ownedRules.some((rule) =>
-            ruleCoversAction(rule, entityType, action),
-          ),
-          editable: true,
-        };
+        return { granted: grantedByOwnRule, grantedByOwnRule, editable: true };
       }),
       editable: true,
     };
   }
 
   /**
-   * Persist the updated permissions for the given roles.
+   * Persist the updated permissions for the given rows (user roles and the
+   * shared `_default` section).
    *
    * Only rules this service owns for the exact entity type are replaced; every
-   * other rule (including `_default`/`_public` and complex rules) is preserved.
+   * other rule (including `_public` and complex rules) is preserved.
    * Actions already granted through `_default` are never written as a role rule,
    * so that inherited access does not get duplicated into every role.
    * A timestamped backup of the previous config is stored before saving.
@@ -213,23 +238,31 @@ export class FeaturePermissionService {
     updates: RoleFeaturePermissionUpdate[],
   ): Promise<Config<DatabaseRules>> {
     const existing = await this.permissionsConfig.load();
-    // the grants to suppress are the ones the admin actually saw as inherited,
-    // i.e. from the stored config - not from a `_default` section seeded below
-    const grantedByDefault = this.getDefaultGrants(
-      this.getDefaultRules(existing?.data ?? {}),
+    // the grants to suppress on the role rows are the ones that are in effect
+    // *after* this save, because `_default` can be edited in the same go.
+    // Read before seeding below, so a seeded `_default` does not count as one
+    // the admin saw as inherited.
+    const grantedByDefault = this.getUpdatedDefaultGrants(
+      updates,
+      existing,
       entityType,
     );
     const config = this.ensurePermissionsConfig(existing);
     const updatedData = structuredClone(config.data);
 
     for (const { role, actions } of updates) {
-      // never edit the shared baseline sections through the per-role grid
-      if (isReservedRuleConfigKey(role)) {
+      const isDefaultSection = role === DEFAULT_SECTION_KEY;
+      // `_public` (and the legacy spellings) are never edited through this grid,
+      // as they carry semantics the per-role checkboxes cannot represent
+      if (!isDefaultSection && isReservedRuleConfigKey(role)) {
         continue;
       }
 
       const selected = FEATURE_ACTIONS.filter(
-        (action) => actions[action] && !grantedByDefault[action],
+        (action) =>
+          actions[action] &&
+          // the shared section is what grants the action in the first place
+          (isDefaultSection || !grantedByDefault[action]),
       );
 
       // keep every rule we don't own, then re-add the selected actions
@@ -250,6 +283,28 @@ export class FeaturePermissionService {
     }
 
     return this.permissionsConfig.saveWithBackup(config, updatedData);
+  }
+
+  /**
+   * Which actions the shared `_default` section grants for this feature once the
+   * given updates are saved: taken from the submitted `_default` row if it was
+   * editable (and therefore sent along), and from the stored config otherwise.
+   */
+  private getUpdatedDefaultGrants(
+    updates: RoleFeaturePermissionUpdate[],
+    existing: Config<DatabaseRules> | null,
+    entityType: string,
+  ): Record<FeatureAction, boolean> {
+    const defaultUpdate = updates.find(
+      ({ role }) => role === DEFAULT_SECTION_KEY,
+    );
+    if (defaultUpdate) {
+      return this.mapActions((action) => defaultUpdate.actions[action]);
+    }
+    return this.getDefaultGrants(
+      this.getDefaultRules(existing?.data ?? {}),
+      entityType,
+    );
   }
 
   /**

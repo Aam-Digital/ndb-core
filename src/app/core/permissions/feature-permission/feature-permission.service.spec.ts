@@ -194,11 +194,12 @@ describe("FeaturePermissionService", () => {
 
     const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
 
+    // the shared section holds only a rule this UI owns, so it can be edited
     expect(summarize(state.defaultRules)).toEqual({
-      ...allActions("-/locked"),
-      read: "granted/locked",
+      ...allActions("-/editable"),
+      read: "granted/editable",
     });
-    expect(state.defaultRules.editable).toBe(false);
+    expect(state.defaultRules.editable).toBe(true);
     expect(summarize(state.roles[0])).toEqual({
       ...allActions("-/editable"),
       read: "granted/locked",
@@ -206,6 +207,29 @@ describe("FeaturePermissionService", () => {
     });
     // a default grant alone does not make the row read-only
     expect(state.roles[0].editable).toBe(true);
+  });
+
+  it("should show the shared default section read-only when an advanced rule decides it", async () => {
+    mockConfig({ _default: [{ subject: "all", action: "manage" }] });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    expect(summarize(state.defaultRules)).toEqual(allActions("granted/locked"));
+    expect(state.defaultRules.editable).toBe(false);
+    expect(state.defaultRules.actions.read.lockedBy).toBe("advanced-rule");
+  });
+
+  it("should report a role's own grant separately from what the default section adds", async () => {
+    mockConfig({
+      _default: [{ subject: ENTITY_TYPE, action: ["read", "update"] }],
+      user_app: [{ subject: ENTITY_TYPE, action: "read" }],
+    });
+
+    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
+
+    // both are locked and granted, but only "read" survives removing the default
+    expect(state.roles[0].actions.read.grantedByOwnRule).toBe(true);
+    expect(state.roles[0].actions.update.grantedByOwnRule).toBe(false);
   });
 
   it("should read the legacy 'default' section as the shared default", async () => {
@@ -292,7 +316,6 @@ describe("FeaturePermissionService", () => {
         role: "assistant_app",
         actions: actions("read", "create", "update", "delete"),
       },
-      { role: "_default", actions: actions("read", "create") },
     ]);
 
     expect(savedPermissions()).toEqual({
@@ -300,6 +323,76 @@ describe("FeaturePermissionService", () => {
       assistant_app: [
         { subject: ENTITY_TYPE, action: ["create", "update", "delete"] },
       ],
+    });
+  });
+
+  it("should write the shared default section like any other row", async () => {
+    mockConfig({ _default: [{ subject: ENTITY_TYPE, action: "read" }] });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "_default", actions: actions("read", "create") },
+      { role: "user_app", actions: actions("read") },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      _default: [{ subject: ENTITY_TYPE, action: ["create", "read"] }],
+    });
+  });
+
+  it("should suppress role rules based on the default section as it is being saved, not as it was stored", async () => {
+    mockConfig({
+      _default: [{ subject: ENTITY_TYPE, action: "read" }],
+      user_app: [{ subject: "Child", action: "read" }],
+    });
+
+    // the admin removes the shared "read" grant and keeps it for user_app only
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "_default", actions: actions() },
+      { role: "user_app", actions: actions("read") },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      user_app: [
+        { subject: "Child", action: "read" },
+        { subject: ENTITY_TYPE, action: "read" },
+      ],
+    });
+  });
+
+  it("should preserve rules of the default section that it does not own", async () => {
+    mockConfig({
+      _default: [
+        { subject: "Child", action: "read" },
+        { subject: ENTITY_TYPE, action: "read" },
+      ],
+    });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      { role: "_default", actions: actions("update") },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      _default: [
+        { subject: "Child", action: "read" },
+        { subject: ENTITY_TYPE, action: "update" },
+      ],
+    });
+  });
+
+  it("should never write the _public section", async () => {
+    mockConfig({ _public: [{ subject: ENTITY_TYPE, action: "read" }] });
+
+    await service.setPermissions(ENTITY_TYPE, [
+      {
+        role: "_public",
+        actions: actions("read", "create", "update", "delete"),
+      },
+      { role: "user_app", actions: actions("read") },
+    ]);
+
+    expect(savedPermissions()).toEqual({
+      _public: [{ subject: ENTITY_TYPE, action: "read" }],
+      user_app: [{ subject: ENTITY_TYPE, action: "read" }],
     });
   });
 

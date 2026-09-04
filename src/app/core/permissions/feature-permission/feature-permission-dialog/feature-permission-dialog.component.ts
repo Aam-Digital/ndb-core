@@ -60,7 +60,17 @@ interface ActionColumn {
 /** one checkbox of a row, with everything the template needs precomputed */
 interface PermissionCell {
   action: FeatureAction;
+  /**
+   * In {@link FeaturePermissionDialogComponent.rows} the row's *own* grant, as
+   * edited through the checkbox; in
+   * {@link FeaturePermissionDialogComponent.displayRows} the effective grant,
+   * including what the `_default` row adds on top.
+   */
   granted: boolean;
+  /**
+   * In `rows` whether an advanced rule leaves this checkbox editable at all; in
+   * `displayRows` additionally `false` while `_default` grants the action.
+   */
   editable: boolean;
   /** why this checkbox cannot be changed; empty when it is editable */
   lockTooltip: string;
@@ -140,11 +150,62 @@ export class FeaturePermissionDialogComponent {
     loader: () => this.loadPermissionRows(),
   });
 
-  /** the displayed rows, holding the changes made through the checkboxes */
+  /**
+   * The edited state, one row per `_default` section and user role, holding each
+   * row's *own* grants - i.e. what will be written for it. What a role inherits
+   * from the `_default` row is layered on top in {@link displayRows} only.
+   */
   readonly rows = linkedSignal(() =>
     // value() throws while the resource is in an error state
     this.permissionRows.hasValue() ? this.permissionRows.value().rows : [],
   );
+
+  /** the actions the `_default` row grants, as currently ticked in this dialog */
+  private readonly grantedByDefault = computed(() => {
+    const defaultRow = this.rows().find((row) => row.isDefaultRow);
+    return new Set(
+      defaultRow?.cells
+        .filter((cell) => cell.granted)
+        .map((cell) => cell.action) ?? [],
+    );
+  });
+
+  /**
+   * The rows as displayed: on a role row an action granted by the `_default` row
+   * shows as ticked and locked, and follows changes to the `_default` row
+   * immediately, so that removing a shared grant does not silently leave the
+   * role rows claiming access.
+   */
+  readonly displayRows = computed(() => {
+    const grantedByDefault = this.grantedByDefault();
+    return this.rows().map((row) =>
+      row.isDefaultRow ? row : this.applyDefaultGrants(row, grantedByDefault),
+    );
+  });
+
+  private applyDefaultGrants(
+    row: RolePermissionRow,
+    grantedByDefault: ReadonlySet<FeatureAction>,
+  ): RolePermissionRow {
+    if (!row.editable) {
+      // an advanced rule decides this row as a whole, `_default` changes nothing
+      return row;
+    }
+
+    return {
+      ...row,
+      cells: row.cells.map((cell) =>
+        cell.editable && grantedByDefault.has(cell.action)
+          ? {
+              ...cell,
+              granted: true,
+              editable: false,
+              lockTooltip: grantedByDefaultRoleTooltip(),
+            }
+          : cell,
+      ),
+    };
+  }
 
   readonly saving = signal(false);
 
@@ -188,9 +249,9 @@ export class FeaturePermissionDialogComponent {
       description,
       isDefaultRow,
       editable: permission.editable,
-      lockTooltip: permission.editable
-        ? ""
-        : this.rowLockTooltip(isDefaultRow, permission),
+      // a whole row is only ever read-only because of an advanced rule - what
+      // `_default` grants locks single checkboxes, never the `_default` row itself
+      lockTooltip: permission.editable ? "" : grantedByAdvancedRuleTooltip(),
       cells: this.actionColumns.map((column) =>
         this.toCell(column, permission.actions[column.action], label),
       ),
@@ -202,36 +263,16 @@ export class FeaturePermissionDialogComponent {
     permission: FeatureActionPermission,
     rowLabel: string,
   ): PermissionCell {
+    const lockedByAdvancedRule = permission.lockedBy === "advanced-rule";
     return {
       action: column.action,
-      granted: permission.granted,
-      editable: permission.editable,
-      lockTooltip: permission.editable ? "" : this.cellLockTooltip(permission),
+      // the row's own grant, not the effective one: what `_default` adds is
+      // layered on in `displayRows`, so unticking it there reveals this again
+      granted: permission.grantedByOwnRule,
+      editable: !lockedByAdvancedRule,
+      lockTooltip: lockedByAdvancedRule ? grantedByAdvancedRuleTooltip() : "",
       ariaLabel: $localize`:Permission checkbox aria label:${column.label} ${this.entityLabel} as ${rowLabel}`,
     };
-  }
-
-  /** the tooltip explaining why a whole row cannot be changed */
-  private rowLockTooltip(
-    isDefaultRow: boolean,
-    permission: RoleFeaturePermission,
-  ): string {
-    if (isDefaultRow) {
-      return grantedByDefaultRoleTooltip();
-    }
-    return this.cellLockTooltip(permission.actions.read);
-  }
-
-  /** the tooltip explaining why a checkbox cannot be changed */
-  private cellLockTooltip(permission: FeatureActionPermission): string {
-    switch (permission.lockedBy) {
-      case "default":
-        return grantedByDefaultRoleTooltip();
-      case "advanced-rule":
-        return grantedByAdvancedRuleTooltip();
-      default:
-        return "";
-    }
   }
 
   /**
@@ -287,10 +328,10 @@ export class FeaturePermissionDialogComponent {
   async confirm(): Promise<void> {
     this.saving.set(true);
     try {
-      // only editable role rows are persisted; the `_default` row and read-only
-      // rows are display-only
+      // only editable rows are persisted (the `_default` row included); rows
+      // decided by an advanced rule are display-only
       const updates = this.rows()
-        .filter((row) => row.editable && !row.isDefaultRow)
+        .filter((row) => row.editable)
         .map((row) => ({
           role: row.role,
           actions: Object.fromEntries(

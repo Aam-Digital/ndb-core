@@ -9,7 +9,9 @@ import { FeaturePermissionDialogComponent } from "./feature-permission-dialog.co
 import { DEFAULT_ROLE } from "../../reserved-roles";
 import {
   FeatureAction,
+  FeatureActionPermission,
   FeaturePermissionService,
+  PermissionLockReason,
 } from "../feature-permission.service";
 import { PermissionsConfigService } from "../../permissions-config.service";
 import { UserAdminService } from "../../../user/user-admin-service/user-admin.service";
@@ -32,45 +34,76 @@ describe("FeaturePermissionDialogComponent", () => {
   const ENTITY_TYPE = "TemplateExport";
   const backupConfig = new Config(Config.PERMISSION_KEY + ":backup", {});
 
+  const ALL_ACTIONS: FeatureAction[] = ["create", "read", "update", "delete"];
+
+  /**
+   * The actions of one row as the service reports them.
+   * @param granted the effective grants, i.e. including what `_default` adds
+   * @param editable the checkboxes that are not decided by another rule
+   * @param lockedBy why the remaining checkboxes are locked
+   * @param ownRules the row's own grants, defaulting to the effective ones
+   */
   function permissions(
     granted: FeatureAction[],
     editable: FeatureAction[],
-  ): Record<FeatureAction, { granted: boolean; editable: boolean }> {
+    lockedBy?: PermissionLockReason,
+    ownRules: FeatureAction[] = granted,
+  ): Record<FeatureAction, FeatureActionPermission> {
     return Object.fromEntries(
-      (["create", "read", "update", "delete"] as FeatureAction[]).map(
-        (action) => [
-          action,
-          {
-            granted: granted.includes(action),
-            editable: editable.includes(action),
-          },
-        ],
-      ),
-    ) as Record<FeatureAction, { granted: boolean; editable: boolean }>;
+      ALL_ACTIONS.map((action) => [
+        action,
+        {
+          granted: granted.includes(action),
+          grantedByOwnRule: ownRules.includes(action),
+          editable: editable.includes(action),
+          ...(editable.includes(action) ? {} : { lockedBy }),
+        },
+      ]),
+    ) as Record<FeatureAction, FeatureActionPermission>;
   }
 
-  /** default state: shared read access, one read-only role and one editable role */
+  /**
+   * default state: the shared section grants read (and can be edited), one role
+   * is read-only through an advanced rule and one role inherits the read grant
+   */
   function defaultState() {
     return {
       entityType: ENTITY_TYPE,
       defaultRules: {
         role: "_default",
-        actions: permissions(["read"], []),
-        editable: false,
+        actions: permissions(["read"], ALL_ACTIONS),
+        editable: true,
       },
       roles: [
         {
           role: "user_app",
-          actions: permissions(["create", "read", "update", "delete"], []),
+          actions: permissions(ALL_ACTIONS, [], "advanced-rule"),
           editable: false,
         },
         {
           role: "assistant_app",
-          actions: permissions(["read"], ["create", "update", "delete"]),
+          // "read" is inherited from the shared section, nothing of its own
+          actions: permissions(
+            ["read"],
+            ["create", "update", "delete"],
+            "default",
+            [],
+          ),
           editable: true,
         },
       ],
     };
+  }
+
+  /** the displayed state of one row's checkboxes, as a compact string per action */
+  function displayed(role: string): Record<string, string> {
+    const row = component.displayRows().find((r) => r.role === role);
+    return Object.fromEntries(
+      row.cells.map((cell) => [
+        cell.action,
+        `${cell.granted ? "granted" : "-"}/${cell.editable ? "editable" : "locked"}`,
+      ]),
+    );
   }
 
   async function createAndInit() {
@@ -179,7 +212,52 @@ describe("FeaturePermissionDialogComponent", () => {
     expect(component.rows()).toEqual([]);
   });
 
-  it("should save only the editable role rows and offer an undo", async () => {
+  it("should show an action granted by the shared section as ticked and locked on a role", async () => {
+    await createAndInit();
+
+    expect(displayed("assistant_app")).toEqual({
+      create: "-/editable",
+      read: "granted/locked",
+      update: "-/editable",
+      delete: "-/editable",
+    });
+    // and the whole row of a role decided by an advanced rule stays read-only
+    expect(displayed("user_app")).toEqual({
+      create: "granted/locked",
+      read: "granted/locked",
+      update: "granted/locked",
+      delete: "granted/locked",
+    });
+  });
+
+  it("should unlock the role checkboxes as soon as the shared section stops granting the action", async () => {
+    await createAndInit();
+
+    component.setAction("_default", "read", false);
+
+    expect(displayed("assistant_app").read).toBe("-/editable");
+    // an advanced rule still decides this row, whatever the shared section says
+    expect(displayed("user_app").read).toBe("granted/locked");
+  });
+
+  it("should reveal a role's own grant again when the shared section stops granting the action", async () => {
+    const state = defaultState();
+    // the role has an own "read" rule on top of the inherited one
+    state.roles[1].actions = permissions(
+      ["read"],
+      ["create", "update", "delete"],
+      "default",
+      ["read"],
+    );
+    mockPermissionService.getPermissions.mockResolvedValue(state);
+
+    await createAndInit();
+    component.setAction("_default", "read", false);
+
+    expect(displayed("assistant_app").read).toBe("granted/editable");
+  });
+
+  it("should save the editable rows including the shared section, and offer an undo", async () => {
     await createAndInit();
 
     component.setAction("assistant_app", "create", true);
@@ -189,10 +267,20 @@ describe("FeaturePermissionDialogComponent", () => {
       ENTITY_TYPE,
       [
         {
+          role: "_default",
+          actions: {
+            create: false,
+            read: true,
+            update: false,
+            delete: false,
+          },
+        },
+        {
           role: "assistant_app",
+          // "read" is inherited, so it is not written as the role's own rule
           actions: {
             create: true,
-            read: true,
+            read: false,
             update: false,
             delete: false,
           },
@@ -204,6 +292,25 @@ describe("FeaturePermissionDialogComponent", () => {
       expect.stringContaining("Export Templates"),
     );
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
+  });
+
+  it("should not save the shared section when an advanced rule decides it", async () => {
+    const state = defaultState();
+    state.defaultRules = {
+      role: "_default",
+      actions: permissions(ALL_ACTIONS, [], "advanced-rule"),
+      editable: false,
+    };
+    mockPermissionService.getPermissions.mockResolvedValue(state);
+
+    await createAndInit();
+    await component.confirm();
+
+    expect(
+      mockPermissionService.setPermissions.mock.calls[0][1].map(
+        (update) => update.role,
+      ),
+    ).toEqual(["assistant_app"]);
   });
 
   it("should keep the dialog open and inform the user when saving fails", async () => {
