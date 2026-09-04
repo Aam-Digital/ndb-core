@@ -6,7 +6,7 @@
 <mat-dialog-content>
   @if (permissionRows.isLoading()) {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  } @else if (permissionRows.error()) {
+  } @else if (loadFailed()) {
     <app-hint-box type="warning">
       <span i18n>
         Could not load the list of user roles. Please try again later or edit
@@ -99,9 +99,7 @@
     mat-raised-button
     color="accent"
     (click)="confirm()"
-    [disabled]="
-      permissionRows.isLoading() || !!permissionRows.error() || saving()
-    "
+    [disabled]="permissionRows.isLoading() || loadFailed() || saving()"
     i18n="Confirm button"
   >
     Confirm

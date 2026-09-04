@@ -191,7 +191,7 @@ describe("FeaturePermissionDialogComponent", () => {
       ENTITY_TYPE,
       ["user_app", "assistant_app"],
     );
-    expect(component.permissionRows.error()).toBeUndefined();
+    expect(component.loadFailed()).toBe(false);
   });
 
   it.each([
@@ -208,7 +208,7 @@ describe("FeaturePermissionDialogComponent", () => {
 
     await createAndInit();
 
-    expect(component.permissionRows.error()).toBeTruthy();
+    expect(component.loadFailed()).toBe(true);
     expect(component.rows()).toEqual([]);
   });
 

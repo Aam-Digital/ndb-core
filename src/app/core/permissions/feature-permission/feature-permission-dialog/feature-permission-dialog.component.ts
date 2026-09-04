@@ -97,6 +97,8 @@ interface RolePermissionRow {
 /** what the dialog loads before it can display anything */
 interface FeaturePermissionRows {
   rows: RolePermissionRow[];
+  /** true when the roles or their permissions could not be loaded at all */
+  loadFailed?: boolean;
 }
 
 /**
@@ -147,18 +149,30 @@ export class FeaturePermissionDialogComponent {
   }));
 
   readonly permissionRows = resource<FeaturePermissionRows, unknown>({
-    loader: () => this.loadPermissionRows(),
+    // a failure is reported as a value rather than a rejected loader, so that
+    // the dialog has one state to render and no rejection can escape the
+    // resource (see `permissionCheck` in PublicFormPermissionWarningComponent)
+    loader: async () => {
+      try {
+        return await this.loadPermissionRows();
+      } catch (error) {
+        Logging.error("Failed to load feature permissions", error);
+        return { rows: [], loadFailed: true };
+      }
+    },
   });
+
+  /** whether the roles and their permissions could not be loaded */
+  readonly loadFailed = computed(
+    () => this.permissionRows.value()?.loadFailed === true,
+  );
 
   /**
    * The edited state, one row per `_default` section and user role, holding each
    * row's *own* grants - i.e. what will be written for it. What a role inherits
    * from the `_default` row is layered on top in {@link displayRows} only.
    */
-  readonly rows = linkedSignal(() =>
-    // value() throws while the resource is in an error state
-    this.permissionRows.hasValue() ? this.permissionRows.value().rows : [],
-  );
+  readonly rows = linkedSignal(() => this.permissionRows.value()?.rows ?? []);
 
   /** the actions the `_default` row grants, as currently ticked in this dialog */
   private readonly grantedByDefault = computed(() => {
