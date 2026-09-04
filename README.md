@@ -43,6 +43,8 @@ The overall architecture and tech stack including backend services looks like th
 ## Setup
 
 1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed.
+   The Angular CLI requires **Node.js `^22.22.3 || ^24.15.0 || >=26.0.0`** — older versions (including earlier 22.x releases) abort with a version error before the dev server starts.
+   A `.nvmrc` is included, so `nvm use` selects the same version our CI builds with.
 2. `git clone` this repository to get all the code with its configuration and requirements.
 3. `npm install` the dependencies (external libraries and packages)
 4. `npm run start` to run your local dev server and get started.
