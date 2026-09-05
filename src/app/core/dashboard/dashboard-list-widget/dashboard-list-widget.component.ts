@@ -83,9 +83,24 @@ export class DashboardListWidgetComponent<E> {
    */
   dataMapper = input<(data: E[]) => E[]>();
 
+  /**
+   * Async function that loads one page of entries from the database, given how many
+   * items to skip and how many to load (limit).
+   *
+   * If set, the widget fetches and manages pages itself as the user pages through the
+   * paginator (querying only what's needed), instead of using `entries`/`entityType`
+   * (which load everything upfront). Intended for a data source (e.g. a dedicated
+   * PouchDB/CouchDB view) that can return results already sorted/filtered server-side -
+   * `dataMapper`, if also set, still applies to each loaded page client-side.
+   */
+  pageLoader = input<(skip: number, limit: number) => Promise<E[]>>();
+
   private rawData = signal<E[] | undefined>(undefined);
+  private usesOwnLoading = computed(
+    () => !!this.entityType() || !!this.pageLoader(),
+  );
   private data = computed(() => {
-    const sourceData = this.entityType() ? this.rawData() : this.entries();
+    const sourceData = this.usesOwnLoading() ? this.rawData() : this.entries();
     if (!sourceData) {
       return [] as E[];
     }
@@ -94,7 +109,7 @@ export class DashboardListWidgetComponent<E> {
     return mapper ? mapper(sourceData) : sourceData;
   });
   isLoading = computed(() => {
-    const sourceData = this.entityType() ? this.rawData() : this.entries();
+    const sourceData = this.usesOwnLoading() ? this.rawData() : this.entries();
     return sourceData === undefined;
   });
   dataSource = new MatTableDataSource<E>();
@@ -116,14 +131,55 @@ export class DashboardListWidgetComponent<E> {
 
     effect(() => {
       const paginator = this.paginator();
-      if (paginator) {
-        this.dataSource.paginator = paginator;
-      }
+      // In pageLoader mode, `rawData` already holds only the current page - MatTableDataSource
+      // must not also slice it by pageIndex*pageSize itself (it would slice a small, already-
+      // paged array as if it were the full dataset). The paginator is still used, just not
+      // bound here - see the pageLoader effect below, which reads its `page` events directly.
+      // Always assigned explicitly (not just conditionally) so a binding made before
+      // pageLoader was set doesn't stick around once it is.
+      this.dataSource.paginator = this.pageLoader() ? undefined : paginator;
     });
 
     effect((onCleanup) => {
+      // Loading via `pageLoader`
+      const loader = this.pageLoader();
+      const paginator = this.paginator();
+      if (!loader || !paginator) {
+        return;
+      }
+      const pageSize = this.paginationPageSize();
+
+      let isCurrent = true;
+      const loadPage = async (pageIndex: number) => {
+        const skip = pageIndex * pageSize;
+        // Fetch one extra item to detect whether a further page exists, without a
+        // separate count query.
+        const page = await loader(skip, pageSize + 1);
+        if (!isCurrent) {
+          return;
+        }
+        const hasMore = page.length > pageSize;
+        this.rawData.set(hasMore ? page.slice(0, pageSize) : page);
+        paginator.length =
+          skip + Math.min(page.length, pageSize) + (hasMore ? pageSize : 0);
+      };
+
+      this.rawData.set(undefined);
+      void loadPage(0);
+      const subscription = paginator.page.subscribe((event) =>
+        loadPage(event.pageIndex),
+      );
+
+      onCleanup(() => {
+        isCurrent = false;
+        subscription.unsubscribe();
+      });
+    });
+
+    effect((onCleanup) => {
+      // Loading via `entityType`
       const entityType = this.entityType();
-      if (!entityType) {
+      if (!entityType || this.pageLoader()) {
         return;
       }
 
