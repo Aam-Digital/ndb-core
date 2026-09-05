@@ -1,4 +1,5 @@
 import {
+  LOCALE_ID,
   Component,
   inject,
   input,
@@ -31,6 +32,13 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AdminEntityService } from "../../admin-entity.service";
+import {
+  resolveTranslatableText,
+  TranslatableText,
+} from "../../../config/multi-lingual-config";
+import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
+import { availableLocales } from "../../../language/languages";
+import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
@@ -71,11 +79,29 @@ import { NumberDatatype } from "#src/app/core/basic-datatypes/number/number.data
     ConditionalColorConfigComponent,
     HintBoxComponent,
     EntityFieldSelectComponent,
+    TranslatableTextInputComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent {
   private fb = inject(FormBuilder);
   private adminEntityService = inject(AdminEntityService);
+  private readonly locale = inject(LOCALE_ID);
+  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
+
+  /** resolve a possibly multi-lingual text to the currently active language */
+  protected resolveText(value: TranslatableText): string | undefined {
+    return resolveTranslatableText(
+      value,
+      this.locale,
+      DEFAULT_LANGUAGE,
+      this.validLocaleIds,
+    );
+  }
+
+  /** the entity label of the active language, used as the plural's placeholder */
+  protected get resolvedLabel(): string {
+    return this.resolveText(this.basicSettingsForm?.get("label")?.value) ?? "";
+  }
 
   entityConstructor = input.required<EntityConstructor>();
   generalSettings = input.required<EntityConfig>();
@@ -120,7 +146,10 @@ export class AdminEntityGeneralSettingsComponent {
             DateOnlyDatatype.dataType,
           ].includes(field.dataType) && field.label,
       )
-      .map(([key, field]) => ({ value: key, label: field.label }));
+      .map(([key, field]) => ({
+        value: key,
+        label: this.resolveText(field.label),
+      }));
 
     return [
       ...selectedKeys
@@ -134,13 +163,18 @@ export class AdminEntityGeneralSettingsComponent {
     if (!this.showPIIDetails()) return undefined;
     const fields = Array.from(this.entityConstructor().schema.entries())
       .filter(([, field]) => !field.isInternalField)
-      .map(([key, field]) => ({ key, label: field.label, field }));
+      .map(([key, field]) => ({
+        key,
+        label: this.resolveText(field.label),
+        field,
+      }));
     return new MatTableDataSource(fields);
   });
 
   readonly basicSettingsForm = this.fb.group({
-    label: [null as string | null, Validators.required],
-    labelPlural: [null as string | null],
+    // hold the raw value: a plain string or a per-language map
+    label: [null as TranslatableText | null, Validators.required],
+    labelPlural: [null as TranslatableText | null],
     icon: [null as string | null],
     color: [null as any],
     toStringAttributes: [null as string[] | null],

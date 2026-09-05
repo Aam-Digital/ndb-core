@@ -13,6 +13,7 @@ import { PrimaryActionService } from "./primary-action.service";
 import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entity-type-select.component";
 import { EntityConstructor } from "../../entity/model/entity";
 import { MenuItem } from "../../ui/navigation/menu-item";
+import { EditableMenuItem } from "../admin-menu/menu-item-for-admin-ui";
 import { FormsModule } from "@angular/forms";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
@@ -47,7 +48,7 @@ export class AdminPrimaryActionComponent {
     return this.primaryActionService.getCurrentConfig();
   }
 
-  menuItem: MenuItem;
+  menuItem: EditableMenuItem;
 
   routeOptions: { value: string; label: string }[] = [];
 

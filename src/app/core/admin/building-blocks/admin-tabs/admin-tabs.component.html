@@ -22,6 +22,7 @@
             ></fa-icon>
             @if (tabIndex === matTabGroup.selectedIndex) {
               <app-admin-section-header
+                [translatable]="translatableTitle()"
                 [(title)]="tab[tabTitleProperty()]"
                 (remove)="removeTab(tabIndex)"
               ></app-admin-section-header>

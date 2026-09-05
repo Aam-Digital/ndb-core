@@ -12,6 +12,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { TranslatableText } from "../../../config/multi-lingual-config";
+import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
 
 /**
  * Simple building block for UI Builder for a section title including button to remove the section.
@@ -32,6 +34,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    TranslatableTextInputComponent,
   ],
   templateUrl: "./admin-section-header.component.html",
   styleUrl: "./admin-section-header.component.scss",
@@ -39,13 +42,22 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 export class AdminSectionHeaderComponent {
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  title = model<string>("");
+  title = model<TranslatableText>("");
 
   /** supports two-way data binding for the editable title: `<app-admin-section-header [(title)]="section.title"` */
   remove = output();
 
   /** disable the confirmation dialog displayed before a remove output is emitted */
   disableConfirmation = input<boolean>(false);
+
+  /**
+   * Whether this title may be configured in several languages.
+   *
+   * Off by default: some titles double as identifiers (e.g. a list view's column
+   * group name is referenced by `columnGroups.default`), and those must stay
+   * plain strings.
+   */
+  translatable = input<boolean>(false);
 
   /** overwrite the label (default: "title") displayed for the form field */
   label = input<string>(
