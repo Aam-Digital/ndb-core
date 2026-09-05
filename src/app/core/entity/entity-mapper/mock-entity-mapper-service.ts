@@ -8,6 +8,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { filter as buildFilterPredicate } from "@ucast/mongo2js";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
+import { FindOptions } from "../../database/database";
 
 export function createEntityMapperSpyObj() {
   return {
@@ -151,7 +152,11 @@ export class MockEntityMapperService extends EntityMapperService {
     filter: DataFilter<T> = {},
     page?: { limit: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
+    _options?: FindOptions,
   ): Promise<{ records: T[]; bookmark?: string }> {
+    // `_options.idOnly` only affects how much data the real database transfers;
+    // the in-memory mock always has the full entities, and record counts stay
+    // correct either way.
     let records = await this.loadType<T>(entityType);
 
     // filter

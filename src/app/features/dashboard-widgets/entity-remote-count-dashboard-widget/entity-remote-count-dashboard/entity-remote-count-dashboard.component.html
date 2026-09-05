@@ -1,0 +1,90 @@
+<app-dashboard-list-widget
+  [icon]="entityDefinition().icon"
+  theme="child"
+  [title]="totalCount()"
+  [subtitle]="subtitle() ?? entityDefinition().labelPlural"
+  [explanation]="explanation()"
+  [entries]="entries()"
+  [paginationPageSize]="4"
+>
+  <span
+    class="groupby-label"
+    i18n="category of disagregation in EntityRemoteCountDashboard"
+  >
+    by
+    <app-entity-field-label
+      [entityType]="entityDefinition()"
+      [field]="groupBy()"
+    ></app-entity-field-label>
+    :
+  </span>
+
+  <div class="label-separator"></div>
+
+  <div class="table-wrapper">
+    <table
+      mat-table
+      i18n-aria-label="Label for entity remote count dashboard"
+      aria-label="Table showing the number of records per category"
+    >
+      <ng-container matColumnDef="label">
+        <td *matCellDef="let group" class="label-cell">
+          @if (group.isInvalidOption) {
+            <span
+              class="invalid-label"
+              matTooltip="records with a value that is not matching any available dropdown option"
+              i18n-matTooltip
+              i18n
+            >
+              [invalid option]
+            </span>
+          } @else if (group.label === undefined) {
+            <span
+              class="not-defined-label"
+              matTooltip="records where this field is empty"
+              i18n-matTooltip
+              i18n
+              >not defined</span
+            >
+          } @else if (group.entity && group.fieldName) {
+            <app-entity-field-view
+              [entity]="group.entity"
+              [field]="group.fieldName"
+            ></app-entity-field-view>
+          }
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="value">
+        <td *matCellDef="let group" class="text-align-end padding-left-regular">
+          {{ group.value }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="link">
+        <td *matCellDef class="text-align-end">
+          <fa-icon icon="external-link-square-alt"></fa-icon>
+        </td>
+      </ng-container>
+
+      <!-- Table header only for assistive technologies like screen readers -->
+      <tr class="visually-hidden">
+        <th scope="col" i18n="The category the count is grouped by">
+          Category
+        </th>
+        <th scope="col" i18n="The count of records in the category">Count</th>
+        <th scope="col" i18n="A link to the filtered list for that category">
+          Link
+        </th>
+      </tr>
+      <tr
+        mat-row
+        *matRowDef="let row; let i = index; columns: ['label', 'value', 'link']"
+        (click)="goToEntityList(row.id)"
+        class="pointer"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="dashboard_entity_remote_count_link"
+        [angularticsLabel]="'list-entry-' + i"
+      ></tr>
+    </table>
+  </div>
+</app-dashboard-list-widget>

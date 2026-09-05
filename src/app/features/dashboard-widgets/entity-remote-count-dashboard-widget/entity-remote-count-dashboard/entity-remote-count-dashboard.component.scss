@@ -1,0 +1,37 @@
+@use "../../../../core/dashboard/dashboard-widget-base";
+@use "../../../../core/common-components/special-option-labels.scss";
+
+.groupby-label {
+  display: block;
+  margin: auto;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label-separator {
+  border-top: 1px solid #ccc;
+  margin: 8px 0 0 0;
+}
+
+.mat-mdc-table {
+  .mat-mdc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 8px;
+  }
+}
+
+.label-cell ::ng-deep app-entity-block.display-entity {
+  display: block;
+  min-width: 0;
+}
+
+.label-cell ::ng-deep app-entity-block .truncate-text {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,4 +1,10 @@
-import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
+import {
+  Database,
+  FindOptions,
+  GetAllOptions,
+  GetOptions,
+  QueryOptions,
+} from "../database";
 import { Logging } from "../../logging/logging.service";
 import { DatabaseException } from "./database-exception";
 import PouchDB from "pouchdb-browser";
@@ -430,6 +436,7 @@ export class PouchDatabase extends Database {
     _query?: any,
     _page?: { limit?: number; bookmark?: string },
     _sort?: { prop?: string; dir?: "asc" | "desc" },
+    _options?: FindOptions,
   ): Promise<{ docs: any[]; bookmark?: string }> {
     throw new Error(
       "find() is only supported by RemotePouchDatabase (bookmark-based pagination requires a real remote CouchDB connection)",

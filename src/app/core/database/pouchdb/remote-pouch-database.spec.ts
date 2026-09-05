@@ -624,6 +624,31 @@ describe("RemotePouchDatabase tests", () => {
 
       expect(requestBody.bookmark).toBeUndefined();
     });
+
+    it("projects to only the _id when idOnly is set, so no doc content is transferred", async () => {
+      database.init("");
+
+      let requestBody: any;
+      (PouchDB.fetch as Mock).mockImplementation(async (url: string, opts) => {
+        if (typeof url === "string" && url.includes("/_find")) {
+          requestBody = JSON.parse(opts.body as string);
+          return new Response(JSON.stringify({ docs: [], bookmark: "bm1" }), {
+            status: HttpStatusCode.Ok,
+          });
+        }
+        return new Response("{}", { status: HttpStatusCode.Ok });
+      });
+
+      await (database as RemotePouchDatabase).find(
+        "Test",
+        {},
+        { limit: 5 },
+        undefined,
+        { idOnly: true },
+      );
+
+      expect(requestBody.fields).toEqual(["_id"]);
+    });
   });
 
   describe("shouldSkipIndexUpdate", () => {

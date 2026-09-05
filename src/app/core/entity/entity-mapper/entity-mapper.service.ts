@@ -25,7 +25,7 @@ import { filter, map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { DatabaseDocChange } from "../../database/database";
+import { DatabaseDocChange, FindOptions } from "../../database/database";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
@@ -99,17 +99,22 @@ export class EntityMapperService {
    * @param filter a valid Mango Query Syntax query
    * @param page optional pagination options
    * @param sort optional sort options
+   * @param options optional low-level query options. With `{ idOnly: true }` the
+   *        database only transfers the `_id` of each match, so the returned
+   *        entity instances carry nothing but their id - useful when only the
+   *        number of matching records is needed.
    */
   public async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T>,
     page?: { limit: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
+    options?: FindOptions,
   ): Promise<{ records: T[]; bookmark?: string }> {
     const ctor = this.resolveConstructor(entityType);
     const result = await this.dbResolver
       .getDatabase(ctor.DATABASE)
-      .find(ctor.ENTITY_TYPE, filter, page, sort);
+      .find(ctor.ENTITY_TYPE, filter, page, sort, options);
     return {
       records: result.docs.map((rec) =>
         this.transformToEntityFormat(rec, ctor),

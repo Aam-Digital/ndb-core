@@ -108,12 +108,14 @@ export abstract class Database {
    * @param query the Mango Query Language query
    * @param page additional pagination options
    * @param sort additional sorting options
+   * @param options additional low-level query options (see {@link FindOptions})
    */
   abstract find(
     prefix: string,
     query: any,
     page?: { limit?: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
+    options?: FindOptions,
   ): Promise<{ docs: any[]; bookmark?: string }>;
 
   /**
@@ -189,6 +191,22 @@ export abstract class Database {
   abstract destroy(): Promise<any>;
 
   abstract changes(): Observable<DatabaseDocChange>;
+}
+
+/**
+ * Additional low-level options for {@link Database.find}.
+ */
+export interface FindOptions {
+  /**
+   * Only return the `_id` of each matching document instead of the full
+   * document (a Mango `fields: ["_id"]` projection).
+   *
+   * Mango's `_find` has no `include_docs` flag; this projection is its
+   * equivalent for the case where only the number (or ids) of the matching
+   * records is needed - not their content - and drastically reduces the amount
+   * of data transferred from the server.
+   */
+  idOnly?: boolean;
 }
 
 /**
