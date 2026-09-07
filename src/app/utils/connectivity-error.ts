@@ -1,4 +1,20 @@
 /**
+ * Wordings for a lazily loaded application chunk that could not be fetched.
+ *
+ * These are requests that did not arrive, like any other connectivity failure:
+ * the device is offline, or a new deployment replaced the chunk that the
+ * still-running app asks for. Which of the two it was is not visible from the
+ * error, and neither is actionable per chunk - so they belong in the shared
+ * network issue rather than in one issue per chunk URL and browser wording.
+ */
+const CHUNK_LOAD_ERROR_PATTERNS = [
+  // Chrome/Edge: "Failed to fetch dynamically imported module: <url>"
+  // Firefox: "error loading dynamically imported module: <url>"
+  "dynamically imported module",
+  "Importing a module script failed", // Safari
+];
+
+/**
  * Common network/connectivity error patterns shared across the application.
  * These indicate transient failures (offline, DNS, proxy issues) rather than
  * application-level errors.
@@ -10,6 +26,7 @@ const CONNECTIVITY_ERROR_PATTERNS = [
   "Network request failed",
   "network timeout",
   "0 Unknown Error", // Angular HttpErrorResponse for a request that never reached the server
+  ...CHUNK_LOAD_ERROR_PATTERNS,
 ];
 
 /**

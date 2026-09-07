@@ -5,6 +5,7 @@ import {
   LoggingService,
   MAX_REPEATED_SENTRY_EVENTS,
   processSentryEvent,
+  resetSentryEventCounts,
   toReportedError,
 } from "./logging.service";
 
@@ -104,6 +105,10 @@ describe("LoggingService", () => {
   });
 
   describe("processSentryEvent (beforeSend)", () => {
+    // the repeat budget is per issue and lives for a whole app session, so
+    // without this the events of one test count against the next one's
+    beforeEach(() => resetSentryEventCounts());
+
     it("should drop an identical event after MAX_REPEATED_SENTRY_EVENTS occurrences", () => {
       const event = () =>
         ({
@@ -518,6 +523,128 @@ describe("LoggingService", () => {
         expect(one.fingerprint).toEqual(other.fingerprint);
       });
 
+      it("should group an error a framework re-threw like the unwrapped one", () => {
+        const lookupFailure = {
+          type: "RegistryLookupError",
+          value:
+            "Requested item is not registered in EntityRegistry. Key: Child",
+        };
+
+        const thrownDirectly = processSentryEvent(
+          { exception: { values: [{ ...lookupFailure }] } } as any,
+          {},
+        );
+        // Angular re-throws an error raised in a `resource()` loader as an error
+        // of its own, copying the message and reporting the inherited "Error"
+        const fromResourceLoader = processSentryEvent(
+          chainedEvent(
+            { ...lookupFailure },
+            {
+              type: "Error",
+              value: `Error: ${lookupFailure.value}`,
+            },
+          ),
+          {},
+        );
+
+        expect(fromResourceLoader.fingerprint).toEqual(
+          thrownDirectly.fingerprint,
+        );
+      });
+
+      it("should keep grouping a wrapper that describes the failed operation by itself", () => {
+        const cause = {
+          type: "DatabaseException",
+          value: "unauthorized",
+        };
+
+        const configLoad = processSentryEvent(
+          chainedEvent(
+            { ...cause },
+            {
+              type: "ConfigLoadError",
+              value: "Failed to load configuration from the database.",
+            },
+          ),
+          {},
+        );
+        const permissionsLoad = processSentryEvent(
+          chainedEvent(
+            { ...cause },
+            {
+              type: "PermissionRulesLoadError",
+              value: "Failed to load permission rules",
+            },
+          ),
+          {},
+        );
+
+        // two operations failing for the same reason stay two problems
+        expect(configLoad.fingerprint).not.toEqual(permissionsLoad.fingerprint);
+        expect(configLoad.fingerprint[0]).toBe("ConfigLoadError");
+      });
+
+      it('should report an exception without a type under a generic one, which Sentry lists as "<unknown>"', () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { value: "Http failure response for /db/app-attachments: 404" },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].type).toBe("Error");
+      });
+
+      it("should report an exception grouped by its message under that normalized message", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "HttpErrorResponse",
+                  value:
+                    "Http failure response for https://example.org/db/app-attachments/Child:8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d/photo: 404 Not Found",
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].value).toBe(
+          "Http failure response for <url> <n> Not Found",
+        );
+        expect(event.extra.originalError).toContain("8f2b1c7e");
+      });
+
+      it("should drop a quoted response body, which as a title hides every other issue", () => {
+        const errorPage = (status: number) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: `Server returned code ${status} with body "<html>\r\n<head><title>${status} Request Entity Too Large</title></head>\r\n</html>"`,
+                },
+              ],
+            },
+          }) as any;
+
+        const event = processSentryEvent(errorPage(413), {});
+
+        expect(event.exception.values[0].value).toBe(
+          "Server returned code <n>",
+        );
+        expect(event.fingerprint).toEqual([
+          "Error",
+          "server returned code <n>",
+        ]);
+      });
+
       it("should group message-only events by their normalized message", () => {
         const one = processSentryEvent(
           { message: "Report failed after 12 rows" } as any,
@@ -592,6 +719,31 @@ describe("LoggingService", () => {
         );
 
         expect(chrome.fingerprint).toEqual(["network-error"]);
+        expect(safari.fingerprint).toEqual(chrome.fingerprint);
+      });
+
+      it("should collect chunk load failures of any browser wording in the same issue", () => {
+        const chrome = processSentryEvent(
+          fetchFailure(
+            "Failed to fetch dynamically imported module: https://example.org/chunk-SL2Y43UW.js",
+            "main.ts",
+          ),
+          {},
+        );
+        const firefox = processSentryEvent(
+          fetchFailure(
+            "error loading dynamically imported module: https://example.org/chunk-UFUS7D7Q.js",
+            "main.ts",
+          ),
+          {},
+        );
+        const safari = processSentryEvent(
+          fetchFailure("Importing a module script failed.", "main.ts"),
+          {},
+        );
+
+        expect(chrome.fingerprint).toEqual(["network-error"]);
+        expect(firefox.fingerprint).toEqual(chrome.fingerprint);
         expect(safari.fingerprint).toEqual(chrome.fingerprint);
       });
 

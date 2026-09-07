@@ -63,7 +63,10 @@ async function fetchTranslations(
   }
 
   Logging.warn(
-    `Could not load translations for locale '${locale}', falling back to default language.`,
+    // the locale is context, not part of the message: interpolated it would
+    // open a separate remote-monitoring issue per locale (see logging/README.md)
+    "Could not load translations for the requested locale, falling back to the default language.",
+    { locale },
   );
   return undefined;
 }
