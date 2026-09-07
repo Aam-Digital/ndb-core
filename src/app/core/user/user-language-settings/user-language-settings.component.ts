@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   signal,
+  viewChild,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -44,6 +45,8 @@ export class UserLanguageSettingsComponent {
 
   readonly saving = signal(false);
 
+  private readonly languageSelect = viewChild(LanguageSelectComponent);
+
   /**
    * Save the language for this user and only then apply it,
    * because applying it reloads the app.
@@ -62,6 +65,7 @@ export class UserLanguageSettingsComponent {
       Logging.error(
         new Error("Failed to save the user's language", { cause: err }),
       );
+      this.languageSelect()?.resetToCurrent();
       this.snackBar.open(
         $localize`Your language could not be saved. Please try again.`,
       );

@@ -67,6 +67,18 @@ describe("UserLanguageSettingsComponent", () => {
     expect(snackBar.open).toHaveBeenCalled();
   });
 
+  it("should revert the shown selection if saving failed", async () => {
+    vi.spyOn(Logging, "error").mockImplementation(() => {});
+    userSettings.setLanguage.mockRejectedValue(new Error("offline"));
+    const select = fixture.debugElement.children[0].componentInstance;
+    // the dropdown shows the picked language right away
+    select.changeLocale("de");
+    expect(select.currentLocale()).toBe("de");
+
+    await component.onLanguageSelected("de");
+    expect(select.currentLocale()).toBe("en-US");
+  });
+
   it("should ignore a locale that is not available", async () => {
     await component.onLanguageSelected("not-a-locale");
 

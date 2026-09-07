@@ -48,4 +48,9 @@ export class LanguageSelectComponent {
       this.languageService.switchLocale(lang);
     }
   }
+
+  /** revert to the active locale, for a caller that failed to persist the choice */
+  resetToCurrent(): void {
+    this.currentLocale.set(this.languageService.getCurrentLocale());
+  }
 }
