@@ -22,6 +22,7 @@ import {
   HttpClient,
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { MarkdownContent } from "./markdown-content";
 
@@ -35,7 +36,7 @@ import { MarkdownContent } from "./markdown-content";
       loader: HttpClient,
     }),
   ],
-  providers: [provideHttpClient(withInterceptorsFromDi())],
+  providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())],
 })
 export class MarkdownPageModule {
   private components = inject(ComponentRegistry);

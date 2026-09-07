@@ -5,7 +5,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { effect, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
-import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
+import { merge } from "rxjs";
 
 /**
  * Number of documents fetched per request when loading the complete dataset
@@ -41,33 +41,21 @@ export class PaginatedDataSource<
     } else {
       this.sortState = { prop: active, dir: direction };
     }
-    this.setRecords();
+    this.resetPaginationCache();
   }
 
   private page: { size?: number; index?: number } = {};
-  private paginatorRef: MatPaginator;
   override set paginator(paginator: MatPaginator) {
-    this.paginatorRef = paginator;
-    this.paginatorRef.initialized.subscribe(() => {
-      this.page.size = this.paginatorRef.pageSize;
-      this.page.index = this.paginatorRef.pageIndex;
-      this.setRecords();
-    });
-    this.paginatorRef.page.subscribe((val) => {
-      this.page.size = val.pageSize;
-      this.page.index = val.pageIndex;
+    super.paginator = paginator;
+    merge(paginator.initialized, paginator.page).subscribe(() => {
+      this.page.size = paginator.pageSize;
+      this.page.index = paginator.pageIndex;
       this.setRecords();
     });
   }
   override get paginator(): MatPaginator {
-    return this.paginatorRef;
+    return super.paginator;
   }
-
-  /**
-   * Total number of records reported to the paginator
-   * (loaded pages plus at least one more record, if it exists).
-   */
-  private totalCount = 0;
 
   /**
    * Whether the reported total is only a lower bound because there are more
@@ -78,32 +66,67 @@ export class PaginatedDataSource<
 
   private effectiveFilter: DataFilter<T> = {};
 
+  /** The DB cursor to continue fetching right after the records already in {@link filteredRecords}. */
+  private bookmark: string | undefined;
+
+  /** Whether the last fetch returned fewer records than requested, i.e. all matching records are already loaded. */
+  private reachedEnd = false;
+
   constructor() {
     super();
     effect(() => {
       this.effectiveFilter = this.processFilterForDB(this.dataFilter());
       if (this.loadRecordConfig()) {
-        this.setRecords();
+        this.resetPaginationCache();
       }
     });
   }
 
-  protected override async loadRecords() {
-    if (!this.loadRecordConfig()) return [];
+  /**
+   * Discard all loaded records/cursor state and move back to the first page.
+   * Necessary whenever the query itself changes (filter, sort, page size) or
+   * the underlying data may have changed (entity update) - in all these
+   * cases the existing bookmark chain is no longer valid.
+   */
+  private resetPaginationCache() {
+    this.filteredRecords.set([]);
+    this.bookmark = undefined;
+    this.reachedEnd = false;
+    if (super.paginator) {
+      // setting page index manually to not trigger the change event which would result in duplicate fetch
+      super.paginator.pageIndex = 0;
+      this.page.index = 0;
+      this.setRecords();
+    }
+  }
 
-    const res = await this.entityMapper.findType(
-      this.loadRecordConfig().entityCtr,
-      this.effectiveFilter,
-      { skip: this.page.index * this.page.size, limit: this.page.size + 1 },
-      this.sortState,
-    );
-    // an extra record beyond the page size was loaded as a probe:
-    // if it exists, there are more records than we can currently count
-    const hasMoreRecords = res.length > this.page.size;
-    this.hasUnknownTotalCount.set(hasMoreRecords);
-    this.totalCount = this.page.size * this.page.index + res.length;
-    // `this.allRecords` stays empty
-    this.filteredRecords.set(res.slice(0, this.page.size));
+  protected override async loadRecords() {
+    if (!this.loadRecordConfig() || !super.paginator) {
+      return [];
+    }
+
+    const start = this.page.size * this.page.index;
+    // +1: a probe beyond the current page, to detect whether further pages exist
+    const requiredLength = start + this.page.size + 1;
+    const loadedLength = this.filteredRecords().length;
+
+    if (loadedLength < requiredLength && !this.reachedEnd) {
+      const deficit = requiredLength - loadedLength;
+      const res = await this.entityMapper.findType(
+        this.loadRecordConfig().entityCtr,
+        this.effectiveFilter,
+        { limit: deficit, bookmark: this.bookmark },
+        this.sortState,
+      );
+      // update signal to trigger effect for data update in super-class
+      this.filteredRecords.update((records) => [...records, ...res.records]);
+      this.bookmark = res.bookmark;
+      this.reachedEnd = res.records.length < deficit;
+    }
+
+    const totalLoaded = this.filteredRecords().length;
+    this.hasUnknownTotalCount.set(totalLoaded > start + this.page.size);
+    // `this.allRecords` stays empty;
   }
 
   override async getAllData(filtered = false): Promise<T[]> {
@@ -115,41 +138,26 @@ export class PaginatedDataSource<
     // CouchDB's _find returns only 25 documents when no limit is given, so we
     // page through the results explicitly until a page is not completely filled.
     const allRecords: T[] = [];
+    let exportBookmark: string | undefined;
     let page: T[];
     do {
-      page = await this.entityMapper.findType(
+      const res = await this.entityMapper.findType(
         entityCtr,
         filter,
-        { skip: allRecords.length, limit: FULL_LOAD_PAGE_SIZE },
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark: exportBookmark },
         this.sortState,
       );
+      page = res.records;
+      exportBookmark = res.bookmark;
       allRecords.push(...page);
     } while (page.length === FULL_LOAD_PAGE_SIZE);
 
     return allRecords;
   }
 
-  /**
-   * Records are already paginated by the database query,
-   * so the MatTableDataSource base class must not slice them again by page index.
-   */
-  override _pageData(data: TableRow<T>[]): TableRow<T>[] {
-    return data;
-  }
-
-  /**
-   * The MatTableDataSource base class updates the paginator with the length of the
-   * loaded data (deferred, after every data change) - which here is only a single page.
-   * Report the overall total from the database query instead,
-   * otherwise the base class would overwrite paginator.length right after setRecords().
-   */
-  override _updatePaginator(_filteredDataLength: number): void {
-    super._updatePaginator(this.totalCount);
-  }
-
   protected override async processEntityUpdate() {
     // We don't really know how it might affect the pages -> full reload
-    await this.setRecords();
+    this.resetPaginationCache();
   }
 
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {

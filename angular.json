@@ -107,6 +107,8 @@
               "aot": false,
               "polyfills": [
                 "@angular/localize/init",
+                "zone.js",
+                "zone.js/testing",
                 "src/polyfills.test.ts"
               ],
               "fileReplacements": [
@@ -121,7 +123,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {},
+          "options": {
+            "prebundle": false
+          },
           "configurations": {
             "production": {
               "buildTarget": "ndb-core:build:production"

@@ -69,6 +69,7 @@ Both repos use CASL v6.8.1. Key facts:
 - **Deny-by-default**: If no rule matches a subject/action pair, access is denied.
 - **No specificity**: CASL does not rank rules by how specific they are. Instead, it uses **last matching rule wins** — the last rule in the array that matches the subject/action/conditions determines the result, regardless of whether earlier rules are more specific.
 - **Inverted rules**: A rule with `inverted: true` works as a deny, not a grant. This can be confusing with multiple roles; use with care.
+  - The Admin UI does not ensure the order or rules is kept, so inverted rules effects might change!
 - **Conditions**: Rules can specify MongoDB-style conditions to restrict access to specific documents or fields. Conditions are only evaluated if the document is passed to `ability.can(subject, doc)` — not just the subject type string.
 - **`cannot()`**: Calling `ability.cannot(action, subject)` is literally `!ability.can(action, subject)`.
 
@@ -135,7 +136,7 @@ Permissions use JSON format with a role → rules mapping:
 - **`action`**: What users can do — `read`, `create`, `update`, `delete`, or `manage` (all operations)
 - **`_default`**: Rules applied to all authenticated users (regardless of role)
 - **`_public`**: Rules applied to anonymous (not logged-in) visitors
-- **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules. Older documents may still use the non-prefixed `default` / `public` names; these are read as a fallback and migrated to the underscore form by the `oneoff-20260724-permissions-key-rename` migration (see `cli/migration/`). `_default` and `_public` are the only allowed underscore-prefixed keys; do not create realm roles, or any other rule section, whose name starts with `_`.
+- **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules. Older documents may still use the non-prefixed `default` / `public` names; these are read as a fallback: every place loading the document normalizes it with `migrateLegacySectionKeys()` (see `permissions-config-migration.ts`), so all readers can rely on the prefixed keys. The stored document is migrated to the underscore form by the `oneoff-20260724-permissions-key-rename` migration (see `cli/migration/`). `_default` and `_public` are the only allowed underscore-prefixed keys; do not create realm roles, or any other rule section, whose name starts with `_`.
 - **Combining roles**: If a user has multiple roles, their rules are appended in order (the `_default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
 
 ### Restricting access (inverted rules)

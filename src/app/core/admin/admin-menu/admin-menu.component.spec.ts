@@ -16,7 +16,11 @@ describe("AdminMenuComponent", () => {
         {
           provide: EntityMapperService,
           useValue: {
-            load: vi.fn(),
+            // must resolve to a Config-shaped object: the component awaits this in
+            // ngOnInit and Angular 22 surfaces the rejection as an uncaught error
+            load: vi.fn().mockResolvedValue({
+              data: { navigationMenu: { items: [] } },
+            }),
           },
         },
         { provide: MenuService, useValue: null },

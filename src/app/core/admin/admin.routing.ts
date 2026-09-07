@@ -1,4 +1,6 @@
+import { inject } from "@angular/core";
 import { Routes } from "@angular/router";
+import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
 import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
 import { AdminOverviewComponent } from "./admin-overview/admin-overview.component";
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
@@ -6,7 +8,8 @@ import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
 import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 import { AdminMenuComponent } from "./admin-menu/admin-menu.component";
-import { AdminUserRolesComponent } from "../user/admin-user-roles/admin-user-roles.component";
+import { AdminRolesListComponent } from "./admin-role-permissions/roles-list/admin-roles-list.component";
+import { AdminRoleDetailsComponent } from "./admin-role-permissions/role-details/admin-role-details.component";
 import { SubscriptionInfoComponent } from "./subscription-info/subscription-info.component";
 import { AdvancedFeaturesComponent } from "./advanced-features/advanced-features.component";
 import { DataPrivacyComponent } from "./data-privacy/data-privacy.component";
@@ -14,6 +17,8 @@ import { UserListComponent } from "../user/user-list/user-list.component";
 import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primary-action.component";
 import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
 import { AdminConfigCleanupComponent } from "./config-cleanup/admin-config-cleanup.component";
+
+const ROLE_MANAGEMENT_ROLES = ["account_manager", "admin_app"];
 
 export const adminRoutes: Routes = [
   {
@@ -38,10 +43,29 @@ export const adminRoutes: Routes = [
   },
   {
     path: "user-roles",
-    component: AdminUserRolesComponent,
+    component: AdminRolesListComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: ["admin_app"],
+      permittedUserRoles: ROLE_MANAGEMENT_ROLES,
+    },
+  },
+  {
+    path: "user-roles/new",
+    component: AdminRoleDetailsComponent,
+    canActivate: [UserRoleGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
+    data: {
+      permittedUserRoles: ROLE_MANAGEMENT_ROLES,
+      newRole: true,
+    },
+  },
+  {
+    path: "user-roles/:role",
+    component: AdminRoleDetailsComponent,
+    canActivate: [UserRoleGuard],
+    canDeactivate: [() => inject(UnsavedChangesService).checkUnsavedChanges()],
+    data: {
+      permittedUserRoles: ROLE_MANAGEMENT_ROLES,
     },
   },
   {

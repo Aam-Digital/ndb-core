@@ -65,9 +65,16 @@ export class DynamicComponentDirective implements OnChanges, OnDestroy {
     try {
       component = await this.components.get(dynamicComponentConfig.component)();
     } catch (e) {
-      Logging.error({
-        message: `Failed to load dynamic component ${dynamicComponentConfig.component} for ${dynamicComponentConfig?.config?.id}`,
-        error: e,
+      // the message stays static and the varying details go into the context,
+      // so that one problem is one issue in remote monitoring: interpolating
+      // the component name here split a single failed page load across one
+      // issue per field component. Passing the caught error as context (rather
+      // than as a property of the logged object) keeps it linked as the
+      // reported error's `cause`, which is what distinguishes a chunk that
+      // could not be fetched from a component missing in the registry.
+      Logging.error("Failed to load dynamic component", e, {
+        component: dynamicComponentConfig.component,
+        id: dynamicComponentConfig?.config?.id,
       });
       // abort if component failed to load
       return;

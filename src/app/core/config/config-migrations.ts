@@ -646,6 +646,78 @@ const migrateIsActiveReportQueries: ConfigMigration = (key, configPart) => {
 };
 
 /**
+ * Config keys whose value is a filter object (MongoDB-style query) defined by admins,
+ * e.g. the fixed `filter` of a RelatedEntities view, the `filter` of a prebuilt filter option
+ * or the `prefilter` of a matching view's side.
+ */
+const FILTER_CONFIG_KEYS = ["filter", "prefilter"];
+
+/** Filter operators whose value is a list of nested filter conditions. */
+const FILTER_LOGICAL_OPERATORS = ["$and", "$or", "$nor"];
+
+/**
+ * Entities do not provide a calculated "isActive" property anymore,
+ * so a configured filter selecting on it cannot match anything.
+ *
+ * `isActive: true` is simply dropped: lists exclude archived records by default now
+ * (see NOT_ARCHIVED_FILTER), which is exactly what the condition used to express.
+ *
+ * `isActive: false` (i.e. archived records only) is dropped as well. It has no equivalent in a
+ * configured filter anymore, because the default not-archived condition is combined with `$and`
+ * and any explicit "archived" condition would make such a filter match no record at all.
+ * Users can include archived records through the list's "show inactive" toggle instead.
+ */
+const removeIsActiveFilters: ConfigMigration = (key, configPart) => {
+  if (!FILTER_CONFIG_KEYS.includes(key)) {
+    return configPart;
+  }
+
+  return removeIsActiveCondition(configPart);
+};
+
+function removeIsActiveCondition(filterPart: any): any {
+  if (
+    !filterPart ||
+    typeof filterPart !== "object" ||
+    Array.isArray(filterPart)
+  ) {
+    return filterPart;
+  }
+
+  delete filterPart["isActive"];
+
+  for (const operator of FILTER_LOGICAL_OPERATORS) {
+    if (!Array.isArray(filterPart[operator])) {
+      continue;
+    }
+
+    // an emptied branch matches every record: drop it, so that an `$or` does not silently
+    // become unconditional (for `$and` / `$nor` it does not carry any information either),
+    // and drop the operator itself if no condition is left
+    const conditions = filterPart[operator]
+      .map((condition) => removeIsActiveCondition(condition))
+      .filter((condition) => !isEmptyFilterCondition(condition));
+
+    if (conditions.length === 0) {
+      delete filterPart[operator];
+    } else {
+      filterPart[operator] = conditions;
+    }
+  }
+
+  return filterPart;
+}
+
+function isEmptyFilterCondition(condition: any): boolean {
+  return (
+    !!condition &&
+    typeof condition === "object" &&
+    !Array.isArray(condition) &&
+    Object.keys(condition).length === 0
+  );
+}
+
+/**
  * Older configs contain a full copy of the prebuilt "tasks due" filter,
  * whose options selected on calculated properties that do not exist anymore.
  * Drop the stored options so the definition provided by the app is used.
@@ -689,6 +761,7 @@ export const configMigrations: ConfigMigration[] = [
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
   migrateIsActiveReportQueries,
+  removeIsActiveFilters,
   migrateTodoDueStatusFilter,
   migrateShortcutDashboardLinks,
   migrateNavigationMenuEntityLinks, // must run last to see all default-added view configs

@@ -149,9 +149,9 @@ export class MockEntityMapperService extends EntityMapperService {
   override async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T> = {},
-    page?: { limit: number; skip: number },
+    page?: { limit: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<T[]> {
+  ): Promise<{ records: T[]; bookmark?: string }> {
     let records = await this.loadType<T>(entityType);
 
     // filter
@@ -163,12 +163,14 @@ export class MockEntityMapperService extends EntityMapperService {
       records = this.sortRecords(records, sort.prop, sort.dir);
     }
 
-    // paginate
+    // paginate: emulate a bookmark cursor as the number of docs already skipped
     if (page) {
-      records = records.slice(page.skip, page.skip + page.limit);
+      const skip = Number(page.bookmark) || 0;
+      const paged = records.slice(skip, skip + page.limit);
+      return { records: paged, bookmark: String(skip + paged.length) };
     }
 
-    return records;
+    return { records };
   }
 
   private sortRecords<T extends Entity>(

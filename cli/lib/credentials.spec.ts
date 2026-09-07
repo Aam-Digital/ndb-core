@@ -115,6 +115,122 @@ describe("getCredentials", () => {
     );
   });
 
+  it("does not resolve or validate an unrelated org excluded by an --org filter", async () => {
+    // The exact bug this guards against: one legacy org in the file has no
+    // explicit url and would need DOMAIN to resolve one — but the operator
+    // only asked for a *different* org, so that broken entry must never be
+    // touched, let alone abort the whole command.
+    vi.stubEnv("DOMAIN", "");
+    const raw = JSON.stringify([
+      { name: "org-a", password: "pw1" },
+      { name: "org-b", password: "pw2", url: "org-b.example.com" },
+    ]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+    const result = await getCredentials(undefined, { org: "org-b" });
+
+    expect(result.orgs).toEqual([
+      {
+        url: "org-b.example.com",
+        name: "org-b",
+        password: "pw2",
+        username: undefined,
+        category: "",
+      },
+    ]);
+  });
+
+  it("still validates and throws for an org that the filter does select", async () => {
+    vi.stubEnv("DOMAIN", "");
+    const raw = JSON.stringify([{ name: "org-b", password: "pw" }]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+
+    await expect(getCredentials(undefined, { org: "org-b" })).rejects.toThrow(
+      /DOMAIN env var is required/,
+    );
+  });
+
+  it("matches a --org filter given as the DOMAIN-derived url against a name-only entry", async () => {
+    vi.stubEnv("DOMAIN", "example.com");
+    const raw = JSON.stringify([{ name: "foo", password: "pw" }]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+    const result = await getCredentials(undefined, {
+      org: "foo.example.com",
+    });
+
+    expect(result.orgs).toEqual([
+      {
+        url: "foo.example.com",
+        name: "foo",
+        password: "pw",
+        username: undefined,
+        category: "",
+      },
+    ]);
+  });
+
+  it("filters by category the same way, before resolving urls", async () => {
+    vi.stubEnv("DOMAIN", "");
+    const raw = JSON.stringify([
+      { name: "broken", password: "pw1", category: "internal" },
+      {
+        name: "org-b",
+        password: "pw2",
+        url: "org-b.example.com",
+        category: "prod",
+      },
+    ]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+    const result = await getCredentials(undefined, { category: "prod" });
+
+    expect(result.orgs).toEqual([
+      {
+        url: "org-b.example.com",
+        name: "org-b",
+        password: "pw2",
+        username: undefined,
+        category: "prod",
+      },
+    ]);
+  });
+
+  it("keeps original file order's index in error messages even when filtered", async () => {
+    vi.stubEnv("DOMAIN", "aam-digital.com");
+    const raw = JSON.stringify([
+      { name: "demo", password: "pw1" },
+      { name: "org-b" }, // index 1 — missing password, and matches the filter
+    ]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+
+    await expect(getCredentials(undefined, { org: "org-b" })).rejects.toThrow(
+      /org at index 1 is missing "password"/,
+    );
+  });
+
   it("throws when password is missing", async () => {
     const raw = JSON.stringify([{ name: "org" }]);
     vi.mocked(fs.existsSync).mockImplementation((p) =>

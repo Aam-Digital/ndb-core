@@ -8,6 +8,7 @@ import {
   provideAppInitializer,
   EnvironmentProviders,
 } from "@angular/core";
+import { HttpStatusCode } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
@@ -346,13 +347,51 @@ export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event)) {
+  if (isOfflineNetworkError(event) || isDocumentUpdateConflict(event, hint)) {
     return null;
   }
 
   const grouped = groupSentryEvent(enrichSentryEvent(event, hint), hint);
   return isExcessiveRepeat(grouped) ? null : grouped;
 }
+
+/**
+ * Whether the reported error is a rejected write whose revision was out of date.
+ *
+ * Two users editing one record is normal operation for an offline-first app, not
+ * a fault: the save is rejected, the user is told so by the form that attempted
+ * it, and the occurrence is counted in usage analytics instead (see
+ * `PouchDatabase.reportConflict`). Reporting it here on top of that produced a
+ * steady stream of issues nobody could act on - at *error* level, so louder than
+ * the failures that do need attention.
+ *
+ * The trade-off is deliberate: how often conflicts happen is now only visible in
+ * usage analytics, not in error monitoring.
+ */
+function isDocumentUpdateConflict(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): boolean {
+  const thrown = hint?.originalException as { status?: unknown } | undefined;
+  if (
+    thrown &&
+    typeof thrown === "object" &&
+    thrown.status === HttpStatusCode.Conflict
+  ) {
+    return true;
+  }
+
+  // the status is not always preserved (e.g. an error rebuilt from a
+  // `_bulk_docs` result), so fall back to the message - normalized, because
+  // PouchDB words it both with and without a trailing period
+  return [
+    event.message,
+    ...(event.exception?.values?.map((v) => v.value) ?? []),
+  ].some((msg) => msg && fingerprintKey(msg).includes(CONFLICT_MESSAGE));
+}
+
+/** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
+const CONFLICT_MESSAGE = "document update conflict";
 
 /**
  * Whether the event is a network-layer fetch failure that occurred while the
@@ -721,12 +760,20 @@ function enrichSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent {
-  // Attach structured properties from custom Error subclasses (e.g. DatabaseException)
-  // so that details like entityId, status, reason are visible in Sentry's "Additional Data"
+  // Attach structured properties from custom Error subclasses (e.g. DatabaseException,
+  // EntityPermissionError) so that details like entityId, status, reason are visible in
+  // Sentry's "Additional Data" - even though (deliberately) not part of the message itself.
   const err = hint.originalException;
   if (err && typeof err === "object") {
     const extras: Record<string, unknown> = {};
-    for (const key of ["entityId", "status", "reason", "name"]) {
+    for (const key of [
+      "entityId",
+      "status",
+      "reason",
+      "name",
+      "action",
+      "entityType",
+    ]) {
       if (key in err && (err as any)[key] !== undefined) {
         extras[key] = (err as any)[key];
       }

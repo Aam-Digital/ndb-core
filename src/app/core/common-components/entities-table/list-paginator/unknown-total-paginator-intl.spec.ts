@@ -50,4 +50,10 @@ describe("UnknownTotalPaginatorIntl", () => {
 
     expect(intl.getRangeLabel(0, 10, 0)).toBe(delegate.getRangeLabel(0, 10, 0));
   });
+
+  it("should show a higher total number if it is already known", () => {
+    intl.hasUnknownTotalCount = true;
+
+    expect(intl.getRangeLabel(0, 10, 31)).toBe("1 - 10 of 30+");
+  });
 });

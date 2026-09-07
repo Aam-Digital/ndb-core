@@ -8,6 +8,43 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { Subject } from "rxjs";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+
+/**
+ * A minimal fake MatPaginator: PaginatedDataSource only reads `pageSize`/
+ * `pageIndex` and reacts to `.initialized`/`.page` emissions, and (indirectly,
+ * via the base class's `dataFilter` effect) calls `.firstPage()`.
+ */
+function createFakePaginator(pageSize: number, pageIndex = 0) {
+  return {
+    pageSize,
+    pageIndex,
+    initialized: new Subject<void>(),
+    page: new Subject<PageEvent>(),
+    firstPage: () => {},
+  };
+}
+
+/**
+ * Simulate a user-driven page/size change: a real MatPaginator updates its own
+ * `pageIndex`/`pageSize` properties *before* emitting the `page` event, and
+ * PaginatedDataSource's subscriber reads those live properties off the
+ * paginator (not the event payload) - so the fake must mirror that.
+ */
+function firePage(
+  paginator: ReturnType<typeof createFakePaginator>,
+  event: PageEvent,
+) {
+  paginator.pageIndex = event.pageIndex;
+  paginator.pageSize = event.pageSize;
+  paginator.page.next(event);
+}
+
+async function flush() {
+  await new Promise((resolve) => setTimeout(resolve));
+  TestBed.tick();
+}
 
 describe("PaginatedDataSource", () => {
   let dataSource: PaginatedDataSource<Entity>;
@@ -62,8 +99,8 @@ describe("PaginatedDataSource", () => {
       );
       const lastPage = [new TestEntity("last-1"), new TestEntity("last-2")];
       findTypeSpy
-        .mockResolvedValueOnce(firstPage)
-        .mockResolvedValueOnce(lastPage);
+        .mockResolvedValueOnce({ records: firstPage, bookmark: "bm1" })
+        .mockResolvedValueOnce({ records: lastPage, bookmark: "bm2" });
 
       const result = await dataSource.getAllData(false);
 
@@ -74,21 +111,25 @@ describe("PaginatedDataSource", () => {
         1,
         TestEntity,
         {},
-        { skip: 0, limit: FULL_LOAD_PAGE_SIZE },
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark: undefined },
         {},
       );
+      // the second request continues from the bookmark of the first, not a skip offset
       expect(findTypeSpy).toHaveBeenNthCalledWith(
         2,
         TestEntity,
         {},
-        { skip: FULL_LOAD_PAGE_SIZE, limit: FULL_LOAD_PAGE_SIZE },
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark: "bm1" },
         {},
       );
     });
 
     it("should stop after a single request when the first page is not full", async () => {
       dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
-      findTypeSpy.mockResolvedValue([new TestEntity("1"), new TestEntity("2")]);
+      findTypeSpy.mockResolvedValue({
+        records: [new TestEntity("1"), new TestEntity("2")],
+        bookmark: "bm1",
+      });
 
       const result = await dataSource.getAllData(false);
 
@@ -101,39 +142,345 @@ describe("PaginatedDataSource", () => {
       dataSource.dataFilter.set({ "category.id": "SCHOOL" } as any);
       TestBed.tick(); // compute effectiveFilter from dataFilter
       findTypeSpy.mockClear();
-      findTypeSpy.mockResolvedValue([]);
+      findTypeSpy.mockResolvedValue({ records: [], bookmark: undefined });
 
       await dataSource.getAllData(true);
 
       expect(findTypeSpy).toHaveBeenCalledWith(
         TestEntity,
         { category: "SCHOOL" },
-        { skip: 0, limit: FULL_LOAD_PAGE_SIZE },
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark: undefined },
         {},
       );
     });
   });
 
-  describe("processEntityUpdate", () => {
-    function processUpdate(update: UpdatedEntity<Entity>) {
-      return (dataSource as any).processEntityUpdate(update);
-    }
+  describe("pagination (bookmark-based)", () => {
+    it("should request pageSize+1 records with no bookmark for the first page", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const page0 = Array.from(
+        { length: 11 },
+        (_, i) => new TestEntity(`${i}`),
+      );
+      findTypeSpy.mockResolvedValueOnce({
+        records: page0,
+        bookmark: "bm-page0",
+      });
 
-    it("should reload from the DB when a entity is updated", async () => {
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+      paginator.initialized.next();
+      await flush();
+
+      expect(findTypeSpy).toHaveBeenCalledWith(
+        TestEntity,
+        {},
+        // the 11th (probe) record is not shown - only pageSize records are
+        { limit: 11, bookmark: undefined },
+        {},
+      );
+      expect(dataSource.filteredRecords()).toEqual(page0);
+      expect(dataSource.hasUnknownTotalCount()).toBe(true);
+    });
+
+    it("should not query anything before a paginator is bound", async () => {
       dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
       TestBed.tick();
-      await new Promise((resolve) => setTimeout(resolve));
+      await flush();
+
+      expect(findTypeSpy).not.toHaveBeenCalled();
+      expect(dataSource.filteredRecords()).toEqual([]);
+    });
+
+    it("should only fetch the missing records (the deficit) for the next page, continuing from the stored bookmark", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const page0 = Array.from(
+        { length: 11 },
+        (_, i) => new TestEntity(`p0-${i}`),
+      );
+      findTypeSpy.mockResolvedValueOnce({
+        records: page0,
+        bookmark: "bm-page0",
+      });
+
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+      paginator.initialized.next();
+      await flush();
+
+      // page index 1 needs records up to index 21 (2 * 10 + 1 probe); 11 are
+      // already loaded, so only 10 more should be requested
+      const nextBatch = Array.from(
+        { length: 10 },
+        (_, i) => new TestEntity(`p1-${i}`),
+      );
+      findTypeSpy.mockResolvedValueOnce({
+        records: nextBatch,
+        bookmark: "bm-page1",
+      });
+
+      firePage(paginator, { pageSize: 10, pageIndex: 1, length: 0 });
+      await flush();
+
+      expect(findTypeSpy).toHaveBeenLastCalledWith(
+        TestEntity,
+        {},
+        { limit: 10, bookmark: "bm-page0" },
+        {},
+      );
+      // the array keeps growing - it now holds everything loaded across both pages
+      expect(dataSource.filteredRecords()).toEqual([...page0, ...nextBatch]);
+    });
+
+    it("should not send another request when navigating back to an already visited page", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const page0 = Array.from(
+        { length: 11 },
+        (_, i) => new TestEntity(`p0-${i}`),
+      );
+      findTypeSpy.mockResolvedValueOnce({
+        records: page0,
+        bookmark: "bm-page0",
+      });
+
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+      paginator.initialized.next();
+      await flush();
+
+      const page1Extra = [new TestEntity("p1-0")];
+      findTypeSpy.mockResolvedValueOnce({
+        records: page1Extra,
+        bookmark: "bm-page1",
+      });
+      firePage(paginator, { pageSize: 10, pageIndex: 1, length: 0 });
+      await flush();
+
       findTypeSpy.mockClear();
+      firePage(paginator, { pageSize: 10, pageIndex: 0, length: 0 });
+      await flush();
 
-      await processUpdate({ type: "new", entity: new TestEntity("3") });
+      expect(findTypeSpy).not.toHaveBeenCalled();
+      // still the full array loaded so far - navigating backward does not shrink it
+      expect(dataSource.filteredRecords()).toEqual([...page0, ...page1Extra]);
+    });
 
-      expect(findTypeSpy).toHaveBeenCalled();
+    it("should stop requesting once a fetch returns fewer records than asked for (end of data)", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      // only 3 records exist in total, fewer than the requested 11
+      const allRecords = [
+        new TestEntity("1"),
+        new TestEntity("2"),
+        new TestEntity("3"),
+      ];
+      findTypeSpy.mockResolvedValueOnce({
+        records: allRecords,
+        bookmark: "bm-end",
+      });
+
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+      paginator.initialized.next();
+      await flush();
+
+      expect(dataSource.filteredRecords()).toEqual(allRecords);
+      expect(dataSource.hasUnknownTotalCount()).toBe(false);
+
+      findTypeSpy.mockClear();
+      // navigating to a later page must not trigger another request:
+      // reachedEnd is already known from the previous, short response
+      firePage(paginator, { pageSize: 10, pageIndex: 1, length: 0 });
+      await flush();
+
+      expect(findTypeSpy).not.toHaveBeenCalled();
+    });
+
+    describe("page size changes", () => {
+      it("should not reset the loaded records or bookmark, only fetch the additional deficit", async () => {
+        dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+        const page0 = Array.from(
+          { length: 11 },
+          (_, i) => new TestEntity(`p0-${i}`),
+        );
+        findTypeSpy.mockResolvedValueOnce({
+          records: page0,
+          bookmark: "bm-page0",
+        });
+
+        const paginator = createFakePaginator(10, 0);
+        dataSource.paginator = paginator as unknown as MatPaginator;
+        paginator.initialized.next();
+        await flush();
+
+        // increasing the page size to 20 needs 21 records in total (20 + 1
+        // probe); 11 are already loaded, so only 10 more are requested,
+        // continuing from the existing bookmark (not starting over)
+        const additional = Array.from(
+          { length: 10 },
+          (_, i) => new TestEntity(`extra-${i}`),
+        );
+        findTypeSpy.mockResolvedValueOnce({
+          records: additional,
+          bookmark: "bm-after-resize",
+        });
+
+        firePage(paginator, { pageSize: 20, pageIndex: 0, length: 0 });
+        await flush();
+
+        expect(findTypeSpy).toHaveBeenLastCalledWith(
+          TestEntity,
+          {},
+          { limit: 10, bookmark: "bm-page0" },
+          {},
+        );
+        expect(dataSource.filteredRecords()).toEqual([...page0, ...additional]);
+      });
+
+      it("should not fetch again when the new (smaller) page size is already fully covered by loaded records", async () => {
+        dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+        const page0 = Array.from(
+          { length: 11 },
+          (_, i) => new TestEntity(`p0-${i}`),
+        );
+        findTypeSpy.mockResolvedValueOnce({
+          records: page0,
+          bookmark: "bm-page0",
+        });
+
+        const paginator = createFakePaginator(10, 0);
+        dataSource.paginator = paginator as unknown as MatPaginator;
+        paginator.initialized.next();
+        await flush();
+
+        findTypeSpy.mockClear();
+        // shrinking the page size still only requires 6 records (5 + 1 probe),
+        // already covered by the 11 already loaded
+        firePage(paginator, { pageSize: 5, pageIndex: 0, length: 0 });
+        await flush();
+
+        expect(findTypeSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("reset on filter/sort/entity-update", () => {
+      async function setUpPageOneWithTwoPages() {
+        dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+        const page0 = Array.from(
+          { length: 11 },
+          (_, i) => new TestEntity(`p0-${i}`),
+        );
+        findTypeSpy.mockResolvedValueOnce({
+          records: page0,
+          bookmark: "bm-page0",
+        });
+
+        const paginator = createFakePaginator(10, 0);
+        dataSource.paginator = paginator as unknown as MatPaginator;
+        paginator.initialized.next();
+        await flush();
+
+        findTypeSpy.mockResolvedValueOnce({
+          records: [new TestEntity("p1-0")],
+          bookmark: "bm-page1",
+        });
+        firePage(paginator, { pageSize: 10, pageIndex: 1, length: 0 });
+        await flush();
+
+        findTypeSpy.mockClear();
+        return paginator;
+      }
+
+      it("should empty filteredRecords, move the paginator back to page 0, and refetch from scratch when the filter changes", async () => {
+        const paginator = await setUpPageOneWithTwoPages();
+
+        const filteredPage0 = [new TestEntity("filtered-0")];
+        findTypeSpy.mockResolvedValueOnce({
+          records: filteredPage0,
+          bookmark: "bm-filtered",
+        });
+
+        dataSource.dataFilter.set({ name: "test" } as any);
+        TestBed.tick();
+        await flush();
+
+        expect(paginator.pageIndex).toBe(0);
+        expect(findTypeSpy).toHaveBeenCalledWith(
+          TestEntity,
+          { name: "test" },
+          { limit: 11, bookmark: undefined },
+          {},
+        );
+        expect(dataSource.filteredRecords()).toEqual(filteredPage0);
+      });
+
+      it("should empty filteredRecords, move the paginator back to page 0, and refetch from scratch when the sort order changes", async () => {
+        const paginator = await setUpPageOneWithTwoPages();
+
+        const sortedPage0 = Array.from(
+          { length: 11 },
+          (_, i) => new TestEntity(`sorted-${i}`),
+        );
+        findTypeSpy.mockResolvedValueOnce({
+          records: sortedPage0,
+          bookmark: "bm-sorted",
+        });
+
+        (dataSource as any).updateSort("name", "asc");
+        await flush();
+
+        expect(paginator.pageIndex).toBe(0);
+        expect(findTypeSpy).toHaveBeenCalledWith(
+          TestEntity,
+          {},
+          { limit: 11, bookmark: undefined },
+          { prop: "name", dir: "asc" },
+        );
+        expect(dataSource.filteredRecords()).toEqual(sortedPage0);
+      });
+
+      it("should empty filteredRecords, move the paginator back to page 0, and refetch from scratch when an entity update is received", async () => {
+        const paginator = await setUpPageOneWithTwoPages();
+
+        const reloadedPage0 = Array.from(
+          { length: 11 },
+          (_, i) => new TestEntity(`reloaded-${i}`),
+        );
+        findTypeSpy.mockResolvedValueOnce({
+          records: reloadedPage0,
+          bookmark: "bm-reloaded",
+        });
+
+        await (dataSource as any).processEntityUpdate();
+        await flush();
+
+        expect(paginator.pageIndex).toBe(0);
+        expect(findTypeSpy).toHaveBeenCalledWith(
+          TestEntity,
+          {},
+          { limit: 11, bookmark: undefined },
+          {},
+        );
+        expect(dataSource.filteredRecords()).toEqual(reloadedPage0);
+      });
+
+      it("should clear filteredRecords immediately, even before a paginator is bound", () => {
+        dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+        // simulate already having some (stale) records, e.g. from a previous config
+        dataSource.filteredRecords.set([new TestEntity("stale")]);
+
+        (dataSource as any).updateSort("name", "asc");
+
+        expect(dataSource.filteredRecords()).toEqual([]);
+      });
     });
   });
 
   it("should send only a single request even when config, filter and sort change during init", async () => {
     // simulate the burst of triggers that fire while a list view initializes
+    const paginator = createFakePaginator(10, 0);
+    dataSource.paginator = paginator as unknown as MatPaginator;
     dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+    paginator.initialized.next();
     TestBed.tick();
     dataSource.dataFilter.set({ isActive: true } as any);
     TestBed.tick();
@@ -166,7 +513,11 @@ describe("PaginatedDataSource", () => {
   });
 
   it("should set isLoading again when the filter changes", async () => {
+    // resetPaginationCache() only re-triggers a load once a paginator is bound
+    const paginator = createFakePaginator(10, 0);
+    dataSource.paginator = paginator as unknown as MatPaginator;
     dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+    paginator.initialized.next();
     TestBed.tick();
     await new Promise((resolve) => setTimeout(resolve));
     TestBed.tick();
