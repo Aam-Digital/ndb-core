@@ -60,6 +60,7 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { ConfigService } from "../../config/config.service";
 import { SessionSubject } from "../../session/auth/session-info";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 
 /**
  * The main user interface component as root element for the app structure
@@ -180,7 +181,7 @@ export class UiComponent {
 
   isAdminUser = toSignal(
     this.sessionSubject.pipe(
-      map((session) => session?.roles?.includes("admin_app") ?? false),
+      map((session) => session?.roles?.includes(ADMIN_APP_ROLE) ?? false),
     ),
     { initialValue: false },
   );

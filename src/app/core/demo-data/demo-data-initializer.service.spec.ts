@@ -18,6 +18,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { MemoryPouchDatabase } from "../database/pouchdb/memory-pouch-database";
 import { Entity } from "../entity/model/entity";
+import { ADMIN_APP_ROLE } from "../permissions/permission-types";
 import type { Mock } from "vitest";
 
 type DemoDataServiceMock = Pick<DemoDataService, "publishDemoData"> & {
@@ -51,7 +52,7 @@ describe("DemoDataInitializerService", () => {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     id: DemoUserGeneratorService.ADMIN_USERNAME,
     entityId: "User:demo-admin",
-    roles: ["user_app", "admin_app"],
+    roles: ["user_app", ADMIN_APP_ROLE],
   };
   let service: DemoDataInitializerService;
   let mockDemoDataService: DemoDataServiceMock;

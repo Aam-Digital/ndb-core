@@ -7,6 +7,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionSubject } from "../../session/auth/session-info";
 import { EntityCountDashboardConfig } from "app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 
 @Component({
   selector: "app-mock-entity-count-dashboard",
@@ -210,7 +211,7 @@ describe("DashboardComponent", () => {
       {
         component: "EntityCountDashboard",
         config: { entityType: "Todo" } as EntityCountDashboardConfig,
-        permittedUserRoles: ["admin_app"],
+        permittedUserRoles: [ADMIN_APP_ROLE],
       },
       { component: "EntityCountDashboard" },
     ];
@@ -221,7 +222,11 @@ describe("DashboardComponent", () => {
       expect(component.permittedWidgets.value() ?? []).toEqual([widgets[1]]),
     );
 
-    session.next({ name: "admin", id: "2", roles: ["user_app", "admin_app"] });
+    session.next({
+      name: "admin",
+      id: "2",
+      roles: ["user_app", ADMIN_APP_ROLE],
+    });
     await setWidgetsAndStabilize(widgets);
     await vi.waitFor(() =>
       expect(component.permittedWidgets.value() ?? []).toEqual(widgets),
