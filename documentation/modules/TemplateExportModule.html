@@ -266,6 +266,7 @@ import { EntityListConfig } from &quot;../../core/entity-list/EntityListConfig&q
 import { DefaultDatatype } from &quot;../../core/entity/default-datatype/default.datatype&quot;;
 import { Entity } from &quot;../../core/entity/model/entity&quot;;
 import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
+import { ADMIN_APP_ROLE } from &quot;../../core/permissions/permission-types&quot;;
 import { AsyncComponent, ComponentRegistry } from &quot;../../dynamic-components&quot;;
 import { TemplateExportFileDatatype } from &quot;./template-export-file-datatype/template-export-file.datatype&quot;;
 import { TemplateExportService } from &quot;./template-export-service/template-export.service&quot;;
@@ -313,7 +314,7 @@ export class TemplateExportModule {
           const session &#x3D; sessionSubject.value;
           if (!session) return false;
           // Show for admin users OR when export feature is enabled
-          const isAdmin &#x3D; session.roles.includes(&quot;admin_app&quot;);
+          const isAdmin &#x3D; session.roles.includes(ADMIN_APP_ROLE);
           const isExportEnabled &#x3D;
             await templateExportService.isExportServerEnabled();
           return isAdmin || isExportEnabled;

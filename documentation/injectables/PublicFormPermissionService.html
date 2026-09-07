@@ -249,8 +249,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="185"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:185</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="186"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:186</a></div>
                         </td>
                     </tr>
 
@@ -326,8 +326,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="159"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:159</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:160</a></div>
                         </td>
                     </tr>
 
@@ -396,8 +396,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="175"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:175</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="176"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:176</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="62"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:62</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="63"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -516,8 +516,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="34"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:34</a></div>
                         </td>
                     </tr>
 
@@ -578,6 +578,7 @@ import { ConfirmationDialogService } from &quot;app/core/common-components/confi
 import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Config } from &quot;../../core/config/config&quot;;
 import {
+  ADMIN_APP_ROLE,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
   LEGACY_PUBLIC_KEY,
@@ -749,7 +750,7 @@ export class PublicFormPermissionService {
    */
   hasAdminPermission(): boolean {
     const userRoles &#x3D; this.sessionInfo.value?.roles || [];
-    return userRoles.includes(&quot;admin_app&quot;);
+    return userRoles.includes(ADMIN_APP_ROLE);
   }
 
   /**

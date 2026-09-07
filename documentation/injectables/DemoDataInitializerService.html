@@ -248,8 +248,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="65"
-                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:65</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -291,8 +291,8 @@ Make sure a user is logged in before calling this method so that a valid databas
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="50"
-                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:50</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -331,6 +331,7 @@ import memory from &quot;pouchdb-adapter-memory&quot;;
 import PouchDB from &quot;pouchdb-browser&quot;;
 import { DatabaseResolverService } from &quot;../database/database-resolver.service&quot;;
 import { computeDbNames } from &quot;../database/db-name-helpers&quot;;
+import { ADMIN_APP_ROLE } from &quot;../permissions/permission-types&quot;;
 
 /**
  * This service handles everything related to the demo-mode
@@ -360,7 +361,7 @@ export class DemoDataInitializerService {
   private readonly adminUser: SessionInfo &#x3D; {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     id: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: [&quot;user_app&quot;, &quot;admin_app&quot;],
+    roles: [&quot;user_app&quot;, ADMIN_APP_ROLE],
     entityId: &#x60;User:${DemoUserGeneratorService.ADMIN_USERNAME}&#x60;,
   };
 
