@@ -1,41 +1,73 @@
 [
   {
     "_id": "ReportConfig:basic-report",
-    "title": "Basic Report",
+    "title": {
+      "en-US": "Basic Report",
+      "de": "Basis-Bericht",
+      "fr": "Rapport de base"
+    },
     "reportDefinition": [
       {
         "query": "Child:toArray:filterActive",
-        "label": "All children",
+        "label": {
+          "en-US": "All children",
+          "de": "Alle Kinder",
+          "fr": "Tous les enfants"
+        },
         "groupBy": [
           "gender"
         ]
       },
       {
         "query": "School:toArray",
-        "label": "All schools",
+        "label": {
+          "en-US": "All schools",
+          "de": "Alle Schulen",
+          "fr": "Toutes les écoles"
+        },
         "aggregations": [
           {
-            "label": "Children attending a school",
+            "label": {
+              "en-US": "Children attending a school",
+              "de": "Kinder, die eine Schule besuchen",
+              "fr": "Enfants fréquentant une école"
+            },
             "query": ":getRelated(ChildSchoolRelation, schoolId):filterActive.childId:unique"
           },
           {
-            "label": "Governmental schools",
+            "label": {
+              "en-US": "Governmental schools",
+              "de": "Staatliche Schulen",
+              "fr": "Écoles publiques"
+            },
             "query": "[*privateSchool!=true]"
           },
           {
             "query": "[*privateSchool!=true]:getRelated(ChildSchoolRelation, schoolId):filterActive.childId::unique:toEntities(Child)",
-            "label": "Children attending a governmental school",
+            "label": {
+              "en-US": "Children attending a governmental school",
+              "de": "Kinder, die eine staatliche Schule besuchen",
+              "fr": "Enfants fréquentant une école publique"
+            },
             "groupBy": [
               "gender"
             ]
           },
           {
-            "label": "Private schools",
+            "label": {
+              "en-US": "Private schools",
+              "de": "Private Schulen",
+              "fr": "Écoles privées"
+            },
             "query": "[*privateSchool=true]"
           },
           {
             "query": "[*privateSchool=true]:getRelated(ChildSchoolRelation, schoolId):filterActive.childId::unique:toEntities(Child)",
-            "label": "Children attending a private school",
+            "label": {
+              "en-US": "Children attending a private school",
+              "de": "Kinder, die eine private Schule besuchen",
+              "fr": "Enfants fréquentant une école privée"
+            },
             "groupBy": [
               "gender"
             ]
@@ -46,21 +78,33 @@
   },
   {
     "_id": "ReportConfig:event-report",
-    "title": "Event Report",
+    "title": {
+      "en-US": "Event Report",
+      "de": "Veranstaltungsbericht",
+      "fr": "Rapport d'événement"
+    },
     "reportDefinition": [
       {
         "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": [
           "category"
         ],
-        "label": "Events",
+        "label": {
+          "en-US": "Events",
+          "de": "Veranstaltungen",
+          "fr": "Événements"
+        },
         "aggregations": [
           {
             "query": ":getParticipantsWithAttendance(PRESENT):unique:toEntities(Child)",
             "groupBy": [
               "gender"
             ],
-            "label": "Participants"
+            "label": {
+              "en-US": "Participants",
+              "de": "Teilnehmer",
+              "fr": "Participants"
+            }
           }
         ]
       }
@@ -68,13 +112,21 @@
   },
   {
     "_id": "ReportConfig:attendance-report",
-    "title": "Attendance Report",
+    "title": {
+      "en-US": "Attendance Report",
+      "de": "Anwesenheitsbericht",
+      "fr": "Rapport de présence"
+    },
     "mode": "exporting",
     "reportDefinition": [
       {
         "query": "Event:toArray[* date >= ? & date <= ?]",
         "groupBy": {
-          "label": "Type",
+          "label": {
+            "en-US": "Type",
+            "de": "Typ",
+            "fr": "Type"
+          },
           "property": "category"
         },
         "subQueries": [
@@ -82,36 +134,64 @@
             "query": ":getAttendanceArray:getAttendanceReport",
             "subQueries": [
               {
-                "label": "Name",
+                "label": {
+                  "en-US": "Name",
+                  "de": "Name",
+                  "fr": "Nom"
+                },
                 "query": ".participant:toEntities(Child).name"
               },
               {
                 "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId):filterActive",
                 "subQueries": [
                   {
-                    "label": "Class",
+                    "label": {
+                      "en-US": "Class",
+                      "de": "Klasse",
+                      "fr": "Classe"
+                    },
                     "query": ".schoolClass"
                   },
                   {
-                    "label": "School",
+                    "label": {
+                      "en-US": "School",
+                      "de": "Schule",
+                      "fr": "École"
+                    },
                     "query": ".schoolId:toEntities(School).name"
                   }
                 ]
               },
               {
-                "label": "Total",
+                "label": {
+                  "en-US": "Total",
+                  "de": "Gesamt",
+                  "fr": "Total"
+                },
                 "query": "total"
               },
               {
-                "label": "Present",
+                "label": {
+                  "en-US": "Present",
+                  "de": "Anwesend",
+                  "fr": "Présent"
+                },
                 "query": "present"
               },
               {
-                "label": "Rate",
+                "label": {
+                  "en-US": "Rate",
+                  "de": "in Prozent",
+                  "fr": "Taux"
+                },
                 "query": "percentage"
               },
               {
-                "label": "Late",
+                "label": {
+                  "en-US": "Late",
+                  "de": "Zu spät",
+                  "fr": "Retard"
+                },
                 "query": "detailedStatus.LATE"
               }
             ]
@@ -122,22 +202,38 @@
   },
   {
     "_id": "ReportConfig:materials-distributed",
-    "title": "Materials Distributed",
+    "title": {
+      "en-US": "Materials Distributed",
+      "de": "Ausgegebene Materialien",
+      "fr": "Matériels distribués"
+    },
     "mode": "exporting",
     "reportDefinition": [
       {
         "query": "EducationalMaterial:toArray[*date >= ? & date <= ?]",
         "groupBy": {
-          "label": "Type",
+          "label": {
+            "en-US": "Type",
+            "de": "Typ",
+            "fr": "Type"
+          },
           "property": "materialType"
         },
         "subQueries": [
           {
-            "label": "Number of events of handing out",
+            "label": {
+              "en-US": "Number of events of handing out",
+              "de": "Anzahl der Verteilungen",
+              "fr": "Nombre d'événements de distribution"
+            },
             "query": ".materialAmount:count"
           },
           {
-            "label": "Total Items",
+            "label": {
+              "en-US": "Total Items",
+              "de": "Gesamtanzahl",
+              "fr": "Total d'articles"
+            },
             "query": ".materialAmount:sum"
           }
         ]
