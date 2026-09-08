@@ -72,10 +72,6 @@ describe("AdminDefaultValueComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should reset form fields when mode field is changed", () => {
     const newMode = "dynamic";
     component.form.get("mode").setValue(newMode);

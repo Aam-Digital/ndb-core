@@ -19,10 +19,6 @@ describe("AttendanceSummaryComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should remove the from and to column", () => {
     fixture.componentRef.setInput("columns", [
       { id: "periodFrom", label: "Month" },

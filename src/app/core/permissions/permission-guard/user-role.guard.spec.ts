@@ -28,10 +28,6 @@ describe("UserRoleGuard", () => {
     sessionInfo = TestBed.inject(SessionSubject);
   });
 
-  it("should be created", () => {
-    expect(guard).toBeTruthy();
-  });
-
   it("should return true if current user is allowed", async () => {
     sessionInfo.next(adminUser);
 

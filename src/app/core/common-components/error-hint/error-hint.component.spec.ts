@@ -21,10 +21,6 @@ describe("ErrorHintComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should be empty when there are no errors", () => {
     const ellElements = fixture.debugElement.queryAll(By.css("div"));
     expect(ellElements).toHaveLength(0);

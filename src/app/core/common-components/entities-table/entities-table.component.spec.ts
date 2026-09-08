@@ -81,10 +81,6 @@ describe("EntitiesTableComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should apply default sort on first column and order dates descending", () => {
     fixture.componentRef.setInput("entityType", Note);
     fixture.componentRef.setInput("customColumns", [

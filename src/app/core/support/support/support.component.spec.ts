@@ -105,10 +105,6 @@ describe("SupportComponent", () => {
     fixture.detectChanges();
   }));
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize application information", () => {
     expect(component.sessionInfo).toBe(testUser);
     expect(component.currentUser).toBe(userEntity);

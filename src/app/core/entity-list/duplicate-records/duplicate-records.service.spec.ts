@@ -63,10 +63,6 @@ describe("DuplicateRecordsService", () => {
     );
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should transform data correctly", () => {
     const duplicateTest = new DuplicateTestEntity();
     duplicateTest.name = "TestName";

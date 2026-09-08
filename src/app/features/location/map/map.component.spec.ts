@@ -43,10 +43,6 @@ describe("MapComponent", () => {
     map = component["map"];
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should create map centered at start position from config", () => {
     expect(map.getCenter()).toEqual(new L.LatLng(...config.start));
   });

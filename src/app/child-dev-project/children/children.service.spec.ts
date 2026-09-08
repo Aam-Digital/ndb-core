@@ -45,10 +45,6 @@ describe("ChildrenService", () => {
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should list newly saved children", async () => {
     const childrenBefore = await service.getChildren();
     const child = createEntityOfType("Child", "10");

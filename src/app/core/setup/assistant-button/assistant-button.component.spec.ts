@@ -51,10 +51,6 @@ describe("AssistantButtonComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should call AssistantService.openAssistant when openAssistant is called", async () => {
     mockAssistantService.openAssistant.mockReturnValue(Promise.resolve());
 

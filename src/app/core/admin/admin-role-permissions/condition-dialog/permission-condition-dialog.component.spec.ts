@@ -8,9 +8,10 @@ import {
   PermissionConditionDialogData,
 } from "./permission-condition-dialog.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("PermissionConditionDialogComponent", () => {
-  const mockDialogRef = { close: vi.fn() };
+  const mockDialogRef = mockMatDialogRef();
 
   function createComponent(data: Partial<PermissionConditionDialogData> = {}) {
     TestBed.configureTestingModule({

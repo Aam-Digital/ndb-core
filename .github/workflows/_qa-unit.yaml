@@ -44,7 +44,10 @@ jobs:
       FORCE_COLOR: 1
     # The Angular 22 upgrade made the ~470-file suite noticeably heavier
     # (extra TestBed.tick() flushes, ApplicationRef.afterTick subscription).
-    # 10 minutes was no longer enough for it to finish - it got cancelled
+    # 10 minutes was no longer enough for it to finish - it got cancelled.
+    # Trimming the suite (see doc/unit-test-inventory.md) brings it back well
+    # under this; a suite that grows into 20 minutes again should be split
+    # across matrix jobs rather than given a bigger number.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4

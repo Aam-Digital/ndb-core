@@ -57,10 +57,6 @@ describe("UiComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should be created", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should render site name in toolbar based on hide flag", () => {
     component.sideNavMode.set("side");
     component.siteSettings.set(

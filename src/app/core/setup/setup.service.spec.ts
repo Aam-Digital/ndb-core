@@ -52,10 +52,6 @@ describe("SetupService", () => {
     httpTesting = TestBed.inject(HttpTestingController);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should get all available base configs from json file", async () => {
     const baseConfigsPromise = service.getAvailableBaseConfig();
 
