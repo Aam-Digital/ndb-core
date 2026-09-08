@@ -15,7 +15,7 @@ export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
  * history has a starting state to replay from.
  *
  * It is not a change anyone made, which is why the change *log* excludes it (see
- * `buildChangeLogQuery`) while the per-record history still builds on it.
+ * `buildChangeHistoryQuery`) while the per-record history still builds on it.
  */
 export const BASELINE_OPERATION = "baseline";
 
@@ -24,7 +24,7 @@ export const BASELINE_OPERATION = "baseline";
  * each one selects.
  *
  * `baseline` is deliberately absent: the log never lists snapshots, so offering
- * it would only ever return nothing (see `buildChangeLogQuery`).
+ * it would only ever return nothing (see `buildChangeHistoryQuery`).
  */
 export const FILTERABLE_ACTION_OPERATIONS: Record<string, string> = {
   created: "create",
@@ -86,7 +86,7 @@ export interface ChangeEvent {
  * deliberately absent: that needs the entity's full replayed state (see
  * `buildChangeEvents`), which the per-record change-history dialog provides.
  */
-export interface ChangeLogEntry {
+export interface ChangeHistoryEntry {
   /** the audit document `_id` */
   id: string;
   /** server-set time of the change */
@@ -114,7 +114,7 @@ export interface ChangeLogEntry {
  * The active filters of the system-wide change log. An unset property means
  * "no restriction" on that dimension.
  */
-export interface ChangeLogFilters {
+export interface ChangeHistoryFilters {
   /** entity type prefix, e.g. `Child` */
   entityType?: string;
   /** author, matched against the recorded user name */

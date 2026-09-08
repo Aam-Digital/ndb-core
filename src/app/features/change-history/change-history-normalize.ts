@@ -51,9 +51,9 @@ function isHidden(field: string): boolean {
  * renderable from its own audit doc alone, so the log can page over records of
  * many different entities without loading a history per entity.
  *
- * A `delete` returns no fields on purpose: PouchDB pushes a tombstone stripped
- * of its content, so the delta would list every field of the record as removed
- * rather than the one thing that happened.
+ * A `delete` returns no fields on purpose: a deletion replicates as a tombstone
+ * stripped of its content, so the delta would list every field of the record as
+ * removed rather than the one thing that happened.
  */
 export function changedFieldsOf(doc: RawAuditDoc): string[] {
   if (doc.operation === "delete") {

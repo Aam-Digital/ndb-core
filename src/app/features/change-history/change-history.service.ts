@@ -9,20 +9,20 @@ import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import {
   ChangeEvent,
-  ChangeLogEntry,
-  ChangeLogFilters,
+  ChangeHistoryEntry,
+  ChangeHistoryFilters,
 } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
 import {
   AUDIT_TIMESTAMP_INDEX,
   buildAuthorSampleQuery,
-  buildChangeLogQuery,
+  buildChangeHistoryQuery,
   buildReferenceViewQuery,
   distinctAuthors,
   MangoQuery,
-  toChangeLogEntry,
-} from "./change-log-query";
+  toChangeHistoryEntry,
+} from "./change-history-query";
 import {
   AUDIT_REFERENCE_VIEW,
   buildAuditReferenceIndex,
@@ -47,8 +47,8 @@ interface ViewResponse {
 }
 
 /** One page of the system-wide change log. */
-export interface ChangeLogPage {
-  entries: ChangeLogEntry[];
+export interface ChangeHistoryPage {
+  entries: ChangeHistoryEntry[];
   /** whether at least one further page exists after this one */
   hasMore: boolean;
 }
@@ -71,21 +71,6 @@ export class ChangeHistoryService {
   private readonly authService = inject(KeycloakAuthService, {
     optional: true,
   });
-
-  /**
-   * Bumped on every ability update. The ability object is mutated in place when
-   * rules change (permission config edited, session or user switched), so its
-   * "updated" event is the only signal that a permission answer may differ now.
-   */
-  private readonly abilityUpdated = signal(0);
-
-  constructor() {
-    // `on` is guarded rather than assumed: the ability is optional here, and a
-    // test double may only implement the permission check itself
-    this.ability?.on?.("updated", () =>
-      this.abilityUpdated.update((count) => count + 1),
-    );
-  }
 
   /** the derived audit db name, e.g. `app-audit` */
   static auditDbName(): string {
@@ -179,7 +164,7 @@ export class ChangeHistoryService {
    * the `pouchdb-find` plugin is not installed).
    *
    * The query asks for one record beyond the page, which is reported as
-   * {@link ChangeLogPage.hasMore} rather than returned, so the caller never
+   * {@link ChangeHistoryPage.hasMore} rather than returned, so the caller never
    * offers a next page that turns out to be empty.
    *
    * Filtering by a related record takes a different route entirely, see
@@ -187,22 +172,22 @@ export class ChangeHistoryService {
    *
    * @throws if the audit database is unavailable or the query is rejected
    */
-  async queryChangeLog(
-    filters: ChangeLogFilters,
+  async queryChangeHistory(
+    filters: ChangeHistoryFilters,
     pageSize: number,
     pageIndex = 0,
-  ): Promise<ChangeLogPage> {
+  ): Promise<ChangeHistoryPage> {
     if (filters.relatedEntityId) {
       return this.queryChangesRelatedTo(filters, pageSize, pageIndex);
     }
 
     await this.ensureTimestampIndex();
     const response = await this.findInAuditDb(
-      buildChangeLogQuery(filters, pageSize, pageIndex),
+      buildChangeHistoryQuery(filters, pageSize, pageIndex),
     );
     const docs = response.docs ?? [];
     return {
-      entries: docs.slice(0, pageSize).map(toChangeLogEntry),
+      entries: docs.slice(0, pageSize).map(toChangeHistoryEntry),
       hasMore: docs.length > pageSize,
     };
   }
@@ -221,10 +206,10 @@ export class ChangeHistoryService {
    *         query is rejected
    */
   private async queryChangesRelatedTo(
-    filters: ChangeLogFilters,
+    filters: ChangeHistoryFilters,
     pageSize: number,
     pageIndex: number,
-  ): Promise<ChangeLogPage> {
+  ): Promise<ChangeHistoryPage> {
     await this.ensureReferenceIndex();
     const response: ViewResponse = await this.getAuditDb().query(
       AUDIT_REFERENCE_VIEW,
@@ -235,7 +220,7 @@ export class ChangeHistoryService {
       .map((row) => row.doc)
       .filter((doc): doc is RawAuditDoc => !!doc);
     return {
-      entries: docs.slice(0, pageSize).map(toChangeLogEntry),
+      entries: docs.slice(0, pageSize).map(toChangeHistoryEntry),
       hasMore: docs.length > pageSize,
     };
   }
@@ -339,15 +324,6 @@ export class ChangeHistoryService {
   hasHistoryPermission(): boolean {
     return !!this.ability && this.ability.can("read", AUDIT_RECORD_SUBJECT);
   }
-
-  /**
-   * {@link hasHistoryPermission} as a signal, for long-lived views that must not
-   * keep showing a "no access" state after the user's rules have changed.
-   */
-  readonly hasAuditPermission = computed(() => {
-    this.abilityUpdated();
-    return this.hasHistoryPermission();
-  });
 
   /** Both: the entity qualifies and the user may read its audit data. */
   canViewHistory(entity?: Entity): boolean {

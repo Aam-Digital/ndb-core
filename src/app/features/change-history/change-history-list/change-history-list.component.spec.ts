@@ -10,18 +10,17 @@ import { MockEntityMapperService } from "../../../core/entity/entity-mapper/mock
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ChangeHistoryService } from "../change-history.service";
-import { ChangeLogEntry } from "../change-history.types";
+import { ChangeHistoryEntry } from "../change-history.types";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
-import { ChangeLogComponent } from "./change-log.component";
+import { ChangeHistoryListComponent } from "./change-history-list.component";
 
-let fixture: ComponentFixture<ChangeLogComponent>;
-let component: ChangeLogComponent;
-let queryChangeLog: ReturnType<typeof vi.fn>;
+let fixture: ComponentFixture<ChangeHistoryListComponent>;
+let component: ChangeHistoryListComponent;
+let queryChangeHistory: ReturnType<typeof vi.fn>;
 let auditEnabled: ReturnType<typeof signal<boolean | undefined>>;
-let hasAuditPermission: ReturnType<typeof signal<boolean>>;
 let dialogOpen: ReturnType<typeof vi.fn>;
 
-function entry(id: string): ChangeLogEntry {
+function entry(id: string): ChangeHistoryEntry {
   return {
     id,
     at: new Date("2026-06-03T10:00:00.000Z"),
@@ -48,12 +47,11 @@ async function setup(
   queryParams: Record<string, string> = {},
 ) {
   auditEnabled = signal(enabled === "loading" ? undefined : enabled);
-  hasAuditPermission = signal(canRead);
-  queryChangeLog = vi.fn().mockResolvedValue(page(0));
+  queryChangeHistory = vi.fn().mockResolvedValue(page(0));
   dialogOpen = vi.fn();
   await TestBed.configureTestingModule({
     imports: [
-      ChangeLogComponent,
+      ChangeHistoryListComponent,
       MockedTestingModule.withState(),
       NoopAnimationsModule,
     ],
@@ -68,9 +66,9 @@ async function setup(
         provide: ChangeHistoryService,
         useValue: {
           isAuditEnabled: auditEnabled,
-          hasAuditPermission,
+          hasHistoryPermission: () => canRead,
           loadAuditFeatureFlag: vi.fn(),
-          queryChangeLog,
+          queryChangeHistory,
           getChangeAuthors: vi.fn().mockResolvedValue(["demo-admin", "priya"]),
         },
       },
@@ -78,7 +76,7 @@ async function setup(
     ],
   }).compileComponents();
 
-  fixture = TestBed.createComponent(ChangeLogComponent);
+  fixture = TestBed.createComponent(ChangeHistoryListComponent);
   component = fixture.componentInstance;
   fixture.detectChanges();
   await settle();
@@ -99,9 +97,9 @@ async function settle() {
   fixture.detectChanges();
 }
 
-/** the filters the given `queryChangeLog` call was made with */
+/** the filters the given `queryChangeHistory` call was made with */
 function callArgs(index = -1) {
-  return queryChangeLog.mock.calls.at(index);
+  return queryChangeHistory.mock.calls.at(index);
 }
 
 it("loads the first page and the author options when enabled and permitted", async () => {
@@ -136,31 +134,22 @@ it("starts pre-filtered by the record type the caller navigated from", async () 
 
 it("does not query while the feature flag is still loading, then queries once it is on", async () => {
   await setup("loading");
-  expect(queryChangeLog).not.toHaveBeenCalled();
+  expect(queryChangeHistory).not.toHaveBeenCalled();
 
   auditEnabled.set(true);
   await settle();
 
-  expect(queryChangeLog).toHaveBeenCalledTimes(1);
+  expect(queryChangeHistory).toHaveBeenCalledTimes(1);
 });
 
 it("does not query when the feature is switched off", async () => {
   await setup(false);
-  expect(queryChangeLog).not.toHaveBeenCalled();
+  expect(queryChangeHistory).not.toHaveBeenCalled();
 });
 
 it("does not query when the user may not read audit data", async () => {
   await setup(true, false);
-  expect(queryChangeLog).not.toHaveBeenCalled();
-});
-
-it("starts querying once the user's rules grant audit access", async () => {
-  await setup(true, false);
-
-  hasAuditPermission.set(true);
-  await settle();
-
-  expect(queryChangeLog).toHaveBeenCalledTimes(1);
+  expect(queryChangeHistory).not.toHaveBeenCalled();
 });
 
 it("re-queries with the selected record type and author", async () => {
@@ -230,7 +219,7 @@ it("applies the kept record type and author selection again once the id is clear
 
 it("returns to the first page when the related record filter changes", async () => {
   await setup();
-  queryChangeLog.mockResolvedValue(page(10, true));
+  queryChangeHistory.mockResolvedValue(page(10, true));
   component.onPageChange({ pageIndex: 1, pageSize: 10, length: 11 });
   await settle();
 
@@ -291,7 +280,7 @@ it("treats a cleared date range as no restriction", async () => {
 
 it("requests the next page by index", async () => {
   await setup();
-  queryChangeLog.mockResolvedValue(page(10, true));
+  queryChangeHistory.mockResolvedValue(page(10, true));
   component.setEntityTypeFilter("Child");
   await settle();
 
@@ -303,7 +292,7 @@ it("requests the next page by index", async () => {
 
 it("returns to the first page when a filter or the page size changes", async () => {
   await setup();
-  queryChangeLog.mockResolvedValue(page(10, true));
+  queryChangeHistory.mockResolvedValue(page(10, true));
   component.onPageChange({ pageIndex: 1, pageSize: 10, length: 11 });
   await settle();
 
@@ -322,13 +311,13 @@ it("labels the total as a lower bound while a further page exists", async () => 
     MatPaginatorIntl,
   ) as UnknownTotalPaginatorIntl;
 
-  queryChangeLog.mockResolvedValue(page(10, true));
+  queryChangeHistory.mockResolvedValue(page(10, true));
   component.setEntityTypeFilter("Child");
   await settle();
   expect(intl.hasUnknownTotalCount).toBe(true);
 
   // the last page knows the real total, so it must not read as "10+"
-  queryChangeLog.mockResolvedValue(page(4, false));
+  queryChangeHistory.mockResolvedValue(page(4, false));
   component.setEntityTypeFilter("School");
   await settle();
   expect(intl.hasUnknownTotalCount).toBe(false);
@@ -336,14 +325,14 @@ it("labels the total as a lower bound while a further page exists", async () => 
 
 it("offers a further page only when the backend reported one", async () => {
   await setup();
-  queryChangeLog.mockResolvedValue(page(10, true));
+  queryChangeHistory.mockResolvedValue(page(10, true));
   component.setEntityTypeFilter("Child");
   await settle();
   // 10 loaded + 1 to keep "next" reachable
   expect(component.pageLengthHint()).toBe(11);
 
   // a page that exactly fills but has nothing after it must not offer a next
-  queryChangeLog.mockResolvedValue(page(10, false));
+  queryChangeHistory.mockResolvedValue(page(10, false));
   component.setEntityTypeFilter("School");
   await settle();
   expect(component.pageLengthHint()).toBe(10);
@@ -354,7 +343,7 @@ it("shows the record type as its label, and each row's own record id", async () 
   // records generated from one template share a title (every event of a
   // recurring activity), so without the id the rows read as repeats of one
   // record — which is the whole reason both are displayed
-  queryChangeLog.mockResolvedValue({
+  queryChangeHistory.mockResolvedValue({
     entries: [
       {
         ...entry("audit-1"),
@@ -391,7 +380,7 @@ it("opens the record's full change history when a row is clicked", async () => {
   await setup();
   const record = new TestEntity("1");
   (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(record);
-  queryChangeLog.mockResolvedValue({
+  queryChangeHistory.mockResolvedValue({
     entries: [
       {
         ...entry("audit-1"),
@@ -421,7 +410,7 @@ it("keeps the record link opening the record itself, not its history", async () 
   const record = new TestEntity("1");
   (TestBed.inject(EntityMapperService) as MockEntityMapperService).add(record);
   const navigate = vi.spyOn(TestBed.inject(Router), "navigate");
-  queryChangeLog.mockResolvedValue({
+  queryChangeHistory.mockResolvedValue({
     entries: [
       {
         ...entry("audit-1"),
@@ -449,7 +438,7 @@ it("opens the history from a deleted record's own block, which links nowhere", a
   await setup();
   // nothing added to the entity mapper: the record is gone, so its block shows
   // the id without a link - the row is what the click belongs to
-  queryChangeLog.mockResolvedValue({
+  queryChangeHistory.mockResolvedValue({
     entries: [
       {
         ...entry("audit-1"),
@@ -517,7 +506,7 @@ it("does not open a dialog when the click only ended a text selection", async ()
 
 it("surfaces a load failure instead of an empty list", async () => {
   await setup();
-  queryChangeLog.mockRejectedValue(new Error("service unavailable"));
+  queryChangeHistory.mockRejectedValue(new Error("service unavailable"));
 
   component.setEntityTypeFilter("Child");
   await settle();

@@ -6,7 +6,8 @@ import {
 } from "@angular/core";
 import { Clipboard } from "@angular/cdk/clipboard";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { AlertService } from "../../../core/alerts/alert.service";
+import { AlertService } from "../../alerts/alert.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * The internal id of a record, shown quietly and copyable in one click.
@@ -31,7 +32,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
         tabindex="0"
         [attr.aria-label]="copyHint"
         [matTooltip]="copyHint"
-        (click)="copyId(); $event.stopPropagation()"
+        (click)="$event.stopPropagation(); copyId()"
         (keydown.enter)="copyId()"
         (keydown.space)="$event.preventDefault(); copyId()"
         >{{ recordId() }}</span
@@ -53,10 +54,25 @@ export class RecordIdDisplayComponent {
    * Copy the id, confirming only once the clipboard actually accepted it: a
    * browser may refuse, and silently claiming success would send someone off to
    * paste something they do not have.
+   *
+   * A refusal can also come as a thrown error rather than a `false` return, so
+   * both are treated the same. Letting it propagate would surface as an
+   * unhandled error from a click the user only meant as a copy.
    */
   copyId() {
     const id = this.recordId();
-    if (id && this.clipboard.copy(id)) {
+    if (!id) {
+      return;
+    }
+
+    let copied = false;
+    try {
+      copied = this.clipboard.copy(id);
+    } catch (err) {
+      Logging.debug("could not copy the record id", err);
+    }
+
+    if (copied) {
       this.alerts.addInfo($localize`:Record id copied:Record ID copied`);
     }
   }

@@ -3,7 +3,7 @@ import { UserRoleGuard } from "../../core/permissions/permission-guard/user-role
 import { ADMIN_APP_ROLE } from "../../core/permissions/permission-types";
 
 /**
- * Routes of the change log, mounted by the app at `/changelog`.
+ * Routes of the change log, mounted by the app at `/change-history`.
  *
  * Owned by this feature rather than the admin module, so the admin routing does
  * not have to import from `features/`. Still restricted to the administration
@@ -17,8 +17,8 @@ export const changeHistoryRoutes: Routes = [
     // registers the per-record history action for every entity details view,
     // but the log is a rarely visited admin screen and need not be bundled with it
     loadComponent: () =>
-      import("./change-log/change-log.component").then(
-        (c) => c.ChangeLogComponent,
+      import("./change-history-list/change-history-list.component").then(
+        (c) => c.ChangeHistoryListComponent,
       ),
     canActivate: [UserRoleGuard],
     data: {

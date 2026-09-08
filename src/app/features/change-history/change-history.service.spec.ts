@@ -19,8 +19,6 @@ let mockDb: {
 let dbFactory: { createRemoteDatabase: ReturnType<typeof vi.fn> };
 let abilityCan: ReturnType<typeof vi.fn>;
 let httpPost: ReturnType<typeof vi.fn>;
-/** fire the ability's "updated" event, as AbilityService does after a rules change */
-let abilityUpdated: () => void;
 
 function setup(docs: any[] = [], canRead = true) {
   mockDb = {
@@ -30,23 +28,12 @@ function setup(docs: any[] = [], canRead = true) {
   };
   dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
   abilityCan = vi.fn().mockReturnValue(canRead);
-  const abilityListeners: (() => void)[] = [];
-  abilityUpdated = () => abilityListeners.forEach((listener) => listener());
   httpPost = vi.fn().mockReturnValue(of({ docs: [], bookmark: "bm-next" }));
   TestBed.configureTestingModule({
     providers: [
       ChangeHistoryService,
       { provide: DatabaseFactoryService, useValue: dbFactory },
-      {
-        provide: EntityAbility,
-        useValue: {
-          can: abilityCan,
-          on: (_event: string, listener: () => void) => {
-            abilityListeners.push(listener);
-            return () => undefined;
-          },
-        },
-      },
+      { provide: EntityAbility, useValue: { can: abilityCan } },
       {
         provide: KeycloakAuthService,
         useValue: {
@@ -60,7 +47,7 @@ function setup(docs: any[] = [], canRead = true) {
   return TestBed.inject(ChangeHistoryService);
 }
 
-/** the `_find` call of the last queryChangeLog/getChangeAuthors, skipping `_index` */
+/** the `_find` call of the last queryChangeHistory/getChangeAuthors, skipping `_index` */
 function lastFindCall(): [string, any, any] {
   return httpPost.mock.calls
     .filter((call) => call[0].endsWith("/_find"))
@@ -163,22 +150,10 @@ it("denies viewing history when no entity is given", () => {
   expect(service.canViewHistory(undefined)).toBe(false);
 });
 
-it("re-evaluates the audit permission when the ability rules are updated", () => {
-  const service = setup([], false);
-  expect(service.hasAuditPermission()).toBe(false);
-
-  abilityCan.mockReturnValue(true);
-  // the ability object is mutated in place by AbilityService, so only its
-  // "updated" event tells us the answer may have changed
-  abilityUpdated();
-
-  expect(service.hasAuditPermission()).toBe(true);
-});
-
 it("queries the change log against the audit db's _find endpoint, authenticated", async () => {
   const service = setup();
 
-  await service.queryChangeLog({ entityType: "Child" }, 10, 2);
+  await service.queryChangeHistory({ entityType: "Child" }, 10, 2);
 
   const [url, body, options] = lastFindCall();
   expect(url).toBe("/db/app-audit/_find");
@@ -190,8 +165,8 @@ it("queries the change log against the audit db's _find endpoint, authenticated"
 it("creates the timestamp index once before querying, since sort needs it", async () => {
   const service = setup();
 
-  await service.queryChangeLog({}, 10);
-  await service.queryChangeLog({}, 10);
+  await service.queryChangeHistory({}, 10);
+  await service.queryChangeHistory({}, 10);
 
   const indexCalls = httpPost.mock.calls.filter((call) =>
     call[0].endsWith("/_index"),
@@ -209,7 +184,7 @@ it("still queries when the index could not be created (it may already exist)", a
       : of({ docs: [rawDoc("2026-06-03T10:00:00.000Z")] }),
   );
 
-  const page = await service.queryChangeLog({}, 10);
+  const page = await service.queryChangeHistory({}, 10);
 
   expect(page.entries.length).toBe(1);
 });
@@ -222,7 +197,7 @@ it("returns mapped entries, without a further page when none was found", async (
       : of({}),
   );
 
-  const page = await service.queryChangeLog({}, 10);
+  const page = await service.queryChangeHistory({}, 10);
 
   expect(page.hasMore).toBe(false);
   expect(page.entries).toEqual([
@@ -248,7 +223,7 @@ it("reports a further page without returning the record that proved it", async (
     url.endsWith("/_find") ? of({ docs }) : of({}),
   );
 
-  const page = await service.queryChangeLog({}, 2);
+  const page = await service.queryChangeHistory({}, 2);
 
   expect(page.entries.length).toBe(2);
   expect(page.hasMore).toBe(true);
@@ -280,7 +255,10 @@ it("queries the reference view instead of _find when filtering by a related reco
     rows: [{ doc: rawDoc("2026-06-03T10:00:00.000Z") }],
   });
 
-  const page = await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+  const page = await service.queryChangeHistory(
+    { relatedEntityId: "User:1" },
+    10,
+  );
 
   const [view, options] = mockDb.query.mock.calls.at(-1);
   expect(view).toBe("audit-references/by_reference");
@@ -296,8 +274,8 @@ it("queries the reference view instead of _find when filtering by a related reco
 it("creates the reference view once before querying it", async () => {
   const service = setup();
 
-  await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
-  await service.queryChangeLog({ relatedEntityId: "User:2" }, 10);
+  await service.queryChangeHistory({ relatedEntityId: "User:1" }, 10);
+  await service.queryChangeHistory({ relatedEntityId: "User:2" }, 10);
 
   expect(mockDb.saveDatabaseIndex).toHaveBeenCalledTimes(1);
   expect(mockDb.saveDatabaseIndex.mock.calls[0][0]._id).toBe(
@@ -317,7 +295,10 @@ it("still queries the reference view when its creation was rejected (it may alre
     rows: [{ doc: rawDoc("2026-06-03T10:00:00.000Z") }],
   });
 
-  const page = await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+  const page = await service.queryChangeHistory(
+    { relatedEntityId: "User:1" },
+    10,
+  );
 
   expect(page.entries.length).toBe(1);
 });
@@ -331,7 +312,10 @@ it("drops reference-view rows the backend's permission filter emptied", async ()
     ],
   });
 
-  const page = await service.queryChangeLog({ relatedEntityId: "User:1" }, 10);
+  const page = await service.queryChangeHistory(
+    { relatedEntityId: "User:1" },
+    10,
+  );
 
   expect(page.entries.length).toBe(1);
   expect(page.hasMore).toBe(false);

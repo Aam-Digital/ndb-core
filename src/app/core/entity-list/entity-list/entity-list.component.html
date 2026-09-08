@@ -216,10 +216,10 @@
     </button>
   }
 
-  @if (canViewChangeLog()) {
+  @if (canViewChangeHistory()) {
     <button
       mat-menu-item
-      [routerLink]="['/changelog']"
+      [routerLink]="['/change-history']"
       [queryParams]="{ entityType: entityConstructor()?.ENTITY_TYPE }"
       matTooltip="See all recorded changes to records of this type: when, by whom and which fields"
       i18n-matTooltip

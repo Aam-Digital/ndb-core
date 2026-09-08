@@ -41,10 +41,13 @@ import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { NotificationTimePipe } from "../../notification/notification-time.pipe";
 import { ChangeHistoryService } from "../change-history.service";
-import { ChangeLogEntry, FILTERABLE_ACTIONS } from "../change-history.types";
-import { authorEntityId } from "../change-log-query";
+import {
+  ChangeHistoryEntry,
+  FILTERABLE_ACTIONS,
+} from "../change-history.types";
+import { authorEntityId } from "../change-history-query";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
-import { RecordIdDisplayComponent } from "../record-id-display/record-id-display.component";
+import { RecordIdDisplayComponent } from "../../../core/common-components/record-id-display/record-id-display.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 
 /**
@@ -52,7 +55,7 @@ import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-hi
  * shared filter also provides. Same shape and periods as the reports screen, so
  * "last month" means the same thing in both places.
  */
-export const CHANGE_LOG_DATE_RANGES: DateRangeFilterConfigOption[] = [
+export const CHANGE_HISTORY_DATE_RANGES: DateRangeFilterConfigOption[] = [
   {
     startOffsets: [{ amount: 0, unit: "weeks" }],
     endOffsets: [{ amount: 0, unit: "weeks" }],
@@ -88,7 +91,7 @@ export const CHANGE_LOG_DATE_RANGES: DateRangeFilterConfigOption[] = [
  * deleted record because its details view is gone.
  */
 @Component({
-  selector: "app-change-log",
+  selector: "app-change-history-list",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
@@ -113,8 +116,8 @@ export const CHANGE_LOG_DATE_RANGES: DateRangeFilterConfigOption[] = [
     ChangeHistoryActionBadgeComponent,
     RecordIdDisplayComponent,
   ],
-  templateUrl: "./change-log.component.html",
-  styleUrl: "./change-log.component.scss",
+  templateUrl: "./change-history-list.component.html",
+  styleUrl: "./change-history-list.component.scss",
   providers: [
     {
       // component-scoped so the "10+" range label affects only this paginator,
@@ -127,7 +130,7 @@ export const CHANGE_LOG_DATE_RANGES: DateRangeFilterConfigOption[] = [
     },
   ],
 })
-export class ChangeLogComponent {
+export class ChangeHistoryListComponent {
   private readonly service = inject(ChangeHistoryService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly route = inject(ActivatedRoute);
@@ -139,12 +142,8 @@ export class ChangeLogComponent {
 
   /** backend feature flag (undefined while loading, then true/false) */
   readonly auditEnabled = this.service.isAuditEnabled;
-  /**
-   * Whether the user may read the audit data. A signal rather than a one-off
-   * check: this screen stays open long enough for the permission rules behind it
-   * to change (the roles admin is a click away).
-   */
-  readonly hasPermission = this.service.hasAuditPermission;
+  /** whether the user may read the audit data */
+  readonly hasPermission = this.service.hasHistoryPermission();
 
   readonly displayedColumns = [
     "when",
@@ -190,12 +189,12 @@ export class ChangeLogComponent {
 
   /**
    * Drives the shared date-range filter, the same control (and presets shape)
-   * the reports screen uses, rather than a change-log-specific dropdown.
+   * the reports screen uses, rather than a change-history-specific dropdown.
    */
   readonly dateFilterConfig = new DateFilter<Entity>(
     "timestamp",
     $localize`:Change log filter label:Date range`,
-    CHANGE_LOG_DATE_RANGES,
+    CHANGE_HISTORY_DATE_RANGES,
   );
 
   readonly pageIndex = signal(0);
@@ -204,7 +203,7 @@ export class ChangeLogComponent {
 
   /** Whether the audit data can be queried at all. */
   private readonly canQuery = computed(
-    () => this.auditEnabled() === true && this.hasPermission(),
+    () => this.auditEnabled() === true && this.hasPermission,
   );
 
   private readonly pageResource = resource({
@@ -234,7 +233,7 @@ export class ChangeLogComponent {
     // page down instead of showing the error below the table
     loader: async ({ params }) => {
       try {
-        const page = await this.service.queryChangeLog(
+        const page = await this.service.queryChangeHistory(
           {
             entityType: params.entityType,
             changedBy: params.changedBy,
@@ -355,7 +354,7 @@ export class ChangeLogComponent {
    * type, which an old audit record of a type that is no longer registered does
    * not have (the same case the record-type column falls back for).
    */
-  canOpenHistory(entry: ChangeLogEntry): boolean {
+  canOpenHistory(entry: ChangeHistoryEntry): boolean {
     return !!entry.entityId && this.entityRegistry.has(entry.entityType);
   }
 
@@ -364,7 +363,7 @@ export class ChangeLogComponent {
    * offers, showing this record's full history rather than the single change of
    * the clicked row.
    */
-  async openHistory(entry: ChangeLogEntry, event?: Event) {
+  async openHistory(entry: ChangeHistoryEntry, event?: Event) {
     if (!this.canOpenHistory(entry)) {
       return;
     }
@@ -390,14 +389,14 @@ export class ChangeLogComponent {
   }
 
   /**
-   * The record of a change-log row, as an entity for the history dialog.
+   * The record of a change-history row, as an entity for the history dialog.
    *
    * A deleted record — which the log deliberately still lists — can no longer be
    * loaded, so an empty instance carrying just its id stands in: the dialog needs
    * the id to query the history and the type for the field labels, and it hides
    * the created/last-updated metadata that such a stand-in has none of.
    */
-  private async loadRecord(entry: ChangeLogEntry): Promise<Entity> {
+  private async loadRecord(entry: ChangeHistoryEntry): Promise<Entity> {
     try {
       return await this.entityMapper.load(entry.entityType, entry.entityId);
     } catch (err) {

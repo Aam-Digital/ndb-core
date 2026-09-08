@@ -15,7 +15,7 @@
 ></app-feature-disabled-info>
 
 @if (auditEnabled() === true) {
-  @if (!hasPermission()) {
+  @if (!hasPermission) {
     <div class="flex-column align-center gap-regular text-secondary">
       <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>
       <p i18n="Change log no access">

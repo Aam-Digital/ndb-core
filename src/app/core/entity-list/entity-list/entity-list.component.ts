@@ -126,7 +126,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
    * The change log lives behind the admin route, so only offer the link to
    * someone the route will actually let in.
    */
-  readonly canViewChangeLog = toSignal(
+  readonly canViewChangeHistory = toSignal(
     this.sessionSubject.pipe(
       map((session) => session?.roles?.includes(ADMIN_APP_ROLE) ?? false),
     ),

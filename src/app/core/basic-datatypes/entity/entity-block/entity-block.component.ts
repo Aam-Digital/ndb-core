@@ -22,6 +22,7 @@ import { Entity } from "../../../entity/model/entity";
 import { Logging } from "../../../logging/logging.service";
 import { resourceWithRetention } from "../../../../utils/resourceWithRetention";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { RecordIdDisplayComponent } from "../../../common-components/record-id-display/record-id-display.component";
 import { validate as isGeneratedId } from "uuid";
 
 /**
@@ -40,6 +41,7 @@ import { validate as isGeneratedId } from "uuid";
     EntityFieldViewComponent,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    RecordIdDisplayComponent,
   ],
 })
 export class EntityBlockComponent {
@@ -62,6 +64,9 @@ export class EntityBlockComponent {
    * referenced record cannot be loaded. Opt-in, for lists where the reader needs
    * to identify *which* record is gone (e.g. an audit log of deletions) rather
    * than only that one is missing.
+   *
+   * Rendered through {@link RecordIdDisplayComponent}, so the id of a record
+   * that can no longer be opened is still copyable for troubleshooting.
    */
   showEntityId = input(false);
 

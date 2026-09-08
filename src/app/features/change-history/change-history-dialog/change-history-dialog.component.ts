@@ -26,14 +26,14 @@ import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { ChangeHistoryService } from "../change-history.service";
 import { ChangeEvent } from "../change-history.types";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
-import { RecordIdDisplayComponent } from "../record-id-display/record-id-display.component";
+import { RecordIdDisplayComponent } from "../../../core/common-components/record-id-display/record-id-display.component";
 import { RecordDiffComponent } from "../record-diff/record-diff.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 export interface ChangeHistoryDialogData {
   entity: Entity;
   /**
-   * the audit record to open right away, so arriving from a change-log row
+   * the audit record to open right away, so arriving from a change-history row
    * lands on that row's entry instead of a collapsed list to search through
    */
   expandEventId?: string;

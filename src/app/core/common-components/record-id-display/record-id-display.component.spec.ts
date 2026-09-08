@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Clipboard } from "@angular/cdk/clipboard";
-import { AlertService } from "../../../core/alerts/alert.service";
+import { AlertService } from "../../alerts/alert.service";
 import { RecordIdDisplayComponent } from "./record-id-display.component";
 
 let fixture: ComponentFixture<RecordIdDisplayComponent>;
@@ -58,4 +58,38 @@ it("renders nothing without an id, so callers need no guard", async () => {
   fixture.detectChanges();
 
   expect(fixture.nativeElement.textContent.trim()).toBe("");
+});
+
+it("keeps a click on the id from reaching an enclosing click handler", async () => {
+  await setup("Child:1");
+  // the change log renders this inside a clickable row, which opens the record's
+  // history - copying the id must not also trigger that
+  const enclosing = vi.fn();
+  fixture.nativeElement.parentElement.addEventListener("click", enclosing);
+
+  fixture.nativeElement
+    .querySelector(".record-id")
+    .dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+  expect(copy).toHaveBeenCalledWith("Child:1");
+  expect(enclosing).not.toHaveBeenCalled();
+});
+
+it("still swallows the click when the copy itself fails", async () => {
+  await setup("Child:1");
+  // propagation is stopped before copying, so a throwing clipboard cannot leak
+  // the click to the row behind it
+  copy.mockImplementation(() => {
+    throw new Error("clipboard unavailable");
+  });
+  const enclosing = vi.fn();
+  fixture.nativeElement.parentElement.addEventListener("click", enclosing);
+
+  fixture.nativeElement
+    .querySelector(".record-id")
+    .dispatchEvent(new MouseEvent("click", { bubbles: true }));
+
+  expect(enclosing).not.toHaveBeenCalled();
+  // a refusal is not a successful copy
+  expect(addInfo).not.toHaveBeenCalled();
 });

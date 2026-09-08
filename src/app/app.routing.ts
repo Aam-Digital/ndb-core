@@ -70,7 +70,7 @@ export const allRoutes: Routes = [
     children: AttendanceModule.routes,
   },
   {
-    path: "changelog",
+    path: "change-history",
     canActivate: [AuthGuard],
     children: ChangeHistoryModule.routes,
   },

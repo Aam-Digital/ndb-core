@@ -20,7 +20,7 @@
     ></app-fa-dynamic-icon>
 
     @if (showEntityId()) {
-      {{ entityId() }}
+      <app-record-id-display [recordId]="entityId()"></app-record-id-display>
     } @else {
       @if (missingEntityType()) {
         {{ missingEntityType()?.label }}:

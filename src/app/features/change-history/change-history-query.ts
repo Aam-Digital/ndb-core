@@ -3,8 +3,8 @@ import { Entity } from "../../core/entity/model/entity";
 import { changedFieldsOf, RawAuditDoc } from "./change-history-normalize";
 import {
   BASELINE_OPERATION,
-  ChangeLogEntry,
-  ChangeLogFilters,
+  ChangeHistoryEntry,
+  ChangeHistoryFilters,
   FILTERABLE_ACTION_OPERATIONS,
   OPERATION_TO_ACTION,
 } from "./change-history.types";
@@ -61,8 +61,8 @@ export const AUTHOR_SAMPLE_SIZE = 1000;
  * correct either way, but a narrow filter over a long history means a longer
  * walk to fill a page.
  */
-export function buildChangeLogQuery(
-  filters: ChangeLogFilters,
+export function buildChangeHistoryQuery(
+  filters: ChangeHistoryFilters,
   pageSize: number,
   pageIndex = 0,
 ): MangoQuery {
@@ -84,7 +84,7 @@ function endOfDay(to: Date): string {
   return moment(to).endOf("day").toISOString();
 }
 
-function buildSelector(filters: ChangeLogFilters): Record<string, unknown> {
+function buildSelector(filters: ChangeHistoryFilters): Record<string, unknown> {
   const timestamp: Record<string, unknown> = {};
   if (filters.from) {
     timestamp.$gte = filters.from.toISOString();
@@ -153,11 +153,11 @@ export interface ReferenceViewQuery {
  * and author filters cannot: no key ordering serves them *and* newest-first, so
  * they are unavailable (and disabled in the UI) while this filter is active.
  *
- * Like {@link buildChangeLogQuery}, one row beyond the page is requested to tell
+ * Like {@link buildChangeHistoryQuery}, one row beyond the page is requested to tell
  * a full page from the last one.
  */
 export function buildReferenceViewQuery(
-  filters: ChangeLogFilters,
+  filters: ChangeHistoryFilters,
   pageSize: number,
   pageIndex = 0,
 ): ReferenceViewQuery {
@@ -200,12 +200,12 @@ export function buildAuthorSampleQuery(): MangoQuery {
 }
 
 /**
- * Map a raw audit document to one displayable change-log row.
+ * Map a raw audit document to one displayable change-history row.
  *
  * Unlike the per-entity history, a row is derived from its own document alone;
  * see {@link changedFieldsOf}.
  */
-export function toChangeLogEntry(doc: RawAuditDoc): ChangeLogEntry {
+export function toChangeHistoryEntry(doc: RawAuditDoc): ChangeHistoryEntry {
   const entityId = doc.entityId ?? "";
   const by = authorOf(doc) ?? "";
   return {

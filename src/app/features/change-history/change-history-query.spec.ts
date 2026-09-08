@@ -1,10 +1,10 @@
 import {
   buildAuthorSampleQuery,
-  buildChangeLogQuery,
+  buildChangeHistoryQuery,
   buildReferenceViewQuery,
   distinctAuthors,
-  toChangeLogEntry,
-} from "./change-log-query";
+  toChangeHistoryEntry,
+} from "./change-history-query";
 import { RawAuditDoc } from "./change-history-normalize";
 
 function doc(partial: Partial<RawAuditDoc>): RawAuditDoc {
@@ -20,7 +20,7 @@ function doc(partial: Partial<RawAuditDoc>): RawAuditDoc {
 }
 
 it("queries the newest records first, restricted to docs that have a timestamp", () => {
-  const query = buildChangeLogQuery({}, 25);
+  const query = buildChangeHistoryQuery({}, 25);
   expect(query.sort).toEqual([{ timestamp: "desc" }]);
   // an index-usable "field exists" condition, required for the sort to use the index
   expect(query.selector).toEqual({
@@ -32,25 +32,27 @@ it("queries the newest records first, restricted to docs that have a timestamp",
 it("excludes the baseline snapshot, which would duplicate the change it anchors", () => {
   // a baseline carries the timestamp and author of the first real change to
   // that record, so listing both shows the same record twice at the same second
-  expect(buildChangeLogQuery({}, 25).selector.operation).toEqual({
+  expect(buildChangeHistoryQuery({}, 25).selector.operation).toEqual({
     $ne: "baseline",
   });
 });
 
 it("asks for one record beyond the page, to tell a full page from the last one", () => {
-  const query = buildChangeLogQuery({}, 25);
+  const query = buildChangeHistoryQuery({}, 25);
   expect(query.limit).toBe(26);
   expect(query.skip).toBe(0);
 });
 
 it("skips the preceding pages to fetch a later one", () => {
-  const query = buildChangeLogQuery({}, 10, 3);
+  const query = buildChangeHistoryQuery({}, 10, 3);
   expect(query.skip).toBe(30);
   expect(query.limit).toBe(11);
 });
 
 it("filters by entity type as an id prefix range", () => {
-  expect(buildChangeLogQuery({ entityType: "School" }, 10).selector).toEqual({
+  expect(
+    buildChangeHistoryQuery({ entityType: "School" }, 10).selector,
+  ).toEqual({
     timestamp: { $gt: null },
     operation: { $ne: "baseline" },
     entityId: { $gte: "School:", $lt: "School:￰" },
@@ -58,18 +60,21 @@ it("filters by entity type as an id prefix range", () => {
 });
 
 it("filters by the selected action, replacing the baseline exclusion", () => {
-  const selector: any = buildChangeLogQuery({ action: "deleted" }, 10).selector;
+  const selector: any = buildChangeHistoryQuery(
+    { action: "deleted" },
+    10,
+  ).selector;
   // the exact operation, not the "anything but a baseline" default
   expect(selector.operation).toBe("delete");
 });
 
 it("still excludes baselines when no action is selected", () => {
-  const selector: any = buildChangeLogQuery({}, 10).selector;
+  const selector: any = buildChangeHistoryQuery({}, 10).selector;
   expect(selector.operation).toEqual({ $ne: "baseline" });
 });
 
 it("ignores an action that maps to no backend operation", () => {
-  const selector: any = buildChangeLogQuery(
+  const selector: any = buildChangeHistoryQuery(
     { action: "baseline" },
     10,
   ).selector;
@@ -78,7 +83,7 @@ it("ignores an action that maps to no backend operation", () => {
 
 it("filters by author and by a lower date bound", () => {
   expect(
-    buildChangeLogQuery(
+    buildChangeHistoryQuery(
       { changedBy: "demo-admin", from: new Date("2026-06-01T00:00:00.000Z") },
       10,
     ).selector,
@@ -90,7 +95,7 @@ it("filters by author and by a lower date bound", () => {
 });
 
 it("extends the upper date bound to the end of that day", () => {
-  const selector: any = buildChangeLogQuery(
+  const selector: any = buildChangeHistoryQuery(
     { to: new Date("2026-06-30T00:00:00.000Z") },
     10,
   ).selector;
@@ -139,7 +144,7 @@ it("narrows the reference key range by the date filter", () => {
 
 it("maps an audit doc to a log entry with its entity type and changed fields", () => {
   expect(
-    toChangeLogEntry(
+    toChangeHistoryEntry(
       doc({ operation: "update", diff: { name: ["A", "B"], updated: {} } }),
     ),
   ).toEqual({
@@ -155,7 +160,7 @@ it("maps an audit doc to a log entry with its entity type and changed fields", (
 });
 
 it("falls back to the user id, and to no entity type, when either is missing", () => {
-  const entry = toChangeLogEntry(
+  const entry = toChangeHistoryEntry(
     doc({ entityId: undefined, user: { id: "kc-9" } }),
   );
   expect(entry.by).toBe("kc-9");
@@ -176,15 +181,15 @@ it("spends the author sample on real changes, not on baselines repeating their a
 });
 
 it("exposes an app user author as an entity id, and a plain username as text only", () => {
-  expect(toChangeLogEntry(doc({ user: { name: "User:demo-admin" } })).by).toBe(
-    "User:demo-admin",
-  );
   expect(
-    toChangeLogEntry(doc({ user: { name: "User:demo-admin" } })).byEntityId,
+    toChangeHistoryEntry(doc({ user: { name: "User:demo-admin" } })).by,
   ).toBe("User:demo-admin");
-  expect(toChangeLogEntry(doc({ user: { name: "importer" } })).byEntityId).toBe(
-    undefined,
-  );
+  expect(
+    toChangeHistoryEntry(doc({ user: { name: "User:demo-admin" } })).byEntityId,
+  ).toBe("User:demo-admin");
+  expect(
+    toChangeHistoryEntry(doc({ user: { name: "importer" } })).byEntityId,
+  ).toBe(undefined);
 });
 
 it("lists the distinct authors of the sampled records, sorted", () => {

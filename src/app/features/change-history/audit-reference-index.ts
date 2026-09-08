@@ -12,7 +12,7 @@ import { BASELINE_OPERATION } from "./change-history.types";
  * The map source is a plain string rather than a serialized TypeScript function
  * on purpose: a bundled `Function.prototype.toString()` changes whenever the
  * minifier picks different identifiers, which would make
- * `PouchDatabase.saveDatabaseIndex` see a "changed" view on every release and
+ * `Database.saveDatabaseIndex` see a "changed" view on every release and
  * rebuild the whole index. The spec evaluates this exact string, so it is still
  * covered by tests.
  */
@@ -38,8 +38,9 @@ import { BASELINE_OPERATION } from "./change-history.types";
  * UI are camelCase (see `generateIdFromLabel`), so the type part must not be
  * restricted to PascalCase.
  *
- * A `delete` contributes only its own `entityId`: PouchDB pushes a tombstone
- * stripped of content, so the record's references are simply not in the diff.
+ * A `delete` contributes only its own `entityId`: a deletion replicates as a
+ * tombstone stripped of content, so the record's references are simply not in
+ * the diff.
  */
 const AUDIT_REFERENCE_MAP = `function (doc) {
   if (!doc || !doc.timestamp || doc.operation === "${BASELINE_OPERATION}") {
