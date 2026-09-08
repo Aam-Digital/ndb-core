@@ -2,6 +2,7 @@ import { FilterSelectionOption } from "../filter/filters/filters";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";
+import { TranslatableText } from "../config/multi-lingual-config";
 
 export interface EntityListConfig {
   /**
@@ -48,18 +49,20 @@ export interface ColumnGroupsConfig {
   /**
    * The name of the group that should be selected by default.
    * Default is the name of the first group.
+   * For a multi-lingual name this may hold the text of any configured language.
    */
   default?: string;
 
   /**
    * The name of the group that should be selected by default on a mobile device.
    * Default is the name of the first group.
+   * Referenced by text, like {@link default}.
    */
   mobile?: string;
 }
 
 export interface GroupConfig {
-  name: string;
+  name: TranslatableText;
   columns: string[];
 }
 

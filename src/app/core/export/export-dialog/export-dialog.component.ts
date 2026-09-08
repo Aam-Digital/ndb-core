@@ -28,6 +28,7 @@ import {
   normalizeQueryKey,
 } from "../data-transformation-service/export-column-config";
 import { ColumnGroupsConfig } from "../../entity-list/EntityListConfig";
+import { resolveActiveText } from "../../language/active-locale";
 
 export interface ExportDialogData {
   /** All records (unfiltered, permissions-limited) */
@@ -84,19 +85,22 @@ export class ExportDialogComponent {
     ),
   );
 
-  /** Column groups passed from the list (admin-configured) */
-  columnGroups = this.data.columnGroups;
+  /** Column groups from the list (admin-configured), names resolved for display and selection */
+  columnGroupOptions: { name: string; columns: string[] }[] = (
+    this.data.columnGroups?.groups ?? []
+  ).map((group) => ({
+    ...group,
+    name: resolveActiveText(group.name) ?? "",
+  }));
 
   /** Currently selected column group name (if any) */
   selectedGroupName = signal<string | undefined>(
-    this.columnGroups && this.columnGroups.groups.length > 0
-      ? this.columnGroups.groups[0].name
-      : undefined,
+    this.columnGroupOptions[0]?.name,
   );
 
   applyColumnGroup(groupName?: string) {
-    if (!groupName || !this.columnGroups) return;
-    const grp = this.columnGroups.groups.find((g) => g.name === groupName);
+    if (!groupName) return;
+    const grp = this.columnGroupOptions.find((g) => g.name === groupName);
     if (!grp) return;
     // Map group columns to normalized keys and set selection
     this.selectedColumnKeys.set(grp.columns.map((c) => normalizeQueryKey(c)));

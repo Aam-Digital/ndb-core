@@ -45,19 +45,19 @@
     "description": "Verwalten Sie Schüler:innen, Anwesenheit, persönliche Entwicklung und Beratungsaktivitäten.\n\nDieses Beispiel wurde für schulische oder außerschulische Förderprogramme entworfen.",
     "entitiesToImport": [
       "education/ProgressDashboardConfig_examples.json",
-      "education/de/Config_CONFIG_ENTITY.json",
+      "education/Config_CONFIG_ENTITY.json",
       "education/configurable-enums.json",
       "basic/ConfigurableEnum_attendance-status.json",
       "basic/ConfigurableEnum_warning-levels.json",
       "basic/ConfigurableEnum_genders.json",
       "basic/ConfigurableEnum_rating-answer.json",
-      "education/de/Config_SetupWizard.json",
+      "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
-      "education/de/PublicFormConfig_example.json",
+      "education/PublicFormConfig_example.json",
       "education/ReportConfig.json",
-      "education/de/EmailTemplate_birthday.json"
+      "education/EmailTemplate_birthday.json"
     ],
     "locale": "de"
   },
@@ -67,19 +67,19 @@
     "description": "Gestion des élèves, de l'assiduité, du développement personnel et des activités de conseil.\n\nCet exemple a été conçu pour les programmes de soutien scolaire ou périscolaire.",
     "entitiesToImport": [
       "education/ProgressDashboardConfig_examples.json",
-      "education/fr/Config_CONFIG_ENTITY.json",
+      "education/Config_CONFIG_ENTITY.json",
       "education/configurable-enums.json",
       "basic/ConfigurableEnum_attendance-status.json",
       "basic/ConfigurableEnum_warning-levels.json",
       "basic/ConfigurableEnum_genders.json",
       "basic/ConfigurableEnum_rating-answer.json",
-      "education/fr/Config_SetupWizard.json",
+      "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json",
-      "education/fr/PublicFormConfig_example.json",
+      "education/PublicFormConfig_example.json",
       "education/ReportConfig.json",
-      "education/fr/EmailTemplate_birthday.json"
+      "education/EmailTemplate_birthday.json"
     ],
     "locale": "fr"
   },

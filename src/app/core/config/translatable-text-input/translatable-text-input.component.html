@@ -1,8 +1,8 @@
-@if (multiline()) {
+@if (isMultiline()) {
   <textarea
     class="text-field"
     [id]="id"
-    [rows]="rows()"
+    [rows]="rowCount()"
     [value]="displayText()"
     [placeholder]="placeholder ?? ''"
     [disabled]="!enabled()"

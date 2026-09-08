@@ -30,6 +30,7 @@ textarea.text-field {
 
 .translations-button {
   flex: 0 0 auto;
+  color: colors.$muted;
   // keep the button from dictating the height of the form field
   --mdc-icon-button-state-layer-size: 24px;
   width: 24px;

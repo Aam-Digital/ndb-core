@@ -57,6 +57,9 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { resolveActiveText } from "../../language/active-locale";
+import { TranslatableText } from "../../config/multi-lingual-config";
+import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -159,6 +162,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   columns = input<(FormFieldConfig | string)[]>([]);
   columnGroups = input<ColumnGroupsConfig>();
   groups: GroupConfig[] = [];
+  /** the same groups with their names resolved, for the tab labels */
+  displayGroups: { name: string; columns: string[] }[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filters = input<FilterConfig[]>([]);
@@ -235,6 +240,10 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     await this.loadPublicFormConfig();
   }
 
+  publicFormTitle(formConfig: PublicFormConfig): string {
+    return resolveActiveText(formConfig.title) ?? "";
+  }
+
   private async loadPublicFormConfig() {
     const allForms = await this.publicFormsService.getAllPublicFormConfigs();
     this.publicFormConfigs = allForms.filter(
@@ -274,15 +283,17 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
+      // the fallback needs a text that matches the first group in some language
+      const firstGroup = resolveActiveText(columnGroup.groups[0].name) ?? "";
       this.defaultColumnGroup =
         columnGroup.default && this.configuredTabExists(columnGroup.default)
           ? columnGroup.default
-          : columnGroup.groups[0].name;
+          : firstGroup;
 
       this.mobileColumnGroup =
         columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
           ? columnGroup.mobile
-          : columnGroup.groups[0].name;
+          : firstGroup;
     } else {
       this.groups = [
         {
@@ -295,10 +306,25 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
     }
+
+    this.displayGroups = this.groups.map((group) => ({
+      ...group,
+      name: resolveActiveText(group.name) ?? "",
+    }));
   }
 
   private configuredTabExists(groupName: string): boolean {
-    return this.groups.some((group) => group.name === groupName);
+    return this.groups.some((group) =>
+      this.groupNameMatches(group.name, groupName),
+    );
+  }
+
+  /** Whether a group's name is the text `columnGroups.default`/`.mobile` references, in any language. */
+  private groupNameMatches(name: TranslatableText, reference: string): boolean {
+    if (typeof name === "string" || name == null) {
+      return name === reference;
+    }
+    return Object.values(name).includes(reference);
   }
 
   applyFilter(filterValue: string) {
@@ -315,7 +341,17 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
-    return this.groups.findIndex((c) => c.name === columnGroupName);
+    // prefer the default language, so another group's translation cannot win
+    const exact = this.groups.findIndex(
+      (c) =>
+        (typeof c.name === "string" ? c.name : c.name?.[DEFAULT_LANGUAGE]) ===
+        columnGroupName,
+    );
+    if (exact !== -1) return exact;
+
+    return this.groups.findIndex((c) =>
+      this.groupNameMatches(c.name, columnGroupName),
+    );
   }
 
   /**

@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { resolveActiveText } from "#src/app/core/language/active-locale";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -27,6 +28,10 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
   ],
 })
 export class CustomFormLinkButtonComponent {
+  formTitle(form: PublicFormConfig | undefined): string {
+    return resolveActiveText(form?.title) ?? "";
+  }
+
   private entityMapper = inject(EntityMapperService);
   private publicFormsService = inject(PublicFormsService);
 

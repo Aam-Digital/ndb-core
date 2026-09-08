@@ -46,7 +46,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-translatable-text-input",
   host: {
-    "[class.is-multiline]": "multiline()",
+    "[class.is-multiline]": "isMultiline()",
     // the placeholder belongs on the inner text field only - leaving it on
     // the host too would make it match twice when queried by placeholder
     "[attr.placeholder]": "null",
@@ -77,6 +77,13 @@ export class TranslatableTextInputComponent
   /** show a multi-line textarea instead of a single-line input */
   multiline = input(false);
   rows = input(3);
+
+  readonly isMultiline = computed(
+    () => this.multiline() || !!this.formFieldConfig()?.additional?.multiline,
+  );
+  readonly rowCount = computed(
+    () => this.formFieldConfig()?.additional?.rows ?? this.rows(),
+  );
 
   /** set false when the form field has its own suffix icon row, and call {@link openTranslations} from there */
   showTranslationsButton = input(true);

@@ -61,7 +61,7 @@ import { TranslatableText } from "../../../config/multi-lingual-config";
   styleUrl: "./admin-tabs.component.scss",
 })
 export class AdminTabsComponent<
-  E extends { title: string } | { name: string },
+  E extends { title: TranslatableText } | { name: TranslatableText },
 > {
   tabs = model<E[]>([]);
 
