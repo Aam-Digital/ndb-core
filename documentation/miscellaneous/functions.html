@@ -689,7 +689,16 @@
                             <a href="#minDateValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/date-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>minDateValidator</b>&nbsp;&nbsp;&nbsp;(src/.../date-validators.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#mockConfirmationDialog" title="src/app/utils/test-utils/dialog-mocks.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mockConfirmationDialog</b>&nbsp;&nbsp;&nbsp;(src/.../dialog-mocks.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#mockEntityMapperProvider" title="src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mockEntityMapperProvider</b>&nbsp;&nbsp;&nbsp;(src/.../mock-entity-mapper-service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#mockMatDialog" title="src/app/utils/test-utils/dialog-mocks.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mockMatDialog</b>&nbsp;&nbsp;&nbsp;(src/.../dialog-mocks.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#mockMatDialogRef" title="src/app/utils/test-utils/dialog-mocks.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mockMatDialogRef</b>&nbsp;&nbsp;&nbsp;(src/.../dialog-mocks.ts)</span></a>
                         </li>
                         <li>
                             <a href="#moveFieldBetweenGroups" title="src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>moveFieldBetweenGroups</b>&nbsp;&nbsp;&nbsp;(src/.../admin-entity-form.component.ts)</span></a>
@@ -17203,6 +17212,219 @@ new code. Idempotent and safe to re-run.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>T</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/utils/test-utils/dialog-mocks.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mockConfirmationDialog"></a>
+                    <span class="name">
+                        <span ><b>mockConfirmationDialog</b></span>
+                        <a href="#mockConfirmationDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>mockConfirmationDialog(confirmed: unknown)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A ConfirmationDialogService whose prompts all resolve the same way.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>confirmed</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>true</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>what the user is taken to have answered (default: they confirm)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#ConfirmationDialogMock" target="_self" >ConfirmationDialogMock</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mockMatDialog"></a>
+                    <span class="name">
+                        <span ><b>mockMatDialog</b></span>
+                        <a href="#mockMatDialog"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>mockMatDialog(result)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A MatDialog whose <code>open()</code> returns a ref that closes with <code>result</code>.</p>
+<p>The dialog is never actually rendered, so this is about what the component does with the
+result - assert on <code>.open</code> for what was opened with which data.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>result</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>the value <code>afterClosed()</code> emits (default: closed without a result)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#MatDialogMock" target="_self" >MatDialogMock</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mockMatDialogRef"></a>
+                    <span class="name">
+                        <span ><b>mockMatDialogRef</b></span>
+                        <a href="#mockMatDialogRef"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>mockMatDialogRef(result)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A MatDialogRef, for the component <em>inside</em> a dialog rather than the one opening it.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>result</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>the value <code>afterClosed()</code> emits (default: closed without a result)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#MatDialogRefMock" target="_self" >MatDialogRefMock</a></code>
 
                         </div>
                             <div class="io-description">

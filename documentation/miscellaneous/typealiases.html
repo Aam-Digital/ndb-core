@@ -170,6 +170,9 @@
                             <a href="#ConfigurableEnumConfig" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum.types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConfigurableEnumConfig</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum.types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#ConfirmationDialogMock" title="src/app/utils/test-utils/dialog-mocks.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConfirmationDialogMock</b>&nbsp;&nbsp;&nbsp;(src/.../dialog-mocks.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#ConflictOutcome" title="src/app/core/database/pouchdb/pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConflictOutcome</b>&nbsp;&nbsp;&nbsp;(src/.../pouch-database.ts)</span></a>
                         </li>
                         <li>
@@ -255,6 +258,12 @@
                         </li>
                         <li>
                             <a href="#LocationProperties" title="src/app/features/location/map/map-properties-popup/map-properties-popup.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>LocationProperties</b>&nbsp;&nbsp;&nbsp;(src/.../map-properties-popup.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#MatDialogMock" title="src/app/utils/test-utils/dialog-mocks.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>MatDialogMock</b>&nbsp;&nbsp;&nbsp;(src/.../dialog-mocks.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#MatDialogRefMock" title="src/app/utils/test-utils/dialog-mocks.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>MatDialogRefMock</b>&nbsp;&nbsp;&nbsp;(src/.../dialog-mocks.ts)</span></a>
                         </li>
                         <li>
                             <a href="#ModelSignal" title="src/app/core/common-components/entities-table/entities-table-selection.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ModelSignal</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</span></a>
@@ -598,6 +607,66 @@ as stored in the config database</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>Array&lt;T&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/utils/test-utils/dialog-mocks.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ConfirmationDialogMock"></a>
+                    <span class="name "><b>ConfirmationDialogMock</b><a href="#ConfirmationDialogMock"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Every prompt is optional except <code>getConfirmation</code>, so a spec that only needs that one can
+still keep a hand-built <code>{ getConfirmation: vi.fn() }</code> - which matters because a bare
+<code>vi.fn()</code> resolves undefined (&quot;the user cancelled&quot;), while <a href="../miscellaneous/functions.html#mockConfirmationDialog">mockConfirmationDialog</a>
+confirms by default. Those are different test setups, not two spellings of one.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../injectables/ConfirmationDialogService.html" target="_self" >literal type &amp; Partial&lt;Record&lt;keyof Pick&lt;ConfirmationDialogService, &quot;getConfirmationWithKeyword&quot; | &quot;getDiscardConfirmation&quot; | &quot;showProgressDialog&quot;&gt;, Mock&gt;&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MatDialogMock"></a>
+                    <span class="name "><b>MatDialogMock</b><a href="#MatDialogMock"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>{ open: Mock }</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="MatDialogRefMock"></a>
+                    <span class="name "><b>MatDialogRefMock</b><a href="#MatDialogRefMock"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>{ close: Mock; afterClosed: Mock; updateSize: Mock; updatePosition: Mock }</code>
 </code>
                 </td>
             </tr>

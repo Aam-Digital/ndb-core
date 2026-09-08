@@ -128,7 +128,12 @@
 
 
 <h1>How to write automated unit tests</h1>
-<p>We are trying to cover all functionality with unit tests.</p>
+<p>We aim to cover functionality that can break with unit tests - branches, transformations,
+error paths and edge cases. Not every class needs a spec: a test that only asserts a
+component can be constructed adds no protection that the production build and the e2e suite
+do not already give, and every spec file costs CI time and review attention. See the
+&quot;What to test, and how much&quot; section of
+<a href="../../../.github/instructions/unit-tests.instructions.md"><code>.github/instructions/unit-tests.instructions.md</code></a>.</p>
 <p>The approach is not specific to our project so please refer the available general documentation and tutorials about testing of Angular applications.</p>
 <p>The following resources may be helpful:</p>
 <ul>
