@@ -324,13 +324,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/CoreModule.html" data-type="entity-link" >CoreModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-CoreModule-c12a669ccd5bfba0cad94d7b74c45b9a7a3ce13295fdd81dc04faf938294fd483c18a417706674be08c796a77f635172e5a82c8bce2ec141f91315875a38c8bf"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-c12a669ccd5bfba0cad94d7b74c45b9a7a3ce13295fdd81dc04faf938294fd483c18a417706674be08c796a77f635172e5a82c8bce2ec141f91315875a38c8bf"' }>
+                                        'data-bs-target="#injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-c12a669ccd5bfba0cad94d7b74c45b9a7a3ce13295fdd81dc04faf938294fd483c18a417706674be08c796a77f635172e5a82c8bce2ec141f91315875a38c8bf"' :
-                                        'id="xs-injectables-links-module-CoreModule-c12a669ccd5bfba0cad94d7b74c45b9a7a3ce13295fdd81dc04faf938294fd483c18a417706674be08c796a77f635172e5a82c8bce2ec141f91315875a38c8bf"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' :
+                                        'id="xs-injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' }>
                                         <li class="link">
                                             <a href="injectables/BooleanDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >BooleanDatatype</a>
                                         </li>
