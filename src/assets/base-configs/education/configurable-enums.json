@@ -4,35 +4,63 @@
     "values": [
       {
         "id": "VISIT",
-        "label": "Home Visit"
+        "label": {
+          "en-US": "Home Visit",
+          "de": "Hausbesuch",
+          "fr": "Visite à domicile"
+        }
       },
       {
         "id": "GUARDIAN_TALK",
-        "label": "Talk with Guardians"
+        "label": {
+          "en-US": "Talk with Guardians",
+          "de": "Elterngespräch",
+          "fr": "Entretien avec les parents"
+        }
       },
       {
         "id": "INCIDENT",
-        "label": "Incident"
+        "label": {
+          "en-US": "Incident",
+          "de": "Vorfall",
+          "fr": "Incident"
+        }
       },
       {
         "id": "NOTE",
-        "label": "General Note"
+        "label": {
+          "en-US": "General Note",
+          "de": "Allgemeine Notiz",
+          "fr": "Remarque générale"
+        }
       },
       {
         "id": "GUARDIAN_MEETING",
-        "label": "Guardians' Meeting",
+        "label": {
+          "en-US": "Guardians' Meeting",
+          "de": "Elternabend",
+          "fr": "Réunion de parents"
+        },
         "color": "#E1F5FE",
         "isMeeting": true
       },
       {
         "id": "COACHING_CLASS",
-        "label": "Coaching Class",
+        "label": {
+          "en-US": "Coaching Class",
+          "de": "Nachhilfe-Unterricht",
+          "fr": "Cours de soutien"
+        },
         "color": "#EEEEEE",
         "isMeeting": true
       },
       {
         "id": "SCHOOL_CLASS",
-        "label": "School Class",
+        "label": {
+          "en-US": "School Class",
+          "de": "Schul-Unterricht",
+          "fr": "Cours scolaire"
+        },
         "color": "#EEEEEE",
         "isMeeting": true
       }
@@ -47,32 +75,60 @@
       },
       {
         "id": "pencil",
-        "label": "pencil"
+        "label": {
+          "en-US": "pencil",
+          "de": "Bleistift",
+          "fr": "crayon à papier"
+        }
       },
       {
         "id": "eraser",
-        "label": "eraser"
+        "label": {
+          "en-US": "eraser",
+          "de": "Radiergummi",
+          "fr": "gomme"
+        }
       },
       {
         "id": "pen (black)",
-        "label": "pen (black)"
+        "label": {
+          "en-US": "pen (black)",
+          "de": "Stift (schwarz)",
+          "fr": "stylo (noir)"
+        }
       },
       {
         "id": "crayons",
-        "label": "crayons"
+        "label": {
+          "en-US": "crayons",
+          "de": "Farbstifte",
+          "fr": "crayons de couleur"
+        }
       },
       {
         "id": "copy (plain)",
-        "label": "copy (plain)"
+        "label": {
+          "en-US": "copy (plain)",
+          "de": "Heft",
+          "fr": "cahier"
+        }
       },
       {
         "id": "School Uniform",
-        "label": "School Uniform",
+        "label": {
+          "en-US": "School Uniform",
+          "de": "Schuluniform",
+          "fr": "Uniforme scolaire"
+        },
         "color": "#B3E5FC"
       },
       {
         "id": "School Shoes",
-        "label": "School Shoes",
+        "label": {
+          "en-US": "School Shoes",
+          "de": "Sportschuhe",
+          "fr": "Chaussures scolaires"
+        },
         "color": "#B3E5FC"
       }
     ]
@@ -82,25 +138,41 @@
     "values": [
       {
         "id": "Nothing",
-        "label": "Nothing",
+        "label": {
+          "en-US": "Nothing",
+          "de": "nichts",
+          "fr": "Aucune compétence"
+        },
         "_ordinal": 0,
         "color": "#fd7272"
       },
       {
         "id": "Numbers 1-9",
-        "label": "Numbers 1-9",
+        "label": {
+          "en-US": "Numbers 1-9",
+          "de": "Zahlen 1-9",
+          "fr": "Chiffres 1-9"
+        },
         "_ordinal": 1,
         "color": "#ff8153"
       },
       {
         "id": "Numbers 10-99",
-        "label": "Numbers 10-99",
+        "label": {
+          "en-US": "Numbers 10-99",
+          "de": "Zahlen 10-99",
+          "fr": "Chiffres 10-99"
+        },
         "_ordinal": 2,
         "color": "#ff982a"
       },
       {
         "id": "Subtraction",
-        "label": "Subtraction",
+        "label": {
+          "en-US": "Subtraction",
+          "de": "Subtraktion",
+          "fr": "Soustraction"
+        },
         "_ordinal": 3,
         "color": "#d2c92e"
       },
@@ -118,31 +190,51 @@
     "values": [
       {
         "id": "Nothing",
-        "label": "Nothing",
+        "label": {
+          "en-US": "Nothing",
+          "de": "nichts",
+          "fr": "Aucune compétence"
+        },
         "_ordinal": 0,
         "color": "#fd7272"
       },
       {
         "id": "Read Letters",
-        "label": "Read Letters",
+        "label": {
+          "en-US": "Read Letters",
+          "de": "Buchstaben",
+          "fr": "Lecture de lettres uniques"
+        },
         "_ordinal": 1,
         "color": "#ff8153"
       },
       {
         "id": "Read Words",
-        "label": "Read Words",
+        "label": {
+          "en-US": "Read Words",
+          "de": "Wörter",
+          "fr": "Lecture de mots"
+        },
         "_ordinal": 2,
         "color": "#ff982a"
       },
       {
         "id": "Read Sentence",
-        "label": "Read Sentence",
+        "label": {
+          "en-US": "Read Sentence",
+          "de": "Sätze",
+          "fr": "Lecture de phrases"
+        },
         "_ordinal": 3,
         "color": "#d2c92e"
       },
       {
         "id": "Read Paragraph",
-        "label": "Read Paragraph",
+        "label": {
+          "en-US": "Read Paragraph",
+          "de": "Texte",
+          "fr": "Lecture de paragraphes"
+        },
         "_ordinal": 4,
         "passed": true,
         "color": "#c8e6c9"
@@ -154,15 +246,27 @@
     "values": [
       {
         "id": "PLANNED",
-        "label": "Planned"
+        "label": {
+          "en-US": "Planned",
+          "de": "geplant",
+          "fr": "Prévu"
+        }
       },
       {
         "id": "ONGOING",
-        "label": "Ongoing"
+        "label": {
+          "en-US": "Ongoing",
+          "de": "läuft",
+          "fr": "En cours"
+        }
       },
       {
         "id": "COMPLETED",
-        "label": "Completed"
+        "label": {
+          "en-US": "Completed",
+          "de": "abgeschlossen",
+          "fr": "Complété"
+        }
       }
     ]
   },
@@ -171,11 +275,19 @@
     "values": [
       {
         "id": "DROPOUT RISK",
-        "label": "Dropout Risk"
+        "label": {
+          "en-US": "Dropout Risk",
+          "de": "Schulabbruch-Risiko",
+          "fr": "Risque d'abandon scolaire"
+        }
       },
       {
         "id": "LEARNING CHALLENGES",
-        "label": "Learning Challenges"
+        "label": {
+          "en-US": "Learning Challenges",
+          "de": "Lernschwierigkeiten",
+          "fr": "Difficultés d'apprentissage"
+        }
       }
     ]
   }

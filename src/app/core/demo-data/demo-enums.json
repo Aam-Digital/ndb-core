@@ -1,0 +1,290 @@
+[
+  {
+    "_id": "ConfigurableEnum:genders",
+    "values": [
+      {
+        "id": "M",
+        "label": "Male"
+      },
+      {
+        "id": "F",
+        "label": "Female"
+      },
+      {
+        "id": "X",
+        "label": "Non-binary / third gender"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:attendance-status",
+    "values": [
+      {
+        "id": "PRESENT",
+        "shortName": "P",
+        "label": "Present",
+        "color": "#c8e6c9",
+        "countAs": "PRESENT"
+      },
+      {
+        "id": "ABSENT",
+        "shortName": "A",
+        "label": "Absent",
+        "color": "#ff8a65",
+        "countAs": "ABSENT"
+      },
+      {
+        "id": "LATE",
+        "shortName": "L",
+        "label": "Late",
+        "color": "#ffecb3",
+        "countAs": "PRESENT"
+      },
+      {
+        "id": "EXCUSED",
+        "shortName": "E",
+        "label": "Excused",
+        "color": "#d7ccc8",
+        "countAs": "IGNORE"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:rating-answer",
+    "values": [
+      {
+        "id": "notTrueAtAll",
+        "label": "not at all",
+        "color": "rgba(253, 114, 114, 0.5)"
+      },
+      {
+        "id": "rarelyTrue",
+        "label": "rarely",
+        "color": "rgba(255, 165, 0, 0.5)"
+      },
+      {
+        "id": "usuallyTrue",
+        "label": "usually",
+        "color": "rgba(255, 242, 0, 0.5)"
+      },
+      {
+        "id": "absolutelyTrue",
+        "label": "absolutely",
+        "color": "rgba(144, 238, 144, 0.5)"
+      },
+      {
+        "id": "noAnswerPossible",
+        "label": "N/A",
+        "color": "#b0b0b0"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:warning-levels",
+    "values": [
+      {
+        "_ordinal": 0,
+        "id": "",
+        "label": ""
+      },
+      {
+        "_ordinal": 1,
+        "id": "OK",
+        "label": "Solved"
+      },
+      {
+        "_ordinal": 2,
+        "id": "WARNING",
+        "label": "Needs Follow-Up"
+      },
+      {
+        "_ordinal": 3,
+        "id": "URGENT",
+        "label": "Urgent Follow-Up"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:interaction-type",
+    "values": [
+      {
+        "id": "VISIT",
+        "label": "Home Visit"
+      },
+      {
+        "id": "GUARDIAN_TALK",
+        "label": "Talk with Guardians"
+      },
+      {
+        "id": "INCIDENT",
+        "label": "Incident"
+      },
+      {
+        "id": "NOTE",
+        "label": "General Note"
+      },
+      {
+        "id": "GUARDIAN_MEETING",
+        "label": "Guardians' Meeting",
+        "color": "#E1F5FE",
+        "isMeeting": true
+      },
+      {
+        "id": "COACHING_CLASS",
+        "label": "Coaching Class",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      },
+      {
+        "id": "SCHOOL_CLASS",
+        "label": "School Class",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:reading-levels",
+    "values": [
+      {
+        "id": "Nothing",
+        "label": "Nothing",
+        "_ordinal": 0,
+        "color": "#fd7272"
+      },
+      {
+        "id": "Read Letters",
+        "label": "Read Letters",
+        "_ordinal": 1,
+        "color": "#ff8153"
+      },
+      {
+        "id": "Read Words",
+        "label": "Read Words",
+        "_ordinal": 2,
+        "color": "#ff982a"
+      },
+      {
+        "id": "Read Sentence",
+        "label": "Read Sentence",
+        "_ordinal": 3,
+        "color": "#d2c92e"
+      },
+      {
+        "id": "Read Paragraph",
+        "label": "Read Paragraph",
+        "_ordinal": 4,
+        "passed": true,
+        "color": "#c8e6c9"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:math-levels",
+    "values": [
+      {
+        "id": "Nothing",
+        "label": "Nothing",
+        "_ordinal": 0,
+        "color": "#fd7272"
+      },
+      {
+        "id": "Numbers 1-9",
+        "label": "Numbers 1-9",
+        "_ordinal": 1,
+        "color": "#ff8153"
+      },
+      {
+        "id": "Numbers 10-99",
+        "label": "Numbers 10-99",
+        "_ordinal": 2,
+        "color": "#ff982a"
+      },
+      {
+        "id": "Subtraction",
+        "label": "Subtraction",
+        "_ordinal": 3,
+        "color": "#d2c92e"
+      },
+      {
+        "id": "Division",
+        "label": "Division",
+        "_ordinal": 4,
+        "passed": true,
+        "color": "#c8e6c9"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:materials",
+    "values": [
+      {
+        "id": "OTHER",
+        "label": ""
+      },
+      {
+        "id": "pencil",
+        "label": "pencil"
+      },
+      {
+        "id": "eraser",
+        "label": "eraser"
+      },
+      {
+        "id": "pen (black)",
+        "label": "pen (black)"
+      },
+      {
+        "id": "crayons",
+        "label": "crayons"
+      },
+      {
+        "id": "copy (plain)",
+        "label": "copy (plain)"
+      },
+      {
+        "id": "School Uniform",
+        "label": "School Uniform",
+        "color": "#B3E5FC"
+      },
+      {
+        "id": "School Shoes",
+        "label": "School Shoes",
+        "color": "#B3E5FC"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:riskStatus",
+    "values": [
+      {
+        "id": "DROPOUT RISK",
+        "label": "Dropout Risk"
+      },
+      {
+        "id": "LEARNING CHALLENGES",
+        "label": "Learning Challenges"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:center",
+    "values": [
+      {
+        "id": "C1",
+        "label": "Alipore",
+        "color": "#CCEFFF"
+      },
+      {
+        "id": "C2",
+        "label": "Tollygunge",
+        "color": "#B3E5FC"
+      },
+      {
+        "id": "C3",
+        "label": "Barabazar",
+        "color": "#94DDFF"
+      }
+    ]
+  }
+]
