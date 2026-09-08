@@ -12,6 +12,7 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { SyncStateSubject } from "../../session/session-type";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 
 describe("UserListComponent", () => {
   let component: UserListComponent;
@@ -36,7 +37,7 @@ describe("UserListComponent", () => {
       email: "user2@example.com",
       enabled: false,
       emailVerified: false,
-      roles: [{ id: "role2", name: "admin_app" }],
+      roles: [{ id: "role2", name: ADMIN_APP_ROLE }],
     },
     {
       id: "user3",
@@ -66,7 +67,7 @@ describe("UserListComponent", () => {
       email: "user2@example.com",
       enabled: false,
       emailVerified: false,
-      roles: [{ id: "role2", name: "admin_app" }],
+      roles: [{ id: "role2", name: ADMIN_APP_ROLE }],
     },
     {
       id: "user3",

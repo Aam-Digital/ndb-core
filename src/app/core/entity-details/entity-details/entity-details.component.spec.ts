@@ -7,6 +7,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 import type { Mock } from "vitest";
 
 type ChildrenServiceMock = {
@@ -174,7 +175,7 @@ describe("EntityDetailsComponent", () => {
           components: [
             { title: "Component B", component: "TestComponent", config: {} },
           ],
-          permittedUserRoles: ["admin_app"],
+          permittedUserRoles: [ADMIN_APP_ROLE],
         },
         {
           title: "Default Panel (without stating permitted roles)",
