@@ -11,7 +11,7 @@ const WARNING_LEVEL_ENUM_ID = "warning-levels";
  * Builds and identifies the PouchDB/CouchDB view that indexes Notes by the ordinal
  * position of their `warningLevel` (highest ordinal - most urgent - first), restricted
  * to a configured set of relevant warning level ids, so that important notes can be
- * queried page-by-page without loading all Notes.
+ * queried already filtered and sorted without loading all Notes and doing it client-side.
  *
  * Note: the ordinal-position lookup is a snapshot of the "warning-levels" enum
  * configuration at the time `buildIndex` runs. If that enum's configured order is later
@@ -41,21 +41,15 @@ export class ImportantNotesIndexService {
   }
 
   /**
-   * Query one page of important Notes (highest warningLevel ordinal first), restricted
-   * to the given relevant warning level ids.
+   * Query the important Notes (highest warningLevel ordinal first), restricted to the
+   * given relevant warning level ids.
    */
-  async queryIndex(
-    relevantWarningLevels: string[],
-    skip: number,
-    limit: number,
-  ): Promise<Note[]> {
+  async queryIndex(relevantWarningLevels: string[]): Promise<Note[]> {
     return this.dbIndexing.queryIndexDocs(
       Note,
       `${this.getIndexId(relevantWarningLevels)}/${VIEW_NAME}`,
       {
         descending: true,
-        skip,
-        limit,
       },
     );
   }

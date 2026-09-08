@@ -68,30 +68,24 @@ describe("ImportantNotesDashboardComponent", () => {
     }
   });
 
-  it("should query the index with the requested skip/limit once built", async () => {
+  it("should expose the notes returned by the index (already filtered and sorted)", async () => {
     vi.useFakeTimers();
     try {
+      const notes = [Note.create(new Date(), "Note A")];
+      mockIndexService.queryIndex.mockResolvedValue(notes);
+
       fixture.componentRef.setInput("warningLevels", ["URGENT"]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      const notes = [Note.create(new Date(), "Note A")];
-      mockIndexService.queryIndex.mockResolvedValue(notes);
-
-      const page = await component.pageLoader()(10, 6);
-
-      expect(mockIndexService.queryIndex).toHaveBeenLastCalledWith(
-        ["URGENT"],
-        10,
-        6,
-      );
-      expect(page).toEqual(notes);
+      expect(mockIndexService.queryIndex).toHaveBeenLastCalledWith(["URGENT"]);
+      expect(component.notes()).toEqual(notes);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should wait for the index to be built before querying it", async () => {
+  it("should query the index only once it has finished building", async () => {
     vi.useFakeTimers();
     try {
       let resolveBuild: () => void;
@@ -100,86 +94,83 @@ describe("ImportantNotesDashboardComponent", () => {
           resolveBuild = () => resolve(undefined);
         }),
       );
+      mockIndexService.buildIndex.mockClear();
+      mockIndexService.queryIndex.mockClear();
+
       fixture.componentRef.setInput("warningLevels", ["URGENT"]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
 
-      let resolved = false;
-      const loadPromise = component
-        .pageLoader()(0, 6)
-        .then(() => (resolved = true));
-      await vi.advanceTimersByTimeAsync(0);
-      expect(resolved).toBe(false); // still waiting on buildIndex
+      expect(mockIndexService.buildIndex).toHaveBeenCalledWith(["URGENT"]);
+      expect(mockIndexService.queryIndex).not.toHaveBeenCalled(); // still building
 
       resolveBuild();
-      await loadPromise;
-      expect(resolved).toBe(true);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockIndexService.queryIndex).toHaveBeenCalledWith(["URGENT"]);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should produce a new pageLoader (so the widget restarts from page 0) when warningLevels changes", async () => {
+  it("should rebuild and re-query the index when warningLevels changes", async () => {
     vi.useFakeTimers();
     try {
       fixture.componentRef.setInput("warningLevels", ["URGENT"]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      const firstLoader = component.pageLoader();
+
+      mockIndexService.buildIndex.mockClear();
+      mockIndexService.queryIndex.mockClear();
 
       fixture.componentRef.setInput("warningLevels", ["WARNING"]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      const secondLoader = component.pageLoader();
 
-      expect(secondLoader).not.toBe(firstLoader);
-      expect(mockIndexService.buildIndex).toHaveBeenLastCalledWith(["WARNING"]);
+      expect(mockIndexService.buildIndex).toHaveBeenCalledWith(["WARNING"]);
+      expect(mockIndexService.queryIndex).toHaveBeenCalledWith(["WARNING"]);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should produce a new pageLoader (so the widget re-fetches) when a relevant Note changes", async () => {
+  it("should re-query the index when a Note changes", async () => {
     // Regression test: Notes are typically created progressively (e.g. during initial
-    // sync/demo-data generation), so the widget's first fetch can legitimately be
-    // empty/partial - nothing else would trigger a retry once matching Notes arrive.
+    // sync/demo-data generation), so the first query can legitimately be empty/partial -
+    // nothing else would trigger a refresh once matching Notes arrive.
     vi.useFakeTimers();
     try {
       fixture.componentRef.setInput("warningLevels", ["URGENT"]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      const firstLoader = component.pageLoader();
+      mockIndexService.queryIndex.mockClear();
 
       const entityMapper = TestBed.inject(EntityMapperService);
       await entityMapper.save(Note.create(new Date(), "New urgent note"));
       await vi.advanceTimersByTimeAsync(300);
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
 
-      const secondLoader = component.pageLoader();
-      expect(secondLoader).not.toBe(firstLoader);
+      expect(mockIndexService.queryIndex).toHaveBeenCalledWith(["URGENT"]);
     } finally {
       vi.useRealTimers();
     }
   });
 
-  it("should produce a new pageLoader (so the widget rebuilds) when the warning-levels enum config changes", async () => {
+  it("should rebuild the index when the warning-levels enum config changes", async () => {
     vi.useFakeTimers();
     try {
       fixture.componentRef.setInput("warningLevels", ["URGENT"]);
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
-      const buildCountBefore = mockIndexService.buildIndex.mock.calls.length;
-      const firstLoader = component.pageLoader();
+      mockIndexService.buildIndex.mockClear();
 
       const entityMapper = TestBed.inject(EntityMapperService);
       await entityMapper.save(new ConfigurableEnum("warning-levels"));
       await vi.advanceTimersByTimeAsync(300);
       fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
 
-      const secondLoader = component.pageLoader();
-      expect(secondLoader).not.toBe(firstLoader);
-      expect(mockIndexService.buildIndex.mock.calls.length).toBe(
-        buildCountBefore + 1,
-      );
+      expect(mockIndexService.buildIndex).toHaveBeenCalledWith(["URGENT"]);
     } finally {
       vi.useRealTimers();
     }

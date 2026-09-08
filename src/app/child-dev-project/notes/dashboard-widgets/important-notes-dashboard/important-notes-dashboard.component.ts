@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   effect,
   inject,
   input,
@@ -38,41 +37,24 @@ export class ImportantNotesDashboardComponent {
 
   warningLevels = input<string[]>([]);
 
-  // Bumped whenever the "warning-levels" enum config changes, to force a rebuild below.
+  // Bumped whenever the "warning-levels" enum config changes, to force an index rebuild.
   // The index's ordinal lookup is baked in from that enum's *current* state at build
   // time, which may not be loaded yet when the widget first mounts (e.g. during initial
   // sync/demo-data generation) - the index would otherwise be permanently built with an
   // empty lookup and never retry once the config actually arrives.
   private configVersion = signal(0);
 
-  // Bumped whenever a relevant Note changes, to make `pageLoader` below produce a new
-  // function reference (without rebuilding the index) so DashboardListWidgetComponent
-  // re-fetches the current page. Notes are typically created progressively (e.g. during
-  // initial sync/demo-data generation), so an initial empty/partial page must be retried
-  // once more matching Notes actually arrive - nothing else would trigger that retry,
-  // since `pageLoader` is otherwise only re-created when warningLevels()/the index change.
+  // Bumped whenever a Note changes, to re-query the index. Notes are typically created
+  // progressively (e.g. during initial sync/demo-data generation), so an initial
+  // empty/partial result must be refreshed once more matching Notes actually arrive.
   private dataVersion = signal(0);
 
-  // Built once per warningLevels()/configVersion() change (not per page query) - the
-  // effect below updates this; `pageLoader` awaits it before querying.
-  private indexBuilt = signal<Promise<void>>(Promise.resolve());
-
   /**
-   * Loads one page of important notes (highest warningLevel first) directly from a
-   * dedicated PouchDB/CouchDB view, instead of loading and filtering/sorting all Notes
-   * client-side - see `ImportantNotesIndexService`. A new function reference is produced
-   * whenever `warningLevels()`, the index, or relevant Note data changes, so
-   * `DashboardListWidgetComponent` knows to restart paging from page 0 and re-fetch.
+   * The important notes (highest warningLevel first) to display, loaded already filtered
+   * and sorted from a dedicated PouchDB/CouchDB view instead of loading all Notes and
+   * filtering/sorting them client-side - see `ImportantNotesIndexService`.
    */
-  pageLoader = computed(() => {
-    const relevantLevels = this.warningLevels();
-    const indexBuilt = this.indexBuilt();
-    this.dataVersion();
-    return async (skip: number, limit: number) => {
-      await indexBuilt;
-      return this.importantNotesIndex.queryIndex(relevantLevels, skip, limit);
-    };
-  });
+  notes = signal<Note[] | undefined>(undefined);
 
   subtitle = input<string>(
     $localize`:dashboard widget subtitle:Notes needing follow-up`,
@@ -82,10 +64,21 @@ export class ImportantNotesDashboardComponent {
   );
 
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const relevantLevels = this.warningLevels();
       this.configVersion(); // re-run when the warning-levels enum config changes
-      this.indexBuilt.set(this.importantNotesIndex.buildIndex(relevantLevels));
+      this.dataVersion(); // re-run when a Note changes
+
+      let isCurrent = true;
+      onCleanup(() => (isCurrent = false));
+
+      void (async () => {
+        await this.importantNotesIndex.buildIndex(relevantLevels);
+        const notes = await this.importantNotesIndex.queryIndex(relevantLevels);
+        if (isCurrent) {
+          this.notes.set(notes);
+        }
+      })();
     });
 
     this.entityMapper

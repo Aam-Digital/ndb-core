@@ -46,7 +46,7 @@ describe("ImportantNotesIndexService", () => {
     await entityMapper.saveAll([urgentNote, warningNote, okNote]);
 
     await service.buildIndex(["URGENT", "WARNING"]);
-    const data = await service.queryIndex(["URGENT", "WARNING"], 0, 10);
+    const data = await service.queryIndex(["URGENT", "WARNING"]);
 
     expect(data.map((n) => n.getId())).toEqual(
       expect.arrayContaining([urgentNote.getId(), warningNote.getId()]),
@@ -61,30 +61,11 @@ describe("ImportantNotesIndexService", () => {
     await entityMapper.saveAll([warningNote, urgentNote]);
 
     await service.buildIndex(["URGENT", "WARNING"]);
-    const data = await service.queryIndex(["URGENT", "WARNING"], 0, 10);
+    const data = await service.queryIndex(["URGENT", "WARNING"]);
 
     expect(data.map((n) => n.getId())).toEqual([
       urgentNote.getId(),
       warningNote.getId(),
     ]);
-  });
-
-  it("should paginate results using skip and limit", async () => {
-    const urgentNotes = Array.from({ length: 5 }, () =>
-      noteWithLevel("URGENT"),
-    );
-    await entityMapper.saveAll(urgentNotes);
-
-    await service.buildIndex(["URGENT"]);
-    const firstPage = await service.queryIndex(["URGENT"], 0, 2);
-    const secondPage = await service.queryIndex(["URGENT"], 2, 2);
-
-    expect(firstPage).toHaveLength(2);
-    expect(secondPage).toHaveLength(2);
-    const firstPageIds = firstPage.map((n) => n.getId());
-    const secondPageIds = secondPage.map((n) => n.getId());
-    expect(firstPageIds).not.toEqual(
-      expect.arrayContaining(secondPageIds.slice(0, 1)),
-    );
   });
 });
