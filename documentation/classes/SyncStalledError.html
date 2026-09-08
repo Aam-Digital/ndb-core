@@ -203,7 +203,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="505" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:505</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="522" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:522</a></div>
                             </td>
                         </tr>
 
@@ -500,13 +500,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
         if (this.isDocumentWriteError(err)) {
           Logging.warn(
             &#x60;sync failed: document write error (possible oversized document)&#x60;,
-            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
+            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
           this.corruptionRecovery?.handleKnownMultiTabCorruption(
             err,
-            &#x60;sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(&quot;, &quot;)}]&#x60;,
+            &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
+            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
           );
         } else if (
           this.isSyncConnectivityError(err) ||
@@ -536,7 +537,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
     } catch (err) {
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
-        &#x60;put failed [${this.dbName}]: likely multi-tab IndexedDB corruption&#x60;,
+        &quot;put failed: likely multi-tab IndexedDB corruption&quot;,
+        { db: this.dbName },
       );
       throw err;
     }
@@ -549,7 +551,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return super.query(fun, options).catch((err) &#x3D;&gt; {
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
-        &#x60;query failed [${this.dbName}]: likely multi-tab IndexedDB corruption&#x60;,
+        &quot;query failed: likely multi-tab IndexedDB corruption&quot;,
+        { db: this.dbName },
       );
       throw err;
     });
@@ -724,6 +727,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
 }
 
 type SyncResult &#x3D; PouchDB.Replication.SyncResultComplete&lt;any&gt;;
+
+/**
+ * What of the last synced batch can be reported when a sync fails right after
+ * it: how much was in flight and which record types, but never the document
+ * ids themselves - those identify records and have no place in remote
+ * monitoring (see #4174), while as part of a message they would also open a
+ * separate issue per batch.
+ */
+function lastSyncedBatchContext(docIds: string[]): Record&lt;string, unknown&gt; {
+  return {
+    lastSyncedBatchSize: docIds.length,
+    lastSyncedEntityTypes: [...new Set(docIds.map((id) &#x3D;&gt; id.split(&quot;:&quot;)[0]))],
+  };
+}
 
 /** Thrown internally when a sync is cancelled for making no progress. */
 class SyncStalledError extends Error {

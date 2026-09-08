@@ -291,8 +291,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="300"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:300</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="333"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:333</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="336"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:336</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="369"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:369</a></div>
                         </td>
                     </tr>
 
@@ -402,8 +402,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="343"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:343</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="376"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:376</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="326"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:326</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="359"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:359</a></div>
                         </td>
                     </tr>
 
@@ -480,8 +480,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="351"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:351</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="384"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:384</a></div>
                         </td>
                     </tr>
 
@@ -519,8 +519,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="317"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:317</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="350"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:350</a></div>
                         </td>
                     </tr>
 
@@ -567,7 +567,7 @@ previous session) and during recovery from a stuck init.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:95</a></div>
                         </td>
                     </tr>
 
@@ -604,7 +604,11 @@ previous session) and during recovery from a stuck init.</p>
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
-        Logging.debug(&quot;Keycloak updateToken failed (offline/unavailable)&quot;, err);
+        Logging.debug(
+          &quot;Keycloak updateToken failed (offline/unavailable)&quot;,
+          err,
+          keycloakFailureContext(err),
+        );
         throw new RemoteLoginNotAvailableError(err);
       }
       throw err;
@@ -620,7 +624,7 @@ previous session) and during recovery from a stuck init.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -664,7 +668,7 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:69</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:94</a></div>
                         </td>
                     </tr>
 
@@ -719,7 +723,7 @@ user clicks &quot;Log in&quot;.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="117" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:117</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:146</a></div>
                         </td>
                     </tr>
 
@@ -791,6 +795,31 @@ const TOKEN_REFRESH_RETRY_DELAYS_MS &#x3D; [2_000, 5_000];
 const TOKEN_MIN_VALIDITY_SECONDS &#x3D; 30;
 
 /**
+ * What a failed Keycloak operation can say about itself beyond its message.
+ *
+ * &#x60;keycloak-js&#x60; reports every rejected response as
+ * &#x60;Server responded with an invalid status.&#x60; and attaches the whole &#x60;Response&#x60;
+ * as &#x60;NetworkError.response&#x60; rather than lifting the status out of it - so the
+ * report names neither which status it was nor which endpoint refused, and the
+ * error cannot be told apart from any other by reading it.
+ *
+ * Passed as log context rather than interpolated into the message, so that all
+ * occurrences stay one issue in remote monitoring (see &#x60;core/logging/README.md&#x60;)
+ * while the status is one click away in the event&#x27;s data.
+ */
+function keycloakFailureContext(err: any): Record&lt;string, unknown&gt; {
+  const status &#x3D; err?.response?.status;
+  if (typeof status !&#x3D;&#x3D; &quot;number&quot;) {
+    // the library also rejects for reasons that never reached the server
+    return { responseStatus: &quot;none&quot; };
+  }
+  return {
+    responseStatus: status,
+    responseStatusText: err.response.statusText,
+  };
+}
+
+/**
  * Check whether an error is a retryable network/connectivity error,
  * including keycloak-specific transient failures.
  */
@@ -838,7 +867,11 @@ export class KeycloakAuthService {
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
-        Logging.debug(&quot;Keycloak updateToken failed (offline/unavailable)&quot;, err);
+        Logging.debug(
+          &quot;Keycloak updateToken failed (offline/unavailable)&quot;,
+          err,
+          keycloakFailureContext(err),
+        );
         throw new RemoteLoginNotAvailableError(err);
       }
       throw err;
@@ -917,10 +950,14 @@ export class KeycloakAuthService {
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
-        Logging.debug(&quot;Keycloak init failed (offline/unavailable)&quot;, err);
+        Logging.debug(
+          &quot;Keycloak init failed (offline/unavailable)&quot;,
+          err,
+          keycloakFailureContext(err),
+        );
         err &#x3D; new RemoteLoginNotAvailableError(err);
       } else {
-        Logging.error(&quot;Keycloak init failed&quot;, err);
+        Logging.error(&quot;Keycloak init failed&quot;, err, keycloakFailureContext(err));
       }
 
       this.initKeycloak.cache.clear();

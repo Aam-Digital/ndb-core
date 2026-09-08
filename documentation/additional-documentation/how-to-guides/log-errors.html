@@ -185,21 +185,44 @@ can still be filtered by where they happened.</p>
 <p>Because the root cause is part of the key, it is also appended to the reported message
 (<code>Failed to load configuration. (caused by DatabaseException: Unknown kid)</code>): several issues would
 otherwise share one title and could only be told apart by opening each of them.</p>
+<p>This also applies when a framework re-throws such an error as a generic one — Angular does that
+for anything raised inside a <code>resource()</code> loader, wrapping it in an error that copies the message
+and reports the <code>&quot;Error&quot;</code> name a subclass inherits. A wrapper that only repeats its cause&#39;s
+message contributes nothing but its own stack trace, so the event is grouped by the recognized
+error underneath it (<code>rewrappedCauseGroupedError</code>) and lands in the same issue as the unwrapped
+one. A wrapper with a message of its own (<code>Failed to load configuration from the database.</code>) says
+more about the failure than its cause does, and stays what the event is grouped by.</p>
 </li>
 <li><p><strong>Network failures</strong> — anything whose chain contains a connectivity error (see
 <code>isConnectivityErrorMessage</code>) is collected into the single <code>network-error</code> issue. The browser
 raises these at whatever point a request happened to be made, so by stack trace they are an
 open-ended stream of near-identical issues with the same (non-)answer. They are still reported
 rather than dropped, because a server outage surfaces exactly this way — as one issue, whose
-number of affected users and sessions is the signal (not its event count, see the cap below).
+number of affected sessions and deployments is the signal (not its event count, see the cap
+below).
 The browsers&#39; differing wordings would make the merged issue&#39;s title flip-flop, so it is
 replaced by a stable one and kept as the searchable <code>network_error</code> tag.</p>
+<p>The status counts as well as the message: an event whose error carries a gateway status
+(<code>0</code>/<code>502</code>/<code>503</code>/<code>504</code>) is a request that never reached the backend, whatever the message says.
+That status is read from <code>err.status</code> or, where a library hands on the whole <code>fetch</code> Response
+instead of lifting the status out of it, from <code>err.response.status</code> — which is how <code>keycloak-js</code>
+reports every rejected response, all of them worded <code>Server responded with an invalid status.</code></p>
+<p>A chunk that fails to load counts as one of these: a lazily loaded part of the app not arriving
+means either that the device is offline or that a deployment replaced the chunk the running app
+asks for, and the error says neither which of the two it was nor anything actionable about the
+chunk. Without this they arrive as one issue per browser wording (Chrome&#39;s &quot;Failed to fetch
+dynamically imported module&quot;, Firefox&#39;s &quot;error loading …&quot;, Safari&#39;s &quot;Importing a module script
+failed&quot;) and per chunk URL.</p>
 <p>This runs <em>after</em> case 1 on purpose: a <code>ConfigLoadError</code> caused by a failed request is about the
 config load, not about the network, and keeps its own issue.</p>
 </li>
 <li><p><strong>Exceptions reported without a stack</strong> (e.g. an <code>HttpErrorResponse</code>) — Sentry falls back to
 grouping those by message, so an id or url interpolated into it opens a new issue every time.
-They are fingerprinted by type and normalized message instead.</p>
+They are fingerprinted by type and normalized message instead, and <em>reported</em> under that same
+normalized message (<code>reportNormalized</code>). Otherwise the issue list still shows the raw one: a row
+per document id, or — where a library quotes a response body into the message, as PouchDB does
+for a proxy error — a whole HTML error page pushing every other row off the screen. The raw
+message stays available as the event&#39;s <code>originalError</code>.</p>
 </li>
 <li><p><strong>Message-only events</strong> (<code>Logging.warn(...)</code>) group by their normalized message, which enforces the
 &quot;keep message strings static&quot; rule above: a message that does interpolate variable data still
@@ -215,8 +238,13 @@ fingerprint, which is why grouping runs before the cap. Budgeting more coarsely 
 starves issues that merely share a cause: while a device is on a flaky connection, one connectivity
 failure is the root cause of the config load, the permission rules, the sync and every file download
 alike, and whichever of them failed first would silence all the others.</p>
-<p>An issue&#39;s <strong>event count is therefore not a measure of how often a problem occurs</strong> — how many users
-and sessions it affects is.</p>
+<p>An issue&#39;s <strong>event count is therefore not a measure of how often a problem occurs.</strong> What to weigh
+instead is how many sessions it affects, how many deployments and releases it spans (the <code>url</code> and
+<code>release</code> tags), and whether it is still recurring.</p>
+<p>Not the number of affected <em>users</em>, which Sentry shows as 0 for every issue: reported events
+deliberately carry no user identity, as data minimization under the GDPR. Sentry&#39;s own session
+counting is anonymous and stays on, so &quot;how many sessions&quot; remains available; &quot;how many users&quot; is a
+question this project has chosen not to be able to answer.</p>
 <p>Values that go into a fingerprint are normalized (<code>fingerprintKey</code>): ids, URLs and numbers are masked,
 and punctuation and casing are dropped, so that occurrences of the same problem match even where a
 library is inconsistent about them (PouchDB reports both <code>Unauthorized</code> and <code>unauthorized</code>).</p>
@@ -230,7 +258,10 @@ exception type is <code>error.name || error.constructor.name</code>, so the name
 a literal — an <code>Error</code> subclass otherwise inherits <code>&quot;Error&quot;</code> from <code>Error.prototype</code> and would silently
 fall out of this list, and the constructor name is minified. Both the dedicated classes
 (<code>RegistryLookupError</code>) and the plain errors that just set <code>error.name</code> (<code>ConfigLoadError</code>) do this.
-An <code>Error</code> subclass with neither a name nor a message is reported as <code>Error: No error message</code>.</p>
+An <code>Error</code> subclass with neither a name nor a message is reported as <code>Error: No error message</code>.
+An exception that reaches Sentry with no type at all is listed as <code>&lt;unknown&gt;</code>, which says nothing in
+a list of issues and hides the message that would — so <code>enrichSentryEvent</code> falls back to the generic
+<code>&quot;Error&quot;</code> for those.</p>
 <p>Fingerprinting inverts the message rule stated above: once an error is fingerprinted its message <em>is</em>
 part of the grouping key, so whatever stays in it becomes a deliberate grouping dimension. Interpolate
 a value there only when both hold:</p>

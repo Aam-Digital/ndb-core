@@ -635,6 +635,12 @@
                             <a href="#itemReferencesId" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>itemReferencesId</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#keycloakFailureContext" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>keycloakFailureContext</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#lastSyncedBatchContext" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lastSyncedBatchContext</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#lockDescriptionId" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lockDescriptionId</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
                         </li>
                         <li>
@@ -794,6 +800,9 @@
                             <a href="#reportAsUnreachableServer" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>reportAsUnreachableServer</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#reportNormalized" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>reportNormalized</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#reportUsesDateRange" title="src/app/features/reporting/report-config.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>reportUsesDateRange</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</span></a>
                         </li>
                         <li>
@@ -801,6 +810,9 @@
                         </li>
                         <li>
                             <a href="#resetPWAInstallListener" title="src/bootstrap-pwa-install.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resetPWAInstallListener</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-pwa-install.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#resetSentryEventCounts" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resetSentryEventCounts</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#resizeImage" title="src/app/features/file/file-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>resizeImage</b>&nbsp;&nbsp;&nbsp;(src/.../file-utils.ts)</span></a>
@@ -825,6 +837,9 @@
                         </li>
                         <li>
                             <a href="#revGeneration" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>revGeneration</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#rewrappedCauseGroupedError" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rewrappedCauseGroupedError</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#rewriteNavMenuLinks" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rewriteNavMenuLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
@@ -8870,7 +8885,7 @@ replaced by a stable one and kept as a searchable tag instead.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>groupByErrorChain(event, values)</code>
+<code>groupByErrorChain(event, values, thrownError)</code>
                 </td>
             </tr>
 
@@ -8916,6 +8931,15 @@ be filtered by where it happened without splitting it into separate issues.</p>
                                         </tr>
                                         <tr>
                                                 <td>values</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>thrownError</td>
 
                                             <td>
                                                     No
@@ -9720,6 +9744,176 @@ even where the frames differ between occurrences).</p>
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="reportNormalized"></a>
+                    <span class="name">
+                        <span ><b>reportNormalized</b></span>
+                        <a href="#reportNormalized"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>reportNormalized(event, exception)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Report an exception under the normalized message it is grouped by, keeping
+the original one as extra data.</p>
+<p>Sentry titles an issue by the reported message, so the volatile details that
+<a href="../miscellaneous/functions.html#fingerprintKey">fingerprintKey</a> masks out of the grouping key are still what the issue
+list shows: one row per document id, and a response body quoted into an error
+message (an nginx error page, say) pushing every other row off the screen.
+Only used where the message is the grouping key anyway, so that the title of
+an issue and the reason its events are in it cannot drift apart.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>exception</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resetSentryEventCounts"></a>
+                    <span class="name">
+                        <span ><b>resetSentryEventCounts</b></span>
+                        <a href="#resetSentryEventCounts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>resetSentryEventCounts()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Clear the repeat budget that <a href="../miscellaneous/functions.html#isExcessiveRepeat">isExcessiveRepeat</a> keeps per app session.</p>
+<p>Exported for tests: nothing else resets those counters, so without this every
+spec in a file shares one budget and whichever runs last sees its events
+dropped instead of processed - which is easy to mistake for the behaviour
+under test, as the budget is shared by all events of one issue.</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rewrappedCauseGroupedError"></a>
+                    <span class="name">
+                        <span ><b>rewrappedCauseGroupedError</b></span>
+                        <a href="#rewrappedCauseGroupedError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>rewrappedCauseGroupedError(values)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The error of a recognized type (see <a href="../miscellaneous/variables.html#CAUSE_GROUPED_ERROR_TYPES">CAUSE_GROUPED_ERROR_TYPES</a>) that a
+framework re-threw as a generic one, if that is what this chain is.</p>
+<p>Angular does this for an error raised inside a <code>resource()</code> loader: it wraps
+it in an error of its own that copies the original&#39;s message and whose type
+is the plain &quot;Error&quot; a subclass inherits. The wrapper contributes nothing but
+a different stack trace, so grouping by it opens a separate issue per call
+site for exactly the problem that <a href="../miscellaneous/functions.html#groupByErrorChain">groupByErrorChain</a> keeps as one.</p>
+<p>Only a wrapper that repeats the recognized error&#39;s message counts as such.
+One that says what it was doing (&quot;Failed to load configuration from the
+database.&quot;) describes the failure better than its cause does, and stays the
+error the event is grouped by.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>values</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Sentry.Exception | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>
@@ -16511,6 +16705,77 @@ including keycloak-specific transient failures.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="keycloakFailureContext"></a>
+                    <span class="name">
+                        <span ><b>keycloakFailureContext</b></span>
+                        <a href="#keycloakFailureContext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>keycloakFailureContext(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>What a failed Keycloak operation can say about itself beyond its message.</p>
+<p><code>keycloak-js</code> reports every rejected response as
+<code>Server responded with an invalid status.</code> and attaches the whole <code>Response</code>
+as <code>NetworkError.response</code> rather than lifting the status out of it - so the
+report names neither which status it was nor which endpoint refused, and the
+error cannot be told apart from any other by reading it.</p>
+<p>Passed as log context rather than interpolated into the message, so that all
+occurrences stay one issue in remote monitoring (see <code>core/logging/README.md</code>)
+while the status is one click away in the event&#39;s data.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
     <h3>src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts</h3>
     <section data-compodoc="block-methods">
@@ -16629,6 +16894,72 @@ including keycloak-specific transient failures.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>ValidationErrors | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/synced-pouch-database.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="lastSyncedBatchContext"></a>
+                    <span class="name">
+                        <span ><b>lastSyncedBatchContext</b></span>
+                        <a href="#lastSyncedBatchContext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>lastSyncedBatchContext(docIds)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>What of the last synced batch can be reported when a sync fails right after
+it: how much was in flight and which record types, but never the document
+ids themselves - those identify records and have no place in remote
+monitoring (see #4174), while as part of a message they would also open a
+separate issue per batch.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>docIds</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
 
                         </div>
                             <div class="io-description">

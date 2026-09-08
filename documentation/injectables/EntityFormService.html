@@ -525,8 +525,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="363"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:363</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="367"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:367</a></div>
                         </td>
                     </tr>
 
@@ -986,8 +986,12 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
+      // the original error is kept as &#x60;cause&#x60;: remote monitoring links it into
+      // the reported exception chain, so a save failure can be told apart by
+      // what actually rejected it instead of only by this message
       throw new Error(
         $localize&#x60;Could not save ${entity.getType()}\: ${err?.message || String(err)}&#x60;,
+        { cause: err },
       );
     }
 
