@@ -26,10 +26,6 @@ describe("ListPaginatorComponent", () => {
 
   afterEach(() => localStorage.clear());
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should save pagination settings in the local storage", () => {
     fixture.componentRef.setInput("idForSavingPagination", "table-id");
     fixture.detectChanges();

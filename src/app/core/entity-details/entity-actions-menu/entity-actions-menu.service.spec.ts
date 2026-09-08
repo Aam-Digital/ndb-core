@@ -21,10 +21,6 @@ describe("EntityActionsMenuService", () => {
     service = TestBed.inject(EntityActionsMenuService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should filter out single actions if required permission is missing", async () => {
     const entity = TestEntity.create("Record A");
     ability.can.mockReturnValue(false);

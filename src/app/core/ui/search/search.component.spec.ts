@@ -51,10 +51,6 @@ describe("SearchComponent", () => {
     subscription?.unsubscribe();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", async () => {
     vi.useFakeTimers();
     try {

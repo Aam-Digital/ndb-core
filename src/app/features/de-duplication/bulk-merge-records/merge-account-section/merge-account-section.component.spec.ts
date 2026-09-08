@@ -5,7 +5,7 @@ import { of, throwError } from "rxjs";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-
+import { mockConfirmationDialog } from "#src/app/utils/test-utils/dialog-mocks";
 @DatabaseEntity("TestEntityWithUserAccountsSection")
 class TestEntityWithUserAccounts extends Entity {
   static override readonly enableUserAccounts = true;
@@ -15,7 +15,7 @@ describe("MergeAccountSectionComponent", () => {
   let component: MergeAccountSectionComponent;
   let fixture: ComponentFixture<MergeAccountSectionComponent>;
   let mockUserAdminService: any;
-  let mockConfirmationDialog: any;
+  let confirmationDialog: any;
 
   const mockAccount0 = {
     id: "kc-1",
@@ -51,9 +51,7 @@ describe("MergeAccountSectionComponent", () => {
         return throwError(() => ({ status: 404 }));
       }),
     };
-    mockConfirmationDialog = {
-      getConfirmation: vi.fn().mockResolvedValue(true),
-    };
+    confirmationDialog = mockConfirmationDialog();
 
     await TestBed.configureTestingModule({
       imports: [MergeAccountSectionComponent],
@@ -61,7 +59,7 @@ describe("MergeAccountSectionComponent", () => {
         { provide: UserAdminService, useValue: mockUserAdminService },
         {
           provide: ConfirmationDialogService,
-          useValue: mockConfirmationDialog,
+          useValue: confirmationDialog,
         },
       ],
     }).compileComponents();
@@ -175,7 +173,7 @@ describe("MergeAccountSectionComponent", () => {
 
   it("should return deleteSecondaryAccount=true when user clicks yes in both-accounts warning", async () => {
     await component.ngOnInit();
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
+    confirmationDialog.getConfirmation.mockResolvedValue(true);
 
     const decision = await component.validateAndGetDecision();
     if (!decision) {
@@ -187,7 +185,7 @@ describe("MergeAccountSectionComponent", () => {
 
   it("should return deleteSecondaryAccount=false when user clicks no in both-accounts warning", async () => {
     await component.ngOnInit();
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(false);
+    confirmationDialog.getConfirmation.mockResolvedValue(false);
 
     const decision = await component.validateAndGetDecision();
     if (!decision) {
@@ -199,7 +197,7 @@ describe("MergeAccountSectionComponent", () => {
 
   it("should return false when user clicks cancel in both-accounts warning", async () => {
     await component.ngOnInit();
-    mockConfirmationDialog.getConfirmation.mockResolvedValue(undefined);
+    confirmationDialog.getConfirmation.mockResolvedValue(undefined);
 
     const decision = await component.validateAndGetDecision();
 

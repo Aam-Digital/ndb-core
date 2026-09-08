@@ -8,7 +8,11 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
-import { DatabaseRule, DatabaseRules } from "../permission-types";
+import {
+  ADMIN_APP_ROLE,
+  DatabaseRule,
+  DatabaseRules,
+} from "../permission-types";
 import { Config } from "../../config/config";
 import { Logging } from "../../logging/logging.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
@@ -30,7 +34,7 @@ describe("AbilityService", () => {
       { subject: TestEntity.ENTITY_TYPE, action: "read" },
       { subject: Note.ENTITY_TYPE, action: "manage", inverted: true },
     ],
-    admin_app: [{ subject: "all", action: "manage" }],
+    [ADMIN_APP_ROLE]: [{ subject: "all", action: "manage" }],
   };
 
   beforeEach(waitForAsync(() => {
@@ -85,10 +89,6 @@ describe("AbilityService", () => {
 
   afterEach(() => {
     entityUpdates.complete();
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should fetch the rules object from the database", () => {
@@ -169,7 +169,7 @@ describe("AbilityService", () => {
       TestBed.inject(SessionSubject).next({
         name: "testAdmin",
         id: "1",
-        roles: ["user_app", "admin_app"],
+        roles: ["user_app", ADMIN_APP_ROLE],
       });
 
       entityUpdates.next({
@@ -179,7 +179,7 @@ describe("AbilityService", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(ability.update).toHaveBeenCalledWith(
-        rules.user_app.concat(rules.admin_app),
+        rules.user_app.concat(rules[ADMIN_APP_ROLE]),
       );
     } finally {
       vi.useRealTimers();
@@ -210,7 +210,7 @@ describe("AbilityService", () => {
       TestBed.inject(SessionSubject).next({
         name: "testAdmin",
         id: "1",
-        roles: ["user_app", "admin_app"],
+        roles: ["user_app", ADMIN_APP_ROLE],
       });
 
       const updatedConfig = new Config(Config.PERMISSION_KEY, rules);
@@ -413,14 +413,14 @@ describe("AbilityService", () => {
       TestBed.inject(SessionSubject).next({
         name: "admin",
         id: "1",
-        roles: ["user_app", "admin_app"],
+        roles: ["user_app", ADMIN_APP_ROLE],
       });
 
       config._rev = "update";
       entityUpdates.next({ entity: config, type: "update" });
       await vi.advanceTimersByTimeAsync(0);
       expect(ability.rules).toEqual(
-        defaultRules.concat(...rules.user_app, ...rules.admin_app),
+        defaultRules.concat(...rules.user_app, ...rules[ADMIN_APP_ROLE]),
       );
     } finally {
       vi.useRealTimers();

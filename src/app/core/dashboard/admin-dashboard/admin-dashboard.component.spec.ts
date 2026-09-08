@@ -47,10 +47,6 @@ describe("AdminDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should add a new widget", async () => {
     const newWidget = { component: "ShortcutDashboard", config: {} };
     mockDialog.open.mockReturnValue({

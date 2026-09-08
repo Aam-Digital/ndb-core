@@ -16,10 +16,6 @@ describe("LocationImportConfigComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize skipLookup from column additional", () => {
     const col: ColumnMapping = {
       column: "address",

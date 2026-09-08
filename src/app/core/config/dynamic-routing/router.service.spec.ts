@@ -18,6 +18,7 @@ import { AuthGuard } from "../../session/auth.guard";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 import { EntityListComponent } from "../../entity-list/entity-list/entity-list.component";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 
 @Component({ template: "" })
 class TestComponent {}
@@ -39,10 +40,6 @@ describe("RouterService", () => {
     });
     service = TestBed.inject(RouterService);
   }));
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
 
   it("should keep additional routes when reloading router config", () => {
     const testRoutes = [{ path: "user", component: TestComponent }];
@@ -136,7 +133,7 @@ describe("RouterService", () => {
     const testViewConfigs: ViewConfig[] = [
       {
         _id: "view:other",
-        permittedUserRoles: ["admin_app"],
+        permittedUserRoles: [ADMIN_APP_ROLE],
         lazyLoaded: true,
       },
     ];
@@ -146,7 +143,7 @@ describe("RouterService", () => {
         component: TestComponent,
         canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
         canDeactivate: [expect.any(Function) as any],
-        data: { permittedUserRoles: ["admin_app"] },
+        data: { permittedUserRoles: [ADMIN_APP_ROLE] },
       },
       { path: "child", component: EntityListComponent },
     ];

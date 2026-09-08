@@ -44,10 +44,6 @@ describe("DisplayTodoCompletionComponent", () => {
     ) as MockEntityMapperService;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load the entity in completedBy when it has full ID", async () => {
     vi.useFakeTimers();
     try {

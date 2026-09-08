@@ -48,10 +48,6 @@ describe("LanguageService", () => {
     window.localStorage.removeItem(LANGUAGE_LOCAL_STORAGE_KEY);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return the current locale", () => {
     expect(service.getCurrentLocale()).toBe("en-US");
   });

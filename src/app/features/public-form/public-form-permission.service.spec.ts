@@ -4,6 +4,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { Config } from "../../core/config/config";
 import { BehaviorSubject } from "rxjs";
+import { ADMIN_APP_ROLE } from "../../core/permissions/permission-types";
 
 describe("PublicFormPermissionService", () => {
   let service: PublicFormPermissionService;
@@ -25,10 +26,6 @@ describe("PublicFormPermissionService", () => {
       ],
     });
     service = TestBed.inject(PublicFormPermissionService);
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should allow access when permissions config cannot be loaded", async () => {
@@ -126,7 +123,7 @@ describe("PublicFormPermissionService", () => {
   });
 
   it("should detect admin permission when user has admin_app role", () => {
-    mockSessionSubject.next({ roles: ["admin_app", "user"] });
+    mockSessionSubject.next({ roles: [ADMIN_APP_ROLE, "user"] });
 
     const result = service.hasAdminPermission();
 

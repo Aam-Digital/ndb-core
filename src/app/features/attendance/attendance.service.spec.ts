@@ -190,10 +190,6 @@ describe("AttendanceService", () => {
     service = TestBed.inject(AttendanceService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("gets events for a date", async () => {
     mockDbIndexing.queryIndexDocsRange.mockResolvedValue([e1_1, e2_1]);
 

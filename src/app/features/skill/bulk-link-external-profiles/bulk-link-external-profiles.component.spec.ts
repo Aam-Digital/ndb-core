@@ -78,10 +78,6 @@ describe("BulkLinkExternalProfilesComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should init onChanges and search matches for all given entities", async () => {
     vi.useFakeTimers();
     try {

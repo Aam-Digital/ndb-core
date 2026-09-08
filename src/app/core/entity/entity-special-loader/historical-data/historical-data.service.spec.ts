@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { HistoricalDataService } from "./historical-data.service";
 import { EntityMapperService } from "../../entity-mapper/entity-mapper.service";
@@ -7,22 +7,32 @@ import moment from "moment";
 import { DatabaseTestingModule } from "../../../../utils/database-testing.module";
 import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../../database/database-resolver.service";
+import { EntityRegistry } from "../../database-entity.decorator";
 
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
     });
+
+    // HistoricalEntityData is defined by config, not by a @DatabaseEntity class, so it only
+    // exists once DatabaseTestingModule's initializer has applied the config - which
+    // TestBed does not await (see the note in database-testing.module.ts).
+    await vi.waitFor(
+      () => {
+        expect(TestBed.inject(EntityRegistry).has("HistoricalEntityData")).toBe(
+          true,
+        );
+      },
+      { timeout: 10_000 },
+    );
+
     service = TestBed.inject(HistoricalDataService);
-  }));
+  });
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
 
   it("should load data related to a entity", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);

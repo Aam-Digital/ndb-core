@@ -22,10 +22,6 @@ describe("TabStateService", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(fixture).toBeTruthy();
-  });
-
   it("should change the URL when the tab index changes", async () => {
     const tabGroupHarness = await TestbedHarnessEnvironment.harnessForFixture(
       fixture,
