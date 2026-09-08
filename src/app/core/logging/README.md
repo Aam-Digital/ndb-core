@@ -103,6 +103,12 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    The browsers' differing wordings would make the merged issue's title flip-flop, so it is
    replaced by a stable one and kept as the searchable `network_error` tag.
 
+   The status counts as well as the message: an event whose error carries a gateway status
+   (`0`/`502`/`503`/`504`) is a request that never reached the backend, whatever the message says.
+   That status is read from `err.status` or, where a library hands on the whole `fetch` Response
+   instead of lifting the status out of it, from `err.response.status` — which is how `keycloak-js`
+   reports every rejected response, all of them worded `Server responded with an invalid status.`
+
    A chunk that fails to load counts as one of these: a lazily loaded part of the app not arriving
    means either that the device is offline or that a deployment replaced the chunk the running app
    asks for, and the error says neither which of the two it was nor anything actionable about the

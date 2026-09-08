@@ -71,7 +71,16 @@ export function isConnectivityError(err: any): boolean {
   if (names.some((name) => CONNECTIVITY_ERROR_NAMES.includes(name))) {
     return true;
   }
-  if (CONNECTIVITY_ERROR_STATUS.includes(err?.status)) return true;
+  // `err.response.status` as well as `err.status`: a library that wraps `fetch`
+  // may hand on the whole `Response` instead of lifting the status out of it
+  // (keycloak-js does, see `NetworkError`), and a gateway failure is the same
+  // problem whichever shape it arrives in
+  if (
+    CONNECTIVITY_ERROR_STATUS.includes(err?.status) ||
+    CONNECTIVITY_ERROR_STATUS.includes(err?.response?.status)
+  ) {
+    return true;
+  }
 
   const message = `${err?.message ?? ""} ${err?.reason ?? ""} ${err?.toString?.() ?? ""}`;
   return isConnectivityErrorMessage(message);

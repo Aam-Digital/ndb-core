@@ -691,6 +691,56 @@ describe("LoggingService", () => {
       });
     });
 
+    describe("a status the library nested inside a Response", () => {
+      it('should report it, so "invalid status" says which status', () => {
+        const thrown = Object.assign(
+          new Error("Server responded with an invalid status."),
+          { response: { status: 403, statusText: "Forbidden" } },
+        );
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "Server responded with an invalid status.",
+                  stacktrace: { frames: [{ filename: "keycloak.js" }] },
+                },
+              ],
+            },
+          } as any,
+          { originalException: thrown },
+        );
+
+        expect(event.extra.status).toBe(403);
+      });
+
+      it("should keep an explicit status over the nested one", () => {
+        const thrown = Object.assign(new Error("failed"), {
+          status: 401,
+          response: { status: 403 },
+        });
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "failed",
+                  stacktrace: { frames: [{ filename: "app.ts" }] },
+                },
+              ],
+            },
+          } as any,
+          { originalException: thrown },
+        );
+
+        expect(event.extra.status).toBe(401);
+      });
+    });
+
     describe("network errors", () => {
       beforeEach(() => vi.stubGlobal("navigator", { onLine: true }));
       afterEach(() => vi.unstubAllGlobals());

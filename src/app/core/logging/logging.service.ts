@@ -844,6 +844,17 @@ function enrichSentryEvent(
         extras[key] = (err as any)[key];
       }
     }
+    // a library may pass on the whole `fetch` Response rather than the status
+    // (keycloak-js does), which otherwise leaves a report saying only that the
+    // status was invalid and never which one it was
+    if (extras.status === undefined) {
+      const status = (err as { response?: { status?: unknown } }).response
+        ?.status;
+      if (typeof status === "number") {
+        extras.status = status;
+      }
+    }
+
     if (Object.keys(extras).length > 0) {
       event.extra = { ...event.extra, ...extras };
     }
