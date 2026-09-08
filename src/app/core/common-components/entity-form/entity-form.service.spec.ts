@@ -62,10 +62,6 @@ describe("EntityFormService", () => {
     destroyRef = new MockDestroyRef();
   }));
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should not save invalid entities", async () => {
     const entity = new Entity("initialId");
     const copyEntity = entity.copy();

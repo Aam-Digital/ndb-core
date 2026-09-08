@@ -44,10 +44,6 @@ describe("ImportantNotesDashboardComponent", () => {
     return fixture.whenStable();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("shows notes that have a high warning level", async () => {
     vi.useFakeTimers();
     try {

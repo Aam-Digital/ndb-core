@@ -57,10 +57,6 @@ describe("SyncedPouchDatabase", () => {
     await vi.advanceTimersByTimeAsync(service.SYNC_INTERVAL + 500);
   }
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   /**
    * Create a mock sync handler that mimics PouchDB's sync return value
    * (a thenable event emitter).

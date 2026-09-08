@@ -24,10 +24,6 @@ describe("PrimaryActionService", () => {
     service = TestBed.inject(PrimaryActionService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return config from ConfigService if available", () => {
     const mockConfig: PrimaryActionConfig = {
       icon: "plus",

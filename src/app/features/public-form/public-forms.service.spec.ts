@@ -90,10 +90,6 @@ describe("PublicFormsService", () => {
     service = TestBed.inject(PublicFormsService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should copy base URL when no entity is provided", async () => {
     const config = new PublicFormConfig();
     config.route = "test-form";

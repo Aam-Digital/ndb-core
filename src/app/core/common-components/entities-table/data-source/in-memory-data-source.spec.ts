@@ -22,10 +22,6 @@ describe("InMemoryDataSource", () => {
     TestBed.tick();
   });
 
-  it("should create", () => {
-    expect(dataSource).toBeTruthy();
-  });
-
   it("should set isLoading while (re)loading records and clear it once done", async () => {
     // a fresh data source so we control the load timing
     const ds = TestBed.runInInjectionContext(

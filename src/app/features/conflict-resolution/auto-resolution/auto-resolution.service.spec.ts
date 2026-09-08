@@ -30,10 +30,6 @@ describe("AutoResolutionService", () => {
     service = TestBed.inject<AutoResolutionService>(AutoResolutionService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should suggest auto delete conflict if a strategy applies", () => {
     const testDoc = { _id: "abc", _rev: "rev-1a", value: 1 };
     const testConflictDoc = { _id: "abc", _rev: "rev-1b", value: 2 };

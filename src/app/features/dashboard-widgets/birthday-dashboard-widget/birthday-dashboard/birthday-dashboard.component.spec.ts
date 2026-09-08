@@ -51,10 +51,6 @@ describe("BirthdayDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should expose exactly what the index service returns, in the returned order", async () => {
     vi.useFakeTimers();
     try {

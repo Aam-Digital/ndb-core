@@ -39,10 +39,6 @@ describe("FaDynamicIconComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show the correct icon when it is in the map", () => {
     fixture.componentRef.setInput("icon", "file-text");
     expect(component._icon()).toEqual(faFileAlt);

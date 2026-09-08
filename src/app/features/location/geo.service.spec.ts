@@ -86,10 +86,6 @@ describe("GeoService", () => {
     configUpdates.next(undefined);
   }
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should not send a country filter when none is configured", () => {
     service.lookup("someSearch").subscribe();
 

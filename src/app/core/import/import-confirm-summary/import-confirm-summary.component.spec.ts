@@ -8,6 +8,7 @@ import { ImportMetadata } from "../import-metadata";
 import { of } from "rxjs";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("ImportConfirmSummaryComponent", () => {
   let component: ImportConfirmSummaryComponent;
@@ -27,9 +28,7 @@ describe("ImportConfirmSummaryComponent", () => {
       open: vi.fn(),
     };
     mockSnackbar.open.mockReturnValue({ onAction: () => of(null) } as any);
-    mockDialogRef = {
-      close: vi.fn(),
-    };
+    mockDialogRef = mockMatDialogRef();
     mockConfirmationService = {
       getConfirmation: vi.fn(),
     };

@@ -81,10 +81,6 @@ describe("KeycloakAuthService", () => {
     service["keycloakReady"] = Promise.resolve(true);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return user object after successful login check", () => {
     return expect(service.login()).resolves.toEqual({
       name: "test",

@@ -36,10 +36,6 @@ describe("EditReportModeComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("shows the SQL feature warning only when SQL mode is selected", () => {
     const warning = () =>
       fixture.nativeElement.querySelector("app-feature-disabled-info");
