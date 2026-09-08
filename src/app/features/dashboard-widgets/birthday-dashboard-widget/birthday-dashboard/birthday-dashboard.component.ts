@@ -18,6 +18,7 @@ import {
   EntityPropertyMap,
   EntityWithBirthday,
 } from "./birthday-dashboard-index.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 interface BirthdayDashboardConfig {
   entities: EntityPropertyMap;
@@ -40,7 +41,7 @@ interface BirthdayDashboardConfig {
 export class BirthdayDashboardComponent {
   private readonly birthdayIndex = inject(BirthdayDashboardIndexService);
   private readonly entityMapper = inject(EntityMapperService);
-  entries = signal<EntityWithBirthday[]>([]);
+  entries = signal<EntityWithBirthday[] | undefined>(undefined);
 
   static getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";
@@ -56,10 +57,10 @@ export class BirthdayDashboardComponent {
   entities = input<EntityPropertyMap>({ ["Child"]: "dateOfBirth" });
 
   /**
-   * Birthdays that are less than "threshold" days away are shown.
-   * Default 32
+   * Birthdays that are less or equal than "threshold" days away are shown.
+   * Default 31
    */
-  threshold = input(32);
+  threshold = input(31);
 
   subtitle = input<string>(
     $localize`:dashboard widget subtitle:Upcoming Birthdays`,
@@ -72,9 +73,6 @@ export class BirthdayDashboardComponent {
       const threshold = this.threshold();
       let isCurrent = true;
 
-      // Built once per entities()/threshold() change only - not re-run by reload()
-      // below, since PUTting the design doc isn't free and the index structure only
-      // depends on entityConfig, not on entity data.
       const indexBuilt = this.birthdayIndex.buildBirthdayIndex(entityConfig);
 
       const reload = () =>
@@ -86,7 +84,10 @@ export class BirthdayDashboardComponent {
             if (isCurrent) {
               this.entries.set(res);
             }
-          });
+          })
+          .catch((err) =>
+            Logging.error("Failed to load upcoming birthdays", err),
+          );
 
       // initial load - covers the case where matching entities already exist on mount.
       reload();

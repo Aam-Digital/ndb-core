@@ -22,7 +22,7 @@ describe("BirthdayDashboardSettingsComponent", () => {
     fixture.componentRef.setInput(
       "formControl",
       new FormControl({
-        threshold: 32,
+        threshold: 31,
         entityType: "Child",
         birthdayProperty: "dateOfBirth",
       }),

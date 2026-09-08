@@ -4,7 +4,6 @@ import {
   EntityWithBirthday,
   getNextOccurrence,
 } from "./birthday-dashboard-index.service";
-import { BirthdayDashboardComponent } from "#src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component";
 import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
@@ -36,7 +35,7 @@ describe("BirthdayDashboardIndexService", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BirthdayDashboardComponent, DatabaseTestingModule],
+      imports: [DatabaseTestingModule],
     }).compileComponents();
 
     entityMapper = TestBed.inject(EntityMapperService);
