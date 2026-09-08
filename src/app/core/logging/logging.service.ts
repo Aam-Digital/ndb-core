@@ -612,13 +612,18 @@ function groupSentryEvent(
 function rewrappedCauseGroupedError(
   values: Sentry.Exception[],
 ): Sentry.Exception | undefined {
-  const thrownValue = fingerprintKey(values[values.length - 1].value);
+  // fingerprintKey already lower-cased and stripped the colon, leaving at most
+  // this leading "error " from the `Error: <cause>` shape `.toString()` gives
+  const thrownValue = fingerprintKey(values[values.length - 1].value).replace(
+    /^error /,
+    "",
+  );
   return values
     .slice(0, -1)
     .find(
       (cause) =>
         CAUSE_GROUPED_ERROR_TYPES.includes(cause.type ?? "") &&
-        thrownValue.includes(fingerprintKey(cause.value)),
+        thrownValue === fingerprintKey(cause.value),
     );
 }
 

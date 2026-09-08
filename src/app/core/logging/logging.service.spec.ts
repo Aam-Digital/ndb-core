@@ -584,6 +584,25 @@ describe("LoggingService", () => {
         expect(configLoad.fingerprint[0]).toBe("ConfigLoadError");
       });
 
+      it("should not treat a wrapper that merely mentions the cause's message as repeating it", () => {
+        const event = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "unauthorized" },
+            {
+              type: "Error",
+              value: "Failed to load configuration: unauthorized",
+            },
+          ),
+          {},
+        );
+
+        const causeAlone = processSentryEvent(deniedEvent("unauthorized"), {});
+
+        // the wrapper's message contains the cause's as a substring without
+        // repeating it, so it must not be merged into the cause's own issue
+        expect(event.fingerprint).not.toEqual(causeAlone.fingerprint);
+      });
+
       it('should report an exception without a type under a generic one, which Sentry lists as "<unknown>"', () => {
         const event = processSentryEvent(
           {
