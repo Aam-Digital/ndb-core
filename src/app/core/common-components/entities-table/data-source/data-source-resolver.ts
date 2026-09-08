@@ -25,15 +25,23 @@ function getDataSource(
   dataSource?: DataSourceType,
   loaderMethod?: LoaderMethod,
 ) {
-  if (environment.session_type === SessionType.online) {
-    if (!dataSource && loaderMethod) {
-      // special loaders are not supported by the paginated data source
-      return InMemoryDataSource;
-    }
-    return dataSource && availableDataSources[dataSource]
-      ? availableDataSources[dataSource]
-      : availableDataSources.paginated;
-  } else {
+  if (environment.session_type !== SessionType.online) {
+    // server-side pagination does not work against the local database
     return InMemoryDataSource;
   }
+
+  if (dataSource && availableDataSources[dataSource]) {
+    // an explicit config for this list takes precedence over any default
+    return availableDataSources[dataSource];
+  }
+
+  if (loaderMethod) {
+    // special loaders are not supported by the paginated data source
+    return InMemoryDataSource;
+  }
+
+  return (
+    availableDataSources[environment.default_data_source] ??
+    availableDataSources.paginated
+  );
 }

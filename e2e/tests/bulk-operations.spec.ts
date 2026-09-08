@@ -141,6 +141,56 @@ test("Bulk-merge two records combines them into one", async ({ page }) => {
   await expect(page.getByRole("cell", { name: CHILD_A_NAME })).toBeVisible();
 });
 
+const ARCHIVE_CHILD_A_NAME = "<ARCHIVE CHILD A>";
+const ARCHIVE_CHILD_B_NAME = "<ARCHIVE CHILD B>";
+
+test("Bulk-archive selected records hides them from the default list", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const childA = generateChild({ name: ARCHIVE_CHILD_A_NAME });
+  const childB = generateChild({ name: ARCHIVE_CHILD_B_NAME });
+
+  await loadApp(page, [...users, childA, childB]);
+
+  await page.getByRole("navigation").getByText("Children").click();
+
+  // Enter bulk-actions mode directly from the list, without ever opening any
+  // entity's details view first — "Archive" must be available as a bulk action.
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
+
+  // Select both target rows.
+  await page
+    .locator("app-entities-table tbody tr")
+    .filter({ hasText: ARCHIVE_CHILD_A_NAME })
+    .click();
+  await page
+    .locator("app-entities-table tbody tr")
+    .filter({ hasText: ARCHIVE_CHILD_B_NAME })
+    .click();
+
+  // Open the bulk action dropdown and pick "Archive".
+  await page
+    .locator("app-entity-bulk-actions")
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: "Archive" }).click();
+
+  // A snackbar confirms the bulk archive.
+  await expect(page.getByText(/archived/)).toBeVisible();
+  await argosScreenshot(page, "bulk-archive-confirmation");
+
+  // Both records are hidden from the default (active-only) list.
+  await expect(
+    page.getByRole("cell", { name: ARCHIVE_CHILD_A_NAME }),
+  ).not.toBeVisible({ timeout: 10_000 });
+  await expect(
+    page.getByRole("cell", { name: ARCHIVE_CHILD_B_NAME }),
+  ).not.toBeVisible();
+});
+
 // Center enum values from configurable-enums.json (id: label)
 const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
 const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };

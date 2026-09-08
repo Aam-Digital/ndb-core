@@ -10,6 +10,7 @@ import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
+import { Logging } from "../../logging/logging.service";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -418,8 +419,28 @@ describe("SyncedPouchDatabase", () => {
 
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
+    let warnSpy: Mock;
+
+    /** the reported ids that the server sends along the `_changes` response */
+    function mockLostPermissions(ids: string[]) {
+      vi.spyOn(
+        service["remoteDatabase"],
+        "collectAndClearLostPermissions",
+      ).mockReturnValue(ids);
+    }
+
+    function warnedMessages(): string[] {
+      return warnSpy.mock.calls.map(([message]) => message);
+    }
 
     beforeEach(() => {
+      warnSpy = vi
+        .spyOn(Logging, "warn")
+        .mockImplementation(() => {}) as unknown as Mock;
+      // spying on an already-spied method returns the existing mock,
+      // which would still hold the calls recorded by the previous test
+      warnSpy.mockClear();
+
       const mockLocalDb = {
         name: "unit-test-db",
         sync: vi.fn().mockReturnValue(mockSyncHandler()),
@@ -434,10 +455,7 @@ describe("SyncedPouchDatabase", () => {
     });
 
     it("should purge local docs reported in lostPermissions after sync", async () => {
-      vi.spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).mockReturnValue(["Child:1", "School:2"]);
+      mockLostPermissions(["Child:1", "School:2"]);
 
       await service.sync();
 
@@ -446,10 +464,7 @@ describe("SyncedPouchDatabase", () => {
     });
 
     it("should not purge anything if no permissions were lost", async () => {
-      vi.spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).mockReturnValue([]);
+      mockLostPermissions([]);
 
       await service.sync();
 
@@ -458,10 +473,7 @@ describe("SyncedPouchDatabase", () => {
 
     it("should skip gracefully if purge returns false (doc not found locally)", async () => {
       purgeSpy.mockResolvedValue(false);
-      vi.spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).mockReturnValue(["Child:missing"]);
+      mockLostPermissions(["Child:missing"]);
 
       await expect(service.sync()).resolves.not.toThrow();
     });
@@ -472,15 +484,56 @@ describe("SyncedPouchDatabase", () => {
           ? Promise.reject(new Error("unexpected"))
           : Promise.resolve(true),
       );
-      vi.spyOn(
-        service["remoteDatabase"],
-        "collectAndClearLostPermissions",
-      ).mockReturnValue(["Child:1", "School:2"]);
+      mockLostPermissions(["Child:1", "School:2"]);
 
       await service.sync();
 
       expect(purgeSpy).toHaveBeenCalledWith("Child:1");
       expect(purgeSpy).toHaveBeenCalledWith("School:2");
+    });
+
+    it("should not warn if none of the reported docs exist locally", async () => {
+      // the server reports every doc the user may not read, not only docs this
+      // client actually holds - so this is the normal case and no data is lost
+      purgeSpy.mockResolvedValue(false);
+      mockLostPermissions(["Child:1", "School:2", "Note:3"]);
+
+      await service.sync();
+
+      expect(warnedMessages()).toEqual([]);
+    });
+
+    it("should warn with the number of docs actually purged, not the number reported", async () => {
+      purgeSpy.mockImplementation(async (id: string) => id === "Child:1");
+      mockLostPermissions(["Child:1", "School:2", "Note:3"]);
+
+      await service.sync();
+
+      expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+        expect.stringContaining("purged local docs"),
+        expect.objectContaining({
+          purged: 1,
+          notPresentLocally: 2,
+          failed: 0,
+          reportedByServer: 3,
+          sampleIds: ["Child:1"],
+        }),
+      );
+    });
+
+    it("should report failed purges as a single, separate warning", async () => {
+      // e.g. the legacy "idb" adapter, which does not implement purge at all
+      const error = new Error("Purge is not implemented in the idb adapter.");
+      purgeSpy.mockRejectedValue(error);
+      mockLostPermissions(["Child:1", "School:2", "Note:3"]);
+
+      await service.sync();
+
+      expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+        expect.stringContaining("failed to purge local docs"),
+        expect.objectContaining({ purged: 0, failed: 3, reportedByServer: 3 }),
+        error,
+      );
     });
 
     it("should skip purge and lost-permission tracking on first sync", async () => {

@@ -170,15 +170,13 @@ export class RelatedEntitiesComponent<E extends Entity> {
     });
 
     effect(() => {
+      // each loader decides for itself how to handle an ambiguous relation property
       const config: LoadRecordConfig<E> = {
         entityCtr: this.entityCtr(),
         forEntity: this.entity(),
+        relationProperty: this.relationProperty(),
+        loaderMethod: this.loaderMethod(),
       };
-      if (!Array.isArray(this.relationProperty())) {
-        // Only when a single relation property is defined/exists, a loader method can be used
-        config.relationProperty = this.relationProperty() as keyof Entity;
-        config.loaderMethod = this.loaderMethod();
-      }
       this.recordsDataSource().loadRecordConfig.set(config);
     });
   }

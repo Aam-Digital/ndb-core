@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { SetupService } from "./setup.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { provideHttpClient } from "@angular/common/http";
+import { provideHttpClient, withXhr } from "@angular/common/http";
 import { Config } from "../config/config";
 import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
@@ -38,7 +38,7 @@ describe("SetupService", () => {
       imports: [CoreTestingModule],
       providers: [
         LoginStateSubject,
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         {
           provide: DemoDataInitializerService,

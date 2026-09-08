@@ -117,9 +117,15 @@ export class FilterComponent<T extends Entity = Entity> {
 
   constructor() {
     effect(() => {
-      const selectionsWithUrlParams = this.loadUrlParams(
-        this.filterSelections(),
-      );
+      const selections = this.filterSelections();
+      // Only sync state from the URL for freshly generated selections
+      // (initial load or data change). During user interaction the URL
+      // trails the state and reading it back would clear the selections
+      // of other filters (e.g. their configured defaults).
+      const selectionsWithUrlParams =
+        selections === this.generatedFilterSelections.value()
+          ? this.loadUrlParams(selections)
+          : selections;
       this.applyFilterSelections(selectionsWithUrlParams);
     });
 

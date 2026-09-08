@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
+    "ignoreDeprecations": "6.0",
     "strict": false,
     "noImplicitOverride": true,
     "skipLibCheck": true,

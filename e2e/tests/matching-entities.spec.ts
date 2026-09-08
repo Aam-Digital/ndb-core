@@ -12,10 +12,21 @@ test("Matching entities widget renders and supports selecting a candidate", asyn
   const child = generateChild({ name: CHILD_NAME });
 
   // Create two schools so the right-side table has selectable rows.
+  // Both get near-identical coordinates so the map groups them into a cluster.
   const school1 = createEntityOfType("School", "match-school-1");
   school1["name"] = "Match Test School One";
+  school1["locationField"] = {
+    lat: 52.4791,
+    lon: 13.432,
+    display_name: "Match Test Street 1",
+  };
   const school2 = createEntityOfType("School", "match-school-2");
   school2["name"] = "Match Test School Two";
+  school2["locationField"] = {
+    lat: 52.4792,
+    lon: 13.4321,
+    display_name: "Match Test Street 2",
+  };
 
   await loadApp(page, [...users, child, school1, school2]);
 
@@ -54,4 +65,15 @@ test("Matching entities widget renders and supports selecting a candidate", asyn
 
   // Once a candidate is picked, the create-match action enables.
   await expect(createMatchButton).toBeEnabled();
+
+  // The matching config includes location columns, so the widget also renders
+  // the map. Cluster icons are created by the leaflet.markercluster
+  // side-effect plugin, which patches leaflet's live exports object. This
+  // breaks silently if the plugin's additions are not visible on the imported
+  // leaflet object (the map then throws during initialization and renders no
+  // markers), so assert the plugin-generated cluster element itself.
+  await expect(page.locator(".leaflet-container")).toBeVisible();
+  await expect(page.locator(".marker-cluster").first()).toBeVisible({
+    timeout: 10_000,
+  });
 });

@@ -41,6 +41,6 @@ export class UnknownTotalPaginatorIntl extends MatPaginatorIntl {
         : startIndex + pageSize;
     return $localize`:@@paginator.rangeOfUnknownTotalLabel:${
       startIndex + 1
-    } - ${endIndex} of ${endIndex}+`;
+    } - ${endIndex} of ${length - 1}+`;
   };
 }

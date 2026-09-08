@@ -4,6 +4,8 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Subject } from "rxjs";
 
 describe("InMemoryDataSource", () => {
   let dataSource: InMemoryDataSource<TestEntity>;
@@ -64,6 +66,54 @@ describe("InMemoryDataSource", () => {
     TestBed.tick();
 
     expect(dataSource.data).toEqual([]);
+  });
+
+  describe("when loading records fails", () => {
+    let snackBarOpen: ReturnType<typeof vi.fn>;
+    let snackBarDismiss: ReturnType<typeof vi.fn>;
+    let retryAction: Subject<void>;
+
+    beforeEach(() => {
+      retryAction = new Subject<void>();
+      snackBarDismiss = vi.fn();
+      snackBarOpen = vi.fn().mockReturnValue({
+        onAction: () => retryAction,
+        dismiss: snackBarDismiss,
+      });
+      vi.spyOn(TestBed.inject(MatSnackBar), "open").mockImplementation(
+        snackBarOpen as any,
+      );
+    });
+
+    it("shows a toast with a retry action that reloads the records", async () => {
+      const loadType = vi
+        .spyOn(entityMapper, "loadType")
+        .mockRejectedValue(new Error("Failed to fetch from DB"));
+
+      const ds = TestBed.runInInjectionContext(
+        () => new InMemoryDataSource<Entity>(),
+      );
+      ds.loadRecordConfig.set({ entityCtr: TestEntity });
+      TestBed.tick();
+      await new Promise((resolve) => setTimeout(resolve));
+      TestBed.tick();
+
+      expect(snackBarOpen).toHaveBeenCalled();
+      expect(ds.isLoading()).toBe(false);
+
+      // the retry succeeds this time
+      loadType.mockResolvedValue([]);
+      const callsBeforeRetry = loadType.mock.calls.length;
+      retryAction.next();
+
+      expect(ds.isLoading()).toBe(true);
+      TestBed.tick();
+      await new Promise((resolve) => setTimeout(resolve));
+      TestBed.tick();
+
+      expect(loadType.mock.calls.length).toBeGreaterThan(callsBeforeRetry);
+      expect(snackBarDismiss).toHaveBeenCalled();
+    });
   });
 
   describe("getAllData", () => {

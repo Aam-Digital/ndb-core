@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { DynamicComponentDirective } from "./dynamic-component.directive";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-test-signal-input",
@@ -117,6 +118,27 @@ describe("DynamicComponentDirective", () => {
     expect(setInputSpy).toHaveBeenCalledWith("signalInput", 42);
     expect(typeof componentRef.instance.signalInput).toBe("function");
     expect(componentRef.instance.signalInput).not.toBe(42);
+  });
+
+  it("should log a failed component load with a static message and the error as cause", async () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    const loadError = new Error("Importing a module script failed.");
+    directive.appDynamicComponent = {
+      component: "EditAge",
+      config: { id: "some-entity-id" },
+    };
+    mockRegistry.get.mockReturnValue(() => Promise.reject(loadError));
+
+    await directive.ngOnChanges();
+
+    // the message must not interpolate the component or id, otherwise every
+    // component name opens its own issue in remote monitoring
+    expect(errorSpy).toHaveBeenCalledWith(
+      "Failed to load dynamic component",
+      loadError,
+      { component: "EditAge", id: "some-entity-id" },
+    );
+    expect(mockContainer.createComponent).not.toHaveBeenCalled();
   });
 
   it("should skip component creation if destroyed before async load resolves", async () => {

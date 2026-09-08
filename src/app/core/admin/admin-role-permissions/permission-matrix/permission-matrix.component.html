@@ -1,0 +1,286 @@
+@if (model().unsupportedRules.length > 0) {
+  <app-hint-box i18n>
+    {model().unsupportedRules.length, plural,
+      one {1 advanced rule is}
+      other {{{ model().unsupportedRules.length }} advanced rules are}
+    }
+    not shown in this matrix and only editable via JSON.
+  </app-hint-box>
+}
+
+<div class="table-container">
+  <div class="table-scroll">
+    <table mat-table [dataSource]="viewRows()" class="full-width table">
+      <ng-container matColumnDef="subject">
+        <th mat-header-cell *matHeaderCellDef class="subject-col" i18n>
+          Record type
+        </th>
+        <td mat-cell *matCellDef="let v" class="subject-col">
+          @if (v.isDefaultRow) {
+            <div class="flex-row align-center gap-regular">
+              <div class="wildcard-badge">
+                <fa-icon [icon]="defaultRole.icon"></fa-icon>
+              </div>
+              <div>
+                <div>{{ v.label }}</div>
+                <div class="text-secondary wildcard-subtitle">
+                  {{ defaultRole.appliesTo }}
+                </div>
+              </div>
+            </div>
+          } @else if (v.row.subject === "all") {
+            <div class="flex-row align-center gap-regular">
+              <div class="wildcard-badge">
+                <fa-icon icon="asterisk"></fa-icon>
+              </div>
+              <div>
+                <div>{{ v.label }}</div>
+                <div class="text-secondary wildcard-subtitle" i18n>
+                  applies to every record type, also to types added later
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div
+              class="flex-row align-center gap-small"
+              [class.text-secondary]="v.isInternal"
+            >
+              @if (v.icon) {
+                <app-fa-dynamic-icon [icon]="v.icon"></app-fa-dynamic-icon>
+              }
+              <span>{{ v.label }}</span>
+              @if (v.isInternal) {
+                <fa-icon
+                  icon="lock"
+                  class="internal-type-icon"
+                  i18n-matTooltip
+                  matTooltip="Internal system type, not meant for regular customization"
+                ></fa-icon>
+              }
+            </div>
+          }
+        </td>
+      </ng-container>
+
+      @for (col of crudColumns; track col.key) {
+        <ng-container [matColumnDef]="col.key">
+          <th mat-header-cell *matHeaderCellDef class="action-col">
+            {{ col.label }}
+          </th>
+          <td mat-cell *matCellDef="let v" class="action-col">
+            <div class="cell-stack">
+              <!-- the tooltip sits on the checkbox itself (not a wrapper), so
+                   "disabledInteractive" keeps it hoverable and focusable while
+                   disabled; the hidden description makes the same reason
+                   available to screen readers -->
+              <mat-checkbox
+                [checked]="v.actionStates[col.key].allowed"
+                [disabled]="!editable() || !v.actionStates[col.key].editable"
+                [disabledInteractive]="!!v.actionStates[col.key].lockTooltip"
+                [matTooltip]="v.actionStates[col.key].lockTooltip"
+                [matTooltipDisabled]="!v.actionStates[col.key].lockTooltip"
+                [attr.aria-label]="col.label + ' – ' + v.label"
+                [aria-describedby]="
+                  v.actionStates[col.key].lockDescriptionId || null
+                "
+                (change)="setCellAllowed(v.modelIndex, col.key, $event.checked)"
+              ></mat-checkbox>
+              @if (v.actionStates[col.key].lockTooltip) {
+                <span
+                  class="visually-hidden"
+                  [id]="v.actionStates[col.key].lockDescriptionId"
+                  >{{ v.actionStates[col.key].lockTooltip }}</span
+                >
+              }
+
+              @if (v.actionStates[col.key].hasCondition) {
+                <!-- condition chip: editable only for subjects whose conditions
+                     can be edited visually, read-only otherwise -->
+                <span
+                  class="cell-condition-chip"
+                  [class.readonly]="
+                    !(
+                      editable() &&
+                      v.conditionsEditable &&
+                      v.actionStates[col.key].editable
+                    )
+                  "
+                  [attr.role]="
+                    editable() &&
+                    v.conditionsEditable &&
+                    v.actionStates[col.key].editable
+                      ? 'button'
+                      : null
+                  "
+                  [attr.tabindex]="
+                    editable() &&
+                    v.conditionsEditable &&
+                    v.actionStates[col.key].editable
+                      ? 0
+                      : null
+                  "
+                  [matTooltip]="v.actionStates[col.key].summary"
+                  (click)="
+                    editable() &&
+                      v.conditionsEditable &&
+                      openConditionDialog(v.modelIndex, col.key)
+                  "
+                  (keydown.enter)="
+                    editable() &&
+                      v.conditionsEditable &&
+                      openConditionDialog(v.modelIndex, col.key)
+                  "
+                  (keydown.space)="
+                    $event.preventDefault();
+                    editable() &&
+                      v.conditionsEditable &&
+                      openConditionDialog(v.modelIndex, col.key)
+                  "
+                >
+                  <fa-icon icon="filter"></fa-icon>
+                  <span class="cell-condition-text">{{
+                    v.actionStates[col.key].summary
+                  }}</span>
+                  @if (editable()) {
+                    <fa-icon
+                      icon="xmark"
+                      class="cell-condition-remove"
+                      role="button"
+                      tabindex="0"
+                      i18n-matTooltip
+                      matTooltip="Remove condition"
+                      (click)="
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
+                      "
+                      (keydown.enter)="
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
+                      "
+                      (keydown.space)="
+                        $event.preventDefault();
+                        $event.stopPropagation();
+                        removeCondition(v.modelIndex, col.key)
+                      "
+                    ></fa-icon>
+                  }
+                </span>
+              } @else if (
+                editable() &&
+                v.actionStates[col.key].ownAllowed &&
+                v.actionStates[col.key].editable &&
+                v.conditionsEditable
+              ) {
+                <button
+                  class="cell-condition-link"
+                  (click)="openConditionDialog(v.modelIndex, col.key)"
+                >
+                  <fa-icon icon="filter"></fa-icon>
+                  <span i18n>only where&hellip;</span>
+                </button>
+              }
+            </div>
+          </td>
+        </ng-container>
+      }
+
+      <ng-container matColumnDef="manage">
+        <th mat-header-cell *matHeaderCellDef class="action-col manage-col">
+          {{ manageColLabel }}
+        </th>
+        <td mat-cell *matCellDef="let v" class="action-col manage-col">
+          <mat-checkbox
+            [checked]="v.manageState.allowed"
+            [disabled]="!editable() || !v.manageState.editable"
+            [disabledInteractive]="!!v.manageState.lockTooltip"
+            [matTooltip]="v.manageState.lockTooltip"
+            [matTooltipDisabled]="!v.manageState.lockTooltip"
+            [attr.aria-label]="manageColLabel + ' – ' + v.label"
+            [aria-describedby]="v.manageState.lockDescriptionId || null"
+            (change)="setManage(v.modelIndex, $event.checked)"
+          ></mat-checkbox>
+          @if (v.manageState.lockTooltip) {
+            <span
+              class="visually-hidden"
+              [id]="v.manageState.lockDescriptionId"
+              >{{ v.manageState.lockTooltip }}</span
+            >
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rowActions">
+        <th mat-header-cell *matHeaderCellDef class="row-actions-col"></th>
+        <td mat-cell *matCellDef="let v" class="row-actions-col">
+          @if (editable() && !v.isDefaultRow) {
+            <button
+              mat-icon-button
+              (click)="removeRow(v.modelIndex)"
+              i18n-matTooltip
+              matTooltip="Remove all permissions for this record type"
+            >
+              <fa-icon icon="trash"></fa-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.wildcard-row]="row.row.subject === 'all'"
+        [class.default-row]="row.isDefaultRow"
+      ></tr>
+    </table>
+  </div>
+
+  @if (viewRows().length === 0) {
+    <div class="empty-state text-secondary padding-regular">
+      @if (editable()) {
+        <span i18n>No permissions yet. Add one below.</span>
+      } @else {
+        <!-- what such a role still inherits is stated in the note below,
+             which is shown whether or not the matrix has any rows -->
+        <span i18n>No permissions defined for this role yet.</span>
+      }
+    </div>
+  }
+
+  @if (editable()) {
+    <div class="flex-row align-center gap-regular padding-regular">
+      @if (!addPickerOpen()) {
+        <button mat-button color="accent" (click)="addPickerOpen.set(true)">
+          <fa-icon icon="plus" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Add Permission</span>
+        </button>
+      } @else {
+        @if (addSelectVisible()) {
+          <mat-form-field class="add-permission-field">
+            <mat-label i18n>Add permission for record type</mat-label>
+            <app-entity-type-select
+              [value]="undefined"
+              [showInternalTypes]="true"
+              [hiddenTypes]="existingSubjects()"
+              (valueChange)="addSubject($event)"
+            ></app-entity-type-select>
+          </mat-form-field>
+        }
+
+        @if (!hasAllSubject()) {
+          <button mat-stroked-button (click)="addSubject('all')">
+            <fa-icon icon="asterisk" class="standard-icon-with-text"></fa-icon>
+            <span i18n>All record types (wildcard)</span>
+          </button>
+        }
+      }
+    </div>
+  }
+
+  @if (inheritsFromDefaultRole()) {
+    <div class="table-footer-note text-secondary" i18n>
+      Logged-in users also always have the permissions defined in the
+      <a [routerLink]="defaultRoleLink">{{ defaultRole.key }}</a> role.
+    </div>
+  }
+</div>

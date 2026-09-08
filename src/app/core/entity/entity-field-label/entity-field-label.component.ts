@@ -75,11 +75,15 @@ export class EntityFieldLabelComponent {
 
     const entityType = this.entityType();
     if (!entityType) return undefined;
+
+    const field = this.field();
+    if (!field) return undefined;
+
     const customFieldConfig = this.additionalFields().find(
-      (col) => toFormFieldConfig(col).id === toFormFieldConfig(this.field()).id,
+      (col) => toFormFieldConfig(col).id === toFormFieldConfig(field).id,
     );
     return this.entityFormService.extendFormFieldConfig(
-      customFieldConfig ?? this.field(),
+      customFieldConfig ?? field,
       entityType,
     );
   });

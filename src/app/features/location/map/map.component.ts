@@ -13,7 +13,11 @@ import {
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-import * as L from "leaflet";
+// default import, not `import * as L`: leaflet.markercluster is a side-effect plugin that adds
+// markerClusterGroup to leaflet's live CommonJS exports object. The esbuild application builder
+// synthesises a *copied* namespace object for `import * as`, so the plugin's additions would not
+// be visible on it and L.markerClusterGroup would be undefined at runtime.
+import L from "leaflet";
 import "leaflet.markercluster";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";

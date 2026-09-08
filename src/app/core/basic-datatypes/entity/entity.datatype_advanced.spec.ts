@@ -3,7 +3,6 @@ import {
   mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ImportProcessingContext } from "../../import/import-processing-context";
@@ -27,16 +26,7 @@ describe("Schema data type: entity (advanced functionality)", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [
-        EntityDatatype,
-        ...mockEntityMapperProvider([]),
-        {
-          provide: EntityActionsService,
-          useValue: {
-            anonymize: vi.fn(),
-          },
-        },
-      ],
+      providers: [EntityDatatype, ...mockEntityMapperProvider([])],
     });
     dataType = TestBed.inject(EntityDatatype);
 
@@ -88,28 +78,28 @@ describe("Schema data type: entity (advanced functionality)", () => {
     ).resolves.toBe(undefined);
   });
 
-  it("should anonymize entity recursively", async () => {
+  it("should remove the reference without anonymizing the referenced entity", async () => {
     const referencedEntity = new TestEntity("ref-1");
     referencedEntity.name = "test";
-
     await entityMapper.saveAll([referencedEntity]);
     vi.spyOn(entityMapper, "save");
-    const removeService = TestBed.inject(EntityActionsService);
-
-    const testValue = referencedEntity.getId();
-    const testSchemaField: EntitySchemaField = {
-      additional: TestEntity.ENTITY_TYPE,
-      dataType: "entity",
-    };
 
     const anonymizedValue = await dataType.anonymize(
-      testValue,
-      testSchemaField,
+      referencedEntity.getId(),
+      { additional: TestEntity.ENTITY_TYPE, dataType: "entity" },
       null,
     );
 
-    expect(anonymizedValue).toEqual(testValue);
-    expect(removeService.anonymize).toHaveBeenCalledWith(referencedEntity);
+    expect(anonymizedValue).toBeUndefined();
+    // the mock entity mapper hands back the same instance it was given,
+    // so assert on the actual field values rather than object identity
+    const storedEntity = entityMapper.get(
+      TestEntity.ENTITY_TYPE,
+      referencedEntity.getId(),
+    ) as TestEntity;
+    expect(storedEntity.name).toBe("test");
+    expect(storedEntity.anonymized).toBeUndefined();
+    expect(entityMapper.save).not.toHaveBeenCalled();
   });
 
   // Orthogonal: the `additional` config accepts both the legacy plain-string form

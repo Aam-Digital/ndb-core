@@ -75,6 +75,7 @@ describe("NotificationSettingComponent", () => {
   const initializeComponent = async () => {
     fixture.detectChanges();
     await fixture.whenStable();
+    TestBed.tick();
   };
 
   beforeEach(async () => {

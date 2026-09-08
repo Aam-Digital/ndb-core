@@ -38,9 +38,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   override loaderMethod = input<LoaderMethod>(
     LoaderMethod.NotesRelatedToEntity,
   );
-  /** set this to make sure that loader method is used (it will not be used if multiple relation properties are found) */
-  override property = input("children");
-
   protected override getDefaultColumns(): FormFieldConfig[] {
     return structuredClone(
       RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns,
