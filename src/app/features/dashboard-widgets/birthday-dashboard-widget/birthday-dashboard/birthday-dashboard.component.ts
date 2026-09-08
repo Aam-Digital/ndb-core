@@ -80,14 +80,15 @@ export class BirthdayDashboardComponent {
           .then(() =>
             this.birthdayIndex.queryBirthdayIndex(entityConfig, threshold),
           )
+          .catch((err) => {
+            Logging.error("Failed to load upcoming birthdays", err);
+            return [];
+          })
           .then((res) => {
             if (isCurrent) {
               this.entries.set(res);
             }
-          })
-          .catch((err) =>
-            Logging.error("Failed to load upcoming birthdays", err),
-          );
+          });
 
       // initial load - covers the case where matching entities already exist on mount.
       reload();
