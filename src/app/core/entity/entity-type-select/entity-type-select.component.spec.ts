@@ -16,10 +16,6 @@ describe("EntityTypeSelectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("omits hiddenTypes from the available options", () => {
     fixture.componentRef.setInput("showInternalTypes", true);
     const all = component["optionsSource"]().map((t) => t.ENTITY_TYPE);

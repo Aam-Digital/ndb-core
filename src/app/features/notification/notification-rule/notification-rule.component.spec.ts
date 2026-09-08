@@ -66,10 +66,6 @@ describe("NotificationRuleComponent", () => {
     };
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should parse component.value into formControls", () => {
     fixture.componentRef.setInput("value", mockValue);
     fixture.detectChanges();

@@ -29,10 +29,6 @@ describe("DiscreteImportConfigComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should mark the column as not configured while no value mappings exist", () => {
     fixture.componentRef.setInput("col", {
       column: "gender",

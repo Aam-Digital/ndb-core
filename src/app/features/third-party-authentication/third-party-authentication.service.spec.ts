@@ -21,10 +21,6 @@ describe("ThirdPartyAuthenticationService", () => {
     httpTesting = TestBed.inject(HttpTestingController);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should not make API request if no session was found", async () => {
     vi.spyOn(localStorage, "getItem").mockReturnValue(null);
     TestBed.inject(HttpClient);

@@ -29,10 +29,6 @@ describe("AdminTabsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should add new tab to config", () => {
     component.createTab();
 

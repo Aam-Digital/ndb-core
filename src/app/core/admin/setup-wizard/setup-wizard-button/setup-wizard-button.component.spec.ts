@@ -32,10 +32,6 @@ describe("SetupWizardButtonComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should hide if SetupWizardConfig completed", async () => {
     vi.useFakeTimers();
     try {

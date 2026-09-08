@@ -48,10 +48,6 @@ describe("ImportantNotesDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should build the index for the configured warning levels", async () => {
     vi.useFakeTimers();
     try {

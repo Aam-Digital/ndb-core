@@ -48,10 +48,6 @@ describe("AdminNoteDetailsComponent", () => {
     fixture.componentRef.setInput("entityConstructor", TestNote);
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should update the config when onNoteDetailsConfigChange is called", () => {
     const emittedConfig = vi.fn();
     component.configChange.subscribe(emittedConfig);

@@ -35,10 +35,6 @@ describe("ShortcutDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only show routes to which the user has access", async () => {
     vi.useFakeTimers();
     try {

@@ -26,10 +26,6 @@ describe("DisplayCalculatedValueComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should display the correct percentage value", () => {
     entity["totalValue"] = 200;
     entity["actualValue"] = 50;

@@ -41,10 +41,6 @@ describe("KeycloakAdminService", () => {
     httpTestingController.verify();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should delete user", async () => {
     // when
     service.deleteUser("test-entity-id").subscribe((response) => {

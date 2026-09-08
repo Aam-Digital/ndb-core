@@ -35,10 +35,6 @@ describe("AdminSearchableCheckboxComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should recognize searchable data types", () => {
     componentRef.setInput("dataType", "string");
     fixture.detectChanges();

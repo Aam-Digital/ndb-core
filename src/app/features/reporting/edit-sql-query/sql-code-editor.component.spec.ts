@@ -20,10 +20,6 @@ describe("SqlCodeEditorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("exposes the current value via the value signal", () => {
     component.value = "SELECT name FROM children";
     expect(component.valueSignal()).toBe("SELECT name FROM children");

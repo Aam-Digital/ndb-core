@@ -53,10 +53,6 @@ describe("TemplateExportApiService", () => {
     currentUser = TestBed.inject(CurrentUserSubject);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should skip deletion requests silently", async () => {
     const templateEntity = new TemplateExport();
 
