@@ -325,6 +325,31 @@ describe("KeycloakAuthService", () => {
     }
   });
 
+  it("should treat a gateway status keycloak nested in a Response as unavailable", async () => {
+    vi.useFakeTimers();
+    try {
+      // the shape keycloak-js actually throws: the status is on `response`,
+      // not on the error, and the message never says which status it was
+      const gatewayFailure = Object.assign(
+        new Error("Server responded with an invalid status."),
+        { response: { status: 504, statusText: "Gateway Timeout" } },
+      );
+      mockKeycloak.init.mockRejectedValue(gatewayFailure);
+
+      const promise = service.login();
+      await vi.advanceTimersByTimeAsync(5_000);
+
+      // unavailable rather than a fault to alert on: same treatment as any
+      // other gateway failure, and it retried instead of failing outright
+      await expect(promise).rejects.toBeInstanceOf(
+        RemoteLoginNotAvailableError,
+      );
+      expect(mockKeycloak.init).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should NOT retry login on a 4xx error", async () => {
     const authError = { status: 401 } as any;
     mockKeycloak.init.mockRejectedValue(authError);
