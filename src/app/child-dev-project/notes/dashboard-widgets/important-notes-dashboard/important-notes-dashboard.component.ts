@@ -17,6 +17,7 @@ import { CustomDatePipe } from "../../../../core/basic-datatypes/date/custom-dat
 import { ImportantNotesIndexService } from "./important-notes-index.service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { ConfigurableEnum } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @DynamicComponent("ImportantNotesDashboard")
 @Component({
@@ -73,8 +74,17 @@ export class ImportantNotesDashboardComponent {
       onCleanup(() => (isCurrent = false));
 
       void (async () => {
-        await this.importantNotesIndex.buildIndex(relevantLevels);
-        const notes = await this.importantNotesIndex.queryIndex(relevantLevels);
+        await this.importantNotesIndex
+          .buildIndex(relevantLevels)
+          .catch((err) =>
+            Logging.error("Failed to build index for important notes", err),
+          );
+        const notes = await this.importantNotesIndex
+          .queryIndex(relevantLevels)
+          .catch((err) => {
+            Logging.error("Failed to load important notes", err);
+            return [];
+          });
         if (isCurrent) {
           this.notes.set(notes);
         }
