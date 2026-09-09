@@ -43,7 +43,7 @@ account, right after setup:
   back to `toStringAttributes` if there is none) rather than a setup-specific field list, and saves
   through `EntityFormService` like any other form.
 - **The account is linked only after the entity is saved**, via the same `updateUser(accountId, {
-  userEntityId })` write path the user administration UI (`../user/user-details/`) uses to re-link an
+userEntityId })` write path the user administration UI (`../user/user-details/`) uses to re-link an
   existing account - this step is really just that same operation, automated for the very first login.
 - **A successful link reloads the app.** `SessionInfo.entityId` comes from a token claim set at login;
   writing the Keycloak attribute server-side doesn't change an already-issued token, so the app has to
