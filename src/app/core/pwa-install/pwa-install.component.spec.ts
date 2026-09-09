@@ -47,10 +47,6 @@ describe("PwaInstallComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show the pwa install instructions on iOS devices", () => {
     mockPWAInstallService.getPWAInstallType.mockReturnValue(
       PWAInstallType.ShowiOSInstallInstructions,

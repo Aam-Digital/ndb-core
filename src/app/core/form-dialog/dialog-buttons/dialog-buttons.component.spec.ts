@@ -58,10 +58,6 @@ describe("DialogButtonsComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should close the dialog when saving is successful", async () => {
     vi.useFakeTimers();
     try {

@@ -68,10 +68,6 @@ describe("ConditionsEditorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize with empty conditions", () => {
     expect(component.conditionsArray()).toEqual([]);
   });

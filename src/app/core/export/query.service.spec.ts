@@ -106,10 +106,6 @@ describe("QueryService", () => {
     ) as MockEntityMapperService;
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   describe("queryData", () => {
     it("should execute simple queries on custom data", () => {
       const customData = { items: [{ value: 1 }, { value: 2 }, { value: 3 }] };
@@ -234,195 +230,77 @@ describe("QueryService", () => {
   });
 
   describe("query helper functions", () => {
-    describe(":toArray", () => {
-      it("should convert object with values to array", () => {
-        const data = { a: 1, b: 2, c: 3 };
-        const result = service.queryData(":toArray", null, null, data);
+    /**
+     * The stateless helper expressions are a pure input -> output contract, so they are
+     * covered as one table: it keeps the full set of supported expressions - and the gaps
+     * between them, e.g. that only :sum and :avg coerce string numbers - visible at a glance.
+     */
+    it.each([
+      // :toArray - the object's values, in insertion order
+      [":toArray", { a: 1, b: 2, c: 3 }, [1, 2, 3]],
+      [":toArray", {}, []],
 
-        expect(Array.isArray(result)).toBe(true);
-        expect(result).toEqual([1, 2, 3]);
-      });
+      // :unique - de-duplicate, keeping the first occurrence
+      [":unique", [1, 2, 2, 3, 3, 3, 4], [1, 2, 3, 4]],
+      [":unique", [], []],
 
-      it("should handle empty objects", () => {
-        const result = service.queryData(":toArray", null, null, {});
+      // :count - array length
+      [":count", [1, 2, 3, 4, 5], 5],
+      [":count", [], 0],
 
-        expect(result).toEqual([]);
-      });
+      // :sum - numeric total; string numbers are coerced, anything else ignored
+      [":sum", [1, 2, 3, 4], 10],
+      [":sum", ["1", "2", "3"], 6],
+      [":sum", ["1", "invalid", "3", null, undefined], 4],
+      [":sum", [], 0],
+
+      // :avg - mean as a string, rounded to the requested number of decimals
+      [":avg", [10, 20, 30], "20"],
+      [":avg", ["10", "20", "30"], "20"],
+      [":avg", ["10", "invalid", "30"], "20"],
+      [":avg", [], "0"],
+      [":avg(2)", [10, 20, 25], "18.33"],
+
+      // :getIds - flatten the given key across all items
+      [
+        ":getIds(ids)",
+        [{ ids: ["id1", "id2"] }, { ids: ["id3"] }],
+        ["id1", "id2", "id3"],
+      ],
+      [":getIds(ids)", [{ other: "value" }], []],
+
+      // :setString - replace every array value, or the value itself if it is not an array
+      [":setString(test)", [1, 2, 3], ["test", "test", "test"]],
+      [":setString(test)", "single", "test"],
+    ])("evaluates %s over %j as %j", (expression, data, expected) => {
+      expect(service.queryData(expression, null, null, data)).toEqual(expected);
     });
 
-    describe(":unique", () => {
-      it("should remove duplicate values from array", () => {
-        const data = [1, 2, 2, 3, 3, 3, 4];
-        const result = service.queryData(":unique", null, null, data);
-
-        expect(result).toEqual([1, 2, 3, 4]);
-      });
-
-      it("should handle empty arrays", () => {
-        const result = service.queryData(":unique", null, null, []);
-
-        expect(result).toEqual([]);
-      });
-    });
-
-    describe(":count", () => {
-      it("should return length of array", () => {
-        const data = [1, 2, 3, 4, 5];
-        const result = service.queryData(":count", null, null, data);
-
-        expect(result).toBe(5);
-      });
-
-      it("should return 0 for empty array", () => {
-        const result = service.queryData(":count", null, null, []);
-
-        expect(result).toBe(0);
-      });
-    });
-
-    describe(":sum", () => {
-      it("should sum numeric values in array", () => {
-        const data = [1, 2, 3, 4];
-        const result = service.queryData(":sum", null, null, data);
-
-        expect(result).toBe(10);
-      });
-
-      it("should handle string representations of numbers", () => {
-        const data = ["1", "2", "3"];
-        const result = service.queryData(":sum", null, null, data);
-
-        expect(result).toBe(6);
-      });
-
-      it("should ignore non-numeric values", () => {
-        const data = ["1", "invalid", "3", null, undefined];
-        const result = service.queryData(":sum", null, null, data);
-
-        expect(result).toBe(4);
-      });
-
-      it("should return 0 for empty array", () => {
-        const result = service.queryData(":sum", null, null, []);
-
-        expect(result).toBe(0);
-      });
-    });
-
-    describe(":avg", () => {
-      it("should calculate average of numeric array", () => {
-        const data = [10, 20, 30];
-        const result = service.queryData(":avg", null, null, data);
-
-        expect(result).toBe("20");
-      });
-
-      it("should handle string representations of numbers", () => {
-        const data = ["10", "20", "30"];
-        const result = service.queryData(":avg", null, null, data);
-
-        expect(result).toBe("20");
-      });
-
-      it("should skip non-numeric values in calculation", () => {
-        const data = ["10", "invalid", "30"];
-        const result = service.queryData(":avg", null, null, data);
-
-        expect(result).toBe("20");
-      });
-
-      it("should return 0 for empty array", () => {
-        const result = service.queryData(":avg", null, null, []);
-
-        expect(result).toBe("0");
-      });
-
-      it("should respect decimals parameter for rounding", () => {
-        const data = [10, 20, 25];
-        const result = service.queryData(":avg(2)", null, null, data);
-
-        expect(result).toBe("18.33");
-      });
-    });
-
-    describe(":filterByObjectAttribute", () => {
-      it("should filter objects by nested attribute value", () => {
-        const data = [
+    it.each([
+      [
+        "keeps only the items whose nested attribute matches",
+        ":filterByObjectAttribute(item, type, A)",
+        [
           { item: { type: "A", value: 1 } },
           { item: { type: "B", value: 2 } },
           { item: { type: "A", value: 3 } },
-        ];
-        const result = service.queryData(
-          ":filterByObjectAttribute(item, type, A)",
-          null,
-          null,
-          data,
-        );
-
-        expect(result.length).toBe(2);
-        expect(result[0].item.type).toBe("A");
-        expect(result[1].item.type).toBe("A");
-      });
-
-      it("should handle multiple filter values separated by pipe", () => {
-        const data = [
-          { cat: { id: "M" } },
-          { cat: { id: "F" } },
-          { cat: { id: "X" } },
-        ];
-        const result = service.queryData(
-          ":filterByObjectAttribute(cat, id, M | F)",
-          null,
-          null,
-          data,
-        );
-
-        expect(result.length).toBe(2);
-      });
-
-      it("should return empty array when attribute doesn't exist", () => {
-        const data = [{ other: "value" }];
-        const result = service.queryData(
-          ":filterByObjectAttribute(nonexistent, id, value)",
-          null,
-          null,
-          data,
-        );
-
-        expect(result).toEqual([]);
-      });
-    });
-
-    describe(":getIds", () => {
-      it("should extract IDs from array of objects by key", () => {
-        const data = [{ ids: ["id1", "id2"] }, { ids: ["id3"] }];
-        const result = service.queryData(":getIds(ids)", null, null, data);
-
-        expect(result).toEqual(["id1", "id2", "id3"]);
-      });
-
-      it("should handle objects without the specified key", () => {
-        const data = [{ other: "value" }];
-        const result = service.queryData(":getIds(ids)", null, null, data);
-
-        expect(result).toEqual([]);
-      });
-    });
-
-    describe(":setString", () => {
-      it("should replace all array values with specified string", () => {
-        const data = [1, 2, 3];
-        const result = service.queryData(":setString(test)", null, null, data);
-
-        expect(result).toEqual(["test", "test", "test"]);
-      });
-
-      it("should return string directly when input is not array", () => {
-        const data = "single";
-        const result = service.queryData(":setString(test)", null, null, data);
-
-        expect(result).toBe("test");
-      });
+        ],
+        [{ item: { type: "A", value: 1 } }, { item: { type: "A", value: 3 } }],
+      ],
+      [
+        "treats a pipe as 'any of these values'",
+        ":filterByObjectAttribute(cat, id, M | F)",
+        [{ cat: { id: "M" } }, { cat: { id: "F" } }, { cat: { id: "X" } }],
+        [{ cat: { id: "M" } }, { cat: { id: "F" } }],
+      ],
+      [
+        "matches nothing when the attribute does not exist",
+        ":filterByObjectAttribute(nonexistent, id, value)",
+        [{ other: "value" }],
+        [],
+      ],
+    ])(":filterByObjectAttribute %s", (_case, expression, data, expected) => {
+      expect(service.queryData(expression, null, null, data)).toEqual(expected);
     });
 
     describe(":addEntities", () => {

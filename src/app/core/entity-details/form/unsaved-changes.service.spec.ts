@@ -23,10 +23,6 @@ describe("UnsavedChangesService", () => {
     service = TestBed.inject(UnsavedChangesService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should report pending as long as at least one source has unsaved changes", () => {
     expect(service.pending()).toBe(false);
 

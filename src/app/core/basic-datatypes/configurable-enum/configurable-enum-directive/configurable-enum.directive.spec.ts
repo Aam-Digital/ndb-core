@@ -48,10 +48,6 @@ describe("ConfigurableEnumDirective", () => {
     directive = TestBed.inject(ConfigurableEnumDirective);
   });
 
-  it("should create an instance", () => {
-    expect(directive).toBeTruthy();
-  });
-
   it("creates a view for each enum config value", () => {
     const testEnumConfigId = "test-enum";
     const testEnumValues: ConfigurableEnumConfig = [

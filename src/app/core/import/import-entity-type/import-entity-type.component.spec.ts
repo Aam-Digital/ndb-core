@@ -48,10 +48,6 @@ describe("ImportSelectTypeComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should hide types the user cannot create", () => {
     const ability = TestBed.inject(EntityAbility);
     ability.update([

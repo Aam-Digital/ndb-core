@@ -70,10 +70,6 @@ describe("AdminAiAgentComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("downloads all AI context document sources", async () => {
     const configDocument = { sentinel: "config" };
     const permissionsDocument = { sentinel: "permissions" };

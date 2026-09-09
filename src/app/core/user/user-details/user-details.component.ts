@@ -46,7 +46,10 @@ import { Entity } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { catchError, map } from "rxjs/operators";
-import { UserAccountActionGuardService } from "../user-admin-service/user-account-action-guard.service";
+import {
+  entityIdsMatch,
+  UserAccountActionGuardService,
+} from "../user-admin-service/user-account-action-guard.service";
 
 /**
  * Options as input to the UserDetailsComponent when it is opened in a dialog.
@@ -136,11 +139,6 @@ export class UserDetailsComponent {
       this.form.disable();
     } else {
       this.form.enable();
-
-      // profile entity is readonly when editing an existing account
-      if (!this.creatingNewAccount()) {
-        this.form.get("userEntityId").disable();
-      }
     }
   });
 
@@ -206,6 +204,23 @@ export class UserDetailsComponent {
           rolesControl.setValidators([Validators.required]);
         }
         rolesControl.updateValueAndValidity();
+      }
+    });
+
+    // Once an account already has a linked profile, the field can no longer be cleared here
+    // (the control used to be readonly for this exact reason) - only re-linked to a different
+    // profile via `updateAccount()`. An account with no profile at all stays optional to edit,
+    // since #3087 (system-init assistant) relies on that being a valid, silent state.
+    effect(() => {
+      const currentUserEntityId = this.userAccount()?.userEntityId;
+      const profileControl = this.form.get("userEntityId");
+      if (profileControl) {
+        if (!this.creatingNewAccount() && currentUserEntityId) {
+          profileControl.setValidators([Validators.required]);
+        } else {
+          profileControl.clearValidators();
+        }
+        profileControl.updateValueAndValidity();
       }
     });
 
@@ -348,15 +363,44 @@ export class UserDetailsComponent {
       update.roles = formData.roles;
     }
 
+    const profileChanged =
+      !!formData.userEntityId &&
+      !entityIdsMatch(formData.userEntityId, currentUser.userEntityId);
+    if (profileChanged) {
+      update.userEntityId = formData.userEntityId;
+    }
+
     if (Object.keys(update).length === 0) {
       this.closeDialog({ type: "formCancel" });
       return;
     }
 
+    if (
+      profileChanged &&
+      !(await this.confirmProfileChange(currentUser, formData.userEntityId))
+    ) {
+      return;
+    }
+
+    // capture before the update overwrites `userAccount()` with the new profile
+    const isOwnAccountRelink =
+      profileChanged &&
+      this.accountActionGuard.isOwnAccount({
+        userAccountId: currentUser.id,
+        userEntityId: currentUser.userEntityId,
+      });
+
     const result = await this.updateUserAccount(
       update,
       $localize`:Snackbar message:Successfully updated user`,
     );
+
+    if (result && isOwnAccountRelink) {
+      this.alertService.addWarning(
+        $localize`:own account relink notice:Your account is now linked to a different profile. You need to log out and log back in for this to take effect in your current session.`,
+      );
+    }
+
     this.formDisabled.set(true);
     this.closeDialog({
       type: "accountUpdated",
@@ -364,6 +408,48 @@ export class UserDetailsComponent {
         user: result,
       },
     });
+  }
+
+  /**
+   * Checks the one-account-per-profile rule and asks the admin to confirm re-linking the
+   * account, since the previous profile record stays in the database but stops being anyone's
+   * login profile.
+   */
+  private async confirmProfileChange(
+    currentUser: UserAccount,
+    newEntityId: string,
+  ): Promise<boolean> {
+    let conflictingAccount: UserAccount | null;
+    try {
+      // getUser resolves to null when no account is linked to that profile,
+      // and only throws when the lookup itself failed
+      conflictingAccount = await firstValueFrom(
+        this.userAdminService.getUser(newEntityId),
+      );
+    } catch (error) {
+      // a failed lookup is not evidence that the profile is free - refuse the change rather
+      // than risk linking a second account to a profile that already has one
+      Logging.error("Failed to check for an existing user account", error);
+      this.alertService.addDanger(
+        $localize`:Error message:Could not check whether this profile already has a user account. Please try again.`,
+      );
+      return false;
+    }
+
+    // getUser looks up by the new profile's exact_username, so on an unchanged save it resolves
+    // back to this very account - only a *different* account's id is an actual conflict.
+    if (conflictingAccount && conflictingAccount.id !== currentUser.id) {
+      this.alertService.addDanger(
+        $localize`:Error message:A user account already exists for this profile. Each profile can only be linked to one account.`,
+      );
+      return false;
+    }
+
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      $localize`:confirm changing linked profile title:Change linked profile?`,
+      $localize`:confirm changing linked profile message:This account will be linked to the newly selected profile record instead. The previous profile record stays in the database, but will no longer be linked to a login account. Permission rules based on this user's identity, as well as records created, updated or assigned to this user going forward, will use the new profile record instead.`,
+    );
+    return confirmed === true;
   }
 
   private async updateUserAccount(
@@ -387,7 +473,9 @@ export class UserDetailsComponent {
           const updatedUser = { ...currentUser, ...update };
           this.userAccount.set(updatedUser);
 
-          if (update.roles?.length > 0) {
+          if (update.roles?.length > 0 || update.userEntityId) {
+            // roles and the linked profile both affect which documents the permission backend
+            // replicates to this user (rules keyed on `${user.roles}` / `${user.entityId}`)
             this.triggerSyncReset();
           }
 

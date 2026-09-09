@@ -281,8 +281,12 @@ export class EntityFormService {
     try {
       await this.entityMapper.save(updatedEntity);
     } catch (err) {
+      // the original error is kept as `cause`: remote monitoring links it into
+      // the reported exception chain, so a save failure can be told apart by
+      // what actually rejected it instead of only by this message
       throw new Error(
         $localize`Could not save ${entity.getType()}\: ${err?.message || String(err)}`,
+        { cause: err },
       );
     }
 
