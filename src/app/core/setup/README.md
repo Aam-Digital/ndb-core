@@ -20,8 +20,39 @@ exists.
    permissions, enum definitions, site settings, sample reports/forms, etc.
 4. Once the config document is saved, the app reconfigures itself reactively — routing and entity
    types are rebuilt and the current page re-renders. There's no redirect and no page reload.
-5. From then on, the Assistant instead shows context-aware guidance and, until it's marked finished,
+5. If the logged-in account isn't linked to any profile yet, a second step offers to create one and
+   link the account to it (see below) before showing "Start Exploring".
+6. From then on, the Assistant instead shows context-aware guidance and, until it's marked finished,
    the multi-step [Setup Wizard](../admin/setup-wizard/) for further onboarding.
+
+## Linking the initial admin's account to a profile
+
+Keycloak's very first user is created with no `exact_username` attribute, so nothing links their login
+account to a "profile" entity (the record `${user.entityId}` permission rules and `createdBy`/`updatedBy`
+resolve to). `UserEntityLinkService` and a step in `system-init-assistant/` close that gap, once per
+account, right after setup:
+
+- **Only offered when `SessionInfo.entityId` is unset** (`UserEntityLinkService.shouldOfferStep`) - the
+  same "no linked profile" state that's already valid and silent for any account outside setup (see
+  above). This is also what makes demo mode skip the step automatically: its hardcoded session already
+  sets `entityId`.
+- **Which entity type to create is asked, not assumed.** `getUserEntityTypes()` returns every type with
+  `enableUserAccounts` set, in entity-registry order - there is no defensible "first" one. The step
+  renders nothing for zero types, skips the picker for exactly one, and shows a dropdown for several.
+- **The form reuses the type's own details-view config** (its first panel's `Form` component, falling
+  back to `toStringAttributes` if there is none) rather than a setup-specific field list, and saves
+  through `EntityFormService` like any other form.
+- **The account is linked only after the entity is saved**, via the same `updateUser(accountId, {
+  userEntityId })` write path the user administration UI (`../user/user-details/`) uses to re-link an
+  existing account - this step is really just that same operation, automated for the very first login.
+- **A successful link reloads the app.** `SessionInfo.entityId` comes from a token claim set at login;
+  writing the Keycloak attribute server-side doesn't change an already-issued token, so the app has to
+  do a fresh login (`init()`'s SSO check) to pick it up - the reload is only skipped when the write
+  wasn't actually persisted, which is also what keeps this safe on a demo/e2e session (excluded by the
+  gate above regardless, but asserted explicitly in tests as the invariant that matters).
+- **Never rolled back.** The entity is saved before the link is attempted, so a failed link (missing
+  permission, network error) leaves a real, unlinked record behind rather than losing the user's input;
+  the user is told an admin can link it later.
 
 ## Base configs
 
@@ -53,8 +84,10 @@ offer their own use cases without a code change. The picker filters these to the
   question been settled yet"
 - `assistant.service.ts` / `assistant-dialog/` — opens and manages the Assistant panel and its tabs
 - `assistant-button/` — toolbar entry point that auto-opens the panel when no config exists
-- `system-init-assistant/` — the initial setup UI, including the `?useCase=` shortcut and use-case
-  picker
+- `system-init-assistant/` — the initial setup UI, including the `?useCase=` shortcut, use-case picker,
+  and the post-setup account-linking step
+- `user-entity-link.service.ts` — resolves which entity type(s) can be linked, the form fields for
+  creating one, and performs the account link
 - `context-aware-assistant/` — the post-setup guidance tab
 - `../../../assets/base-configs/` — the shipped base configs and the descriptors listing them
 - `../admin/setup-wizard/` — the post-setup stepper
