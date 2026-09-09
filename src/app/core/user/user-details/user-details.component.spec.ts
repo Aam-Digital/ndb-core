@@ -27,12 +27,14 @@ type UserAdminServiceMock = {
   updateUser: Mock;
   deleteUser: Mock;
   resendInvitation: Mock;
+  getUser: Mock;
 };
 
 type AlertServiceMock = {
   addInfo: Mock;
   addAlert: Mock;
   addDanger: Mock;
+  addWarning: Mock;
 };
 
 type KeycloakAuthServiceMock = {
@@ -83,14 +85,17 @@ describe("UserDetailsComponent", () => {
         .fn()
         .mockName("UserAdminService.resendInvitation")
         .mockReturnValue(of(undefined)),
+      getUser: vi.fn().mockName("UserAdminService.getUser"),
     };
     mockUserAdminService.getAllRoles.mockReturnValue(of([mockRole]));
     mockUserAdminService.updateUser.mockReturnValue(of({ userUpdated: true }));
+    mockUserAdminService.getUser.mockReturnValue(of(null));
 
     mockAlertService = {
       addInfo: vi.fn().mockName("AlertService.addInfo"),
       addAlert: vi.fn().mockName("AlertService.addAlert"),
       addDanger: vi.fn().mockName("AlertService.addDanger"),
+      addWarning: vi.fn().mockName("AlertService.addWarning"),
     };
     mockKeycloakService = {
       changePassword: vi.fn().mockName("KeycloakAuthService.changePassword"),
@@ -434,5 +439,172 @@ describe("UserDetailsComponent", () => {
     component.save();
 
     expect(mockHttpClient.post).not.toHaveBeenCalled();
+  });
+
+  describe("changing the linked profile", () => {
+    const linkedUserAccount: UserAccount = {
+      ...mockUserAccount,
+      userEntityId: "legacy-id", // no type prefix, as stored by a pre-existing account
+    };
+
+    it("should keep the profile field editable for an existing account", () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+
+      component.editMode();
+      fixture.detectChanges();
+
+      expect(component.form.get("userEntityId").disabled).toBe(false);
+    });
+
+    it("should not allow clearing the linked profile of an already-linked account", () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      component.form.get("userEntityId").setValue(null);
+
+      expect(component.form.get("userEntityId").hasError("required")).toBe(
+        true,
+      );
+      expect(component.form.invalid).toBe(true);
+    });
+
+    it("should allow editing other fields of an account that has no linked profile", async () => {
+      fixture.componentRef.setInput("userAccount", {
+        ...mockUserAccount,
+        userEntityId: undefined,
+      });
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      expect(component.form.get("userEntityId").hasError("required")).toBe(
+        false,
+      );
+
+      component.form.patchValue({ email: "updated@example.com" });
+      await component.save();
+
+      expect(mockUserAdminService.updateUser).toHaveBeenCalledWith(
+        mockUserAccount.id,
+        { email: "updated@example.com" },
+      );
+    });
+
+    it("should not update when re-saving an unchanged profile without a type prefix", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      // form now displays the normalised "User:legacy-id", but nothing was actually changed
+      await component.save();
+
+      expect(mockUserAdminService.getUser).not.toHaveBeenCalled();
+      expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+      expect(mockDialogRef.close).toHaveBeenCalledWith({ type: "formCancel" });
+    });
+
+    it("should refuse re-linking to a profile that already has a different account", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      mockUserAdminService.getUser.mockReturnValue(
+        of({ id: "some-other-account-id", enabled: true }),
+      );
+      component.form.patchValue({ userEntityId: "User:other-entity" });
+
+      await component.save();
+
+      expect(mockUserAdminService.getUser).toHaveBeenCalledWith(
+        "User:other-entity",
+      );
+      expect(mockAlertService.addDanger).toHaveBeenCalledWith(
+        expect.stringContaining("Each profile can only be linked"),
+      );
+      expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+      expect(mockDialogRef.close).not.toHaveBeenCalled();
+    });
+
+    it("should proceed when the profile lookup resolves back to this very account", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      mockUserAdminService.getUser.mockReturnValue(
+        of({ id: linkedUserAccount.id, enabled: true }),
+      );
+      component.form.patchValue({ userEntityId: "User:other-entity" });
+
+      await component.save();
+
+      expect(mockUserAdminService.updateUser).toHaveBeenCalledWith(
+        linkedUserAccount.id,
+        expect.objectContaining({ userEntityId: "User:other-entity" }),
+      );
+      expect(mockDialogRef.close).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "accountUpdated" }),
+      );
+    });
+
+    it("should not re-link when the user cancels the confirmation", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      mockUserAdminService.getUser.mockReturnValue(of(null));
+      confirmationDialog.getConfirmation.mockResolvedValue(false);
+      component.form.patchValue({ userEntityId: "User:other-entity" });
+
+      await component.save();
+
+      expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+      expect(mockDialogRef.close).not.toHaveBeenCalled();
+    });
+
+    it("should trigger sync reset when the linked profile changes, not only on role changes", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      mockUserAdminService.getUser.mockReturnValue(of(null));
+      component.form.patchValue({ userEntityId: "User:other-entity" });
+
+      await component.save();
+
+      expect(mockHttpClient.post).toHaveBeenCalledWith(
+        expect.stringContaining("/admin/clear_local/"),
+        undefined,
+      );
+    });
+
+    it("should surface a re-login notice when re-linking one's own account", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      mockSessionSubject.next({
+        id: linkedUserAccount.id,
+        name: "test",
+        roles: [],
+      });
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      mockUserAdminService.getUser.mockReturnValue(of(null));
+      component.form.patchValue({ userEntityId: "User:other-entity" });
+
+      await component.save();
+
+      expect(mockUserAdminService.updateUser).toHaveBeenCalled();
+      expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+        expect.stringContaining("log out"),
+      );
+    });
   });
 });
