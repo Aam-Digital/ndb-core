@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
@@ -8,14 +9,18 @@ import { TranslatableTextInputComponent } from "./translatable-text-input.compon
 describe("TranslatableTextInputComponent", () => {
   let component: TranslatableTextInputComponent;
   let fixture: ComponentFixture<TranslatableTextInputComponent>;
+  let mockDialog: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
+    mockDialog = { open: vi.fn() };
+
     await TestBed.configureTestingModule({
       imports: [
         TranslatableTextInputComponent,
         FontAwesomeTestingModule,
         NoopAnimationsModule,
       ],
+      providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TranslatableTextInputComponent);
@@ -25,9 +30,7 @@ describe("TranslatableTextInputComponent", () => {
 
   /** simulate the translations dialog being confirmed with the given result */
   function confirmDialogWith(result: unknown) {
-    vi.spyOn(component["dialog"], "open").mockReturnValue({
-      afterClosed: () => of(result),
-    } as any);
+    mockDialog.open.mockReturnValue({ afterClosed: () => of(result) });
     component.openTranslations({ stopPropagation: () => undefined } as Event);
   }
 

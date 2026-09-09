@@ -83,8 +83,8 @@ export class ConfigureTranslationsPopupComponent {
   }
 
   /**
-   * Build the new raw value: a plain string while only one language is filled in,
-   * a per-language map as soon as there are several.
+   * Build the new raw value. Only the default language on its own collapses to a
+   * plain string: {@link initialTextFor} reads one back as that language's text.
    */
   private buildValue(): TranslatableText | undefined {
     const filled = this.rows.filter((row) => !!row.text?.trim());
@@ -92,7 +92,7 @@ export class ConfigureTranslationsPopupComponent {
     if (filled.length === 0) {
       return undefined;
     }
-    if (filled.length === 1) {
+    if (filled.length === 1 && filled[0].locale === DEFAULT_LANGUAGE) {
       return filled[0].text.trim();
     }
 

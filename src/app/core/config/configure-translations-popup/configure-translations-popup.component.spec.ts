@@ -83,6 +83,23 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(dialogRef.close).toHaveBeenCalledWith("Name");
   });
 
+  it("should keep a single non-default translation as a one-entry map", async () => {
+    await createComponent({ value: undefined });
+    setText("de", "Vorname");
+
+    component.onSave();
+
+    expect(dialogRef.close).toHaveBeenCalledWith({ de: "Vorname" });
+  });
+
+  it("should read a single non-default translation back into its own language", async () => {
+    // a plain string would be read back as the default language's text
+    await createComponent({ value: { de: "Vorname" } });
+
+    expect(component.rows.find((r) => r.locale === "de").text).toBe("Vorname");
+    expect(component.rows.find((r) => r.locale === "en-US").text).toBe("");
+  });
+
   it("should ignore languages that only contain whitespace", async () => {
     await createComponent({ value: "Name" });
     setText("de", "   ");

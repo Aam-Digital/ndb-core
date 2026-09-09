@@ -56,6 +56,8 @@ test("shows a multi-lingual config label in the default language, then in the us
   await expect(
     page.getByRole("columnheader", { name: "Project Number" }),
   ).toHaveCount(0);
+
+  await argosScreenshot(page, "i18n-de_children-list");
 });
 
 test("translates the whole app when the user picks a language on the welcome screen", async ({
@@ -68,7 +70,7 @@ test("translates the whole app when the user picks a language on the welcome scr
     page.getByRole("heading", { name: "Welcome to Aam Digital!" }),
   ).toBeVisible();
 
-  await page.getByText("Choose your language").click();
+  await page.getByRole("combobox", { name: "Choose your language" }).click();
   await page.getByRole("option", { name: "Deutsch / German (de)" }).click();
 
   await expect(

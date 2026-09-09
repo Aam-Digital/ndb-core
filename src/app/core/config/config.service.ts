@@ -9,11 +9,6 @@ import { Logging } from "../logging/logging.service";
 import { Config } from "./config";
 import { ConfigMigration } from "./config-migration";
 import { applyConfigMigrations } from "./config-migrations";
-import {
-  CONFIG_ENTITY_ROUTE_PREFIX,
-  normalizeRoutePath,
-} from "./dynamic-routing/route-paths";
-import { PREFIX_VIEW_CONFIG } from "./dynamic-routing/view-config.interface";
 import { resolveTranslatableConfig } from "./multi-lingual-config";
 import { DEFAULT_LANGUAGE } from "../language/language-statics";
 import { availableLocales } from "../language/languages";

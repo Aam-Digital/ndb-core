@@ -405,7 +405,8 @@ export class AdminEntityFieldComponent implements OnInit {
     } else if (this.schemaFieldsForm.get("label").value) {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
       const newOption = this.createNewAdditionalOption(
-        this.schemaFieldsForm.get("label").value,
+        // resolve first: `generateIdFromLabel` returns undefined for a per-language map
+        this.resolveForDisplay(this.schemaFieldsForm.get("label").value),
       );
       this.typeAdditionalOptions.push(newOption);
       this.additionalForm.setValue(newOption.value);
