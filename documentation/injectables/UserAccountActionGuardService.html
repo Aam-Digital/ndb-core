@@ -224,8 +224,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="15"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/user-account-action-guard.service.ts:15</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="50"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/user-account-action-guard.service.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -293,8 +293,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/user-account-action-guard.service.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="70"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/user-account-action-guard.service.ts:70</a></div>
                         </td>
                     </tr>
 
@@ -354,6 +354,41 @@ import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 
 export type SelfAccountAction &#x3D; &quot;delete&quot; | &quot;deactivate&quot;;
 
+/**
+ * Compares two entity ids where one or both may be missing the &#x60;Type:&#x60; prefix
+ * (e.g. a legacy &#x60;exact_username&#x60; stored without it), treating them as equal
+ * when they refer to the same record.
+ *
+ * Exported for reuse wherever a stored/session entity id needs to be compared
+ * against a value coming from an entity picker (which always includes the prefix).
+ */
+export function entityIdsMatch(
+  entityIdA?: string | null,
+  entityIdB?: string | null,
+): boolean {
+  if (!entityIdA || !entityIdB) {
+    return entityIdA &#x3D;&#x3D;&#x3D; entityIdB;
+  }
+  if (entityIdA &#x3D;&#x3D;&#x3D; entityIdB) {
+    return true;
+  }
+
+  const aHasTypePrefix &#x3D; entityIdA.includes(&quot;:&quot;);
+  const bHasTypePrefix &#x3D; entityIdB.includes(&quot;:&quot;);
+  if (aHasTypePrefix &amp;&amp; bHasTypePrefix) {
+    return false;
+  }
+
+  return (
+    getEntityIdWithoutTypePrefix(entityIdA) &#x3D;&#x3D;&#x3D;
+    getEntityIdWithoutTypePrefix(entityIdB)
+  );
+}
+
+export function getEntityIdWithoutTypePrefix(entityId: string): string {
+  return entityId.split(&quot;:&quot;).at(-1) ?? entityId;
+}
+
 @Injectable({
   providedIn: &quot;root&quot;,
 })
@@ -378,7 +413,7 @@ export class UserAccountActionGuardService {
       return false;
     }
 
-    return this.entityIdsMatch(session.entityId, account.userEntityId);
+    return entityIdsMatch(session.entityId, account.userEntityId);
   }
 
   async showSelfAccountActionBlockedWarning(
@@ -398,27 +433,6 @@ export class UserAccountActionGuardService {
       $localize&#x60;:self-deletion warning dialog:You cannot delete your own account. Please ask another admin to remove your account if needed.&#x60;,
       OkButton,
     );
-  }
-
-  private entityIdsMatch(sessionEntityId: string, accountEntityId: string) {
-    if (sessionEntityId &#x3D;&#x3D;&#x3D; accountEntityId) {
-      return true;
-    }
-
-    const sessionHasTypePrefix &#x3D; sessionEntityId.includes(&quot;:&quot;);
-    const accountHasTypePrefix &#x3D; accountEntityId.includes(&quot;:&quot;);
-    if (sessionHasTypePrefix &amp;&amp; accountHasTypePrefix) {
-      return false;
-    }
-
-    return (
-      this.getEntityIdWithoutTypePrefix(sessionEntityId) &#x3D;&#x3D;&#x3D;
-      this.getEntityIdWithoutTypePrefix(accountEntityId)
-    );
-  }
-
-  private getEntityIdWithoutTypePrefix(entityId: string) {
-    return entityId.split(&quot;:&quot;).at(-1) ?? entityId;
   }
 }
 </code></pre>

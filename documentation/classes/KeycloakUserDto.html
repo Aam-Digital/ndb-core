@@ -533,14 +533,19 @@ See <a href="https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userr
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="37"
-                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-user-dto.ts:37</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/app/core/user/user-admin-service/keycloak-user-dto.ts:43</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Builds a partial update from a partial <a href="../interfaces/UserAccount.html">UserAccount</a>, assigning only the keys the
+partial actually defines. This is required for <a href="KeycloakAdminService.updateKeycloakUser">KeycloakAdminService.updateKeycloakUser</a>,
+which merges the result onto the current user - an explicit <code>undefined</code> here would overwrite
+(and effectively clear) that field on the server.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -570,7 +575,7 @@ See <a href="https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userr
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/KeycloakUserDto.html" target="_self" >KeycloakUserDto</a></code>
+                            <b>Returns : </b>        <code><a href="../classes/KeycloakUserDto.html" target="_self" >Partial&lt;KeycloakUserDto&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -607,7 +612,7 @@ export class KeycloakUserDto {
 
   email?: string;
 
-  attributes?: { [key in string]: string };
+  attributes?: { [key in string]: string[] };
 
   requiredActions?: string[];
 
@@ -623,19 +628,34 @@ export class KeycloakUserDto {
       this.requiredActions &#x3D; [&quot;VERIFY_EMAIL&quot;, &quot;UPDATE_PASSWORD&quot;];
     }
     if (userEntityId) {
-      this.attributes &#x3D; { exact_username: userEntityId };
+      this.attributes &#x3D; { exact_username: [userEntityId] };
     }
   }
 
-  static fromUserAccount(userAccount: Partial&lt;UserAccount&gt;): KeycloakUserDto {
-    const kcUser &#x3D; new KeycloakUserDto();
-    kcUser.id &#x3D; userAccount.id;
-    kcUser.email &#x3D; userAccount.email;
-    kcUser.enabled &#x3D; userAccount.enabled;
-    kcUser.emailVerified &#x3D; userAccount.emailVerified;
+  /**
+   * Builds a partial update from a partial {@link UserAccount}, assigning only the keys the
+   * partial actually defines. This is required for {@link KeycloakAdminService.updateKeycloakUser},
+   * which merges the result onto the current user - an explicit &#x60;undefined&#x60; here would overwrite
+   * (and effectively clear) that field on the server.
+   */
+  static fromUserAccount(
+    userAccount: Partial&lt;UserAccount&gt;,
+  ): Partial&lt;KeycloakUserDto&gt; {
+    const kcUser: Partial&lt;KeycloakUserDto&gt; &#x3D; {};
+    if (userAccount.id !&#x3D;&#x3D; undefined) {
+      kcUser.id &#x3D; userAccount.id;
+    }
+    if (userAccount.email !&#x3D;&#x3D; undefined) {
+      kcUser.email &#x3D; userAccount.email;
+    }
+    if (userAccount.enabled !&#x3D;&#x3D; undefined) {
+      kcUser.enabled &#x3D; userAccount.enabled;
+    }
+    if (userAccount.emailVerified !&#x3D;&#x3D; undefined) {
+      kcUser.emailVerified &#x3D; userAccount.emailVerified;
+    }
     if (userAccount.userEntityId) {
-      kcUser.attributes &#x3D; kcUser.attributes ?? {};
-      kcUser.attributes.exact_username &#x3D; userAccount.userEntityId;
+      kcUser.attributes &#x3D; { exact_username: [userAccount.userEntityId] };
     }
     return kcUser;
   }
