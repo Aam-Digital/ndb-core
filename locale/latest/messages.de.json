@@ -1104,7 +1104,6 @@
   "8640491660010681609": "Benutzername: {$INTERPOLATION} ",
   "7488018751215318196": "Die Änderung Ihrer E-Mail-Adresse ist vorübergehend nur Administrator:innen möglich. Bitte wenden Sie sich an Ihre Projektkoordinator:in oder das Support-Team. ",
   "1481645236299803925": " Passwort ändern ",
-  "6752676861724307957": "Das Bearbeiten verknüpfter Profildatensätze ist hier nicht möglich. Bitte wenden Sie sich an den Benutzersupport. ",
   "4790924700106590922": "Für die Benutzererstellung ist keine Profil-ID verfügbar.",
   "4761234520219298052": "Benutzerkonto konnte nicht erstellt werden",
   "5937037087605449384": "Benutzerkonto konnte nicht aktualisiert werden",
@@ -1719,5 +1718,10 @@
   "7130290349340923540": "applies to visitors who are not logged in",
   "5669831863904333260": "Permissions that apply before login (e.g. public registration forms)",
   "7059147185536314223": "Could not load the list. Please check your internet connection.",
-  "7934833136974560675": "Retry"
+  "7934833136974560675": "Retry",
+  "8389488666764155714": " Changing this links the account to a different profile record. The previous record stays in the database but will no longer have a login account. ",
+  "5664608968652414494": "Your account is now linked to a different profile. You need to log out and log back in for this to take effect in your current session.",
+  "7348904147850479023": "Could not check whether this profile already has a user account. Please try again.",
+  "3611779582058033216": "Change linked profile?",
+  "5514714384578116210": "This account will be linked to the newly selected profile record instead. The previous profile record stays in the database, but will no longer be linked to a login account. Permission rules based on this user's identity, as well as records created, updated or assigned to this user going forward, will use the new profile record instead."
 }
