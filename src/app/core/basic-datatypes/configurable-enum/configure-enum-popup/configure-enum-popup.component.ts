@@ -26,6 +26,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
+import { resolveActiveText } from "../../../language/active-locale";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import {
   CustomYesNoButtons,
@@ -181,7 +182,9 @@ export class ConfigureEnumPopupComponent {
 
   async delete(value: ConfigurableEnumValue, index: number) {
     const existingUsages = await this.getUsages(value);
-    let deletionText = $localize`Are you sure that you want to delete the option "${value.label}"?`;
+    // the popup edits raw values, so the label may be a per-language map
+    const label = resolveActiveText(value.label);
+    let deletionText = $localize`Are you sure that you want to delete the option "${label}"?`;
     if (existingUsages.length > 0) {
       deletionText += $localize` The option is still used in ${existingUsages.join(
         ", ",
