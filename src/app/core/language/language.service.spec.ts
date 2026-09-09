@@ -11,12 +11,14 @@ import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/conf
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { SiteSettings } from "#src/app/core/site-settings/site-settings";
+import { UserSettingsService } from "../site-settings/user-settings.service";
 
 describe("LanguageService", () => {
   let service: LanguageService;
   let reloadSpy: Mock;
   let languageSubject: Subject<ConfigurableEnumValue>;
   let mockEntityMapperUpdates: Subject<UpdatedEntity<SiteSettings>>;
+  let mockUserSettings: { getLanguage: Mock };
 
   beforeEach(() => {
     reloadSpy = vi.fn();
@@ -26,6 +28,8 @@ describe("LanguageService", () => {
     };
     languageSubject = new Subject();
     mockEntityMapperUpdates = new Subject();
+    // by default the user has not chosen a language for their own account
+    mockUserSettings = { getLanguage: vi.fn().mockResolvedValue(undefined) };
 
     TestBed.configureTestingModule({
       providers: [
@@ -39,6 +43,7 @@ describe("LanguageService", () => {
           provide: EntityMapperService,
           useValue: { receiveUpdates: () => mockEntityMapperUpdates },
         },
+        { provide: UserSettingsService, useValue: mockUserSettings },
       ],
     });
     service = TestBed.inject(LanguageService);
@@ -56,16 +61,16 @@ describe("LanguageService", () => {
     expect(service.getCurrentLocale()).toBe("en-US");
   });
 
-  it("should use the default locale if no locale is set", () => {
-    service.initDefaultLanguage();
+  it("should use the default locale if no locale is set", async () => {
+    await service.initDefaultLanguage();
     languageSubject.next({ id: "de", label: "de" });
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
     expect(reloadSpy).toHaveBeenCalled();
   });
 
-  it("should not change language if a different locale is set", () => {
+  it("should not change language if a different locale is set", async () => {
     window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
-    service.initDefaultLanguage();
+    await service.initDefaultLanguage();
     languageSubject.next({ id: "de", label: "de" });
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
     expect(reloadSpy).not.toHaveBeenCalled();
@@ -79,6 +84,44 @@ describe("LanguageService", () => {
 
   it("should switch locale and reload the page", () => {
     service.switchLocale("de");
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
+    expect(reloadSpy).toHaveBeenCalled();
+  });
+
+  it("should prefer the language the user chose for their own account", async () => {
+    mockUserSettings.getLanguage.mockResolvedValue("fr");
+
+    await service.initDefaultLanguage();
+
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
+    expect(reloadSpy).toHaveBeenCalled();
+  });
+
+  it("should not override a user's own language when the system default changes", async () => {
+    mockUserSettings.getLanguage.mockResolvedValue("fr");
+    window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
+
+    mockEntityMapperUpdates.next({
+      entity: Object.assign(new SiteSettings(), {
+        defaultLanguage: { id: "de", label: "de" },
+      }),
+      type: "update",
+    });
+    await new Promise((resolve) => setTimeout(resolve));
+
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
+    expect(reloadSpy).not.toHaveBeenCalled();
+  });
+
+  it("should apply a changed system default to users without their own language", async () => {
+    mockEntityMapperUpdates.next({
+      entity: Object.assign(new SiteSettings(), {
+        defaultLanguage: { id: "de", label: "de" },
+      }),
+      type: "update",
+    });
+    await new Promise((resolve) => setTimeout(resolve));
+
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
     expect(reloadSpy).toHaveBeenCalled();
   });

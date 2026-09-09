@@ -5,6 +5,7 @@ import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 import { SiteSettings } from "../site-settings/site-settings";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
+import { UserSettingsService } from "../site-settings/user-settings.service";
 import { filter } from "rxjs";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 
@@ -21,6 +22,7 @@ export class LanguageService {
   private window = inject<Window>(WINDOW_TOKEN);
   private siteSettings = inject(SiteSettingsService);
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly userSettings = inject(UserSettingsService);
 
   constructor() {
     this.switchLocaleOnSiteSettingsUpdate();
@@ -39,8 +41,14 @@ export class LanguageService {
         untilDestroyed(this),
         filter((u) => u?.entity.getId(true) === SiteSettings.ENTITY_ID),
       )
-      .subscribe((updatedSettings: UpdatedEntity<SiteSettings>) => {
+      .subscribe(async (updatedSettings: UpdatedEntity<SiteSettings>) => {
         const updatedLanguage = updatedSettings?.entity?.defaultLanguage?.id;
+        if (!updatedLanguage) return;
+
+        // users who picked a language for their own account keep it
+        const ownLanguage = await this.userSettings.getLanguage();
+        if (ownLanguage) return;
+
         this.switchLocale(updatedLanguage);
       });
   }
@@ -57,16 +65,22 @@ export class LanguageService {
     this.window.location.reload();
   }
 
-  initDefaultLanguage(): void {
+  async initDefaultLanguage(): Promise<void> {
     const languageSelected = this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
+    if (languageSelected) return;
 
-    if (!languageSelected) {
-      this.siteSettings.defaultLanguage.subscribe(({ id }) => {
-        this.switchLocale(id);
-      });
+    const ownLanguage = await this.userSettings.getLanguage();
+    if (ownLanguage) {
+      this.switchLocale(ownLanguage);
+      return;
     }
+
+    // nothing chosen for this account: fall back to the system default
+    this.siteSettings.defaultLanguage.subscribe(({ id }) => {
+      this.switchLocale(id);
+    });
   }
 
   /**

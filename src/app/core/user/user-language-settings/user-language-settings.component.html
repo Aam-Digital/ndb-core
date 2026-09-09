@@ -1,0 +1,8 @@
+@if (displayLanguageSelect()) {
+  <app-language-select
+    [availableLocales]="availableLocales"
+    [applyImmediately]="false"
+    [hint]="languageHint"
+    (localeChange)="onLanguageSelected($event)"
+  ></app-language-select>
+}
