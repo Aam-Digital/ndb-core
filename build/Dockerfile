@@ -37,10 +37,17 @@ ENV COUCHDB_URL="http://localhost"
 ENV COUCHDB_DIRECT_URL=""
 
 # The Keycloak realm and server url used to generate assets/keycloak.json at
-# container start (see keycloak.json.template). Defaults reproduce the
-# repo's dummy dev values, so an unconfigured deployment behaves as before.
-ENV KEYCLOAK_URL="https://keycloak.localhost"
-ENV KEYCLOAK_REALM="dummy-realm"
+# container start (see keycloak.json.template). Left unset by default: the
+# app is shipped (see COPY ./dist/ above) with a static assets/keycloak.json
+# already containing this repo's dummy dev values, so an unconfigured
+# deployment needs no generation to behave as before. Generation only runs
+# when both are set - which also keeps this backwards compatible with older
+# deployments that instead bind-mount their own file over assets/keycloak.json:
+# since neither var is set there, the mounted file is left untouched instead
+# of failing to start over an EACCES (mounted files are often not writable by
+# this image's unprivileged nginx user).
+ENV KEYCLOAK_URL=""
+ENV KEYCLOAK_REALM=""
 
 # The url to the backend API, see https://github.com/Aam-Digital/aam-services
 ENV API_URL="http://localhost:3000"
@@ -68,6 +75,9 @@ ENV CSP_EXTRA_FRAME_ANCESTORS=""
 CMD export RESOLVER=$(awk '$1=="nameserver" && $2 !~ /:/ {print $2}' /etc/resolv.conf | xargs) &&\
     if [ -z "$RESOLVER" ]; then export RESOLVER=8.8.8.8; fi &&\
     export COUCHDB_DIRECT_URL="${COUCHDB_DIRECT_URL:-$COUCHDB_URL}" &&\
-    envsubst '$$KEYCLOAK_URL $$KEYCLOAK_REALM' < /etc/nginx/keycloak.json.template > /usr/share/nginx/html/assets/keycloak.json &&\
+    if [ -n "$KEYCLOAK_URL" ] && [ -n "$KEYCLOAK_REALM" ]; then\
+      envsubst '$$KEYCLOAK_URL $$KEYCLOAK_REALM' < /etc/nginx/keycloak.json.template > /usr/share/nginx/html/assets/keycloak.json ||\
+        echo 'WARN: KEYCLOAK_URL/KEYCLOAK_REALM are set but assets/keycloak.json could not be written (e.g. still bind-mounted read-only by an older deployment config) - serving the existing file unchanged' >&2;\
+    fi &&\
     envsubst '$$PORT $$COUCHDB_URL $$COUCHDB_DIRECT_URL $$API_URL $$NOMINATIM_URL $$RESOLVER $$CSP $$CSP_REPORT_URI $$CSP_EXTRA_FRAME_ANCESTORS' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
-    nginx -g 'daemon off;'
+    exec nginx -g 'daemon off;'
