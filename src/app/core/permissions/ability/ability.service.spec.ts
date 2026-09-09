@@ -12,6 +12,7 @@ import {
   ADMIN_APP_ROLE,
   DatabaseRule,
   DatabaseRules,
+  DEFAULT_SECTION_KEY,
 } from "../permission-types";
 import { Config } from "../../config/config";
 import { Logging } from "../../logging/logging.service";
@@ -402,7 +403,10 @@ describe("AbilityService", () => {
       ];
       const config = new Config<DatabaseRules>(
         Config.PERMISSION_KEY,
-        Object.assign({ default: defaultRules } as DatabaseRules, rules),
+        Object.assign(
+          { [DEFAULT_SECTION_KEY]: defaultRules } as DatabaseRules,
+          rules,
+        ),
       );
 
       entityUpdates.next({ entity: config, type: "update" });
@@ -437,7 +441,10 @@ describe("AbilityService", () => {
       ];
       const config = new Config<DatabaseRules>(
         Config.PERMISSION_KEY,
-        Object.assign({ _default: defaultRules } as DatabaseRules, rules),
+        Object.assign(
+          { [DEFAULT_SECTION_KEY]: defaultRules } as DatabaseRules,
+          rules,
+        ),
       );
 
       TestBed.inject(SessionSubject).next({
@@ -450,30 +457,6 @@ describe("AbilityService", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should still read the legacy default section of a document that has not been migrated yet", async () => {
-    vi.useFakeTimers();
-    try {
-      service.initializeRules();
-      await vi.advanceTimersByTimeAsync(0);
-      const legacyDefaultRules: DatabaseRule[] = [
-        { subject: "Config", action: "read" },
-      ];
-      const config = new Config<DatabaseRules>(
-        Config.PERMISSION_KEY,
-        Object.assign({ default: legacyDefaultRules } as DatabaseRules, rules),
-      );
-
-      entityUpdates.next({ entity: config, type: "update" });
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(ability.rules).toEqual(
-        legacyDefaultRules.concat(...rules.user_app),
-      );
     } finally {
       vi.useRealTimers();
     }

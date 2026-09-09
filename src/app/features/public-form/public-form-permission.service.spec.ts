@@ -47,7 +47,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should allow access when public role has create permission", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "Child", action: "create" }],
+      _public: [{ subject: "Child", action: "create" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -58,7 +58,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should allow access when public role has manage permission", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "Child", action: "manage" }],
+      _public: [{ subject: "Child", action: "manage" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -69,7 +69,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should allow access when public role has create permission with grouped/array subjects", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: ["Child", "School"], action: "create" }],
+      _public: [{ subject: ["Child", "School"], action: "create" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -80,7 +80,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should allow access when public role has manage permission with grouped/array subjects", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: ["Child", "School"], action: "manage" }],
+      _public: [{ subject: ["Child", "School"], action: "manage" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -91,7 +91,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should deny access when entity type is not in the grouped subjects array", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: ["Child", "School"], action: "create" }],
+      _public: [{ subject: ["Child", "School"], action: "create" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -102,7 +102,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should deny access when public role has no permission for the entity type", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "School", action: "create" }],
+      _public: [{ subject: "School", action: "create" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -113,7 +113,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should deny access when public role has read permission but not create permission", async () => {
     const permissionsConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "Child", action: "read" }],
+      _public: [{ subject: "Child", action: "read" }],
     });
     mockEntityMapper.load.mockResolvedValue(permissionsConfig);
 
@@ -179,7 +179,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should add permission to existing permissions config", async () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [
+      _public: [
         {
           subject: [
             "Config",
@@ -265,7 +265,7 @@ describe("PublicFormPermissionService", () => {
 
   it("should add create permission when only read permission exists", async () => {
     const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "Child", action: "read" }],
+      _public: [{ subject: "Child", action: "read" }],
     });
     mockEntityMapper.load.mockResolvedValue(existingConfig);
     mockEntityMapper.save.mockResolvedValue(undefined);
@@ -292,46 +292,5 @@ describe("PublicFormPermissionService", () => {
       }),
       true,
     );
-  });
-
-  it("should migrate a legacy public section to the renamed _public key", async () => {
-    const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [{ subject: "Child", action: "read" }],
-    });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
-    mockEntityMapper.save.mockResolvedValue(undefined);
-
-    await service.addPublicCreatePermission("Child");
-
-    const saved = mockEntityMapper.save.mock.calls[0][0] as Config<any>;
-    expect(saved.data._public).toBeDefined();
-    expect(saved.data.public).toBeUndefined();
-  });
-
-  it("should persist the legacy migration even when all required rules already exist", async () => {
-    const existingConfig = new Config(Config.PERMISSION_KEY, {
-      public: [
-        {
-          subject: [
-            "Config",
-            "SiteSettings",
-            "PublicFormConfig",
-            "ConfigurableEnum",
-          ],
-          action: "read",
-        },
-        { subject: "Child", action: "create" },
-      ],
-    });
-    mockEntityMapper.load.mockResolvedValue(existingConfig);
-    mockEntityMapper.save.mockResolvedValue(undefined);
-
-    await service.addPublicCreatePermission("Child");
-
-    // no new rule is needed, but the legacy -> _public migration must still be saved
-    expect(mockEntityMapper.save).toHaveBeenCalledTimes(1);
-    const saved = mockEntityMapper.save.mock.calls[0][0] as Config<any>;
-    expect(saved.data._public).toBeDefined();
-    expect(saved.data.public).toBeUndefined();
   });
 });
