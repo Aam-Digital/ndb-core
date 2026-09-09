@@ -213,10 +213,18 @@
           formControlName="userEntityId"
           [entityType]="userAccountEntityTypes()"
         ></app-edit-entity>
-        @if (!creatingNewAccount()) {
-          <mat-hint i18n>
-            Editing linked profile record is not possible here. Please contact
-            user support.
+        @if (getFormError("userEntityId", "required")) {
+          <mat-error i18n>This field is required</mat-error>
+        }
+        @if (!creatingNewAccount() && !formDisabled()) {
+          <mat-hint
+            i18n="
+              hint explaining the consequence of changing the linked profile
+            "
+          >
+            Changing this links the account to a different profile record. The
+            previous record stays in the database but will no longer have a
+            login account.
           </mat-hint>
         }
       </mat-form-field>
