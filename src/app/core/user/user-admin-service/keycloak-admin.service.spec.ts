@@ -194,6 +194,66 @@ describe("KeycloakAdminService", () => {
       .flush({});
   });
 
+  it("should preserve unrelated fields and merge attributes when updating only the linked profile", async () => {
+    // given
+    const mockUser = {
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+      attributes: { locale: ["en"] },
+    };
+
+    // when
+    service
+      .updateUser("test-id", { userEntityId: "User:new-entity-id" })
+      .subscribe((result) => {
+        expect(result).toEqual({ userUpdated: true });
+      });
+
+    // then
+    const reqGet = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqGet.request.method).toEqual("GET");
+    reqGet.flush(mockUser);
+
+    const reqPut = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqPut.request.method).toEqual("PUT");
+    expect(reqPut.request.body).toEqual({
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+      attributes: {
+        locale: ["en"],
+        exact_username: ["User:new-entity-id"],
+      },
+    });
+    reqPut.flush({});
+  });
+
+  it("should send enabled:false as an explicit value, not drop it as an unset key", async () => {
+    // given
+    const mockUser = {
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+    };
+
+    // when
+    service.updateUser("test-id", { enabled: false }).subscribe();
+
+    // then
+    const reqGet = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    reqGet.flush(mockUser);
+
+    const reqPut = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqPut.request.body).toEqual(
+      expect.objectContaining({ enabled: false }),
+    );
+    reqPut.flush({});
+  });
+
   it("should handle error when updating user", async () => {
     // when
     service

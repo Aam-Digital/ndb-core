@@ -164,7 +164,19 @@ export class KeycloakAdminService extends UserAdminService {
     }
 
     // first update the user object, then run other actions
-    const newUser = { ...currentUser, ...updatedUser }; // make sure we don't lose unchanged properties
+    const newUser: Record<string, unknown> = {
+      ...currentUser,
+      ...updatedUser, // make sure we don't lose unchanged properties
+      // merge rather than let `updatedUser.attributes` replace the whole map,
+      // which would drop every other Keycloak attribute the user has
+      attributes: { ...currentUser.attributes, ...updatedUser.attributes },
+    };
+    Object.keys(newUser).forEach((key) => {
+      if (newUser[key] === undefined) {
+        delete newUser[key];
+      }
+    });
+
     return this.http
       .put(`${this.keycloakUrl}/users/${currentUser.id}`, newUser)
       .pipe(concatWith(...actions));
