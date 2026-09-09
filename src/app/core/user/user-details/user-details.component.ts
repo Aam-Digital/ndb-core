@@ -419,9 +419,23 @@ export class UserDetailsComponent {
     currentUser: UserAccount,
     newEntityId: string,
   ): Promise<boolean> {
-    const conflictingAccount = await firstValueFrom(
-      this.userAdminService.getUser(newEntityId),
-    ).catch(() => null);
+    let conflictingAccount: UserAccount | null;
+    try {
+      // getUser resolves to null when no account is linked to that profile,
+      // and only throws when the lookup itself failed
+      conflictingAccount = await firstValueFrom(
+        this.userAdminService.getUser(newEntityId),
+      );
+    } catch (error) {
+      // a failed lookup is not evidence that the profile is free - refuse the change rather
+      // than risk linking a second account to a profile that already has one
+      Logging.error("Failed to check for an existing user account", error);
+      this.alertService.addDanger(
+        $localize`:Error message:Could not check whether this profile already has a user account. Please try again.`,
+      );
+      return false;
+    }
+
     // getUser looks up by the new profile's exact_username, so on an unchanged save it resolves
     // back to this very account - only a *different* account's id is an actual conflict.
     if (conflictingAccount && conflictingAccount.id !== currentUser.id) {

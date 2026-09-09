@@ -530,6 +530,26 @@ describe("UserDetailsComponent", () => {
       expect(mockDialogRef.close).not.toHaveBeenCalled();
     });
 
+    it("should not re-link when the check for an existing account fails", async () => {
+      fixture.componentRef.setInput("userAccount", linkedUserAccount);
+      fixture.detectChanges();
+      component.editMode();
+      fixture.detectChanges();
+
+      mockUserAdminService.getUser.mockReturnValue(
+        throwError(() => new Error("server unreachable")),
+      );
+      component.form.patchValue({ userEntityId: "User:other-entity" });
+
+      await component.save();
+
+      expect(mockAlertService.addDanger).toHaveBeenCalledWith(
+        expect.stringContaining("Could not check"),
+      );
+      expect(mockUserAdminService.updateUser).not.toHaveBeenCalled();
+      expect(mockDialogRef.close).not.toHaveBeenCalled();
+    });
+
     it("should proceed when the profile lookup resolves back to this very account", async () => {
       fixture.componentRef.setInput("userAccount", linkedUserAccount);
       fixture.detectChanges();
