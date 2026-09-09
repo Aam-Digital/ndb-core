@@ -216,7 +216,7 @@
         @if (getFormError("userEntityId", "required")) {
           <mat-error i18n>This field is required</mat-error>
         }
-        @if (!creatingNewAccount()) {
+        @if (!creatingNewAccount() && !formDisabled()) {
           <mat-hint
             i18n="
               hint explaining the consequence of changing the linked profile
