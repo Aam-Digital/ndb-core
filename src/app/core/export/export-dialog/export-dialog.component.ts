@@ -114,7 +114,8 @@ export class ExportDialogComponent {
     return this.availableColumns.length;
   });
 
-  columnToString = (col: ExportColumnConfig) => col.label ?? col.query;
+  columnToString = (col: ExportColumnConfig) =>
+    resolveActiveText(col.label) ?? col.query;
   columnToValue = (col: ExportColumnConfig) => normalizeQueryKey(col.query);
 
   clearSelection() {
