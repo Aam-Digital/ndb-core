@@ -249,8 +249,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="186"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:186</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -326,8 +326,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="160"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:160</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:156</a></div>
                         </td>
                     </tr>
 
@@ -396,8 +396,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="176"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:176</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="172"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:172</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -516,8 +516,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -581,10 +581,8 @@ import {
   ADMIN_APP_ROLE,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
-  LEGACY_PUBLIC_KEY,
   PUBLIC_SECTION_KEY,
 } from &quot;../../core/permissions/permission-types&quot;;
-import { migrateLegacySectionKeys } from &quot;../../core/permissions/permissions-config-migration&quot;;
 import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
 
@@ -641,9 +639,7 @@ export class PublicFormPermissionService {
       if (!permissionsConfig?.data) {
         return false; // No permissions config means &quot;public&quot; users have no access
       }
-      const publicRules &#x3D;
-        migrateLegacySectionKeys(permissionsConfig.data)[PUBLIC_SECTION_KEY] ??
-        [];
+      const publicRules &#x3D; permissionsConfig.data[PUBLIC_SECTION_KEY] ?? [];
       return publicRules.some(
         (rule) &#x3D;&gt;
           this.subjectMatches(rule.subject, entityType) &amp;&amp;
@@ -770,21 +766,6 @@ export class PublicFormPermissionService {
       permissionsConfig.data &#x3D; {};
     }
 
-    // migrate any legacy section key to the underscore-prefixed name so we
-    // never write both spellings (the read path prefers the new key).
-    // Kept inline instead of using migrateLegacySectionKeys(): this is a write
-    // path, so it also removes the legacy key and must not touch any section
-    // other than the one this form needs.
-    const migratedLegacyPublic &#x3D; LEGACY_PUBLIC_KEY in permissionsConfig.data;
-    if (
-      permissionsConfig.data[LEGACY_PUBLIC_KEY] &amp;&amp;
-      !permissionsConfig.data[PUBLIC_SECTION_KEY]
-    ) {
-      permissionsConfig.data[PUBLIC_SECTION_KEY] &#x3D;
-        permissionsConfig.data[LEGACY_PUBLIC_KEY];
-    }
-    delete permissionsConfig.data[LEGACY_PUBLIC_KEY];
-
     if (!permissionsConfig.data[PUBLIC_SECTION_KEY]) {
       permissionsConfig.data[PUBLIC_SECTION_KEY] &#x3D; [];
     }
@@ -837,8 +818,7 @@ export class PublicFormPermissionService {
       });
     }
 
-    // also persist when we only migrated a legacy section (no new rule added)
-    if (migratedLegacyPublic || !createExists || !formReadExists) {
+    if (!createExists || !formReadExists) {
       await this.entityMapper.save(permissionsConfig, true);
     }
   }

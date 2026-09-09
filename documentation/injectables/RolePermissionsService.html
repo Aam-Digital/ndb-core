@@ -277,8 +277,8 @@ stored in the Config:Permissions document and the authentication server.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="186"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:186</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="184"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:184</a></div>
                         </td>
                     </tr>
 
@@ -381,8 +381,8 @@ The realm role is created first; if that fails the config is left untouched
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="198"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:198</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:196</a></div>
                         </td>
                     </tr>
 
@@ -458,8 +458,8 @@ The realm role is deleted first; if that fails the config is left untouched.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="120"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:120</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="119"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:119</a></div>
                         </td>
                     </tr>
 
@@ -503,8 +503,8 @@ save a document that silently drops every already configured role.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -546,8 +546,8 @@ followed by all other config keys and remaining realm roles.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="234"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:234</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="232"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:232</a></div>
                         </td>
                     </tr>
 
@@ -618,8 +618,8 @@ keeping a backup of the previous state with an &quot;undo&quot; option.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="222"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:222</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:220</a></div>
                         </td>
                     </tr>
 
@@ -702,8 +702,8 @@ keeping a backup of the previous state with an &quot;undo&quot; option.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="212"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:212</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="210"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:210</a></div>
                         </td>
                     </tr>
 
@@ -810,7 +810,7 @@ keeping a backup of the previous state with an &quot;undo&quot; option.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:102</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -849,7 +849,6 @@ import {
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from &quot;../../permissions/permission-types&quot;;
-import { migrateLegacySectionKeys } from &quot;../../permissions/permissions-config-migration&quot;;
 import { RESERVED_ROLES } from &quot;../../permissions/reserved-roles&quot;;
 import { Role } from &quot;../../user/user-admin-service/user-account&quot;;
 import { UserAdminService } from &quot;../../user/user-admin-service/user-admin.service&quot;;
@@ -970,9 +969,8 @@ export class RolePermissionsService {
    * followed by all other config keys and remaining realm roles.
    */
   async loadRoles(): Promise&lt;RoleWithPermissions[]&gt; {
-    const rules: DatabaseRules &#x3D; migrateLegacySectionKeys(
-      (await this.loadPermissionsConfig()).data ?? {},
-    );
+    const rules: DatabaseRules &#x3D;
+      (await this.loadPermissionsConfig()).data ?? {};
     const keycloakRoles: Role[] &#x3D; await firstValueFrom(
       this.userAdminService.getAllRoles().pipe(catchError(() &#x3D;&gt; of([]))),
     );

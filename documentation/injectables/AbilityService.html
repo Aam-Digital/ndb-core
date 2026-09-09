@@ -276,7 +276,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:59</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:58</a></div>
                             </td>
                         </tr>
 
@@ -311,8 +311,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -507,7 +507,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:34</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -622,7 +622,6 @@ import {
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from &quot;../permission-types&quot;;
-import { migrateLegacySectionKeys } from &quot;../permissions-config-migration&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { PermissionEnforcerService } from &quot;../permission-enforcer/permission-enforcer.service&quot;;
 import { EntityAbility } from &quot;./entity-ability&quot;;
@@ -678,9 +677,7 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.rulesUpdated &#x3D; this.entityUpdated.pipe(
-      map((config) &#x3D;&gt; migrateLegacySectionKeys(config.data)),
-    );
+    this.rulesUpdated &#x3D; this.entityUpdated.pipe(map((config) &#x3D;&gt; config.data));
     this.rulesUpdated
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((rules) &#x3D;&gt; {
@@ -702,9 +699,7 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
     }
 
     if (initialPermissions) {
-      await this.updateAbilityWithUserRules(
-        migrateLegacySectionKeys(initialPermissions.data),
-      );
+      await this.updateAbilityWithUserRules(initialPermissions.data);
     } else if (this.rulesKnown) {
       // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: &quot;manage&quot;, subject: &quot;all&quot; }]);

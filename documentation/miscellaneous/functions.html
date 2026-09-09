@@ -671,9 +671,6 @@
                             <a href="#migrateIsoDatesToInferredDateOnly" title="src/app/core/basic-datatypes/date-only/date-only.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migrateIsoDatesToInferredDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../date-only.datatype.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#migrateLegacySectionKeys" title="src/app/core/permissions/permissions-config-migration.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migrateLegacySectionKeys</b>&nbsp;&nbsp;&nbsp;(src/.../permissions-config-migration.ts)</span></a>
-                        </li>
-                        <li>
                             <a href="#migrateNavMenuItem" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>migrateNavMenuItem</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
@@ -17313,85 +17310,6 @@ Values that are not a string are passed through, which lets both walk a document
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/permissions/permissions-config-migration.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="migrateLegacySectionKeys"></a>
-                    <span class="name">
-                        <span ><b>migrateLegacySectionKeys</b></span>
-                        <a href="#migrateLegacySectionKeys"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>migrateLegacySectionKeys(rules: <a href="../interfaces/DatabaseRules.html" target="_self">DatabaseRules</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Bring a raw Config:Permissions rules object into the current format, so that
-everything reading it can rely on the underscore-prefixed reserved section
-keys (&quot;_default&quot;, &quot;_public&quot;) alone.</p>
-<p>A legacy section (&quot;default&quot;, &quot;public&quot;) is copied to its current name if that
-is not present, which is the same precedence the backend applies: where both
-exist, the underscore-prefixed one wins.</p>
-<p>The legacy keys themselves are kept, because removing them from the stored
-document is a separate, staged step (the <code>oneoff-20260804-permissions-key-legacy-cleanup</code>
-migration in <code>cli/migration/</code>, which only runs once every reader is known to
-use the new keys). They are never resolved as a user role
-(see <a href="../miscellaneous/variables.html#RESERVED_RULE_CONFIG_KEYS">RESERVED_RULE_CONFIG_KEYS</a>), so leaving them in has no effect.</p>
-<p>Returns a new object; the input, which typically belongs to a loaded entity,
-is not modified. A missing rules object is passed through unchanged, so that
-callers can still distinguish &quot;no permissions configured&quot; from &quot;no rules&quot;.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>rules</td>
-                                            <td>
-                                                            <code><a href="../interfaces/DatabaseRules.html" target="_self" >DatabaseRules</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/DatabaseRules.html" target="_self" >DatabaseRules</a></code>
 
                         </div>
                             <div class="io-description">

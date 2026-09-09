@@ -259,7 +259,7 @@ merged from the Config:Permissions document and the authentication server (Keycl
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:58</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:57</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,7 @@ merged from the Config:Permissions document and the authentication server (Keycl
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:69</a></div>
                                 </td>
                             </tr>
 
@@ -344,7 +344,7 @@ the virtual reserved roles and the technical <a href="../miscellaneous/variables
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:64</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:63</a></div>
                                 </td>
                             </tr>
 
@@ -395,7 +395,7 @@ and have no matching realm role in the authentication server.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:72</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:71</a></div>
                                 </td>
                             </tr>
 
@@ -434,7 +434,7 @@ and have no matching realm role in the authentication server.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:56</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:55</a></div>
                                 </td>
                             </tr>
 
@@ -478,7 +478,7 @@ and have no matching realm role in the authentication server.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:79</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:78</a></div>
                                 </td>
                             </tr>
 
@@ -513,7 +513,6 @@ import {
   RESERVED_ROLE_PREFIX,
   RESERVED_RULE_CONFIG_KEYS,
 } from &quot;../../permissions/permission-types&quot;;
-import { migrateLegacySectionKeys } from &quot;../../permissions/permissions-config-migration&quot;;
 import { RESERVED_ROLES } from &quot;../../permissions/reserved-roles&quot;;
 import { Role } from &quot;../../user/user-admin-service/user-account&quot;;
 import { UserAdminService } from &quot;../../user/user-admin-service/user-admin.service&quot;;
@@ -634,9 +633,8 @@ export class RolePermissionsService {
    * followed by all other config keys and remaining realm roles.
    */
   async loadRoles(): Promise&lt;RoleWithPermissions[]&gt; {
-    const rules: DatabaseRules &#x3D; migrateLegacySectionKeys(
-      (await this.loadPermissionsConfig()).data ?? {},
-    );
+    const rules: DatabaseRules &#x3D;
+      (await this.loadPermissionsConfig()).data ?? {};
     const keycloakRoles: Role[] &#x3D; await firstValueFrom(
       this.userAdminService.getAllRoles().pipe(catchError(() &#x3D;&gt; of([]))),
     );
