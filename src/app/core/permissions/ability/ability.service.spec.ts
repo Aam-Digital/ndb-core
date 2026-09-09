@@ -12,6 +12,7 @@ import {
   ADMIN_APP_ROLE,
   DatabaseRule,
   DatabaseRules,
+  DEFAULT_SECTION_KEY,
 } from "../permission-types";
 import { Config } from "../../config/config";
 import { Logging } from "../../logging/logging.service";
@@ -402,7 +403,10 @@ describe("AbilityService", () => {
       ];
       const config = new Config<DatabaseRules>(
         Config.PERMISSION_KEY,
-        Object.assign({ _default: defaultRules } as DatabaseRules, rules),
+        Object.assign(
+          { [DEFAULT_SECTION_KEY]: defaultRules } as DatabaseRules,
+          rules,
+        ),
       );
 
       entityUpdates.next({ entity: config, type: "update" });
@@ -437,7 +441,10 @@ describe("AbilityService", () => {
       ];
       const config = new Config<DatabaseRules>(
         Config.PERMISSION_KEY,
-        Object.assign({ _default: defaultRules } as DatabaseRules, rules),
+        Object.assign(
+          { [DEFAULT_SECTION_KEY]: defaultRules } as DatabaseRules,
+          rules,
+        ),
       );
 
       TestBed.inject(SessionSubject).next({
