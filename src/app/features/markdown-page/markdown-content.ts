@@ -1,3 +1,4 @@
+import { TranslatableText } from "app/core/config/multi-lingual-config";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { Entity } from "app/core/entity/model/entity";
@@ -7,8 +8,6 @@ import { Entity } from "app/core/entity/model/entity";
  */
 @DatabaseEntity("MarkdownContent")
 export class MarkdownContent extends Entity {
-  /**
-   * The content with markdown formatting.
-   */
-  @DatabaseField() content: string;
+  /** markdown content, may hold a per-language map (#3862) */
+  @DatabaseField() content: TranslatableText;
 }

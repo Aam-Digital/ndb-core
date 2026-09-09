@@ -5,6 +5,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
+import { resolveActiveText } from "../../language/active-locale";
 
 @Injectable({ providedIn: "root" })
 export class ConfigurableEnumService {
@@ -28,11 +29,23 @@ export class ConfigurableEnumService {
     return this.enums.set(entity.getId(), entity);
   }
 
+  /**
+   * The options with their labels resolved to the active language, as copies so
+   * the cached entity keeps every language (#3862). Ids are never translated.
+   * Use {@link getEnum} when the enum is to be edited and saved.
+   */
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
     id: string,
   ): T[] {
     const configurableEnum = this.getEnum(id);
-    return configurableEnum ? (configurableEnum.values as T[]) : [];
+    if (!configurableEnum) {
+      return [];
+    }
+
+    return configurableEnum.values.map((option) => ({
+      ...option,
+      label: resolveActiveText(option.label),
+    })) as T[];
   }
 
   getEnum(id: string): ConfigurableEnum | undefined {

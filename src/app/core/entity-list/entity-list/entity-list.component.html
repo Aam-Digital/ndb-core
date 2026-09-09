@@ -52,7 +52,7 @@
             [(selectedIndex)]="selectedColumnGroupIndex"
             appTabStateMemo
           >
-            @for (item of groups; track item.name) {
+            @for (item of displayGroups; track item.name) {
               <mat-tab
                 [label]="item.name"
                 angulartics2On="click"
@@ -233,7 +233,7 @@
     <button
       mat-menu-item
       (click)="copyPublicFormLinkForEntityType(formConfig)"
-      [matTooltip]="formConfig.title"
+      [matTooltip]="publicFormTitle(formConfig)"
       i18n-matTooltip
       matTooltipPosition="before"
     >
@@ -241,7 +241,9 @@
         class="color-accent standard-icon-with-text"
         icon="link"
       ></fa-icon>
-      <span i18n>Copy Public Form Link</span> ({{ formConfig.title }})
+      <span i18n>Copy Public Form Link</span> ({{
+        publicFormTitle(formConfig)
+      }})
     </button>
   }
 

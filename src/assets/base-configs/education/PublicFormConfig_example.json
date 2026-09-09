@@ -1,8 +1,16 @@
 [
   {
     "_id": "PublicFormConfig:example",
-    "title": "Example form",
-    "description": "This is a form that can be shared as a link or embedded in a website. It can be filled by users without having an account. For example you can let participants self-register their details and just review the records within Aam Digital.",
+    "title": {
+      "en-US": "Example form",
+      "de": "Beispielformular",
+      "fr": "Formulaire d'exemple"
+    },
+    "description": {
+      "en-US": "This is a form that can be shared as a link or embedded in a website. It can be filled by users without having an account. For example you can let participants self-register their details and just review the records within Aam Digital.",
+      "de": "Dies ist ein Formular, das als Link geteilt oder in eine Website eingebettet werden kann. Es kann von Benutzern ohne Konto ausgefüllt werden. Sie können beispielsweise Teilnehmern ermöglichen, ihre Daten selbst zu registrieren und die Datensätze einfach in Aam Digital zu überprüfen.",
+      "fr": "Il s'agit d'un formulaire qui peut être partagé sous forme de lien ou intégré dans un site Web. Il peut être rempli par des utilisateurs sans avoir de compte. Par exemple, vous pouvez permettre aux participants de s'inscrire eux-mêmes et simplement examiner les enregistrements dans Aam Digital."
+    },
     "entity": "Child",
     "route": "example",
     "columns": [

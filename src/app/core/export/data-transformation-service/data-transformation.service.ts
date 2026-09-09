@@ -6,6 +6,8 @@ import {
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../query.service";
 import { groupBy } from "../../../utils/utils";
+import { resolveActiveText } from "../../language/active-locale";
+import { TranslatableText } from "../../config/multi-lingual-config";
 
 /**
  * Prepare data for export or analysis
@@ -38,7 +40,7 @@ export class DataTransformationService {
           )),
         );
       } else {
-        totalRow[c.label] = baseData;
+        totalRow[resolveActiveText(c.label)] = baseData;
       }
 
       combinedResults.push(...result);
@@ -69,7 +71,7 @@ export class DataTransformationService {
     config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
-    groupByProperty?: { label: string; property: string },
+    groupByProperty?: { label: TranslatableText; property: string },
   ): Promise<ExportRow[]> {
     const fullQuery = config.map((c) => this.concatQueries(c)).join("");
     await this.queryService.cacheRequiredData(fullQuery, from, to);
@@ -83,7 +85,7 @@ export class DataTransformationService {
     config: ExportColumnConfig[],
     from: Date,
     to: Date,
-    groupByProperty?: { label: string; property: string },
+    groupByProperty?: { label: TranslatableText; property: string },
   ) {
     const result: ExportRow[] = [];
     if (groupByProperty) {
@@ -156,8 +158,11 @@ export class DataTransformationService {
     from: Date,
     to: Date,
   ): ExportRow[] {
+    // a configured label may be a per-language map, but it is used as the column
+    // key here and in the downloaded file, so it has to be plain text
     const label =
-      exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
+      resolveActiveText(exportColumnConfig.label) ??
+      exportColumnConfig.query.replace(".", "");
     const value = this.getValueForQuery(exportColumnConfig, data, from, to);
 
     if (!exportColumnConfig.subQueries) {

@@ -9,6 +9,7 @@ import {
   PublicFormEntityFormConfig,
 } from "./public-form-config";
 import { asArray } from "#src/app/utils/asArray";
+import { resolveActiveText } from "#src/app/core/language/active-locale";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityConfigService } from "app/core/entity/entity-config.service";
@@ -43,6 +44,7 @@ export class PublicFormsService {
     );
     this.entityActionsMenuService.unregisterActions(actionKeys);
     for (const config of matchingForms) {
+      const formTitle = resolveActiveText(config.title) ?? "";
       this.entityActionsMenuService.registerActions([
         {
           action: `copy-form-${config.getId()}`,
@@ -52,8 +54,8 @@ export class PublicFormsService {
           },
           permission: "read",
           icon: "link",
-          label: $localize`Copy Custom Form (${config.title})`,
-          tooltip: $localize`Copy link to public form "${config.title}" that will connect submissions to this individual record.`,
+          label: $localize`Copy Custom Form (${formTitle})`,
+          tooltip: $localize`Copy link to public form "${formTitle}" that will connect submissions to this individual record.`,
           visible: (entity) =>
             this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),
           availableFor: "individual-only",

@@ -65,6 +65,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EditTranslatableText",
+    () =>
+      import("./config/translatable-text-input/translatable-text-input.component").then(
+        (c) => c.TranslatableTextInputComponent,
+      ),
+  ],
+  [
     "EditBoolean",
     () =>
       import("./basic-datatypes/boolean/edit-boolean/edit-boolean.component").then(
@@ -125,6 +132,13 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./basic-datatypes/string/display-text/display-text.component").then(
         (c) => c.DisplayTextComponent,
+      ),
+  ],
+  [
+    "DisplayTranslatableText",
+    () =>
+      import("./config/display-translatable-text/display-translatable-text.component").then(
+        (c) => c.DisplayTranslatableTextComponent,
       ),
   ],
   [

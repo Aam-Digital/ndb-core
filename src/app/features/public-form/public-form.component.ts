@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -37,6 +38,9 @@ import {
   PublicFormLinkingService,
 } from "./public-form-linking.service";
 import { UpdateMetadata } from "../../core/entity/model/update-metadata";
+import { resolveActiveText } from "../../core/language/active-locale";
+import { availableLocales } from "../../core/language/languages";
+import { LanguageSelectComponent } from "../../core/language/language-select/language-select.component";
 
 @UntilDestroy()
 @Component({
@@ -51,6 +55,7 @@ import { UpdateMetadata } from "../../core/entity/model/update-metadata";
     DisplayImgComponent,
     FontAwesomeModule,
     MarkdownPageModule,
+    LanguageSelectComponent,
   ],
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
@@ -67,6 +72,22 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   formConfig = signal<PublicFormConfig | undefined>(undefined);
+
+  /** display only - `formConfig` stays raw so every language is kept */
+  readonly formTitle = computed(() =>
+    resolveActiveText(this.formConfig()?.title),
+  );
+  readonly formDescription = computed(() =>
+    resolveActiveText(this.formConfig()?.description),
+  );
+
+  /**
+   * Visitors have no account: the choice is stored in localStorage and applied
+   * on reload by `initLanguage()`, which needs no logged-in user.
+   */
+  readonly availableLocales = availableLocales.values;
+  readonly showLanguageSelect = this.availableLocales.length > 1;
+
   entityFormEntries = signal<
     Array<
       PublicFormEntry & {

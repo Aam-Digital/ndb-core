@@ -15,6 +15,7 @@ import { Entity } from "./entity/model/entity";
 import { TimePeriod } from "./entity-details/related-time-period-entities/time-period";
 import { CommonModule } from "@angular/common";
 import { LongTextDatatype } from "./basic-datatypes/string/long-text.datatype";
+import { TranslatableTextDatatype } from "./config/translatable-text.datatype";
 import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype";
 import { CurrentUserSubject } from "./session/current-user-subject";
 import { SessionSubject } from "./session/auth/session-info";
@@ -34,6 +35,11 @@ import { SchemaEmbedDatatype } from "./basic-datatypes/schema-embed/schema-embed
     { provide: DefaultDatatype, useClass: SchemaEmbedDatatype, multi: true },
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
+    {
+      provide: DefaultDatatype,
+      useClass: TranslatableTextDatatype,
+      multi: true,
+    },
     { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
     { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
     { provide: DefaultDatatype, useClass: UpdateMetadataDatatype, multi: true },

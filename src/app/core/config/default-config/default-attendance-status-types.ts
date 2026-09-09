@@ -1,5 +1,7 @@
 import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
-import enumJson from "../../../../assets/base-configs/basic/ConfigurableEnum_attendance-status.json";
+import demoEnums from "../../demo-data/demo-enums.json";
 
-export const defaultAttendanceStatusTypes =
-  enumJson.values as AttendanceStatusType[];
+// kept separate from the shipped config, whose texts can be configured per language
+export const defaultAttendanceStatusTypes = demoEnums.find(
+  (e) => e._id === "ConfigurableEnum:attendance-status",
+).values as AttendanceStatusType[];

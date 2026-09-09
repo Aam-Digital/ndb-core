@@ -24,7 +24,7 @@ button {
 
 .public-form-image {
   max-width: 100%;
-  height: 100px;
+  max-height: 100px;
   object-fit: contain;
 }
 
@@ -50,4 +50,10 @@ button {
   li {
     margin: 4px 0;
   }
+}
+
+.language-select-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 16px 0;
 }

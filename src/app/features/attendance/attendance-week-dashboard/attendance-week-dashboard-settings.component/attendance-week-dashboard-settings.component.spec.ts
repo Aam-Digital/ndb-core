@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AttendanceWeekDashboardSettingsComponent } from "./attendance-week-dashboard-settings.component";
 import { FormControl } from "@angular/forms";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AttendanceWeekDashboardSettingsComponent", () => {
   let component: AttendanceWeekDashboardSettingsComponent;
@@ -9,7 +10,10 @@ describe("AttendanceWeekDashboardSettingsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AttendanceWeekDashboardSettingsComponent],
+      imports: [
+        AttendanceWeekDashboardSettingsComponent,
+        FontAwesomeTestingModule,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AttendanceWeekDashboardSettingsComponent);

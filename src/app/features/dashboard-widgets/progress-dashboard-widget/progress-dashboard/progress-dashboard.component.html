@@ -3,9 +3,9 @@
     icon="list"
     theme="child"
     [title]="overallPercentage() | percent: '1.0-0'"
-    [subtitle]="subtitle() ?? data().title"
+    [subtitle]="subtitle() ?? displayTitle()"
     [explanation]="explanation()"
-    [entries]="data().parts"
+    [entries]="displayParts()"
   >
     <div class="table-wrapper">
       <table

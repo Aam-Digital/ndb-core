@@ -52,10 +52,8 @@ export class AdminSectionHeaderComponent {
 
   /**
    * Whether this title may be configured in several languages.
-   *
-   * Off by default: some titles double as identifiers (e.g. a list view's column
-   * group name is referenced by `columnGroups.default`), and those must stay
-   * plain strings.
+   * Off by default: a title that is referenced elsewhere may only become a map
+   * once that reference matches any language (see `columnGroups.default`).
    */
   translatable = input<boolean>(false);
 

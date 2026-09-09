@@ -34,6 +34,7 @@ import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 import { ConfigService } from "app/core/config/config.service";
+import { resolveActiveText } from "app/core/language/active-locale";
 import {
   DateRangeFilterConfig,
   DateRangeFilterConfigOption,
@@ -94,9 +95,19 @@ export class ReportingComponent {
 
   private reportsResource = resource({
     loader: () =>
-      this.entityMapper
-        .loadType(ReportEntity)
-        .then((res) => res.sort((a, b) => a.title?.localeCompare(b.title))),
+      this.entityMapper.loadType(ReportEntity).then((res) =>
+        res
+          // resolve once here, so everything downstream works on plain strings.
+          .map((report) => {
+            const forDisplay = report.copy();
+            forDisplay.title = resolveActiveText(report.title);
+            forDisplay.description = resolveActiveText(report.description);
+            return forDisplay;
+          })
+          .sort((a, b) =>
+            (a.title as string)?.localeCompare(b.title as string),
+          ),
+      ),
   });
   reports = this.reportsResource.value;
 

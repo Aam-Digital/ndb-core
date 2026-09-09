@@ -28,6 +28,7 @@ import {
 } from "../../admin/admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
+import { resolveActiveConfig } from "../../language/active-locale";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
@@ -66,14 +67,21 @@ export class AdminDashboardComponent {
     () => PREFIX_VIEW_CONFIG + this.dashboardViewId(),
   );
 
+  // raw, because save() writes this back to the config document - a resolved
+  // value would drop every other configured language (#3862)
   private readonly dashboardViewConfig = computed(
     () =>
-      this.configService.getConfig(this.dashboardViewConfigKey()) as
+      this.configService.getRawConfig(this.dashboardViewConfigKey()) as
         DynamicComponentConfig<DashboardConfig> | undefined,
   );
 
   dashboardConfig = linkedSignal(() =>
     structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
+  );
+
+  /** resolved copies, for the live widget preview only */
+  readonly previewWidgets = computed(() =>
+    resolveActiveConfig(this.dashboardConfig().widgets),
   );
 
   private readonly configService = inject(ConfigService);

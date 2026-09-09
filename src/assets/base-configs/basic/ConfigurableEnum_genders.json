@@ -3,15 +3,27 @@
   "values": [
     {
       "id": "M",
-      "label": "Male"
+      "label": {
+        "en-US": "Male",
+        "de": "männlich",
+        "fr": "masculin"
+      }
     },
     {
       "id": "F",
-      "label": "Female"
+      "label": {
+        "en-US": "Female",
+        "de": "weiblich",
+        "fr": "féminin"
+      }
     },
     {
       "id": "X",
-      "label": "Non-binary / third gender"
+      "label": {
+        "en-US": "Non-binary / third gender",
+        "de": "nicht-binär",
+        "fr": "non binaire"
+      }
     }
   ]
 }

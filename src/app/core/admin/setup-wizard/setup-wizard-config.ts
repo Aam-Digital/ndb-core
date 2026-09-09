@@ -12,6 +12,7 @@ export interface SetupWizardConfig {
   steps: SetupWizardStep[];
 }
 
+/** stored, the texts may be per-language maps - resolved for display (#3862) */
 export interface SetupWizardStep {
   title: string;
   text: string;

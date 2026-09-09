@@ -18,12 +18,14 @@
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
+import { TranslatableText } from "../../../../core/config/multi-lingual-config";
 
 @DatabaseEntity("ProgressDashboardConfig")
 export class ProgressDashboardConfig extends Entity {
   static override isInternalEntity = true;
 
-  @DatabaseField() title: string = $localize`Progress Widget`;
+  /** may hold a per-language map, resolve for display only (#3862) */
+  @DatabaseField() title: TranslatableText = $localize`Progress Widget`;
   @DatabaseField({ isArray: true }) parts: Array<ProgressDashboardPart> = [];
 
   getTotalPercentage() {
@@ -40,7 +42,7 @@ export class ProgressDashboardConfig extends Entity {
 }
 
 export interface ProgressDashboardPart {
-  label: string;
+  label: TranslatableText;
   currentValue: number;
   targetValue: number;
 }

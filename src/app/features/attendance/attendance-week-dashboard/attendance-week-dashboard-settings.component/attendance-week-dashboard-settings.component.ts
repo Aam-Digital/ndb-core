@@ -8,10 +8,12 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule, FormControl } from "@angular/forms";
+import { TranslatableTextInputComponent } from "#src/app/core/config/translatable-text-input/translatable-text-input.component";
+import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
 
 export interface AttendanceWeekDashboardSettingsConfig {
   daysOffset?: number;
-  periodLabel?: string;
+  periodLabel?: TranslatableText;
   label?: string;
   attendanceStatusType?: string;
 }
@@ -20,7 +22,12 @@ export interface AttendanceWeekDashboardSettingsConfig {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-attendance-week-dashboard-settings",
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, FormsModule],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    TranslatableTextInputComponent,
+  ],
   templateUrl: "./attendance-week-dashboard-settings.component.html",
   styleUrls: ["./attendance-week-dashboard-settings.component.scss"],
 })
@@ -29,7 +36,9 @@ export class AttendanceWeekDashboardSettingsComponent {
     input.required<FormControl<AttendanceWeekDashboardSettingsConfig>>();
 
   daysOffset = linkedSignal(() => this.formControl().value?.daysOffset ?? 0);
-  periodLabel = linkedSignal(() => this.formControl().value?.periodLabel ?? "");
+  periodLabel = linkedSignal<TranslatableText>(
+    () => this.formControl().value?.periodLabel ?? "",
+  );
   label = linkedSignal(() => this.formControl().value?.label ?? "");
   attendanceStatusType = linkedSignal(
     () => this.formControl().value?.attendanceStatusType ?? "",

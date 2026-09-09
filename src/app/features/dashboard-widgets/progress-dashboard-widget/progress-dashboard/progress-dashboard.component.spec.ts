@@ -153,6 +153,51 @@ describe("ProgressDashboardComponent", () => {
     }
   });
 
+  it("resolves multi-lingual texts for display while keeping the raw value to be saved", async () => {
+    vi.useFakeTimers();
+    try {
+      const multiLingualConfig = Object.assign(
+        new ProgressDashboardConfig("ml-id"),
+        {
+          title: { "en-US": "Annual Survey", de: "Jährliche Umfrage" },
+          parts: [
+            {
+              label: { "en-US": "Schools checked", de: "Überprüfte Schulen" },
+              currentValue: 1,
+              targetValue: 2,
+            },
+          ],
+        },
+      );
+      loadSpy.mockImplementation((entityType, id) => {
+        if (entityType === ProgressDashboardConfig) {
+          return Promise.resolve(multiLingualConfig);
+        }
+        return defaultLoadImplementation(entityType, id);
+      });
+
+      fixture.componentRef.setInput("dashboardConfigId", "ml-id");
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      // display uses the active locale (en-US in tests)
+      expect(component.displayTitle()).toBe("Annual Survey");
+      expect(component.displayParts()[0].label).toBe("Schools checked");
+
+      // ... while the entity that gets saved still holds every language
+      expect(component.data().title).toEqual({
+        "en-US": "Annual Survey",
+        de: "Jährliche Umfrage",
+      });
+      expect(component.data().parts[0].label).toEqual({
+        "en-US": "Schools checked",
+        de: "Überprüfte Schulen",
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("saves data after the dialog was closed", async () => {
     const closeNotifier = new Subject<Partial<ProgressDashboardConfig>>();
     mockDialog.open.mockReturnValue({

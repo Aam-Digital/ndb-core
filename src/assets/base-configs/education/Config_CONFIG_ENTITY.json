@@ -154,14 +154,22 @@
             "component": "AttendanceWeekDashboard",
             "config": {
               "daysOffset": 7,
-              "periodLabel": "this week"
+              "periodLabel": {
+                "en-US": "this week",
+                "de": "diese Woche",
+                "fr": "cette semaine"
+              }
             }
           },
           {
             "component": "AttendanceWeekDashboard",
             "config": {
               "daysOffset": 0,
-              "periodLabel": "last week"
+              "periodLabel": {
+                "en-US": "last week",
+                "de": "letzte Woche",
+                "fr": "la semaine dernière"
+              }
             }
           },
           {
@@ -316,7 +324,11 @@
               ]
             },
             {
-              "name": "Mobile",
+              "name": {
+                "en-US": "Mobile",
+                "de": "Mobil",
+                "fr": "Mobile"
+              },
               "columns": [
                 "date",
                 "subject",
@@ -488,7 +500,11 @@
           "mobile": "Short Overview (mobile)",
           "groups": [
             {
-              "name": "Basic Info",
+              "name": {
+                "en-US": "Basic Info",
+                "de": "Übersicht",
+                "fr": "Informations de base"
+              },
               "columns": [
                 "projectNumber",
                 "name",
@@ -499,7 +515,11 @@
               ]
             },
             {
-              "name": "Status",
+              "name": {
+                "en-US": "Status",
+                "de": "Status im Projekt",
+                "fr": "Statut"
+              },
               "columns": [
                 "projectNumber",
                 "name",
@@ -510,7 +530,11 @@
               ]
             },
             {
-              "name": "Short Overview (mobile)",
+              "name": {
+                "en-US": "Short Overview (mobile)",
+                "de": "Kurzübersicht (mobil)",
+                "fr": "Aperçu rapide (mobile)"
+              },
               "columns": [
                 "projectNumber",
                 "name",

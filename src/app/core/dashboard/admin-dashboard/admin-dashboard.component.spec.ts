@@ -14,6 +14,7 @@ describe("AdminDashboardComponent", () => {
   let fixture: ComponentFixture<AdminDashboardComponent>;
   const mockConfigService = {
     getConfig: vi.fn().mockName("ConfigService.getConfig"),
+    getRawConfig: vi.fn().mockName("ConfigService.getRawConfig"),
   };
   const mockDialog = {
     open: vi.fn().mockName("MatDialog.open"),
@@ -21,6 +22,11 @@ describe("AdminDashboardComponent", () => {
 
   beforeEach(async () => {
     mockConfigService.getConfig.mockReturnValue({
+      config: {
+        widgets: [],
+      },
+    });
+    mockConfigService.getRawConfig.mockReturnValue({
       config: {
         widgets: [],
       },

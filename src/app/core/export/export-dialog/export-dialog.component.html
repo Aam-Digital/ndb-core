@@ -41,7 +41,7 @@
   }
 
   @if (data.exportConfig) {
-    @if (columnGroups) {
+    @if (columnGroupOptions.length > 0) {
       <mat-form-field class="full-width">
         <mat-label i18n="Export dialog presets label">Presets</mat-label>
         <mat-select
@@ -50,7 +50,7 @@
             selectedGroupName.set($event); applyColumnGroup($event)
           "
         >
-          @for (g of columnGroups.groups; track g.name) {
+          @for (g of columnGroupOptions; track g.name) {
             <mat-option [value]="g.name">{{ g.name }}</mat-option>
           }
         </mat-select>
