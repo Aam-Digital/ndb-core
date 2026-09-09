@@ -44,10 +44,6 @@ describe("DisplayTodoCompletionComponent", () => {
     ) as MockEntityMapperService;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load the entity in completedBy when it has full ID", async () => {
     vi.useFakeTimers();
     try {
@@ -59,7 +55,9 @@ describe("DisplayTodoCompletionComponent", () => {
         completedBy: completingChild.getId(),
         completedAt: new Date(),
       });
+      fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
 
       expect(component.completedBy.value()).toEqual(completingChild);
     } finally {

@@ -12,6 +12,10 @@ import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import {
+  describeResponse,
+  unexpectedResponseMessage,
+} from "../../logging/http-response-logging";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -24,28 +28,9 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.NotFound,
 ];
 
-/**
- * Extract the diagnostic fields of a fetch `Response` into a plain object.
- *
- * `Response` keeps its state in internal slots rather than own enumerable
- * properties, so passing one to the logger (or to `JSON.stringify`) yields an
- * empty object - the reported event then carries no status at all, which is the
- * one thing needed to tell e.g. a conflict from a rate limit
- * (see AAM-DIGITAL-77H, whose `context` reads `[{}]` for every event).
- */
-export function describeResponse(response: Response | undefined): {
-  status?: number;
-  statusText?: string;
-  responseUrl?: string;
-} {
-  if (!response) {
-    return {};
-  }
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    responseUrl: response.url,
-  };
+/** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
+function requestMethod(opts: RequestInit | undefined): string {
+  return (opts?.method ?? "GET").toUpperCase();
 }
 
 /**
@@ -188,19 +173,22 @@ export class RemotePouchDatabase extends PouchDatabase {
       }
     }
 
+    const method = requestMethod(opts);
+
     if (!result || result.status >= 500) {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
       throw new DatabaseException({
         message: "Failed to fetch from DB",
         requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(describeResponse(result)),
+        actualResponse: JSON.stringify(describeResponse(result, method)),
         actualResponseBody: await result?.text(),
       });
     }
 
     // additional output for debugging
     if (result?.status >= 400) {
+      const response = describeResponse(result, method);
       if (this.isNotificationsDatabase() && result.status === 404) {
         Logging.debug(
           "Notifications database not found (404) - may be expected",
@@ -208,13 +196,23 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
         // expired session (401), permission-filtered doc (403) and missing doc (404)
         // are part of normal operation and handled by callers
-        Logging.debug(
-          "Failed to fetch from DB with 40X error",
-          describeResponse(result),
-        );
+        Logging.debug("Expected 4XX response from DB", response);
+      } else if (result.status === HttpStatusCode.Conflict) {
+        // A 409 is CouchDB rejecting a write whose revision is out of date. This
+        // layer cannot tell whether that cost anyone anything, but whoever made
+        // the request always can:
+        //  - remote-only session: the write came from PouchDatabase.put(), and
+        //    PouchDatabase.resolveConflict() decides between merging,
+        //    overwriting and failing - and counts the outcome it chose.
+        //  - synced session: writes go to the local database, so the only 409s
+        //    reaching here are replication's own `PUT /_local/<checkpoint>`
+        //    races between concurrent tabs, which PouchDB retries internally.
+        // Reporting it here would therefore be an alert nobody can act on, and
+        // it is what buried the genuinely unexpected statuses in the same issue.
+        Logging.debug("Document update conflict from DB", response);
       } else {
-        Logging.warn("Failed to fetch from DB with 40X error", {
-          ...describeResponse(result),
+        Logging.warn(unexpectedResponseMessage(result.status), {
+          ...response,
           requestedUrl: remoteUrl,
         });
       }
@@ -286,7 +284,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     url: string,
     opts: RequestInit,
   ): Promise<Response> {
-    const method = (opts.method ?? "GET").toUpperCase();
+    const method = requestMethod(opts);
     const isSafeMethod = method === "GET" || method === "HEAD";
 
     if (!isSafeMethod) {

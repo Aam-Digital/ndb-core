@@ -5,6 +5,7 @@ import {
   LoggingService,
   MAX_REPEATED_SENTRY_EVENTS,
   processSentryEvent,
+  resetSentryEventCounts,
   toReportedError,
 } from "./logging.service";
 
@@ -16,10 +17,6 @@ describe("LoggingService", () => {
     loggingService = new LoggingService();
     vi.spyOn(loggingService as any, "logToConsole");
     vi.spyOn(loggingService as any, "logToRemoteMonitoring");
-  });
-
-  it("should be created", () => {
-    expect(loggingService).toBeTruthy();
   });
 
   it("should log a debug message with additional context", function () {
@@ -104,6 +101,10 @@ describe("LoggingService", () => {
   });
 
   describe("processSentryEvent (beforeSend)", () => {
+    // the repeat budget is per issue and lives for a whole app session, so
+    // without this the events of one test count against the next one's
+    beforeEach(() => resetSentryEventCounts());
+
     it("should drop an identical event after MAX_REPEATED_SENTRY_EVENTS occurrences", () => {
       const event = () =>
         ({
@@ -134,6 +135,42 @@ describe("LoggingService", () => {
         exception: { values: [{ type: "Error", value: "different failure" }] },
       } as any;
       expect(processSentryEvent(other, {})).not.toBeNull();
+    });
+
+    describe("document update conflicts", () => {
+      // normal operation for an offline-first app: the user is told the save was
+      // rejected, and the occurrence is counted in usage analytics instead
+      const dbFailure = (value: string, hint: Sentry.EventHint = {}) =>
+        processSentryEvent(
+          {
+            exception: { values: [{ type: "DatabaseException", value }] },
+          } as any,
+          hint,
+        );
+
+      it("should drop a conflict identified by its status", () => {
+        expect(
+          dbFailure("whatever PouchDB said", {
+            originalException: { status: 409 },
+          }),
+        ).toBeNull();
+      });
+
+      it("should drop a conflict identified by its message, however PouchDB worded it", () => {
+        expect(
+          dbFailure("Document update conflict. (unable to resolve)"),
+        ).toBeNull();
+        expect(
+          dbFailure("Document update conflict (unable to resolve)"),
+        ).toBeNull();
+        expect(dbFailure("document update conflict")).toBeNull();
+      });
+
+      it("should still report other database failures", () => {
+        expect(
+          dbFailure("not_found", { originalException: { status: 404 } }),
+        ).not.toBeNull();
+      });
     });
 
     it("should count message-only events (captureMessage) separately by message", () => {
@@ -176,6 +213,11 @@ describe("LoggingService", () => {
         ({
           // Sentry orders the chain innermost-first: the thrown error is last
           exception: { values: [rootCause, thrown] },
+        }) as any;
+
+      const deniedEvent = (value: string) =>
+        ({
+          exception: { values: [{ type: "DatabaseException", value }] },
         }) as any;
 
       it("should group our wrapper errors by thrown error and root cause", () => {
@@ -316,7 +358,7 @@ describe("LoggingService", () => {
                 {
                   type: "DatabaseException",
                   value:
-                    'Document update conflict. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
+                    'missing: no document found. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
                 },
               ],
             },
@@ -330,7 +372,7 @@ describe("LoggingService", () => {
                 {
                   type: "DatabaseException",
                   value:
-                    'Document update conflict. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
+                    'missing: no document found. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
                 },
               ],
             },
@@ -342,21 +384,18 @@ describe("LoggingService", () => {
       });
 
       it("should ignore punctuation and casing, which third-party errors are inconsistent about", () => {
-        const conflictEvent = (value: string) =>
-          ({
-            exception: { values: [{ type: "DatabaseException", value }] },
-          }) as any;
-
+        // PouchDB reports the same failure as both "Unauthorized" and
+        // "unauthorized", with and without a trailing period
         const withPeriod = processSentryEvent(
-          conflictEvent("Document update conflict. (unable to resolve)"),
+          deniedEvent("Unauthorized. (name or password is incorrect)"),
           {},
         );
         const withoutPeriod = processSentryEvent(
-          conflictEvent("Document update conflict (unable to resolve)"),
+          deniedEvent("Unauthorized (name or password is incorrect)"),
           {},
         );
         const lowercased = processSentryEvent(
-          conflictEvent("document update conflict (unable to resolve)"),
+          deniedEvent("unauthorized (name or password is incorrect)"),
           {},
         );
 
@@ -480,6 +519,147 @@ describe("LoggingService", () => {
         expect(one.fingerprint).toEqual(other.fingerprint);
       });
 
+      it("should group an error a framework re-threw like the unwrapped one", () => {
+        const lookupFailure = {
+          type: "RegistryLookupError",
+          value:
+            "Requested item is not registered in EntityRegistry. Key: Child",
+        };
+
+        const thrownDirectly = processSentryEvent(
+          { exception: { values: [{ ...lookupFailure }] } } as any,
+          {},
+        );
+        // Angular re-throws an error raised in a `resource()` loader as an error
+        // of its own, copying the message and reporting the inherited "Error"
+        const fromResourceLoader = processSentryEvent(
+          chainedEvent(
+            { ...lookupFailure },
+            {
+              type: "Error",
+              value: `Error: ${lookupFailure.value}`,
+            },
+          ),
+          {},
+        );
+
+        expect(fromResourceLoader.fingerprint).toEqual(
+          thrownDirectly.fingerprint,
+        );
+      });
+
+      it("should keep grouping a wrapper that describes the failed operation by itself", () => {
+        const cause = {
+          type: "DatabaseException",
+          value: "unauthorized",
+        };
+
+        const configLoad = processSentryEvent(
+          chainedEvent(
+            { ...cause },
+            {
+              type: "ConfigLoadError",
+              value: "Failed to load configuration from the database.",
+            },
+          ),
+          {},
+        );
+        const permissionsLoad = processSentryEvent(
+          chainedEvent(
+            { ...cause },
+            {
+              type: "PermissionRulesLoadError",
+              value: "Failed to load permission rules",
+            },
+          ),
+          {},
+        );
+
+        // two operations failing for the same reason stay two problems
+        expect(configLoad.fingerprint).not.toEqual(permissionsLoad.fingerprint);
+        expect(configLoad.fingerprint[0]).toBe("ConfigLoadError");
+      });
+
+      it("should not treat a wrapper that merely mentions the cause's message as repeating it", () => {
+        const event = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "unauthorized" },
+            {
+              type: "Error",
+              value: "Failed to load configuration: unauthorized",
+            },
+          ),
+          {},
+        );
+
+        const causeAlone = processSentryEvent(deniedEvent("unauthorized"), {});
+
+        // the wrapper's message contains the cause's as a substring without
+        // repeating it, so it must not be merged into the cause's own issue
+        expect(event.fingerprint).not.toEqual(causeAlone.fingerprint);
+      });
+
+      it('should report an exception without a type under a generic one, which Sentry lists as "<unknown>"', () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { value: "Http failure response for /db/app-attachments: 404" },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].type).toBe("Error");
+      });
+
+      it("should report an exception grouped by its message under that normalized message", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "HttpErrorResponse",
+                  value:
+                    "Http failure response for https://example.org/db/app-attachments/Child:8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d/photo: 404 Not Found",
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].value).toBe(
+          "Http failure response for <url> <n> Not Found",
+        );
+        expect(event.extra.originalError).toContain("8f2b1c7e");
+      });
+
+      it("should drop a quoted response body, which as a title hides every other issue", () => {
+        const errorPage = (status: number) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: `Server returned code ${status} with body "<html>\r\n<head><title>${status} Request Entity Too Large</title></head>\r\n</html>"`,
+                },
+              ],
+            },
+          }) as any;
+
+        const event = processSentryEvent(errorPage(413), {});
+
+        expect(event.exception.values[0].value).toBe(
+          "Server returned code <n>",
+        );
+        expect(event.fingerprint).toEqual([
+          "Error",
+          "server returned code <n>",
+        ]);
+      });
+
       it("should group message-only events by their normalized message", () => {
         const one = processSentryEvent(
           { message: "Report failed after 12 rows" } as any,
@@ -526,6 +706,56 @@ describe("LoggingService", () => {
       });
     });
 
+    describe("a status the library nested inside a Response", () => {
+      it('should report it, so "invalid status" says which status', () => {
+        const thrown = Object.assign(
+          new Error("Server responded with an invalid status."),
+          { response: { status: 403, statusText: "Forbidden" } },
+        );
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "Server responded with an invalid status.",
+                  stacktrace: { frames: [{ filename: "keycloak.js" }] },
+                },
+              ],
+            },
+          } as any,
+          { originalException: thrown },
+        );
+
+        expect(event.extra.status).toBe(403);
+      });
+
+      it("should keep an explicit status over the nested one", () => {
+        const thrown = Object.assign(new Error("failed"), {
+          status: 401,
+          response: { status: 403 },
+        });
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "failed",
+                  stacktrace: { frames: [{ filename: "app.ts" }] },
+                },
+              ],
+            },
+          } as any,
+          { originalException: thrown },
+        );
+
+        expect(event.extra.status).toBe(401);
+      });
+    });
+
     describe("network errors", () => {
       beforeEach(() => vi.stubGlobal("navigator", { onLine: true }));
       afterEach(() => vi.unstubAllGlobals());
@@ -554,6 +784,31 @@ describe("LoggingService", () => {
         );
 
         expect(chrome.fingerprint).toEqual(["network-error"]);
+        expect(safari.fingerprint).toEqual(chrome.fingerprint);
+      });
+
+      it("should collect chunk load failures of any browser wording in the same issue", () => {
+        const chrome = processSentryEvent(
+          fetchFailure(
+            "Failed to fetch dynamically imported module: https://example.org/chunk-SL2Y43UW.js",
+            "main.ts",
+          ),
+          {},
+        );
+        const firefox = processSentryEvent(
+          fetchFailure(
+            "error loading dynamically imported module: https://example.org/chunk-UFUS7D7Q.js",
+            "main.ts",
+          ),
+          {},
+        );
+        const safari = processSentryEvent(
+          fetchFailure("Importing a module script failed.", "main.ts"),
+          {},
+        );
+
+        expect(chrome.fingerprint).toEqual(["network-error"]);
+        expect(firefox.fingerprint).toEqual(chrome.fingerprint);
         expect(safari.fingerprint).toEqual(chrome.fingerprint);
       });
 

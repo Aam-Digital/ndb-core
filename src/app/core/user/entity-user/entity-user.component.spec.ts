@@ -97,10 +97,6 @@ describe("EntityUserComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load existing account data", async () => {
     await fixture.whenStable();
     fixture.detectChanges();

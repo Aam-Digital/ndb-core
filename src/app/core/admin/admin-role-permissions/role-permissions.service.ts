@@ -11,7 +11,6 @@ import {
   DatabaseRules,
   isReservedRuleConfigKey,
 } from "../../permissions/permission-types";
-import { migrateLegacySectionKeys } from "../../permissions/permissions-config-migration";
 import { RESERVED_ROLES } from "../../permissions/reserved-roles";
 import { Role } from "../../user/user-admin-service/user-account";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
@@ -115,9 +114,8 @@ export class RolePermissionsService {
    * followed by all other config keys and remaining realm roles.
    */
   async loadRoles(): Promise<RoleWithPermissions[]> {
-    const rules: DatabaseRules = migrateLegacySectionKeys(
-      (await this.loadPermissionsConfig()).data ?? {},
-    );
+    const rules: DatabaseRules =
+      (await this.loadPermissionsConfig()).data ?? {};
     const keycloakRoles: Role[] = await firstValueFrom(
       this.userAdminService.getAllRoles().pipe(catchError(() => of([]))),
     );

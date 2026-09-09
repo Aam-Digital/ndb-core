@@ -24,6 +24,28 @@ describe("isConnectivityError", () => {
     }
   });
 
+  it("detects a gateway status a library nested inside a Response", () => {
+    // keycloak-js reports every rejected response as "Server responded with an
+    // invalid status." and hands on the whole Response instead of the status
+    for (const status of [0, 502, 503, 504]) {
+      expect(
+        isConnectivityError(
+          Object.assign(new Error("Server responded with an invalid status."), {
+            response: { status },
+          }),
+        ),
+      ).toBe(true);
+    }
+    // a status that is the server answering, not failing to be reached
+    expect(
+      isConnectivityError(
+        Object.assign(new Error("Server responded with an invalid status."), {
+          response: { status: 400 },
+        }),
+      ),
+    ).toBe(false);
+  });
+
   it("detects browser fetch failures by message", () => {
     expect(isConnectivityError(new TypeError("Failed to fetch"))).toBe(true);
     expect(

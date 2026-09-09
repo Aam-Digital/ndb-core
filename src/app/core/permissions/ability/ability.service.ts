@@ -6,7 +6,6 @@ import {
   isReservedRuleConfigKey,
   PUBLIC_SECTION_KEY,
 } from "../permission-types";
-import { migrateLegacySectionKeys } from "../permissions-config-migration";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
@@ -20,6 +19,7 @@ import { filter, firstValueFrom, merge, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -61,15 +61,15 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
     super(Config, Config.PERMISSION_KEY, entityMapper);
 
-    this.rulesUpdated = this.entityUpdated.pipe(
-      map((config) => migrateLegacySectionKeys(config.data)),
-    );
-    this.rulesUpdated.subscribe((rules) => {
-      this.currentRules = rules;
-      // includes a deletion of the config (empty entity): that the rules are
-      // gone is a known state, unlike a failed load
-      this.rulesKnown = true;
-    });
+    this.rulesUpdated = this.entityUpdated.pipe(map((config) => config.data));
+    this.rulesUpdated
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((rules) => {
+        this.currentRules = rules;
+        // includes a deletion of the config (empty entity): that the rules are
+        // gone is a known state, unlike a failed load
+        this.rulesKnown = true;
+      });
   }
 
   async initializeRules() {
@@ -83,9 +83,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     }
 
     if (initialPermissions) {
-      await this.updateAbilityWithUserRules(
-        migrateLegacySectionKeys(initialPermissions.data),
-      );
+      await this.updateAbilityWithUserRules(initialPermissions.data);
     } else if (this.rulesKnown) {
       // no permission object is defined for this instance: allow everything
       this.ability.update([{ action: "manage", subject: "all" }]);
@@ -98,19 +96,21 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       this.rulesUpdated,
       this.sessionInfo.pipe(map(() => this.currentRules)),
       this.currentUser.pipe(map(() => this.currentRules)),
-    ).subscribe((rules) => {
-      if (this.rulesKnown) {
-        this.updateAbilityWithUserRules(rules);
-      } else {
-        // While the rules are unknown, a session or user change must not
-        // re-derive the permissive fallback and hand it to the enforcer: that
-        // would store "allowed everything" as the baseline for future
-        // comparisons, so the real rules arriving afterwards look like a
-        // permission change and trigger a full re-sync (or, on the legacy
-        // adapter, destroy the local database).
-        this.applyLastKnownRules();
-      }
-    });
+    )
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((rules) => {
+        if (this.rulesKnown) {
+          this.updateAbilityWithUserRules(rules);
+        } else {
+          // While the rules are unknown, a session or user change must not
+          // re-derive the permissive fallback and hand it to the enforcer: that
+          // would store "allowed everything" as the baseline for future
+          // comparisons, so the real rules arriving afterwards look like a
+          // permission change and trigger a full re-sync (or, on the legacy
+          // adapter, destroy the local database).
+          this.applyLastKnownRules();
+        }
+      });
   }
 
   /**

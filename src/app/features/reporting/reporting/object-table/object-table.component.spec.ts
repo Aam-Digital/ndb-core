@@ -18,10 +18,6 @@ describe("ObjectTableComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should setup a table with columns for each property of the input data", () => {
     fixture.componentRef.setInput("objects", [
       { first: 1, second: 3 },

@@ -92,10 +92,6 @@ describe("AdminEntityFieldComponent", () => {
     await fixture.whenStable();
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should generate id (if new field) from label", async () => {
     component.schemaFieldsForm.get("label").setValue("New Label");
     await fixture.whenStable();

@@ -138,10 +138,6 @@ describe("DefaultValueService", () => {
     cleanUpTemporarySchemaFields();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should do nothing, if targetFormControl is missing", async () => {
     vi.useFakeTimers();
     try {

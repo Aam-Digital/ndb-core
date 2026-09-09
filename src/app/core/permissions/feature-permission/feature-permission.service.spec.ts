@@ -249,32 +249,16 @@ describe("FeaturePermissionService", () => {
     expect(state.roles[0].actions.update.grantedByOwnRule).toBe(false);
   });
 
-  it("should read the legacy 'default' section as the shared default", async () => {
-    mockConfig({ default: [{ subject: "all", action: "read" }] });
-
-    const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
-
-    // the wildcard rule decides "read" only, the other actions stay editable
-    expect(summarize(state.defaultRules)).toEqual({
-      ...allActions("-/editable"),
-      read: "granted/locked",
-    });
-  });
-
   it("should not list reserved section keys as roles", async () => {
     mockConfig({
       _default: [],
       _public: [],
-      default: [],
-      public: [],
       user_app: [],
     });
 
     const state = await service.getPermissions(ENTITY_TYPE, [
       "_default",
       "_public",
-      "default",
-      "public",
       "user_app",
     ]);
 

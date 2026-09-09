@@ -8,10 +8,8 @@ import {
   provideAppInitializer,
   EnvironmentProviders,
 } from "@angular/core";
+import { HttpStatusCode } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { LoginState } from "../session/session-states/login-state.enum";
-import { LoginStateSubject } from "../session/session-type";
-import { SessionSubject } from "../session/auth/session-info";
 import { TraceService } from "@sentry/angular";
 import {
   CONNECTIVITY_ERROR_NAMES,
@@ -51,26 +49,6 @@ export class LoggingService {
   }
 
   /**
-   * Register any additional logging context integrations that need Angular services.
-   * @param loginState
-   * @param sessionInfo
-   */
-  initAngularLogging(
-    loginState: LoginStateSubject,
-    sessionInfo: SessionSubject,
-  ) {
-    return () =>
-      loginState.subscribe((newState) => {
-        if (newState === LoginState.LOGGED_IN) {
-          const username = sessionInfo.value?.id;
-          Logging.setLoggingContextUser(username);
-        } else {
-          Logging.setLoggingContextUser(undefined);
-        }
-      });
-  }
-
-  /**
    * Get the Angular providers to set up additional logging and tracing,
    * that should be added to the providers array of the AppModule.
    */
@@ -87,12 +65,6 @@ export class LoggingService {
       },
       provideAppInitializer(() => {
         inject(TraceService);
-      }),
-      provideAppInitializer(() => {
-        Logging.initAngularLogging(
-          inject(LoginStateSubject),
-          inject(SessionSubject),
-        );
       }),
     ];
   }
@@ -115,14 +87,10 @@ export class LoggingService {
     }
   }
 
-  /**
-   * Update the username to be attached to all log messages for easier debugging,
-   * especially in remote logging.
-   * @param username
-   */
-  setLoggingContextUser(username: string) {
-    Sentry.setUser({ username: username });
-  }
+  // Deliberately no equivalent of Sentry's `setUser`: reported events carry no
+  // user identity, as data minimization under the GDPR (see README.md). Adding
+  // one back would put a personal identifier into every event of every issue,
+  // so it is a decision to take before it is a line of code to write.
 
   /**
    * Log the message with "debug" level - for very detailed, non-essential information.
@@ -334,6 +302,18 @@ export const MAX_REPEATED_SENTRY_EVENTS = 5;
 const sentryEventCounts = new Map<string, number>();
 
 /**
+ * Clear the repeat budget that {@link isExcessiveRepeat} keeps per app session.
+ *
+ * Exported for tests: nothing else resets those counters, so without this every
+ * spec in a file shares one budget and whichever runs last sees its events
+ * dropped instead of processed - which is easy to mistake for the behaviour
+ * under test, as the budget is shared by all events of one issue.
+ */
+export function resetSentryEventCounts() {
+  sentryEventCounts.clear();
+}
+
+/**
  * Sentry `beforeSend` hook: drops network failures of offline devices
  * and excessive repeats of an identical event,
  * and enriches the remaining events with structured extra data
@@ -346,13 +326,51 @@ export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event)) {
+  if (isOfflineNetworkError(event) || isDocumentUpdateConflict(event, hint)) {
     return null;
   }
 
   const grouped = groupSentryEvent(enrichSentryEvent(event, hint), hint);
   return isExcessiveRepeat(grouped) ? null : grouped;
 }
+
+/**
+ * Whether the reported error is a rejected write whose revision was out of date.
+ *
+ * Two users editing one record is normal operation for an offline-first app, not
+ * a fault: the save is rejected, the user is told so by the form that attempted
+ * it, and the occurrence is counted in usage analytics instead (see
+ * `PouchDatabase.reportConflict`). Reporting it here on top of that produced a
+ * steady stream of issues nobody could act on - at *error* level, so louder than
+ * the failures that do need attention.
+ *
+ * The trade-off is deliberate: how often conflicts happen is now only visible in
+ * usage analytics, not in error monitoring.
+ */
+function isDocumentUpdateConflict(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): boolean {
+  const thrown = hint?.originalException as { status?: unknown } | undefined;
+  if (
+    thrown &&
+    typeof thrown === "object" &&
+    thrown.status === HttpStatusCode.Conflict
+  ) {
+    return true;
+  }
+
+  // the status is not always preserved (e.g. an error rebuilt from a
+  // `_bulk_docs` result), so fall back to the message - normalized, because
+  // PouchDB words it both with and without a trailing period
+  return [
+    event.message,
+    ...(event.exception?.values?.map((v) => v.value) ?? []),
+  ].some((msg) => msg && fingerprintKey(msg).includes(CONFLICT_MESSAGE));
+}
+
+/** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
+const CONFLICT_MESSAGE = "document update conflict";
 
 /**
  * Whether the event is a network-layer fetch failure that occurred while the
@@ -460,6 +478,10 @@ const CAUSE_GROUPED_ERROR_TYPES = [
  * Order matters: the more specific patterns have to run before the plain number.
  */
 const VOLATILE_VALUE_PATTERNS: [RegExp, string][] = [
+  // a response body quoted into an error message (a proxy failure, an error
+  // page served by the reverse proxy): its content varies per request and can
+  // be a whole HTML document, which as an issue title hides every other row
+  [/ with body ["'][\s\S]*$/i, ""],
   [/https?:\/\/\S+/gi, "<url>"],
   [
     /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi,
@@ -547,7 +569,12 @@ function groupSentryEvent(
     CAUSE_GROUPED_ERROR_TYPES.includes(thrownType) ||
     hint?.originalException instanceof LoggedError
   ) {
-    return groupByErrorChain(event, values);
+    return groupByErrorChain(event, values, thrownError);
+  }
+
+  const rewrapped = rewrappedCauseGroupedError(values);
+  if (rewrapped) {
+    return groupByErrorChain(event, values, rewrapped);
   }
 
   if (values.some(isConnectivityException) || hasConnectivityStatus(event)) {
@@ -561,10 +588,82 @@ function groupSentryEvent(
       thrownType || "Error",
       fingerprintKey(thrownError.value),
     ];
+    reportNormalized(event, thrownError);
   }
 
   return event;
 }
+
+/**
+ * The error of a recognized type (see {@link CAUSE_GROUPED_ERROR_TYPES}) that a
+ * framework re-threw as a generic one, if that is what this chain is.
+ *
+ * Angular does this for an error raised inside a `resource()` loader: it wraps
+ * it in an error of its own that copies the original's message and whose type
+ * is the plain "Error" a subclass inherits. The wrapper contributes nothing but
+ * a different stack trace, so grouping by it opens a separate issue per call
+ * site for exactly the problem that {@link groupByErrorChain} keeps as one.
+ *
+ * Only a wrapper that repeats the recognized error's message counts as such.
+ * One that says what it was doing ("Failed to load configuration from the
+ * database.") describes the failure better than its cause does, and stays the
+ * error the event is grouped by.
+ */
+function rewrappedCauseGroupedError(
+  values: Sentry.Exception[],
+): Sentry.Exception | undefined {
+  // fingerprintKey already lower-cased and stripped the colon, leaving at most
+  // this leading "error " from the `Error: <cause>` shape `.toString()` gives
+  const thrownValue = fingerprintKey(values[values.length - 1].value).replace(
+    /^error /,
+    "",
+  );
+  return values
+    .slice(0, -1)
+    .find(
+      (cause) =>
+        CAUSE_GROUPED_ERROR_TYPES.includes(cause.type ?? "") &&
+        thrownValue === fingerprintKey(cause.value),
+    );
+}
+
+/**
+ * Report an exception under the normalized message it is grouped by, keeping
+ * the original one as extra data.
+ *
+ * Sentry titles an issue by the reported message, so the volatile details that
+ * {@link fingerprintKey} masks out of the grouping key are still what the issue
+ * list shows: one row per document id, and a response body quoted into an error
+ * message (an nginx error page, say) pushing every other row off the screen.
+ * Only used where the message is the grouping key anyway, so that the title of
+ * an issue and the reason its events are in it cannot drift apart.
+ */
+function reportNormalized(
+  event: Sentry.ErrorEvent,
+  exception: Sentry.Exception,
+) {
+  if (!exception.value) {
+    // nothing to read either way, and a placeholder would only pretend there is
+    return;
+  }
+  const normalized = normalizeErrorValue(exception.value).slice(
+    0,
+    MAX_REPORTED_MESSAGE_LENGTH,
+  );
+  if (normalized === exception.value) {
+    return;
+  }
+  event.extra = { ...event.extra, originalError: exception.value };
+  exception.value = normalized;
+}
+
+/**
+ * How much of an error message is kept as the reported one (see
+ * {@link reportNormalized}). Generous enough for any message written to be
+ * read, and a backstop against the ones that turn out to be a serialized
+ * document or a web page.
+ */
+const MAX_REPORTED_MESSAGE_LENGTH = 300;
 
 /**
  * Group by the error chain instead of the stack trace, so that one problem
@@ -587,8 +686,8 @@ function groupSentryEvent(
 function groupByErrorChain(
   event: Sentry.ErrorEvent,
   values: Sentry.Exception[],
+  thrownError: Sentry.Exception,
 ): Sentry.ErrorEvent {
-  const thrownError = values[values.length - 1];
   const thrownType = thrownError.type ?? "";
   const thrownValue = groupingValue(thrownError);
   const fingerprint = [thrownType, thrownValue];
@@ -714,6 +813,17 @@ function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
 }
 
 /**
+ * Placeholder type for an exception reported without one.
+ *
+ * Sentry builds an issue title from the reported exception's type and message,
+ * and lists an issue whose exception carries no type as `<unknown>` - which
+ * says nothing at all in a list of issues, and hides the message that would
+ * have. The generic name is no loss: it is what an `Error` subclass reports
+ * anyway unless it sets `name` explicitly (see {@link CAUSE_GROUPED_ERROR_TYPES}).
+ */
+const FALLBACK_EXCEPTION_TYPE = "Error";
+
+/**
  * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
  */
@@ -739,9 +849,24 @@ function enrichSentryEvent(
         extras[key] = (err as any)[key];
       }
     }
+    // a library may pass on the whole `fetch` Response rather than the status
+    // (keycloak-js does), which otherwise leaves a report saying only that the
+    // status was invalid and never which one it was
+    if (extras.status === undefined) {
+      const status = (err as { response?: { status?: unknown } }).response
+        ?.status;
+      if (typeof status === "number") {
+        extras.status = status;
+      }
+    }
+
     if (Object.keys(extras).length > 0) {
       event.extra = { ...event.extra, ...extras };
     }
+  }
+
+  for (const exception of event.exception?.values ?? []) {
+    exception.type ||= FALLBACK_EXCEPTION_TYPE;
   }
 
   return event;

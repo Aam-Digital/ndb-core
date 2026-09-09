@@ -33,6 +33,7 @@ import {
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
+import { ConfirmationDialogMock } from "#src/app/utils/test-utils/dialog-mocks";
 
 type NotificationServiceMock = Pick<
   NotificationService,
@@ -57,13 +58,6 @@ type NotificationServiceMock = Pick<
   testNotification: Mock;
 };
 
-type ConfirmationDialogMock = Pick<
-  ConfirmationDialogService,
-  "getConfirmation"
-> & {
-  getConfirmation: Mock;
-};
-
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
   let fixture: ComponentFixture<NotificationSettingsComponent>;
@@ -75,6 +69,7 @@ describe("NotificationSettingComponent", () => {
   const initializeComponent = async () => {
     fixture.detectChanges();
     await fixture.whenStable();
+    TestBed.tick();
   };
 
   beforeEach(async () => {
@@ -134,10 +129,6 @@ describe("NotificationSettingComponent", () => {
     ) as MockEntityMapperService;
     fixture = TestBed.createComponent(NotificationSettingsComponent);
     component = fixture.componentInstance;
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should add a new notification rule to the config", async () => {

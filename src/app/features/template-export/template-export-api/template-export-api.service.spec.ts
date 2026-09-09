@@ -14,6 +14,7 @@ import {
   HttpResponse,
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { TemplateExport } from "../template-export.entity";
 import {
@@ -40,7 +41,7 @@ describe("TemplateExportApiService", () => {
           useValue: of(SyncState.COMPLETED),
         },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     });
@@ -50,10 +51,6 @@ describe("TemplateExportApiService", () => {
       EntityMapperService,
     ) as MockEntityMapperService;
     currentUser = TestBed.inject(CurrentUserSubject);
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should skip deletion requests silently", async () => {

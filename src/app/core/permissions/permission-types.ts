@@ -35,20 +35,23 @@ export type DatabaseRule = RawRuleOf<Ability<[EntityActionPermission, string]>>;
 /**
  * Section keys in {@link DatabaseRules} that carry special semantics instead of
  * mapping a user role. The underscore prefix marks them as internal so they
- * cannot collide with a realm role name. Legacy (non-prefixed) spellings are
- * still read for backward compatibility until all documents are migrated.
+ * cannot collide with a realm role name.
  */
 export const DEFAULT_SECTION_KEY = "_default";
 export const PUBLIC_SECTION_KEY = "_public";
-export const LEGACY_DEFAULT_KEY = "default";
-export const LEGACY_PUBLIC_KEY = "public";
 
 /** A user role starting with this prefix is reserved and never resolved. */
 export const RESERVED_ROLE_PREFIX = "_";
 
 /**
- * All section keys (current and legacy) that must never be resolved as if they
- * were user role names, even if a realm role with the same name exists.
+ * The realm role that grants access to the administration features, as checked
+ * by the admin routes' {@link UserRoleGuard} configuration.
+ */
+export const ADMIN_APP_ROLE = "admin_app";
+
+/**
+ * All section keys that must never be resolved as if they were user role names,
+ * even if a realm role with the same name exists.
  *
  * A new key added here does not automatically stop inheriting the "_default"
  * rules; see {@link inheritsDefaultRules}.
@@ -56,8 +59,6 @@ export const RESERVED_ROLE_PREFIX = "_";
 export const RESERVED_RULE_CONFIG_KEYS: string[] = [
   DEFAULT_SECTION_KEY,
   PUBLIC_SECTION_KEY,
-  LEGACY_DEFAULT_KEY,
-  LEGACY_PUBLIC_KEY,
 ];
 
 /**
@@ -121,25 +122,18 @@ export function ruleCoversAction(
  * applies to logged-in users would inherit the "_default" rules as usual.
  */
 export function inheritsDefaultRules(roleName: string): boolean {
-  return ![
-    DEFAULT_SECTION_KEY,
-    PUBLIC_SECTION_KEY,
-    LEGACY_DEFAULT_KEY,
-    LEGACY_PUBLIC_KEY,
-  ].includes(roleName);
+  return ![DEFAULT_SECTION_KEY, PUBLIC_SECTION_KEY].includes(roleName);
 }
 
 /**
  * The format of the JSON object which defines the rules for each role.
  * The format is `<user-role>: <array of DatabaseRule>`, meaning for each role an array of rules can be defined.
- * The rules defined in '_default' (legacy 'default') are prepended to any other rules defined for a user.
- * The rules defined in '_public' (legacy 'public') are used if a user is not logged in.
+ * The rules defined in '_default' are prepended to any other rules defined for a user.
+ * The rules defined in '_public' are used if a user is not logged in.
  */
 export interface DatabaseRules {
   _public?: DatabaseRule[];
   _default?: DatabaseRule[];
-  public?: DatabaseRule[];
-  default?: DatabaseRule[];
 
   [key: string]: DatabaseRule[];
 }

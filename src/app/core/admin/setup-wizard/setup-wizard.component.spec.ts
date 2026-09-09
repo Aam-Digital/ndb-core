@@ -51,10 +51,6 @@ describe("SetupWizardComponent", () => {
     localStorage.removeItem(component.LOCAL_STORAGE_KEY);
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load config on init and save if finished in last step", async () => {
     vi.useFakeTimers();
     try {

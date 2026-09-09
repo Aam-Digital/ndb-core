@@ -5,7 +5,7 @@ import {
   EscoSkillDto,
   EscoSkillResponseDto,
 } from "./esco-api.service";
-import { provideHttpClient } from "@angular/common/http";
+import { provideHttpClient, withXhr } from "@angular/common/http";
 import {
   HttpTestingController,
   provideHttpClientTesting,
@@ -47,7 +47,7 @@ describe("EscoApiService", () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         {
           provide: EntityMapperService,
@@ -64,10 +64,6 @@ describe("EscoApiService", () => {
   afterEach(() => {
     // Verify that none of the tests make any extra HTTP requests.
     httpTesting.verify();
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should get ESCO skill", async () => {

@@ -59,10 +59,6 @@ describe("BasicAutocompleteComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should correctly show the autocomplete values", async () => {
     const school1 = TestEntity.create({ name: "Aaa" });
     const school2 = TestEntity.create({ name: "aab" });
@@ -146,10 +142,10 @@ describe("BasicAutocompleteComponent", () => {
 
   it("should disable the form if the control is disabled", () => {
     component.disabled = false;
-    fixture.detectChanges();
+    TestBed.tick();
     expect(component.autocompleteForm.disabled).toBe(false);
     component.disabled = true;
-    fixture.detectChanges();
+    TestBed.tick();
     expect(component.autocompleteForm.disabled).toBe(true);
   });
 

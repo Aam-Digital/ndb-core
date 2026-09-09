@@ -20,10 +20,6 @@ describe("DisplayAgeComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should take the date object of the parent entity", () => {
     const child = new TestEntity();
     child.dateOfBirth = new DateWithAge(moment().subtract(5, "years").toDate());

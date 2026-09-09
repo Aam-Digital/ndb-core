@@ -12,10 +12,18 @@ import { environment } from "environments/environment";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
+// type-only, so the database layer gains no runtime dependency on analytics
+import type { AnalyticsService } from "../../analytics/analytics.service";
 
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
+
+/**
+ * What happened to a document whose update was rejected as a conflict
+ * (see {@link PouchDatabase.resolveConflict}).
+ */
+export type ConflictOutcome = "merged" | "overwritten" | "unresolved";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -55,6 +63,17 @@ export class PouchDatabase extends Database {
    * Default: "indexeddb" (the newer adapter). Use "idb" for the legacy adapter.
    */
   adapter: string = "indexeddb";
+
+  /**
+   * Optional accessor for usage analytics (see {@link reportConflict}).
+   *
+   * Assigned by `DatabaseFactoryService` rather than injected: the database
+   * classes are constructed manually and have no access to Angular DI. It
+   * resolves lazily, and only once something is actually tracked, so that
+   * bootstrap never closes the cycle AnalyticsService -> ConfigService ->
+   * EntityMapperService -> DatabaseResolver -> DatabaseFactoryService.
+   */
+  analytics?: () => Promise<AnalyticsService | null>;
 
   constructor(
     dbName: string,
@@ -218,11 +237,20 @@ export class PouchDatabase extends Database {
           forceOverwrite,
           result,
         ).catch((e) => {
-          Logging.warn(
-            "error during putAll",
-            e,
-            objects.map((x) => x._id),
-          );
+          if (e?.status === HttpStatusCode.Conflict) {
+            // counted by reportConflict and still returned to the caller below,
+            // so alerting on it here would only repeat what the single-document
+            // path deliberately stopped reporting
+            Logging.debug("could not resolve conflict during putAll", e);
+          } else {
+            Logging.warn("error during putAll", e, {
+              // entity types only - a list of document IDs has no place in
+              // remote monitoring (see #4174)
+              entityTypes: [
+                ...new Set(objects.map((x) => x._id?.split(":")[0])),
+              ],
+            });
+          }
           return new DatabaseException(e);
         });
       }
@@ -515,20 +543,62 @@ export class PouchDatabase extends Database {
       Logging.debug(
         "resolved document conflict automatically (" + resolvedObject._id + ")",
       );
-      return this.put(resolvedObject);
+      // counted only once the write actually went through - see reportConflict
+      const result = await this.put(resolvedObject);
+      this.reportConflict("merged", newObject._id);
+      return result;
     } else if (overwriteChanges) {
       Logging.debug(
         "overwriting conflicting document version (" + newObject._id + ")",
       );
       newObject._rev = existingObject._rev;
-      return this.put(newObject);
+      const result = await this.put(newObject);
+      this.reportConflict("overwritten", newObject._id);
+      return result;
     } else {
+      this.reportConflict("unresolved", newObject._id);
       // the document's ID is passed as entityId rather than appended to the
       // message: remote monitoring groups by message, so an ID in there would
       // fragment one recurring problem into a separate issue per document
       existingError.message = `${existingError.message} (unable to resolve)`;
       throw new DatabaseException(existingError, newObject._id);
     }
+  }
+
+  /**
+   * Count a document update conflict in usage statistics.
+   *
+   * Two users editing the same record is normal operation for an offline-first
+   * app, not a fault, so conflicts are counted rather than reported as errors:
+   * how often they happen (and for which record types) is the signal worth
+   * having, while an alert per occurrence only buries the failures that do need
+   * attention - which is what happened in AAM-DIGITAL-77H. A user whose save was
+   * rejected is told so by the form that attempted it, so nothing is silently
+   * swallowed here.
+   *
+   * Only the entity type is reported, never the document ID: the point is to
+   * see which record types collide, and record identifiers have no place in
+   * monitoring (see #4174).
+   *
+   * Deliberately not awaited by its callers, and total: counting a conflict must
+   * neither delay a save nor be the reason one fails.
+   *
+   * `merged` and `overwritten` are reported only after the write that resolved
+   * the conflict succeeded. That write can conflict again (another writer got in
+   * between), in which case the retry reports its own outcome - so reporting up
+   * front would count a save that never happened, and count one conflict twice.
+   */
+  private reportConflict(outcome: ConflictOutcome, docId: string) {
+    this.analytics?.()
+      .then((analytics) =>
+        analytics?.eventTrack(outcome, {
+          category: "document_update_conflict",
+          label: docId?.split(":")[0],
+        }),
+      )
+      .catch((err) =>
+        Logging.debug("could not report document update conflict", err),
+      );
   }
 
   private mergeObjects(_existingObject: any, _newObject: any) {

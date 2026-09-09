@@ -25,10 +25,6 @@ describe("EditNumberComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only allow valid numbers", () => {
     component.formControl.setValue("one" as any);
     expect(formGroup.valid).toBe(false);

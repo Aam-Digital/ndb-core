@@ -6,7 +6,6 @@ import {
   DEFAULT_SECTION_KEY,
   EntityActionPermission,
   isReservedRuleConfigKey,
-  LEGACY_DEFAULT_KEY,
   ruleCoversAction,
   SYSTEM_DEFAULT_RULE_REASON,
 } from "../permission-types";
@@ -346,7 +345,7 @@ export class FeaturePermissionService {
 
   /** rules in `_default` apply to every logged-in user, on top of their role rules */
   private getDefaultRules(rules: DatabaseRules): DatabaseRule[] {
-    return rules[DEFAULT_SECTION_KEY] ?? rules[LEGACY_DEFAULT_KEY] ?? [];
+    return rules[DEFAULT_SECTION_KEY] ?? [];
   }
 
   /** which actions the shared `_default` section grants for this feature */

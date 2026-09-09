@@ -22,10 +22,6 @@ describe("ColorInputComponent (standalone mode)", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should have a valid colorControl for a valid hex color", () => {
     component.colorControl.setValue("#ff0000");
     expect(component.colorControl.valid).toBe(true);
@@ -82,10 +78,6 @@ describe("ColorInputComponent (EditComponent mode)", () => {
     component = fixture.componentInstance;
     setupCustomFormControlEditComponent(component, "testProperty", {}, fixture);
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should be valid for a valid hex color", () => {

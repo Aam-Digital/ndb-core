@@ -15,9 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "app/core/session/session-type";
+import { Logging } from "../../logging/logging.service";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -292,6 +294,132 @@ describe("PouchDatabase tests", () => {
         expect.objectContaining({ status: 409 }),
       ],
     ]);
+  });
+
+  describe("counting document update conflicts", () => {
+    const STALE = { _id: "Child:1", name: "Rudolph", _rev: "1-invalid_rev" };
+    let eventTrack: Mock;
+
+    /** The tracked events, once analytics has resolved asynchronously. */
+    const tracked = () =>
+      vi.waitFor(() => {
+        expect(eventTrack).toHaveBeenCalled();
+        return eventTrack.mock.calls;
+      });
+
+    beforeEach(async () => {
+      eventTrack = vi.fn();
+      database.analytics = () => Promise.resolve({ eventTrack } as any);
+      await database.put({ _id: "Child:1", name: "Rudolph" });
+    });
+
+    it("counts a conflict that could not be resolved, by entity type only", async () => {
+      await expect(database.put({ ...STALE })).rejects.toBeInstanceOf(
+        DatabaseException,
+      );
+
+      // the document ID must never be reported - see #4174
+      expect(await tracked()).toEqual([
+        [
+          "unresolved",
+          { category: "document_update_conflict", label: "Child" },
+        ],
+      ]);
+    });
+
+    it("counts a conflict that was overwritten on the caller's request", async () => {
+      await database.put({ ...STALE }, true);
+
+      expect((await tracked())[0][0]).toBe("overwritten");
+    });
+
+    it("does not count a conflict when the write that would resolve it fails", async () => {
+      // the overwrite can conflict again (another writer got in between), and
+      // then the retry reports its own outcome - counting up front would count
+      // a save that never happened, and count one conflict twice
+      const pouchDB = (database as any).pouchDB;
+      const realPut = pouchDB.put.bind(pouchDB);
+      let puts = 0;
+      vi.spyOn(pouchDB, "put").mockImplementation(
+        (doc: any, ...rest: any[]) => {
+          puts++;
+          // 1st is the caller's forced put (conflicts), 2nd the overwrite attempt
+          return puts === 2
+            ? Promise.reject(Object.assign(new Error("nope"), { status: 500 }))
+            : realPut(doc, ...rest);
+        },
+      );
+
+      await expect(database.put({ ...STALE }, true)).rejects.toBeInstanceOf(
+        DatabaseException,
+      );
+
+      // analytics resolves asynchronously, so give it the chance to be called
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(eventTrack).not.toHaveBeenCalled();
+    });
+
+    it("counts a conflict once, not twice, when the overwrite conflicts again", async () => {
+      // the retry reports "unresolved" itself, so reporting "overwritten" up
+      // front would count the same conflict under two outcomes
+      const pouchDB = (database as any).pouchDB;
+      const realPut = pouchDB.put.bind(pouchDB);
+      let puts = 0;
+      vi.spyOn(pouchDB, "put").mockImplementation(
+        (doc: any, ...rest: any[]) => {
+          puts++;
+          // another writer wins the race on the overwrite attempt too
+          return puts === 2
+            ? Promise.reject(
+                Object.assign(new Error("conflict"), { status: 409 }),
+              )
+            : realPut(doc, ...rest);
+        },
+      );
+
+      await expect(database.put({ ...STALE }, true)).rejects.toBeInstanceOf(
+        DatabaseException,
+      );
+
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(eventTrack.mock.calls).toEqual([
+        [
+          "unresolved",
+          { category: "document_update_conflict", label: "Child" },
+        ],
+      ]);
+    });
+
+    it("still saves when analytics is unavailable", async () => {
+      database.analytics = () => Promise.resolve(null);
+
+      await expect(database.put({ ...STALE }, true)).resolves.toEqual(
+        expect.objectContaining({ ok: true }),
+      );
+    });
+
+    it("still saves when counting the conflict fails", async () => {
+      database.analytics = () => Promise.reject(new Error("analytics is down"));
+
+      await expect(database.put({ ...STALE }, true)).resolves.toEqual(
+        expect.objectContaining({ ok: true }),
+      );
+    });
+
+    it("counts a conflict during putAll without alerting on it", async () => {
+      const warn = vi.spyOn(Logging, "warn") as unknown as Mock;
+      warn.mockClear();
+
+      // the batch still rejects, so the caller is not left thinking it saved
+      await expect(database.putAll([{ ...STALE }])).rejects.toBeTruthy();
+
+      expect((await tracked())[0][0]).toBe("unresolved");
+      expect(
+        warn.mock.calls.filter(
+          ([message]) => message === "error during putAll",
+        ),
+      ).toEqual([]);
+    });
   });
 
   it("should correctly determine if database is empty", async () => {

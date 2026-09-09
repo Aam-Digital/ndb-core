@@ -26,6 +26,7 @@ import {
 import {
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
@@ -200,7 +201,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
       deps: [LoginStateSubject],
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     NotificationService,
     ...defaultValueStrategyProviders,
     {

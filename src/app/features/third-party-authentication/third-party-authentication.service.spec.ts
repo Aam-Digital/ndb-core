@@ -5,7 +5,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
-import { HttpClient, provideHttpClient } from "@angular/common/http";
+import { HttpClient, provideHttpClient, withXhr } from "@angular/common/http";
 
 describe("ThirdPartyAuthenticationService", () => {
   let service: ThirdPartyAuthenticationService;
@@ -14,15 +14,11 @@ describe("ThirdPartyAuthenticationService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting()],
     });
     service = TestBed.inject(ThirdPartyAuthenticationService);
 
     httpTesting = TestBed.inject(HttpTestingController);
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should not make API request if no session was found", async () => {

@@ -2,7 +2,7 @@ import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
-import { describeResponse, RemotePouchDatabase } from "./remote-pouch-database";
+import { RemotePouchDatabase } from "./remote-pouch-database";
 import { Logging } from "../../logging/logging.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { environment } from "environments/environment";
@@ -488,7 +488,6 @@ describe("RemotePouchDatabase tests", () => {
   });
 
   describe("4XX logging", () => {
-    const MESSAGE = "Failed to fetch from DB with 40X error";
     let warn: Mock;
 
     beforeEach(() => {
@@ -506,32 +505,55 @@ describe("RemotePouchDatabase tests", () => {
       );
     });
 
-    /** The 40X warnings logged, ignoring anything else the app logs. */
+    /** The DB response warnings logged, ignoring anything else the app logs. */
     const warningsLogged = () =>
-      warn.mock.calls.filter(([message]) => message === MESSAGE);
+      warn.mock.calls.filter(([message]) =>
+        String(message).startsWith("Unexpected DB response"),
+      );
 
-    const fetch4xx = async (status: number) => {
+    const fetch4xx = async (status: number, method?: string) => {
       database.init("");
       (PouchDB.fetch as Mock).mockReturnValue(
         Promise.resolve(new Response("{}", { status })),
       );
       await (database as any).defaultFetch(
         `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
-        { headers: {} },
+        { headers: {}, method },
       );
     };
 
-    it("should report the status of an unexpected 4XX, not an unserializable Response", async () => {
+    it("should report the status and method of an unexpected 4XX, not an unserializable Response", async () => {
       // Reproduces AAM-DIGITAL-77H: passing the Response itself logged `context: [{}]`,
       // because a Response has no own enumerable properties - so the status,
       // the only thing distinguishing these failures, never reached monitoring.
-      await fetch4xx(HttpStatusCode.Conflict);
+      await fetch4xx(HttpStatusCode.BadRequest);
 
       const [, context] = warningsLogged()[0];
       expect(context).toEqual(
-        expect.objectContaining({ status: HttpStatusCode.Conflict }),
+        expect.objectContaining({
+          status: HttpStatusCode.BadRequest,
+          method: "GET",
+        }),
       );
-      expect(JSON.stringify(context)).toContain("409");
+      expect(JSON.stringify(context)).toContain("400");
+    });
+
+    it("should report each status under its own message, so monitoring separates the root causes", async () => {
+      // the wording itself is covered by the http-response-logging spec; what
+      // matters here is that two statuses do not end up in one bucket
+      await fetch4xx(HttpStatusCode.BadRequest);
+      await fetch4xx(HttpStatusCode.TooManyRequests);
+
+      const [first, second] = warningsLogged().map(([message]) => message);
+      expect(first).not.toEqual(second);
+    });
+
+    it("should keep the numeric status in the context of an unnamed 4XX", async () => {
+      await fetch4xx(423); // Locked - not one we expect from CouchDB
+
+      expect(warningsLogged()[0][1]).toEqual(
+        expect.objectContaining({ status: 423 }),
+      );
     });
 
     it("should not report expected 4XX statuses as warnings", async () => {
@@ -539,27 +561,14 @@ describe("RemotePouchDatabase tests", () => {
 
       expect(warningsLogged()).toEqual([]);
     });
-  });
 
-  describe("describeResponse", () => {
-    it("should extract fields that JSON.stringify(response) drops", () => {
-      const response = new Response("{}", {
-        status: HttpStatusCode.TooManyRequests,
-        statusText: "Too Many Requests",
-      });
+    it("should not report a conflict as a warning, as only the caller knows its outcome", async () => {
+      // a 409 is always surfaced to whoever made the write - either
+      // PouchDatabase.resolveConflict or PouchDB's own replication - so warning
+      // here alerts on something nobody can act on
+      await fetch4xx(HttpStatusCode.Conflict, "PUT");
 
-      // the behaviour this helper exists to work around
-      expect(JSON.stringify(response)).toBe("{}");
-
-      expect(describeResponse(response)).toEqual({
-        status: HttpStatusCode.TooManyRequests,
-        statusText: "Too Many Requests",
-        responseUrl: "",
-      });
-    });
-
-    it("should handle a missing response", () => {
-      expect(describeResponse(undefined)).toEqual({});
+      expect(warningsLogged()).toEqual([]);
     });
   });
 

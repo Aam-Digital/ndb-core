@@ -78,10 +78,6 @@ describe("LatestChangesService", () => {
     service = TestBed.inject<LatestChangesService>(LatestChangesService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return changelog of current version", async () => {
     vi.spyOn(http, "get").mockReturnValue(of(testReleases));
 
