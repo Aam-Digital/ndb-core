@@ -318,6 +318,68 @@ describe("CouchdbFileService", () => {
     );
   });
 
+  it("should show a distinct warning alert if file download returns 401 (not authenticated)", () => {
+    mockHttp.get.mockReturnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: HttpStatusCode.Unauthorized }),
+      ),
+    );
+    const entity = new Entity("testId");
+    entity["testProp"] = "some-file.pdf";
+
+    service.showFile(entity, "testProp");
+
+    expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+      expect.stringContaining("permission"),
+    );
+  });
+
+  it("should show a distinct warning alert if file download returns 403 (not permitted)", () => {
+    mockHttp.get.mockReturnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: HttpStatusCode.Forbidden }),
+      ),
+    );
+    const entity = new Entity("testId");
+    entity["testProp"] = "some-file.pdf";
+
+    service.showFile(entity, "testProp");
+
+    expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+      expect.stringContaining("permission"),
+    );
+  });
+
+  it("should not let a second subscriber to the progress observable (e.g. the snackbar's AsyncPipe) see an unhandled error", () => {
+    const events = new Subject<HttpEvent<Blob>>();
+    mockHttp.get.mockReturnValue(events);
+
+    service.showFile(new Entity("testId"), "testProp");
+
+    const data: any = vi.mocked(mockSnackbar.openFromComponent).mock.lastCall[1]
+      .data;
+    // a second, independent subscription with no error handler of its own,
+    // the same shape as the snackbar template's `config.progress | async`
+    const secondSubscriberError = vi.fn();
+    data.progress.subscribe({ error: secondSubscriberError });
+
+    events.error(new HttpErrorResponse({ status: 0 }));
+
+    expect(secondSubscriberError).not.toHaveBeenCalled();
+  });
+
+  it("should not fail removeAllFiles if the attachments document does not exist", () => {
+    mockHttp.get.mockReturnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: HttpStatusCode.NotFound }),
+      ),
+    );
+
+    return expect(
+      firstValueFrom(service.removeAllFiles(new Entity("testId"))),
+    ).resolves.not.toThrow();
+  });
+
   it("should delete files document if a entity is deleted", async () => {
     vi.useFakeTimers();
     try {
