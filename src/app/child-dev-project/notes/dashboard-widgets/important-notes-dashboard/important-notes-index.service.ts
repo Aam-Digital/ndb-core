@@ -71,10 +71,11 @@ export class ImportantNotesIndexService {
    * urgent notes first).
    */
   private buildMapFunction(relevantWarningLevels: string[]): string {
+    const sortedLevels = relevantWarningLevels.slice().sort();
     const ordinalById = this.getOrdinalLookup();
     return `(doc) => {
     if (!doc._id.startsWith("Note:")) return;
-    var relevantLevels = ${JSON.stringify(relevantWarningLevels)};
+    var relevantLevels = ${JSON.stringify(sortedLevels)};
     if (relevantLevels.indexOf(doc.warningLevel) === -1) return;
     var ordinalById = ${JSON.stringify(ordinalById)};
     var ordinal = ordinalById[doc.warningLevel];

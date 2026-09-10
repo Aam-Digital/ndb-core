@@ -3,6 +3,7 @@ import { ImportantNotesIndexService } from "./important-notes-index.service";
 import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { warningLevels } from "#src/app/child-dev-project/warning-level";
 import { ConfigurableEnum } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum";
@@ -52,6 +53,20 @@ describe("ImportantNotesIndexService", () => {
       expect.arrayContaining([urgentNote.getId(), warningNote.getId()]),
     );
     expect(data).toHaveLength(2);
+  });
+
+  it("should build the same index view function regardless of the order of the provided warning levels", async () => {
+    const createIndex = vi
+      .spyOn(TestBed.inject(DatabaseIndexingService), "createIndex")
+      .mockResolvedValue(undefined);
+
+    await service.buildIndex(["URGENT", "WARNING", "OK"]);
+    await service.buildIndex(["OK", "URGENT", "WARNING"]);
+
+    const mapFn = (designDoc: any) => designDoc.views.importantNotes.map;
+    expect(mapFn(createIndex.mock.calls[1][0])).toEqual(
+      mapFn(createIndex.mock.calls[0][0]),
+    );
   });
 
   it("should sort notes with the highest warning level (most urgent) first", async () => {
