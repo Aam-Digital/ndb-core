@@ -60,4 +60,17 @@ describe("EntityImportConfigComponent", () => {
 
     expect(component.selectedRefField()).toBe("name");
   });
+
+  it("should not throw and should offer properties from every allowed type for a multi-type reference field", () => {
+    const col: ColumnMapping = {
+      column: "test",
+      propertyName: "refMixed",
+    };
+    fixture.componentRef.setInput("col", col);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("otherColumnMappings", []);
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(component.availableProperties().length).toBeGreaterThan(0);
+  });
 });

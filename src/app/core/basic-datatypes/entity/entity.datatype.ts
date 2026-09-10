@@ -30,6 +30,7 @@ import {
   ExportColumnMapping,
 } from "../../entity/default-datatype/default.datatype";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { asArray } from "../../../utils/asArray";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -279,7 +280,11 @@ export class EntityDatatype extends StringDatatype {
       return normalizeValue(rawValue);
     }
 
-    const refFieldSchema = context.refEntityCtor?.schema?.get(refField);
+    // multiple allowed types could in principle disagree on refField's schema;
+    // use the first one that actually declares it
+    const refFieldSchema = context.refEntityCtors
+      ?.map((ctor) => ctor.schema?.get(refField))
+      .find((schema) => !!schema);
     const refDatatype = refFieldSchema
       ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
       : null;
@@ -308,24 +313,46 @@ export class EntityDatatype extends StringDatatype {
 
   /**
    * Load the required entity type's entities into context's cache if not available yet.
+   *
+   * A field can allow referencing several entity types at once, in which case
+   * `entityType` is an array rather than a single type name - candidates are
+   * loaded per type and merged (as `EditEntityComponent` does for its own
+   * multi-type autocomplete, see `edit-entity.component.ts`). Each type is
+   * resolved independently so that one unresolvable type (e.g. a stale or
+   * removed registration) does not prevent matching against the other,
+   * still-valid types.
    */
   private async loadImportMapEntities(
-    entityType: string,
+    entityType: string | string[],
     context: EntityFieldImportContext,
   ): Promise<void> {
     if (context.entities) {
       return;
     }
 
-    try {
-      context.entities = (await this.entityMapper.loadType(entityType)).map(
-        (e) => this.schemaService.transformEntityToDatabaseFormat(e),
-      );
-      context.refEntityCtor = this.entityRegistry.get(entityType);
-    } catch (error) {
-      Logging.error("Error loading entities for import mapping:", error);
-      context.entities = [];
+    const results = await Promise.allSettled(
+      asArray(entityType).map(async (type) => ({
+        entities: await this.entityMapper.loadType(type),
+        ctor: this.entityRegistry.get(type),
+      })),
+    );
+
+    const loaded: { entities: Entity[]; ctor: EntityConstructor }[] = [];
+    for (const result of results) {
+      if (result.status === "fulfilled") {
+        loaded.push(result.value);
+      } else {
+        Logging.error(
+          "Error loading entities for import mapping:",
+          result.reason,
+        );
+      }
     }
+
+    context.entities = loaded
+      .flatMap((r) => r.entities)
+      .map((e) => this.schemaService.transformEntityToDatabaseFormat(e));
+    context.refEntityCtors = loaded.map((r) => r.ctor);
   }
 
   /**
@@ -441,13 +468,13 @@ class EntityFieldImportContext {
   }
 
   /**
-   * Constructor of the referenced entity type (to access schema for value mapping)
+   * Constructors of the allowed referenced entity type(s) (to access schema for value mapping)
    */
-  get refEntityCtor(): EntityConstructor | undefined {
-    return this.globalContext[`ctor_${this.schemaField.additional}`];
+  get refEntityCtors(): EntityConstructor[] | undefined {
+    return this.globalContext[`ctors_${this.schemaField.additional}`];
   }
 
-  set refEntityCtor(value: EntityConstructor) {
-    this.globalContext[`ctor_${this.schemaField.additional}`] = value;
+  set refEntityCtors(value: EntityConstructor[]) {
+    this.globalContext[`ctors_${this.schemaField.additional}`] = value;
   }
 }

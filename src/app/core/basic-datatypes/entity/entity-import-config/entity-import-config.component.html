@@ -12,7 +12,7 @@
   <div class="flex-row gap-regular align-center">
     <mat-form-field class="margin-left-small">
       <mat-label i18n="import - entity - match by property label">
-        Match by {{ referencedEntity()?.label }} property
+        Match by {{ referencedEntityLabel() }} property
       </mat-label>
       <mat-select
         [ngModel]="selectedRefField()"

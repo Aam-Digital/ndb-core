@@ -23,6 +23,7 @@ import {
 } from "../entity.datatype";
 import { isInheritanceSourceReferenceField } from "../../../import/import-inheritance-warning.util";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { asArray } from "../../../../utils/asArray";
 
 /**
  * Inline import configuration component for entity reference fields.
@@ -61,30 +62,62 @@ export class EntityImportConfigComponent {
     return current?.refField ?? "";
   });
 
-  referencedEntity = computed<EntityConstructor | null>(() => {
+  /**
+   * All entity types this column's target field allows referencing.
+   * Normally a single type, but a field can allow linking to several record
+   * types, in which case the schema's `additional` is an array rather than a
+   * single type name - each is resolved individually here (an unregistered
+   * type is skipped rather than throwing, since `EntityRegistry.get()` only
+   * accepts one registered key at a time).
+   */
+  referencedEntities = computed<EntityConstructor[]>(() => {
     const col = this.col();
     const entityType = this.entityType();
-    if (!col?.propertyName || !entityType) return null;
+    if (!col?.propertyName || !entityType) return [];
 
     const fieldSchema = entityType.schema.get(col.propertyName);
-    const entityName = fieldSchema?.additional;
-    if (!entityName) return null;
-
-    return this.entityRegistry.get(entityName) ?? null;
+    return asArray(fieldSchema?.additional)
+      .filter((entityName) => this.entityRegistry.has(entityName))
+      .map((entityName) => this.entityRegistry.get(entityName));
   });
 
+  /**
+   * The first of the allowed referenced types, for UI that can only
+   * reasonably work off a single type (e.g. the referenced-entity label, the
+   * nested value-mapping component's target schema).
+   */
+  referencedEntity = computed<EntityConstructor | null>(
+    () => this.referencedEntities()[0] ?? null,
+  );
+
+  /** Display label for the "Match by ... property" dropdown, joining every allowed type's label. */
+  referencedEntityLabel = computed(() =>
+    this.referencedEntities()
+      .map((entity) => entity.label)
+      .join(" / "),
+  );
+
+  /**
+   * The union of matchable properties across every allowed referenced type,
+   * so a multi-type field still offers a full "match by" property list
+   * instead of only the first type's properties.
+   */
   availableProperties = computed(() => {
-    const entity = this.referencedEntity();
-    if (!entity) return [];
-    return [...entity.schema.entries()]
-      .filter(
-        ([prop, schema]) =>
-          (!!schema.label && !schema.isInternalField) || prop === "_id",
-      )
-      .map(([prop, schema]) => ({
-        label: schema.label ?? prop,
-        property: prop,
-      }));
+    const seenProperties = new Set<string>();
+    const properties: { label: string; property: string }[] = [];
+
+    for (const entity of this.referencedEntities()) {
+      for (const [prop, schema] of entity.schema.entries()) {
+        if (seenProperties.has(prop)) continue;
+        if (!((!!schema.label && !schema.isInternalField) || prop === "_id"))
+          continue;
+
+        seenProperties.add(prop);
+        properties.push({ label: schema.label ?? prop, property: prop });
+      }
+    }
+
+    return properties;
   });
 
   showInheritanceHint = computed(() => {
