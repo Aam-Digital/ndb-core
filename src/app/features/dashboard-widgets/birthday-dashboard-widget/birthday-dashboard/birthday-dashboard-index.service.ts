@@ -1,5 +1,6 @@
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { inject, Injectable } from "@angular/core";
+import moment from "moment";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
@@ -60,15 +61,13 @@ export class BirthdayDashboardIndexService {
    * index's reference-year-based cyclic-day-of-year approximation (e.g. around Feb 29
    * in leap years). That padding can also pull in rows that don't actually belong (e.g.
    * a birthday that was yesterday, or one day beyond the threshold), so the results are
-   * re-filtered afterward using the exact, real calendar day difference (see
-   * {@link daysUntil}) to drop those before returning.
+   * re-filtered afterward using the exact, real calendar day difference
    */
   async queryBirthdayIndex(
     entityConfig: EntityPropertyMap,
     threshold: number,
   ): Promise<EntityWithBirthday[]> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = moment().startOf("day").toDate();
     const todayDayOfYear = this.getCyclicDayOfYear(today);
 
     const result = await this.dbIndexing.queryIndexRaw(
@@ -81,18 +80,22 @@ export class BirthdayDashboardIndexService {
     );
 
     return result.rows
-      .filter((row) => daysUntil(new Date(row.value), today) <= threshold)
+      .map((row) => ({ ...row, value: parseDateOnly(row.value) }))
+      .filter(
+        (row) =>
+          moment(getNextOccurrence(row.value, today)).diff(today, "days") <=
+          threshold,
+      )
       .map((row) => {
         const entityType = Entity.extractTypeFromId(row.doc._id);
         const entityConstructor = this.entityRegistry.get(entityType);
         const entity = new entityConstructor("");
         this.entitySchemaService.loadDataIntoEntity(entity, row.doc);
-        const dateOfBirth = new Date(row.value);
-        const birthday = getNextOccurrence(dateOfBirth, today);
+        const birthday = getNextOccurrence(row.value, today);
         return {
           entity,
           birthday,
-          newAge: birthday.getFullYear() - dateOfBirth.getFullYear(),
+          newAge: birthday.getFullYear() - row.value.getFullYear(),
         };
       });
   }
@@ -184,8 +187,25 @@ export class BirthdayDashboardIndexService {
 }
 
 /**
+ * Parse a stored date-of-birth value into a Date at local midnight.
+ *
+ * `moment()` reads an ISO date string (`"YYYY-MM-DD"`) in local time, whereas
+ * `new Date("2020-01-15")` reads it as UTC and would then land on the previous day via the
+ * local `getFullYear()`/`getMonth()`/`getDate()` accessors used downstream. `moment.ISO_8601`
+ * also covers any legacy value still stored as a full ISO timestamp, normalizing it to the
+ * local calendar day.
+ */
+export function parseDateOnly(value: string): Date {
+  return moment(value, moment.ISO_8601).startOf("day").toDate();
+}
+
+/**
  * Real calendar date of the next occurrence (this year, or next year if it has already
  * passed) of the given date's month/day, relative to `today`.
+ *
+ * Uses the native `Date` constructor (not `moment`) on purpose: its month/day overflow
+ * folds a Feb 29 birthday onto March 1 in non-leap years, matching how the index's
+ * reference-year day-of-year keys treat it. `moment([y, m, d])` would instead be invalid.
  */
 export function getNextOccurrence(date: Date, today: Date): Date {
   const next = new Date(today.getFullYear(), date.getMonth(), date.getDate());
@@ -193,13 +213,4 @@ export function getNextOccurrence(date: Date, today: Date): Date {
     next.setFullYear(next.getFullYear() + 1);
   }
   return next;
-}
-
-/**
- * Exact number of real calendar days from `today` until the next occurrence of the
- * given date's month/day.
- */
-export function daysUntil(date: Date, today: Date): number {
-  const next = getNextOccurrence(date, today);
-  return Math.round((next.getTime() - today.getTime()) / 86400000);
 }

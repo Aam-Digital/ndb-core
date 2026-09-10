@@ -3,6 +3,7 @@ import {
   BirthdayDashboardIndexService,
   EntityWithBirthday,
   getNextOccurrence,
+  parseDateOnly,
 } from "./birthday-dashboard-index.service";
 import { DatabaseTestingModule } from "#src/app/utils/database-testing.module";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -397,5 +398,27 @@ describe("BirthdayDashboardIndexService", () => {
 
       expect(data).toEqual([]);
     });
+  });
+});
+
+describe("parseDateOnly", () => {
+  it("parses a YYYY-MM-DD string to local midnight, not the UTC instant", () => {
+    // `new Date("2020-01-15")` would be UTC midnight and read back as Jan 14 via the
+    // local accessors in timezones west of UTC - this assertion holds in every timezone.
+    const date = parseDateOnly("2020-01-15");
+
+    expect(date.getFullYear()).toBe(2020);
+    expect(date.getMonth()).toBe(0);
+    expect(date.getDate()).toBe(15);
+    expect(date.getHours()).toBe(0);
+  });
+
+  it("normalizes a legacy full ISO timestamp to local midnight", () => {
+    const date = parseDateOnly("2023-01-06T10:03:35.726Z");
+
+    expect(moment(date).isValid()).toBe(true);
+    expect(date.getHours()).toBe(0);
+    expect(date.getMinutes()).toBe(0);
+    expect(date.getSeconds()).toBe(0);
   });
 });
