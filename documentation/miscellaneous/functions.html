@@ -479,6 +479,9 @@
                             <a href="#getMinDistanceKm" title="src/app/features/location/map-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getMinDistanceKm</b>&nbsp;&nbsp;&nbsp;(src/.../map-utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#getNextOccurrence" title="src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getNextOccurrence</b>&nbsp;&nbsp;&nbsp;(src/.../birthday-dashboard-index.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#getParentUrl" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getParentUrl</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
@@ -752,6 +755,9 @@
                             <a href="#normalizeValue" title="src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeValue</b>&nbsp;&nbsp;&nbsp;(src/.../unique-property-validator.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#parseDateOnly" title="src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>parseDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../birthday-dashboard-index.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#parseJwt" title="src/app/core/session/session-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>parseJwt</b>&nbsp;&nbsp;&nbsp;(src/.../session-utils.ts)</span></a>
                         </li>
                         <li>
@@ -909,6 +915,9 @@
                         </li>
                         <li>
                             <a href="#toggleRecordSelection" title="src/app/core/common-components/entities-table/entities-table-selection.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toggleRecordSelection</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#toPropertyList" title="src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toPropertyList</b>&nbsp;&nbsp;&nbsp;(src/.../birthday-dashboard-index.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#toReportDefinition" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toReportDefinition</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
@@ -15386,6 +15395,213 @@ without duplicating schema-scanning logic.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getNextOccurrence"></a>
+                    <span class="name">
+                        <span ><b>getNextOccurrence</b></span>
+                        <a href="#getNextOccurrence"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getNextOccurrence(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, today: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Real calendar date of the next occurrence (this year, or next year if it has already
+passed) of the given date&#39;s month/day, relative to <code>today</code>.</p>
+<p>Uses the native <code>Date</code> constructor (not <code>moment</code>) on purpose: its month/day overflow
+folds a Feb 29 birthday onto March 1 in non-leap years, matching how the index&#39;s
+reference-year day-of-year keys treat it. <code>moment([y, m, d])</code> would instead be invalid.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>today</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="parseDateOnly"></a>
+                    <span class="name">
+                        <span ><b>parseDateOnly</b></span>
+                        <a href="#parseDateOnly"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>parseDateOnly(value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Parse a stored date-of-birth value into a Date at local midnight.</p>
+<p><code>moment()</code> reads an ISO date string (<code>&quot;YYYY-MM-DD&quot;</code>) in local time, whereas
+<code>new Date(&quot;2020-01-15&quot;)</code> reads it as UTC and would then land on the previous day via the
+local <code>getFullYear()</code>/<code>getMonth()</code>/<code>getDate()</code> accessors used downstream. <code>moment.ISO_8601</code>
+also covers any legacy value still stored as a full ISO timestamp, normalizing it to the
+local calendar day.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toPropertyList"></a>
+                    <span class="name">
+                        <span ><b>toPropertyList</b></span>
+                        <a href="#toPropertyList"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toPropertyList(properties)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>properties</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
 
                         </div>
                             <div class="io-description">

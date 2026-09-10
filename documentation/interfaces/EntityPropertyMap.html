@@ -128,7 +128,7 @@
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
     <span class="icon ion-ios-document" aria-hidden="true"></span>
-    <code>src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts</code>
+    <code>src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts</code>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -173,7 +173,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="164" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts:164</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts:8</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -184,177 +184,221 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  signal,
-  untracked,
-} from &quot;@angular/core&quot;;
-import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
-import { MatTableModule } from &quot;@angular/material/table&quot;;
-import { Entity } from &quot;../../../../core/entity/model/entity&quot;;
-import { DatePipe } from &quot;@angular/common&quot;;
-import { EntityBlockComponent } from &quot;../../../../core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
-import { applyUpdate } from &quot;../../../../core/entity/model/entity-update&quot;;
-import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DatabaseIndexingService } from &quot;#src/app/core/entity/database-indexing/database-indexing.service&quot;;
+import { inject, Injectable } from &quot;@angular/core&quot;;
+import moment from &quot;moment&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
+import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
 
-interface BirthdayDashboardConfig {
-  entities: EntityPropertyMap;
-  threshold: number;
-}
-
-@DynamicComponent(&quot;BirthdayDashboard&quot;)
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: &quot;app-birthday-dashboard&quot;,
-  templateUrl: &quot;./birthday-dashboard.component.html&quot;,
-  styleUrls: [&quot;./birthday-dashboard.component.scss&quot;],
-  imports: [
-    MatTableModule,
-    EntityBlockComponent,
-    DatePipe,
-    DashboardListWidgetComponent,
-  ],
-})
-export class BirthdayDashboardComponent {
-  private entityMapper &#x3D; inject(EntityMapperService);
-  private entitiesByType &#x3D; signal&lt;Map&lt;string, Entity[]&gt;&gt;(new Map());
-
-  static getRequiredEntities(config: BirthdayDashboardConfig) {
-    return config?.entities ? Object.keys(config.entities) : &quot;Child&quot;;
-  }
-
-  private readonly today: Date;
-
-  /**
-   * An object holding the names of entities and properties where they have a &#x60;DateOfBirth&#x60; attribute.
-   * E.g. (which is also the default)
-   * &#x60;&#x60;&#x60;json
-   * &quot;entities&quot;: { &quot;Child&quot;: &quot;dateOfBirth&quot; }
-   * &#x60;&#x60;&#x60;
-   */
-  entities &#x3D; input&lt;EntityPropertyMap&gt;({ [&quot;Child&quot;]: &quot;dateOfBirth&quot; });
-
-  /**
-   * Birthdays that are less than &quot;threshold&quot; days away are shown.
-   * Default 32
-   */
-  threshold &#x3D; input(32);
-
-  entries &#x3D; computed(() &#x3D;&gt; {
-    const threshold &#x3D; this.threshold();
-    const dataByType &#x3D; this.entitiesByType();
-    const entityConfig &#x3D; this.entities();
-    const data: EntityWithBirthday[] &#x3D; [];
-
-    for (const [entityType, properties] of Object.entries(entityConfig)) {
-      const entities &#x3D; dataByType.get(entityType) ?? [];
-      const propertyList &#x3D; Array.isArray(properties)
-        ? properties
-        : [properties];
-
-      for (const property of propertyList) {
-        data.push(
-          ...entities
-            .filter((entity) &#x3D;&gt; !entity.inactive &amp;&amp; entity[property])
-            .map((entity) &#x3D;&gt; ({
-              entity: entity,
-              birthday: this.getNextBirthday(entity[property]),
-              newAge: entity[property]?.age + 1,
-            }))
-            .filter((entry) &#x3D;&gt; this.daysUntil(entry.birthday) &lt; threshold),
-        );
-      }
-    }
-
-    data.sort(
-      (a, b) &#x3D;&gt; this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
-    );
-    return data;
-  });
-
-  subtitle &#x3D; input&lt;string&gt;(
-    $localize&#x60;:dashboard widget subtitle:Upcoming Birthdays&#x60;,
-  );
-  explanation &#x3D; input&lt;string&gt;();
-
-  constructor() {
-    this.today &#x3D; new Date();
-    this.today.setHours(0, 0, 0, 0);
-
-    effect((onCleanup) &#x3D;&gt; {
-      const entityConfig &#x3D; this.entities();
-      const subscriptions: Array&lt;{ unsubscribe: () &#x3D;&gt; void }&gt; &#x3D; [];
-      let isCurrent &#x3D; true;
-
-      this.entitiesByType.set(new Map());
-
-      for (const entityType of Object.keys(entityConfig)) {
-        untracked(async () &#x3D;&gt; {
-          const entities &#x3D; await this.entityMapper.loadType(entityType);
-          if (!isCurrent) {
-            return;
-          }
-          this.setEntitiesForType(entityType, entities as Entity[]);
-        });
-
-        const subscription &#x3D; this.entityMapper
-          .receiveUpdates(entityType)
-          .subscribe((update) &#x3D;&gt; {
-            const currentData &#x3D; this.entitiesByType().get(entityType) ?? [];
-            const updatedData &#x3D; applyUpdate(currentData, update) as Entity[];
-            this.setEntitiesForType(entityType, updatedData);
-          });
-        subscriptions.push(subscription);
-      }
-
-      onCleanup(() &#x3D;&gt; {
-        isCurrent &#x3D; false;
-        subscriptions.forEach((subscription) &#x3D;&gt; subscription.unsubscribe());
-      });
-    });
-  }
-
-  private setEntitiesForType(entityType: string, entities: Entity[]) {
-    this.entitiesByType.update((current) &#x3D;&gt; {
-      const next &#x3D; new Map(current);
-      next.set(entityType, entities);
-      return next;
-    });
-  }
-
-  private getNextBirthday(dateOfBirth: Date): Date {
-    const birthday &#x3D; new Date(
-      this.today.getFullYear(),
-      dateOfBirth.getMonth(),
-      dateOfBirth.getDate(),
-    );
-
-    if (this.today.getTime() &gt; birthday.getTime()) {
-      birthday.setFullYear(birthday.getFullYear() + 1);
-    }
-    return birthday;
-  }
-
-  private daysUntil(date: Date): number {
-    const diff &#x3D; date.getTime() - this.today.getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
-  }
-}
-
-interface EntityPropertyMap {
+export interface EntityPropertyMap {
   [key: string]: string | string[];
 }
 
-interface EntityWithBirthday {
+/**
+ * One entity paired with the next occurrence of a single one of its configured
+ * birthday properties. An entity with several matching birthday properties is
+ * represented by several &#x60;EntityWithBirthday&#x60; entries (one per matching property),
+ * mirroring the underlying index which emits one row per (entity, property) match.
+ */
+export interface EntityWithBirthday {
   entity: Entity;
   birthday: Date;
   newAge: number;
+}
+
+const INDEX_ID_PREFIX &#x3D; &quot;birthdayDashboard&quot;;
+const VIEW_NAME &#x3D; &quot;birthday&quot;;
+
+function toPropertyList(properties: string | string[]): string[] {
+  return Array.isArray(properties) ? properties : [properties];
+}
+
+/**
+ * Builds and identifies the single PouchDB/CouchDB view that indexes entities of all
+ * configured types by the cyclic day-of-year of their date-of-birth propertie(s), so
+ * that entities with an upcoming birthday can be queried efficiently without loading
+ * all entities of any type.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class BirthdayDashboardIndexService {
+  private readonly dbIndexing &#x3D; inject(DatabaseIndexingService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+
+  buildBirthdayIndex(entityConfig: EntityPropertyMap) {
+    return this.dbIndexing.createIndex({
+      _id: &#x60;_design/${this.getIndexId(entityConfig)}&#x60;,
+      views: {
+        [VIEW_NAME]: {
+          map: this.buildMapFunction(entityConfig),
+        },
+      },
+    });
+  }
+
+  /**
+   * Query the birthday index for entities of any configured type whose (real calendar)
+   * birthday falls within &#x60;threshold&#x60; days from today.
+   *
+   * The underlying range query is padded by one day on each side to account for the
+   * index&#x27;s reference-year-based cyclic-day-of-year approximation (e.g. around Feb 29
+   * in leap years). That padding can also pull in rows that don&#x27;t actually belong (e.g.
+   * a birthday that was yesterday, or one day beyond the threshold), so the results are
+   * re-filtered afterward using the exact, real calendar day difference
+   */
+  async queryBirthdayIndex(
+    entityConfig: EntityPropertyMap,
+    threshold: number,
+  ): Promise&lt;EntityWithBirthday[]&gt; {
+    const today &#x3D; moment().startOf(&quot;day&quot;).toDate();
+    const todayDayOfYear &#x3D; this.getCyclicDayOfYear(today);
+
+    const result &#x3D; await this.dbIndexing.queryIndexRaw(
+      &#x60;${this.getIndexId(entityConfig)}/${VIEW_NAME}&#x60;,
+      {
+        startkey: todayDayOfYear - 1,
+        endkey: todayDayOfYear + threshold + 1,
+        include_docs: true,
+      },
+    );
+
+    return result.rows
+      .map((row) &#x3D;&gt; ({ ...row, value: parseDateOnly(row.value) }))
+      .filter(
+        (row) &#x3D;&gt;
+          moment(getNextOccurrence(row.value, today)).diff(today, &quot;days&quot;) &lt;&#x3D;
+          threshold,
+      )
+      .map((row) &#x3D;&gt; {
+        const entityType &#x3D; Entity.extractTypeFromId(row.doc._id);
+        const entityConstructor &#x3D; this.entityRegistry.get(entityType);
+        const entity &#x3D; new entityConstructor(&quot;&quot;);
+        this.entitySchemaService.loadDataIntoEntity(entity, row.doc);
+        const birthday &#x3D; getNextOccurrence(row.value, today);
+        return {
+          entity,
+          birthday,
+          newAge: birthday.getFullYear() - row.value.getFullYear(),
+        };
+      });
+  }
+
+  /**
+   * Deterministic id for the design doc indexing the given entities/properties config.
+   * Different widget configs (e.g. different dashboard instances) get their own design doc
+   * so that their map functions don&#x27;t overwrite each other.
+   */
+  private getIndexId(entityConfig: EntityPropertyMap): string {
+    const configPart &#x3D; Object.keys(entityConfig)
+      .sort()
+      .map((entityType) &#x3D;&gt; {
+        const properties &#x3D; toPropertyList(entityConfig[entityType])
+          .slice()
+          .sort();
+        return &#x60;${entityType}(${properties.join(&quot;,&quot;)})&#x60;;
+      })
+      .join(&quot;_&quot;);
+    return &#x60;${INDEX_ID_PREFIX}_${configPart}&#x60;;
+  }
+
+  /**
+   * Day-of-year (1-365) for the given date&#x27;s month/day, computed against a fixed non-leap
+   * reference year so that the same month/day always maps to the same cyclic key,
+   * independent of the actual (birth) year and independent of leap years.
+   */
+  private getCyclicDayOfYear(date: Date): number {
+    return (
+      Math.floor(
+        (Date.UTC(2001, date.getMonth(), date.getDate()) -
+          Date.UTC(2001, 0, 1)) /
+          86400000,
+      ) + 1
+    );
+  }
+
+  /**
+   * Build the map function (as a string, to be run by PouchDB/CouchDB) that indexes
+   * documents of every configured entity type by the cyclic day-of-year of any of their
+   * configured date-of-birth properties.
+   *
+   * The emitted key is the cyclic day-of-year (see {@link getCyclicDayOfYear}), duplicated at +365
+   * so that range queries spanning a year boundary (e.g. &quot;next 32 days&quot; in late December) don&#x27;t need
+   * to wrap around manually. The emitted value is the raw property value (the date of birth).
+   *
+   * Only entities that are not &#x60;inactive&#x60; are indexed.
+   */
+  private buildMapFunction(entityConfig: EntityPropertyMap): string {
+    const typeBlocks &#x3D; Object.keys(entityConfig)
+      .sort()
+      .map((entityType) &#x3D;&gt; {
+        const properties &#x3D; toPropertyList(entityConfig[entityType])
+          .slice()
+          .sort();
+        const propertyEmits &#x3D; properties
+          .map(
+            (property) &#x3D;&gt; &#x60;
+          if (doc.${property}) {
+            var raw &#x3D; doc.${property};
+            var month, day;
+            if (typeof raw &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; raw.length &gt;&#x3D; 10) {
+              month &#x3D; parseInt(raw.substring(5, 7), 10);
+              day &#x3D; parseInt(raw.substring(8, 10), 10);
+            } else {
+              var parsed &#x3D; new Date(raw);
+              month &#x3D; parsed.getMonth() + 1;
+              day &#x3D; parsed.getDate();
+            }
+            var dayOfYear &#x3D; Math.floor((Date.UTC(2001, month - 1, day) - Date.UTC(2001, 0, 1)) / 86400000) + 1;
+            emit(dayOfYear, raw);
+            emit(dayOfYear + 365, raw);
+          }&#x60;,
+          )
+          .join(&quot;\n&quot;);
+
+        return &#x60;
+      if (doc._id.startsWith(&quot;${entityType}:&quot;)) {
+        ${propertyEmits}
+      }&#x60;;
+      })
+      .join(&quot;\n&quot;);
+
+    return &#x60;(doc) &#x3D;&gt; {
+    if (doc.inactive) return;
+    ${typeBlocks}
+  }&#x60;;
+  }
+}
+
+/**
+ * Parse a stored date-of-birth value into a Date at local midnight.
+ *
+ * &#x60;moment()&#x60; reads an ISO date string (&#x60;&quot;YYYY-MM-DD&quot;&#x60;) in local time, whereas
+ * &#x60;new Date(&quot;2020-01-15&quot;)&#x60; reads it as UTC and would then land on the previous day via the
+ * local &#x60;getFullYear()&#x60;/&#x60;getMonth()&#x60;/&#x60;getDate()&#x60; accessors used downstream. &#x60;moment.ISO_8601&#x60;
+ * also covers any legacy value still stored as a full ISO timestamp, normalizing it to the
+ * local calendar day.
+ */
+export function parseDateOnly(value: string): Date {
+  return moment(value, moment.ISO_8601).startOf(&quot;day&quot;).toDate();
+}
+
+/**
+ * Real calendar date of the next occurrence (this year, or next year if it has already
+ * passed) of the given date&#x27;s month/day, relative to &#x60;today&#x60;.
+ *
+ * Uses the native &#x60;Date&#x60; constructor (not &#x60;moment&#x60;) on purpose: its month/day overflow
+ * folds a Feb 29 birthday onto March 1 in non-leap years, matching how the index&#x27;s
+ * reference-year day-of-year keys treat it. &#x60;moment([y, m, d])&#x60; would instead be invalid.
+ */
+export function getNextOccurrence(date: Date, today: Date): Date {
+  const next &#x3D; new Date(today.getFullYear(), date.getMonth(), date.getDate());
+  if (today.getTime() &gt; next.getTime()) {
+    next.setFullYear(next.getFullYear() + 1);
+  }
+  return next;
 }
 </code></pre>
     </div>

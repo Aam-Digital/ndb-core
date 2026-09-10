@@ -1932,6 +1932,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/BackupService.html" data-type="entity-link" >BackupService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/BirthdayDashboardIndexService.html" data-type="entity-link" >BirthdayDashboardIndexService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/BulkMergeService.html" data-type="entity-link" >BulkMergeService</a>
                                 </li>
                                 <li class="link">

@@ -223,7 +223,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts:24</a></div>
                                 </td>
                             </tr>
 
@@ -262,7 +262,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -276,21 +276,24 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   effect,
   inject,
   input,
   signal,
-  untracked,
 } from &quot;@angular/core&quot;;
-import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { debounceTime, merge } from &quot;rxjs&quot;;
+import { DynamicComponent } from &quot;#src/app/core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { MatTableModule } from &quot;@angular/material/table&quot;;
-import { Entity } from &quot;../../../../core/entity/model/entity&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { DatePipe } from &quot;@angular/common&quot;;
-import { EntityBlockComponent } from &quot;../../../../core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
-import { applyUpdate } from &quot;../../../../core/entity/model/entity-update&quot;;
-import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+import { EntityBlockComponent } from &quot;#src/app/core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
+import { DashboardListWidgetComponent } from &quot;#src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+import {
+  BirthdayDashboardIndexService,
+  EntityPropertyMap,
+  EntityWithBirthday,
+} from &quot;./birthday-dashboard-index.service&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 
 interface BirthdayDashboardConfig {
   entities: EntityPropertyMap;
@@ -311,14 +314,13 @@ interface BirthdayDashboardConfig {
   ],
 })
 export class BirthdayDashboardComponent {
-  private entityMapper &#x3D; inject(EntityMapperService);
-  private entitiesByType &#x3D; signal&lt;Map&lt;string, Entity[]&gt;&gt;(new Map());
+  private readonly birthdayIndex &#x3D; inject(BirthdayDashboardIndexService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  entries &#x3D; signal&lt;EntityWithBirthday[] | undefined&gt;(undefined);
 
   static getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : &quot;Child&quot;;
   }
-
-  private readonly today: Date;
 
   /**
    * An object holding the names of entities and properties where they have a &#x60;DateOfBirth&#x60; attribute.
@@ -330,42 +332,10 @@ export class BirthdayDashboardComponent {
   entities &#x3D; input&lt;EntityPropertyMap&gt;({ [&quot;Child&quot;]: &quot;dateOfBirth&quot; });
 
   /**
-   * Birthdays that are less than &quot;threshold&quot; days away are shown.
-   * Default 32
+   * Birthdays that are less or equal than &quot;threshold&quot; days away are shown.
+   * Default 31
    */
-  threshold &#x3D; input(32);
-
-  entries &#x3D; computed(() &#x3D;&gt; {
-    const threshold &#x3D; this.threshold();
-    const dataByType &#x3D; this.entitiesByType();
-    const entityConfig &#x3D; this.entities();
-    const data: EntityWithBirthday[] &#x3D; [];
-
-    for (const [entityType, properties] of Object.entries(entityConfig)) {
-      const entities &#x3D; dataByType.get(entityType) ?? [];
-      const propertyList &#x3D; Array.isArray(properties)
-        ? properties
-        : [properties];
-
-      for (const property of propertyList) {
-        data.push(
-          ...entities
-            .filter((entity) &#x3D;&gt; !entity.inactive &amp;&amp; entity[property])
-            .map((entity) &#x3D;&gt; ({
-              entity: entity,
-              birthday: this.getNextBirthday(entity[property]),
-              newAge: entity[property]?.age + 1,
-            }))
-            .filter((entry) &#x3D;&gt; this.daysUntil(entry.birthday) &lt; threshold),
-        );
-      }
-    }
-
-    data.sort(
-      (a, b) &#x3D;&gt; this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
-    );
-    return data;
-  });
+  threshold &#x3D; input(31);
 
   subtitle &#x3D; input&lt;string&gt;(
     $localize&#x60;:dashboard widget subtitle:Upcoming Birthdays&#x60;,
@@ -373,77 +343,50 @@ export class BirthdayDashboardComponent {
   explanation &#x3D; input&lt;string&gt;();
 
   constructor() {
-    this.today &#x3D; new Date();
-    this.today.setHours(0, 0, 0, 0);
-
     effect((onCleanup) &#x3D;&gt; {
       const entityConfig &#x3D; this.entities();
-      const subscriptions: Array&lt;{ unsubscribe: () &#x3D;&gt; void }&gt; &#x3D; [];
+      const threshold &#x3D; this.threshold();
       let isCurrent &#x3D; true;
 
-      this.entitiesByType.set(new Map());
+      const indexBuilt &#x3D; this.birthdayIndex.buildBirthdayIndex(entityConfig);
 
-      for (const entityType of Object.keys(entityConfig)) {
-        untracked(async () &#x3D;&gt; {
-          const entities &#x3D; await this.entityMapper.loadType(entityType);
-          if (!isCurrent) {
-            return;
-          }
-          this.setEntitiesForType(entityType, entities as Entity[]);
-        });
-
-        const subscription &#x3D; this.entityMapper
-          .receiveUpdates(entityType)
-          .subscribe((update) &#x3D;&gt; {
-            const currentData &#x3D; this.entitiesByType().get(entityType) ?? [];
-            const updatedData &#x3D; applyUpdate(currentData, update) as Entity[];
-            this.setEntitiesForType(entityType, updatedData);
+      const reload &#x3D; () &#x3D;&gt;
+        indexBuilt
+          .then(() &#x3D;&gt;
+            this.birthdayIndex.queryBirthdayIndex(entityConfig, threshold),
+          )
+          .catch((err) &#x3D;&gt; {
+            Logging.error(&quot;Failed to load upcoming birthdays&quot;, err);
+            return [];
+          })
+          .then((res) &#x3D;&gt; {
+            if (isCurrent) {
+              this.entries.set(res);
+            }
           });
-        subscriptions.push(subscription);
-      }
+
+      // initial load - covers the case where matching entities already exist on mount.
+      reload();
+
+      // Re-query (cheap/incremental) whenever a relevant entity type changes, so the
+      // widget picks up entities added/edited after the initial query (e.g. while the
+      // index was still empty during sync/demo-data generation), and stays live for
+      // ongoing changes. Debounced because e.g. demo-data generation saves many
+      // entities in a burst - without this, that&#x27;s one redundant query per save.
+      const subscription &#x3D; merge(
+        ...Object.keys(entityConfig).map((type) &#x3D;&gt;
+          this.entityMapper.receiveUpdates(type),
+        ),
+      )
+        .pipe(debounceTime(500))
+        .subscribe(() &#x3D;&gt; reload());
 
       onCleanup(() &#x3D;&gt; {
         isCurrent &#x3D; false;
-        subscriptions.forEach((subscription) &#x3D;&gt; subscription.unsubscribe());
+        subscription.unsubscribe();
       });
     });
   }
-
-  private setEntitiesForType(entityType: string, entities: Entity[]) {
-    this.entitiesByType.update((current) &#x3D;&gt; {
-      const next &#x3D; new Map(current);
-      next.set(entityType, entities);
-      return next;
-    });
-  }
-
-  private getNextBirthday(dateOfBirth: Date): Date {
-    const birthday &#x3D; new Date(
-      this.today.getFullYear(),
-      dateOfBirth.getMonth(),
-      dateOfBirth.getDate(),
-    );
-
-    if (this.today.getTime() &gt; birthday.getTime()) {
-      birthday.setFullYear(birthday.getFullYear() + 1);
-    }
-    return birthday;
-  }
-
-  private daysUntil(date: Date): number {
-    const diff &#x3D; date.getTime() - this.today.getTime();
-    return Math.floor(diff / (1000 * 60 * 60 * 24));
-  }
-}
-
-interface EntityPropertyMap {
-  [key: string]: string | string[];
-}
-
-interface EntityWithBirthday {
-  entity: Entity;
-  birthday: Date;
-  newAge: number;
 }
 </code></pre>
     </div>

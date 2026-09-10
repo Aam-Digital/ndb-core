@@ -301,8 +301,8 @@ e.g. <code>{ &quot;Child&quot;: &quot;dateOfBirth&quot;, &quot;School&quot;: [&q
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   computed,
   effect,
   inject,
@@ -385,7 +385,7 @@ export class BirthdayDashboardSettingsComponent {
       ]),
     );
 
-  threshold &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.threshold ?? 32);
+  threshold &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.threshold ?? 31);
 
   entityPropertyPairs &#x3D; linkedSignal&lt;EntityPropertyPair[]&gt;(() &#x3D;&gt; {
     const entities &#x3D; this.formControl().value?.entities;
