@@ -1,6 +1,6 @@
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   computed,
   effect,
   inject,
@@ -83,7 +83,7 @@ export class BirthdayDashboardSettingsComponent {
       ]),
     );
 
-  threshold = linkedSignal(() => this.formControl().value?.threshold ?? 32);
+  threshold = linkedSignal(() => this.formControl().value?.threshold ?? 31);
 
   entityPropertyPairs = linkedSignal<EntityPropertyPair[]>(() => {
     const entities = this.formControl().value?.entities;
