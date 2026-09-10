@@ -260,11 +260,7 @@
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#dataMapper" >dataMapper</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#relevantWarningLevels" >relevantWarningLevels</a>
+                                <a href="#notes" >notes</a>
                             </li>
                         </ul>
                     </td>
@@ -323,6 +319,24 @@
 
 </section>
 
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:65</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
 
     <section data-compodoc="block-inputs">
     <h3 id="inputs">Inputs</h3>
@@ -347,7 +361,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:47</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:63</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -373,7 +387,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:60</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -399,7 +413,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:39</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -436,8 +450,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="26"
-                                    class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:26</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -473,8 +487,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -531,10 +545,10 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="dataMapper"></a>
+                    <a name="notes"></a>
                     <span class="name">
-                        <span ><b>dataMapper</b></span>
-                        <a href="#dataMapper"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>notes</b></span>
+                        <a href="#notes"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -546,56 +560,23 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed&lt;(data: Note[]) &#x3D;&gt; Note[]&gt;(() &#x3D;&gt; {
-    const relevantWarningLevels &#x3D; this.relevantWarningLevels();
-    return (data) &#x3D;&gt;
-      data
-        .filter(
-          (note) &#x3D;&gt;
-            note.warningLevel &amp;&amp;
-            relevantWarningLevels.has(note.warningLevel.id),
-        )
-        .sort((a, b) &#x3D;&gt; b.warningLevel._ordinal - a.warningLevel._ordinal);
-  })</code>
+                        <i>Default value : </i><code>signal&lt;Note[] | undefined&gt;(undefined)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:58</a></div>
                         </td>
                     </tr>
 
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="relevantWarningLevels"></a>
-                    <span class="name">
-                        <span ><b>relevantWarningLevels</b></span>
-                        <a href="#relevantWarningLevels"><span class="icon ion-ios-link"></span></a>
-                    </span>
+                    <div class="io-description"><p>The important notes (highest warningLevel first) to display, loaded already filtered
+and sorted from a dedicated PouchDB/CouchDB view instead of loading all Notes and
+filtering/sorting them client-side - see <code>ImportantNotesIndexService</code>.</p>
+</div>
                 </td>
             </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt; new Set(this.warningLevels()))</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts:31</a></div>
-                        </td>
-                    </tr>
-
 
         </tbody>
     </table>
@@ -608,16 +589,23 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  effect,
   inject,
   input,
+  signal,
 } from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { debounceTime } from &quot;rxjs&quot;;
 import { Note } from &quot;../../model/note&quot;;
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { FormDialogService } from &quot;../../../../core/form-dialog/form-dialog.service&quot;;
 import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
 import { MatTableModule } from &quot;@angular/material/table&quot;;
 import { CustomDatePipe } from &quot;../../../../core/basic-datatypes/date/custom-date.pipe&quot;;
+import { ImportantNotesIndexService } from &quot;./important-notes-index.service&quot;;
+import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { ConfigurableEnum } from &quot;../../../../core/basic-datatypes/configurable-enum/configurable-enum&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 
 @DynamicComponent(&quot;ImportantNotesDashboard&quot;)
 @Component({
@@ -629,24 +617,33 @@ import { CustomDatePipe } from &quot;../../../../core/basic-datatypes/date/custo
 })
 export class ImportantNotesDashboardComponent {
   private formDialog &#x3D; inject(FormDialogService);
+  private importantNotesIndex &#x3D; inject(ImportantNotesIndexService);
+  private entityMapper &#x3D; inject(EntityMapperService);
 
   static getRequiredEntities() {
     return Note.ENTITY_TYPE;
   }
 
   warningLevels &#x3D; input&lt;string[]&gt;([]);
-  relevantWarningLevels &#x3D; computed(() &#x3D;&gt; new Set(this.warningLevels()));
-  dataMapper &#x3D; computed&lt;(data: Note[]) &#x3D;&gt; Note[]&gt;(() &#x3D;&gt; {
-    const relevantWarningLevels &#x3D; this.relevantWarningLevels();
-    return (data) &#x3D;&gt;
-      data
-        .filter(
-          (note) &#x3D;&gt;
-            note.warningLevel &amp;&amp;
-            relevantWarningLevels.has(note.warningLevel.id),
-        )
-        .sort((a, b) &#x3D;&gt; b.warningLevel._ordinal - a.warningLevel._ordinal);
-  });
+
+  // Bumped whenever the &quot;warning-levels&quot; enum config changes, to force an index rebuild.
+  // The index&#x27;s ordinal lookup is baked in from that enum&#x27;s *current* state at build
+  // time, which may not be loaded yet when the widget first mounts (e.g. during initial
+  // sync/demo-data generation) - the index would otherwise be permanently built with an
+  // empty lookup and never retry once the config actually arrives.
+  private configVersion &#x3D; signal(0);
+
+  // Bumped whenever a Note changes, to re-query the index. Notes are typically created
+  // progressively (e.g. during initial sync/demo-data generation), so an initial
+  // empty/partial result must be refreshed once more matching Notes actually arrive.
+  private dataVersion &#x3D; signal(0);
+
+  /**
+   * The important notes (highest warningLevel first) to display, loaded already filtered
+   * and sorted from a dedicated PouchDB/CouchDB view instead of loading all Notes and
+   * filtering/sorting them client-side - see &#x60;ImportantNotesIndexService&#x60;.
+   */
+  notes &#x3D; signal&lt;Note[] | undefined&gt;(undefined);
 
   subtitle &#x3D; input&lt;string&gt;(
     $localize&#x60;:dashboard widget subtitle:Notes needing follow-up&#x60;,
@@ -654,6 +651,44 @@ export class ImportantNotesDashboardComponent {
   explanation &#x3D; input&lt;string&gt;(
     $localize&#x60;:dashboard widget explanation:Notes require immediate attention or follow-up actions&#x60;,
   );
+
+  constructor() {
+    effect((onCleanup) &#x3D;&gt; {
+      const relevantLevels &#x3D; this.warningLevels();
+      this.configVersion(); // re-run when the warning-levels enum config changes
+      this.dataVersion(); // re-run when a Note changes
+
+      let isCurrent &#x3D; true;
+      onCleanup(() &#x3D;&gt; (isCurrent &#x3D; false));
+
+      void (async () &#x3D;&gt; {
+        await this.importantNotesIndex
+          .buildIndex(relevantLevels)
+          .catch((err) &#x3D;&gt;
+            Logging.error(&quot;Failed to build index for important notes&quot;, err),
+          );
+        const notes &#x3D; await this.importantNotesIndex
+          .queryIndex(relevantLevels)
+          .catch((err) &#x3D;&gt; {
+            Logging.error(&quot;Failed to load important notes&quot;, err);
+            return [];
+          });
+        if (isCurrent) {
+          this.notes.set(notes);
+        }
+      })();
+    });
+
+    this.entityMapper
+      .receiveUpdates(ConfigurableEnum)
+      .pipe(debounceTime(300), takeUntilDestroyed())
+      .subscribe(() &#x3D;&gt; this.configVersion.update((v) &#x3D;&gt; v + 1));
+
+    this.entityMapper
+      .receiveUpdates(Note)
+      .pipe(debounceTime(300), takeUntilDestroyed())
+      .subscribe(() &#x3D;&gt; this.dataVersion.update((v) &#x3D;&gt; v + 1));
+  }
 
   openNote(note: Note) {
     this.formDialog.openView(note);
@@ -668,8 +703,7 @@ export class ImportantNotesDashboardComponent {
   [subtitle]&#x3D;&quot;subtitle()&quot;
   [explanation]&#x3D;&quot;explanation()&quot;
   theme&#x3D;&quot;note&quot;
-  entityType&#x3D;&quot;Note&quot;
-  [dataMapper]&#x3D;&quot;dataMapper()&quot;
+  [entries]&#x3D;&quot;notes()&quot;
 &gt;
   &lt;table mat-table i18n-aria-label aria-label&#x3D;&quot;Notes needing follow-up&quot;&gt;
     &lt;!-- Table header only for assistive technologies like screen readers --&gt;
@@ -752,7 +786,7 @@ export class ImportantNotesDashboardComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><app-dashboard-list-widget  icon="exclamation-triangle"  [subtitle]="subtitle()"  [explanation]="explanation()"  theme="note"  entityType="Note"  [dataMapper]="dataMapper()">  <table mat-table i18n-aria-label aria-label="Notes needing follow-up">    <!-- Table header only for assistive technologies like screen readers -->    <tr class="visually-hidden">      <th scope="col" i18n="Column header for the date of a note">Date</th>      <th scope="col" i18n="Column header for the title of a note">Title</th>    </tr>    <ng-container matColumnDef="date">      <td *matCellDef="let note" class="date-cell row-indicator">        {{ note.date | customDate: "shortDate" }}      </td>    </ng-container>    <ng-container matColumnDef="title">      <td *matCellDef="let note" class="subject-cell">        {{ note.subject }}      </td>    </ng-container>    <tr      mat-row      *matRowDef="let row; columns: [\'date\', \'title\']"      class="dashboard-table-row row-view"      (click)="openNote(row)"      [style.--row-indicator-color]="row.getColor?.()"    ></tr>  </table></app-dashboard-list-widget></div>'
+        var COMPONENT_TEMPLATE = '<div><app-dashboard-list-widget  icon="exclamation-triangle"  [subtitle]="subtitle()"  [explanation]="explanation()"  theme="note"  [entries]="notes()">  <table mat-table i18n-aria-label aria-label="Notes needing follow-up">    <!-- Table header only for assistive technologies like screen readers -->    <tr class="visually-hidden">      <th scope="col" i18n="Column header for the date of a note">Date</th>      <th scope="col" i18n="Column header for the title of a note">Title</th>    </tr>    <ng-container matColumnDef="date">      <td *matCellDef="let note" class="date-cell row-indicator">        {{ note.date | customDate: "shortDate" }}      </td>    </ng-container>    <ng-container matColumnDef="title">      <td *matCellDef="let note" class="subject-cell">        {{ note.subject }}      </td>    </ng-container>    <tr      mat-row      *matRowDef="let row; columns: [\'date\', \'title\']"      class="dashboard-table-row row-view"      (click)="openNote(row)"      [style.--row-indicator-color]="row.getColor?.()"    ></tr>  </table></app-dashboard-list-widget></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionConditionDialogComponent', 'selector': 'app-permission-condition-dialog'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'KeepPanelOpenOnSelectDirective', 'selector': 'input[appKeepPanelOpenOnSelect]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'ImportantNotesDashboardComponent'};
