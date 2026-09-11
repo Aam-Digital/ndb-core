@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { FileService } from "../../file/file.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { Entity } from "app/core/entity/model/entity";
-import { Observable, of, throwError } from "rxjs";
+import { from, Observable, of, throwError } from "rxjs";
 import { HttpResponse } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
@@ -14,6 +14,7 @@ import {
   TemplateExportComplement,
   TemplateExportContextService,
 } from "../template-export-context/template-export-context.service";
+import { EntityRelationResolverService } from "../../../core/entity/entity-relation-resolver/entity-relation-resolver.service";
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -60,6 +61,7 @@ export interface TemplateExportResult {
 export class TemplateExportApiService extends FileService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
   private readonly exportContext = inject(TemplateExportContextService);
+  private readonly relationResolver = inject(EntityRelationResolverService);
 
   readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
 
@@ -136,30 +138,33 @@ export class TemplateExportApiService extends FileService {
   ): Observable<TemplateExportResult> {
     const complement = this.exportContext.getComplement();
 
-    return this.httpClient
-      .post(
-        url,
-        {
-          convertTo: "pdf",
-          data,
-          ...(complement ? { complement } : {}),
-        } as TemplateRenderRequestDto,
-        { observe: "response", responseType: "arraybuffer" },
-      )
-      .pipe(
-        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
-          // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
-          const disposition = res.headers.get("Content-Disposition");
-          const filenameMatch = disposition
-            ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
-            : null;
+    // give the template access to details of linked records (e.g. a Note's related
+    // Child) instead of just their id - resolved one level deep, see the service.
+    return from(this.relationResolver.resolveRelations(data)).pipe(
+      switchMap((resolvedData) =>
+        this.httpClient.post(
+          url,
+          {
+            convertTo: "pdf",
+            data: resolvedData,
+            ...(complement ? { complement } : {}),
+          } as TemplateRenderRequestDto,
+          { observe: "response", responseType: "arraybuffer" },
+        ),
+      ),
+      switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+        // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
+        const disposition = res.headers.get("Content-Disposition");
+        const filenameMatch = disposition
+          ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
+          : null;
 
-          return {
-            filename: filenameMatch?.[1] ?? fallbackFilename,
-            file: res.body,
-          };
-        }),
-      );
+        return {
+          filename: filenameMatch?.[1] ?? fallbackFilename,
+          file: res.body,
+        };
+      }),
+    );
   }
 
   /**
