@@ -79,7 +79,10 @@ export class EntityRelationResolverService {
       return value;
     }
 
-    const resolved: Record<string, any> = {};
+    // start from a full copy so enumerable properties that aren't part of the
+    // schema (e.g. runtime-attached/computed values) are preserved as-is;
+    // the loop below then overwrites every schema field with its resolved value.
+    const resolved: Record<string, any> = { ...value };
     for (const [fieldId, fieldSchema] of schema) {
       const raw = value[fieldId];
       if (raw === undefined) {

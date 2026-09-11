@@ -155,9 +155,21 @@ export class TemplateExportApiService extends FileService {
       switchMap(async (res: HttpResponse<ArrayBuffer>) => {
         // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
         const disposition = res.headers.get("Content-Disposition");
-        const filenameMatch = disposition
-          ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
-          : null;
+        let filenameMatch: RegExpMatchArray | null = null;
+        if (disposition) {
+          try {
+            filenameMatch = decodeURIComponent(disposition).match(
+              /filename="?([^";]+)"?/,
+            );
+          } catch (err) {
+            // malformed percent-encoding must not fail an otherwise successful
+            // download - fall back to fallbackFilename below
+            Logging.warn(
+              "TemplateExportApiService: could not decode Content-Disposition filename",
+              err,
+            );
+          }
+        }
 
         return {
           filename: filenameMatch?.[1] ?? fallbackFilename,

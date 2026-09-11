@@ -70,6 +70,17 @@ describe("EntityRelationResolverService", () => {
     expect(result).toEqual(plain);
   });
 
+  it("preserves enumerable properties that are not part of the schema", async () => {
+    const primary = TestEntity.create("Primary");
+    (primary as any).extraRuntimeProp = "computed value";
+
+    const result = await service.resolveRelations(primary);
+
+    expect((result as any).extraRuntimeProp).toBe("computed value");
+    // schema fields are still processed as usual alongside it
+    expect(result.name).toBe("Primary");
+  });
+
   it("resolves a property holding a single entity reference id", async () => {
     const related = TestEntity.create("Related");
     entityMapper.add(related);
