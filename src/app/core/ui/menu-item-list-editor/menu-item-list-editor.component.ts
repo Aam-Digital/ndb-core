@@ -21,6 +21,7 @@ import {
 import { MenuItem } from "../navigation/menu-item";
 import { AdminMenuItemComponent } from "../../admin/admin-menu/admin-menu-item/admin-menu-item.component";
 import {
+  EditableMenuItem,
   menuItemTree,
   MenuItemForAdminUi,
   MenuItemForAdminUiNew,
@@ -152,7 +153,7 @@ export class MenuItemListEditorComponent {
   static toPlainMenuItem(
     item: MenuItemForAdminUi,
     opts?: { forceLinkOnly?: boolean },
-  ): MenuItem | null {
+  ): EditableMenuItem | null {
     if ("entityType" in item && item.entityType) {
       if (opts?.forceLinkOnly) {
         // For shortcuts, entity items should not be included
@@ -207,7 +208,7 @@ export class MenuItemListEditorComponent {
   static toPlainMenuItems(
     items: MenuItemForAdminUi[],
     opts?: { forceLinkOnly?: boolean },
-  ): MenuItem[] {
+  ): EditableMenuItem[] {
     return items
       .map((item) => MenuItemListEditorComponent.toPlainMenuItem(item, opts))
       .filter((item): item is MenuItem => item !== null);

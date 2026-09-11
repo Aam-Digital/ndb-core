@@ -12,7 +12,9 @@
         <div class="entity-form-cell">
           <mat-form-field>
             <mat-label i18n>Label</mat-label>
-            <input formControlName="label" matInput #formLabel />
+            <app-translatable-text-input
+              formControlName="label"
+            ></app-translatable-text-input>
           </mat-form-field>
 
           <mat-form-field floatLabel="always">
@@ -25,11 +27,10 @@
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
-            <input
+            <app-translatable-text-input
               formControlName="labelPlural"
-              matInput
-              [placeholder]="formLabel.value"
-            />
+              [placeholder]="resolvedLabel"
+            ></app-translatable-text-input>
           </mat-form-field>
 
           <app-icon-input [control]="iconControl"></app-icon-input>

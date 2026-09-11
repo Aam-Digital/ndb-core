@@ -1,0 +1,35 @@
+@if (multiline()) {
+  <textarea
+    class="text-field"
+    [id]="id"
+    [rows]="rows()"
+    [value]="displayText()"
+    [placeholder]="placeholder ?? ''"
+    [disabled]="!enabled()"
+    (input)="onTextInput($any($event.target).value)"
+    (blur)="onTouched()"
+  ></textarea>
+} @else {
+  <input
+    class="text-field"
+    [id]="id"
+    [value]="displayText()"
+    [placeholder]="placeholder ?? ''"
+    [disabled]="!enabled()"
+    (input)="onTextInput($any($event.target).value)"
+    (blur)="onTouched()"
+  />
+}
+
+<button
+  mat-icon-button
+  type="button"
+  class="translations-button"
+  [class.is-multi-lingual]="isMultiLingual()"
+  [disabled]="!enabled()"
+  (click)="openTranslations($event)"
+  matTooltip="Configure this text in other languages"
+  i18n-matTooltip
+>
+  <fa-icon icon="language"></fa-icon>
+</button>

@@ -30,7 +30,11 @@
     "navigationMenu": {
       "items": [
         {
-          "label": "Dashboard",
+          "label": {
+            "en-US": "Dashboard",
+            "de": "Dashboard",
+            "fr": "Tableau de bord"
+          },
           "icon": "home",
           "link": "/"
         },
@@ -38,7 +42,11 @@
           "entityType": "Child"
         },
         {
-          "label": "Attendance",
+          "label": {
+            "en-US": "Attendance",
+            "de": "Anwesenheit",
+            "fr": "Présence"
+          },
           "icon": "calendar-check",
           "link": "/attendance",
           "subMenu": [
@@ -57,7 +65,11 @@
           "entityType": "Todo"
         },
         {
-          "label": "More ...",
+          "label": {
+            "en-US": "More ...",
+            "de": "Mehr ...",
+            "fr": "Plus ..."
+          },
           "subMenu": [
             {
               "entityType": "School"
@@ -66,7 +78,11 @@
               "entityType": "User"
             },
             {
-              "label": "Reports",
+              "label": {
+                "en-US": "Reports",
+                "de": "Berichte",
+                "fr": "Rapports"
+              },
               "icon": "line-chart",
               "link": "/report"
             }
@@ -83,22 +99,38 @@
             "config": {
               "shortcuts": [
                 {
-                  "label": "Record Attendance",
+                  "label": {
+                    "en-US": "Record Attendance",
+                    "de": "Anwesenheiten aufnehmen",
+                    "fr": "Faire l'appel"
+                  },
                   "icon": "calendar-check",
                   "link": "/attendance/add-day"
                 },
                 {
-                  "label": "Add Child",
+                  "label": {
+                    "en-US": "Add Child",
+                    "de": "Kind hinzufügen",
+                    "fr": "Ajouter un enfant"
+                  },
                   "icon": "plus",
                   "link": "/c/child/new"
                 },
                 {
-                  "label": "Public Registration Form",
+                  "label": {
+                    "en-US": "Public Registration Form",
+                    "de": "Öffentliches Anmelde-Formular",
+                    "fr": "Formulaire d'inscription publique"
+                  },
                   "icon": "file-circle-check",
                   "link": "/public-form/form/example"
                 },
                 {
-                  "label": "Import from file",
+                  "label": {
+                    "en-US": "Import from file",
+                    "de": "Import aus Datei",
+                    "fr": "Importer des données"
+                  },
                   "icon": "file-upload",
                   "link": "/import"
                 }
@@ -154,12 +186,24 @@
       "toStringAttributes": [
         "subject"
       ],
-      "label": "Note",
-      "labelPlural": "Notes",
+      "label": {
+        "en-US": "Note",
+        "de": "Notiz",
+        "fr": "Observation"
+      },
+      "labelPlural": {
+        "en-US": "Notes",
+        "de": "Notizen",
+        "fr": "Observations"
+      },
       "hasPII": true,
       "attributes": {
         "date": {
-          "label": "Date",
+          "label": {
+            "en-US": "Date",
+            "de": "Datum",
+            "fr": "Date"
+          },
           "dataType": "date-only",
           "defaultValue": {
             "mode": "dynamic",
@@ -171,14 +215,26 @@
         },
         "subject": {
           "dataType": "string",
-          "label": "Subject"
+          "label": {
+            "en-US": "Subject",
+            "de": "Betreff",
+            "fr": "Sujet"
+          }
         },
         "text": {
           "dataType": "long-text",
-          "label": "Notes"
+          "label": {
+            "en-US": "Notes",
+            "de": "Notizen",
+            "fr": "Observations"
+          }
         },
         "authors": {
-          "label": "Team involved",
+          "label": {
+            "en-US": "Team involved",
+            "de": "Beteiligtes Team",
+            "fr": "Equipe impliquée"
+          },
           "dataType": "entity",
           "isArray": true,
           "additional": "User",
@@ -191,17 +247,29 @@
           "anonymize": "retain"
         },
         "category": {
-          "label": "Category",
+          "label": {
+            "en-US": "Category",
+            "de": "Kategorie",
+            "fr": "Categorie"
+          },
           "dataType": "configurable-enum",
           "additional": "interaction-type",
           "anonymize": "retain"
         },
         "attachment": {
-          "label": "Attachment",
+          "label": {
+            "en-US": "Attachment",
+            "de": "Anhang",
+            "fr": "Pièce jointe"
+          },
           "dataType": "file"
         },
         "relatedEntities": {
-          "label": "Related Records",
+          "label": {
+            "en-US": "Related Records",
+            "de": "Verknüpfte Datensätze",
+            "fr": "Enregistrements associés"
+          },
           "dataType": "entity",
           "additional": [
             "Child",
@@ -212,7 +280,11 @@
           "anonymize": "retain"
         },
         "warningLevel": {
-          "label": "Status",
+          "label": {
+            "en-US": "Status",
+            "de": "Status im Projekt",
+            "fr": "Statut"
+          },
           "dataType": "configurable-enum",
           "additional": "warning-levels",
           "anonymize": "retain"
@@ -224,7 +296,11 @@
       "config": {
         "entityType": "Note",
         "clickMode": "popup-details",
-        "title": "Notes & Reports",
+        "title": {
+          "en-US": "Notes & Reports",
+          "de": "Notizen",
+          "fr": "Observations & Rapports"
+        },
         "columnGroups": {
           "default": "Standard",
           "mobile": "Mobile",
@@ -258,7 +334,11 @@
             "default": 1,
             "options": [
               {
-                "label": "Today"
+                "label": {
+                  "en-US": "Today",
+                  "de": "Heute",
+                  "fr": "Aujourd'hui"
+                }
               },
               {
                 "startOffsets": [
@@ -273,7 +353,11 @@
                     "unit": "weeks"
                   }
                 ],
-                "label": "This week"
+                "label": {
+                  "en-US": "This week",
+                  "de": "Diese Woche",
+                  "fr": "Cette semaine"
+                }
               },
               {
                 "startOffsets": [
@@ -282,7 +366,11 @@
                     "unit": "weeks"
                   }
                 ],
-                "label": "Since last week"
+                "label": {
+                  "en-US": "Since last week",
+                  "de": "Seit letzter Woche",
+                  "fr": "Depuis la semaine dernière"
+                }
               },
               {
                 "startOffsets": [
@@ -297,7 +385,11 @@
                     "unit": "months"
                   }
                 ],
-                "label": "This month"
+                "label": {
+                  "en-US": "This month",
+                  "de": "Diesen Monat",
+                  "fr": "Ce mois-ci"
+                }
               },
               {
                 "startOffsets": [
@@ -312,7 +404,11 @@
                     "unit": "months"
                   }
                 ],
-                "label": "Last month"
+                "label": {
+                  "en-US": "Last month",
+                  "de": "Letzten Monat",
+                  "fr": "Mois dernier"
+                }
               }
             ]
           },
@@ -349,23 +445,39 @@
         "columns": [
           {
             "viewComponent": "EntityBlock",
-            "label": "Name",
+            "label": {
+              "en-US": "Name",
+              "de": "Name",
+              "fr": "Nom"
+            },
             "id": "name"
           },
           {
             "viewComponent": "DisplayAge",
-            "label": "Age",
+            "label": {
+              "en-US": "Age",
+              "de": "Alter",
+              "fr": "Âge"
+            },
             "id": "age",
             "additional": "dateOfBirth"
           },
           {
             "viewComponent": "DisplayText",
-            "label": "Class",
+            "label": {
+              "en-US": "Class",
+              "de": "Klasse",
+              "fr": "Classe"
+            },
             "id": "schoolClass"
           },
           {
             "viewComponent": "DisplayEntity",
-            "label": "School",
+            "label": {
+              "en-US": "School",
+              "de": "Schule",
+              "fr": "École"
+            },
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
@@ -414,7 +526,11 @@
           {
             "id": "schoolId",
             "type": "School",
-            "label": "School"
+            "label": {
+              "en-US": "School",
+              "de": "Schule",
+              "fr": "École"
+            }
           }
         ],
         "loaderMethod": "ChildrenService"
@@ -427,7 +543,11 @@
         "entityType": "Child",
         "panels": [
           {
-            "title": "Basic Information",
+            "title": {
+              "en-US": "Basic Information",
+              "de": "Übersicht",
+              "fr": "Informations de base"
+            },
             "components": [
               {
                 "title": "",
@@ -446,7 +566,11 @@
                         "admissionDate",
                         "riskStatus"
                       ],
-                      "header": "Personal Information"
+                      "header": {
+                        "en-US": "Personal Information",
+                        "de": "Persönlich",
+                        "fr": "Renseignements personnels"
+                      }
                     },
                     {
                       "fields": [
@@ -454,7 +578,11 @@
                         "phone",
                         "address"
                       ],
-                      "header": "Contact Details"
+                      "header": {
+                        "en-US": "Contact Details",
+                        "de": "Kontaktdaten",
+                        "fr": "Coordonnées"
+                      }
                     },
                     {
                       "fields": [
@@ -463,7 +591,11 @@
                         "birth_certificate",
                         "motherTongue"
                       ],
-                      "header": "Demographics"
+                      "header": {
+                        "en-US": "Demographics",
+                        "de": "Demografische Angaben",
+                        "fr": "Données démographiques"
+                      }
                     }
                   ]
                 }
@@ -471,10 +603,18 @@
             ]
           },
           {
-            "title": "Education",
+            "title": {
+              "en-US": "Education",
+              "de": "Bildung",
+              "fr": "Éducation"
+            },
             "components": [
               {
-                "title": "School History",
+                "title": {
+                  "en-US": "School History",
+                  "de": "Schullaufbahn",
+                  "fr": "Parcours scolaire"
+                },
                 "component": "ChildSchoolOverview",
                 "config": {
                   "single": true,
@@ -494,7 +634,11 @@
                 }
               },
               {
-                "title": "Literacy Test Results",
+                "title": {
+                  "en-US": "Literacy Test Results",
+                  "de": "Abschneiden beim Lese-Tests",
+                  "fr": "Résultats du test d'alphabétisation"
+                },
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "Aser",
@@ -530,7 +674,11 @@
             ]
           },
           {
-            "title": "Attendance",
+            "title": {
+              "en-US": "Attendance",
+              "de": "Anwesenheit",
+              "fr": "Présence"
+            },
             "components": [
               {
                 "title": "",
@@ -539,7 +687,11 @@
             ]
           },
           {
-            "title": "Notes & Tasks",
+            "title": {
+              "en-US": "Notes & Tasks",
+              "de": "Notizen & Aufgaben",
+              "fr": "Notes et tâches"
+            },
             "components": [
               {
                 "title": "",
@@ -552,7 +704,11 @@
             ]
           },
           {
-            "title": "Educational Materials",
+            "title": {
+              "en-US": "Educational Materials",
+              "de": "Schulmaterialien",
+              "fr": "Matériels scolaires"
+            },
             "components": [
               {
                 "title": "",
@@ -589,7 +745,11 @@
             ]
           },
           {
-            "title": "Exit & Dropout",
+            "title": {
+              "en-US": "Exit & Dropout",
+              "de": "Ausscheiden aus dem Projekt",
+              "fr": "Fin de scolarité"
+            },
             "components": [
               {
                 "title": "",
@@ -621,8 +781,16 @@
       "_id": "view:child/:id"
     },
     "entity:EducationalMaterial": {
-      "label": "Educational Material",
-      "labelPlural": "Educational Materials",
+      "label": {
+        "en-US": "Educational Material",
+        "de": "Schulmaterial",
+        "fr": "Matériel éducatif"
+      },
+      "labelPlural": {
+        "en-US": "Educational Materials",
+        "de": "Schulmaterialien",
+        "fr": "Matériels éducatifs"
+      },
       "attributes": {
         "child": {
           "dataType": "entity",
@@ -631,7 +799,11 @@
         },
         "date": {
           "dataType": "date",
-          "label": "Date",
+          "label": {
+            "en-US": "Date",
+            "de": "Datum",
+            "fr": "Date"
+          },
           "defaultValue": {
             "mode": "dynamic",
             "config": {
@@ -640,7 +812,11 @@
           }
         },
         "materialType": {
-          "label": "Material",
+          "label": {
+            "en-US": "Material",
+            "de": "Material",
+            "fr": "Materiél"
+          },
           "dataType": "configurable-enum",
           "additional": "materials",
           "validators": {
@@ -649,7 +825,11 @@
         },
         "materialAmount": {
           "dataType": "number",
-          "label": "Amount",
+          "label": {
+            "en-US": "Amount",
+            "de": "Anzahl",
+            "fr": "Quantité"
+          },
           "defaultValue": {
             "mode": "static",
             "config": {
@@ -662,7 +842,11 @@
         },
         "description": {
           "dataType": "string",
-          "label": "Description"
+          "label": {
+            "en-US": "Description",
+            "de": "Beschreibung",
+            "fr": "Description"
+          }
         }
       }
     },
@@ -670,38 +854,70 @@
       "toStringAttributes": [
         "title"
       ],
-      "label": "Activity",
-      "labelPlural": "Activities",
+      "label": {
+        "en-US": "Activity",
+        "de": "Aktivität",
+        "fr": "Activité"
+      },
+      "labelPlural": {
+        "en-US": "Activities",
+        "de": "Aktivitäten",
+        "fr": "Activités"
+      },
       "icon": "calendar-days",
       "color": "#00838F",
       "route": "recurring-activity",
       "attributes": {
         "title": {
           "dataType": "string",
-          "label": "Title",
+          "label": {
+            "en-US": "Title",
+            "de": "Titel",
+            "fr": "Titre"
+          },
           "validators": {
             "required": true
           }
         },
         "type": {
-          "label": "Type",
+          "label": {
+            "en-US": "Type",
+            "de": "Typ",
+            "fr": "Taper"
+          },
           "dataType": "configurable-enum",
           "additional": "interaction-type"
         },
         "status": {
-          "label": "Status of activity",
-          "description": "This status can be used to automatically update participants' status also.",
+          "label": {
+            "en-US": "Status of activity",
+            "de": "Status der Aktivität",
+            "fr": "Statut de l'activité"
+          },
+          "description": {
+            "en-US": "This status can be used to automatically update participants' status also.",
+            "de": "Dieser Status kann genutzt werden, um automatisch den Status der Teilnehmer:innen mit zu aktualisieren.",
+            "fr": "Ce statut peut également être utilisé pour mettre à jour automatiquement le statut des participants."
+          },
           "dataType": "configurable-enum",
           "additional": "activity-status"
         },
         "participants": {
-          "label": "Participants",
+          "label": {
+            "en-US": "Participants",
+            "de": "Teilnehmer:innen",
+            "fr": "Participants"
+          },
           "dataType": "entity",
           "isArray": true,
           "additional": "Child"
         },
         "assignedTo": {
-          "label": "Assigned user(s)",
+          "label": {
+            "en-US": "Assigned user(s)",
+            "de": "Verantwortliche:r",
+            "fr": "Utilisateur(s) affecté(e)(s)"
+          },
           "dataType": "entity",
           "isArray": true,
           "additional": "User"
@@ -727,7 +943,11 @@
         "entityType": "RecurringActivity",
         "panels": [
           {
-            "title": "Basic Information",
+            "title": {
+              "en-US": "Basic Information",
+              "de": "Übersicht",
+              "fr": "Informations de base"
+            },
             "components": [
               {
                 "component": "Form",
@@ -755,7 +975,11 @@
             ]
           },
           {
-            "title": "Participants",
+            "title": {
+              "en-US": "Participants",
+              "de": "Teilnehmer:innen",
+              "fr": "Participants"
+            },
             "components": [
               {
                 "component": "Form",
@@ -772,7 +996,11 @@
             ]
           },
           {
-            "title": "Events & Attendance",
+            "title": {
+              "en-US": "Events & Attendance",
+              "de": "Aktivitäten & Anwesenheit",
+              "fr": "Évènements & présence"
+            },
             "components": [
               {
                 "component": "ActivityAttendanceSection"
@@ -788,8 +1016,16 @@
       "_id": "view:report"
     },
     "entity:Child": {
-      "label": "Student",
-      "labelPlural": "Students",
+      "label": {
+        "en-US": "Student",
+        "de": "Schüler:in",
+        "fr": "Étudiante"
+      },
+      "labelPlural": {
+        "en-US": "Students",
+        "de": "Schüler:innen",
+        "fr": "Étudiantes"
+      },
       "toStringAttributes": [
         "name"
       ],
@@ -808,86 +1044,162 @@
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "Name",
+          "label": {
+            "en-US": "Name",
+            "de": "Name",
+            "fr": "Nom"
+          },
           "validators": {
             "required": true
           }
         },
         "projectNumber": {
           "dataType": "string",
-          "label": "Student ID",
+          "label": {
+            "en-US": "Student ID",
+            "de": "Schüler-ID",
+            "fr": "ID de l'étudiante"
+          },
           "labelShort": "ID",
-          "description": "A unique ID for internal use of the organization",
+          "description": {
+            "en-US": "A unique ID for internal use of the organization",
+            "de": "Eine eindeutige Kennnummer für die interne Nutzung",
+            "fr": "Un identifiant unique à usage interne à l'organisation"
+          },
           "searchable": true,
           "anonymize": "retain"
         },
         "dateOfBirth": {
           "dataType": "date-with-age",
-          "label": "Date of birth",
-          "labelShort": "DoB",
+          "label": {
+            "en-US": "Date of birth",
+            "de": "Geburtsdatum",
+            "fr": "Date de naissance"
+          },
+          "labelShort": {
+            "en-US": "DoB",
+            "de": "Geburtsdatum",
+            "fr": "DDN"
+          },
           "anonymize": "retain-anonymized"
         },
         "gender": {
           "dataType": "configurable-enum",
-          "label": "Gender",
+          "label": {
+            "en-US": "Gender",
+            "de": "Geschlecht",
+            "fr": "Genre"
+          },
           "additional": "genders",
           "anonymize": "retain"
         },
         "admissionDate": {
           "dataType": "date-only",
-          "label": "Admission",
+          "label": {
+            "en-US": "Admission",
+            "de": "Aufnahmedatum",
+            "fr": "Admission"
+          },
           "anonymize": "retain-anonymized"
         },
         "riskStatus": {
           "dataType": "configurable-enum",
-          "label": "Risk Status",
+          "label": {
+            "en-US": "Risk Status",
+            "de": "Risiko-Status",
+            "fr": "Statut de risque"
+          },
           "additional": "riskStatus"
         },
         "dropoutDate": {
           "dataType": "date-only",
-          "label": "Dropout Date",
+          "label": {
+            "en-US": "Dropout Date",
+            "de": "Datum des Ausscheidens",
+            "fr": "Date de fin de scolarité"
+          },
           "anonymize": "retain-anonymized"
         },
         "dropoutType": {
           "dataType": "string",
-          "label": "Dropout Type",
+          "label": {
+            "en-US": "Dropout Type",
+            "de": "Grund des Ausscheidens",
+            "fr": "Type de fin de scolarité"
+          },
           "anonymize": "retain"
         },
         "dropoutRemarks": {
           "dataType": "string",
-          "label": "Dropout remarks"
+          "label": {
+            "en-US": "Dropout remarks",
+            "de": "Bermekungen zum Ausscheiden",
+            "fr": "Commentaires sur la fin de scolarité"
+          }
         },
         "photo": {
           "dataType": "photo",
-          "label": "Photo"
+          "label": {
+            "en-US": "Photo",
+            "de": "Foto",
+            "fr": "Photo"
+          }
         },
         "phone": {
           "dataType": "string",
-          "label": "Phone Number"
+          "label": {
+            "en-US": "Phone Number",
+            "de": "Telefonnummer",
+            "fr": "Numéro de téléphone"
+          }
         },
         "address": {
           "dataType": "location",
-          "label": "Address"
+          "label": {
+            "en-US": "Address",
+            "de": "Adresse",
+            "fr": "Adresse"
+          }
         },
         "health_bloodGroup": {
           "dataType": "string",
-          "label": "Blood Group"
+          "label": {
+            "en-US": "Blood Group",
+            "de": "Blutgruppe",
+            "fr": "Groupe sanguin"
+          }
         },
         "motherTongue": {
           "dataType": "string",
-          "label": "Mother Tongue",
-          "description": "The primary language spoken at home"
+          "label": {
+            "en-US": "Mother Tongue",
+            "de": "Muttersprache",
+            "fr": "Langue maternelle"
+          },
+          "description": {
+            "en-US": "The primary language spoken at home",
+            "de": "Die hauptsächlich zu Hause gesprochene Sprache",
+            "fr": "La langue principale parlée à la maison"
+          }
         },
         "birth_certificate": {
           "dataType": "file",
-          "label": "Birth certificate",
+          "label": {
+            "en-US": "Birth certificate",
+            "de": "Geburtsurkunde",
+            "fr": "Acte de naissance"
+          },
           "additional": {
             "acceptedFileTypes": ".pdf"
           }
         },
         "email": {
           "dataType": "email",
-          "label": "Email"
+          "label": {
+            "en-US": "Email",
+            "de": "E-Mail",
+            "fr": "Email"
+          }
         }
       }
     },
@@ -896,49 +1208,93 @@
         "name"
       ],
       "icon": "university",
-      "label": "Partner",
-      "labelPlural": "Partners",
+      "label": {
+        "en-US": "Partner",
+        "de": "Partner",
+        "fr": "Partenaire"
+      },
+      "labelPlural": {
+        "en-US": "Partners",
+        "de": "Partner",
+        "fr": "Partenaires"
+      },
       "color": "#9E9D24",
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "Name",
+          "label": {
+            "en-US": "Name",
+            "de": "Name",
+            "fr": "Nom"
+          },
           "validators": {
             "required": true
           }
         },
         "privateSchool": {
           "dataType": "boolean",
-          "label": "Private School"
+          "label": {
+            "en-US": "Private School",
+            "de": "Privatschule",
+            "fr": "École privée"
+          }
         },
         "language": {
           "dataType": "string",
-          "label": "Language"
+          "label": {
+            "en-US": "Language",
+            "de": "Sprache",
+            "fr": "Langue"
+          }
         },
         "address": {
           "dataType": "location",
-          "label": "Address"
+          "label": {
+            "en-US": "Address",
+            "de": "Adresse",
+            "fr": "Adresse"
+          }
         },
         "phone": {
           "dataType": "string",
-          "label": "Phone Number"
+          "label": {
+            "en-US": "Phone Number",
+            "de": "Telefonnummer",
+            "fr": "Numéro de téléphone"
+          }
         },
         "timing": {
           "dataType": "string",
-          "label": "School Timing"
+          "label": {
+            "en-US": "School Timing",
+            "de": "Unterrichtszeiten",
+            "fr": "Horaires scolaires"
+          }
         },
         "remarks": {
           "dataType": "string",
-          "label": "Remarks"
+          "label": {
+            "en-US": "Remarks",
+            "de": "Vermerk",
+            "fr": "Observations"
+          }
         },
         "website": {
           "dataType": "url",
-          "label": "Website"
+          "label": {
+            "en-US": "Website",
+            "de": "Webseite",
+            "fr": "Site web"
+          }
         },
         "contactPerson": {
           "dataType": "entity",
           "additional": "User",
-          "label": "Contact Person"
+          "label": {
+            "en-US": "Contact Person",
+            "de": "Kontaktperson",
+            "fr": "Personne de contact"
+          }
         }
       }
     },
@@ -951,7 +1307,11 @@
           {
             "id": "DisplayParticipantsCount",
             "viewComponent": "DisplayParticipantsCount",
-            "label": "Children"
+            "label": {
+              "en-US": "Children",
+              "de": "Schüler:innen",
+              "fr": "Enfants"
+            }
           },
           "privateSchool",
           "language",
@@ -974,7 +1334,11 @@
         "entityType": "School",
         "panels": [
           {
-            "title": "Basic Information",
+            "title": {
+              "en-US": "Basic Information",
+              "de": "Übersicht",
+              "fr": "Informations de base"
+            },
             "components": [
               {
                 "title": "",
@@ -1012,7 +1376,11 @@
             ]
           },
           {
-            "title": "Students",
+            "title": {
+              "en-US": "Students",
+              "de": "Schüler:innen",
+              "fr": "Élèves"
+            },
             "components": [
               {
                 "title": "",
@@ -1021,7 +1389,11 @@
             ]
           },
           {
-            "title": "Activities",
+            "title": {
+              "en-US": "Activities",
+              "de": "Aktivitäten",
+              "fr": "Activités"
+            },
             "components": [
               {
                 "title": "",
@@ -1039,30 +1411,62 @@
         "lastname"
       ],
       "icon": "user",
-      "label": "Staff Member",
-      "labelPlural": "Staff Members",
+      "label": {
+        "en-US": "Staff Member",
+        "de": "Mitarbeiter:in",
+        "fr": "Personnel"
+      },
+      "labelPlural": {
+        "en-US": "Staff Members",
+        "de": "Mitarbeiter:innen",
+        "fr": "Personnel"
+      },
       "hasPII": true,
       "attributes": {
         "firstname": {
           "dataType": "string",
-          "label": "First Name"
+          "label": {
+            "en-US": "First Name",
+            "de": "Vorname",
+            "fr": "Prénom"
+          }
         },
         "lastname": {
           "dataType": "string",
-          "label": "Last Name"
+          "label": {
+            "en-US": "Last Name",
+            "de": "Nachname",
+            "fr": "Nom de famille"
+          }
         },
         "phone": {
           "dataType": "string",
-          "label": "Contact Number"
+          "label": {
+            "en-US": "Contact Number",
+            "de": "Telefonnummer",
+            "fr": "Numéro de contact"
+          }
         },
         "role": {
           "dataType": "string",
-          "label": "Role",
-          "description": "Current role in the organisation"
+          "label": {
+            "en-US": "Role",
+            "de": "Rolle",
+            "fr": "Rôle"
+          },
+          "description": {
+            "en-US": "Current role in the organisation",
+            "de": "Aktuelle Rolle in der Organisation",
+            "fr": "Rôle actuel au sein de l'organisation"
+          }
         },
         "dateOfJoining": {
           "dataType": "date-only",
-          "label": "Date of Joining"
+          "label": {
+            "en-US": "Date of Joining",
+            "de": "Eintrittsdatum",
+            "fr": "Date d'entrée"
+          }
         }
       }
     },
@@ -1093,7 +1497,11 @@
         "entityType": "User",
         "panels": [
           {
-            "title": "User Information",
+            "title": {
+              "en-US": "User Information",
+              "de": "Übersicht",
+              "fr": "Informations sur l'utilisateur"
+            },
             "components": [
               {
                 "title": "",
@@ -1123,10 +1531,18 @@
             ]
           },
           {
-            "title": "Responsible for",
+            "title": {
+              "en-US": "Responsible for",
+              "de": "Verantwortlich für",
+              "fr": "Responsable de"
+            },
             "components": [
               {
-                "title": "Contact Person for Partners",
+                "title": {
+                  "en-US": "Contact Person for Partners",
+                  "de": "Kontaktperson für Partner",
+                  "fr": "Personne de contact pour les partenaires"
+                },
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "School",
@@ -1144,7 +1560,11 @@
                 }
               },
               {
-                "title": "Managing Activities ",
+                "title": {
+                  "en-US": "Managing Activities ",
+                  "de": "Verantwortete Aktivitäten",
+                  "fr": "Gestion des activités"
+                },
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "RecurringActivity",
@@ -1168,8 +1588,16 @@
       "_id": "view:user/:id"
     },
     "entity:Aser": {
-      "label": "Literacy Test",
-      "labelPlural": "Literacy Tests",
+      "label": {
+        "en-US": "Literacy Test",
+        "de": "Lese-Test",
+        "fr": "Test d'alphabétisation"
+      },
+      "labelPlural": {
+        "en-US": "Literacy Tests",
+        "de": "Lese-Tests",
+        "fr": "Tests d'alphabétisation"
+      },
       "hasPII": true,
       "attributes": {
         "child": {
@@ -1179,7 +1607,11 @@
         },
         "date": {
           "dataType": "date",
-          "label": "Date",
+          "label": {
+            "en-US": "Date",
+            "de": "Datum",
+            "fr": "Date"
+          },
           "defaultValue": {
             "mode": "dynamic",
             "config": {
@@ -1199,18 +1631,30 @@
           "additional": "reading-levels"
         },
         "english": {
-          "label": "English",
+          "label": {
+            "en-US": "English",
+            "de": "Englisch",
+            "fr": "Anglais"
+          },
           "dataType": "configurable-enum",
           "additional": "reading-levels"
         },
         "math": {
-          "label": "Math",
+          "label": {
+            "en-US": "Math",
+            "de": "Mathe",
+            "fr": "Mathématiques"
+          },
           "dataType": "configurable-enum",
           "additional": "math-levels"
         },
         "remarks": {
           "dataType": "string",
-          "label": "Remarks"
+          "label": {
+            "en-US": "Remarks",
+            "de": "Vermerk",
+            "fr": "Observations"
+          }
         }
       }
     },
@@ -1225,7 +1669,11 @@
             "required": true
           },
           "anonymize": "retain",
-          "label": "Child"
+          "label": {
+            "en-US": "Child",
+            "de": "Kind",
+            "fr": "Enfant"
+          }
         },
         "schoolId": {
           "dataType": "entity",
@@ -1235,28 +1683,56 @@
             "required": true
           },
           "anonymize": "retain",
-          "label": "School"
+          "label": {
+            "en-US": "School",
+            "de": "Schule",
+            "fr": "École"
+          }
         },
         "schoolClass": {
           "dataType": "string",
-          "label": "Class",
+          "label": {
+            "en-US": "Class",
+            "de": "Klasse",
+            "fr": "Classe"
+          },
           "anonymize": "retain"
         },
         "start": {
           "dataType": "date-only",
-          "label": "Start date",
-          "description": "The date a child joins a school",
+          "label": {
+            "en-US": "Start date",
+            "de": "Anfang",
+            "fr": "Date de début"
+          },
+          "description": {
+            "en-US": "The date a child joins a school",
+            "de": "Das Datum, an dem das Kind der Schule beigetreten ist",
+            "fr": "Date où l'enfant rejoint une école"
+          },
           "anonymize": "retain"
         },
         "end": {
           "dataType": "date-only",
-          "label": "End date",
-          "description": "The date of a child leaving the school",
+          "label": {
+            "en-US": "End date",
+            "de": "Ende",
+            "fr": "Date de fin"
+          },
+          "description": {
+            "en-US": "The date of a child leaving the school",
+            "de": "Das Datum, an dem das Kind die Schule verlassen hat",
+            "fr": "Date de départ d'un enfant de l'école"
+          },
           "anonymize": "retain"
         },
         "result": {
           "dataType": "percentage",
-          "label": "Result",
+          "label": {
+            "en-US": "Result",
+            "de": "Ergebnis",
+            "fr": "Résultat"
+          },
           "validators": {
             "min": 0,
             "max": 100
@@ -1268,13 +1744,25 @@
       "toStringAttributes": [
         "subject"
       ],
-      "label": "Event",
-      "labelPlural": "Events",
+      "label": {
+        "en-US": "Event",
+        "de": "Veranstaltung",
+        "fr": "Évènement"
+      },
+      "labelPlural": {
+        "en-US": "Events",
+        "de": "Veranstaltungen",
+        "fr": "Évènements"
+      },
       "icon": "calendar-day",
       "hasPII": true,
       "attributes": {
         "date": {
-          "label": "Date",
+          "label": {
+            "en-US": "Date",
+            "de": "Datum",
+            "fr": "Date"
+          },
           "dataType": "date-only",
           "defaultValue": {
             "mode": "dynamic",
@@ -1285,7 +1773,11 @@
           "anonymize": "retain"
         },
         "participants": {
-          "label": "Participants",
+          "label": {
+            "en-US": "Participants",
+            "de": "Teilnehmer:innen",
+            "fr": "Participants"
+          },
           "dataType": "attendance",
           "isArray": true,
           "additional": {
@@ -1301,14 +1793,26 @@
         },
         "subject": {
           "dataType": "string",
-          "label": "Title"
+          "label": {
+            "en-US": "Title",
+            "de": "Titel",
+            "fr": "Sujet"
+          }
         },
         "text": {
           "dataType": "long-text",
-          "label": "Notes"
+          "label": {
+            "en-US": "Notes",
+            "de": "Notizen",
+            "fr": "Observations"
+          }
         },
         "authors": {
-          "label": "Team involved",
+          "label": {
+            "en-US": "Team involved",
+            "de": "Beteiligtes Team",
+            "fr": "Equipe impliquée"
+          },
           "dataType": "entity",
           "isArray": true,
           "additional": "User",
@@ -1321,17 +1825,29 @@
           "anonymize": "retain"
         },
         "category": {
-          "label": "Category",
+          "label": {
+            "en-US": "Category",
+            "de": "Kategorie",
+            "fr": "Categorie"
+          },
           "dataType": "configurable-enum",
           "additional": "interaction-type",
           "anonymize": "retain"
         },
         "attachment": {
-          "label": "Attachment",
+          "label": {
+            "en-US": "Attachment",
+            "de": "Anhang",
+            "fr": "Pièce jointe"
+          },
           "dataType": "file"
         },
         "parentActivity": {
-          "label": "Parent Activity",
+          "label": {
+            "en-US": "Parent Activity",
+            "de": "Übergeordnete Aktivität",
+            "fr": "Activité parente"
+          },
           "dataType": "entity",
           "additional": "RecurringActivity",
           "anonymize": "retain"
@@ -1363,7 +1879,11 @@
         "entityType": "Event",
         "panels": [
           {
-            "title": "Details",
+            "title": {
+              "en-US": "Details",
+              "de": "Details",
+              "fr": "Détails"
+            },
             "components": [
               {
                 "component": "Form",

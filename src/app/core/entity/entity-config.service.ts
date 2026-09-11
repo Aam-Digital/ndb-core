@@ -205,6 +205,18 @@ export class EntityConfigService {
     return this.configService.getConfig<EntityConfig>(configName);
   }
 
+  /**
+   * Like {@link getEntityConfig}, but with raw values: any multi-lingual texts
+   * are returned as their full per-language map rather than resolved to the
+   * active language. Required when editing config values that are saved back
+   * to the config document (see #3862).
+   */
+  public getRawEntityConfig(entityType: EntityConstructor): EntityConfig {
+    const configName =
+      EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
+    return this.configService.getRawConfig<EntityConfig>(configName);
+  }
+
   getDetailsViewConfig(
     entityType: EntityConstructor,
   ): ViewConfig<EntityDetailsConfig> {
