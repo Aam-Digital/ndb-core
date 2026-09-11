@@ -11,12 +11,21 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { ImportService } from "../../import/import.service";
 import { ColumnMapping } from "../../import/column-mapping";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+} from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { Entity } from "../../entity/model/entity";
 
 // separate test file for custom functionality of the EntityDatatype
 // because there were conflicts with the standard tests in entity.datatype.spec.ts
+
+/** a second referenced type, to exercise fields allowing several target types */
+@DatabaseEntity("SecondRefTestEntity")
+class SecondRefTestEntity extends Entity {
+  @DatabaseField({ label: "Name" }) name: string;
+}
 
 describe("Schema data type: entity (advanced functionality)", () => {
   let entityMapper: MockEntityMapperService;
@@ -183,6 +192,39 @@ describe("Schema data type: entity (advanced functionality)", () => {
     ).resolves.toBeUndefined();
   });
 
+  it("should load each referenced type's candidates only once across fields", async () => {
+    await entityMapper.saveAll([TestEntity.create({ name: "A" })]);
+    const loadType = vi.spyOn(entityMapper, "loadType");
+
+    // one shared context, as during a real import run
+    const importContext = new ImportProcessingContext({
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [],
+    });
+    const fieldOf = (additional: any): EntitySchemaField => ({
+      id: "ref",
+      dataType: "entity",
+      additional,
+    });
+
+    // a field allowing both types, then another field allowing only one of them
+    await dataType.importMatchField(
+      fieldOf([TestEntity.ENTITY_TYPE, SecondRefTestEntity.ENTITY_TYPE]),
+      [],
+      importContext,
+    );
+    await dataType.importMatchField(
+      fieldOf(TestEntity.ENTITY_TYPE),
+      [],
+      importContext,
+    );
+
+    const testEntityLoads = loadType.mock.calls.filter(
+      (call) => call[0] === TestEntity.ENTITY_TYPE,
+    );
+    expect(testEntityLoads).toHaveLength(1);
+  });
+
   /**
    * Call importMatchField directly with the given columns mapped to `schema`
    * (a single-value entity-reference field on TestEntity).
@@ -223,6 +265,9 @@ describe("Schema data type: entity (advanced functionality)", () => {
  * can be triggered by mapping columns onto the matching field.
  */
 describe("Schema data type: entity (import matching, end-to-end via ImportService)", () => {
+  @DatabaseEntity("OtherReferencedEntity")
+  class OtherReferencedEntity extends Entity {}
+
   class ImportTarget extends Entity {
     @DatabaseField({
       dataType: EntityDatatype.dataType,
@@ -236,6 +281,15 @@ describe("Schema data type: entity (import matching, end-to-end via ImportServic
       additional: TestEntity.ENTITY_TYPE,
     })
     arrayRef: string[];
+
+    // a field allowing several referenced record types: `additional` is an
+    // array rather than a single entity type name
+    @DatabaseField({
+      dataType: EntityDatatype.dataType,
+      isArray: true,
+      additional: [TestEntity.ENTITY_TYPE, OtherReferencedEntity.ENTITY_TYPE],
+    })
+    multiRef: string[];
   }
 
   let service: ImportService;
@@ -342,5 +396,27 @@ describe("Schema data type: entity (import matching, end-to-end via ImportServic
       expect.arrayContaining([john.getId(), jane.getId()]),
     );
     expect(result?.arrayRef).toHaveLength(2);
+  });
+
+  it("links records across every type allowed by a multi-type reference field", async () => {
+    const child = TestEntity.create({ name: "Child A" });
+    const otherTarget = new OtherReferencedEntity("other1");
+    await entityMapper.saveAll([child, otherTarget]);
+
+    const result = await runImport(
+      { ids: `${child.getId()},${otherTarget.getId()}` },
+      [
+        {
+          column: "ids",
+          propertyName: "multiRef",
+          additional: { refField: "_id" },
+        },
+      ],
+    );
+
+    expect(result?.multiRef).toEqual(
+      expect.arrayContaining([child.getId(), otherTarget.getId()]),
+    );
+    expect(result?.multiRef).toHaveLength(2);
   });
 });

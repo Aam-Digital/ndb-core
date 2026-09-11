@@ -24,12 +24,13 @@ import { ImportProcessingContext } from "../../import/import-processing-context"
 import { splitArrayValue } from "../../import/split-array-value";
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { Entity } from "../../entity/model/entity";
 import {
   ColumnImportInput,
   ExportColumnMapping,
 } from "../../entity/default-datatype/default.datatype";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { asArray } from "../../../utils/asArray";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -114,7 +115,7 @@ export class EntityDatatype extends StringDatatype {
       schemaField,
     );
     await this.loadImportMapEntities(schemaField.additional, context);
-    const candidates = context.entities ?? [];
+    const candidates = context.entities;
 
     const criteria = await this.buildMatchCriteria(
       columns,
@@ -279,7 +280,7 @@ export class EntityDatatype extends StringDatatype {
       return normalizeValue(rawValue);
     }
 
-    const refFieldSchema = context.refEntityCtor?.schema?.get(refField);
+    const refFieldSchema = this.getRefFieldSchema(context.types, refField);
     const refDatatype = refFieldSchema
       ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
       : null;
@@ -307,25 +308,61 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Load the required entity type's entities into context's cache if not available yet.
+   * Load the candidates of every entity type the field may reference into the
+   * context's cache, skipping types that are cached already.
+   *
+   * A field can allow referencing several entity types at once, in which case
+   * `entityType` is an array rather than a single type name (as
+   * `EditEntityComponent` handles for its own multi-type autocomplete, see
+   * `edit-entity.component.ts`). Each type is loaded independently so that one
+   * unresolvable type (e.g. a stale or removed registration) does not prevent
+   * matching against the other, still-valid types.
    */
   private async loadImportMapEntities(
-    entityType: string,
+    entityType: string | string[],
     context: EntityFieldImportContext,
   ): Promise<void> {
-    if (context.entities) {
-      return;
-    }
+    const missingTypes = asArray(entityType).filter(
+      (type) => !context.hasEntitiesOfType(type),
+    );
 
-    try {
-      context.entities = (await this.entityMapper.loadType(entityType)).map(
-        (e) => this.schemaService.transformEntityToDatabaseFormat(e),
-      );
-      context.refEntityCtor = this.entityRegistry.get(entityType);
-    } catch (error) {
-      Logging.error("Error loading entities for import mapping:", error);
-      context.entities = [];
+    await Promise.all(
+      missingTypes.map(async (type) => {
+        try {
+          const entities = await this.entityMapper.loadType(type);
+          context.setEntitiesOfType(
+            type,
+            entities.map((e) =>
+              this.schemaService.transformEntityToDatabaseFormat(e),
+            ),
+          );
+        } catch (error) {
+          Logging.error("Error loading entities for import mapping:", error);
+          // cache the empty result so the failing type is not retried for every
+          // other field referencing it in this same import run
+          context.setEntitiesOfType(type, []);
+        }
+      }),
+    );
+  }
+
+  /**
+   * Schema of the matching property, taken from whichever of the allowed types
+   * declares it (they could in principle disagree on its datatype - first wins).
+   */
+  private getRefFieldSchema(
+    types: string[],
+    refField: string,
+  ): EntitySchemaField | undefined {
+    for (const type of types) {
+      if (!this.entityRegistry.has(type)) continue;
+
+      const refFieldSchema = this.entityRegistry
+        .get(type)
+        .schema?.get(refField);
+      if (refFieldSchema) return refFieldSchema;
     }
+    return undefined;
   }
 
   /**
@@ -430,24 +467,34 @@ class EntityFieldImportContext {
   ) {}
 
   /**
-   * Entities (in database format for easier comparison!)
+   * All entity types this field may reference
+   * (an array when the field allows several target types).
    */
-  get entities(): any[] | undefined {
-    return this.globalContext[`entities_${this.schemaField.additional}`];
-  }
-
-  set entities(value: any[]) {
-    this.globalContext[`entities_${this.schemaField.additional}`] = value;
+  get types(): string[] {
+    return asArray(this.schemaField.additional);
   }
 
   /**
-   * Constructor of the referenced entity type (to access schema for value mapping)
+   * Candidates (in database format for easier comparison!) of every type this
+   * field allows, merged.
+   *
+   * Cached per entity type rather than per field, so a type loaded for one
+   * field is reused by every other field referencing it in the same import
+   * run - including fields that allow only a subset of these types.
    */
-  get refEntityCtor(): EntityConstructor | undefined {
-    return this.globalContext[`ctor_${this.schemaField.additional}`];
+  get entities(): any[] {
+    return this.types.flatMap((type) => this.entitiesOfType(type) ?? []);
   }
 
-  set refEntityCtor(value: EntityConstructor) {
-    this.globalContext[`ctor_${this.schemaField.additional}`] = value;
+  hasEntitiesOfType(type: string): boolean {
+    return !!this.entitiesOfType(type);
+  }
+
+  setEntitiesOfType(type: string, entities: any[]) {
+    this.globalContext[`entities_${type}`] = entities;
+  }
+
+  private entitiesOfType(type: string): any[] | undefined {
+    return this.globalContext[`entities_${type}`];
   }
 }
