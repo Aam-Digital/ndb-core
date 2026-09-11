@@ -49,6 +49,38 @@ Use `linkedSignal` for state that depends on other signals
 and `resource` for async data fetching.
 Try to avoid init methods to make code easier to read.
 
+## Async Work and the Component Lifetime
+
+A component can be destroyed while one of its `async` methods is still waiting — the user
+navigates away, a dialog is closed, a route changes. Everything after an `await` therefore
+runs for a view that may no longer exist:
+
+- Registering a destroy callback on a destroyed view throws
+  `NG0911: View has already been destroyed.` This covers everything that needs an injection
+  context, e.g. `effect()`, `toSignal()`, `runInInjectionContext()` and `DestroyRef.onDestroy()`.
+- Writing to signals does not throw, but it is wasted work and can leave a half-finished
+  action behind.
+
+So:
+
+- Do the injection-context work **before** the first `await` — e.g. start parallel loads with
+  `Promise.all` instead of awaiting one after the other.
+- Guard continuations that touch the view with `DestroyRef.destroyed` and simply drop the work:
+
+```typescript
+private readonly destroyRef = inject(DestroyRef);
+
+async ngOnInit() {
+  const records = await this.entityMapper.loadType(Child);
+  if (this.destroyRef.destroyed) {
+    return;
+  }
+  this.records.set(records);
+}
+```
+
+- For observables use `takeUntilDestroyed()`, which already guards against this internally.
+
 ## Template Control Flow
 
 Use native control flow — **not** structural directives (`*ngIf`, `*ngFor`, `*ngSwitch`):
