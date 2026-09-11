@@ -377,7 +377,7 @@ describe("CouchdbFileService", () => {
 
     return expect(
       firstValueFrom(service.removeAllFiles(new Entity("testId"))),
-    ).resolves.not.toThrow();
+    ).resolves.toEqual({ ok: true });
   });
 
   it("should delete files document if a entity is deleted", async () => {
