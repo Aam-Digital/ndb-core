@@ -51,18 +51,87 @@
     </div>
   } @else if (generatingData()) {
     <p i18n>Generating sample data for this demo ...</p>
-  } @else {
-    <p i18n>
-      We have loaded some sample data into this demo system. Explore and play
-      around – you can’t break anything!<br />
-      Changes you make in this demo will <em>not</em> be saved anywhere. The
-      system is reset after you close or reload the page.
-    </p>
+  } @else if (!profileStepReady()) {
+    <p i18n>Preparing your workspace ...</p>
+  } @else if (showProfileStep()) {
+    @if (profileEntityTypes().length > 1 && !selectedProfileType()) {
+      <p i18n>
+        Choose what kind of record represents you, so that your login account
+        can be linked to it.
+      </p>
 
-    <p i18n>
-      You can get assistance by clicking the "Assistant" button on the top right
-      of the toolbar. From there you can also switch to other demo scenarios.
-    </p>
+      <mat-form-field>
+        <mat-label i18n>Profile type</mat-label>
+        <mat-select (selectionChange)="onProfileTypeSelected($event.value)">
+          @for (type of profileEntityTypes(); track type.ENTITY_TYPE) {
+            <mat-option [value]="type">{{ type.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+
+    @if (selectedProfileType() && profileForm()) {
+      <p i18n>
+        Create your own "{{ selectedProfileType().label }}" record, so that your
+        login account is linked to it.
+      </p>
+
+      <app-entity-form
+        [entity]="profileEntity()"
+        [fieldGroups]="profileFieldGroups()"
+        [form]="profileForm()"
+      ></app-entity-form>
+    }
+
+    <div class="demo-actions">
+      @if (selectedProfileType() && profileForm()) {
+        <button
+          mat-raised-button
+          class="full-width"
+          color="accent"
+          (click)="saveProfile()"
+          [disabled]="savingProfile()"
+          i18n
+        >
+          Create profile
+        </button>
+      }
+      <button
+        mat-stroked-button
+        class="full-width"
+        (click)="skipProfileStep()"
+        [disabled]="savingProfile()"
+        i18n
+      >
+        Skip for now
+      </button>
+    </div>
+  } @else {
+    @if (environment.demo_mode) {
+      <p i18n>
+        We have loaded some sample data into this demo system. Explore and play
+        around – you can’t break anything!<br />
+        Changes you make in this demo will <em>not</em> be saved anywhere. The
+        system is reset after you close or reload the page.
+      </p>
+
+      <p i18n>
+        You can get assistance by clicking the "Assistant" button on the top
+        right of the toolbar. From there you can also switch to other demo
+        scenarios.
+      </p>
+    } @else {
+      <p i18n>Your system is ready to use.</p>
+
+      @if (profileStepNotice()) {
+        <p>{{ profileStepNotice() }}</p>
+      }
+
+      <p i18n>
+        You can get assistance any time by clicking the "Assistant" button on
+        the top right of the toolbar.
+      </p>
+    }
 
     <div class="demo-actions">
       <button
