@@ -303,7 +303,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:68</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:69</a></div>
                                 </td>
                             </tr>
 
@@ -359,7 +359,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:80</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:81</a></div>
                                 </td>
                             </tr>
 
@@ -398,7 +398,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:71</a></div>
                                 </td>
                             </tr>
 
@@ -437,7 +437,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:66</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:67</a></div>
                                 </td>
                             </tr>
 
@@ -482,7 +482,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:78</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:79</a></div>
                                 </td>
                             </tr>
 
@@ -527,7 +527,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:74</a></div>
                                 </td>
                             </tr>
 
@@ -572,7 +572,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -616,7 +616,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:69</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:70</a></div>
                                 </td>
                             </tr>
 
@@ -783,6 +783,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   Injector,
@@ -896,6 +897,7 @@ export class MatchingEntitiesComponent implements OnInit {
   private entityRegistry &#x3D; inject(EntityRegistry);
   private filterService &#x3D; inject(FilterService);
   private injector &#x3D; inject(Injector);
+  private destroyRef &#x3D; inject(DestroyRef);
   static DEFAULT_CONFIG_KEY &#x3D; &quot;appConfig:matching-entities&quot;;
 
   entity &#x3D; input&lt;Entity&gt;();
@@ -976,10 +978,22 @@ export class MatchingEntitiesComponent implements OnInit {
 
   async ngOnInit() {
     this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
-    const sides: [MatchingSide, MatchingSide] &#x3D; [
-      await this.initSideDetails(this.resolvedLeftSide(), 0),
-      await this.initSideDetails(this.resolvedRightSide(), 1),
-    ];
+
+    // Both sides are started before the first &#x60;await&#x60; so that their data sources
+    // (which need an injection context, see &#x60;initSideDetails&#x60;) are created while
+    // this component is certainly still alive. Loading the records then happens
+    // in parallel instead of one side after the other.
+    const sides &#x3D; await Promise.all([
+      this.initSideDetails(this.resolvedLeftSide(), 0),
+      this.initSideDetails(this.resolvedRightSide(), 1),
+    ]);
+
+    if (this.destroyRef.destroyed) {
+      // the user navigated away while the records were still loading:
+      // drop the half-finished setup instead of writing it into a destroyed view
+      return;
+    }
+
     this.sideDetails.set(sides);
     sides.forEach((side, index) &#x3D;&gt; this.initDistanceColumn(side, index));
   }
