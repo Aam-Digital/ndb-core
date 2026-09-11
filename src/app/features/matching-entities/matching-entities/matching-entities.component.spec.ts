@@ -220,6 +220,22 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.sideDetails()![1].columns).toEqual(["name", "phone"]);
   });
 
+  it("drops the initialization when the view is destroyed while records are still loading", async () => {
+    let resolveLoad: (records: TestEntity[]) => void;
+    vi.spyOn(TestBed.inject(EntityMapperService), "loadType").mockReturnValue(
+      new Promise<TestEntity[]>((resolve) => (resolveLoad = resolve)),
+    );
+    setInputs(testConfig);
+
+    const initialization = component.ngOnInit();
+    fixture.destroy();
+    resolveLoad([TestEntity.create("1")]);
+
+    // must not throw NG0911 by setting up a data source for the destroyed view
+    await expect(initialization).resolves.toBeUndefined();
+    expect(component.sideDetails()).toBeUndefined();
+  });
+
   it("should select only one entity at a time in single select mode", async () => {
     const matchedEntity = TestEntity.create("matched child");
     const otherMatchedEntity = TestEntity.create("second matched child");
