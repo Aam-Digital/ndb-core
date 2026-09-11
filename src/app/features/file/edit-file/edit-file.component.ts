@@ -144,7 +144,9 @@ export class EditFileComponent
     if (!entity || !formFieldConfig) {
       return;
     }
-    // The maximum file size is set to 5 MB
+    // no client-side size check here - the limit is enforced by the deployment's
+    // reverse proxy, so an oversized file can only be rejected once uploaded
+    // (see handleError's 413 branch)
     this.fileService.uploadFile(file, entity, formFieldConfig.id).subscribe({
       error: (err) => this.handleError(err),
       complete: () => {
@@ -157,7 +159,7 @@ export class EditFileComponent
   private handleError(err) {
     let errorMessage: string;
     if (err?.status === 413) {
-      errorMessage = $localize`:File Upload Error Message:File too large. Usually files up to 5 MB are supported.`;
+      errorMessage = $localize`:File Upload Error Message:File too large. Usually files up to 5 MB are supported (or your system administrator's custom limit).`;
     } else if (err instanceof NotAvailableOfflineError) {
       errorMessage = $localize`:File Upload Error Message:Changes to file attachments are not available offline.`;
     } else {
