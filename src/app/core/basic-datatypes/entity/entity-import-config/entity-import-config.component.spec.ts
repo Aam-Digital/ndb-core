@@ -10,7 +10,7 @@ import { Entity } from "../../../entity/model/entity";
 /** first allowed type of the multi-type field below, without a "startDate" field */
 @DatabaseEntity("MultiRefTypeA")
 class MultiRefTypeA extends Entity {
-  static override label = "Type A";
+  static override readonly label = "Type A";
 
   @DatabaseField({ label: "Name" }) name: string;
 }
@@ -18,7 +18,7 @@ class MultiRefTypeA extends Entity {
 /** second allowed type, the only one declaring "startDate" */
 @DatabaseEntity("MultiRefTypeB")
 class MultiRefTypeB extends Entity {
-  static override label = "Type B";
+  static override readonly label = "Type B";
 
   @DatabaseField({ label: "Name" }) name: string;
   @DatabaseField({ label: "Start date", dataType: "date" }) startDate: Date;
