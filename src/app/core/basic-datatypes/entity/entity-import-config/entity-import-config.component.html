@@ -19,7 +19,14 @@
         (ngModelChange)="onRefFieldChange($event)"
       >
         @for (prop of availableProperties(); track prop.property) {
-          <mat-option [value]="prop.property">{{ prop.label }}</mat-option>
+          <mat-option [value]="prop.property">
+            {{ prop.label }}
+            @if (prop.typeHint) {
+              <span class="hint-text margin-left-small">{{
+                prop.typeHint
+              }}</span>
+            }
+          </mat-option>
         }
       </mat-select>
     </mat-form-field>

@@ -82,18 +82,27 @@ export class EntityImportConfigComponent {
   });
 
   /**
-   * The first of the allowed referenced types, for UI that can only
-   * reasonably work off a single type (e.g. the referenced-entity label, the
-   * nested value-mapping component's target schema).
+   * The allowed type that declares the currently selected match property.
+   *
+   * With several allowed types the selected property may exist on only one of
+   * them, so the value-transformation config has to be built from that type's
+   * schema rather than from an arbitrary (e.g. the first) one.
    */
-  referencedEntity = computed<EntityConstructor | null>(
-    () => this.referencedEntities()[0] ?? null,
-  );
+  selectedRefFieldEntity = computed<EntityConstructor | null>(() => {
+    const refField = this.selectedRefField();
+    if (!refField) return null;
+
+    return (
+      this.referencedEntities().find((entity) => entity.schema.has(refField)) ??
+      null
+    );
+  });
 
   /** Display label for the "Match by ... property" dropdown, joining every allowed type's label. */
   referencedEntityLabel = computed(() =>
     this.referencedEntities()
-      .map((entity) => entity.label)
+      // a type configured without a label falls back to its id, as elsewhere
+      .map((entity) => entity.label ?? entity.ENTITY_TYPE)
       .join(" / "),
   );
 
@@ -101,23 +110,51 @@ export class EntityImportConfigComponent {
    * The union of matchable properties across every allowed referenced type,
    * so a multi-type field still offers a full "match by" property list
    * instead of only the first type's properties.
+   *
+   * Properties sharing an id across several types are deliberately collapsed
+   * into one entry: matching compares that same property on candidates of
+   * every allowed type (see `EntityDatatype.importMatchField`), so offering it
+   * once matches against all of them. `typeHint` then names every type that
+   * declares it, so users can tell a shared property from one that only
+   * narrows the match to a single type. It stays empty for a single-type
+   * field, where naming the one allowed type would just be noise.
    */
   availableProperties = computed(() => {
-    const seenProperties = new Set<string>();
-    const properties: { label: string; property: string }[] = [];
+    const referencedEntities = this.referencedEntities();
+    const isMultiType = referencedEntities.length > 1;
+    const properties = new Map<
+      string,
+      { property: string; label: string; declaringTypes: string[] }
+    >();
 
-    for (const entity of this.referencedEntities()) {
+    for (const entity of referencedEntities) {
+      const entityLabel = entity.label ?? entity.ENTITY_TYPE;
+
       for (const [prop, schema] of entity.schema.entries()) {
-        if (seenProperties.has(prop)) continue;
         if (!((!!schema.label && !schema.isInternalField) || prop === "_id"))
           continue;
 
-        seenProperties.add(prop);
-        properties.push({ label: schema.label ?? prop, property: prop });
+        const existing = properties.get(prop);
+        if (existing) {
+          existing.declaringTypes.push(entityLabel);
+          continue;
+        }
+
+        properties.set(prop, {
+          property: prop,
+          label: schema.label ?? prop,
+          declaringTypes: [entityLabel],
+        });
       }
     }
 
-    return properties;
+    return [...properties.values()].map(
+      ({ property, label, declaringTypes }) => ({
+        property,
+        label,
+        typeHint: isMultiType ? declaringTypes.join(", ") : "",
+      }),
+    );
   });
 
   showInheritanceHint = computed(() => {
@@ -141,7 +178,7 @@ export class EntityImportConfigComponent {
   /** Config for the sub-field's inline component (for value transformation config) */
   subFieldInlineConfig = computed(() => {
     const refField = this.selectedRefField();
-    const refEntity = this.referencedEntity();
+    const refEntity = this.selectedRefFieldEntity();
     if (!refField || !refEntity) return null;
 
     const refFieldSchema = refEntity.schema.get(refField);

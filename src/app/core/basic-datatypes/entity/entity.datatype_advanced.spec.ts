@@ -21,6 +21,12 @@ import { Entity } from "../../entity/model/entity";
 // separate test file for custom functionality of the EntityDatatype
 // because there were conflicts with the standard tests in entity.datatype.spec.ts
 
+/** a second referenced type, to exercise fields allowing several target types */
+@DatabaseEntity("SecondRefTestEntity")
+class SecondRefTestEntity extends Entity {
+  @DatabaseField({ label: "Name" }) name: string;
+}
+
 describe("Schema data type: entity (advanced functionality)", () => {
   let entityMapper: MockEntityMapperService;
   let dataType: EntityDatatype;
@@ -184,6 +190,39 @@ describe("Schema data type: entity (advanced functionality)", () => {
         },
       ]),
     ).resolves.toBeUndefined();
+  });
+
+  it("should load each referenced type's candidates only once across fields", async () => {
+    await entityMapper.saveAll([TestEntity.create({ name: "A" })]);
+    const loadType = vi.spyOn(entityMapper, "loadType");
+
+    // one shared context, as during a real import run
+    const importContext = new ImportProcessingContext({
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [],
+    });
+    const fieldOf = (additional: any): EntitySchemaField => ({
+      id: "ref",
+      dataType: "entity",
+      additional,
+    });
+
+    // a field allowing both types, then another field allowing only one of them
+    await dataType.importMatchField(
+      fieldOf([TestEntity.ENTITY_TYPE, SecondRefTestEntity.ENTITY_TYPE]),
+      [],
+      importContext,
+    );
+    await dataType.importMatchField(
+      fieldOf(TestEntity.ENTITY_TYPE),
+      [],
+      importContext,
+    );
+
+    const testEntityLoads = loadType.mock.calls.filter(
+      (call) => call[0] === TestEntity.ENTITY_TYPE,
+    );
+    expect(testEntityLoads).toHaveLength(1);
   });
 
   /**

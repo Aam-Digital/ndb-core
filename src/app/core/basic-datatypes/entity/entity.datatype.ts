@@ -24,7 +24,7 @@ import { ImportProcessingContext } from "../../import/import-processing-context"
 import { splitArrayValue } from "../../import/split-array-value";
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { Entity } from "../../entity/model/entity";
 import {
   ColumnImportInput,
   ExportColumnMapping,
@@ -115,7 +115,7 @@ export class EntityDatatype extends StringDatatype {
       schemaField,
     );
     await this.loadImportMapEntities(schemaField.additional, context);
-    const candidates = context.entities ?? [];
+    const candidates = context.entities;
 
     const criteria = await this.buildMatchCriteria(
       columns,
@@ -280,11 +280,7 @@ export class EntityDatatype extends StringDatatype {
       return normalizeValue(rawValue);
     }
 
-    // multiple allowed types could in principle disagree on refField's schema;
-    // use the first one that actually declares it
-    const refFieldSchema = context.refEntityCtors
-      ?.map((ctor) => ctor.schema?.get(refField))
-      .find((schema) => !!schema);
+    const refFieldSchema = this.getRefFieldSchema(context.types, refField);
     const refDatatype = refFieldSchema
       ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
       : null;
@@ -312,47 +308,61 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Load the required entity type's entities into context's cache if not available yet.
+   * Load the candidates of every entity type the field may reference into the
+   * context's cache, skipping types that are cached already.
    *
    * A field can allow referencing several entity types at once, in which case
-   * `entityType` is an array rather than a single type name - candidates are
-   * loaded per type and merged (as `EditEntityComponent` does for its own
-   * multi-type autocomplete, see `edit-entity.component.ts`). Each type is
-   * resolved independently so that one unresolvable type (e.g. a stale or
-   * removed registration) does not prevent matching against the other,
-   * still-valid types.
+   * `entityType` is an array rather than a single type name (as
+   * `EditEntityComponent` handles for its own multi-type autocomplete, see
+   * `edit-entity.component.ts`). Each type is loaded independently so that one
+   * unresolvable type (e.g. a stale or removed registration) does not prevent
+   * matching against the other, still-valid types.
    */
   private async loadImportMapEntities(
     entityType: string | string[],
     context: EntityFieldImportContext,
   ): Promise<void> {
-    if (context.entities) {
-      return;
-    }
-
-    const results = await Promise.allSettled(
-      asArray(entityType).map(async (type) => ({
-        entities: await this.entityMapper.loadType(type),
-        ctor: this.entityRegistry.get(type),
-      })),
+    const missingTypes = asArray(entityType).filter(
+      (type) => !context.hasEntitiesOfType(type),
     );
 
-    const loaded: { entities: Entity[]; ctor: EntityConstructor }[] = [];
-    for (const result of results) {
-      if (result.status === "fulfilled") {
-        loaded.push(result.value);
-      } else {
-        Logging.error(
-          "Error loading entities for import mapping:",
-          result.reason,
-        );
-      }
-    }
+    await Promise.all(
+      missingTypes.map(async (type) => {
+        try {
+          const entities = await this.entityMapper.loadType(type);
+          context.setEntitiesOfType(
+            type,
+            entities.map((e) =>
+              this.schemaService.transformEntityToDatabaseFormat(e),
+            ),
+          );
+        } catch (error) {
+          Logging.error("Error loading entities for import mapping:", error);
+          // cache the empty result so the failing type is not retried for every
+          // other field referencing it in this same import run
+          context.setEntitiesOfType(type, []);
+        }
+      }),
+    );
+  }
 
-    context.entities = loaded
-      .flatMap((r) => r.entities)
-      .map((e) => this.schemaService.transformEntityToDatabaseFormat(e));
-    context.refEntityCtors = loaded.map((r) => r.ctor);
+  /**
+   * Schema of the matching property, taken from whichever of the allowed types
+   * declares it (they could in principle disagree on its datatype - first wins).
+   */
+  private getRefFieldSchema(
+    types: string[],
+    refField: string,
+  ): EntitySchemaField | undefined {
+    for (const type of types) {
+      if (!this.entityRegistry.has(type)) continue;
+
+      const refFieldSchema = this.entityRegistry
+        .get(type)
+        .schema?.get(refField);
+      if (refFieldSchema) return refFieldSchema;
+    }
+    return undefined;
   }
 
   /**
@@ -457,24 +467,34 @@ class EntityFieldImportContext {
   ) {}
 
   /**
-   * Entities (in database format for easier comparison!)
+   * All entity types this field may reference
+   * (an array when the field allows several target types).
    */
-  get entities(): any[] | undefined {
-    return this.globalContext[`entities_${this.schemaField.additional}`];
-  }
-
-  set entities(value: any[]) {
-    this.globalContext[`entities_${this.schemaField.additional}`] = value;
+  get types(): string[] {
+    return asArray(this.schemaField.additional);
   }
 
   /**
-   * Constructors of the allowed referenced entity type(s) (to access schema for value mapping)
+   * Candidates (in database format for easier comparison!) of every type this
+   * field allows, merged.
+   *
+   * Cached per entity type rather than per field, so a type loaded for one
+   * field is reused by every other field referencing it in the same import
+   * run - including fields that allow only a subset of these types.
    */
-  get refEntityCtors(): EntityConstructor[] | undefined {
-    return this.globalContext[`ctors_${this.schemaField.additional}`];
+  get entities(): any[] {
+    return this.types.flatMap((type) => this.entitiesOfType(type) ?? []);
   }
 
-  set refEntityCtors(value: EntityConstructor[]) {
-    this.globalContext[`ctors_${this.schemaField.additional}`] = value;
+  hasEntitiesOfType(type: string): boolean {
+    return !!this.entitiesOfType(type);
+  }
+
+  setEntitiesOfType(type: string, entities: any[]) {
+    this.globalContext[`entities_${type}`] = entities;
+  }
+
+  private entitiesOfType(type: string): any[] | undefined {
+    return this.globalContext[`entities_${type}`];
   }
 }
