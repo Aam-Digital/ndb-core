@@ -23,8 +23,11 @@ interface TemplateUploadResponseDto {
 }
 
 /**
- * Format of API request body to render a PDF from a template.
+ * Format of API request body to render one or more files from a template.
  * TemplateId is provided via URL path.
+ *
+ * `data` is a single record for `/render`, or an array of records for `/render-batch`
+ * (the backend renders each one and returns either a ZIP or a combined PDF).
  */
 interface TemplateRenderRequestDto {
   /**
@@ -35,7 +38,7 @@ interface TemplateRenderRequestDto {
   /**
    * The data used to fill placeholders in the template.
    */
-  data: Object;
+  data: Object | Object[];
 
   /**
    * Additional context data available in the template under the `{c.…}` prefix.
@@ -43,27 +46,7 @@ interface TemplateRenderRequestDto {
   complement?: TemplateExportComplement;
 }
 
-/**
- * Format of API request body to render a batch of files from one template.
- * `data` is an array of records; the backend will render each one and return a ZIP.
- */
-interface TemplateRenderBatchRequestDto {
-  convertTo: string;
-  data: Object[];
-
-  /**
-   * Additional context data, shared by all records of the batch,
-   * available in the template under the `{c.…}` prefix.
-   */
-  complement?: TemplateExportComplement;
-}
-
 export interface TemplateExportResult {
-  filename: string;
-  file: ArrayBuffer;
-}
-
-export interface TemplateExportBatchResult {
   filename: string;
   file: ArrayBuffer;
 }
@@ -140,6 +123,46 @@ export class TemplateExportApiService extends FileService {
   */
 
   /**
+   * POST a render request to the given endpoint and resolve the response's Content-Disposition
+   * filename, falling back to `fallbackFilename` if the header is missing or cannot be parsed.
+   *
+   * Shared by the single-record and batch render methods below, which only differ in the
+   * endpoint URL, the shape of `data`, and the fallback filename.
+   */
+  private renderTemplate(
+    url: string,
+    data: Object | Object[],
+    fallbackFilename: string,
+  ): Observable<TemplateExportResult> {
+    const complement = this.exportContext.getComplement();
+
+    return this.httpClient
+      .post(
+        url,
+        {
+          convertTo: "pdf",
+          data,
+          ...(complement ? { complement } : {}),
+        } as TemplateRenderRequestDto,
+        { observe: "response", responseType: "arraybuffer" },
+      )
+      .pipe(
+        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+          // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
+          const disposition = res.headers.get("Content-Disposition");
+          const filenameMatch = disposition
+            ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
+            : null;
+
+          return {
+            filename: filenameMatch?.[1] ?? fallbackFilename,
+            file: res.body,
+          };
+        }),
+      );
+  }
+
+  /**
    * Generate a PDF applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
@@ -149,36 +172,11 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     data: Object,
   ): Observable<TemplateExportResult> {
-    const complement = this.exportContext.getComplement();
-
-    return this.httpClient
-      .post(
-        this.API_URL + "/render/" + template.getId(),
-        {
-          convertTo: "pdf",
-          data: data,
-          ...(complement ? { complement } : {}),
-        } as TemplateRenderRequestDto,
-        { observe: "response", responseType: "arraybuffer" },
-      )
-      .pipe(
-        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
-          // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
-          const filenameMatch = decodeURIComponent(
-            res.headers.get("Content-Disposition"),
-          ).match(/filename="(.+)"/);
-
-          const fileName =
-            filenameMatch && filenameMatch.length > 1
-              ? filenameMatch[1]
-              : template.title;
-
-          return {
-            filename: fileName,
-            file: res.body,
-          };
-        }),
-      );
+    return this.renderTemplate(
+      this.API_URL + "/render/" + template.getId(),
+      data,
+      template.title,
+    );
   }
 
   /**
@@ -198,36 +196,11 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     dataList: Object[],
     mode: "zip" | "combined" = "zip",
-  ): Observable<TemplateExportBatchResult> {
-    const fallbackExtension = mode === "combined" ? ".pdf" : ".zip";
-    const complement = this.exportContext.getComplement();
-
-    return this.httpClient
-      .post(
-        this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
-        {
-          convertTo: "pdf",
-          data: dataList,
-          ...(complement ? { complement } : {}),
-        } as TemplateRenderBatchRequestDto,
-        { observe: "response", responseType: "arraybuffer" },
-      )
-      .pipe(
-        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
-          const disposition = res.headers.get("Content-Disposition");
-          const filenameMatch = disposition
-            ? decodeURIComponent(disposition).match(/filename="?([^";]+)"?/)
-            : null;
-          const filename =
-            filenameMatch && filenameMatch.length > 1
-              ? filenameMatch[1]
-              : template.title + fallbackExtension;
-
-          return {
-            filename,
-            file: res.body,
-          };
-        }),
-      );
+  ): Observable<TemplateExportResult> {
+    return this.renderTemplate(
+      this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
+      dataList,
+      template.title + (mode === "combined" ? ".pdf" : ".zip"),
+    );
   }
 }
