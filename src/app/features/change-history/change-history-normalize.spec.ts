@@ -1,4 +1,8 @@
-import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
+import {
+  buildChangeEvents,
+  changedFieldsOf,
+  RawAuditDoc,
+} from "./change-history-normalize";
 import { BASELINE_NOTE } from "./change-history.types";
 
 function doc(partial: Partial<RawAuditDoc>): RawAuditDoc {
@@ -138,6 +142,52 @@ it("renders a delete as structural (no field changes)", () => {
   ]);
   expect(event.action).toBe("deleted");
   expect(event.changes).toEqual([]);
+});
+
+it("reads changed field names straight from an update delta, ignoring metadata", () => {
+  expect(
+    changedFieldsOf(
+      doc({
+        operation: "update",
+        diff: {
+          name: ["A", "B"],
+          center: { _t: "a", "1": ["tollygunge"] },
+          updated: { at: ["t1", "t2"] },
+          _rev: ["1-a", "2-b"],
+        },
+      }),
+    ),
+  ).toEqual(["name", "center"]);
+});
+
+it("reads changed field names from a create and a baseline snapshot", () => {
+  expect(
+    changedFieldsOf(
+      doc({ operation: "create", diff: [{ _id: "Child:1", name: "Asha" }] }),
+    ),
+  ).toEqual(["name"]);
+  expect(
+    changedFieldsOf(
+      doc({
+        operation: "baseline",
+        diff: { _id: "Child:1", created: { at: "t" }, name: "Asha" },
+      }),
+    ),
+  ).toEqual(["name"]);
+});
+
+it("reads no changed fields for a delete or a metadata-only update", () => {
+  expect(
+    changedFieldsOf(doc({ operation: "delete", diff: { _deleted: [true] } })),
+  ).toEqual([]);
+  expect(
+    changedFieldsOf(
+      doc({ operation: "update", diff: { updated: { at: ["t1", "t2"] } } }),
+    ),
+  ).toEqual([]);
+  expect(
+    changedFieldsOf(doc({ operation: "update", diff: undefined })),
+  ).toEqual([]);
 });
 
 it("orders events newest-first", () => {

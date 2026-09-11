@@ -7,8 +7,26 @@ import { DatabaseFactoryService } from "../../core/database/database-factory.ser
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
-import { ChangeEvent } from "./change-history.types";
+import {
+  ChangeEvent,
+  ChangeHistoryEntry,
+  ChangeHistoryFilters,
+} from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
+import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
+import {
+  AUDIT_TIMESTAMP_INDEX,
+  buildAuthorSampleQuery,
+  buildChangeHistoryQuery,
+  buildReferenceViewQuery,
+  distinctAuthors,
+  MangoQuery,
+  toChangeHistoryEntry,
+} from "./change-history-query";
+import {
+  AUDIT_REFERENCE_VIEW,
+  buildAuditReferenceIndex,
+} from "./audit-reference-index";
 
 /** CASL subject the audit records are keyed under (see replication-backend #4026). */
 export const AUDIT_RECORD_SUBJECT = "AuditRecord";
@@ -16,6 +34,23 @@ export const AUDIT_RECORD_SUBJECT = "AuditRecord";
 /** Response of the replication-backend central `GET /_features` endpoint. */
 interface AuditFeatureStatus {
   audit: { enabled: boolean };
+}
+
+/** Response of the audit database's `_find` endpoint, as proxied by the backend. */
+interface FindResponse {
+  docs: RawAuditDoc[];
+}
+
+/** Response of a view query against the audit database, as proxied by the backend. */
+interface ViewResponse {
+  rows: { doc?: RawAuditDoc }[];
+}
+
+/** One page of the system-wide change log. */
+export interface ChangeHistoryPage {
+  entries: ChangeHistoryEntry[];
+  /** whether at least one further page exists after this one */
+  hasMore: boolean;
 }
 
 /**
@@ -33,6 +68,9 @@ export class ChangeHistoryService {
   private readonly dbFactory = inject(DatabaseFactoryService);
   private readonly ability = inject(EntityAbility, { optional: true });
   private readonly httpClient = inject(HttpClient);
+  private readonly authService = inject(KeycloakAuthService, {
+    optional: true,
+  });
 
   /** the derived audit db name, e.g. `app-audit` */
   static auditDbName(): string {
@@ -90,6 +128,12 @@ export class ChangeHistoryService {
 
   private auditDb?: Database;
 
+  /** in-flight or completed creation of the change log's index, attempted once */
+  private indexCreated?: Promise<void>;
+
+  /** in-flight or completed creation of the related-record view, attempted once */
+  private referenceIndexCreated?: Promise<unknown>;
+
   private getAuditDb(): Database {
     if (!this.auditDb) {
       this.auditDb = this.dbFactory.createRemoteDatabase(
@@ -108,6 +152,157 @@ export class ChangeHistoryService {
     const prefix = `AuditRecord:${entity.getId()}:`;
     const docs = await this.getAuditDb().getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
+  }
+
+  /**
+   * Fetch one page of the system-wide change log, newest first.
+   *
+   * Unlike {@link getHistory}, this cannot go through the audit db's PouchDB
+   * handle: audit `_id`s are keyed by entity id, so `_all_docs` orders by
+   * record, not by time. A Mango query sorted on `timestamp` is used instead,
+   * via the backend's proxied `_find` endpoint (PouchDB has no `find` here:
+   * the `pouchdb-find` plugin is not installed).
+   *
+   * The query asks for one record beyond the page, which is reported as
+   * {@link ChangeHistoryPage.hasMore} rather than returned, so the caller never
+   * offers a next page that turns out to be empty.
+   *
+   * Filtering by a related record takes a different route entirely, see
+   * {@link queryChangesRelatedTo}.
+   *
+   * @throws if the audit database is unavailable or the query is rejected
+   */
+  async queryChangeHistory(
+    filters: ChangeHistoryFilters,
+    pageSize: number,
+    pageIndex = 0,
+  ): Promise<ChangeHistoryPage> {
+    if (filters.relatedEntityId) {
+      return this.queryChangesRelatedTo(filters, pageSize, pageIndex);
+    }
+
+    await this.ensureTimestampIndex();
+    const response = await this.findInAuditDb(
+      buildChangeHistoryQuery(filters, pageSize, pageIndex),
+    );
+    const docs = response.docs ?? [];
+    return {
+      entries: docs.slice(0, pageSize).map(toChangeHistoryEntry),
+      hasMore: docs.length > pageSize,
+    };
+  }
+
+  /**
+   * Fetch one page of the changes related to a single record, newest first.
+   *
+   * Goes through the `by_reference` view (see {@link buildAuditReferenceIndex}),
+   * the only thing that can answer "which records mentioned this id?" — the ids
+   * sit inside each record's `diff`, which no Mango index can reach.
+   *
+   * Unlike the other queries this uses the audit database's PouchDB handle,
+   * which speaks the view API directly.
+   *
+   * @throws if the view is unavailable (e.g. it could not be created) or the
+   *         query is rejected
+   */
+  private async queryChangesRelatedTo(
+    filters: ChangeHistoryFilters,
+    pageSize: number,
+    pageIndex: number,
+  ): Promise<ChangeHistoryPage> {
+    await this.ensureReferenceIndex();
+    const response: ViewResponse = await this.getAuditDb().query(
+      AUDIT_REFERENCE_VIEW,
+      buildReferenceViewQuery(filters, pageSize, pageIndex),
+    );
+    // a row without a doc is one the backend's permission filter removed
+    const docs = (response.rows ?? [])
+      .map((row) => row.doc)
+      .filter((doc): doc is RawAuditDoc => !!doc);
+    return {
+      entries: docs.slice(0, pageSize).map(toChangeHistoryEntry),
+      hasMore: docs.length > pageSize,
+    };
+  }
+
+  /**
+   * The authors to offer in the change log's "changed by" filter, sampled from
+   * the most recent records (see AUTHOR_SAMPLE_SIZE) since the audit database
+   * holds no index of its authors.
+   */
+  async getChangeAuthors(): Promise<string[]> {
+    await this.ensureTimestampIndex();
+    const response = await this.findInAuditDb(buildAuthorSampleQuery());
+    return distinctAuthors(response.docs ?? []);
+  }
+
+  /**
+   * Create the timestamp index the change log sorts on, once per session.
+   * Creating an existing index is a no-op in CouchDB, so this is safe to repeat
+   * and needs no prior existence check.
+   */
+  private async ensureTimestampIndex(): Promise<void> {
+    this.indexCreated ??= firstValueFrom(
+      this.httpClient.post(
+        `${environment.DB_PROXY_PREFIX}/${ChangeHistoryService.auditDbName()}/_index`,
+        AUDIT_TIMESTAMP_INDEX,
+        { headers: this.auditRequestHeaders() },
+      ),
+    ).then(() => undefined);
+
+    try {
+      await this.indexCreated;
+    } catch (err) {
+      // a failure here is not necessarily fatal: the index may already exist
+      // from an earlier session, in which case the query below still works
+      Logging.debug("could not ensure the audit timestamp index", err);
+      this.indexCreated = undefined;
+    }
+  }
+
+  /**
+   * Create the view the related-record filter queries, once per session.
+   *
+   * `saveDatabaseIndex` writes the design document only when it is missing or
+   * its views actually differ, so a repeat costs one lookup and no reindexing.
+   *
+   * A failure must not stop the query: the view may well already exist, from an
+   * earlier session or another admin. Most relevantly, writing it needs the
+   * `manage _design` permission, which a restrictive permission config
+   * withholds. `PouchDatabase` already logs and swallows that itself; the catch
+   * here covers the abstract `Database` contract, which allows rejecting.
+   *
+   * The first creation triggers a full index build over the audit database,
+   * which on a long history takes a while before the first page appears.
+   */
+  private ensureReferenceIndex(): Promise<unknown> {
+    this.referenceIndexCreated ??= this.getAuditDb()
+      .saveDatabaseIndex(buildAuditReferenceIndex())
+      .catch((err) =>
+        Logging.debug("could not ensure the audit reference index", err),
+      );
+    return this.referenceIndexCreated;
+  }
+
+  private findInAuditDb(query: MangoQuery): Promise<FindResponse> {
+    return firstValueFrom(
+      this.httpClient.post<FindResponse>(
+        `${environment.DB_PROXY_PREFIX}/${ChangeHistoryService.auditDbName()}/_find`,
+        query,
+        { headers: this.auditRequestHeaders() },
+      ),
+    );
+  }
+
+  /**
+   * Headers for a direct call to the proxied audit database. The bearer token is
+   * added explicitly because these requests do not go through PouchDB's
+   * authenticating fetch, and no HTTP interceptor supplies it.
+   */
+  private auditRequestHeaders(): Record<string, string> {
+    const headers: Record<string, string> = { "ngsw-bypass": "true" };
+    this.authService?.addAuthHeader(headers);
+    return headers;
   }
 
   /**

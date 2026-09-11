@@ -24,9 +24,11 @@ export class EntityTypeLabelPipe implements PipeTransform {
   }
 
   /**
-   * Look up the label for a single entity type key,
-   * falling back to the raw key if the type is not registered
-   * (e.g. a config still references a type that was removed/renamed).
+   * Look up the label for a single entity type key, falling back to the raw key
+   * when there is no label to show. That covers both a type that is not
+   * registered at all (e.g. a config still references one that was removed or
+   * renamed) and a registered one whose config defines no label, which would
+   * otherwise render as empty text.
    */
   private getLabel(key: string, plural: boolean): string {
     // `EntityRegistry.get` throws for unregistered keys, so guard with `has`
@@ -34,6 +36,7 @@ export class EntityTypeLabelPipe implements PipeTransform {
     const entity = this.entityTypes.has(key)
       ? this.entityTypes.get(key)
       : undefined;
-    return entity ? (plural ? entity.labelPlural : entity.label) : key;
+    const label = plural ? entity?.labelPlural : entity?.label;
+    return label || key;
   }
 }
