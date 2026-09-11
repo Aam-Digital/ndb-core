@@ -27,6 +27,7 @@ _Key files:_
 - `ability/entity-ability.ts` — extends CASL `Ability`, converts `Entity` instances to CASL subjects
 - `ability/ability.service.ts` — loads `Config:Permissions` and builds the `EntityAbility`
 - `../entity/entity-mapper/entity-mapper.service.ts` — calls `assertPermission()` before `save()` / `remove()` (write enforcement)
+- `feature-permission/feature-permission.service.ts` — admin-facing editing of per-role access to a single "feature" entity type
 
 _Flow:_
 
@@ -82,12 +83,17 @@ Admins edit this document to control what each role can do.
 
 **In the Aam Digital app:**
 
-- Go to Admin > Application Configuration > Edit permissions config
-- This opens the `Config:Permissions` document in the app's JSON editor
+- Go to Admin > User Roles & Permissions to edit the rules of each role
+- The same screen offers the raw `Config:Permissions` document through its "Edit JSON" menu entry
 
 **Directly in the database:**
 
 - Use CouchDB Fauxton GUI or another database tool to edit the document directly
+
+**Per feature, from its admin list view:**
+
+- On an internal "feature" type (e.g. Export Templates, Email Templates, Public Forms) use the "Configure Permissions" button
+- This only writes plain rules for that one entity type; roles decided by an advanced rule stay read-only and have to be edited in the role administration
 
 ### Permission structure
 
@@ -241,7 +247,7 @@ Pass the entity and the operation (`create`, `read`, `update`, `delete`, `manage
 
 ## Testing
 
-- Frontend: `src/app/core/permissions/ability/ability.service.spec.ts`, `entity-ability.spec.ts`
+- Frontend: `src/app/core/permissions/ability/ability.service.spec.ts`, `entity-ability.spec.ts`, `feature-permission/feature-permission.service.spec.ts`
 - Backend: `src/permissions/rules/rules.service.spec.ts`, `src/permissions/permission/permission.service.spec.ts`
 
 When testing permissions:

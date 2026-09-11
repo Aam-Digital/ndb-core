@@ -2,15 +2,17 @@ import { Ability, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 
 /**
+ * The individual CRUD actions, in the order they are displayed as columns of the
+ * permission UIs.
+ */
+export const CRUD_ACTIONS = ["read", "create", "update", "delete"] as const;
+
+export type CrudAction = (typeof CRUD_ACTIONS)[number];
+
+/**
  * The list of action strings that can be used for permissions
  */
-const actions = [
-  "read",
-  "create",
-  "update",
-  "delete",
-  "manage", // Matches any actions
-] as const;
+const actions = [...CRUD_ACTIONS, "manage"] as const; // "manage" matches any action
 
 /**
  * The type which defines which actions can be used for permissions.
@@ -60,6 +62,56 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] = [
   DEFAULT_SECTION_KEY,
   PUBLIC_SECTION_KEY,
 ];
+
+/**
+ * Whether a key in {@link DatabaseRules} carries special semantics instead of
+ * naming a user role, so it must neither be resolved as a role nor rewritten by
+ * a per-role UI. Covers the reserved underscore prefix as well as the legacy
+ * (non-prefixed) spellings of not yet migrated configs.
+ */
+export function isReservedRuleConfigKey(key: string): boolean {
+  return (
+    key.startsWith(RESERVED_ROLE_PREFIX) ||
+    RESERVED_RULE_CONFIG_KEYS.includes(key)
+  );
+}
+
+/**
+ * Marker written into a rule's `reason` by the backend for rules it manages itself
+ * to guarantee a baseline. Such rules must not be rewritten by an admin UI.
+ */
+export const SYSTEM_DEFAULT_RULE_REASON = "[system-default]";
+
+/**
+ * Whether the rule applies to the given entity type, ignoring conditions and
+ * inversion. `all` matches every entity type.
+ */
+export function ruleAppliesToSubject(
+  subject: DatabaseRule["subject"],
+  entityType: string,
+): boolean {
+  if (Array.isArray(subject)) {
+    return subject.includes(entityType) || subject.includes("all");
+  }
+  return subject === entityType || subject === "all";
+}
+
+/**
+ * Whether the rule grants the given action for the entity type, ignoring conditions
+ * and inversion. `manage` covers every other action, and a rule can list several
+ * actions as an array.
+ */
+export function ruleCoversAction(
+  rule: DatabaseRule,
+  entityType: string,
+  action: EntityActionPermission,
+): boolean {
+  const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
+  return (
+    ruleAppliesToSubject(rule.subject, entityType) &&
+    (actions.includes(action) || actions.includes("manage"))
+  );
+}
 
 /**
  * Whether users of the given role also receive the shared "_default" rules.

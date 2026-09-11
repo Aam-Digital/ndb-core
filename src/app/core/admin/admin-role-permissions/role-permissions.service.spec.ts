@@ -7,6 +7,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Config } from "../../config/config";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("RolePermissionsService", () => {
   let service: RolePermissionsService;
@@ -38,6 +39,8 @@ describe("RolePermissionsService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: UserAdminService, useValue: mockUserAdmin },
         { provide: SessionSubject, useValue: sessionInfo },
+        // used by the shared PermissionsConfigService this service writes through
+        { provide: EntityAbility, useValue: { can: () => true, on: () => {} } },
         {
           provide: MatSnackBar,
           useValue: { open: () => ({ onAction: () => EMPTY }) },
