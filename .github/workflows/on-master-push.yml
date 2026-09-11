@@ -7,17 +7,21 @@ on:
 
 permissions:
   contents: write  # needed for semantic-release and gh-pages
-  id-token: write  # required for _qa.yaml (QLTY code coverage)
+  id-token: write  # required for _qa-unit.yaml (QLTY code coverage)
 
 jobs:
   toolchain:
     uses: ./.github/workflows/_node-toolchain.yml
 
   qa:
-    uses: ./.github/workflows/_qa.yaml
-    secrets: inherit
-    with:
-      upload-e2e-screenshots: true
+    uses: ./.github/workflows/_qa-unit.yaml
+
+  # Uploads screenshots to Argos for comparison, same as the label-triggered
+  # review flow (see label-triggered-review.yml) - master is the baseline.
+  qa-e2e:
+    uses: ./.github/workflows/_qa-e2e.yaml
+    secrets:
+      ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
 
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest
@@ -42,6 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - qa
+      - qa-e2e
       - toolchain
     steps:
       - name: Checkout repository files
