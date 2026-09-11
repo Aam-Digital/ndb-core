@@ -12,7 +12,6 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { MatTooltipModule } from "@angular/material/tooltip";
 
 import { ConditionsEditorComponent } from "../../../common-components/conditions-editor/conditions-editor.component";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -42,7 +41,6 @@ export interface PermissionConditionDialogData {
     MatDialogModule,
     MatButtonModule,
     MatButtonToggleModule,
-    MatTooltipModule,
     ConditionsEditorComponent,
     DialogCloseComponent,
   ],
@@ -78,10 +76,15 @@ export class PermissionConditionDialogComponent {
   readonly entityLabel: string =
     this.entityConstructor?.label ?? this.data.subject;
 
+  /**
+   * Custom hint only for the "all" case; "any" reuses the conditions
+   * editor's default hint text (which already describes "or" semantics)
+   * to avoid near-duplicate strings and extra translation effort.
+   */
   readonly combinatorHint = computed(() =>
-    this.combinator() === "any"
-      ? $localize`Records match if any one of the conditions applies ("or" conditions).`
-      : $localize`Records match only if all conditions apply ("and" conditions).`,
+    this.combinator() === "all"
+      ? $localize`Records match only if all conditions apply ("and" conditions).`
+      : undefined,
   );
 
   /**
