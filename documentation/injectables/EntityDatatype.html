@@ -353,7 +353,7 @@ Stored as a simple ID string.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:342</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:379</a></code>
 </div>
                         </td>
                     </tr>
@@ -457,7 +457,7 @@ as for any other datatype that does not support partial anonymization.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:55</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:56</a></code>
 </div>
                         </td>
                     </tr>
@@ -533,7 +533,7 @@ as for any other datatype that does not support partial anonymization.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:167</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:168</a></code>
 </div>
                         </td>
                     </tr>
@@ -653,7 +653,7 @@ be resolved to an id before it can be compared with the stored reference.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:107</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:108</a></code>
 </div>
                         </td>
                     </tr>
@@ -1314,7 +1314,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:48</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:49</a></code>
 </div>
                         </td>
                     </tr>
@@ -1353,7 +1353,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:51</a></code>
 </div>
                         </td>
                     </tr>
@@ -1392,7 +1392,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:53</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:54</a></code>
 </div>
                         </td>
                     </tr>
@@ -1431,7 +1431,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:52</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:53</a></code>
 </div>
                         </td>
                     </tr>
@@ -1471,7 +1471,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:49</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -1510,7 +1510,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:51</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -1577,12 +1577,13 @@ import { ImportProcessingContext } from &quot;../../import/import-processing-con
 import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
 import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
-import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
 import {
   ColumnImportInput,
   ExportColumnMapping,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
+import { asArray } from &quot;../../../utils/asArray&quot;;
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -1667,7 +1668,7 @@ export class EntityDatatype extends StringDatatype {
       schemaField,
     );
     await this.loadImportMapEntities(schemaField.additional, context);
-    const candidates &#x3D; context.entities ?? [];
+    const candidates &#x3D; context.entities;
 
     const criteria &#x3D; await this.buildMatchCriteria(
       columns,
@@ -1832,7 +1833,7 @@ export class EntityDatatype extends StringDatatype {
       return normalizeValue(rawValue);
     }
 
-    const refFieldSchema &#x3D; context.refEntityCtor?.schema?.get(refField);
+    const refFieldSchema &#x3D; this.getRefFieldSchema(context.types, refField);
     const refDatatype &#x3D; refFieldSchema
       ? this.schemaService.getDatatypeOrDefault(refFieldSchema.dataType)
       : null;
@@ -1860,25 +1861,61 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Load the required entity type&#x27;s entities into context&#x27;s cache if not available yet.
+   * Load the candidates of every entity type the field may reference into the
+   * context&#x27;s cache, skipping types that are cached already.
+   *
+   * A field can allow referencing several entity types at once, in which case
+   * &#x60;entityType&#x60; is an array rather than a single type name (as
+   * &#x60;EditEntityComponent&#x60; handles for its own multi-type autocomplete, see
+   * &#x60;edit-entity.component.ts&#x60;). Each type is loaded independently so that one
+   * unresolvable type (e.g. a stale or removed registration) does not prevent
+   * matching against the other, still-valid types.
    */
   private async loadImportMapEntities(
-    entityType: string,
+    entityType: string | string[],
     context: EntityFieldImportContext,
   ): Promise&lt;void&gt; {
-    if (context.entities) {
-      return;
-    }
+    const missingTypes &#x3D; asArray(entityType).filter(
+      (type) &#x3D;&gt; !context.hasEntitiesOfType(type),
+    );
 
-    try {
-      context.entities &#x3D; (await this.entityMapper.loadType(entityType)).map(
-        (e) &#x3D;&gt; this.schemaService.transformEntityToDatabaseFormat(e),
-      );
-      context.refEntityCtor &#x3D; this.entityRegistry.get(entityType);
-    } catch (error) {
-      Logging.error(&quot;Error loading entities for import mapping:&quot;, error);
-      context.entities &#x3D; [];
+    await Promise.all(
+      missingTypes.map(async (type) &#x3D;&gt; {
+        try {
+          const entities &#x3D; await this.entityMapper.loadType(type);
+          context.setEntitiesOfType(
+            type,
+            entities.map((e) &#x3D;&gt;
+              this.schemaService.transformEntityToDatabaseFormat(e),
+            ),
+          );
+        } catch (error) {
+          Logging.error(&quot;Error loading entities for import mapping:&quot;, error);
+          // cache the empty result so the failing type is not retried for every
+          // other field referencing it in this same import run
+          context.setEntitiesOfType(type, []);
+        }
+      }),
+    );
+  }
+
+  /**
+   * Schema of the matching property, taken from whichever of the allowed types
+   * declares it (they could in principle disagree on its datatype - first wins).
+   */
+  private getRefFieldSchema(
+    types: string[],
+    refField: string,
+  ): EntitySchemaField | undefined {
+    for (const type of types) {
+      if (!this.entityRegistry.has(type)) continue;
+
+      const refFieldSchema &#x3D; this.entityRegistry
+        .get(type)
+        .schema?.get(refField);
+      if (refFieldSchema) return refFieldSchema;
     }
+    return undefined;
   }
 
   /**
@@ -1983,25 +2020,35 @@ class EntityFieldImportContext {
   ) {}
 
   /**
-   * Entities (in database format for easier comparison!)
+   * All entity types this field may reference
+   * (an array when the field allows several target types).
    */
-  get entities(): any[] | undefined {
-    return this.globalContext[&#x60;entities_${this.schemaField.additional}&#x60;];
-  }
-
-  set entities(value: any[]) {
-    this.globalContext[&#x60;entities_${this.schemaField.additional}&#x60;] &#x3D; value;
+  get types(): string[] {
+    return asArray(this.schemaField.additional);
   }
 
   /**
-   * Constructor of the referenced entity type (to access schema for value mapping)
+   * Candidates (in database format for easier comparison!) of every type this
+   * field allows, merged.
+   *
+   * Cached per entity type rather than per field, so a type loaded for one
+   * field is reused by every other field referencing it in the same import
+   * run - including fields that allow only a subset of these types.
    */
-  get refEntityCtor(): EntityConstructor | undefined {
-    return this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;];
+  get entities(): any[] {
+    return this.types.flatMap((type) &#x3D;&gt; this.entitiesOfType(type) ?? []);
   }
 
-  set refEntityCtor(value: EntityConstructor) {
-    this.globalContext[&#x60;ctor_${this.schemaField.additional}&#x60;] &#x3D; value;
+  hasEntitiesOfType(type: string): boolean {
+    return !!this.entitiesOfType(type);
+  }
+
+  setEntitiesOfType(type: string, entities: any[]) {
+    this.globalContext[&#x60;entities_${type}&#x60;] &#x3D; entities;
+  }
+
+  private entitiesOfType(type: string): any[] | undefined {
+    return this.globalContext[&#x60;entities_${type}&#x60;];
   }
 }
 </code></pre>

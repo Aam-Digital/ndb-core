@@ -288,7 +288,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:56</a></div>
                                 </td>
                             </tr>
 
@@ -327,7 +327,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:63</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:66</a></div>
                                 </td>
                             </tr>
 
@@ -372,7 +372,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:68</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:71</a></div>
                                 </td>
                             </tr>
 
@@ -417,7 +417,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -467,7 +467,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:58</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:61</a></div>
                                 </td>
                             </tr>
 
@@ -493,7 +493,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>targetType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                <code>targetType:     <code>string | string[]</code>
 </code>
                             </td>
                         </tr>
@@ -501,7 +501,7 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    <i>Type : </i>    <code>string | string[]</code>
 
                                 </td>
                             </tr>
@@ -512,13 +512,14 @@ linking imported data indirectly to another existing entity (by creating new &qu
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:78</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/import/additional-actions/additional-import-action.ts:82</a></div>
                                 </td>
                             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-description"><p>EntityType of the target entity (to which the entities should be linked)</p>
+                            <div class="io-description"><p>EntityType(s) of the target entity (to which the entities should be linked).
+An array when the relationship field allows linking to several record types.</p>
 </div>
                         </td>
                     </tr>
@@ -637,7 +638,7 @@ interface AdditionalImportBaseAction {
    */
   sourceType: string;
 
-  targetType?: string;
+  targetType?: string | string[];
   targetId?: string;
 
   /**
@@ -654,7 +655,10 @@ export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
   mode: &quot;direct&quot;;
 
   /**
-   * EntityType of the target entity (into which the entities should be linked)
+   * EntityType of the target entity (into which the entities should be linked).
+   * Always a single type in practice - a &quot;direct&quot; action updates one field on
+   * one target entity, unlike an &quot;indirect&quot; action&#x27;s relationship field which
+   * can allow several target types (see AdditionalIndirectLinkAction.targetType).
    */
   targetType: string;
 
@@ -697,9 +701,10 @@ export interface AdditionalIndirectLinkAction extends AdditionalImportBaseAction
   relationshipTargetProperty: string;
 
   /**
-   * EntityType of the target entity (to which the entities should be linked)
+   * EntityType(s) of the target entity (to which the entities should be linked).
+   * An array when the relationship field allows linking to several record types.
    */
-  targetType: string;
+  targetType: string | string[];
 }
 </code></pre>
     </div>

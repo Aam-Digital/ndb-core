@@ -264,8 +264,8 @@ like creating secondary relationship entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="353"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:353</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="355"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:355</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@ like creating secondary relationship entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="192"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:192</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:194</a></div>
                         </td>
                     </tr>
 
@@ -585,8 +585,8 @@ linking entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="213"
-                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:213</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="215"
+                                    class="link-to-prism">src/app/core/import/additional-actions/import-additional.service.ts:215</a></div>
                         </td>
                     </tr>
 
@@ -788,7 +788,9 @@ export class ImportAdditionalService {
 
     for (const entityType of this.linkableEntities.keys()) {
       const matchingActions &#x3D; (this.linkableEntities.get(entityType) ?? [])
-        .filter((a) &#x3D;&gt; a.targetType &#x3D;&#x3D;&#x3D; targetEntityType)
+        // targetType can be an array (a relationship field allowing several
+        // target types), so a plain &#x60;&#x3D;&#x3D;&#x3D;&#x60; would never match such an action
+        .filter((a) &#x3D;&gt; asArray(a.targetType).includes(targetEntityType))
         .filter((a) &#x3D;&gt; this.hasAllReferencedTypes(a));
       linkingTypes.push(...matchingActions);
     }

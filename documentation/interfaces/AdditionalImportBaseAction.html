@@ -423,7 +423,7 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>targetType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                <code>targetType:     <code>string | string[]</code>
 </code>
                             </td>
                         </tr>
@@ -431,7 +431,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    <i>Type : </i>    <code>string | string[]</code>
 
                                 </td>
                             </tr>
@@ -470,7 +470,7 @@ interface AdditionalImportBaseAction {
    */
   sourceType: string;
 
-  targetType?: string;
+  targetType?: string | string[];
   targetId?: string;
 
   /**
@@ -487,7 +487,10 @@ export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
   mode: &quot;direct&quot;;
 
   /**
-   * EntityType of the target entity (into which the entities should be linked)
+   * EntityType of the target entity (into which the entities should be linked).
+   * Always a single type in practice - a &quot;direct&quot; action updates one field on
+   * one target entity, unlike an &quot;indirect&quot; action&#x27;s relationship field which
+   * can allow several target types (see AdditionalIndirectLinkAction.targetType).
    */
   targetType: string;
 
@@ -530,9 +533,10 @@ export interface AdditionalIndirectLinkAction extends AdditionalImportBaseAction
   relationshipTargetProperty: string;
 
   /**
-   * EntityType of the target entity (to which the entities should be linked)
+   * EntityType(s) of the target entity (to which the entities should be linked).
+   * An array when the relationship field allows linking to several record types.
    */
-  targetType: string;
+  targetType: string | string[];
 }
 </code></pre>
     </div>
