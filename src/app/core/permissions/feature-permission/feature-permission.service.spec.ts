@@ -1,11 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import {
-  FeatureAction,
-  FeaturePermissionService,
-} from "./feature-permission.service";
+import { FeaturePermissionService } from "./feature-permission.service";
 import { PermissionsConfigService } from "../permissions-config.service";
 import { Config } from "../../config/config";
-import { DatabaseRules } from "../permission-types";
+import { CrudAction, DatabaseRules } from "../permission-types";
 
 describe("FeaturePermissionService", () => {
   let service: FeaturePermissionService;
@@ -30,18 +27,18 @@ describe("FeaturePermissionService", () => {
 
   /** which actions of a row are granted / editable, as a compact string per action */
   function summarize(row: {
-    actions: Record<FeatureAction, { granted: boolean; editable: boolean }>;
-  }): Record<FeatureAction, string> {
+    actions: Record<CrudAction, { granted: boolean; editable: boolean }>;
+  }): Record<CrudAction, string> {
     return Object.fromEntries(
       Object.entries(row.actions).map(([action, state]) => [
         action,
         `${state.granted ? "granted" : "-"}/${state.editable ? "editable" : "locked"}`,
       ]),
-    ) as Record<FeatureAction, string>;
+    ) as Record<CrudAction, string>;
   }
 
   /** all four actions in the same state, for the common all-or-nothing rows */
-  function allActions(state: string): Record<FeatureAction, string> {
+  function allActions(state: string): Record<CrudAction, string> {
     return {
       create: state,
       read: state,
@@ -51,9 +48,7 @@ describe("FeaturePermissionService", () => {
   }
 
   /** the update object expected by setPermissions */
-  function actions(
-    ...granted: FeatureAction[]
-  ): Record<FeatureAction, boolean> {
+  function actions(...granted: CrudAction[]): Record<CrudAction, boolean> {
     return {
       create: granted.includes("create"),
       read: granted.includes("read"),
@@ -280,7 +275,7 @@ describe("FeaturePermissionService", () => {
 
     expect(savedPermissions()).toEqual({
       user_app: [{ subject: ENTITY_TYPE, action: "read" }],
-      assistant_app: [{ subject: ENTITY_TYPE, action: ["create", "read"] }],
+      assistant_app: [{ subject: ENTITY_TYPE, action: ["read", "create"] }],
       admin_app: [{ subject: ENTITY_TYPE, action: "manage" }],
     });
   });
@@ -337,7 +332,7 @@ describe("FeaturePermissionService", () => {
     ]);
 
     expect(savedPermissions()).toEqual({
-      _default: [{ subject: ENTITY_TYPE, action: ["create", "read"] }],
+      _default: [{ subject: ENTITY_TYPE, action: ["read", "create"] }],
     });
   });
 

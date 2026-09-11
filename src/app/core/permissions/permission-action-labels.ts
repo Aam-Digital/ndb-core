@@ -1,9 +1,5 @@
+import { CRUD_ACTIONS, CrudAction } from "./permission-types";
 import { DEFAULT_ROLE } from "./reserved-roles";
-
-/** the CRUD actions shown as their own column, in the order they are displayed */
-export const CRUD_ACTIONS = ["read", "create", "update", "delete"] as const;
-
-export type CrudAction = (typeof CRUD_ACTIONS)[number];
 
 /**
  * User-facing name of each action, so that the role administration and the
@@ -19,12 +15,19 @@ export const CRUD_ACTION_LABELS: Record<CrudAction, string> = {
 /** the CASL "manage" action, which covers every other action */
 export const MANAGE_ALL_LABEL = $localize`:Permission column header:Manage (all)`;
 
+/** one action column of a permission grid, with its header label */
+export interface CrudActionColumn {
+  action: CrudAction;
+  label: string;
+}
+
 /** the actions with their labels, in display order */
-export const CRUD_ACTION_COLUMNS: { action: CrudAction; label: string }[] =
-  CRUD_ACTIONS.map((action) => ({
+export const CRUD_ACTION_COLUMNS: CrudActionColumn[] = CRUD_ACTIONS.map(
+  (action) => ({
     action,
     label: CRUD_ACTION_LABELS[action],
-  }));
+  }),
+);
 
 /**
  * Explains a checkbox that is ticked but disabled because the shared default

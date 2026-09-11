@@ -27,7 +27,7 @@ _Key files:_
 - `ability/entity-ability.ts` — extends CASL `Ability`, converts `Entity` instances to CASL subjects
 - `ability/ability.service.ts` — loads `Config:Permissions` and builds the `EntityAbility`
 - `../entity/entity-mapper/entity-mapper.service.ts` — calls `assertPermission()` before `save()` / `remove()` (write enforcement)
-- `feature-permission/feature-permission.service.ts` — admin-facing editing of per-role access to a single "feature" entity type (see [Feature permission dialog](#feature-permission-dialog))
+- `feature-permission/feature-permission.service.ts` — admin-facing editing of per-role access to a single "feature" entity type
 
 _Flow:_
 
@@ -93,7 +93,7 @@ Admins edit this document to control what each role can do.
 **Per feature, from its admin list view:**
 
 - On an internal "feature" type (e.g. Export Templates, Email Templates, Public Forms) use the "Configure Permissions" button
-- See [Feature permission dialog](#feature-permission-dialog) below for what this can and cannot change
+- This only writes plain rules for that one entity type; roles decided by an advanced rule stay read-only and have to be edited in the role administration
 
 ### Permission structure
 
@@ -144,40 +144,6 @@ Permissions use JSON format with a role → rules mapping:
 - **`_public`**: Rules applied to anonymous (not logged-in) visitors
 - **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules.
 - **Combining roles**: If a user has multiple roles, their rules are appended in order (the `_default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
-
-### Feature permission dialog
-
-From the list view of an internal "feature" entity type (`isInternalEntity`, e.g.
-`TemplateExport`, `EmailTemplate`, `PublicFormConfig`) admins can grant each role
-the individual actions for that one entity type, without editing raw JSON.
-
-The selected actions are stored as a single rule for this entity type: a plain
-string for one action, an array for several and `"manage"` when all of them are
-selected, keeping the shape an admin would write by hand.
-
-**What it will not touch.** Checkboxes cannot represent arbitrary CASL rules, so
-the dialog only ever adds or removes rules whose `subject` is _exactly_ this one
-entity type with plain actions. Everything else is read (to display the effective
-state) but never written:
-
-- grouped subjects (`subject: ["A", "B"]`) and the `all` wildcard
-- rules with `conditions` or `inverted: true`
-- the shared `_default` and `_public` sections (and their legacy `default` / `public` spellings)
-- managed `[system-default]` rules written by the backend
-
-A role whose access is decided by one of those rules is shown read-only, because
-changing such a rule here would affect other roles or entity types. Actions granted
-by `_default` are shown as granted on every role and never duplicated into a role's
-own rules.
-
-The one case in which the dialog writes a `_default` section is the very first save on
-an instance that has no permissions config at all: an absent config means "everyone may
-do everything", so `_default: [{ subject: "all", action: "manage" }]` is seeded alongside
-the new rules to avoid locking every logged-in user out of everything else.
-
-_Key files:_ `feature-permission/feature-permission.service.ts` (rule reading/writing),
-`feature-permission/feature-permission-dialog/`, `permissions-config.service.ts`
-(shared loading, backup/undo and admin check).
 
 ### Restricting access (inverted rules)
 

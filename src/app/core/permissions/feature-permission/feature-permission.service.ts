@@ -1,6 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { Config } from "../../config/config";
 import {
+  CRUD_ACTIONS,
+  CrudAction,
   DatabaseRule,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
@@ -10,21 +12,6 @@ import {
   SYSTEM_DEFAULT_RULE_REASON,
 } from "../permission-types";
 import { PermissionsConfigService } from "../permissions-config.service";
-
-/**
- * The actions offered as a checkbox in the feature-permission UI, in display order.
- *
- * A role that is granted all of them is stored as the CASL `manage` action instead,
- * so that a config written by an admin keeps the shape it had before.
- */
-export const FEATURE_ACTIONS = [
-  "create",
-  "read",
-  "update",
-  "delete",
-] as const satisfies readonly EntityActionPermission[];
-
-export type FeatureAction = (typeof FEATURE_ACTIONS)[number];
 
 /** why a checkbox is shown but cannot be changed here */
 export type PermissionLockReason =
@@ -63,7 +50,7 @@ export interface FeatureActionPermission {
 export interface RoleFeaturePermission {
   /** the role's technical name as used as a key in the permissions config */
   role: string;
-  actions: Record<FeatureAction, FeatureActionPermission>;
+  actions: Record<CrudAction, FeatureActionPermission>;
   /**
    * Whether any checkbox of this row can be edited.
    *
@@ -100,7 +87,7 @@ export interface FeaturePermissionState {
 /** the actions of one row as sent back to {@link FeaturePermissionService.setPermissions} */
 export interface RoleFeaturePermissionUpdate {
   role: string;
-  actions: Record<FeatureAction, boolean>;
+  actions: Record<CrudAction, boolean>;
 }
 
 /**
@@ -163,7 +150,7 @@ export class FeaturePermissionService {
     role: string,
     roleRules: DatabaseRule[],
     defaultRules: DatabaseRule[],
-    grantedByDefault: Record<FeatureAction, boolean>,
+    grantedByDefault: Record<CrudAction, boolean>,
     entityType: string,
   ): RoleFeaturePermission {
     // An inverted rule revokes access granted before it and cannot be expressed
@@ -222,7 +209,7 @@ export class FeaturePermissionService {
       actions,
       // only a row that is decided by uneditable rules throughout is read-only;
       // a lock coming from `_default` is lifted again by unticking it there
-      editable: FEATURE_ACTIONS.some(
+      editable: CRUD_ACTIONS.some(
         (action) => actions[action].lockedBy !== "advanced-rule",
       ),
     };
@@ -265,7 +252,7 @@ export class FeaturePermissionService {
         continue;
       }
 
-      const selected = FEATURE_ACTIONS.filter(
+      const selected = CRUD_ACTIONS.filter(
         (action) =>
           actions[action] &&
           // the shared section is what grants the action in the first place
@@ -301,7 +288,7 @@ export class FeaturePermissionService {
     updates: RoleFeaturePermissionUpdate[],
     existing: Config<DatabaseRules> | null,
     entityType: string,
-  ): Record<FeatureAction, boolean> {
+  ): Record<CrudAction, boolean> {
     const defaultUpdate = updates.find(
       ({ role }) => role === DEFAULT_SECTION_KEY,
     );
@@ -332,12 +319,12 @@ export class FeaturePermissionService {
    * for a single action and an array otherwise. `undefined` if nothing is selected.
    */
   private toRuleAction(
-    selected: FeatureAction[],
+    selected: CrudAction[],
   ): EntityActionPermission | EntityActionPermission[] | undefined {
     if (selected.length === 0) {
       return undefined;
     }
-    if (selected.length === FEATURE_ACTIONS.length) {
+    if (selected.length === CRUD_ACTIONS.length) {
       return "manage";
     }
     return selected.length === 1 ? selected[0] : [...selected];
@@ -352,18 +339,18 @@ export class FeaturePermissionService {
   private getDefaultGrants(
     defaultRules: DatabaseRule[],
     entityType: string,
-  ): Record<FeatureAction, boolean> {
+  ): Record<CrudAction, boolean> {
     return this.mapActions((action) =>
       this.hasEffectiveAccess(defaultRules, entityType, action),
     );
   }
 
   private mapActions<T>(
-    valueFor: (action: FeatureAction) => T,
-  ): Record<FeatureAction, T> {
+    valueFor: (action: CrudAction) => T,
+  ): Record<CrudAction, T> {
     return Object.fromEntries(
-      FEATURE_ACTIONS.map((action) => [action, valueFor(action)]),
-    ) as Record<FeatureAction, T>;
+      CRUD_ACTIONS.map((action) => [action, valueFor(action)]),
+    ) as Record<CrudAction, T>;
   }
 
   /**
@@ -381,8 +368,7 @@ export class FeaturePermissionService {
       rule.subject === entityType &&
       actions.every(
         (action) =>
-          action === "manage" ||
-          FEATURE_ACTIONS.includes(action as FeatureAction),
+          action === "manage" || CRUD_ACTIONS.includes(action as CrudAction),
       )
     );
   }
@@ -392,7 +378,7 @@ export class FeaturePermissionService {
    * grants or denies it.
    */
   private affectsFeature(rule: DatabaseRule, entityType: string): boolean {
-    return FEATURE_ACTIONS.some((action) =>
+    return CRUD_ACTIONS.some((action) =>
       ruleCoversAction(rule, entityType, action),
     );
   }

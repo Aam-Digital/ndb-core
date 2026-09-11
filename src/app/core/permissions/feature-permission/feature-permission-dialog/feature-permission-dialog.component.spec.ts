@@ -8,11 +8,11 @@ import { of, throwError } from "rxjs";
 import { FeaturePermissionDialogComponent } from "./feature-permission-dialog.component";
 import { DEFAULT_ROLE } from "../../reserved-roles";
 import {
-  FeatureAction,
   FeatureActionPermission,
   FeaturePermissionService,
   PermissionLockReason,
 } from "../feature-permission.service";
+import { CrudAction } from "../../permission-types";
 import { PermissionsConfigService } from "../../permissions-config.service";
 import { UserAdminService } from "../../../user/user-admin-service/user-admin.service";
 import { Config } from "../../../config/config";
@@ -34,7 +34,7 @@ describe("FeaturePermissionDialogComponent", () => {
   const ENTITY_TYPE = "TemplateExport";
   const backupConfig = new Config(Config.PERMISSION_KEY + ":backup", {});
 
-  const ALL_ACTIONS: FeatureAction[] = ["create", "read", "update", "delete"];
+  const ALL_ACTIONS: CrudAction[] = ["create", "read", "update", "delete"];
 
   /**
    * The actions of one row as the service reports them.
@@ -44,11 +44,11 @@ describe("FeaturePermissionDialogComponent", () => {
    * @param ownRules the row's own grants, defaulting to the effective ones
    */
   function permissions(
-    granted: FeatureAction[],
-    editable: FeatureAction[],
+    granted: CrudAction[],
+    editable: CrudAction[],
     lockedBy?: PermissionLockReason,
-    ownRules: FeatureAction[] = granted,
-  ): Record<FeatureAction, FeatureActionPermission> {
+    ownRules: CrudAction[] = granted,
+  ): Record<CrudAction, FeatureActionPermission> {
     return Object.fromEntries(
       ALL_ACTIONS.map((action) => [
         action,
@@ -59,7 +59,7 @@ describe("FeaturePermissionDialogComponent", () => {
           ...(editable.includes(action) ? {} : { lockedBy }),
         },
       ]),
-    ) as Record<FeatureAction, FeatureActionPermission>;
+    ) as Record<CrudAction, FeatureActionPermission>;
   }
 
   /**
@@ -102,7 +102,7 @@ describe("FeaturePermissionDialogComponent", () => {
     return Object.fromEntries(
       row.cells.map((cell) => [
         cell.action,
-        `${cell.granted ? "granted" : "-"}/${cell.editable ? "editable" : "locked"}`,
+        `${cell.allowed ? "granted" : "-"}/${cell.editable ? "editable" : "locked"}`,
       ]),
     );
   }

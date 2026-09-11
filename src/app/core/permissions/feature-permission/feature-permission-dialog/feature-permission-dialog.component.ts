@@ -13,7 +13,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -26,16 +25,20 @@ import { UserAdminService } from "../../../user/user-admin-service/user-admin.se
 import { Logging } from "../../../logging/logging.service";
 import { ROLES_ADMIN_ROUTE } from "../../../admin/admin-role-permissions/role-permissions.service";
 import {
-  CRUD_ACTION_LABELS,
-  CRUD_ACTIONS,
+  CRUD_ACTION_COLUMNS,
+  CrudActionColumn,
   grantedByAdvancedRuleTooltip,
   grantedByDefaultRoleTooltip,
 } from "../../permission-action-labels";
+import { CRUD_ACTIONS, CrudAction } from "../../permission-types";
+import {
+  lockDescriptionId,
+  PermissionCellState,
+  PermissionCheckboxComponent,
+} from "../../permission-checkbox/permission-checkbox.component";
 import { DEFAULT_ROLE } from "../../reserved-roles";
 import { PermissionsConfigService } from "../../permissions-config.service";
 import {
-  FEATURE_ACTIONS,
-  FeatureAction,
   FeatureActionPermission,
   FeaturePermissionService,
   RoleFeaturePermission,
@@ -51,35 +54,28 @@ export interface FeaturePermissionDialogData {
   entityLabel?: string;
 }
 
-/** one checkbox column of the grid */
-interface ActionColumn {
-  action: FeatureAction;
-  label: string;
-}
-
 /** one checkbox of a row, with everything the template needs precomputed */
-interface PermissionCell {
-  action: FeatureAction;
+interface PermissionCell extends PermissionCellState {
+  action: CrudAction;
   /**
    * What the checkbox shows: the effective access where another rule decides it,
    * and otherwise the row's own grant as edited here - with what the `_default`
    * row adds on top layered in by
    * {@link FeaturePermissionDialogComponent.displayRows}.
    */
-  granted: boolean;
-  /**
-   * What is written for this action, i.e. the row's own grant. It differs from
-   * {@link granted} where an uneditable rule decides the checkbox, so that such
-   * a rule is neither duplicated into the row nor silently dropped from it.
-   */
-  grantedByOwnRule: boolean;
+  allowed: boolean;
   /**
    * In `rows` whether an advanced rule leaves this checkbox editable at all; in
    * `displayRows` additionally `false` while `_default` grants the action.
    */
   editable: boolean;
-  /** why this checkbox cannot be changed; empty when it is editable */
-  lockTooltip: string;
+  /**
+   * What is written for this action, i.e. the row's own grant. It differs from
+   * {@link PermissionCellState.allowed} where an uneditable rule decides the
+   * checkbox, so that such a rule is neither duplicated into the row nor
+   * silently dropped from it.
+   */
+  grantedByOwnRule: boolean;
   ariaLabel: string;
 }
 
@@ -120,13 +116,13 @@ interface FeaturePermissionRows {
   imports: [
     MatDialogModule,
     MatButtonModule,
-    MatCheckboxModule,
     MatTooltipModule,
     MatProgressBarModule,
     RouterLink,
     FaIconComponent,
     DialogCloseComponent,
     HintBoxComponent,
+    PermissionCheckboxComponent,
   ],
 })
 export class FeaturePermissionDialogComponent {
@@ -145,19 +141,14 @@ export class FeaturePermissionDialogComponent {
   readonly entityType = this.data.entityType;
   readonly entityLabel = this.data.entityLabel ?? this.data.entityType;
 
-  /**
-   * the checkbox columns, in display order, labelled like the columns of the
-   * permission matrix in the role administration
-   */
-  readonly actionColumns: ActionColumn[] = CRUD_ACTIONS.map((action) => ({
-    action,
-    label: CRUD_ACTION_LABELS[action],
-  }));
+  /** the checkbox columns, shared with the permission matrix of the role administration */
+  readonly actionColumns = CRUD_ACTION_COLUMNS;
 
   readonly permissionRows = resource<FeaturePermissionRows, unknown>({
-    // a failure is reported as a value rather than a rejected loader, so that
-    // the dialog has one state to render and no rejection can escape the
-    // resource (see `permissionCheck` in PublicFormPermissionWarningComponent)
+    // A failure is reported as a value rather than through the resource's own
+    // error state: the ProxyZone the specs run in re-reports an error thrown
+    // inside a loader as an uncaught exception, failing the test run, even
+    // though `resource` itself stores it and keeps rendering.
     loader: async () => {
       try {
         return await this.loadPermissionRows();
@@ -185,7 +176,7 @@ export class FeaturePermissionDialogComponent {
     const defaultRow = this.rows().find((row) => row.isDefaultRow);
     return new Set(
       defaultRow?.cells
-        .filter((cell) => cell.granted)
+        .filter((cell) => cell.allowed)
         .map((cell) => cell.action) ?? [],
     );
   });
@@ -205,7 +196,7 @@ export class FeaturePermissionDialogComponent {
 
   private applyDefaultGrants(
     row: RolePermissionRow,
-    grantedByDefault: ReadonlySet<FeatureAction>,
+    grantedByDefault: ReadonlySet<CrudAction>,
   ): RolePermissionRow {
     if (!row.editable) {
       // an advanced rule decides this row as a whole, `_default` changes nothing
@@ -218,9 +209,10 @@ export class FeaturePermissionDialogComponent {
         cell.editable && grantedByDefault.has(cell.action)
           ? {
               ...cell,
-              granted: true,
+              allowed: true,
               editable: false,
               lockTooltip: grantedByDefaultRoleTooltip(),
+              lockDescriptionId: lockDescriptionId(row.role, cell.action),
             }
           : cell,
       ),
@@ -273,14 +265,20 @@ export class FeaturePermissionDialogComponent {
       // `_default` grants locks single checkboxes, never the `_default` row itself
       lockTooltip: permission.editable ? "" : grantedByAdvancedRuleTooltip(),
       cells: this.actionColumns.map((column) =>
-        this.toCell(column, permission.actions[column.action], label),
+        this.toCell(
+          column,
+          permission.actions[column.action],
+          permission.role,
+          label,
+        ),
       ),
     };
   }
 
   private toCell(
-    column: ActionColumn,
+    column: CrudActionColumn,
     permission: FeatureActionPermission,
+    role: string,
     rowLabel: string,
   ): PermissionCell {
     const lockedByAdvancedRule = permission.lockedBy === "advanced-rule";
@@ -289,12 +287,15 @@ export class FeaturePermissionDialogComponent {
       // a checkbox an uneditable rule decides shows that rule's effect; an
       // editable one shows the row's own grant, so that unticking `_default`
       // in `displayRows` reveals it again instead of discarding it
-      granted: lockedByAdvancedRule
+      allowed: lockedByAdvancedRule
         ? permission.granted
         : permission.grantedByOwnRule,
       grantedByOwnRule: permission.grantedByOwnRule,
       editable: !lockedByAdvancedRule,
       lockTooltip: lockedByAdvancedRule ? grantedByAdvancedRuleTooltip() : "",
+      lockDescriptionId: lockedByAdvancedRule
+        ? lockDescriptionId(role, column.action)
+        : "",
       ariaLabel: $localize`:Permission checkbox aria label:${column.label} ${this.entityLabel} as ${rowLabel}`,
     };
   }
@@ -334,14 +335,14 @@ export class FeaturePermissionDialogComponent {
   }
 
   /** Update a single checkbox, replacing the array so OnPush re-renders. */
-  setAction(role: string, action: FeatureAction, checked: boolean): void {
+  setAction(role: string, action: CrudAction, checked: boolean): void {
     this.rows.update((rows) =>
       rows.map((row) =>
         row.role === role
           ? {
               ...row,
               cells: row.cells.map((cell) =>
-                cell.action === action ? { ...cell, granted: checked } : cell,
+                cell.action === action ? { ...cell, allowed: checked } : cell,
               ),
             }
           : row,
@@ -359,17 +360,17 @@ export class FeaturePermissionDialogComponent {
         .map((row) => ({
           role: row.role,
           actions: Object.fromEntries(
-            FEATURE_ACTIONS.map((action) => [
+            CRUD_ACTIONS.map((action) => [
               action,
               row.cells.some(
                 (cell) =>
                   cell.action === action &&
                   // a checkbox decided by an uneditable rule keeps whatever the
                   // row itself grants, rather than what that rule displays
-                  (cell.editable ? cell.granted : cell.grantedByOwnRule),
+                  (cell.editable ? cell.allowed : cell.grantedByOwnRule),
               ),
             ]),
-          ) as Record<FeatureAction, boolean>,
+          ) as Record<CrudAction, boolean>,
         }));
 
       const backup = await this.permissionService.setPermissions(

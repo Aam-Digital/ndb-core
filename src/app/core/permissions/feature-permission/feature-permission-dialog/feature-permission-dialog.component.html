@@ -62,18 +62,12 @@
             </td>
             @for (cell of row.cells; track cell.action) {
               <td class="checkbox-col">
-                <span
-                  class="checkbox-tooltip-wrapper"
-                  [matTooltip]="cell.lockTooltip"
-                  [matTooltipDisabled]="cell.editable"
-                >
-                  <mat-checkbox
-                    [checked]="cell.granted"
-                    [disabled]="!cell.editable || saving()"
-                    (change)="setAction(row.role, cell.action, $event.checked)"
-                    [attr.aria-label]="cell.ariaLabel"
-                  ></mat-checkbox>
-                </span>
+                <app-permission-checkbox
+                  [state]="cell"
+                  [disabled]="saving()"
+                  [ariaLabel]="cell.ariaLabel"
+                  (toggled)="setAction(row.role, cell.action, $event)"
+                ></app-permission-checkbox>
               </td>
             }
           </tr>

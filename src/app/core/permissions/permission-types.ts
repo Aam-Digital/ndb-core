@@ -2,15 +2,17 @@ import { Ability, RawRuleOf } from "@casl/ability";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 
 /**
+ * The individual CRUD actions, in the order they are displayed as columns of the
+ * permission UIs.
+ */
+export const CRUD_ACTIONS = ["read", "create", "update", "delete"] as const;
+
+export type CrudAction = (typeof CRUD_ACTIONS)[number];
+
+/**
  * The list of action strings that can be used for permissions
  */
-const actions = [
-  "read",
-  "create",
-  "update",
-  "delete",
-  "manage", // Matches any actions
-] as const;
+const actions = [...CRUD_ACTIONS, "manage"] as const; // "manage" matches any action
 
 /**
  * The type which defines which actions can be used for permissions.
