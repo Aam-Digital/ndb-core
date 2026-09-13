@@ -20,7 +20,7 @@ jobs:
     needs: toolchain
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.toolchain.outputs.node-version }}
@@ -50,7 +50,7 @@ jobs:
     # across matrix jobs rather than given a bigger number.
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ needs.toolchain.outputs.node-version }}
