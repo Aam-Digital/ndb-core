@@ -1,9 +1,9 @@
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
-import { Observable } from "rxjs";
+import { EMPTY, Observable } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { filter, map, shareReplay } from "rxjs/operators";
+import { catchError, filter, map, shareReplay } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileDatatype } from "./file.datatype";
@@ -142,10 +142,17 @@ export abstract class FileService {
       error: (err) => {
         Logging.warn("Could not download file", entity?.getId(), property, err);
 
-        const errorMessage =
-          err?.status === HttpStatusCode.NotFound
-            ? $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`
-            : $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
+        let errorMessage: string;
+        if (err?.status === HttpStatusCode.NotFound) {
+          errorMessage = $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`;
+        } else if (
+          err?.status === HttpStatusCode.Unauthorized ||
+          err?.status === HttpStatusCode.Forbidden
+        ) {
+          errorMessage = $localize`:File Download Error Message:You do not have permission to open this file.`;
+        } else {
+          errorMessage = $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
+        }
 
         this.alertService.addWarning(errorMessage);
       },
@@ -186,13 +193,16 @@ export abstract class FileService {
           e.type === HttpEventType.UploadProgress,
       ),
       map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total))),
+      // `progress` is handed to ProgressComponent's template as `config.progress | async`,
+      // a second, independent subscription to this same (unshared) observable, with no
+      // error handler of its own. Without this, an error here would be rethrown by the
+      // AsyncPipe to Angular's global ErrorHandler. The caller handles the actual error
+      // on its own subscription to `obs`, so here it's enough to end the progress bar.
+      catchError(() => EMPTY),
     );
     const ref = this.snackbar.openFromComponent(ProgressComponent, {
       data: { message, progress },
     });
-    progress.subscribe({
-      complete: () => ref.dismiss(),
-      error: () => ref.dismiss(),
-    });
+    progress.subscribe({ complete: () => ref.dismiss() });
   }
 }
