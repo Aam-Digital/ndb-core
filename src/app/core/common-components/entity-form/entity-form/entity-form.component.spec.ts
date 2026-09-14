@@ -102,6 +102,56 @@ describe("EntityFormComponent", () => {
     ]);
   });
 
+  it("should hide a field whose displayCondition is not met", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant";
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+  });
+
+  it("should show and enable a field again once its displayCondition becomes met", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant";
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    component.form().formGroup.get("name").setValue("shown");
+
+    expect(component.filteredFieldGroups()).toEqual([{ fields: columns }]);
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+  });
+
+  it("should hide the field again once its displayCondition becomes unmet", async () => {
+    const entity = new TestEntity();
+    entity.name = "shown";
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    expect(component.filteredFieldGroups()).toEqual([{ fields: columns }]);
+
+    component.form().formGroup.get("name").setValue("something else");
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+  });
+
   it("should not remove fields when creating new and conditions are not met yet", async () => {
     fixture.componentRef.setInput("fieldGroups", [
       { fields: ["foo", "bar"] },

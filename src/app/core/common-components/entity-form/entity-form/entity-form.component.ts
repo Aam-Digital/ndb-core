@@ -23,6 +23,7 @@ import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/enti
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { FilterService } from "../../../filter/filter.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 /**
@@ -52,6 +53,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private entityMapper = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
+  private filterService = inject(FilterService);
   private automatedFieldUpdateConfigService = inject(
     AutomatedFieldUpdateConfigService,
   );
@@ -78,12 +80,18 @@ export class EntityFormComponent<T extends Entity = Entity> {
   readonly entityState = signal<T | undefined>(undefined);
   readonly isEntityLocked = computed(() => !!this.entityState()?.anonymized);
 
-  /** Field groups filtered by the current user's permissions */
+  /** ids of fields currently hidden because their `displayCondition` is not met */
+  private readonly conditionHiddenFieldIds = signal<ReadonlySet<string>>(
+    new Set(),
+  );
+
+  /** Field groups filtered by the current user's permissions and by `displayCondition` */
   readonly filteredFieldGroups = computed<FieldGroup[]>(() => {
     const groups = this.fieldGroups();
     const entity = this.entityState();
     if (!groups || !entity) return groups ?? [];
-    return this.filterFieldGroupsByPermissions(groups, entity);
+    const hiddenFieldIds = this.conditionHiddenFieldIds();
+    return this.filterFieldGroupsByPermissions(groups, entity, hiddenFieldIds);
   });
 
   private initialFormValues: any;
@@ -131,6 +139,84 @@ export class EntityFormComponent<T extends Entity = Entity> {
         });
       onCleanup(() => sub.unsubscribe());
     });
+
+    effect((onCleanup) => {
+      const form = this.form();
+      if (!form) {
+        this.conditionHiddenFieldIds.set(new Set());
+        return;
+      }
+
+      this.updateFieldDisplayConditions(form);
+      const sub = form.formGroup.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe(() => this.updateFieldDisplayConditions(form));
+      onCleanup(() => sub.unsubscribe());
+    });
+  }
+
+  /**
+   * Re-evaluate each field's `displayCondition` (if any) against the entity's current,
+   * possibly unsaved state (i.e. including the current form values) and hide/disable
+   * fields whose condition is not met.
+   *
+   * Only touches controls that declare a `displayCondition`, so it never interferes with
+   * disabling done elsewhere (e.g. for missing update permissions).
+   */
+  private updateFieldDisplayConditions(form: EntityForm<T>) {
+    const entity = this.entityState();
+    if (!entity) return;
+
+    const fieldsWithCondition = form.fieldConfigs.filter(
+      (f) => f.displayCondition && Object.keys(f.displayCondition).length > 0,
+    );
+    if (fieldsWithCondition.length === 0) {
+      this.conditionHiddenFieldIds.set(new Set());
+      return;
+    }
+
+    const currentEntityState = entity.copy();
+    Object.assign(currentEntityState, form.formGroup.getRawValue());
+
+    const action = entity.isNew ? "create" : "update";
+    const hiddenFieldIds = new Set<string>();
+
+    for (const field of fieldsWithCondition) {
+      const control = form.formGroup.get(field.id);
+      if (!control) continue;
+
+      const isMet = this.evaluateDisplayCondition(
+        field.displayCondition,
+        currentEntityState,
+      );
+
+      if (!isMet) {
+        hiddenFieldIds.add(field.id);
+        if (control.enabled) {
+          control.disable({ onlySelf: true, emitEvent: false });
+        }
+        continue;
+      }
+
+      if (
+        control.disabled &&
+        !this.isEntityLocked() &&
+        this.ability.can(action, entity, field.id)
+      ) {
+        control.enable({ onlySelf: true, emitEvent: false });
+      }
+    }
+
+    this.conditionHiddenFieldIds.set(hiddenFieldIds);
+  }
+
+  private evaluateDisplayCondition(condition: any, entity: T): boolean {
+    try {
+      return this.filterService.getFilterPredicate(condition)(entity);
+    } catch {
+      // an invalid/misconfigured condition should not hide the field entirely
+      return true;
+    }
   }
 
   private async applyChanges(externallyUpdatedEntity: T) {
@@ -189,19 +275,20 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private filterFieldGroupsByPermissions<T extends Entity = Entity>(
     fieldGroups: FieldGroup[],
     entity: Entity,
+    hiddenFieldIds: ReadonlySet<string> = new Set(),
   ): FieldGroup[] {
     const action = entity.isNew ? "create" : "read";
 
     return fieldGroups
       .map((group) => ({
         ...group,
-        fields: group.fields.filter((field) =>
-          this.ability.can(
-            action,
-            entity,
-            typeof field === "string" ? field : field.id,
-          ),
-        ),
+        fields: group.fields.filter((field) => {
+          const fieldId = typeof field === "string" ? field : field.id;
+          return (
+            !hiddenFieldIds.has(fieldId) &&
+            this.ability.can(action, entity, fieldId)
+          );
+        }),
       }))
       .filter((group) => group.fields.length > 0);
   }

@@ -156,6 +156,18 @@ export interface EntitySchemaField {
    * that should not be shown in the admin form builder or saved to config.
    */
   isInternalField?: boolean;
+
+  /**
+   * (Optional) A Mango/MongoDB style query condition, evaluated against the current
+   * (possibly not yet saved) state of the entity, that determines whether this field
+   * is displayed in forms.
+   *
+   * If the condition is not met, the form field is hidden and its value is excluded
+   * from validation (e.g. a "required" validator is skipped while hidden).
+   *
+   * Uses the same `{ $or: [ { field: value }, ... ] }` format as `ColorMapping.condition`.
+   */
+  displayCondition?: any;
 }
 
 /**

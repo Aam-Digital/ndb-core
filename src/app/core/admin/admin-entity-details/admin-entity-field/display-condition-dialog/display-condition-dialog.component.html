@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>
+  @if (hadCondition) {
+    <span i18n>Edit Display Condition</span>
+  } @else {
+    <span i18n>Add Display Condition</span>
+  }
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</h2>
+
+<mat-dialog-content>
+  <p i18n>
+    This field will only be shown in the form if the record currently matches
+    one of the conditions below.
+  </p>
+
+  <app-conditions-editor
+    [conditions]="editorConditions"
+    [entityConstructor]="data.entityType"
+    (conditionsChange)="onConditionsChange($event)"
+  ></app-conditions-editor>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  @if (hadCondition) {
+    <button mat-button color="warn" (click)="removeCondition()" i18n>
+      Remove condition
+    </button>
+  }
+  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  <button mat-raised-button color="accent" (click)="apply()" i18n>
+    Apply Condition
+  </button>
+</mat-dialog-actions>

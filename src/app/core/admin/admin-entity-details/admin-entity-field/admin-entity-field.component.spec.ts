@@ -24,6 +24,8 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { DisplayConditionDialogComponent } from "./display-condition-dialog/display-condition-dialog.component";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -535,6 +537,78 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.fieldIdForm.errors).toEqual({
       uniqueProperty: expect.any(String),
     });
+  });
+
+  it("should open the display condition dialog with the current entityType and condition, and apply the result", async () => {
+    await recreateComponentWithData(
+      { label: "Other", dataType: StringDatatype.dataType } as EntitySchemaField,
+      TestEntity,
+    );
+
+    const newCondition = { $or: [{ name: "shown" }] };
+    const dialogSpy = vi
+      .spyOn((component as any).dialog, "open")
+      .mockReturnValue(mockMatDialogRef(newCondition) as any);
+
+    component.openDisplayConditionDialog();
+    await fixture.whenStable();
+
+    expect(dialogSpy).toHaveBeenCalledWith(
+      DisplayConditionDialogComponent,
+      expect.objectContaining({
+        // an unset FormControl value is `null`, not `undefined`
+        data: { entityType: TestEntity, displayCondition: null },
+      }),
+    );
+    expect(component.schemaFieldsForm.get("displayCondition").value).toEqual(
+      newCondition,
+    );
+  });
+
+  it("should clear the display condition when the dialog is closed with 'remove'", async () => {
+    await recreateComponentWithData(
+      {
+        label: "Other",
+        dataType: StringDatatype.dataType,
+        displayCondition: { $or: [{ name: "shown" }] },
+      } as EntitySchemaField,
+      TestEntity,
+    );
+
+    vi.spyOn((component as any).dialog, "open").mockReturnValue(
+      mockMatDialogRef(null) as any,
+    );
+
+    component.openDisplayConditionDialog();
+    await fixture.whenStable();
+
+    expect(
+      component.schemaFieldsForm.get("displayCondition").value,
+    ).toBeNull();
+    expect(dialogData.entitySchemaField.displayCondition).toBeUndefined();
+  });
+
+  it("should keep the display condition unchanged when the dialog is cancelled", async () => {
+    const existingCondition = { $or: [{ name: "shown" }] };
+    await recreateComponentWithData(
+      {
+        label: "Other",
+        dataType: StringDatatype.dataType,
+        displayCondition: existingCondition,
+      } as EntitySchemaField,
+      TestEntity,
+    );
+
+    vi.spyOn((component as any).dialog, "open").mockReturnValue(
+      mockMatDialogRef(undefined) as any,
+    );
+
+    component.openDisplayConditionDialog();
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("displayCondition").value).toEqual(
+      existingCondition,
+    );
   });
 
   it("should reject a field ID starting with underscore", async () => {
