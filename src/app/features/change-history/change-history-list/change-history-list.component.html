@@ -25,10 +25,14 @@
     </div>
   } @else {
     <div class="flex-row flex-wrap gap-regular align-baseline">
-      <mat-form-field>
+      <mat-form-field
+        [matTooltip]="disabledFilterHint"
+        [matTooltipDisabled]="!otherFiltersDisabled()"
+      >
         <mat-label i18n="Change log filter label">Record type</mat-label>
         <mat-select
           [value]="entityTypeFilter()"
+          [disabled]="otherFiltersDisabled()"
           (valueChange)="setEntityTypeFilter($event)"
         >
           @for (type of entityTypes; track type.key) {
@@ -37,7 +41,7 @@
         </mat-select>
         <!-- no "all types" option: an unset filter is the unrestricted state,
              so clearing is what removes the restriction -->
-        @if (entityTypeFilter()) {
+        @if (entityTypeFilter() && !otherFiltersDisabled()) {
           <button
             matSuffix
             mat-icon-button
@@ -53,10 +57,14 @@
         }
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field
+        [matTooltip]="disabledFilterHint"
+        [matTooltipDisabled]="!otherFiltersDisabled()"
+      >
         <mat-label i18n="Change log filter label">Action</mat-label>
         <mat-select
           [value]="actionFilter()"
+          [disabled]="otherFiltersDisabled()"
           (valueChange)="setActionFilter($event)"
         >
           @for (action of actions; track action) {
@@ -67,7 +75,7 @@
             </mat-option>
           }
         </mat-select>
-        @if (actionFilter()) {
+        @if (actionFilter() && !otherFiltersDisabled()) {
           <button
             matSuffix
             mat-icon-button
@@ -83,10 +91,14 @@
         }
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field
+        [matTooltip]="disabledFilterHint"
+        [matTooltipDisabled]="!otherFiltersDisabled()"
+      >
         <mat-label i18n="Change log filter label">Changed by</mat-label>
         <mat-select
           [value]="changedByFilter()"
+          [disabled]="otherFiltersDisabled()"
           (valueChange)="setChangedByFilter($event)"
         >
           @for (author of authors(); track author.value) {
@@ -102,7 +114,7 @@
             </mat-option>
           }
         </mat-select>
-        @if (changedByFilter()) {
+        @if (changedByFilter() && !otherFiltersDisabled()) {
           <button
             matSuffix
             mat-icon-button
@@ -124,6 +136,42 @@
         [filterConfig]="dateFilterConfig"
         (dateRangeChange)="onDateRangeChange($event)"
       ></app-date-range-filter>
+
+      <!-- a plain id input rather than a record picker: the id is what is copied
+           from a URL or another screen, and it still matches a record that has
+           since been deleted, which no picker could offer -->
+      <mat-form-field
+        class="related-record-filter"
+        matTooltip="Show every change involving this record, including changes to other records that reference it"
+        i18n-matTooltip="Change log filter tooltip"
+      >
+        <mat-label i18n="Change log filter label">Related record</mat-label>
+        <input
+          matInput
+          #relatedRecordInput
+          type="text"
+          placeholder="e.g. User:1"
+          i18n-placeholder="Change log filter placeholder"
+          [value]="relatedEntityFilter() ?? ''"
+          (change)="setRelatedEntityFilter(relatedRecordInput.value)"
+        />
+        @if (relatedEntityFilter()) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            matTooltip="Clear related record filter"
+            i18n-matTooltip
+            aria-label="Clear related record filter"
+            i18n-aria-label
+            (click)="
+              relatedRecordInput.value = ''; setRelatedEntityFilter(undefined)
+            "
+          >
+            <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
+          </button>
+        }
+      </mat-form-field>
     </div>
 
     <!-- a row opens the record's full history, the same dialog its details view

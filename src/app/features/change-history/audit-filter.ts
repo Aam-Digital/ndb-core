@@ -11,7 +11,7 @@ import {
 const RANGE_END = "￰";
 
 /** The whole of the selected end day is included, not just its midnight. */
-function endOfDay(to: Date): string {
+export function endOfDay(to: Date): string {
   return moment(to).endOf("day").toISOString();
 }
 

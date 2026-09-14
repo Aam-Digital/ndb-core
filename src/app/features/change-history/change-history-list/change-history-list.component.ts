@@ -16,7 +16,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
-import { PaginatedDataSource } from "../../../core/common-components/entities-table/data-source/paginated-data-source";
+import { AuditDataSource } from "../audit-data-source";
 import { DateRangeFilterComponent } from "../../../core/basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { DateFilter } from "../../../core/filter/filters/dateFilter";
 import { DateRangeFilterConfigOption } from "../../../core/entity-list/EntityListConfig";
@@ -113,8 +113,11 @@ export class ChangeHistoryListComponent {
    * decides on the session type while this type's database is remote in every
    * session. The table takes a data source as an input, so nothing else is
    * needed to bypass it.
+   *
+   * It also answers the related-record filter, which needs a different query
+   * than the rest of the filter bar.
    */
-  readonly dataSource = new PaginatedDataSource<AuditRecord>();
+  readonly dataSource = new AuditDataSource();
 
   /**
    * Newest first. Pinned explicitly because the default would order by `_id`,
@@ -175,9 +178,19 @@ export class ChangeHistoryListComponent {
     this.route.snapshot.queryParamMap.get("entityType") ?? undefined,
   );
   readonly changedByFilter = signal<string | undefined>(undefined);
+  readonly relatedEntityFilter = signal<string | undefined>(undefined);
   readonly actionFilter = signal<string | undefined>(undefined);
   readonly dateFrom = signal<Date | undefined>(undefined);
   readonly dateTo = signal<Date | undefined>(undefined);
+
+  /**
+   * The related-record filter is served by a view keyed on the referenced id, so
+   * only the date range narrows it further; record type, action and author would
+   * need a different key order and are therefore unavailable while it is set.
+   */
+  readonly otherFiltersDisabled = computed(() => !!this.relatedEntityFilter());
+
+  readonly disabledFilterHint = $localize`:Change log filter hint:Not available while filtering by a related record`;
 
   /**
    * Drives the shared date-range filter, the same control (and presets shape)
@@ -195,13 +208,19 @@ export class ChangeHistoryListComponent {
   );
 
   readonly filter = computed(() =>
-    buildAuditFilter({
-      entityType: this.entityTypeFilter(),
-      changedBy: this.changedByFilter(),
-      action: this.actionFilter(),
-      from: this.dateFrom(),
-      to: this.dateTo(),
-    }),
+    buildAuditFilter(
+      // the disabled filters keep their selection but must not be applied, or
+      // the list would silently contradict the query it ran
+      this.otherFiltersDisabled()
+        ? { from: this.dateFrom(), to: this.dateTo() }
+        : {
+            entityType: this.entityTypeFilter(),
+            changedBy: this.changedByFilter(),
+            action: this.actionFilter(),
+            from: this.dateFrom(),
+            to: this.dateTo(),
+          },
+    ),
   );
 
   private readonly authorsResource = resource({
@@ -243,9 +262,31 @@ export class ChangeHistoryListComponent {
     this.changedByFilter.set(changedBy);
   }
 
+  /**
+   * @param relatedEntityId a record id as displayed and copied elsewhere in the
+   *        app (`User:1`); anything blank clears the filter
+   */
+  setRelatedEntityFilter(relatedEntityId: string | undefined) {
+    this.relatedEntityFilter.set(relatedEntityId?.trim() || undefined);
+    this.applyRelatedRecord();
+  }
+
   onDateRangeChange(range: { from: Date | null; to: Date | null }) {
     this.dateFrom.set(range.from ?? undefined);
     this.dateTo.set(range.to ?? undefined);
+    // the view is keyed on the date range too, so it has to be re-queried
+    if (this.relatedEntityFilter()) {
+      this.applyRelatedRecord();
+    }
+  }
+
+  private applyRelatedRecord() {
+    const recordId = this.relatedEntityFilter();
+    this.dataSource.setRelatedRecord(
+      recordId
+        ? { recordId, from: this.dateFrom(), to: this.dateTo() }
+        : undefined,
+    );
   }
 
   /**
