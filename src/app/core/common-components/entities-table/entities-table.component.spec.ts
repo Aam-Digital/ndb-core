@@ -19,6 +19,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { Logging } from "../../logging/logging.service";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -361,6 +362,30 @@ describe("EntitiesTableComponent", () => {
     expect(
       component._columns().find((c) => c.id === customField.id).label,
     ).toBe(customField.label);
+  });
+
+  it("should skip an incompletely configured column instead of failing the whole table", () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    mockFormService.extendFormFieldConfig.mockImplementation((c) => {
+      if (c?.id === "broken") {
+        throw new Error("field has no id");
+      }
+      return toFormFieldConfig(c);
+    });
+
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("customColumns", [
+      { id: "name" },
+      { id: "broken" },
+      { id: "other" },
+    ]);
+    fixture.detectChanges();
+
+    expect(component._customColumns().map((c) => c.id)).toEqual([
+      "name",
+      "other",
+    ]);
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   it("should set noSorting if dataType cannot be sorted properly", () => {

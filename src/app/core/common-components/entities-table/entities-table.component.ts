@@ -39,6 +39,7 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
+import { Logging } from "../../logging/logging.service";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
@@ -116,14 +117,26 @@ export class EntitiesTableComponent<T extends Entity>
   readonly ACTIONCOLUMN_EDIT = "__edit";
 
   // --- Column state ---
-  readonly _customColumns = computed<FormFieldConfig[]>(() =>
-    this.customColumns().map((column) => {
-      const entityType = this.entityType();
-      return entityType
-        ? this.entityFormService.extendFormFieldConfig(column, entityType)
-        : toFormFieldConfig(column);
-    }),
-  );
+  readonly _customColumns = computed<FormFieldConfig[]>(() => {
+    const entityType = this.entityType();
+    const columns: FormFieldConfig[] = [];
+    for (const column of this.customColumns()) {
+      try {
+        columns.push(
+          entityType
+            ? this.entityFormService.extendFormFieldConfig(column, entityType)
+            : toFormFieldConfig(column),
+        );
+      } catch (err) {
+        // an incompletely configured column must not block the rest of the table from rendering
+        Logging.error("Could not create table column config for a field", err, {
+          column,
+          entityType: entityType?.ENTITY_TYPE,
+        });
+      }
+    }
+    return columns;
+  });
   readonly _columnsToDisplay = computed<string[]>(() => {
     let colsToDisplay = this.columnsToDisplay();
     if (!colsToDisplay || colsToDisplay.length === 0) {
