@@ -7,6 +7,7 @@ import {
   signal,
   resource,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatRadioModule } from "@angular/material/radio";
@@ -88,7 +89,31 @@ export class TemplateExportSelectionDialogComponent {
     () => this.entities()[0],
   );
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
-    e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
+    e.applicableForEntityTypes.includes(
+      this.currentEntity()?.getType() ?? "",
+    ) &&
+    // an arrayReport combines all selected records into one document, so it
+    // is only useful (and only offered) for a bulk selection of records
+    (!e.arrayReport || this.isBulk());
+
+  /**
+   * The full TemplateExport entity currently selected in the form, reactively reloaded
+   * whenever the selection changes - needed to check `arrayReport` before submitting.
+   */
+  private readonly selectedTemplateId = toSignal(
+    this.templateSelectionForm.valueChanges,
+    { initialValue: this.templateSelectionForm.value },
+  );
+  private readonly selectedTemplate = resource<TemplateExport, string>({
+    params: () => this.selectedTemplateId(),
+    loader: ({ params: templateId }) =>
+      templateId
+        ? this.entityMapper.load(TemplateExport, templateId)
+        : Promise.resolve(undefined),
+  });
+  readonly selectedTemplateIsArrayReport = computed(
+    () => this.selectedTemplate.value()?.arrayReport ?? false,
+  );
 
   readonly phase = signal<"select" | "running" | "done">("select");
   readonly totalRecords = signal<number>(0);
@@ -115,7 +140,6 @@ export class TemplateExportSelectionDialogComponent {
   });
 
   async requestFile() {
-    const templateId = this.templateSelectionForm.value;
     const entities = this.entities();
     if (entities.length === 0) {
       this.alertService.addWarning(
@@ -129,9 +153,18 @@ export class TemplateExportSelectionDialogComponent {
     this.failures.set([]);
 
     try {
-      const template = await this.entityMapper.load(TemplateExport, templateId);
+      const template = this.selectedTemplate.value();
 
-      if (entities.length === 1) {
+      if (template.arrayReport) {
+        const result = await firstValueFrom(
+          this.templateExportApi.generatePdfFromTemplate(template, entities),
+        );
+        await this.downloadService.triggerDownload(
+          result.file,
+          "pdf",
+          result.filename ?? template.title,
+        );
+      } else if (entities.length === 1) {
         const result = await firstValueFrom(
           this.templateExportApi.generatePdfFromTemplate(template, entities[0]),
         );
@@ -157,9 +190,7 @@ export class TemplateExportSelectionDialogComponent {
       }
       this.dialogRef.close(true);
 
-      this.alertService.addInfo(
-        $localize`Generated ${entities.length} of ${entities.length} files.`,
-      );
+      this.alertService.addInfo($localize`Files generated successfully.`);
     } catch (error) {
       Logging.warn("Failed to generate files", error);
       this.failures.set(entities.map((entity) => ({ entity, error })));
