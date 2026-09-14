@@ -5,7 +5,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
 import {
   TemplateExportApiService,
-  TemplateExportBatchResult,
   TemplateExportResult,
 } from "../template-export-api/template-export-api.service";
 import { DownloadService } from "../../../core/export/download-service/download.service";
@@ -258,7 +257,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     });
 
     it("should call the batch endpoint once with the array and trigger a single zip download", async () => {
-      const batchResponse: TemplateExportBatchResult = {
+      const batchResponse: TemplateExportResult = {
         filename: "report.zip",
         file: new ArrayBuffer(16),
       };
@@ -293,7 +292,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
     it("should use combined mode and download a single PDF when the combine-into-single-PDF signal is enabled", async () => {
       bulkComponent.combineIntoSinglePdf.set(true);
 
-      const combinedResponse: TemplateExportBatchResult = {
+      const combinedResponse: TemplateExportResult = {
         filename: "combined.pdf",
         file: new ArrayBuffer(16),
       };
