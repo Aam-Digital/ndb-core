@@ -14,7 +14,7 @@ import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-en
 import { firstValueFrom } from "rxjs";
 import { AttendanceInitService } from "../features/attendance/attendance-init.service";
 import { DatabaseFactoryService } from "../core/database/database-factory.service";
-import { MemoryPouchDatabase } from "../core/database/pouchdb/memory-pouch-database";
+import { FindableMemoryPouchDatabase } from "./findable-memory-pouch-database";
 import { SyncStateSubject } from "../core/session/session-type";
 import { Database } from "../core/database/database";
 
@@ -53,7 +53,7 @@ import { Database } from "../core/database/database";
         const syncState = inject(SyncStateSubject);
         const ngZone = inject(NgZone);
         const create = (dbName: string) =>
-          new MemoryPouchDatabase(dbName, syncState, ngZone);
+          new FindableMemoryPouchDatabase(dbName, syncState, ngZone);
 
         return {
           createDatabase: create,
