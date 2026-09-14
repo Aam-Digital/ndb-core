@@ -114,6 +114,7 @@ const viewConfigs: ViewConfig[] = [
                       "title",
                       "description",
                       "applicableForEntityTypes",
+                      "arrayReport",
                     ],
                   },
                   {

@@ -216,6 +216,39 @@ describe("TemplateExportApiService", () => {
     );
   });
 
+  it("should render an array of records as a single top-level array (arrayReport templates)", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "People Overview";
+    const dataList = [{ name: "A" }, { name: "B" }];
+
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(16),
+      headers: new HttpHeaders({
+        "Content-Disposition": 'filename="people.pdf"',
+      }),
+      status: 200,
+    });
+    const mockApiResponse = vi
+      .spyOn(TestBed.inject(HttpClient), "post")
+      .mockReturnValue(of(mockResponse));
+
+    const result = await lastValueFrom(
+      service.generatePdfFromTemplate(templateEntity, dataList),
+    );
+
+    expect(result).toEqual({ filename: "people.pdf", file: mockResponse.body });
+    // the single-record /render endpoint is used, with the whole array as `data`
+    // (not the /render-batch endpoint), so carbone gets one top-level array
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.API_URL + "/render/" + templateEntity.getId(),
+      {
+        convertTo: "pdf",
+        data: dataList,
+      },
+      expect.any(Object),
+    );
+  });
+
   it("should call the render-batch endpoint with the array and parse Content-Disposition (zip mode)", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataList = [{ name: "A" }, { name: "B" }, { name: "C" }];

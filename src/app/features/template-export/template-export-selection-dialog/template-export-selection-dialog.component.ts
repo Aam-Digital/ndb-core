@@ -7,6 +7,7 @@ import {
   signal,
   resource,
 } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatRadioModule } from "@angular/material/radio";
@@ -88,7 +89,31 @@ export class TemplateExportSelectionDialogComponent {
     () => this.entities()[0],
   );
   templateEntityFilter: (e: TemplateExport) => boolean = (e) =>
-    e.applicableForEntityTypes.includes(this.currentEntity()?.getType() ?? "");
+    e.applicableForEntityTypes.includes(
+      this.currentEntity()?.getType() ?? "",
+    ) &&
+    // an arrayReport combines all selected records into one document, so it
+    // is only useful (and only offered) for a bulk selection of records
+    (!e.arrayReport || this.isBulk());
+
+  /**
+   * The full TemplateExport entity currently selected in the form, reactively reloaded
+   * whenever the selection changes - needed to check `arrayReport` before submitting.
+   */
+  private readonly selectedTemplateId = toSignal(
+    this.templateSelectionForm.valueChanges,
+    { initialValue: this.templateSelectionForm.value },
+  );
+  private readonly selectedTemplate = resource({
+    params: () => this.selectedTemplateId(),
+    loader: ({ params: templateId }) =>
+      templateId
+        ? this.entityMapper.load(TemplateExport, templateId)
+        : Promise.resolve(undefined),
+  });
+  readonly selectedTemplateIsArrayReport = computed(
+    () => this.selectedTemplate.value()?.arrayReport ?? false,
+  );
 
   readonly phase = signal<"select" | "running" | "done">("select");
   readonly totalRecords = signal<number>(0);
@@ -131,7 +156,18 @@ export class TemplateExportSelectionDialogComponent {
     try {
       const template = await this.entityMapper.load(TemplateExport, templateId);
 
-      if (entities.length === 1) {
+      if (template.arrayReport) {
+        // all selected records combined into a single top-level array, rendered
+        // as one report in one request - never split into a zip or per-record pages
+        const result = await firstValueFrom(
+          this.templateExportApi.generatePdfFromTemplate(template, entities),
+        );
+        await this.downloadService.triggerDownload(
+          result.file,
+          "pdf",
+          result.filename ?? template.title,
+        );
+      } else if (entities.length === 1) {
         const result = await firstValueFrom(
           this.templateExportApi.generatePdfFromTemplate(template, entities[0]),
         );
