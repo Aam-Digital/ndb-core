@@ -1,4 +1,10 @@
-import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
+import {
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Injectable,
+  LOCALE_ID,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
@@ -20,6 +26,9 @@ import {
   TypedFormGroup,
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { asArray } from "app/utils/asArray";
+import { resolveTranslatableText } from "../../config/multi-lingual-config";
+import { availableLocales } from "../../language/languages";
+import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -37,6 +46,8 @@ export class EntityFormService {
   private ability = inject(EntityAbility);
   private unsavedChanges = inject(UnsavedChangesService);
   private defaultValueService = inject(DefaultValueService);
+  private readonly locale = inject(LOCALE_ID);
+  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -94,7 +105,28 @@ export class EntityFormService {
         fullField.label || fullField.label || fullField.labelShort;
     }
 
+    this.resolveTranslatableLabels(fullField);
+
     return fullField;
+  }
+
+  /**
+   * Config loaded through ConfigService is already resolved, but the runtime
+   * schema can hold a translation map while an admin has configured
+   * translations that are not saved to the config document yet.
+   */
+  private resolveTranslatableLabels(field: FormFieldConfig) {
+    for (const property of ["label", "labelShort", "description"]) {
+      if (field[property] === undefined) {
+        continue;
+      }
+      field[property] = resolveTranslatableText(
+        field[property],
+        this.locale,
+        DEFAULT_LANGUAGE,
+        this.validLocaleIds,
+      );
+    }
   }
 
   /**

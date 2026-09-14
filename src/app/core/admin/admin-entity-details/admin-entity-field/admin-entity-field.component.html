@@ -1,6 +1,4 @@
-<h2 mat-dialog-title i18n>
-  Configure Field "{{ data.entitySchemaField.label }}"
-</h2>
+<h2 mat-dialog-title i18n>Configure Field "{{ resolvedLabel }}"</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
@@ -28,7 +26,9 @@
           <div class="entity-form-cell">
             <mat-form-field>
               <mat-label i18n>Label</mat-label>
-              <input formControlName="label" matInput #formLabel />
+              <app-translatable-text-input
+                formControlName="label"
+              ></app-translatable-text-input>
               @if (schemaFieldsForm.get("label").hasError("uniqueProperty")) {
                 <mat-error>
                   {{ schemaFieldsForm.get("label").getError("uniqueProperty") }}
@@ -54,11 +54,10 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <input
+              <app-translatable-text-input
                 formControlName="labelShort"
-                matInput
-                [placeholder]="formLabel.value"
-              />
+                [placeholder]="resolvedLabel"
+              ></app-translatable-text-input>
             </mat-form-field>
 
             <mat-form-field>
@@ -70,11 +69,11 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <textarea
+              <app-translatable-text-input
                 formControlName="description"
-                matInput
-                rows="3"
-              ></textarea>
+                [multiline]="true"
+                [rows]="3"
+              ></app-translatable-text-input>
             </mat-form-field>
           </div>
 
