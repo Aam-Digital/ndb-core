@@ -541,7 +541,10 @@ describe("AdminEntityFieldComponent", () => {
 
   it("should open the display condition dialog with the current entityType and condition, and apply the result", async () => {
     await recreateComponentWithData(
-      { label: "Other", dataType: StringDatatype.dataType } as EntitySchemaField,
+      {
+        label: "Other",
+        dataType: StringDatatype.dataType,
+      } as EntitySchemaField,
       TestEntity,
     );
 
@@ -582,9 +585,7 @@ describe("AdminEntityFieldComponent", () => {
     component.openDisplayConditionDialog();
     await fixture.whenStable();
 
-    expect(
-      component.schemaFieldsForm.get("displayCondition").value,
-    ).toBeNull();
+    expect(component.schemaFieldsForm.get("displayCondition").value).toBeNull();
     expect(dialogData.entitySchemaField.displayCondition).toBeUndefined();
   });
 

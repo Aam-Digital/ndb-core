@@ -117,6 +117,19 @@ describe("DisplayConditionDialogComponent", () => {
     expect(mockDialogRef.close).toHaveBeenCalledWith(null);
   });
 
+  it("preserves a direct (non-$or) condition when applied without changes", () => {
+    // regression test: a condition stored as a direct Mango query (no `$or`, e.g.
+    // hand-authored config) must survive an unmodified Apply instead of being
+    // treated as empty and erased
+    const component = createComponent({
+      displayCondition: { name: "shown" },
+    });
+
+    component.apply();
+
+    expect(mockDialogRef.close).toHaveBeenCalledWith({ name: "shown" });
+  });
+
   it("applies null when no valid condition rows remain", () => {
     const component = createComponent({
       displayCondition: { $or: [{ name: "shown" }] },
