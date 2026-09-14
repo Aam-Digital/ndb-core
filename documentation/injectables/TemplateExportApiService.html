@@ -348,8 +348,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="197"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:197</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="212"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:212</a></div>
                         </td>
                     </tr>
 
@@ -438,7 +438,7 @@ just forwards the request:</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/TemplateExportBatchResult.html" target="_self" >Observable&lt;TemplateExportBatchResult&gt;</a></code>
+                            <b>Returns : </b>        <code><a href="../interfaces/TemplateExportResult.html" target="_self" >Observable&lt;TemplateExportResult&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -469,8 +469,8 @@ just forwards the request:</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="148"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:148</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="188"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:188</a></div>
                         </td>
                     </tr>
 
@@ -569,7 +569,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:115</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:100</a></code>
 </div>
                         </td>
                     </tr>
@@ -654,7 +654,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:122</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:107</a></code>
 </div>
                         </td>
                     </tr>
@@ -739,7 +739,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:133</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:118</a></code>
 </div>
                         </td>
                     </tr>
@@ -812,7 +812,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:127</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:112</a></code>
 </div>
                         </td>
                     </tr>
@@ -897,7 +897,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:94</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:79</a></code>
 </div>
                         </td>
                     </tr>
@@ -1193,7 +1193,7 @@ just forwards the request:</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:81</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -1524,7 +1524,7 @@ just forwards the request:</p>
 import { FileService } from &quot;../../file/file.service&quot;;
 import { SafeUrl } from &quot;@angular/platform-browser&quot;;
 import { Entity } from &quot;app/core/entity/model/entity&quot;;
-import { Observable, of, throwError } from &quot;rxjs&quot;;
+import { from, Observable, of, throwError } from &quot;rxjs&quot;;
 import { HttpResponse } from &quot;@angular/common/http&quot;;
 import { NotAvailableOfflineError } from &quot;../../../core/session/not-available-offline.error&quot;;
 import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
@@ -1536,6 +1536,7 @@ import {
   TemplateExportComplement,
   TemplateExportContextService,
 } from &quot;../template-export-context/template-export-context.service&quot;;
+import { EntityRelationResolverService } from &quot;../../../core/entity/entity-relation-resolver/entity-relation-resolver.service&quot;;
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -1545,8 +1546,11 @@ interface TemplateUploadResponseDto {
 }
 
 /**
- * Format of API request body to render a PDF from a template.
+ * Format of API request body to render one or more files from a template.
  * TemplateId is provided via URL path.
+ *
+ * &#x60;data&#x60; is a single record for &#x60;/render&#x60;, or an array of records for &#x60;/render-batch&#x60;
+ * (the backend renders each one and returns either a ZIP or a combined PDF).
  */
 interface TemplateRenderRequestDto {
   /**
@@ -1557,7 +1561,7 @@ interface TemplateRenderRequestDto {
   /**
    * The data used to fill placeholders in the template.
    */
-  data: Object;
+  data: Object | Object[];
 
   /**
    * Additional context data available in the template under the &#x60;{c.…}&#x60; prefix.
@@ -1565,27 +1569,7 @@ interface TemplateRenderRequestDto {
   complement?: TemplateExportComplement;
 }
 
-/**
- * Format of API request body to render a batch of files from one template.
- * &#x60;data&#x60; is an array of records; the backend will render each one and return a ZIP.
- */
-interface TemplateRenderBatchRequestDto {
-  convertTo: string;
-  data: Object[];
-
-  /**
-   * Additional context data, shared by all records of the batch,
-   * available in the template under the &#x60;{c.…}&#x60; prefix.
-   */
-  complement?: TemplateExportComplement;
-}
-
 export interface TemplateExportResult {
-  filename: string;
-  file: ArrayBuffer;
-}
-
-export interface TemplateExportBatchResult {
   filename: string;
   file: ArrayBuffer;
 }
@@ -1599,6 +1583,7 @@ export interface TemplateExportBatchResult {
 export class TemplateExportApiService extends FileService {
   private navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN);
   private readonly exportContext &#x3D; inject(TemplateExportContextService);
+  private readonly relationResolver &#x3D; inject(EntityRelationResolverService);
 
   readonly API_URL &#x3D; environment.API_PROXY_PREFIX + &quot;/v1/export&quot;;
 
@@ -1662,6 +1647,61 @@ export class TemplateExportApiService extends FileService {
   */
 
   /**
+   * POST a render request to the given endpoint and resolve the response&#x27;s Content-Disposition
+   * filename, falling back to &#x60;fallbackFilename&#x60; if the header is missing or cannot be parsed.
+   *
+   * Shared by the single-record and batch render methods below, which only differ in the
+   * endpoint URL, the shape of &#x60;data&#x60;, and the fallback filename.
+   */
+  private renderTemplate(
+    url: string,
+    data: Object | Object[],
+    fallbackFilename: string,
+  ): Observable&lt;TemplateExportResult&gt; {
+    const complement &#x3D; this.exportContext.getComplement();
+
+    // give the template access to details of linked records (e.g. a Note&#x27;s related
+    // Child) instead of just their id - resolved one level deep, see the service.
+    return from(this.relationResolver.resolveRelations(data)).pipe(
+      switchMap((resolvedData) &#x3D;&gt;
+        this.httpClient.post(
+          url,
+          {
+            convertTo: &quot;pdf&quot;,
+            data: resolvedData,
+            ...(complement ? { complement } : {}),
+          } as TemplateRenderRequestDto,
+          { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
+        ),
+      ),
+      switchMap(async (res: HttpResponse&lt;ArrayBuffer&gt;) &#x3D;&gt; {
+        // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
+        const disposition &#x3D; res.headers.get(&quot;Content-Disposition&quot;);
+        let filenameMatch: RegExpMatchArray | null &#x3D; null;
+        if (disposition) {
+          try {
+            filenameMatch &#x3D; decodeURIComponent(disposition).match(
+              /filename&#x3D;&quot;?([^&quot;;]+)&quot;?/,
+            );
+          } catch (err) {
+            // malformed percent-encoding must not fail an otherwise successful
+            // download - fall back to fallbackFilename below
+            Logging.warn(
+              &quot;TemplateExportApiService: could not decode Content-Disposition filename&quot;,
+              err,
+            );
+          }
+        }
+
+        return {
+          filename: filenameMatch?.[1] ?? fallbackFilename,
+          file: res.body,
+        };
+      }),
+    );
+  }
+
+  /**
    * Generate a PDF applying actual data to an existing template.
    * @param template The TemplateExport entity to render
    * @param data The data object (typically an entity) to be applied to the template
@@ -1671,36 +1711,11 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     data: Object,
   ): Observable&lt;TemplateExportResult&gt; {
-    const complement &#x3D; this.exportContext.getComplement();
-
-    return this.httpClient
-      .post(
-        this.API_URL + &quot;/render/&quot; + template.getId(),
-        {
-          convertTo: &quot;pdf&quot;,
-          data: data,
-          ...(complement ? { complement } : {}),
-        } as TemplateRenderRequestDto,
-        { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
-      )
-      .pipe(
-        switchMap(async (res: HttpResponse&lt;ArrayBuffer&gt;) &#x3D;&gt; {
-          // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
-          const filenameMatch &#x3D; decodeURIComponent(
-            res.headers.get(&quot;Content-Disposition&quot;),
-          ).match(/filename&#x3D;&quot;(.+)&quot;/);
-
-          const fileName &#x3D;
-            filenameMatch &amp;&amp; filenameMatch.length &gt; 1
-              ? filenameMatch[1]
-              : template.title;
-
-          return {
-            filename: fileName,
-            file: res.body,
-          };
-        }),
-      );
+    return this.renderTemplate(
+      this.API_URL + &quot;/render/&quot; + template.getId(),
+      data,
+      template.title,
+    );
   }
 
   /**
@@ -1720,37 +1735,12 @@ export class TemplateExportApiService extends FileService {
     template: TemplateExport,
     dataList: Object[],
     mode: &quot;zip&quot; | &quot;combined&quot; &#x3D; &quot;zip&quot;,
-  ): Observable&lt;TemplateExportBatchResult&gt; {
-    const fallbackExtension &#x3D; mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;;
-    const complement &#x3D; this.exportContext.getComplement();
-
-    return this.httpClient
-      .post(
-        this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
-        {
-          convertTo: &quot;pdf&quot;,
-          data: dataList,
-          ...(complement ? { complement } : {}),
-        } as TemplateRenderBatchRequestDto,
-        { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
-      )
-      .pipe(
-        switchMap(async (res: HttpResponse&lt;ArrayBuffer&gt;) &#x3D;&gt; {
-          const disposition &#x3D; res.headers.get(&quot;Content-Disposition&quot;);
-          const filenameMatch &#x3D; disposition
-            ? decodeURIComponent(disposition).match(/filename&#x3D;&quot;?([^&quot;;]+)&quot;?/)
-            : null;
-          const filename &#x3D;
-            filenameMatch &amp;&amp; filenameMatch.length &gt; 1
-              ? filenameMatch[1]
-              : template.title + fallbackExtension;
-
-          return {
-            filename,
-            file: res.body,
-          };
-        }),
-      );
+  ): Observable&lt;TemplateExportResult&gt; {
+    return this.renderTemplate(
+      this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
+      dataList,
+      template.title + (mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;),
+    );
   }
 }
 </code></pre>

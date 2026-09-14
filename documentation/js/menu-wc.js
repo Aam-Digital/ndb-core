@@ -2064,6 +2064,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/EntityMapperService.html" data-type="entity-link" >EntityMapperService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/EntityRelationResolverService.html" data-type="entity-link" >EntityRelationResolverService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/EntityRelationsService.html" data-type="entity-link" >EntityRelationsService</a>
                                 </li>
                                 <li class="link">
@@ -2901,16 +2904,10 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/TableRow.html" data-type="entity-link" >TableRow&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/TemplateExportBatchResult.html" data-type="entity-link" >TemplateExportBatchResult</a>
-                            </li>
-                            <li class="link">
                                 <a href="interfaces/TemplateExportComplement.html" data-type="entity-link" >TemplateExportComplement</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateExportResult.html" data-type="entity-link" >TemplateExportResult</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/TemplateRenderBatchRequestDto.html" data-type="entity-link" >TemplateRenderBatchRequestDto</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/TemplateRenderRequestDto.html" data-type="entity-link" >TemplateRenderRequestDto</a>
@@ -2923,6 +2920,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UniquePropertyValidatorConfig.html" data-type="entity-link" >UniquePropertyValidatorConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UnresolvedEntityStub.html" data-type="entity-link" >UnresolvedEntityStub</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/UpdatedEntity.html" data-type="entity-link" >UpdatedEntity&lt;T extends Entity&gt;</a>
