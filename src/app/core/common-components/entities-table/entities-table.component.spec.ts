@@ -353,6 +353,20 @@ describe("EntitiesTableComponent", () => {
     expect(component.effectiveFilter()).toEqual(NOT_ARCHIVED_FILTER);
   });
 
+  it("should not touch the filter for a type that cannot be archived", () => {
+    const configuredFilter = { category: "a" } as DataFilter<Entity>;
+    fixture.componentRef.setInput("filter", configuredFilter);
+    fixture.componentRef.setInput("supportsArchiving", false);
+    fixture.detectChanges();
+
+    // such a type has no `inactive` flag, so the condition could only ever add
+    // an $or that no database index can serve
+    expect(component.effectiveFilter()).toEqual(configuredFilter);
+    expect(
+      fixture.nativeElement.querySelector(".filter-inactive-toggle"),
+    ).toBeNull();
+  });
+
   it("should overwrite entity schema fields with customColumn config", async () => {
     fixture.componentRef.setInput("entityType", TestEntity);
     const customField = {
