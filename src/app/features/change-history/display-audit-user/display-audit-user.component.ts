@@ -11,6 +11,14 @@ export interface AuditUser {
 }
 
 /**
+ * The author as an entity id, when one was recorded.
+ * An entity id is type-prefixed, which a plain username is not.
+ */
+export function authorEntityId(author: string): string | undefined {
+  return author?.includes(":") ? author : undefined;
+}
+
+/**
  * Who made an audited change.
  *
  * The backend records whatever the authenticated session carried, which is a
@@ -39,8 +47,5 @@ export class DisplayAuditUserComponent extends ViewDirective<AuditUser> {
     () => this.value()?.name ?? this.value()?.id ?? "",
   );
 
-  /** an entity id is type-prefixed, which a plain username is not */
-  readonly userEntityId = computed(() =>
-    this.author().includes(":") ? this.author() : undefined,
-  );
+  readonly userEntityId = computed(() => authorEntityId(this.author()));
 }

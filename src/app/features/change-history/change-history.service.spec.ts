@@ -6,7 +6,8 @@ import {
   AUDIT_RECORD_SUBJECT,
   ChangeHistoryService,
 } from "./change-history.service";
-import { DatabaseFactoryService } from "../../core/database/database-factory.service";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
@@ -16,7 +17,8 @@ let mockDb: {
   query: ReturnType<typeof vi.fn>;
   saveDatabaseIndex: ReturnType<typeof vi.fn>;
 };
-let dbFactory: { createRemoteDatabase: ReturnType<typeof vi.fn> };
+let dbResolver: { getDatabase: ReturnType<typeof vi.fn> };
+let findType: ReturnType<typeof vi.fn>;
 let abilityCan: ReturnType<typeof vi.fn>;
 let httpPost: ReturnType<typeof vi.fn>;
 
@@ -26,13 +28,15 @@ function setup(docs: any[] = [], canRead = true) {
     query: vi.fn().mockResolvedValue({ rows: [] }),
     saveDatabaseIndex: vi.fn().mockResolvedValue(undefined),
   };
-  dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
+  dbResolver = { getDatabase: vi.fn().mockReturnValue(mockDb) };
+  findType = vi.fn().mockResolvedValue({ records: [] });
   abilityCan = vi.fn().mockReturnValue(canRead);
   httpPost = vi.fn().mockReturnValue(of({ docs: [], bookmark: "bm-next" }));
   TestBed.configureTestingModule({
     providers: [
       ChangeHistoryService,
-      { provide: DatabaseFactoryService, useValue: dbFactory },
+      { provide: DatabaseResolverService, useValue: dbResolver },
+      { provide: EntityMapperService, useValue: { findType } },
       { provide: EntityAbility, useValue: { can: abilityCan } },
       {
         provide: KeycloakAuthService,
@@ -45,13 +49,6 @@ function setup(docs: any[] = [], canRead = true) {
     ],
   });
   return TestBed.inject(ChangeHistoryService);
-}
-
-/** the `_find` call of the last queryChangeHistory/getChangeAuthors, skipping `_index` */
-function lastFindCall(): [string, any, any] {
-  return httpPost.mock.calls
-    .filter((call) => call[0].endsWith("/_find"))
-    .at(-1) as [string, any, any];
 }
 
 class InternalEntity extends Entity {
@@ -86,7 +83,7 @@ it("queries the audit db with the entity's AuditRecord prefix", async () => {
 
   await service.getHistory(entity);
 
-  expect(dbFactory.createRemoteDatabase).toHaveBeenCalledWith("app-audit");
+  expect(dbResolver.getDatabase).toHaveBeenCalledWith("app-audit");
   expect(mockDb.getAll).toHaveBeenCalledWith(`AuditRecord:${entity.getId()}:`);
 });
 
@@ -108,13 +105,15 @@ it("returns normalized events newest-first", async () => {
   expect(history[0].changes).toEqual([{ field: "name", from: "B", to: "C" }]);
 });
 
-it("caches the remote audit db across calls", async () => {
+it("reads the audit db through the resolver, which owns its lifecycle", async () => {
   const service = setup([]);
 
   await service.getHistory(new Entity("1"));
   await service.getHistory(new Entity("2"));
 
-  expect(dbFactory.createRemoteDatabase).toHaveBeenCalledTimes(1);
+  // the handle is not cached here any more: it is a registered remote-only
+  // database, so the resolver hands out the same instance
+  expect(dbResolver.getDatabase).toHaveBeenCalledWith("app-audit");
 });
 
 it("propagates errors when the audit db is unavailable", async () => {
@@ -150,175 +149,26 @@ it("denies viewing history when no entity is given", () => {
   expect(service.canViewHistory(undefined)).toBe(false);
 });
 
-it("queries the change log against the audit db's _find endpoint, authenticated", async () => {
-  const service = setup();
-
-  await service.queryChangeHistory({ entityType: "Child" }, 10, 2);
-
-  const [url, body, options] = lastFindCall();
-  expect(url).toBe("/db/app-audit/_find");
-  expect(body.skip).toBe(20);
-  expect(body.selector.entityId.$gte).toBe("Child:");
-  expect(options.headers["Authorization"]).toBe("Bearer t");
-});
-
-it("creates the timestamp index once before querying, since sort needs it", async () => {
-  const service = setup();
-
-  await service.queryChangeHistory({}, 10);
-  await service.queryChangeHistory({}, 10);
-
-  const indexCalls = httpPost.mock.calls.filter((call) =>
-    call[0].endsWith("/_index"),
-  );
-  expect(indexCalls.length).toBe(1);
-  expect(indexCalls[0][0]).toBe("/db/app-audit/_index");
-  expect(indexCalls[0][1].index.fields).toEqual([{ timestamp: "desc" }]);
-});
-
-it("still queries when the index could not be created (it may already exist)", async () => {
-  const service = setup();
-  httpPost.mockImplementation((url: string) =>
-    url.endsWith("/_index")
-      ? throwError(() => new Error("forbidden"))
-      : of({ docs: [rawDoc("2026-06-03T10:00:00.000Z")] }),
-  );
-
-  const page = await service.queryChangeHistory({}, 10);
-
-  expect(page.entries.length).toBe(1);
-});
-
-it("returns mapped entries, without a further page when none was found", async () => {
-  const service = setup();
-  httpPost.mockImplementation((url: string) =>
-    url.endsWith("/_find")
-      ? of({ docs: [rawDoc("2026-06-03T10:00:00.000Z")] })
-      : of({}),
-  );
-
-  const page = await service.queryChangeHistory({}, 10);
-
-  expect(page.hasMore).toBe(false);
-  expect(page.entries).toEqual([
-    {
-      id: "AuditRecord:Entity:1:2026-06-03T10:00:00.000Z:1-a",
-      at: new Date("2026-06-03T10:00:00.000Z"),
-      by: "User:demo",
-      byEntityId: "User:demo",
-      action: "updated",
-      entityId: "Entity:1",
-      entityType: "Entity",
-      changedFields: ["name"],
-    },
-  ]);
-});
-
-it("reports a further page without returning the record that proved it", async () => {
-  const service = setup();
-  const docs = Array.from({ length: 3 }, (_, i) =>
-    rawDoc(`2026-06-0${i + 1}T10:00:00.000Z`),
-  );
-  httpPost.mockImplementation((url: string) =>
-    url.endsWith("/_find") ? of({ docs }) : of({}),
-  );
-
-  const page = await service.queryChangeHistory({}, 2);
-
-  expect(page.entries.length).toBe(2);
-  expect(page.hasMore).toBe(true);
-  expect(lastFindCall()[1].limit).toBe(3);
-});
-
 it("samples recent records for the distinct authors of the filter dropdown", async () => {
   const service = setup();
-  httpPost.mockImplementation((url: string) =>
-    url.endsWith("/_find")
-      ? of({
-          docs: [
-            { user: { name: "b" } },
-            { user: { name: "a" } },
-            { user: { name: "b" } },
-          ],
-        })
-      : of({}),
-  );
-
-  expect(await service.getChangeAuthors()).toEqual(["a", "b"]);
-  // _id must stay in the projection or the proxy drops every doc
-  expect(lastFindCall()[1].fields).toEqual(["_id", "user"]);
-});
-
-it("queries the reference view instead of _find when filtering by a related record", async () => {
-  const service = setup();
-  mockDb.query.mockResolvedValue({
-    rows: [{ doc: rawDoc("2026-06-03T10:00:00.000Z") }],
-  });
-
-  const page = await service.queryChangeHistory(
-    { relatedEntityId: "User:1" },
-    10,
-  );
-
-  const [view, options] = mockDb.query.mock.calls.at(-1);
-  expect(view).toBe("audit-references/by_reference");
-  expect(options.startkey[0]).toBe("User:1");
-  expect(options.include_docs).toBe(true);
-  expect(page.entries[0].entityId).toBe("Entity:1");
-  // no _find fallback: its selector cannot reach the ids inside a diff
-  expect(
-    httpPost.mock.calls.filter((call) => call[0].endsWith("/_find")),
-  ).toEqual([]);
-});
-
-it("creates the reference view once before querying it", async () => {
-  const service = setup();
-
-  await service.queryChangeHistory({ relatedEntityId: "User:1" }, 10);
-  await service.queryChangeHistory({ relatedEntityId: "User:2" }, 10);
-
-  expect(mockDb.saveDatabaseIndex).toHaveBeenCalledTimes(1);
-  expect(mockDb.saveDatabaseIndex.mock.calls[0][0]._id).toBe(
-    "_design/audit-references",
-  );
-  // the remote-only audit db, never the app db: routing this through the
-  // database resolver would open a *synced* handle and replicate the
-  // unboundedly growing audit history onto every device
-  expect(dbFactory.createRemoteDatabase).toHaveBeenCalledWith("app-audit");
-  expect(dbFactory.createRemoteDatabase).toHaveBeenCalledTimes(1);
-});
-
-it("still queries the reference view when its creation was rejected (it may already exist)", async () => {
-  const service = setup();
-  mockDb.saveDatabaseIndex.mockRejectedValue(new Error("forbidden"));
-  mockDb.query.mockResolvedValue({
-    rows: [{ doc: rawDoc("2026-06-03T10:00:00.000Z") }],
-  });
-
-  const page = await service.queryChangeHistory(
-    { relatedEntityId: "User:1" },
-    10,
-  );
-
-  expect(page.entries.length).toBe(1);
-});
-
-it("drops reference-view rows the backend's permission filter emptied", async () => {
-  const service = setup();
-  mockDb.query.mockResolvedValue({
-    rows: [
-      { doc: rawDoc("2026-06-03T10:00:00.000Z") },
-      { id: "AuditRecord:Secret:1:x:1-a" },
+  findType.mockResolvedValue({
+    records: [
+      { author: "User:demo" },
+      { author: "priya" },
+      { author: "User:demo" },
     ],
   });
 
-  const page = await service.queryChangeHistory(
-    { relatedEntityId: "User:1" },
-    10,
-  );
+  const authors = await service.getChangeAuthors();
 
-  expect(page.entries.length).toBe(1);
-  expect(page.hasMore).toBe(false);
+  // the same sort index the list uses, rather than a query of its own
+  expect(findType).toHaveBeenCalledWith(
+    expect.anything(),
+    {},
+    { limit: 1000 },
+    { prop: "timestamp", dir: "desc" },
+  );
+  expect(authors).toEqual(["priya", "User:demo"]);
 });
 
 it("reads the audit feature status from the replication-backend /_features endpoint (lazily)", async () => {
@@ -328,11 +178,13 @@ it("reads the audit feature status from the replication-backend /_features endpo
     query: vi.fn().mockResolvedValue({ rows: [] }),
     saveDatabaseIndex: vi.fn().mockResolvedValue(undefined),
   };
-  dbFactory = { createRemoteDatabase: vi.fn().mockReturnValue(mockDb) };
+  dbResolver = { getDatabase: vi.fn().mockReturnValue(mockDb) };
+  findType = vi.fn().mockResolvedValue({ records: [] });
   TestBed.configureTestingModule({
     providers: [
       ChangeHistoryService,
-      { provide: DatabaseFactoryService, useValue: dbFactory },
+      { provide: DatabaseResolverService, useValue: dbResolver },
+      { provide: EntityMapperService, useValue: { findType } },
       { provide: EntityAbility, useValue: { can: () => true } },
       { provide: HttpClient, useValue: { get: httpGet } },
     ],

@@ -16,6 +16,13 @@ export const changeHistoryComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "DisplayAuditTimestamp",
+    () =>
+      import("./display-audit-timestamp/display-audit-timestamp.component").then(
+        (c) => c.DisplayAuditTimestampComponent,
+      ),
+  ],
+  [
     "DisplayAuditRecord",
     () =>
       import("./display-audit-record/display-audit-record.component").then(
