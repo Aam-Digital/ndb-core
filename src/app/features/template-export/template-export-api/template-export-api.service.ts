@@ -34,12 +34,8 @@ interface TemplateRenderRequestDto {
 
   /**
    * The data used to fill placeholders in the template.
-   *
-   * Usually a single record. For a `TemplateExport.arrayReport` template, this is
-   * instead the array of all selected records, so the template's `d` is a top-level
-   * array that can be iterated with carbone's array/repetition syntax in one render.
    */
-  data: Object | Object[];
+  data: Object;
 
   /**
    * Additional context data available in the template under the `{c.…}` prefix.
@@ -145,16 +141,13 @@ export class TemplateExportApiService extends FileService {
 
   /**
    * Generate a PDF applying actual data to an existing template.
-   *
    * @param template The TemplateExport entity to render
-   * @param data The data object (typically an entity) to be applied to the template.
-   *   For a `template.arrayReport` template, pass the array of all selected records
-   *   instead, so they are rendered together as one top-level array in a single request.
+   * @param data The data object (typically an entity) to be applied to the template
    * @return An array buffer of the generated PDF
    */
   generatePdfFromTemplate(
     template: TemplateExport,
-    data: Object | Object[],
+    data: Object,
   ): Observable<TemplateExportResult> {
     const complement = this.exportContext.getComplement();
 
