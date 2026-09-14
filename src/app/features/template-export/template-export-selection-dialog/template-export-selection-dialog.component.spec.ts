@@ -202,6 +202,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
       of(mockResponse),
     );
     component.templateSelectionForm.setValue("template-1");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     await component.requestFile();
 
@@ -225,9 +228,15 @@ describe("TemplateExportSelectionDialogComponent", () => {
       throwError(() => new Error("boom")),
     );
     component.templateSelectionForm.setValue("template-1");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     await component.requestFile();
 
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).toHaveBeenCalled();
     expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
     expect(component.failures().length).toBe(1);
     expect(component.failures()[0].entity).toBe(testEntity);
@@ -258,6 +267,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
       await bulkFixture.whenStable();
       bulkComponent = bulkFixture.componentInstance;
       bulkComponent.templateSelectionForm.setValue("template-1");
+      bulkFixture.detectChanges();
+      await bulkFixture.whenStable();
+      bulkFixture.detectChanges();
     });
 
     it("should expose the entities array as-is for an array dialog payload", () => {
@@ -334,7 +346,15 @@ describe("TemplateExportSelectionDialogComponent", () => {
     });
 
     it("should reactively expose the selected template's arrayReport flag", async () => {
-      loadedTemplate.arrayReport = true;
+      const arrayReportTemplate = Object.assign(
+        new TemplateExport("template-2"),
+        {
+          title: "Array Report Template",
+          arrayReport: true,
+        },
+      );
+      mockEntityMapperLoad.mockResolvedValue(arrayReportTemplate);
+      bulkComponent.templateSelectionForm.setValue(arrayReportTemplate.getId());
 
       bulkFixture.detectChanges();
       await bulkFixture.whenStable();
@@ -395,6 +415,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
       await bulkComponent.requestFile();
 
+      expect(
+        mockPdfGeneratorApiService.generateBatchFromTemplate,
+      ).toHaveBeenCalled();
       expect(bulkComponent.phase()).toBe("done");
       expect(bulkComponent.failures().length).toBe(2);
       expect(bulkComponent.failures().map((f) => f.entity)).toEqual([
