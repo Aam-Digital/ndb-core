@@ -6,6 +6,8 @@ import { ChangeHistoryService } from "./change-history.service";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
 import { changeHistoryRoutes } from "./change-history.routing";
 import { AuditRecord } from "./model/audit-record";
+import { changeHistoryComponents } from "./change-history-components";
+import { ComponentRegistry } from "../../dynamic-components";
 
 export { AUDIT_RECORD_SUBJECT } from "./change-history.service";
 
@@ -31,6 +33,8 @@ export class ChangeHistoryModule {
   private readonly changeHistory = inject(ChangeHistoryService);
 
   constructor() {
+    inject(ComponentRegistry).addAll(changeHistoryComponents);
+
     this.entityActionsMenu.registerActions([
       {
         action: "view-change-history",

@@ -3,6 +3,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { ChangeAction, OPERATION_TO_ACTION } from "../change-history.types";
+import { changedFieldsOf } from "../change-history-normalize";
 
 /**
  * The `:<ISO timestamp>:<rev>` that the backend appends when it builds an audit
@@ -76,5 +77,21 @@ export class AuditRecord extends Entity {
   /** the displayed action, which unlike {@link operation} is past tense */
   get action(): ChangeAction {
     return OPERATION_TO_ACTION[this.operation];
+  }
+
+  /**
+   * The names of the fields this write changed.
+   *
+   * Readable from this record alone, unlike the before/after values, because a
+   * delta is already keyed by field name. Empty for a delete, which replicates
+   * as a tombstone stripped of its content.
+   */
+  get changedFields(): string[] {
+    return changedFieldsOf(this);
+  }
+
+  /** the recorded author, which is a user-entity id when one was recorded */
+  get author(): string {
+    return this.user?.name ?? this.user?.id ?? "";
   }
 }
