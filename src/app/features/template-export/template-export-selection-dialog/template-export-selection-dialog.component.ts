@@ -104,7 +104,7 @@ export class TemplateExportSelectionDialogComponent {
     this.templateSelectionForm.valueChanges,
     { initialValue: this.templateSelectionForm.value },
   );
-  private readonly selectedTemplate = resource({
+  private readonly selectedTemplate = resource<TemplateExport, string>({
     params: () => this.selectedTemplateId(),
     loader: ({ params: templateId }) =>
       templateId
@@ -140,7 +140,6 @@ export class TemplateExportSelectionDialogComponent {
   });
 
   async requestFile() {
-    const templateId = this.templateSelectionForm.value;
     const entities = this.entities();
     if (entities.length === 0) {
       this.alertService.addWarning(
@@ -154,11 +153,9 @@ export class TemplateExportSelectionDialogComponent {
     this.failures.set([]);
 
     try {
-      const template = await this.entityMapper.load(TemplateExport, templateId);
+      const template = this.selectedTemplate.value();
 
       if (template.arrayReport) {
-        // all selected records combined into a single top-level array, rendered
-        // as one report in one request - never split into a zip or per-record pages
         const result = await firstValueFrom(
           this.templateExportApi.generatePdfFromTemplate(template, entities),
         );
