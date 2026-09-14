@@ -1,5 +1,6 @@
 import { Routes } from "@angular/router";
 import { UserRoleGuard } from "../../core/permissions/permission-guard/user-role.guard";
+import { EntityPermissionGuard } from "../../core/permissions/permission-guard/entity-permission.guard";
 import { ADMIN_APP_ROLE } from "../../core/permissions/permission-types";
 
 /**
@@ -20,9 +21,15 @@ export const changeHistoryRoutes: Routes = [
       import("./change-history-list/change-history-list.component").then(
         (c) => c.ChangeHistoryListComponent,
       ),
-    canActivate: [UserRoleGuard],
+    // both gates, deliberately: the role keeps the system-wide log away from
+    // ordinary users on an instance whose config grants them a wildcard, and
+    // the subject check is what fails on an instance that enumerates subjects
+    // and has no AuditRecord rule - where the backend returns nothing at all
+    canActivate: [UserRoleGuard, EntityPermissionGuard],
     data: {
       permittedUserRoles: [ADMIN_APP_ROLE],
+      entityType: "AuditRecord",
+      requiredPermissionOperation: "read",
     },
   },
 ];

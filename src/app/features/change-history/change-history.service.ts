@@ -8,6 +8,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { AuditRecord } from "./model/audit-record";
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
+import { AUDIT_RECORD_SUBJECT } from "../../core/permissions/permission-types";
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeEvent } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
@@ -16,9 +17,6 @@ import {
   buildAuditReferenceIndex,
 } from "./audit-reference-index";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
-
-/** CASL subject the audit records are keyed under (see replication-backend #4026). */
-export const AUDIT_RECORD_SUBJECT = "AuditRecord";
 
 /** Response of the replication-backend central `GET /_features` endpoint. */
 interface AuditFeatureStatus {

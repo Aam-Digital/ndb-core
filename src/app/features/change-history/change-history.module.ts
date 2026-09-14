@@ -9,8 +9,6 @@ import { AuditRecord } from "./model/audit-record";
 import { changeHistoryComponents } from "./change-history-components";
 import { ComponentRegistry } from "../../dynamic-components";
 
-export { AUDIT_RECORD_SUBJECT } from "./change-history.service";
-
 function asSingle(entity: Entity | Entity[]): Entity | undefined {
   return Array.isArray(entity) ? entity[0] : entity;
 }

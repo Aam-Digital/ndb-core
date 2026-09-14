@@ -15,7 +15,10 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
-import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
+import {
+  ADMIN_APP_ROLE,
+  AUDIT_RECORD_SUBJECT,
+} from "../../permissions/permission-types";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -124,11 +127,15 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   /**
    * The change log lives behind the admin route, so only offer the link to
-   * someone the route will actually let in.
+   * someone the route will actually let in - which takes both of its gates.
    */
   readonly canViewChangeHistory = toSignal(
     this.sessionSubject.pipe(
-      map((session) => session?.roles?.includes(ADMIN_APP_ROLE) ?? false),
+      map(
+        (session) =>
+          (session?.roles?.includes(ADMIN_APP_ROLE) ?? false) &&
+          this.ability.can("read", AUDIT_RECORD_SUBJECT),
+      ),
     ),
     { initialValue: false },
   );

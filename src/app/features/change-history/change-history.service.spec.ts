@@ -2,10 +2,8 @@ import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import {
-  AUDIT_RECORD_SUBJECT,
-  ChangeHistoryService,
-} from "./change-history.service";
+import { ChangeHistoryService } from "./change-history.service";
+import { AUDIT_RECORD_SUBJECT } from "../../core/permissions/permission-types";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
