@@ -214,7 +214,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       mockResponse.filename,
     );
     expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-      "Generated 1 of 1 files.",
+      "Files generated successfully.",
     );
     // dialog auto-closes on success — implicitly verifies the done-summary is never rendered
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
@@ -293,7 +293,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       );
       expect(bulkComponent.failures()).toEqual([]);
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-        "Generated 2 of 2 files.",
+        "Files generated successfully.",
       );
       expect(mockDialogRef.close).toHaveBeenCalledWith(true);
     });
@@ -320,7 +320,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
         "combined.pdf",
       );
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-        "Generated 2 of 2 files.",
+        "Files generated successfully.",
       );
       expect(mockDialogRef.close).toHaveBeenCalledWith(true);
     });
@@ -367,7 +367,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
         "combined-report.pdf",
       );
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-        "Generated 2 of 2 files.",
+        "Files generated successfully.",
       );
       expect(mockDialogRef.close).toHaveBeenCalledWith(true);
     });

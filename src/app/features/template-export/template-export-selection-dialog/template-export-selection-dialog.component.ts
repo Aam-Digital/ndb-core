@@ -193,9 +193,7 @@ export class TemplateExportSelectionDialogComponent {
       }
       this.dialogRef.close(true);
 
-      this.alertService.addInfo(
-        $localize`Generated ${entities.length} of ${entities.length} files.`,
-      );
+      this.alertService.addInfo($localize`Files generated successfully.`);
     } catch (error) {
       Logging.warn("Failed to generate files", error);
       this.failures.set(entities.map((entity) => ({ entity, error })));
