@@ -84,6 +84,16 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private readonly conditionHiddenFieldIds = signal<ReadonlySet<string>>(
     new Set(),
   );
+  /**
+   * ids of fields this component has disabled because of an unmet `displayCondition`.
+   *
+   * Only fields tracked here are ever re-enabled by `updateFieldDisplayConditions`: a field
+   * may also be disabled for unrelated reasons (the whole form is still in read-only "view"
+   * mode until the user clicks "Edit", see `FormComponent`; missing update permissions; an
+   * anonymized entity) and must stay disabled in that case even once its condition is met.
+   */
+  private readonly conditionDisabledFieldIds = new Set<string>();
+  private lastDisplayConditionForm: EntityForm<T> | undefined;
 
   /** Field groups filtered by the current user's permissions and by `displayCondition` */
   readonly filteredFieldGroups = computed<FieldGroup[]>(() => {
@@ -160,12 +170,19 @@ export class EntityFormComponent<T extends Entity = Entity> {
    * possibly unsaved state (i.e. including the current form values) and hide/disable
    * fields whose condition is not met.
    *
-   * Only touches controls that declare a `displayCondition`, so it never interferes with
-   * disabling done elsewhere (e.g. for missing update permissions).
+   * Only touches controls that declare a `displayCondition`. A field is only re-enabled if
+   * this component itself had previously disabled it for an unmet condition - never a field
+   * that is disabled for some unrelated reason (the form is still in read-only "view" mode,
+   * missing update permissions, an anonymized entity), so it never overrides those.
    */
   private updateFieldDisplayConditions(form: EntityForm<T>) {
     const entity = this.entityState();
     if (!entity) return;
+
+    if (form !== this.lastDisplayConditionForm) {
+      this.conditionDisabledFieldIds.clear();
+      this.lastDisplayConditionForm = form;
+    }
 
     const fieldsWithCondition = form.fieldConfigs.filter(
       (f) => f.displayCondition && Object.keys(f.displayCondition).length > 0,
@@ -193,17 +210,19 @@ export class EntityFormComponent<T extends Entity = Entity> {
       if (!isMet) {
         hiddenFieldIds.add(field.id);
         if (control.enabled) {
+          this.conditionDisabledFieldIds.add(field.id);
           control.disable({ onlySelf: true, emitEvent: false });
         }
         continue;
       }
 
       if (
-        control.disabled &&
+        this.conditionDisabledFieldIds.has(field.id) &&
         !this.isEntityLocked() &&
         this.ability.can(action, entity, field.id)
       ) {
         control.enable({ onlySelf: true, emitEvent: false });
+        this.conditionDisabledFieldIds.delete(field.id);
       }
     }
 
