@@ -165,7 +165,9 @@ export interface EntitySchemaField {
    * If the condition is not met, the form field is hidden and its value is excluded
    * from validation (e.g. a "required" validator is skipped while hidden).
    *
-   * Uses the same `{ $or: [ { field: value }, ... ] }` format as `ColorMapping.condition`.
+   * Either `{ $or: [ { field: value }, ... ] }` (shown if any row matches, same format
+   * as `ColorMapping.condition`) or a merged object / `{ $and: [...] }` (shown only if
+   * every row matches), matching what the "Display Condition" admin dialog produces.
    */
   displayCondition?: any;
 }

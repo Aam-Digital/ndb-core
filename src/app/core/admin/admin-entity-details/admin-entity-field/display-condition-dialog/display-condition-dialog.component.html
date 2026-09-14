@@ -8,14 +8,20 @@
 </h2>
 
 <mat-dialog-content>
-  <p i18n>
-    This field will only be shown in the form if the record currently matches
-    one of the conditions below.
-  </p>
+  <p i18n>This field is shown only while the record matches...</p>
+
+  <div class="flex-row align-center gap-regular margin-bottom-regular">
+    <app-condition-combinator-toggle
+      [value]="combinator()"
+      (valueChange)="combinator.set($event)"
+    ></app-condition-combinator-toggle>
+    <span i18n>of the following conditions match</span>
+  </div>
 
   <app-conditions-editor
     [conditions]="editorConditions"
     [entityConstructor]="data.entityType"
+    [hint]="combinatorHint()"
     (conditionsChange)="onConditionsChange($event)"
   ></app-conditions-editor>
 </mat-dialog-content>

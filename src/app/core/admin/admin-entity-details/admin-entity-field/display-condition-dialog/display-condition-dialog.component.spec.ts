@@ -36,6 +36,34 @@ describe("DisplayConditionDialogComponent", () => {
     TestBed.resetTestingModule();
   });
 
+  it("derives combinator and editor rows from existing conditions of different shapes", () => {
+    expect(
+      createComponent({
+        displayCondition: { $or: [{ name: "shown" }] },
+      }).combinator(),
+    ).toBe("any");
+
+    TestBed.resetTestingModule();
+    const allFromMerged = createComponent({
+      displayCondition: { status: "closed", name: "shown" },
+    });
+    expect(allFromMerged.combinator()).toBe("all");
+    expect(allFromMerged.editorConditions.$or).toEqual([
+      { status: "closed" },
+      { name: "shown" },
+    ]);
+
+    TestBed.resetTestingModule();
+    const allFromAnd = createComponent({
+      displayCondition: { $and: [{ status: "closed" }, { status: "open" }] },
+    });
+    expect(allFromAnd.combinator()).toBe("all");
+    expect(allFromAnd.editorConditions.$or).toEqual([
+      { status: "closed" },
+      { status: "open" },
+    ]);
+  });
+
   it("initializes editorConditions from the existing displayCondition", () => {
     const component = createComponent({
       displayCondition: { $or: [{ name: "shown" }] },
@@ -54,15 +82,39 @@ describe("DisplayConditionDialogComponent", () => {
     expect(component.editorConditions).toEqual({});
   });
 
-  it("applies the edited condition", () => {
+  it("applies conditions according to combinator and removes empty conditions", () => {
     const component = createComponent();
 
-    component.onConditionsChange({ $or: [{ name: "shown" }] });
-    component.apply();
-
-    expect(mockDialogRef.close).toHaveBeenCalledWith({
-      $or: [{ name: "shown" }],
+    component.onConditionsChange({
+      $or: [{ status: "closed" }, { name: "shown" }],
     });
+    component.combinator.set("all");
+    component.apply();
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      status: "closed",
+      name: "shown",
+    });
+
+    component.combinator.set("any");
+    component.apply();
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      $or: [{ status: "closed" }, { name: "shown" }],
+    });
+
+    // duplicate keys cannot be merged into one object, fall back to $and
+    component.onConditionsChange({
+      $or: [{ status: "closed" }, { status: "open" }],
+    });
+    component.combinator.set("all");
+    component.apply();
+    expect(mockDialogRef.close).toHaveBeenCalledWith({
+      $and: [{ status: "closed" }, { status: "open" }],
+    });
+
+    // no valid rows left -> null signals "remove condition"
+    component.onConditionsChange({ $or: [{}] });
+    component.apply();
+    expect(mockDialogRef.close).toHaveBeenCalledWith(null);
   });
 
   it("applies null when no valid condition rows remain", () => {

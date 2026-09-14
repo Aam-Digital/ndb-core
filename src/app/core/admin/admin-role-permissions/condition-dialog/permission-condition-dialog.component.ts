@@ -6,7 +6,6 @@ import {
   signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -15,6 +14,7 @@ import {
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 import { ConditionsEditorComponent } from "../../../common-components/conditions-editor/conditions-editor.component";
+import { ConditionCombinatorToggleComponent } from "../../../common-components/condition-combinator-toggle/condition-combinator-toggle.component";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../../entity/model/entity";
@@ -41,9 +41,9 @@ export interface PermissionConditionDialogData {
   imports: [
     MatDialogModule,
     MatButtonModule,
-    MatButtonToggleModule,
     MatTooltipModule,
     ConditionsEditorComponent,
+    ConditionCombinatorToggleComponent,
     DialogCloseComponent,
   ],
   templateUrl: "./permission-condition-dialog.component.html",
