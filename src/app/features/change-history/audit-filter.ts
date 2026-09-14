@@ -60,7 +60,13 @@ export function buildAuditFilter(
   }
 
   if (filters.changedBy) {
-    selector["user.name"] = filters.changedBy;
+    // the backend writes `user.name` only when the token carried one, so on
+    // some systems every record identifies its author by id alone. The options
+    // are sampled from the same fallback, so both have to be matched.
+    selector.$or = [
+      { "user.name": filters.changedBy },
+      { "user.id": filters.changedBy },
+    ];
   }
 
   return selector as DataFilter<AuditRecord>;

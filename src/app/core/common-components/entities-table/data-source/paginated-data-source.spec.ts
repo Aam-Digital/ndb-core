@@ -77,9 +77,19 @@ describe("PaginatedDataSource", () => {
     });
 
     it("should strip the '.id' suffix of entity/enum reference keys (stored by id only)", () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+
       expect(processFilter({ "category.id": "SCHOOL" })).toEqual({
         category: "SCHOOL",
       });
+    });
+
+    it("should keep '.id' where it is a real path into an object value", () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+
+      // `other` is a plain field, so its value is an object of its own and
+      // rewriting this would silently match nothing
+      expect(processFilter({ "other.id": "x" })).toEqual({ "other.id": "x" });
     });
   });
 

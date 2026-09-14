@@ -42,10 +42,12 @@ describe("buildAuditFilter", () => {
     );
   });
 
-  it("should match the author on the recorded name", () => {
-    expect(buildAuditFilter({ changedBy: "User:demo" })["user.name"]).toBe(
-      "User:demo",
-    );
+  it("should match the author however the backend recorded them", () => {
+    // a token without a name leaves every record identified by id alone
+    expect(buildAuditFilter({ changedBy: "User:demo" }).$or).toEqual([
+      { "user.name": "User:demo" },
+      { "user.id": "User:demo" },
+    ]);
   });
 
   it("should leave an unset filter unrestricted", () => {
@@ -56,7 +58,7 @@ describe("buildAuditFilter", () => {
     });
 
     expect(filter.entityId).toBeUndefined();
-    expect(filter["user.name"]).toBeUndefined();
+    expect(filter.$or).toBeUndefined();
     expect(filter.operation).toEqual({ $ne: "baseline" });
   });
 });

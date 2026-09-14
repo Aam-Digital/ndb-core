@@ -13,6 +13,9 @@ import { merge } from "rxjs";
  */
 export const FULL_LOAD_PAGE_SIZE = 500;
 
+/** datatypes whose value is stored as the referenced id alone */
+const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
+
 export class PaginatedDataSource<
   T extends Entity,
 > extends EntitiesTableDataSource<T> {
@@ -183,8 +186,18 @@ export class PaginatedDataSource<
     // Mango queries need `$options: "i"` while CouchDB only supports `$regex: "(?i)..."`
     filter = convertToCouchRegex(filter);
     const filterString = JSON.stringify(filter);
-    // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
-    const updatedString = filterString.replace(/("\w+)\.id(?=":)/g, "$1");
+    const schema = this.loadRecordConfig()?.entityCtr?.schema;
+    // replace e.g. "gender.id" with "gender": enum and entity references are
+    // stored as the plain id. Only for fields that are actually stored that
+    // way, though - on any other field ".id" is a real path into an object
+    // value, and rewriting it silently matches nothing.
+    const updatedString = filterString.replace(
+      /"(\w+)\.id(?=":)/g,
+      (match, field) =>
+        STORED_BY_ID_DATATYPES.includes(schema?.get(field)?.dataType)
+          ? `"${field}`
+          : match,
+    );
     return JSON.parse(updatedString);
   }
 }

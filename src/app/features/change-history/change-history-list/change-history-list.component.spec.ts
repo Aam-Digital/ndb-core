@@ -99,7 +99,7 @@ it("should apply the selected record type, action and author to the query", asyn
   expect(selector()).toMatchObject({
     entityId: { $gte: "School:", $lt: "School:￰" },
     operation: "delete",
-    "user.name": "priya",
+    $or: [{ "user.name": "priya" }, { "user.id": "priya" }],
   });
 });
 
