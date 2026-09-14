@@ -130,11 +130,7 @@ export class EntityRelationResolverService {
     }
 
     try {
-      const entitiesOfType = await this.loadAllOfType(
-        entityType,
-        loadedEntitiesByType,
-      );
-      const match = entitiesOfType.get(id);
+      const match = await this.getEntity(entityType, id, loadedEntitiesByType);
       // a shallow, one-level copy: protects the entity instance still held
       // elsewhere in the app from being mutated through the resolved data,
       // without resolving (and thereby recursing into) its own relations.
@@ -175,14 +171,17 @@ export class EntityRelationResolverService {
   }
 
   /**
-   * Load all entities of the given type, indexed by id.
-   * Memoized in `loadedEntitiesByType` so repeated ids/records of the same
-   * type only trigger a single `loadType` database request.
+   * Return the actual entity with the given ID.
+   *
+   * Internally loads all entities of that type at once for less DB requests.
+   * If it turns out to be transferring too much data this could be changed to
+   * individual loads which would slow down the frontend though.
    */
-  private loadAllOfType(
+  private getEntity(
     entityType: string,
+    id: string,
     loadedEntitiesByType: Map<string, Promise<Map<string, Entity>>>,
-  ): Promise<Map<string, Entity>> {
+  ): Promise<Entity> {
     if (!loadedEntitiesByType.has(entityType)) {
       loadedEntitiesByType.set(
         entityType,
@@ -191,7 +190,7 @@ export class EntityRelationResolverService {
           .then((entities) => new Map(entities.map((e) => [e.getId(), e]))),
       );
     }
-    return loadedEntitiesByType.get(entityType);
+    return loadedEntitiesByType.get(entityType).then((res) => res.get(id));
   }
 
   /**
