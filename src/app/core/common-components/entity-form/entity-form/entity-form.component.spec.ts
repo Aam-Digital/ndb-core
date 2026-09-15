@@ -220,6 +220,22 @@ describe("EntityFormComponent", () => {
     ]);
   });
 
+  it("should skip an incompletely configured field instead of failing the whole group", async () => {
+    fixture.componentRef.setInput("fieldGroups", [
+      { fields: ["name", undefined, "other"] },
+    ]);
+
+    TestBed.inject(EntityAbility).update([
+      { subject: "all", action: "manage" },
+    ]);
+
+    fixture.detectChanges();
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: ["name", "other"] },
+    ]);
+  });
+
   it("should not change anything if changed entity has same values as form", () => {
     return expectApplyChangesPopup(
       "not-shown",

@@ -302,8 +302,10 @@ export class EntityFormComponent<T extends Entity = Entity> {
       .map((group) => ({
         ...group,
         fields: group.fields.filter((field) => {
-          const fieldId = typeof field === "string" ? field : field.id;
+          const fieldId = typeof field === "string" ? field : field?.id;
+          // an incompletely configured field (e.g. no id selected) must not break the whole group
           return (
+            fieldId &&
             !hiddenFieldIds.has(fieldId) &&
             this.ability.can(action, entity, fieldId)
           );

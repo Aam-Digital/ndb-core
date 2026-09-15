@@ -13,6 +13,7 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
+import { Logging } from "../../logging/logging.service";
 import {
   EntityForm,
   EntityFormGroup,
@@ -116,9 +117,24 @@ export class EntityFormService {
     withPermissionCheck = true,
     withDefaultValues = true,
   ): Promise<EntityForm<T>> {
-    const fields = formFields.map((f) =>
-      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
-    );
+    const fields: FormFieldConfig[] = [];
+    for (const formField of formFields) {
+      try {
+        fields.push(
+          this.extendFormFieldConfig(
+            formField,
+            entity.getConstructor(),
+            forTable,
+          ),
+        );
+      } catch (err) {
+        // an incompletely configured field must not block the rest of the form from opening
+        Logging.error("Could not create form config for a field", err, {
+          formField,
+          entityType: entity.getConstructor().ENTITY_TYPE,
+        });
+      }
+    }
 
     const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
       fields,
