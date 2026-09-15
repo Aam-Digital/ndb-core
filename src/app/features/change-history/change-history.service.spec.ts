@@ -159,10 +159,11 @@ it("samples recent records for the distinct authors of the filter dropdown", asy
 
   const authors = await service.getChangeAuthors();
 
-  // the same sort index the list uses, rather than a query of its own
+  // the same sort index the list uses, rather than a query of its own, and
+  // naming the sort field so the query is not served by the pinned index alone
   expect(findType).toHaveBeenCalledWith(
     expect.anything(),
-    {},
+    { timestamp: { $gt: null } },
     { limit: 1000 },
     { prop: "timestamp", dir: "desc" },
   );

@@ -6,6 +6,7 @@ import { environment } from "../../../environments/environment";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { AuditRecord } from "./model/audit-record";
+import { DataFilter } from "../../core/filter/filters/filters";
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { AUDIT_RECORD_SUBJECT } from "../../core/permissions/permission-types";
@@ -150,7 +151,10 @@ export class ChangeHistoryService {
   async getChangeAuthors(): Promise<string[]> {
     const res = await this.entityMapper.findType(
       AuditRecord,
-      {},
+      // the same constraint the list's own filter carries: the sort field is
+      // named so the query describes the index it is served from, rather than
+      // relying on the pinned index alone
+      { timestamp: { $gt: null } } as DataFilter<AuditRecord>,
       { limit: AUTHOR_SAMPLE_SIZE },
       { prop: "timestamp", dir: "desc" },
     );
