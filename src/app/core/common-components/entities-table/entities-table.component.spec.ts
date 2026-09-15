@@ -388,6 +388,34 @@ describe("EntitiesTableComponent", () => {
     expect(errorSpy).toHaveBeenCalled();
   });
 
+  it("should skip a null/non-string entry in columnsToDisplay instead of failing the whole table", () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", [
+      "name",
+      null as unknown as string,
+      "other",
+    ]);
+    fixture.detectChanges();
+
+    expect(component._columnsToDisplay()).toEqual(["name", "other"]);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should skip a dangling column id with no matching column instead of failing the whole table", () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", [
+      "name",
+      "field-that-was-deleted",
+      "other",
+    ]);
+    fixture.detectChanges();
+
+    expect(component._columnsToDisplay()).toEqual(["name", "other"]);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
   it("should set noSorting if dataType cannot be sorted properly", () => {
     fixture.componentRef.setInput("entityType", Note);
     fixture.detectChanges();
