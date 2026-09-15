@@ -4,6 +4,7 @@ import {
 } from "#src/app/core/common-components/entity-form/entity-form";
 import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -11,7 +12,6 @@ import {
   input,
   signal,
   ViewEncapsulation,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -101,7 +101,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
     const entity = this.entityState();
     if (!groups || !entity) return groups ?? [];
     const hiddenFieldIds = this.conditionHiddenFieldIds();
-    return this.filterFieldGroupsByPermissions(groups, entity, hiddenFieldIds);
+    return this.filterFieldGroups(groups, entity, hiddenFieldIds);
   });
 
   private initialFormValues: any;
@@ -291,7 +291,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
     );
   }
 
-  private filterFieldGroupsByPermissions(
+  private filterFieldGroups(
     fieldGroups: FieldGroup[],
     entity: Entity,
     hiddenFieldIds: ReadonlySet<string> = new Set(),
