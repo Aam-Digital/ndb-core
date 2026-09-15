@@ -29,12 +29,12 @@ exists.
 
 Keycloak's very first user is created with no `exact_username` attribute, so nothing links their login
 account to a "profile" entity (the record `${user.entityId}` permission rules and `createdBy`/`updatedBy`
-resolve to). `UserEntityLinkService` and a step in `system-init-assistant/` close that gap, once per
-account, right after setup:
+resolve to). `system-init-assistant/user-profile-setup/` closes that gap, once per account, right
+after setup:
 
-- **Only offered when `SessionInfo.entityId` is unset** (`UserEntityLinkService.shouldOfferStep`) - the
-  same "no linked profile" state that's already valid and silent for any account outside setup (see
-  above). This is also what makes demo mode skip the step automatically: its hardcoded session already
+- **Only offered when `SessionInfo.entityId` is unset** (`UserProfileSetupComponent.shouldOfferStep`) -
+  the same "no linked profile" state that's already valid and silent for any account outside setup
+  (see above). This is also what makes demo mode skip the step automatically: its hardcoded session already
   sets `entityId`.
 - **Which entity type to create is asked, not assumed.** `getUserEntityTypes()` returns every type with
   `enableUserAccounts` set, in entity-registry order - there is no defensible "first" one. The step
@@ -45,6 +45,12 @@ account, right after setup:
 - **The account is linked only after the entity is saved**, via the same `updateUser(accountId, {
 userEntityId })` write path the user administration UI (`../user/user-details/`) uses to re-link an
   existing account - this step is really just that same operation, automated for the very first login.
+- **The entity is pushed to the server before the account is linked.** A save only writes to the local
+  database, and linking changes what `${user.entityId}` resolves to - so the next login enforces
+  different permission rules and `PermissionEnforcerService` drops local data they no longer cover
+  (on the legacy `idb` adapter by destroying the local database, unsynced documents included). With
+  the reload below, a profile that hasn't reached the server yet would be lost while its account link
+  survives. If that push fails (e.g. offline), the account is left unlinked rather than reloading.
 - **A successful link reloads the app.** `SessionInfo.entityId` comes from a token claim set at login;
   writing the Keycloak attribute server-side doesn't change an already-issued token, so the app has to
   do a fresh login (`init()`'s SSO check) to pick it up - the reload is only skipped when the write
@@ -84,10 +90,9 @@ offer their own use cases without a code change. The picker filters these to the
   question been settled yet"
 - `assistant.service.ts` / `assistant-dialog/` — opens and manages the Assistant panel and its tabs
 - `assistant-button/` — toolbar entry point that auto-opens the panel when no config exists
-- `system-init-assistant/` — the initial setup UI, including the `?useCase=` shortcut, use-case picker,
-  and the post-setup account-linking step
-- `user-entity-link.service.ts` — resolves which entity type(s) can be linked, the form fields for
-  creating one, and performs the account link
+- `system-init-assistant/` — the initial setup UI, including the `?useCase=` shortcut and use-case picker
+- `system-init-assistant/user-profile-setup/` — the post-setup step: resolves which entity type(s) can
+  be linked and the form fields for creating one, then performs the account link
 - `context-aware-assistant/` — the post-setup guidance tab
 - `../../../assets/base-configs/` — the shipped base configs and the descriptors listing them
 - `../admin/setup-wizard/` — the post-setup stepper
