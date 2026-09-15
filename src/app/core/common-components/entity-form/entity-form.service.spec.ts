@@ -32,6 +32,7 @@ import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EventEmitter } from "@angular/core";
+import { Logging } from "../../logging/logging.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -586,6 +587,22 @@ describe("EntityFormService", () => {
       description: "Property description",
       additional: "someAdditional",
     } as FormFieldConfig);
+  });
+
+  it("should skip an incompletely configured field instead of failing the whole form", async () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    const formFields = [
+      { id: "name" },
+      undefined as unknown as FormFieldConfig, // simulates a form field row saved without an id, e.g. from a raw config edit
+      { id: "dateOfBirth" },
+    ];
+
+    const form = await createForm(formFields, new TestEntity());
+
+    expect(form.formGroup.get("name")).toBeTruthy();
+    expect(form.formGroup.get("dateOfBirth")).toBeTruthy();
+    expect(form.fieldConfigs.map((f) => f.id)).toEqual(["name", "dateOfBirth"]);
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   function createMockEntityForm<T extends Entity>(
