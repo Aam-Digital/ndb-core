@@ -195,13 +195,11 @@ export class EntityFormComponent<T extends Entity = Entity> {
     return fieldGroups
       .map((group) => ({
         ...group,
-        fields: group.fields.filter((field) =>
-          this.ability.can(
-            action,
-            entity,
-            typeof field === "string" ? field : field.id,
-          ),
-        ),
+        fields: group.fields.filter((field) => {
+          const fieldId = typeof field === "string" ? field : field?.id;
+          // an incompletely configured field (e.g. no id selected) must not break the whole group
+          return fieldId && this.ability.can(action, entity, fieldId);
+        }),
       }))
       .filter((group) => group.fields.length > 0);
   }
