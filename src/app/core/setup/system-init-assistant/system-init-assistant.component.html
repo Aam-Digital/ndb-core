@@ -51,18 +51,36 @@
     </div>
   } @else if (generatingData()) {
     <p i18n>Generating sample data for this demo ...</p>
+  } @else if (!profileStepDone()) {
+    <app-user-profile-setup
+      (completed)="onProfileStepCompleted($event)"
+    ></app-user-profile-setup>
   } @else {
-    <p i18n>
-      We have loaded some sample data into this demo system. Explore and play
-      around – you can’t break anything!<br />
-      Changes you make in this demo will <em>not</em> be saved anywhere. The
-      system is reset after you close or reload the page.
-    </p>
+    @if (environment.demo_mode) {
+      <p i18n>
+        We have loaded some sample data into this demo system. Explore and play
+        around – you can’t break anything!<br />
+        Changes you make in this demo will <em>not</em> be saved anywhere. The
+        system is reset after you close or reload the page.
+      </p>
 
-    <p i18n>
-      You can get assistance by clicking the "Assistant" button on the top right
-      of the toolbar. From there you can also switch to other demo scenarios.
-    </p>
+      <p i18n>
+        You can get assistance by clicking the "Assistant" button on the top
+        right of the toolbar. From there you can also switch to other demo
+        scenarios.
+      </p>
+    } @else {
+      <p i18n>Your system is ready to use.</p>
+
+      @if (profileStepNotice()) {
+        <p>{{ profileStepNotice() }}</p>
+      }
+
+      <p i18n>
+        You can get assistance any time by clicking the "Assistant" button on
+        the top right of the toolbar.
+      </p>
+    }
 
     <div class="demo-actions">
       <button
