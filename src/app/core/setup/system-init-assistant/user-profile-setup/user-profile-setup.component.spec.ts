@@ -22,25 +22,25 @@ import { KeycloakAuthService } from "../../../session/auth/keycloak/keycloak-aut
 import { LOCATION_TOKEN } from "app/utils/di-tokens";
 
 class ProfileTestEntity extends Entity {
-  static override ENTITY_TYPE = "ProfileTestEntity";
-  static override enableUserAccounts = true;
-  static override toStringAttributes = ["name"];
-  static override label = "Profile";
+  static override readonly ENTITY_TYPE = "ProfileTestEntity";
+  static override readonly enableUserAccounts = true;
+  static override readonly toStringAttributes = ["name"];
+  static override readonly label = "Profile";
 
   @DatabaseField() name: string;
 }
 
 class OtherProfileTestEntity extends Entity {
-  static override ENTITY_TYPE = "OtherProfileTestEntity";
-  static override enableUserAccounts = true;
-  static override toStringAttributes = ["name"];
-  static override label = "Other Profile";
+  static override readonly ENTITY_TYPE = "OtherProfileTestEntity";
+  static override readonly enableUserAccounts = true;
+  static override readonly toStringAttributes = ["name"];
+  static override readonly label = "Other Profile";
 
   @DatabaseField() name: string;
 }
 
 class NonAccountTestEntity extends Entity {
-  static override ENTITY_TYPE = "NonAccountTestEntity";
+  static override readonly ENTITY_TYPE = "NonAccountTestEntity";
 
   @DatabaseField() name: string;
 }
