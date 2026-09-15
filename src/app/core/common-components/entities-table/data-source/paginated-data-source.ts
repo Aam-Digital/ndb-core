@@ -13,6 +13,9 @@ import { merge } from "rxjs";
  */
 export const FULL_LOAD_PAGE_SIZE = 500;
 
+/** datatypes whose value is stored as the referenced id alone */
+const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
+
 export class PaginatedDataSource<
   T extends Entity,
 > extends EntitiesTableDataSource<T> {
@@ -88,7 +91,7 @@ export class PaginatedDataSource<
    * the underlying data may have changed (entity update) - in all these
    * cases the existing bookmark chain is no longer valid.
    */
-  private resetPaginationCache() {
+  protected resetPaginationCache() {
     this.filteredRecords.set([]);
     this.bookmark = undefined;
     this.reachedEnd = false;
@@ -112,8 +115,7 @@ export class PaginatedDataSource<
 
     if (loadedLength < requiredLength && !this.reachedEnd) {
       const deficit = requiredLength - loadedLength;
-      const res = await this.entityMapper.findType(
-        this.loadRecordConfig().entityCtr,
+      const res = await this.fetchPage(
         this.effectiveFilter,
         { limit: deficit, bookmark: this.bookmark },
         this.sortState,
@@ -127,6 +129,26 @@ export class PaginatedDataSource<
     const totalLoaded = this.filteredRecords().length;
     this.hasUnknownTotalCount.set(totalLoaded > start + this.page.size);
     // `this.allRecords` stays empty;
+  }
+
+  /**
+   * Fetch one page, continuing from `page.bookmark` when one is given.
+   *
+   * The seam for data that is paged some other way than by a Mango query: the
+   * bookmark is opaque to this class, so an override is free to put its own
+   * cursor in it as long as a short page still means the end of the data.
+   */
+  protected async fetchPage(
+    filter: DataFilter<T>,
+    page: { limit: number; bookmark?: string },
+    sort: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<{ records: T[]; bookmark?: string }> {
+    return this.entityMapper.findType(
+      this.loadRecordConfig().entityCtr,
+      filter,
+      page,
+      sort,
+    );
   }
 
   override async getAllData(filtered = false): Promise<T[]> {
@@ -164,8 +186,18 @@ export class PaginatedDataSource<
     // Mango queries need `$options: "i"` while CouchDB only supports `$regex: "(?i)..."`
     filter = convertToCouchRegex(filter);
     const filterString = JSON.stringify(filter);
-    // replace e.g. "gender.id" with "gender" as configurable enums are only stored with id value
-    const updatedString = filterString.replace(/("\w+)\.id(?=":)/g, "$1");
+    const schema = this.loadRecordConfig()?.entityCtr?.schema;
+    // replace e.g. "gender.id" with "gender": enum and entity references are
+    // stored as the plain id. Only for fields that are actually stored that
+    // way, though - on any other field ".id" is a real path into an object
+    // value, and rewriting it silently matches nothing.
+    const updatedString = filterString.replace(
+      /"(\w+)\.id(?=":)/g,
+      (match, field) =>
+        STORED_BY_ID_DATATYPES.includes(schema?.get(field)?.dataType)
+          ? `"${field}`
+          : match,
+    );
     return JSON.parse(updatedString);
   }
 }

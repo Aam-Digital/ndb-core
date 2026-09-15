@@ -26,7 +26,6 @@
   } @else {
     <div class="flex-row flex-wrap gap-regular align-baseline">
       <mat-form-field
-        subscriptSizing="dynamic"
         [matTooltip]="disabledFilterHint"
         [matTooltipDisabled]="!otherFiltersDisabled()"
       >
@@ -59,7 +58,6 @@
       </mat-form-field>
 
       <mat-form-field
-        subscriptSizing="dynamic"
         [matTooltip]="disabledFilterHint"
         [matTooltipDisabled]="!otherFiltersDisabled()"
       >
@@ -94,7 +92,6 @@
       </mat-form-field>
 
       <mat-form-field
-        subscriptSizing="dynamic"
         [matTooltip]="disabledFilterHint"
         [matTooltipDisabled]="!otherFiltersDisabled()"
       >
@@ -144,7 +141,6 @@
            from a URL or another screen, and it still matches a record that has
            since been deleted, which no picker could offer -->
       <mat-form-field
-        subscriptSizing="dynamic"
         class="related-record-filter"
         matTooltip="Show every change involving this record, including changes to other records that reference it"
         i18n-matTooltip="Change log filter tooltip"
@@ -178,168 +174,18 @@
       </mat-form-field>
     </div>
 
-    <div class="table-container">
-      @if (isLoading()) {
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      }
-
-      <table mat-table [dataSource]="entries()" class="full-width table">
-        <ng-container matColumnDef="when">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="when-cell"
-            i18n="Change log column"
-          >
-            When
-          </th>
-          <td mat-cell *matCellDef="let entry" class="when-cell">
-            <div class="flex-column">
-              <span>{{ entry.at | customDate: "short" }}</span>
-              <!-- how long ago, quieter than the date so the two read apart -->
-              <span class="elapsed text-secondary">{{
-                entry.at | notificationTime | async
-              }}</span>
-            </div>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="recordType">
-          <th mat-header-cell *matHeaderCellDef i18n="Change log column">
-            Record type
-          </th>
-          <td mat-cell *matCellDef="let entry">
-            <!-- the pipe falls back to the raw key for a type that is no longer
-                 registered, which an old audit record may well reference -->
-            @if (entry.entityType) {
-              {{ entry.entityType | entityTypeLabel }}
-            } @else {
-              <span>-</span>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="entity">
-          <th mat-header-cell *matHeaderCellDef i18n="Change log column">
-            Record
-          </th>
-          <td mat-cell *matCellDef="let entry">
-            @if (entry.entityId) {
-              <div class="flex-column">
-                <!-- a resolvable record is linked to its details view, a
-                     different destination than the row's history dialog (see
-                     openHistory); a deleted one has no link and leaves the
-                     click to the row -->
-                <app-entity-block
-                  [entityId]="entry.entityId"
-                ></app-entity-block>
-                <app-record-id-display
-                  [recordId]="entry.entityId"
-                ></app-record-id-display>
-              </div>
-            } @else {
-              <span>-</span>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef i18n="Change log column">
-            Action
-          </th>
-          <td mat-cell *matCellDef="let entry">
-            <app-change-history-action-badge
-              [action]="entry.action"
-            ></app-change-history-action-badge>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="changedBy">
-          <th mat-header-cell *matHeaderCellDef i18n="Change log column">
-            Changed by
-          </th>
-          <td mat-cell *matCellDef="let entry">
-            @if (entry.byEntityId) {
-              <app-entity-block
-                [entityId]="entry.byEntityId"
-                [showEntityId]="true"
-              ></app-entity-block>
-            } @else {
-              <span>{{ entry.by || "-" }}</span>
-            }
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="changedFields">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="changed-fields-cell"
-            i18n="Change log column"
-          >
-            Changed fields
-          </th>
-          <td mat-cell *matCellDef="let entry" class="changed-fields-cell">
-            @if (entry.changedFields.length > 0) {
-              <mat-chip-set>
-                @for (field of entry.changedFields; track field) {
-                  <mat-chip>
-                    <app-entity-field-label
-                      [field]="field"
-                      [entityType]="entry.entityType"
-                    ></app-entity-field-label>
-                  </mat-chip>
-                }
-              </mat-chip-set>
-            } @else if (entry.action === "created") {
-              <span class="text-secondary" i18n="Change log changed fields"
-                >new record</span
-              >
-            } @else if (entry.action === "deleted") {
-              <span class="text-secondary" i18n="Change log changed fields"
-                >record removed</span
-              >
-            } @else {
-              <span class="text-secondary" i18n="Change log changed fields"
-                >no visible field changes</span
-              >
-            }
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <!-- a row opens the record's full history, the same dialog its details
-             view offers - the log shows only the one change of that row -->
-        <tr
-          mat-row
-          *matRowDef="let row; columns: displayedColumns"
-          [class.clickable-row]="canOpenHistory(row)"
-          (click)="openHistory(row, $event)"
-        ></tr>
-      </table>
-
-      @if (loadError()) {
-        <p class="padding-regular color-error" i18n="Change log load error">
-          Couldn't load the change log — there may be a temporary problem.
-          Please try again or contact your administrator.
-        </p>
-      } @else if (!isLoading() && entries().length === 0) {
-        <p class="padding-regular text-secondary" i18n="Change log empty">
-          No changes recorded for the selected filters.
-        </p>
-      }
-
-      <mat-paginator
-        class="table-footer"
-        [length]="pageLengthHint()"
-        [pageIndex]="pageIndex()"
-        [pageSize]="pageSize()"
-        [pageSizeOptions]="pageSizeOptions"
-        [showFirstLastButtons]="false"
-        (page)="onPageChange($event)"
-        aria-label="Change log pagination"
-        i18n-aria-label
-      ></mat-paginator>
-    </div>
+    <!-- a row opens the record's full history, the same dialog its details view
+         offers - the log shows only the one change of that row -->
+    <app-entities-table
+      [recordsDataSource]="dataSource"
+      [entityType]="auditRecordType"
+      [customColumns]="columns"
+      [filter]="filter()"
+      [sortBy]="sortBy"
+      [supportsArchiving]="false"
+      [editable]="false"
+      clickMode="none"
+      (entityClick)="openHistory($event)"
+    ></app-entities-table>
   }
 }

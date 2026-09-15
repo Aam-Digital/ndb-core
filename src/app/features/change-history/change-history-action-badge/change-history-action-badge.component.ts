@@ -7,6 +7,8 @@ import {
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { BASELINE_NOTE, ChangeAction } from "../change-history.types";
+import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 
 /** Display metadata for one {@link ChangeAction} badge. */
 interface ActionMeta {
@@ -58,6 +60,7 @@ const ACTION_META: Record<ChangeAction, ActionMeta> = {
  * A small colored pill showing the icon + label of a change action
  * (Created / Updated / Deleted / Baseline / ...).
  */
+@DynamicComponent("ChangeHistoryActionBadge")
 @Component({
   selector: "app-change-history-action-badge",
   standalone: true,
@@ -87,10 +90,15 @@ const ACTION_META: Record<ChangeAction, ActionMeta> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangeHistoryActionBadgeComponent {
-  readonly action = input.required<ChangeAction>();
+export class ChangeHistoryActionBadgeComponent extends ViewDirective<ChangeAction> {
+  /**
+   * The action to display, for the callers that have one to hand.
+   * As a table column it comes through `value` instead.
+   */
+  readonly action = input<ChangeAction>();
+
   /** display metadata, falling back to `updated` for any unknown action */
   readonly meta = computed(
-    () => ACTION_META[this.action()] ?? ACTION_META.updated,
+    () => ACTION_META[this.action() ?? this.value()] ?? ACTION_META.updated,
   );
 }

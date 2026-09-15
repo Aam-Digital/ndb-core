@@ -105,6 +105,14 @@ export class EntitiesTableComponent<T extends Entity>
   newRecordFactory = input<() => T>();
   editable = input<boolean>(true);
   selectable = input<boolean>(false);
+  /**
+   * Whether records of this type can be archived.
+   *
+   * Turn this off for types that have no `inactive` flag: the archived
+   * condition would be added to every database query as an `$or` that no index
+   * can serve, and the toggle would offer a filter that can never match.
+   */
+  supportsArchiving = input<boolean>(true);
 
   // --- Outputs & Models ---
   entityClick = output<T>();
@@ -151,6 +159,9 @@ export class EntitiesTableComponent<T extends Entity>
   // --- Filtering (stateless derivation) ---
   readonly effectiveFilter = computed<DataFilter<T>>(() => {
     const nextFilter = { ...this.filter() };
+    if (!this.supportsArchiving()) {
+      return nextFilter;
+    }
     if (this.showInactive()) {
       // the toggle overrides an archived condition that may come from the configured filter
       delete nextFilter["inactive"];

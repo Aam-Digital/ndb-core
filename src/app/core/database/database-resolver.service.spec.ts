@@ -12,12 +12,17 @@ import {
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
+import { Entity } from "../entity/model/entity";
+import { entityRegistry } from "../entity/database-entity.decorator";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
   let syncStateSubject: SyncStateSubject;
   let migrationServiceSpy: any;
-  let factory: { createDatabase: (dbName: string) => any };
+  let factory: {
+    createDatabase: (dbName: string) => any;
+    createRemoteDatabase: (dbName: string) => any;
+  };
   const originalSessionType = environment.session_type;
 
   const testDbConfig: DbConfig = {
@@ -43,6 +48,12 @@ describe("DatabaseResolverService", () => {
           return new RemotePouchDatabase(dbName, null as any, syncStateSubject);
         }
         return new MemoryPouchDatabase(dbName, syncStateSubject);
+      },
+      // mirrors the real factory, which initializes the handle it returns
+      createRemoteDatabase: (dbName: string) => {
+        const db = new MemoryPouchDatabase(dbName, syncStateSubject);
+        db.init(dbName);
+        return db;
       },
     };
 
@@ -151,6 +162,82 @@ describe("DatabaseResolverService", () => {
     } as SessionInfo);
 
     expect(defaultDb.init).toHaveBeenCalledWith("test-user-app");
+  });
+
+  describe("remote-only databases", () => {
+    const REMOTE_ONLY_DB = "test-remote-only";
+    const TEST_TYPE = "RemoteOnlyTestEntity";
+
+    class RemoteOnlyTestEntity extends Entity {
+      static override readonly DATABASE = REMOTE_ONLY_DB;
+      static override readonly DATABASE_REMOTE_ONLY = true;
+    }
+
+    beforeEach(() => {
+      entityRegistry.add(TEST_TYPE, RemoteOnlyTestEntity);
+    });
+
+    afterEach(() => {
+      entityRegistry.delete(TEST_TYPE);
+    });
+
+    it("should hand out an already initialized remote database", () => {
+      // @ts-ignore - forcing this for stable test conditions
+      service["sessionType"] = SessionType.online;
+      vi.spyOn(factory, "createRemoteDatabase");
+
+      const db = service.getDatabase(REMOTE_ONLY_DB);
+
+      expect(factory.createRemoteDatabase).toHaveBeenCalledWith(REMOTE_ONLY_DB);
+      // an uninitialized database makes every read wait forever rather than fail
+      expect(db.isInitialized()).toBe(true);
+    });
+
+    it("should not subscribe it to the global changes feed", () => {
+      // @ts-ignore - forcing this for stable test conditions
+      service["sessionType"] = SessionType.online;
+      const remoteDb = new MemoryPouchDatabase(
+        REMOTE_ONLY_DB,
+        syncStateSubject,
+      );
+      remoteDb.init(REMOTE_ONLY_DB);
+      vi.spyOn(remoteDb, "changes");
+      vi.spyOn(factory, "createRemoteDatabase").mockReturnValue(remoteDb);
+
+      service.getDatabase(REMOTE_ONLY_DB);
+
+      expect(remoteDb.changes).not.toHaveBeenCalled();
+    });
+
+    it("should stay a remote handle even without a remote session", () => {
+      // sessionType is already mock. The data exists only on the server, so a
+      // local database could not answer for it - and this is the address the
+      // requests have to go to for a test or a proxy to intercept them.
+      vi.spyOn(factory, "createRemoteDatabase");
+
+      const db = service.getDatabase(REMOTE_ONLY_DB);
+
+      expect(factory.createRemoteDatabase).toHaveBeenCalledWith(REMOTE_ONLY_DB);
+      expect(db.isInitialized()).toBe(true);
+    });
+
+    it("should leave it untouched when local databases are reset or destroyed", async () => {
+      const appDb = service.getDatabase();
+      const remoteOnlyDb = service.getDatabase(REMOTE_ONLY_DB);
+      vi.spyOn(appDb, "reset").mockResolvedValue(undefined);
+      vi.spyOn(appDb, "destroy").mockResolvedValue(undefined);
+      vi.spyOn(remoteOnlyDb, "reset").mockResolvedValue(undefined);
+      // destroy() on a remote handle would delete the database on the server
+      vi.spyOn(remoteOnlyDb, "destroy").mockResolvedValue(undefined);
+
+      await service.resetDatabases();
+      await service.destroyDatabases();
+
+      expect(appDb.reset).toHaveBeenCalled();
+      expect(appDb.destroy).toHaveBeenCalled();
+      expect(remoteOnlyDb.reset).not.toHaveBeenCalled();
+      expect(remoteOnlyDb.destroy).not.toHaveBeenCalled();
+    });
   });
 
   describe("storage persistence", () => {

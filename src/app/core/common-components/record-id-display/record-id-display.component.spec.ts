@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Clipboard } from "@angular/cdk/clipboard";
 import { AlertService } from "../../alerts/alert.service";
 import { RecordIdDisplayComponent } from "./record-id-display.component";
+import { isClickableTarget } from "../entities-table/entities-table-selection";
 
 let fixture: ComponentFixture<RecordIdDisplayComponent>;
 let component: RecordIdDisplayComponent;
@@ -58,6 +59,15 @@ it("renders nothing without an id, so callers need no guard", async () => {
   fixture.detectChanges();
 
   expect(fixture.nativeElement.textContent.trim()).toBe("");
+});
+
+it("is recognised as a clickable target, so a table row does not act on it", async () => {
+  await setup("Child:1");
+  // a table row fires its action on mousedown, before this component's click
+  // handler can stop propagation - so the row's own guard is what has to bail
+  expect(
+    isClickableTarget(fixture.nativeElement.querySelector(".record-id")),
+  ).toBe(true);
 });
 
 it("keeps a click on the id from reaching an enclosing click handler", async () => {

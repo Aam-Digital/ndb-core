@@ -27,7 +27,7 @@ import { Logging } from "../../logging/logging.service";
   template: `
     @if (recordId()) {
       <span
-        class="record-id truncate-text pointer"
+        class="record-id truncate-text pointer clickable"
         role="button"
         tabindex="0"
         [attr.aria-label]="copyHint"

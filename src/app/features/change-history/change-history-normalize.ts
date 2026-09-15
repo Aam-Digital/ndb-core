@@ -28,6 +28,13 @@ export interface RawAuditDoc {
   diff?: unknown;
 }
 
+/**
+ * The part of an audit record that says which fields a single write touched.
+ * Narrower than {@link RawAuditDoc} so that an already-loaded AuditRecord can
+ * be passed just as well as a raw document.
+ */
+export type AuditDelta = Pick<RawAuditDoc, "operation" | "diff">;
+
 /** Doc fields that are internal/metadata and never shown as user-facing field changes. */
 const HIDDEN_FIELDS = new Set([
   "_id",
@@ -55,7 +62,7 @@ function isHidden(field: string): boolean {
  * stripped of its content, so the delta would list every field of the record as
  * removed rather than the one thing that happened.
  */
-export function changedFieldsOf(doc: RawAuditDoc): string[] {
+export function changedFieldsOf(doc: AuditDelta): string[] {
   if (doc.operation === "delete") {
     return [];
   }
@@ -130,7 +137,7 @@ function revGeneration(rev?: string): number {
 }
 
 /** the full document snapshot carried by a baseline (raw doc) or create (`[doc]`) record */
-function snapshotOf(doc: RawAuditDoc): Record<string, unknown> {
+function snapshotOf(doc: AuditDelta): Record<string, unknown> {
   const full =
     doc.operation === "create" && Array.isArray(doc.diff)
       ? doc.diff[0]
