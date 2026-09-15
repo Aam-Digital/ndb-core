@@ -291,7 +291,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
     );
   }
 
-  private filterFieldGroupsByPermissions<T extends Entity = Entity>(
+  private filterFieldGroupsByPermissions(
     fieldGroups: FieldGroup[],
     entity: Entity,
     hiddenFieldIds: ReadonlySet<string> = new Set(),
