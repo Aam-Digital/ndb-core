@@ -247,8 +247,8 @@ new changes correctly to the entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="111"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:111</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -424,8 +424,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="47"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:47</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -525,8 +525,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="367"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:367</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="383"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:383</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +615,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="268"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:268</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="284"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:284</a></div>
                         </td>
                     </tr>
 
@@ -718,6 +718,7 @@ import { UnsavedChangesService } from &quot;../../entity-details/form/unsaved-ch
 import { filter } from &quot;rxjs/operators&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { DefaultValueService } from &quot;../../default-values/default-value-service/default-value.service&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 import {
   EntityForm,
   EntityFormGroup,
@@ -821,9 +822,24 @@ export class EntityFormService {
     withPermissionCheck &#x3D; true,
     withDefaultValues &#x3D; true,
   ): Promise&lt;EntityForm&lt;T&gt;&gt; {
-    const fields &#x3D; formFields.map((f) &#x3D;&gt;
-      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
-    );
+    const fields: FormFieldConfig[] &#x3D; [];
+    for (const formField of formFields) {
+      try {
+        fields.push(
+          this.extendFormFieldConfig(
+            formField,
+            entity.getConstructor(),
+            forTable,
+          ),
+        );
+      } catch (err) {
+        // an incompletely configured field must not block the rest of the form from opening
+        Logging.error(&quot;Could not create form config for a field&quot;, err, {
+          formField,
+          entityType: entity.getConstructor().ENTITY_TYPE,
+        });
+      }
+    }
 
     const typedFormGroup: TypedFormGroup&lt;Partial&lt;T&gt;&gt; &#x3D; this.createFormGroup(
       fields,

@@ -818,13 +818,11 @@ export class EntityFormComponent&lt;T extends Entity &#x3D; Entity&gt; {
     return fieldGroups
       .map((group) &#x3D;&gt; ({
         ...group,
-        fields: group.fields.filter((field) &#x3D;&gt;
-          this.ability.can(
-            action,
-            entity,
-            typeof field &#x3D;&#x3D;&#x3D; &quot;string&quot; ? field : field.id,
-          ),
-        ),
+        fields: group.fields.filter((field) &#x3D;&gt; {
+          const fieldId &#x3D; typeof field &#x3D;&#x3D;&#x3D; &quot;string&quot; ? field : field?.id;
+          // an incompletely configured field (e.g. no id selected) must not break the whole group
+          return fieldId &amp;&amp; this.ability.can(action, entity, fieldId);
+        }),
       }))
       .filter((group) &#x3D;&gt; group.fields.length &gt; 0);
   }
