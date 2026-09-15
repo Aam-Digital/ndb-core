@@ -129,7 +129,7 @@
     "eslint-plugin-jsonc": "^3.4.2",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-storybook": "^10.5.10",
-    "jsdom": "^28.1.0",
+    "jsdom": "^30.0.1",
     "jsonc-eslint-parser": "^3.3.0",
     "katex": "^0.16.47",
     "madge": "^8.0.0",
