@@ -102,6 +102,100 @@ describe("EntityFormComponent", () => {
     ]);
   });
 
+  it("should hide a field whose displayCondition is not met", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant";
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+  });
+
+  it("should show and enable a field again once its displayCondition becomes met", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant";
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    component.form().formGroup.get("name").setValue("shown");
+
+    expect(component.filteredFieldGroups()).toEqual([{ fields: columns }]);
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+  });
+
+  it("should hide the field again once its displayCondition becomes unmet", async () => {
+    const entity = new TestEntity();
+    entity.name = "shown";
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    expect(component.filteredFieldGroups()).toEqual([{ fields: columns }]);
+
+    component.form().formGroup.get("name").setValue("something else");
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+  });
+
+  it("should not force-enable a conditionally shown field while the rest of the form is still disabled (view mode)", async () => {
+    // regression test: a field whose displayCondition is already met when the entity-details
+    // "Form" panel is in read-only view mode (whole FormGroup disabled until "Edit" is clicked)
+    // must stay disabled/read-only like its siblings, not become the only editable field
+    const entity = new TestEntity();
+    entity.name = "shown"; // condition already met from the start
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+
+    // simulates FormComponent's `form.formGroup.disable()` for a non-new entity (view mode)
+    component.form().formGroup.disable();
+
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+    expect(component.form().formGroup.get("name").disabled).toBe(true);
+  });
+
+  it("should re-disable a still-hidden field and correctly enable a now-shown field once the form is enabled for editing", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant"; // condition not met
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    component.form().formGroup.disable(); // view mode
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+
+    // simulates clicking "Edit": `(click)="form()?.formGroup.enable()"` in form.component.html
+    component.form().formGroup.enable();
+
+    // still hidden: enabling the whole group must not leave an unmet condition's field enabled
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+
+    component.form().formGroup.get("name").setValue("shown");
+    // now shown: this component is the one that disabled it, so it may re-enable it
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+  });
+
   it("should not remove fields when creating new and conditions are not met yet", async () => {
     fixture.componentRef.setInput("fieldGroups", [
       { fields: ["foo", "bar"] },
