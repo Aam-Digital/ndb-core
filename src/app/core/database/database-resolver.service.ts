@@ -13,7 +13,7 @@ import {
   IndexeddbMigrationService,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
-import { hasRemoteSession, SessionType } from "../session/session-type";
+import { SessionType } from "../session/session-type";
 import { isRemoteOnlyDatabase } from "./remote-only-databases";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { Logging } from "../logging/logging.service";
@@ -82,15 +82,11 @@ export class DatabaseResolverService {
    * watching, and feed them to consumers that reload on every update.
    */
   private createRemoteOnlyDatabase(dbName: string): Database {
-    if (hasRemoteSession(this.sessionType)) {
-      return this.databaseFactory.createRemoteDatabase(dbName);
-    }
-
-    // there is no server to connect to, so hand out an empty but initialized
-    // local database: callers get empty results instead of hanging
-    const fallback = this.databaseFactory.createDatabase(dbName);
-    fallback.init(dbName);
-    return fallback;
+    // always a remote handle, whatever the session type: the data exists only
+    // on the server, so a local database could not answer for it. Without a
+    // server the requests fail fast rather than hanging, and the feature that
+    // owns such a database is gated on the server reporting it as available.
+    return this.databaseFactory.createRemoteDatabase(dbName);
   }
 
   getDatabase(dbName: string = Entity.DATABASE): Database {

@@ -719,9 +719,12 @@ interface StubMangoQuery {
   selector?: {
     operation?: string | { $ne?: string };
     entityId?: { $gte?: string };
-    "user.name"?: string;
+    /**
+     * The author is matched on either recorded field: the backend writes
+     * `user.name` only when the access token carried one.
+     */
+    $or?: { "user.name"?: string; "user.id"?: string }[];
   };
-  skip?: number;
   limit?: number;
 }
 
@@ -812,7 +815,7 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
       if (idPrefix && !doc.entityId.startsWith(idPrefix)) {
         return false;
       }
-      const author = selector["user.name"];
+      const author = selector.$or?.[0]?.["user.name"];
       if (author && doc.user.name !== author) {
         return false;
       }
@@ -822,16 +825,14 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
     const newestFirst = [...matched].sort((a, b) =>
       b.timestamp.localeCompare(a.timestamp),
     );
-    const skip = query.skip ?? 0;
-    const docs = newestFirst.slice(
-      skip,
-      skip + (query.limit ?? matched.length),
-    );
+    // the list pages by cursor, so it asks for a page at a time rather than
+    // by position; this stub holds too few records for a second page
+    const docs = newestFirst.slice(0, query.limit ?? matched.length);
 
     return route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ docs }),
+      body: JSON.stringify({ docs, bookmark: "stub-end" }),
     });
   });
 }

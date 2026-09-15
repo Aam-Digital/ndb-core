@@ -209,13 +209,15 @@ describe("DatabaseResolverService", () => {
       expect(remoteDb.changes).not.toHaveBeenCalled();
     });
 
-    it("should hand out an initialized local database when there is no server", () => {
-      // sessionType is already mock, i.e. no remote session
+    it("should stay a remote handle even without a remote session", () => {
+      // sessionType is already mock. The data exists only on the server, so a
+      // local database could not answer for it - and this is the address the
+      // requests have to go to for a test or a proxy to intercept them.
       vi.spyOn(factory, "createRemoteDatabase");
 
       const db = service.getDatabase(REMOTE_ONLY_DB);
 
-      expect(factory.createRemoteDatabase).not.toHaveBeenCalled();
+      expect(factory.createRemoteDatabase).toHaveBeenCalledWith(REMOTE_ONLY_DB);
       expect(db.isInitialized()).toBe(true);
     });
 
