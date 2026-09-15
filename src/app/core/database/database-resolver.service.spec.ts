@@ -169,8 +169,8 @@ describe("DatabaseResolverService", () => {
     const TEST_TYPE = "RemoteOnlyTestEntity";
 
     class RemoteOnlyTestEntity extends Entity {
-      static override DATABASE = REMOTE_ONLY_DB;
-      static override DATABASE_REMOTE_ONLY = true;
+      static override readonly DATABASE = REMOTE_ONLY_DB;
+      static override readonly DATABASE_REMOTE_ONLY = true;
     }
 
     beforeEach(() => {

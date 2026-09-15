@@ -87,7 +87,7 @@ export class Entity {
    * Use it for data that grows without bound or that the client must not keep
    * a copy of.
    */
-  static DATABASE_REMOTE_ONLY = false;
+  static readonly DATABASE_REMOTE_ONLY: boolean = false;
 
   /**
    * EntitySchema defining property transformations from/to the database.

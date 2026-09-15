@@ -32,11 +32,11 @@ export class AuditRecord extends Entity {
   static override readonly DATABASE = `${Entity.DATABASE}-audit`;
   static override readonly DATABASE_REMOTE_ONLY = true;
 
-  static override isInternalEntity = true;
-  static override toStringAttributes = ["record"];
-  static override label = $localize`:AuditRecord label:Change`;
-  static override labelPlural = $localize`:AuditRecord label plural:Changes`;
-  static override icon: IconName = "clock-rotate-left";
+  static override readonly isInternalEntity = true;
+  static override readonly toStringAttributes = ["record"];
+  static override readonly label = $localize`:AuditRecord label:Change`;
+  static override readonly labelPlural = $localize`:AuditRecord label plural:Changes`;
+  static override readonly icon: IconName = "clock-rotate-left";
 
   /** server-set time of the change */
   @DatabaseField() timestamp: Date;
