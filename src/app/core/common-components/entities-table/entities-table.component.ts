@@ -122,11 +122,15 @@ export class EntitiesTableComponent<T extends Entity>
     const columns: FormFieldConfig[] = [];
     for (const column of this.customColumns()) {
       try {
-        columns.push(
-          entityType
-            ? this.entityFormService.extendFormFieldConfig(column, entityType)
-            : toFormFieldConfig(column),
-        );
+        const resolved = entityType
+          ? this.entityFormService.extendFormFieldConfig(column, entityType)
+          : toFormFieldConfig(column);
+        // toFormFieldConfig (used when no entityType is set) never throws, so a
+        // malformed column (e.g. null) has to be caught here explicitly instead
+        if (!resolved?.id) {
+          throw new Error("column has no id");
+        }
+        columns.push(resolved);
       } catch (err) {
         // an incompletely configured column must not block the rest of the table from rendering
         Logging.error("Could not create table column config for a field", err, {

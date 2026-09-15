@@ -6,7 +6,7 @@ import moment from "moment/moment";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { toFormFieldConfig } from "../entity-form/FormConfig";
+import { FormFieldConfig, toFormFieldConfig } from "../entity-form/FormConfig";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { NOT_ARCHIVED_FILTER } from "../../filter/not-archived-filter";
@@ -385,6 +385,22 @@ describe("EntitiesTableComponent", () => {
       "name",
       "other",
     ]);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should skip a malformed customColumns entry when no entityType is set", () => {
+    // toFormFieldConfig (the path used without an entityType) never throws,
+    // so a null/malformed entry needs an explicit id check, not just a try/catch
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    fixture.componentRef.setInput("customColumns", [
+      { id: "a" },
+      null as unknown as FormFieldConfig,
+      { id: "b" },
+    ]);
+    fixture.detectChanges();
+
+    expect(component._customColumns().map((c) => c.id)).toEqual(["a", "b"]);
+    expect(component._columnsToDisplay()).toEqual(["a", "b"]);
     expect(errorSpy).toHaveBeenCalled();
   });
 
