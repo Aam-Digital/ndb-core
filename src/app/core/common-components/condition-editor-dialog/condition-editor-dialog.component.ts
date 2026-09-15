@@ -6,58 +6,81 @@ import {
   signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
-import { ConditionsEditorComponent } from "../../../../common-components/conditions-editor/conditions-editor.component";
-import {
-  ConditionCombinator,
-  ConditionCombinatorToggleComponent,
-} from "../../../../common-components/condition-combinator-toggle/condition-combinator-toggle.component";
-import { DialogCloseComponent } from "../../../../common-components/dialog-close/dialog-close.component";
-import { EntityConstructor } from "../../../../entity/model/entity";
+import { ConditionsEditorComponent } from "../conditions-editor/conditions-editor.component";
+import { DialogCloseComponent } from "../dialog-close/dialog-close.component";
+import { EntityConstructor } from "../../entity/model/entity";
 
-export interface DisplayConditionDialogData {
-  entityType: EntityConstructor;
-  displayCondition?: any;
+export interface ConditionEditorDialogData {
+  /** entity type whose fields can be selected in condition rows */
+  entityConstructor: EntityConstructor | undefined;
+
+  /** existing condition to edit, if any */
+  conditions?: any;
+
+  /** fully localized dialog title shown when an existing condition is being edited */
+  editTitle: string;
+
+  /** fully localized dialog title shown when there is no condition yet */
+  addTitle: string;
+
+  /** fully localized sentence shown above the conditions editor, explaining what the condition applies to */
+  explanation: string;
+
+  /** fully localized hint shown while the "Any" combinator is selected */
+  anyHint: string;
+
+  /** fully localized hint shown while the "All" combinator is selected */
+  allHint: string;
+
+  /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
+  showInternalIdField?: boolean;
 }
 
 /**
- * Dialog to visually edit the condition that determines whether a form field
- * is displayed, based on the values of other fields of the same record.
+ * Generic dialog to visually edit a Mango-query condition build from a list of
+ * field/value rows, combined with either "any" ($or) or "all" (merged / $and) semantics.
+ *
+ * All domain-specific wording (title, explanation, hints) is passed in via {@link ConditionEditorDialogData}
+ * so this dialog itself has no knowledge of what the condition is used for
+ * (e.g. permissions, or a form field's display condition).
  *
  * Closes with the new condition, `null` to remove it, or `undefined` when cancelled.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-display-condition-dialog",
+  selector: "app-condition-editor-dialog",
   imports: [
     MatDialogModule,
     MatButtonModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
     ConditionsEditorComponent,
-    ConditionCombinatorToggleComponent,
     DialogCloseComponent,
   ],
-  templateUrl: "./display-condition-dialog.component.html",
+  templateUrl: "./condition-editor-dialog.component.html",
 })
-export class DisplayConditionDialogComponent {
+export class ConditionEditorDialogComponent {
   private readonly dialogRef = inject(
-    MatDialogRef<DisplayConditionDialogComponent>,
+    MatDialogRef<ConditionEditorDialogComponent>,
   );
 
-  readonly data: DisplayConditionDialogData = inject(MAT_DIALOG_DATA);
+  readonly data: ConditionEditorDialogData = inject(MAT_DIALOG_DATA);
 
   readonly hadCondition = !!(
-    this.data.displayCondition &&
-    Object.keys(this.data.displayCondition).length > 0
+    this.data.conditions && Object.keys(this.data.conditions).length > 0
   );
 
   /** whether all rows must match ("all", implicit and / $and) or any row ("any", $or) */
-  readonly combinator = signal<ConditionCombinator>(
-    Array.isArray(this.data.displayCondition?.$or) ? "any" : "all",
+  readonly combinator = signal<"any" | "all">(
+    Array.isArray(this.data.conditions?.$or) ? "any" : "all",
   );
 
   /**
@@ -65,12 +88,10 @@ export class DisplayConditionDialogComponent {
    * Deliberately not a signal: the conditions editor mutates this object in place
    * and the template does not need to react to its changes.
    */
-  editorConditions: any = toEditorFormat(this.data.displayCondition);
+  editorConditions: any = toEditorFormat(this.data.conditions);
 
   readonly combinatorHint = computed(() =>
-    this.combinator() === "any"
-      ? $localize`The field is shown if any one of the conditions below applies.`
-      : $localize`The field is shown only if every one of the conditions below applies.`,
+    this.combinator() === "any" ? this.data.anyHint : this.data.allHint,
   );
 
   onConditionsChange(conditions: any) {

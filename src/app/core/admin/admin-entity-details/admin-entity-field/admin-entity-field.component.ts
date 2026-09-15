@@ -59,9 +59,9 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import {
-  DisplayConditionDialogComponent,
-  DisplayConditionDialogData,
-} from "./display-condition-dialog/display-condition-dialog.component";
+  ConditionEditorDialogComponent,
+  ConditionEditorDialogData,
+} from "app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -593,13 +593,18 @@ export class AdminEntityFieldComponent implements OnInit {
 
   openDisplayConditionDialog() {
     const dialogRef = this.dialog.open<
-      DisplayConditionDialogComponent,
-      DisplayConditionDialogData
-    >(DisplayConditionDialogComponent, {
+      ConditionEditorDialogComponent,
+      ConditionEditorDialogData
+    >(ConditionEditorDialogComponent, {
       data: {
-        entityType: this.data.entityType,
-        displayCondition: this.schemaFieldsForm.get("displayCondition").value,
-      },
+        entityConstructor: this.data.entityType,
+        conditions: this.schemaFieldsForm.get("displayCondition").value,
+        editTitle: $localize`Edit Display Condition`,
+        addTitle: $localize`Add Display Condition`,
+        explanation: $localize`This field is shown only while the record matches...`,
+        anyHint: $localize`The field is shown if any one of the conditions below applies.`,
+        allHint: $localize`The field is shown only if every one of the conditions below applies.`,
+      } satisfies ConditionEditorDialogData,
       width: "600px",
     });
 

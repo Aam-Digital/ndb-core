@@ -24,7 +24,7 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
-import { DisplayConditionDialogComponent } from "./display-condition-dialog/display-condition-dialog.component";
+import { ConditionEditorDialogComponent } from "app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
 import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("AdminEntityFieldComponent", () => {
@@ -557,10 +557,13 @@ describe("AdminEntityFieldComponent", () => {
     await fixture.whenStable();
 
     expect(dialogSpy).toHaveBeenCalledWith(
-      DisplayConditionDialogComponent,
+      ConditionEditorDialogComponent,
       expect.objectContaining({
-        // an unset FormControl value is `null`, not `undefined`
-        data: { entityType: TestEntity, displayCondition: null },
+        data: expect.objectContaining({
+          entityConstructor: TestEntity,
+          // an unset FormControl value is `null`, not `undefined`
+          conditions: null,
+        }),
       }),
     );
     expect(component.schemaFieldsForm.get("displayCondition").value).toEqual(
