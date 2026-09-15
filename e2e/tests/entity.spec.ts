@@ -684,3 +684,41 @@ test("Closing an untouched new-entity dialog does not prompt discard-changes, bu
   await expect(discardDialog).not.toBeVisible();
   await expect(dialog).toBeVisible();
 });
+
+const HISTORY_CHILD_NAME = "<CHANGE HISTORY CHILD>";
+
+test("Change log of a single record is reachable from the entity actions menu", async ({
+  page,
+}) => {
+  const users = generateUsers();
+  const child = generateChild({ name: HISTORY_CHILD_NAME });
+
+  await loadApp(page, [...users, child]);
+
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.getByRole("cell", { name: HISTORY_CHILD_NAME }).click();
+
+  // the entry point is offered to every user, not only those who may read the
+  // audit data - the dialog itself explains why there is nothing to show
+  await page
+    .locator("app-entity-actions-menu button[mat-icon-button]")
+    .first()
+    .click();
+  await page.getByRole("menuitem", { name: /View change log/i }).click();
+
+  const dialog = page.getByRole("dialog");
+  // by level, as the dialog also has a "Change log" section heading below
+  await expect(
+    dialog.getByRole("heading", { level: 2, name: "Change Log" }),
+  ).toBeVisible();
+
+  // the record's internal id is offered for troubleshooting (copyable in one
+  // click), which is the only handle on a record whose title says nothing
+  await expect(dialog.getByText(child.getId())).toBeVisible();
+
+  // the e2e app runs on the browser-local database with no replication-backend,
+  // so the audit feature reports itself unavailable rather than erroring
+  await expect(
+    dialog.getByText("This feature is currently not enabled for your system."),
+  ).toBeVisible();
+});
