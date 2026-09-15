@@ -592,18 +592,11 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   openDisplayConditionDialog() {
-    const dialogRef = this.dialog.open<
-      ConditionEditorDialogComponent,
-      ConditionEditorDialogData
-    >(ConditionEditorDialogComponent, {
+    const dialogRef = this.dialog.open(ConditionEditorDialogComponent, {
       data: {
         entityConstructor: this.data.entityType,
         conditions: this.schemaFieldsForm.get("displayCondition").value,
-        editTitle: $localize`Edit Display Condition`,
-        addTitle: $localize`Add Display Condition`,
         explanation: $localize`This field is shown only while the record matches...`,
-        anyHint: $localize`The field is shown if any one of the conditions below applies.`,
-        allHint: $localize`The field is shown only if every one of the conditions below applies.`,
       } satisfies ConditionEditorDialogData,
       width: "600px",
     });

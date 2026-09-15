@@ -16,11 +16,7 @@ describe("ConditionEditorDialogComponent", () => {
     // entityConstructor left undefined so the embedded ConditionsEditorComponent
     // skips its (heavier) schema-dependent initialization in this unit test
     entityConstructor: undefined,
-    editTitle: "Edit Condition",
-    addTitle: "Add Condition",
     explanation: "Only shown where…",
-    anyHint: "any hint",
-    allHint: "all hint",
   };
 
   function createComponent(data: Partial<ConditionEditorDialogData> = {}) {
@@ -85,15 +81,6 @@ describe("ConditionEditorDialogComponent", () => {
 
     expect(component.hadCondition).toBe(false);
     expect(component.editorConditions).toEqual({});
-  });
-
-  it("uses the anyHint/allHint from the dialog data depending on the combinator", () => {
-    const component = createComponent();
-
-    component.combinator.set("any");
-    expect(component.combinatorHint()).toBe(defaultData.anyHint);
-    component.combinator.set("all");
-    expect(component.combinatorHint()).toBe(defaultData.allHint);
   });
 
   it("applies conditions according to combinator and removes empty conditions", () => {

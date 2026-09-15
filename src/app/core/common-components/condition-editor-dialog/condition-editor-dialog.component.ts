@@ -25,20 +25,8 @@ export interface ConditionEditorDialogData {
   /** existing condition to edit, if any */
   conditions?: any;
 
-  /** fully localized dialog title shown when an existing condition is being edited */
-  editTitle: string;
-
-  /** fully localized dialog title shown when there is no condition yet */
-  addTitle: string;
-
   /** fully localized sentence shown above the conditions editor, explaining what the condition applies to */
   explanation: string;
-
-  /** fully localized hint shown while the "Any" combinator is selected */
-  anyHint: string;
-
-  /** fully localized hint shown while the "All" combinator is selected */
-  allHint: string;
 
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
   showInternalIdField?: boolean;
@@ -48,9 +36,7 @@ export interface ConditionEditorDialogData {
  * Generic dialog to visually edit a Mango-query condition build from a list of
  * field/value rows, combined with either "any" ($or) or "all" (merged / $and) semantics.
  *
- * All domain-specific wording (title, explanation, hints) is passed in via {@link ConditionEditorDialogData}
- * so this dialog itself has no knowledge of what the condition is used for
- * (e.g. permissions, or a form field's display condition).
+ * Configured via {@link ConditionEditorDialogData}
  *
  * Closes with the new condition, `null` to remove it, or `undefined` when cancelled.
  */
@@ -91,7 +77,9 @@ export class ConditionEditorDialogComponent {
   editorConditions: any = toEditorFormat(this.data.conditions);
 
   readonly combinatorHint = computed(() =>
-    this.combinator() === "any" ? this.data.anyHint : this.data.allHint,
+    this.combinator() === "any"
+      ? $localize`Matches if any one of the conditions applies ("or" conditions).`
+      : $localize`Matches only if all conditions apply ("and" conditions).`,
   );
 
   onConditionsChange(conditions: any) {

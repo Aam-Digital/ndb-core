@@ -527,11 +527,7 @@ export class PermissionMatrixComponent {
         data: {
           entityConstructor,
           conditions,
-          editTitle: $localize`Edit Condition`,
-          addTitle: $localize`Add Condition`,
           explanation: this.buildConditionSentence(action, entityLabel),
-          anyHint: $localize`Records match if any one of the conditions applies ("or" conditions).`,
-          allHint: $localize`Records match only if all conditions apply ("and" conditions).`,
           showInternalIdField: true,
         } satisfies ConditionEditorDialogData,
       })
