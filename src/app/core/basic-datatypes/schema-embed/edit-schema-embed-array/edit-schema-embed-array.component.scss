@@ -12,7 +12,10 @@
 }
 
 .embedded-table {
-  width: 100%;
+  // min-width (not width): lets the table grow past its container so cells don't get
+  // squeezed - .table-scroll then scrolls horizontally instead of clipping content.
+  min-width: 100%;
+  width: max-content;
   border-collapse: collapse;
 
   th,
