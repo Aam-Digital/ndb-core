@@ -125,6 +125,31 @@ describe("ConditionEditorDialogComponent", () => {
     expect(mockDialogRef.close).toHaveBeenCalledWith({ name: "shown" });
   });
 
+  it("preserves a sibling clause next to $or/$and instead of silently dropping it", () => {
+    // regression test: Mango treats `{ status: "active", $or: [...] }` as an
+    // implicit AND. The row editor has no concept of nested groups, so the
+    // sibling key must at least survive as a visible/editable row rather than
+    // being dropped outright.
+    const fromOr = createComponent({
+      conditions: { status: "active", $or: [{ a: 1 }, { b: 2 }] },
+    });
+    expect(fromOr.editorConditions.$or).toEqual([
+      { a: 1 },
+      { b: 2 },
+      { status: "active" },
+    ]);
+
+    TestBed.resetTestingModule();
+    const fromAnd = createComponent({
+      conditions: { status: "active", $and: [{ a: 1 }, { b: 2 }] },
+    });
+    expect(fromAnd.editorConditions.$or).toEqual([
+      { a: 1 },
+      { b: 2 },
+      { status: "active" },
+    ]);
+  });
+
   it("removeCondition closes with null", () => {
     const component = createComponent({ conditions: { center: "x" } });
     component.removeCondition();

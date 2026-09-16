@@ -196,6 +196,31 @@ describe("EntityFormComponent", () => {
     expect(component.form().formGroup.get("other").disabled).toBe(false);
   });
 
+  it("should not enable a condition-owned field while the whole form is still disabled, even once its condition becomes met", async () => {
+    // regression test: an external update (e.g. a synced change from another
+    // device) can satisfy a field's displayCondition while the entity-details
+    // page is still in read-only view mode (before "Edit" was clicked). That
+    // must not enable the field ahead of the rest of the still-disabled form.
+    const entity = new TestEntity();
+    entity.name = "irrelevant"; // condition not met initially
+    const columns = [
+      { id: "name" },
+      { id: "other", displayCondition: { name: "shown" } },
+    ];
+
+    await setupInitialForm(entity, [columns]);
+    component.form().formGroup.disable(); // view mode
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+
+    // value changes while still disabled (e.g. via an external sync), without leaving view mode
+    component.form().formGroup.get("name").setValue("shown");
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+
+    // only once actually enabled for editing does the now-shown field become available
+    component.form().formGroup.enable();
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+  });
+
   it("should not remove fields when creating new and conditions are not met yet", async () => {
     fixture.componentRef.setInput("fieldGroups", [
       { fields: ["foo", "bar"] },

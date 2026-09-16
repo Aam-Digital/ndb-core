@@ -219,6 +219,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
       if (
         this.conditionDisabledFieldIds.has(field.id) &&
         !this.isEntityLocked() &&
+        !form.formGroup.disabled &&
         this.ability.can(action, entity, field.id)
       ) {
         control.enable({ onlySelf: true, emitEvent: false });

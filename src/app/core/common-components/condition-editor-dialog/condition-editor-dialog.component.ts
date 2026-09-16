@@ -119,22 +119,31 @@ export class ConditionEditorDialogComponent {
  *
  * Deep-copies the input so the editor (which mutates rows in place) cannot
  * touch the caller's config: cancelling the dialog must leave it untouched.
+ *
+ * A condition can combine `$or`/`$and` with sibling keys (Mango's implicit AND,
+ * e.g. `{ status: "active", $or: [...] }`). This editor has no concept of nested
+ * groups, so such a sibling key cannot be kept ANDed with the `$or`/`$and` array -
+ * instead it is folded in as one more row, to at least keep it visible and
+ * editable rather than silently dropping it.
  */
 function toEditorFormat(condition: any): any {
   if (!condition || typeof condition !== "object") {
     return {};
   }
   const copy = structuredClone(condition);
+  const rows: any[] = [];
+
   if (Array.isArray(copy.$or)) {
-    return { $or: copy.$or };
+    rows.push(...copy.$or);
+    delete copy.$or;
+  } else if (Array.isArray(copy.$and)) {
+    rows.push(...copy.$and);
+    delete copy.$and;
   }
-  if (Array.isArray(copy.$and)) {
-    return { $or: copy.$and };
-  }
-  // merged plain object: one row per key
-  return {
-    $or: Object.entries(copy).map(([key, value]) => ({ [key]: value })),
-  };
+  // remaining plain keys (either the whole condition, or siblings of $or/$and above)
+  rows.push(...Object.entries(copy).map(([key, value]) => ({ [key]: value })));
+
+  return { $or: rows };
 }
 
 /**
