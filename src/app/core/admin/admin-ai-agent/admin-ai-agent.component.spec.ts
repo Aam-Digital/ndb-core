@@ -33,9 +33,6 @@ describe("AdminAiAgentComponent", () => {
       if (entityType === ConfigurableEnum) {
         return Promise.resolve([configurableEnumDocument]);
       }
-      if (entityType === SiteSettings) {
-        return Promise.resolve([siteSettingsDocument]);
-      }
       if (entityType === ReportEntity) {
         return Promise.resolve([reportDocument]);
       }
@@ -44,7 +41,12 @@ describe("AdminAiAgentComponent", () => {
       }
       return Promise.resolve([]);
     });
-    mockEntityMapper.load.mockReturnValue(Promise.resolve(null));
+    mockEntityMapper.load.mockImplementation((entityType, key) => {
+      if (entityType === SiteSettings && key === SiteSettings.ENTITY_ID) {
+        return Promise.resolve(siteSettingsDocument);
+      }
+      return Promise.resolve(null);
+    });
 
     mockDownloadService = {
       triggerDownload: vi.fn().mockName("DownloadService.triggerDownload"),
@@ -78,11 +80,14 @@ describe("AdminAiAgentComponent", () => {
     const configDocument = { sentinel: "config" };
     const permissionsDocument = { sentinel: "permissions" };
 
-    mockEntityMapper.load.mockImplementation((_entityType, key) =>
-      Promise.resolve(
+    mockEntityMapper.load.mockImplementation((entityType, key) => {
+      if (entityType === SiteSettings) {
+        return Promise.resolve(siteSettingsDocument);
+      }
+      return Promise.resolve(
         key === Config.CONFIG_KEY ? configDocument : permissionsDocument,
-      ),
-    );
+      );
+    });
 
     await component.downloadAiContext();
 
@@ -100,7 +105,7 @@ describe("AdminAiAgentComponent", () => {
     );
   });
 
-  it("omits config and permissions documents that fail to load", async () => {
+  it("omits documents that fail to load", async () => {
     mockEntityMapper.load.mockImplementation(() =>
       Promise.reject(new Error("document not found")),
     );
@@ -108,14 +113,20 @@ describe("AdminAiAgentComponent", () => {
     await component.downloadAiContext();
 
     expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-      [
-        configurableEnumDocument,
-        siteSettingsDocument,
-        reportDocument,
-        publicFormDocument,
-      ],
+      [configurableEnumDocument, reportDocument, publicFormDocument],
       "json",
       expect.any(String),
     );
+  });
+
+  it("includes only the global site settings, not every user's own settings", async () => {
+    // loading the whole type would add one doc per user account
+    await component.downloadAiContext();
+
+    expect(mockEntityMapper.load).toHaveBeenCalledWith(
+      SiteSettings,
+      SiteSettings.ENTITY_ID,
+    );
+    expect(mockEntityMapper.loadType).not.toHaveBeenCalledWith(SiteSettings);
   });
 });
