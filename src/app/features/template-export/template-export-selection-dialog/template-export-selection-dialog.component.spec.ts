@@ -167,6 +167,14 @@ describe("TemplateExportSelectionDialogComponent", () => {
     expect(component.templateEntityFilter(template3)).toBe(false);
   });
 
+  it("should exclude arrayReport templates from the picker for a single entity", () => {
+    const template = new TemplateExport();
+    template.applicableForEntityTypes = [TestEntity.ENTITY_TYPE];
+    template.arrayReport = true;
+
+    expect(component.templateEntityFilter(template)).toBe(false);
+  });
+
   it("should normalize a single-entity dialog payload to a one-element entities array", async () => {
     await fixture.whenStable();
     fixture.detectChanges();
@@ -193,6 +201,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
       of(mockResponse),
     );
     component.templateSelectionForm.setValue("template-1");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     await component.requestFile();
 
@@ -205,7 +216,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       mockResponse.filename,
     );
     expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-      "Generated 1 of 1 files.",
+      "Files generated successfully.",
     );
     // dialog auto-closes on success — implicitly verifies the done-summary is never rendered
     expect(mockDialogRef.close).toHaveBeenCalledWith(true);
@@ -216,9 +227,15 @@ describe("TemplateExportSelectionDialogComponent", () => {
       throwError(() => new Error("boom")),
     );
     component.templateSelectionForm.setValue("template-1");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     await component.requestFile();
 
+    expect(
+      mockPdfGeneratorApiService.generatePdfFromTemplate,
+    ).toHaveBeenCalled();
     expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
     expect(component.failures().length).toBe(1);
     expect(component.failures()[0].entity).toBe(testEntity);
@@ -249,6 +266,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
       await bulkFixture.whenStable();
       bulkComponent = bulkFixture.componentInstance;
       bulkComponent.templateSelectionForm.setValue("template-1");
+      bulkFixture.detectChanges();
+      await bulkFixture.whenStable();
+      bulkFixture.detectChanges();
     });
 
     it("should expose the entities array as-is for an array dialog payload", () => {
@@ -284,7 +304,7 @@ describe("TemplateExportSelectionDialogComponent", () => {
       );
       expect(bulkComponent.failures()).toEqual([]);
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-        "Generated 2 of 2 files.",
+        "Files generated successfully.",
       );
       expect(mockDialogRef.close).toHaveBeenCalledWith(true);
     });
@@ -311,9 +331,80 @@ describe("TemplateExportSelectionDialogComponent", () => {
         "combined.pdf",
       );
       expect(mockAlertService.addInfo).toHaveBeenCalledWith(
-        "Generated 2 of 2 files.",
+        "Files generated successfully.",
       );
       expect(mockDialogRef.close).toHaveBeenCalledWith(true);
+    });
+
+    it("should include arrayReport templates in the picker for a bulk selection", () => {
+      const template = new TemplateExport();
+      template.applicableForEntityTypes = [TestEntity.ENTITY_TYPE];
+      template.arrayReport = true;
+
+      expect(bulkComponent.templateEntityFilter(template)).toBe(true);
+    });
+
+    it("should reactively expose the selected template's arrayReport flag", async () => {
+      const arrayReportTemplate = Object.assign(
+        new TemplateExport("template-2"),
+        {
+          title: "Array Report Template",
+          arrayReport: true,
+        },
+      );
+      mockEntityMapperLoad.mockResolvedValue(arrayReportTemplate);
+      bulkComponent.templateSelectionForm.setValue(arrayReportTemplate.getId());
+
+      bulkFixture.detectChanges();
+      await bulkFixture.whenStable();
+      bulkFixture.detectChanges();
+
+      expect(bulkComponent.selectedTemplateIsArrayReport()).toBe(true);
+    });
+
+    it("should call generatePdfFromTemplate with the full selection and download a single pdf for an arrayReport template", async () => {
+      loadedTemplate.arrayReport = true;
+      const result: TemplateExportResult = {
+        filename: "combined-report.pdf",
+        file: new ArrayBuffer(16),
+      };
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+        of(result),
+      );
+
+      await bulkComponent.requestFile();
+
+      expect(
+        mockPdfGeneratorApiService.generateBatchFromTemplate,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockPdfGeneratorApiService.generatePdfFromTemplate,
+      ).toHaveBeenCalledWith(loadedTemplate, [entityA, entityB]);
+      expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+        result.file,
+        "pdf",
+        "combined-report.pdf",
+      );
+      expect(mockAlertService.addInfo).toHaveBeenCalledWith(
+        "Files generated successfully.",
+      );
+      expect(mockDialogRef.close).toHaveBeenCalledWith(true);
+    });
+
+    it("should fall back to the template title as filename for an arrayReport template", async () => {
+      loadedTemplate.arrayReport = true;
+      loadedTemplate.title = "People Overview";
+      mockPdfGeneratorApiService.generatePdfFromTemplate.mockReturnValue(
+        of({ file: new ArrayBuffer(4) } as TemplateExportResult),
+      );
+
+      await bulkComponent.requestFile();
+
+      expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
+        expect.any(ArrayBuffer),
+        "pdf",
+        "People Overview",
+      );
     });
 
     it("should mark all selected entities as failed when the bulk request errors out", async () => {
@@ -323,6 +414,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
       await bulkComponent.requestFile();
 
+      expect(
+        mockPdfGeneratorApiService.generateBatchFromTemplate,
+      ).toHaveBeenCalled();
       expect(bulkComponent.phase()).toBe("done");
       expect(bulkComponent.failures().length).toBe(2);
       expect(bulkComponent.failures().map((f) => f.entity)).toEqual([
