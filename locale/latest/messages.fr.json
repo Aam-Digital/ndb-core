@@ -1726,5 +1726,15 @@
   "6853821726408429494": " This template combines all selected records into a single report. ",
   "5546581207762070668": "Files generated successfully.",
   "4955563477664972346": "Multi-Record Report",
-  "4339652673305755091": "Enable this if the template uses carbone's array syntax to list all selected records within a single generated document (e.g. a table listing multiple people), instead of generating one file per record. Only offered when generating a file for multiple selected records at once (not for a single record)."
+  "4339652673305755091": "Enable this if the template uses carbone's array syntax to list all selected records within a single generated document (e.g. a table listing multiple people), instead of generating one file per record. Only offered when generating a file for multiple selected records at once (not for a single record).",
+  "1041228814242152481": "Your system is ready to use.",
+  "6517583886474229983": " You can get assistance any time by clicking the \"Assistant\" button on the top right of the toolbar. ",
+  "5494883893502795542": "Preparing your workspace ...",
+  "2262189061678758677": " Choose what kind of record represents you, so that your login account can be linked to it. ",
+  "2274726698079848231": "Profile type",
+  "3338211009200014825": " Create your own \"{$INTERPOLATION}\" record, so that your login account is linked to it. ",
+  "2818436142710859801": " Create profile ",
+  "5918836789619678550": " Skip for now ",
+  "7892910188550548387": "No record type in this configuration supports login accounts, so no profile was created for your account.",
+  "5797725100345356958": "Your profile \"{$profileName}\" was created, but could not be linked to your account automatically. An administrator can link it to your account later from user administration."
 }
