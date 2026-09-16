@@ -20,6 +20,7 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 import { environment } from "#src/environments/environment";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
+import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-setup.component";
 
 /**
  * UI for initial system setup and use case selection,
@@ -34,6 +35,7 @@ import { AssistantService } from "#src/app/core/setup/assistant.service";
     LanguageSelectComponent,
     MatCheckbox,
     FormsModule,
+    UserProfileSetupComponent,
   ],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
@@ -46,6 +48,9 @@ export class SystemInitAssistantComponent implements OnInit {
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly setupService = inject(SetupService);
 
+  /** exposed for the template to branch copy that only applies to the public in-memory demo */
+  protected readonly environment = environment;
+
   availableUseCases = signal<BaseConfig[]>([]);
   selectedUseCase = signal<BaseConfig | null>(null);
   generateDemoData = signal<boolean>(environment.demo_mode);
@@ -53,6 +58,11 @@ export class SystemInitAssistantComponent implements OnInit {
   demoInitialized = signal<boolean>(false);
   generatingData = signal<boolean>(false);
   availableLocales = signal<ConfigurableEnumValue[]>([]);
+
+  /** Whether the "create your profile" step has run its course (shown or not). */
+  profileStepDone = signal<boolean>(false);
+  /** What the profile step left to report on the final screen, if anything. */
+  profileStepNotice = signal<string | null>(null);
 
   async ngOnInit(): Promise<void> {
     this.adjustAssistantDialogPanel();
@@ -121,6 +131,8 @@ export class SystemInitAssistantComponent implements OnInit {
         await this.demoDataInitializer.generateDemoData();
       }
 
+      // this also mounts the profile step, which relies on a config having been imported
+      // successfully - on failure there is none to read entity types from.
       this.demoInitialized.set(true);
     } catch (error) {
       Logging.error("Error initializing demo data:", error);
@@ -131,6 +143,11 @@ export class SystemInitAssistantComponent implements OnInit {
 
   onUseCaseSelected(selected: BaseConfig) {
     this.selectedUseCase.set(selected);
+  }
+
+  onProfileStepCompleted(notice: string | null) {
+    this.profileStepNotice.set(notice);
+    this.profileStepDone.set(true);
   }
 
   startExploring() {
