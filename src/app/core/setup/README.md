@@ -46,11 +46,14 @@ after setup:
 userEntityId })` write path the user administration UI (`../user/user-details/`) uses to re-link an
   existing account - this step is really just that same operation, automated for the very first login.
 - **The entity is pushed to the server before the account is linked.** A save only writes to the local
-  database, and linking changes what `${user.entityId}` resolves to - so the next login enforces
-  different permission rules and `PermissionEnforcerService` drops local data they no longer cover
-  (on the legacy `idb` adapter by destroying the local database, unsynced documents included). With
-  the reload below, a profile that hasn't reached the server yet would be lost while its account link
-  survives. If that push fails (e.g. offline), the account is left unlinked rather than reloading.
+  database, and the reload below does not reopen that same one: its name comes from `SessionInfo.name`,
+  i.e. the token's `username` claim, which is exactly what linking sets - so the app continues against
+  a differently-named local database and anything left unsynced in the old one is orphaned. The changed
+  `${user.entityId}` also makes the next login enforce different permission rules, and
+  `PermissionEnforcerService` drops local data they no longer cover (on the legacy `idb` adapter by
+  destroying the local database). Either way a profile that hasn't reached the server yet would be lost
+  while its account link survives. If the push fails (e.g. offline), the account is left unlinked
+  rather than reloading, and the profile syncs up on its own once the server is reachable again.
 - **A successful link reloads the app.** `SessionInfo.entityId` comes from a token claim set at login;
   writing the Keycloak attribute server-side doesn't change an already-issued token, so the app has to
   do a fresh login (`init()`'s SSO check) to pick it up - the reload is only skipped when the write

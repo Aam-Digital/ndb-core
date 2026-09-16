@@ -232,12 +232,14 @@ export class UserProfileSetupComponent implements OnInit {
   /**
    * Send the newly created profile to the server before the account is linked to it.
    *
-   * A save only writes to the local database, which the following steps then outlive it in:
-   * linking changes what `${user.entityId}` resolves to, so the user's permission rules differ
-   * on the next login and {@link PermissionEnforcerService} discards local data that the new
-   * rules no longer cover - on the legacy `idb` adapter by destroying the local database
-   * altogether, unsynced documents included. Combined with the reload below, a profile that
-   * has not reached the server yet is lost while its account link remains.
+   * A save only writes to the local database, and the reload after linking does not come back
+   * to that same one: the local database name is built from `SessionInfo.name`, which is the
+   * token's `username` claim - exactly what linking sets. The app therefore reopens under a
+   * different local database, orphaning whatever was left unsynced in the previous one. The
+   * changed `${user.entityId}` additionally makes the next login enforce different permission
+   * rules, so {@link PermissionEnforcerService} discards local data they no longer cover (on
+   * the legacy `idb` adapter by destroying the local database outright). Either way, a profile
+   * that has not reached the server yet is lost while its account link survives.
    *
    * @returns whether the profile is on the server (always true where the save already went
    *   there directly, i.e. without a local database to sync from).
