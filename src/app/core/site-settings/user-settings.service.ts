@@ -3,20 +3,18 @@ import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/conf
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Logging } from "../logging/logging.service";
 import { SessionSubject } from "../session/auth/session-info";
-import { SiteSettings } from "./site-settings";
+import { UserSettings } from "./user-settings";
 
 /**
- * Settings a user has chosen for their own account, stored as a `SiteSettings`
- * document under their account id, with `SiteSettings:global` as the fallback.
+ * Settings a user has chosen for their own account, stored as a
+ * {@link UserSettings} document under their account id.
  *
  * Deliberately separate from {@link SiteSettingsService}, which also applies the
- * site branding that individual users must not be able to override.
+ * site branding that individual users must not be able to override - permissions
+ * are granted per entity type, so these have to be different types.
  */
 @Injectable({ providedIn: "root" })
 export class UserSettingsService {
-  /** everything not listed here stays global and admin-controlled */
-  static readonly USER_OVERRIDABLE_SETTINGS = ["defaultLanguage"] as const;
-
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
 
@@ -30,13 +28,13 @@ export class UserSettingsService {
    */
   async loadUserSettings(
     userId = this.userId,
-  ): Promise<SiteSettings | undefined> {
+  ): Promise<UserSettings | undefined> {
     if (!userId) {
       return undefined;
     }
 
     try {
-      return await this.entityMapper.load(SiteSettings, userId);
+      return await this.entityMapper.load(UserSettings, userId);
     } catch (err) {
       // no personal settings saved yet is the normal case, not an error
       Logging.debug("UserSettingsService: no settings for this user", err);
@@ -59,7 +57,7 @@ export class UserSettingsService {
     }
 
     const settings =
-      (await this.loadUserSettings(userId)) ?? new SiteSettings(userId);
+      (await this.loadUserSettings(userId)) ?? new UserSettings(userId);
     settings.defaultLanguage = locale;
 
     await this.entityMapper.save(settings);

@@ -6,8 +6,10 @@ import { SiteSettings } from "../site-settings/site-settings";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { UserSettingsService } from "../site-settings/user-settings.service";
-import { filter } from "rxjs";
+import { distinctUntilChanged, filter, firstValueFrom, map } from "rxjs";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
+import { Logging } from "../logging/logging.service";
+import { SessionSubject } from "../session/auth/session-info";
 
 /**
  * Service that provides the currently active locale and applies a newly selected one.
@@ -23,9 +25,43 @@ export class LanguageService {
   private siteSettings = inject(SiteSettingsService);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly userSettings = inject(UserSettingsService);
+  private readonly sessionInfo = inject(SessionSubject);
 
   constructor() {
     this.switchLocaleOnSiteSettingsUpdate();
+    this.applyOwnLanguageOnLogin();
+  }
+
+  /**
+   * A user's own language lives in the database, so it can only be read once a
+   * session exists. Resolving on every login also stops a shared browser from
+   * keeping the previous user's choice.
+   */
+  private applyOwnLanguageOnLogin() {
+    this.sessionInfo
+      .pipe(
+        untilDestroyed(this),
+        map((session) => session?.id),
+        filter((userId) => !!userId),
+        distinctUntilChanged(),
+      )
+      .subscribe(async () => {
+        const ownLanguage = await this.userSettings.getLanguage();
+        if (ownLanguage) {
+          this.switchLocale(ownLanguage);
+          return;
+        }
+
+        // fall back to the system default, not the previous user's choice
+        try {
+          const siteDefault = await firstValueFrom(
+            this.siteSettings.defaultLanguage,
+          );
+          this.switchLocale(siteDefault?.id);
+        } catch (err) {
+          Logging.debug("No site default language to fall back to", err);
+        }
+      });
   }
 
   /**
@@ -65,19 +101,16 @@ export class LanguageService {
     this.window.location.reload();
   }
 
+  /**
+   * Apply the system default at startup. A user's own language is applied on
+   * login instead (see {@link applyOwnLanguageOnLogin}).
+   */
   async initDefaultLanguage(): Promise<void> {
     const languageSelected = this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
     if (languageSelected) return;
 
-    const ownLanguage = await this.userSettings.getLanguage();
-    if (ownLanguage) {
-      this.switchLocale(ownLanguage);
-      return;
-    }
-
-    // nothing chosen for this account: fall back to the system default
     this.siteSettings.defaultLanguage.subscribe(({ id }) => {
       this.switchLocale(id);
     });

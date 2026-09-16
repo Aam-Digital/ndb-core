@@ -1,9 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { AlertService } from "../../alerts/alert.service";
 import { BehaviorSubject } from "rxjs";
 
+import { By } from "@angular/platform-browser";
+
 import { UserLanguageSettingsComponent } from "./user-language-settings.component";
+import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
 import { LanguageService } from "../../language/language.service";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { UserSettingsService } from "../../site-settings/user-settings.service";
@@ -14,7 +17,7 @@ describe("UserLanguageSettingsComponent", () => {
   let fixture: ComponentFixture<UserLanguageSettingsComponent>;
   let userSettings: { setLanguage: ReturnType<typeof vi.fn> };
   let languageService: { switchLocale: ReturnType<typeof vi.fn> };
-  let snackBar: { open: ReturnType<typeof vi.fn> };
+  let alertService: { addDanger: ReturnType<typeof vi.fn> };
   let displayLanguageSelect: BehaviorSubject<boolean>;
 
   async function createComponent() {
@@ -23,7 +26,7 @@ describe("UserLanguageSettingsComponent", () => {
       switchLocale: vi.fn(),
       getCurrentLocale: vi.fn().mockReturnValue("en-US"),
     } as any;
-    snackBar = { open: vi.fn() };
+    alertService = { addDanger: vi.fn() };
     displayLanguageSelect = new BehaviorSubject(true);
 
     await TestBed.configureTestingModule({
@@ -31,7 +34,7 @@ describe("UserLanguageSettingsComponent", () => {
       providers: [
         { provide: UserSettingsService, useValue: userSettings },
         { provide: LanguageService, useValue: languageService },
-        { provide: MatSnackBar, useValue: snackBar },
+        { provide: AlertService, useValue: alertService },
         {
           provide: SiteSettingsService,
           useValue: { displayLanguageSelect },
@@ -47,6 +50,11 @@ describe("UserLanguageSettingsComponent", () => {
   beforeEach(() => createComponent());
 
   afterEach(() => TestBed.resetTestingModule());
+
+  function languageSelect(): LanguageSelectComponent {
+    return fixture.debugElement.query(By.directive(LanguageSelectComponent))
+      .componentInstance;
+  }
 
   it("should save the language before applying it, since applying reloads the app", async () => {
     await component.onLanguageSelected("de");
@@ -64,7 +72,7 @@ describe("UserLanguageSettingsComponent", () => {
     await component.onLanguageSelected("de");
 
     expect(languageService.switchLocale).not.toHaveBeenCalled();
-    expect(snackBar.open).toHaveBeenCalled();
+    expect(alertService.addDanger).toHaveBeenCalled();
   });
 
   it("should revert the shown selection if saving failed", async () => {
@@ -77,6 +85,25 @@ describe("UserLanguageSettingsComponent", () => {
 
     await component.onLanguageSelected("de");
     expect(select.currentLocale()).toBe("en-US");
+  });
+
+  it("should disable the select while a save is in flight", async () => {
+    // the dropdown moves to the new value as soon as it is picked, so a second
+    // pick has to be prevented rather than silently dropped
+    let resolveSave: () => void;
+    userSettings.setLanguage.mockReturnValue(
+      new Promise<void>((resolve) => (resolveSave = resolve)),
+    );
+
+    const pending = component.onLanguageSelected("de");
+    fixture.detectChanges();
+    expect(languageSelect().disabled()).toBe(true);
+
+    resolveSave();
+    await pending;
+    fixture.detectChanges();
+
+    expect(languageSelect().disabled()).toBe(false);
   });
 
   it("should ignore a locale that is not available", async () => {

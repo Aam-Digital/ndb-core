@@ -66,10 +66,6 @@ export class SiteSettings extends Entity {
   error: string;
   @DatabaseField({ label: $localize`Text font` }) font: string;
 
-  /**
-   * @param id the settings document to represent - the global settings by
-   *   default, or a user account id for that user's personal overrides
-   */
   constructor(id: string = SiteSettings.ENTITY_ID) {
     super(id);
   }

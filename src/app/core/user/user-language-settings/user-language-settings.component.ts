@@ -6,7 +6,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { AlertService } from "../../alerts/alert.service";
 import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
 import { LanguageService } from "../../language/language.service";
 import { availableLocales } from "../../language/languages";
@@ -31,7 +31,7 @@ export class UserLanguageSettingsComponent {
   private readonly userSettings = inject(UserSettingsService);
   private readonly languageService = inject(LanguageService);
   private readonly siteSettings = inject(SiteSettingsService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly alertService = inject(AlertService);
 
   readonly availableLocales = availableLocales.values;
 
@@ -66,7 +66,7 @@ export class UserLanguageSettingsComponent {
         new Error("Failed to save the user's language", { cause: err }),
       );
       this.languageSelect()?.resetToCurrent();
-      this.snackBar.open(
+      this.alertService.addDanger(
         $localize`Your language could not be saved. Please try again.`,
       );
     } finally {

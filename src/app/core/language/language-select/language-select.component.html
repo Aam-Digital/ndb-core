@@ -3,6 +3,7 @@
 
   <mat-select
     [value]="currentLocale()"
+    [disabled]="disabled()"
     (selectionChange)="changeLocale($event.value)"
   >
     @for (locale of availableLocales(); track locale.id) {

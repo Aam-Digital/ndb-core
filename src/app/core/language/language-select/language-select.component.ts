@@ -36,6 +36,9 @@ export class LanguageSelectComponent {
    */
   applyImmediately = input<boolean>(true);
 
+  /** block further picks, e.g. while the caller is still saving the last one */
+  disabled = input<boolean>(false);
+
   localeChange = output<string>();
 
   currentLocale = signal(this.languageService.getCurrentLocale());
