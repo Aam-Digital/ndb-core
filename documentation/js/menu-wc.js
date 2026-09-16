@@ -1542,6 +1542,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/UserListComponent.html" data-type="entity-link" >UserListComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/UserProfileSetupComponent.html" data-type="entity-link" >UserProfileSetupComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/ViewActionsComponent.html" data-type="entity-link" >ViewActionsComponent</a>
                             </li>
                             <li class="link">
