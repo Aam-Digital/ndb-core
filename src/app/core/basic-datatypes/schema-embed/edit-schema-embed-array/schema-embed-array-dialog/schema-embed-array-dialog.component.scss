@@ -1,7 +1,3 @@
-:host {
-  display: block;
-}
-
 /* make layout of row fields more dense and align them by hiding unused subscript space */
 :host ::ng-deep .embedded-table .mat-mdc-form-field-subscript-wrapper {
   display: none;

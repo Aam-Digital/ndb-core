@@ -1,49 +1,11 @@
-<div class="table-scroll">
-  <table class="embedded-table">
-    <thead>
-      <tr>
-        <th></th>
-        @for (column of columns(); track column.id) {
-          <th>{{ column.label }}</th>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @for (row of rows(); track row; let i = $index) {
-        <tr>
-          <td>
-            @if (!isDisabled()) {
-              <button
-                type="button"
-                class="remove-btn"
-                (click)="removeRow(i)"
-                matTooltip="Remove entry"
-                i18n-matTooltip
-              >
-                <fa-icon icon="xmark"></fa-icon>
-              </button>
-            }
-          </td>
-          @for (column of columns(); track column.id) {
-            <td>
-              <app-entity-field-edit
-                [field]="column"
-                [form]="row.form"
-                [hideLabel]="true"
-                [hideInheritButton]="true"
-                [compactMode]="true"
-              ></app-entity-field-edit>
-            </td>
-          }
-        </tr>
-      }
-    </tbody>
-  </table>
-</div>
-
-@if (!isDisabled()) {
-  <button type="button" mat-button (click)="addRow()">
-    <fa-icon icon="plus"></fa-icon>
-    <span i18n>Add entry</span>
+@if (enabled()) {
+  <button type="button" mat-stroked-button (click)="openDialog()">
+    <fa-icon icon="table"></fa-icon>
+    <span i18n>Manage entries ({{ rowCount() }})</span>
   </button>
+} @else {
+  <app-display-schema-embed-array
+    [value]="valueSignal()"
+    [formFieldConfig]="formFieldConfig()"
+  ></app-display-schema-embed-array>
 }

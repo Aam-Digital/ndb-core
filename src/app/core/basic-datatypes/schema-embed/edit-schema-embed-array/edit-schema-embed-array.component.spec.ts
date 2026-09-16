@@ -1,22 +1,29 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
 import { By } from "@angular/platform-browser";
+import { MatDialog } from "@angular/material/dialog";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EditSchemaEmbedArrayComponent } from "./edit-schema-embed-array.component";
-import { EditTextComponent } from "#src/app/core/basic-datatypes/string/edit-text/edit-text.component";
+import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
+import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/display-schema-embed-array.component";
 
 describe("EditSchemaEmbedArrayComponent", () => {
   let component: EditSchemaEmbedArrayComponent;
   let fixture: ComponentFixture<EditSchemaEmbedArrayComponent>;
   let formControl: FormControl<Record<string, any>[]>;
+  let mockDialog: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
+    mockDialog = { open: vi.fn() };
+
     await TestBed.configureTestingModule({
       imports: [
         EditSchemaEmbedArrayComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN),
       ],
+      providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditSchemaEmbedArrayComponent);
@@ -31,86 +38,88 @@ describe("EditSchemaEmbedArrayComponent", () => {
     fixture.componentRef.setInput("formFieldConfig", {
       id: "documents",
       dataType: "schema-embed-array",
+      label: "Identification Documents",
       additional: {
         documentType: { dataType: "string", label: "Document Type" },
         documentNumber: { dataType: "string", label: "Document Number" },
       },
     });
     fixture.detectChanges();
-    await fixture.whenStable();
   });
 
-  it("renders configured columns as table headers, in order", () => {
-    const headers = fixture.debugElement
-      .queryAll(By.css("th"))
-      .map((h) => h.nativeElement.textContent.trim());
-
-    expect(headers).toEqual(["", "Document Type", "Document Number"]);
+  it("shows a button with the current number of entries while enabled", () => {
+    const button = fixture.debugElement.query(By.css("button"));
+    expect(button.nativeElement.textContent).toContain("2");
   });
 
-  it("renders one row per array entry", () => {
-    expect(component.rows()).toHaveLength(2);
-    expect(fixture.debugElement.queryAll(By.css("tbody tr"))).toHaveLength(2);
+  it("updates the displayed count when the value changes", () => {
+    formControl.setValue([...formControl.value, {}]);
+    fixture.detectChanges();
+
+    const button = fixture.debugElement.query(By.css("button"));
+    expect(button.nativeElement.textContent).toContain("3");
   });
 
-  it("appends an empty row when addRow is called", () => {
-    component.addRow();
-
-    expect(formControl.value).toHaveLength(3);
-    expect(formControl.value[2]).toEqual({});
-  });
-
-  it("removes exactly the targeted row, keeping other rows' content intact", () => {
-    component.removeRow(0);
-
-    expect(formControl.value).toHaveLength(1);
-    expect(formControl.value[0]).toMatchObject({
-      documentType: "ID Card",
-      documentNumber: "B2",
-    });
-  });
-
-  it("updates the correct row/column in the outer control when a cell changes", async () => {
-    const textInputs = fixture.debugElement.queryAll(
-      By.directive(EditTextComponent),
-    );
-    // second row's "documentType" cell
-    const secondRowType = textInputs[2].componentInstance as EditTextComponent;
-    secondRowType.formControl.setValue("Updated Type");
-
-    expect(formControl.value[1]).toMatchObject({
-      documentType: "Updated Type",
-      documentNumber: "B2",
-    });
-    // first row is untouched
-    expect(formControl.value[0]).toMatchObject({
-      documentType: "Passport",
-      documentNumber: "A1",
-    });
-  });
-
-  it("marks the outer control dirty when a row is added, removed or edited", () => {
-    expect(formControl.dirty).toBe(false);
-
-    component.addRow();
-
-    expect(formControl.dirty).toBe(true);
-  });
-
-  it("disables all cells and hides add/remove buttons when the outer control is disabled", () => {
+  it("replaces the button with a read-only preview once the control is disabled", () => {
+    // the surrounding mat-form-field sets pointer-events:none on itself while disabled
+    // (Material's standard behavior), so the button would be unclickable there - showing
+    // a plain read-only preview instead matches how every other field type still displays
+    // its value inline while disabled.
     formControl.disable();
     fixture.detectChanges();
 
-    expect(component.isDisabled()).toBe(true);
-    expect(fixture.debugElement.queryAll(By.css(".remove-btn"))).toHaveLength(
-      0,
+    expect(fixture.debugElement.query(By.css("button"))).toBeFalsy();
+    const display = fixture.debugElement.query(
+      By.directive(DisplaySchemaEmbedArrayComponent),
     );
-    expect(
-      fixture.debugElement.queryAll(By.css("button[mat-button]")),
-    ).toHaveLength(0);
+    expect(display).toBeTruthy();
+    expect(display.componentInstance.value()).toEqual(formControl.value);
   });
 
-  it("renders no columns when additional is not configured", () => {
+  it("shows the button again once a disabled control is re-enabled", () => {
+    formControl.disable();
+    fixture.detectChanges();
+    formControl.enable();
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css("button"))).toBeTruthy();
+    expect(
+      fixture.debugElement.query(
+        By.directive(DisplaySchemaEmbedArrayComponent),
+      ),
+    ).toBeFalsy();
+  });
+
+  it("opens the dialog with the field's formControl, resolved columns, entity and label", () => {
+    const entity = new TestEntity();
+    fixture.componentRef.setInput("entity", entity);
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css("button")).nativeElement.click();
+
+    expect(mockDialog.open).toHaveBeenCalledWith(
+      SchemaEmbedArrayDialogComponent,
+      expect.objectContaining({
+        data: {
+          formControl,
+          columns: [
+            expect.objectContaining({
+              id: "documentType",
+              label: "Document Type",
+            }),
+            expect.objectContaining({
+              id: "documentNumber",
+              label: "Document Number",
+            }),
+          ],
+          entity,
+          label: "Identification Documents",
+        },
+      }),
+    );
+  });
+
+  it("resolves no columns when additional is not configured", () => {
     fixture.componentRef.setInput("formFieldConfig", {
       id: "documents",
       dataType: "schema-embed-array",
@@ -118,7 +127,5 @@ describe("EditSchemaEmbedArrayComponent", () => {
     fixture.detectChanges();
 
     expect(component.columns()).toEqual([]);
-    // only the blank leading header (for the remove-row button column) remains
-    expect(fixture.debugElement.queryAll(By.css("th"))).toHaveLength(1);
   });
 });
