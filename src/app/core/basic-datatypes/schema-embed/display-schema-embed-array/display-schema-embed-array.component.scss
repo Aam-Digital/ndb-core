@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.embedded-table-view {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 2px 12px 2px 0;
+    text-align: left;
+    font-weight: normal;
+    white-space: nowrap;
+  }
+
+  thead th {
+    font-weight: 500;
+    border-bottom: 1px solid var(--mdc-theme-divider-color, rgba(0, 0, 0, 0.12));
+  }
+}

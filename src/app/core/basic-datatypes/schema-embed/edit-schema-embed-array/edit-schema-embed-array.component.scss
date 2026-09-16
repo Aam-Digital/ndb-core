@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+/* make layout of row fields more dense and align them by hiding unused subscript space */
+:host ::ng-deep .embedded-table .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.embedded-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 4px 8px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .remove-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    color: var(--mdc-theme-text-secondary-on-background, rgba(0, 0, 0, 0.54));
+    border-radius: 50%;
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}

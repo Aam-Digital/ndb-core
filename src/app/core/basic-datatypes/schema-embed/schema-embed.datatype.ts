@@ -72,8 +72,12 @@ export class SchemaEmbedDatatype<
   /**
    * Build the effective inner schema from the embedded type's annotations
    * and/or the `additional` config.
+   *
+   * Public so that generic UI components (e.g. for `schema-embed-array`) can resolve the
+   * same merged column list this datatype uses for (de)serialization, without duplicating
+   * the merge logic or being limited to the `additional`-only (config-based) case.
    */
-  private getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
+  getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
     // Clone the base schema to avoid mutating the original class schema
     const baseSchema: EntitySchema = new Map(
       this.embeddedType?.schema ?? new Map(),
