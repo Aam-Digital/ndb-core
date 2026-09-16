@@ -1399,7 +1399,6 @@
   "7982743728124050763": " Generated {$INTERPOLATION} of {$INTERPOLATION_1} files. ",
   "4080264981280047589": "Failed: {$INTERPOLATION}",
   "1801379279347743035": "No records selected for file generation.",
-  "8948007995644975474": "Generated {$PH} of {$PH_1} files.",
   "6741190853602746450": "Presets",
   "843548054527451651": "Columns",
   "3785405971041041504": "Type to search columns",
@@ -1723,5 +1722,9 @@
   "5664608968652414494": "Your account is now linked to a different profile. You need to log out and log back in for this to take effect in your current session.",
   "7348904147850479023": "Could not check whether this profile already has a user account. Please try again.",
   "3611779582058033216": "Change linked profile?",
-  "5514714384578116210": "This account will be linked to the newly selected profile record instead. The previous profile record stays in the database, but will no longer be linked to a login account. Permission rules based on this user's identity, as well as records created, updated or assigned to this user going forward, will use the new profile record instead."
+  "5514714384578116210": "This account will be linked to the newly selected profile record instead. The previous profile record stays in the database, but will no longer be linked to a login account. Permission rules based on this user's identity, as well as records created, updated or assigned to this user going forward, will use the new profile record instead.",
+  "6853821726408429494": " This template combines all selected records into a single report. ",
+  "5546581207762070668": "Files generated successfully.",
+  "4955563477664972346": "Multi-Record Report",
+  "4339652673305755091": "Enable this if the template uses carbone's array syntax to list all selected records within a single generated document (e.g. a table listing multiple people), instead of generating one file per record. Only offered when generating a file for multiple selected records at once (not for a single record)."
 }

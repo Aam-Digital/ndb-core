@@ -1399,7 +1399,6 @@
   "7982743728124050763": "Es wurden {$INTERPOLATION} von {$INTERPOLATION_1} Dateien generiert. ",
   "4080264981280047589": "Fehlgeschlagen: {$INTERPOLATION}",
   "1801379279347743035": "Für die Dateierstellung wurden keine Datensätze ausgewählt.",
-  "8948007995644975474": "Es wurden {$PH} von {$PH_1} Dateien generiert.",
   "6741190853602746450": "Voreinstellungen",
   "843548054527451651": "Spalten",
   "3785405971041041504": "Geben Sie etwas ein, um die verfügbaren Spalten zu filtern.",
@@ -1723,5 +1722,9 @@
   "5664608968652414494": "Ihr Konto ist nun mit einem anderen Profil verknüpft. Sie müssen sich ab- und wieder anmelden, damit die Änderung in Ihrer aktuellen Sitzung wirksam wird.",
   "7348904147850479023": "Es konnte nicht geprüft werden, ob für dieses Profil bereits ein Benutzerkonto existiert. Bitte versuchen Sie es erneut.",
   "3611779582058033216": "Verknüpftes Profil ändern?",
-  "5514714384578116210": "Dieses Konto wird stattdessen mit dem neu ausgewählten Profil verknüpft. Der vorherige Profileintrag bleibt in der Datenbank erhalten, ist aber nicht mehr mit einem Benutzerkonto verknüpft. Berechtigungsregeln, die auf der Identität dieses Benutzers basieren, sowie alle Datensätze, die diesem Benutzer zukünftig erstellt, aktualisiert oder zugewiesen werden, verwenden den neuen Profileintrag."
+  "5514714384578116210": "Dieses Konto wird stattdessen mit dem neu ausgewählten Profil verknüpft. Der vorherige Profileintrag bleibt in der Datenbank erhalten, ist aber nicht mehr mit einem Benutzerkonto verknüpft. Berechtigungsregeln, die auf der Identität dieses Benutzers basieren, sowie alle Datensätze, die diesem Benutzer zukünftig erstellt, aktualisiert oder zugewiesen werden, verwenden den neuen Profileintrag.",
+  "6853821726408429494": " This template combines all selected records into a single report. ",
+  "5546581207762070668": "Files generated successfully.",
+  "4955563477664972346": "Multi-Record Report",
+  "4339652673305755091": "Enable this if the template uses carbone's array syntax to list all selected records within a single generated document (e.g. a table listing multiple people), instead of generating one file per record. Only offered when generating a file for multiple selected records at once (not for a single record)."
 }
