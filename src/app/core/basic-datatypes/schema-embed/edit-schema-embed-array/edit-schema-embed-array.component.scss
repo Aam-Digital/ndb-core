@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 :host {
   display: block;
 }
@@ -8,4 +10,11 @@
   // mat-form-field via `.mat-form-field-disabled` when this field is disabled), so hovering
   // still works to show the preview tooltip even though the button itself stays unclickable.
   pointer-events: auto;
+}
+
+button {
+  // Keep the label/icon readable while disabled, matching every other field's value text
+  // (which stays full-strength in a disabled/view-mode form) instead of Material's default
+  // washed-out disabled-button color.
+  --mdc-outlined-button-disabled-label-text-color: #{colors.$text};
 }
