@@ -28,6 +28,7 @@ export const addDefaultNoteDetailsConfig: ConfigMigration = (
  */
 export function getDefaultNoteDetailsConfig(): NoteDetailsConfig {
   return {
+    entityType: "Note",
     topForm: ["date", "warningLevel", "category", "authors", "attachment"],
     middleForm: ["subject", "text"],
     bottomForm: ["children", "schools"],
