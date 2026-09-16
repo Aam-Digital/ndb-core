@@ -2,27 +2,6 @@
   display: block;
 }
 
-.table-scroll {
-  overflow-x: auto;
-}
-
-.embedded-table-view {
-  // min-width (not width): lets the table grow past its container so cells don't get
-  // squeezed - .table-scroll then scrolls horizontally instead of clipping content.
-  min-width: 100%;
-  width: max-content;
-  border-collapse: collapse;
-
-  th,
-  td {
-    padding: 2px 12px 2px 0;
-    text-align: left;
-    font-weight: normal;
-    white-space: nowrap;
-  }
-
-  thead th {
-    font-weight: 500;
-    border-bottom: 1px solid var(--mdc-theme-divider-color, rgba(0, 0, 0, 0.12));
-  }
+.entry-count {
+  cursor: help;
 }

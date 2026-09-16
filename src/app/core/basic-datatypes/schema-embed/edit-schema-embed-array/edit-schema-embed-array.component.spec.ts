@@ -7,7 +7,7 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EditSchemaEmbedArrayComponent } from "./edit-schema-embed-array.component";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
-import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/display-schema-embed-array.component";
+import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 
 describe("EditSchemaEmbedArrayComponent", () => {
   let component: EditSchemaEmbedArrayComponent;
@@ -47,9 +47,10 @@ describe("EditSchemaEmbedArrayComponent", () => {
     fixture.detectChanges();
   });
 
-  it("shows a button with the current number of entries while enabled", () => {
+  it("shows a button with the current number of entries", () => {
     const button = fixture.debugElement.query(By.css("button"));
     expect(button.nativeElement.textContent).toContain("2");
+    expect(button.nativeElement.disabled).toBe(false);
   });
 
   it("updates the displayed count when the value changes", () => {
@@ -60,20 +61,13 @@ describe("EditSchemaEmbedArrayComponent", () => {
     expect(button.nativeElement.textContent).toContain("3");
   });
 
-  it("replaces the button with a read-only preview once the control is disabled", () => {
-    // the surrounding mat-form-field sets pointer-events:none on itself while disabled
-    // (Material's standard behavior), so the button would be unclickable there - showing
-    // a plain read-only preview instead matches how every other field type still displays
-    // its value inline while disabled.
+  it("keeps the button visible but visibly disabled when the control is disabled", () => {
     formControl.disable();
     fixture.detectChanges();
 
-    expect(fixture.debugElement.query(By.css("button"))).toBeFalsy();
-    const display = fixture.debugElement.query(
-      By.directive(DisplaySchemaEmbedArrayComponent),
-    );
-    expect(display).toBeTruthy();
-    expect(display.componentInstance.value()).toEqual(formControl.value);
+    const button = fixture.debugElement.query(By.css("button"));
+    expect(button).toBeTruthy();
+    expect(button.nativeElement.disabled).toBe(true);
   });
 
   it("shows the button again once a disabled control is re-enabled", () => {
@@ -82,12 +76,29 @@ describe("EditSchemaEmbedArrayComponent", () => {
     formControl.enable();
     fixture.detectChanges();
 
-    expect(fixture.debugElement.query(By.css("button"))).toBeTruthy();
-    expect(
-      fixture.debugElement.query(
-        By.directive(DisplaySchemaEmbedArrayComponent),
-      ),
-    ).toBeFalsy();
+    const button = fixture.debugElement.query(By.css("button"));
+    expect(button.nativeElement.disabled).toBe(false);
+  });
+
+  it("enables the hover preview tooltip whenever there are entries, regardless of disabled state", () => {
+    formControl.disable();
+    fixture.detectChanges();
+
+    const directive = fixture.debugElement
+      .query(By.directive(TemplateTooltipDirective))
+      .injector.get(TemplateTooltipDirective);
+    expect(directive.tooltipDisabled()).toBe(false);
+    expect(directive.contentTemplate()).toBeTruthy();
+  });
+
+  it("disables the hover preview tooltip when there are no entries", () => {
+    formControl.setValue([]);
+    fixture.detectChanges();
+
+    const directive = fixture.debugElement
+      .query(By.directive(TemplateTooltipDirective))
+      .injector.get(TemplateTooltipDirective);
+    expect(directive.tooltipDisabled()).toBe(true);
   });
 
   it("opens the dialog with the field's formControl, resolved columns, entity and label", () => {
@@ -106,10 +117,12 @@ describe("EditSchemaEmbedArrayComponent", () => {
             expect.objectContaining({
               id: "documentType",
               label: "Document Type",
+              viewComponent: "DisplayText",
             }),
             expect.objectContaining({
               id: "documentNumber",
               label: "Document Number",
+              viewComponent: "DisplayText",
             }),
           ],
           entity,

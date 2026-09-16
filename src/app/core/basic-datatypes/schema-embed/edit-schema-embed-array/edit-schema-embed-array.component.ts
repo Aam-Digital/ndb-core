@@ -15,24 +15,24 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 import { SchemaEmbedDatatype } from "../schema-embed.datatype";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
-import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/display-schema-embed-array.component";
+import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
 
 /**
  * Generic edit component for the `schema-embed-array` datatype.
  *
- * While editable, renders a single button showing the current number of entries; clicking
- * it opens {@link SchemaEmbedArrayDialogComponent}, a popup with the full editable table (one
- * row per array entry, one column per field defined in the field's `additional` schema, or
+ * Renders a single button showing the current number of entries; clicking it opens
+ * {@link SchemaEmbedArrayDialogComponent}, a popup with the full editable table (one row
+ * per array entry, one column per field defined in the field's `additional` schema, or
  * `embeddedType` for subclasses). Edits inside the dialog apply immediately to this field's
  * own FormControl, exactly as the previous inline table did.
  *
- * While disabled (read-only view mode), the surrounding `mat-form-field` sets
- * `pointer-events: none` on itself (Material's standard disabled-field behavior), which would
- * make the button unclickable - so a plain, non-interactive read-only preview is rendered
- * instead via {@link DisplaySchemaEmbedArrayComponent}, matching how every other field type
- * still shows its value inline while disabled.
+ * The button stays visible (but visibly disabled) while the surrounding form isn't in edit
+ * mode, and hovering it - whether enabled or disabled - shows a read-only preview table via
+ * {@link TemplateTooltipDirective}, the same pattern the attendance datatype's display
+ * component uses.
  */
 @DynamicComponent("EditSchemaEmbedArray")
 @Component({
@@ -40,9 +40,11 @@ import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/
   imports: [
     MatButtonModule,
     FontAwesomeModule,
-    DisplaySchemaEmbedArrayComponent,
+    TemplateTooltipDirective,
+    SchemaEmbedArrayTableComponent,
   ],
   templateUrl: "./edit-schema-embed-array.component.html",
+  styleUrls: ["./edit-schema-embed-array.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -61,7 +63,7 @@ export class EditSchemaEmbedArrayComponent
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dialog = inject(MatDialog);
 
-  /** The inner fields (table columns) resolved from the field's schema-embed configuration. */
+  /** The inner fields (table columns), each with its resolved viewComponent for the hover preview. */
   columns = computed<FormFieldConfig[]>(() => {
     const fieldConfig = this.formFieldConfig();
     if (!fieldConfig?.dataType) {
@@ -70,12 +72,16 @@ export class EditSchemaEmbedArrayComponent
     const dataType = this.entitySchemaService.getDatatypeOrDefault(
       fieldConfig.dataType,
     ) as SchemaEmbedDatatype;
-    return [
-      ...dataType.getEffectiveSchema(fieldConfig).values(),
-    ] as FormFieldConfig[];
+    return [...dataType.getEffectiveSchema(fieldConfig).values()].map(
+      (column) => ({
+        ...column,
+        viewComponent: this.entitySchemaService.getComponent(column, "view"),
+      }),
+    ) as FormFieldConfig[];
   });
 
-  rowCount = computed(() => this.valueSignal()?.length ?? 0);
+  rows = computed(() => this.valueSignal() ?? []);
+  rowCount = computed(() => this.rows().length);
 
   openDialog() {
     this.dialog.open(SchemaEmbedArrayDialogComponent, {

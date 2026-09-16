@@ -1,31 +1,12 @@
 @if (rows().length) {
-  <div class="table-scroll">
-    <table class="embedded-table-view">
-      <thead>
-        <tr>
-          @for (column of columns(); track column.id) {
-            <th>{{ column.label }}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of rows(); track $index) {
-          <tr>
-            @for (column of columns(); track column.id) {
-              <td>
-                <ng-container
-                  [appDynamicComponent]="{
-                    component: column.viewComponent,
-                    config: { value: row[column.id], formFieldConfig: column },
-                  }"
-                ></ng-container>
-              </td>
-            }
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-} @else {
-  <span>-</span>
+  <span class="entry-count" [appTemplateTooltip]="tooltip">
+    {{ rows().length }} <span i18n>entries</span>
+  </span>
 }
+
+<ng-template #tooltip>
+  <app-schema-embed-array-table
+    [rows]="rows()"
+    [columns]="columns()"
+  ></app-schema-embed-array-table>
+</ng-template>

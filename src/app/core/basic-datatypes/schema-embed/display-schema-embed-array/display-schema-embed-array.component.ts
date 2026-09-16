@@ -6,27 +6,23 @@ import {
 } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
-import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
+import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { SchemaEmbedDatatype } from "../schema-embed.datatype";
+import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
 
 /**
  * Generic view component for the `schema-embed-array` datatype.
  *
- * Renders a simple, borderless table - one row per array entry, one column per field defined
- * in the field's `additional` schema (or `embeddedType`, for subclasses). Each cell is rendered
- * through the view component that field's own dataType resolves to (e.g. a `date` column
- * renders through `DisplayDate`).
- *
- * `EntityFieldViewComponent` cannot be reused for cells since it requires a real `Entity`
- * instance; this drives `DynamicComponentDirective` directly instead, the same primitive
- * `EntityFieldViewComponent` uses internally.
+ * Shows just a small "N entries" text (nothing when there are no entries), and reveals a
+ * read-only preview table on hover via {@link TemplateTooltipDirective} - the same pattern
+ * the attendance datatype's display component uses for its participant list.
  */
 @DynamicComponent("DisplaySchemaEmbedArray")
 @Component({
   selector: "app-display-schema-embed-array",
-  imports: [DynamicComponentDirective],
+  imports: [TemplateTooltipDirective, SchemaEmbedArrayTableComponent],
   templateUrl: "./display-schema-embed-array.component.html",
   styleUrls: ["./display-schema-embed-array.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,

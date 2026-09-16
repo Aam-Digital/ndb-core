@@ -3,8 +3,7 @@ import { By } from "@angular/platform-browser";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { DisplaySchemaEmbedArrayComponent } from "./display-schema-embed-array.component";
-import { DisplayTextComponent } from "#src/app/core/basic-datatypes/string/display-text/display-text.component";
-import { DisplayDateComponent } from "#src/app/core/basic-datatypes/date/display-date/display-date.component";
+import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 
 describe("DisplaySchemaEmbedArrayComponent", () => {
   let component: DisplaySchemaEmbedArrayComponent;
@@ -31,59 +30,54 @@ describe("DisplaySchemaEmbedArrayComponent", () => {
     });
   });
 
-  it("renders one column header per configured field, in order", () => {
+  it("resolves columns in order with their default view components", () => {
     fixture.componentRef.setInput("value", [
       { documentType: "Passport", issueDate: new Date("2020-01-01") },
     ]);
     fixture.detectChanges();
 
-    const headers = fixture.debugElement
-      .queryAll(By.css("th"))
-      .map((h) => h.nativeElement.textContent.trim());
-    expect(headers).toEqual(["Document Type", "Issue Date"]);
-  });
-
-  it("resolves each column's default view component from its dataType", () => {
-    fixture.componentRef.setInput("value", [
-      { documentType: "Passport", issueDate: new Date("2020-01-01") },
-    ]);
-    fixture.detectChanges();
-
-    expect(component.columns().map((c) => c.viewComponent)).toEqual([
-      "DisplayText",
-      "DisplayDate",
-    ]);
-  });
-
-  it("renders one row per array entry through the resolved view components", async () => {
-    fixture.componentRef.setInput("value", [
-      { documentType: "Passport", issueDate: new Date("2020-01-01") },
-      { documentType: "ID Card", issueDate: new Date("2021-06-15") },
-    ]);
-    fixture.detectChanges();
-    await fixture.whenStable();
-
-    expect(fixture.debugElement.queryAll(By.css("tbody tr"))).toHaveLength(2);
     expect(
-      fixture.debugElement.queryAll(By.directive(DisplayTextComponent)),
-    ).toHaveLength(2);
-    expect(
-      fixture.debugElement.queryAll(By.directive(DisplayDateComponent)),
-    ).toHaveLength(2);
+      component
+        .columns()
+        .map((c) => ({ id: c.id, viewComponent: c.viewComponent })),
+    ).toEqual([
+      { id: "documentType", viewComponent: "DisplayText" },
+      { id: "issueDate", viewComponent: "DisplayDate" },
+    ]);
   });
 
-  it("shows a placeholder when there are no entries", () => {
+  it("shows the number of entries as text", () => {
+    fixture.componentRef.setInput("value", [
+      { documentType: "Passport" },
+      { documentType: "ID Card" },
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent.trim()).toBe("2 entries");
+  });
+
+  it("shows nothing when there are no entries", () => {
     fixture.componentRef.setInput("value", []);
     fixture.detectChanges();
 
-    expect(fixture.debugElement.query(By.css("table"))).toBeFalsy();
-    expect(fixture.nativeElement.textContent.trim()).toBe("-");
+    expect(fixture.nativeElement.textContent.trim()).toBe("");
+    expect(fixture.debugElement.query(By.css(".entry-count"))).toBeFalsy();
   });
 
-  it("shows a placeholder when the value is undefined", () => {
+  it("shows nothing when the value is undefined", () => {
     fixture.detectChanges();
 
     expect(component.rows()).toEqual([]);
-    expect(fixture.nativeElement.textContent.trim()).toBe("-");
+    expect(fixture.nativeElement.textContent.trim()).toBe("");
+  });
+
+  it("wires the hover tooltip with the preview table content", () => {
+    fixture.componentRef.setInput("value", [{ documentType: "Passport" }]);
+    fixture.detectChanges();
+
+    const directive = fixture.debugElement
+      .query(By.directive(TemplateTooltipDirective))
+      .injector.get(TemplateTooltipDirective);
+    expect(directive.contentTemplate()).toBeTruthy();
   });
 });
