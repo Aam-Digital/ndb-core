@@ -1,0 +1,41 @@
+@use "variables/colors";
+
+:host {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+// a textarea is taller than the button, so keep the button at the top
+:host(.is-multiline) {
+  align-items: flex-start;
+}
+
+.text-field {
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  // `inherit` would pick up the form field's muted label colour
+  color: var(--mat-sys-on-surface, rgba(0, 0, 0, 0.87));
+  font: inherit;
+  padding: 0;
+  outline: none;
+}
+
+textarea.text-field {
+  resize: vertical;
+}
+
+.translations-button {
+  flex: 0 0 auto;
+  // keep the button from dictating the height of the form field
+  --mdc-icon-button-state-layer-size: 24px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+
+// highlight the button when translations for several languages exist
+.is-multi-lingual {
+  color: colors.$accent;
+}

@@ -1,4 +1,4 @@
-import { EventEmitter, inject, Injectable } from "@angular/core";
+import { EventEmitter, inject, Injectable, LOCALE_ID } from "@angular/core";
 import { EntityConstructor } from "../entity/model/entity";
 import { Config } from "../config/config";
 import { EntityConfig } from "../entity/entity-config";
@@ -8,6 +8,9 @@ import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { DynamicComponentConfig } from "../config/dynamic-components/dynamic-component-config.interface";
 import { NoteDetailsConfig } from "#src/app/child-dev-project/notes/note-details/note-details-config.interface";
+import { mergeTranslatableValues } from "../config/multi-lingual-config";
+import { DEFAULT_LANGUAGE } from "../language/language-statics";
+import { availableLocales } from "../language/languages";
 
 /**
  * Simply service to centralize updates between various admin components in the form builder.
@@ -18,6 +21,9 @@ import { NoteDetailsConfig } from "#src/app/child-dev-project/notes/note-details
 export class AdminEntityService {
   public entitySchemaUpdated = new EventEmitter<void>();
   private entityMapper = inject(EntityMapperService);
+
+  private readonly locale = inject(LOCALE_ID);
+  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   /**
    * Set a new schema field to the given entity and trigger update event for related admin components.
@@ -100,13 +106,38 @@ export class AdminEntityService {
       if (field.isInternalField) {
         continue;
       }
-      entitySchemaConfig.attributes[fieldId] = field;
+      // the runtime schema holds values resolved to the active language, so merge
+      // onto the raw config to keep translations of other languages (#3862)
+      entitySchemaConfig.attributes[fieldId] = this.mergeTranslations(
+        entitySchemaConfig.attributes[fieldId],
+        field,
+      );
     }
 
     // Add additional general settings if available
     if (configEntitySettings) {
-      Object.assign(entitySchemaConfig, configEntitySettings);
+      Object.assign(
+        entitySchemaConfig,
+        this.mergeTranslations(entitySchemaConfig, configEntitySettings),
+      );
     }
+  }
+
+  /**
+   * Merge an edited (language-resolved) config part onto its raw counterpart from
+   * the config document, so that translations for other languages are preserved.
+   */
+  private mergeTranslations<T extends Record<string, any>>(
+    raw: Record<string, any> | undefined,
+    edited: T,
+  ): T {
+    return mergeTranslatableValues(
+      raw,
+      edited,
+      this.locale,
+      DEFAULT_LANGUAGE,
+      this.validLocaleIds,
+    );
   }
 
   private getEntitySchemaFromConfig(
