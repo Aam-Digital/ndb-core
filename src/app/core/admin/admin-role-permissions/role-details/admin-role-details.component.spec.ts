@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router, provideRouter } from "@angular/router";
@@ -11,11 +12,13 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.service";
+import { EntityPermissionError } from "../../../entity/entity-mapper/entity-permission-error";
 
 describe("AdminRoleDetailsComponent", () => {
   let component: AdminRoleDetailsComponent;
   let fixture: ComponentFixture<AdminRoleDetailsComponent>;
   const defaultRules = [{ subject: "all", action: "read" }];
+  const canEditPermissions = signal(true);
   const mockRolePermissions = {
     loadRoles: vi.fn(),
     saveRules: vi.fn().mockResolvedValue(undefined),
@@ -23,6 +26,7 @@ describe("AdminRoleDetailsComponent", () => {
     deleteRole: vi.fn().mockResolvedValue(undefined),
     updateRoleDescription: vi.fn().mockResolvedValue(undefined),
     canManageRoles: vi.fn().mockReturnValue(true),
+    canEditPermissions,
   };
 
   beforeEach(async () => {
@@ -31,6 +35,7 @@ describe("AdminRoleDetailsComponent", () => {
     mockRolePermissions.createRole.mockResolvedValue(undefined);
     mockRolePermissions.deleteRole.mockResolvedValue(undefined);
     mockRolePermissions.canManageRoles.mockReturnValue(true);
+    canEditPermissions.set(true);
     mockRolePermissions.loadRoles.mockResolvedValue([
       {
         name: "user_app",
@@ -152,6 +157,45 @@ describe("AdminRoleDetailsComponent", () => {
     ]);
     expect(component.editing()).toBe(false);
     expect(unsavedChanges.pending()).toBe(false);
+  });
+
+  it("disables editing when the user may not update the permissions config", async () => {
+    await fixture.whenStable();
+    canEditPermissions.set(false);
+    fixture.detectChanges();
+
+    const editButton = Array.from(
+      fixture.nativeElement.querySelectorAll("button"),
+    ).find((b: HTMLButtonElement) =>
+      b.textContent?.includes("Edit"),
+    ) as HTMLButtonElement;
+
+    // the button stays focusable so its tooltip can explain why, so Material
+    // marks it disabled via aria instead of the native property
+    expect(editButton.getAttribute("aria-disabled")).toBe("true");
+    expect(
+      fixture.nativeElement.querySelector(
+        "#" + editButton.getAttribute("aria-describedby"),
+      ).textContent,
+    ).toContain("permission");
+
+    // ...and because it stays interactive, the click must be refused too
+    editButton.click();
+    expect(component.editing()).toBe(false);
+  });
+
+  it("names the missing permission instead of asking to retry", async () => {
+    await fixture.whenStable();
+    const openSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
+    mockRolePermissions.saveRules.mockRejectedValue(
+      new EntityPermissionError("update", "Config:Permissions", "Config"),
+    );
+
+    component.startEditing();
+    await component.save();
+
+    expect(openSpy.mock.calls[0][0]).not.toContain("try again");
+    expect(openSpy.mock.calls[0][0]).toContain("permission");
   });
 
   it("keeps edit mode and reports an error when saving permissions fails", async () => {

@@ -7,6 +7,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Config } from "../../config/config";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("RolePermissionsService", () => {
   let service: RolePermissionsService;
@@ -22,9 +23,19 @@ describe("RolePermissionsService", () => {
     updateRole: vi.fn(),
   };
   const sessionInfo = new SessionSubject();
+  let canUpdatePermissionsConfig: boolean;
+  let emitAbilityUpdate: () => void;
+  const mockAbility = {
+    can: vi.fn(() => canUpdatePermissionsConfig),
+    on: vi.fn().mockImplementation((_, callback) => {
+      emitAbilityUpdate = callback;
+      return () => {};
+    }),
+  } as Partial<EntityAbility> as EntityAbility;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    canUpdatePermissionsConfig = true;
     mockEntityMapper.save.mockResolvedValue(undefined);
     sessionInfo.next({
       id: "admin",
@@ -38,6 +49,7 @@ describe("RolePermissionsService", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: UserAdminService, useValue: mockUserAdmin },
         { provide: SessionSubject, useValue: sessionInfo },
+        { provide: EntityAbility, useValue: mockAbility },
         {
           provide: MatSnackBar,
           useValue: { open: () => ({ onAction: () => EMPTY }) },
@@ -243,6 +255,23 @@ describe("RolePermissionsService", () => {
     // unknown capability (token without client roles) is treated as allowed
     sessionInfo.next({ id: "u", name: "u", roles: [] });
     expect(service.canManageRoles()).toBe(true);
+  });
+
+  it("canEditPermissions reflects the permission to update the permissions config", () => {
+    expect(service.canEditPermissions()).toBe(true);
+
+    canUpdatePermissionsConfig = false;
+    emitAbilityUpdate();
+
+    expect(service.canEditPermissions()).toBe(false);
+
+    // the check must run against the actual document, so rules with conditions
+    // on the permissions config are evaluated rather than only the "Config" type
+    const [action, checkedSubject] = vi
+      .mocked(mockAbility.can)
+      .mock.calls.at(-1);
+    expect(action).toBe("update");
+    expect((checkedSubject as Config).getId()).toBe("Config:Permissions");
   });
 
   it("saveRules writes timestamped backup config before saving updated permissions", async () => {

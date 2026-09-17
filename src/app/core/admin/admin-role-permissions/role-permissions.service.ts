@@ -1,4 +1,11 @@
-import { Injectable, Signal, computed, inject } from "@angular/core";
+import {
+  DestroyRef,
+  Injectable,
+  Signal,
+  computed,
+  inject,
+  signal,
+} from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import moment from "moment";
@@ -8,6 +15,7 @@ import { catchError } from "rxjs/operators";
 import { Config } from "../../config/config";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { SessionSubject } from "../../session/auth/session-info";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 import {
   DatabaseRule,
   DatabaseRules,
@@ -88,6 +96,7 @@ export class RolePermissionsService {
   private readonly userAdminService = inject(UserAdminService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly sessionInfo = inject(SessionSubject);
+  private readonly ability = inject(EntityAbility);
 
   private readonly session = toSignal(this.sessionInfo);
 
@@ -107,6 +116,33 @@ export class RolePermissionsService {
       realmManagementRoles.includes("realm-admin")
     );
   });
+
+  /**
+   * Bumped whenever the ability rules change, so the permission checks below
+   * recompute. CASL's Ability is not a signal, so its "updated" event is the
+   * only way to learn that the rules were replaced (e.g. after the config synced).
+   */
+  private readonly abilityRules = signal(0);
+
+  /**
+   * Whether the logged-in user may write the permissions config document itself.
+   *
+   * This is a different authority from {@link canManageRoles}: that one covers
+   * the roles in the authentication server, while the permission rules of a role
+   * live in the Config:Permissions document and are governed by the app's own
+   * entity permissions. A user can hold one without the other.
+   */
+  readonly canEditPermissions: Signal<boolean> = computed(() => {
+    this.abilityRules();
+    return this.ability.can("update", new Config(Config.PERMISSION_KEY));
+  });
+
+  constructor() {
+    const unsubscribe = this.ability.on("updated", () =>
+      this.abilityRules.update((v) => v + 1),
+    );
+    inject(DestroyRef).onDestroy(unsubscribe);
+  }
 
   /**
    * The permissions config document, or an empty one if it does not exist yet.
