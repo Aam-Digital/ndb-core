@@ -8,15 +8,12 @@ import {
   signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-
-import { asArray } from "#src/app/utils/asArray";
 
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -29,17 +26,27 @@ import {
   PermissionConditionDialogData,
 } from "../condition-dialog/permission-condition-dialog.component";
 import {
+  CRUD_ACTIONS,
+  CrudAction,
   DatabaseRule,
   DEFAULT_SECTION_KEY,
   EntityActionPermission,
   inheritsDefaultRules,
+  ruleCoversAction,
 } from "../../../permissions/permission-types";
+import {
+  CRUD_ACTION_COLUMNS,
+  grantedByDefaultRoleTooltip,
+  MANAGE_ALL_LABEL,
+} from "../../../permissions/permission-action-labels";
+import {
+  lockDescriptionId,
+  PermissionCellState,
+  PermissionCheckboxComponent,
+} from "../../../permissions/permission-checkbox/permission-checkbox.component";
 import { DEFAULT_ROLE } from "../../../permissions/reserved-roles";
 import { MatrixModel, MatrixRow, RuleConditions } from "../permission-matrix";
 import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
-
-/** the four individual CRUD actions shown as their own matrix columns ("manage" is separate) */
-type CrudAction = "read" | "create" | "update" | "delete";
 
 /**
  * Where an action is granted from, if not by an own rule of its row:
@@ -49,36 +56,12 @@ type CrudAction = "read" | "create" | "update" | "delete";
 type GrantedBy = "manage" | "wildcard" | "default";
 
 /** display state of one action cell */
-interface CellState {
-  /** shown as granted, either by an own rule of this row or by a broader one */
-  allowed: boolean;
+interface CellState extends PermissionCellState {
   /** granted by an own rule of this row, so a condition can be attached to it */
   ownAllowed: boolean;
-  /** whether the checkbox may be changed on this row */
-  editable: boolean;
   hasCondition: boolean;
   /** readable summary of the condition, empty when none */
   summary: string;
-  /** why the checkbox cannot be changed; empty when it is editable */
-  lockTooltip: string;
-  /**
-   * id of the hidden element repeating {@link lockTooltip} for screen readers,
-   * which do not announce the tooltip of a checkbox they cannot change.
-   * Empty when the cell is editable.
-   */
-  lockDescriptionId: string;
-}
-
-/**
- * Stable id of the hidden element describing why a cell's checkbox is locked.
- * Derived from subject and action rather than a row index, so it stays the same
- * when rows are added or removed.
- */
-function lockDescriptionId(
-  subject: string,
-  action: EntityActionPermission,
-): string {
-  return `perm-lock-${subject}-${action}`;
 }
 
 /**
@@ -91,7 +74,6 @@ function lockDescriptionId(
   selector: "app-permission-matrix",
   imports: [
     MatTableModule,
-    MatCheckboxModule,
     MatButtonModule,
     MatTooltipModule,
     MatFormFieldModule,
@@ -100,6 +82,7 @@ function lockDescriptionId(
     HintBoxComponent,
     EntityTypeSelectComponent,
     RouterLink,
+    PermissionCheckboxComponent,
   ],
   templateUrl: "./permission-matrix.component.html",
   styleUrl: "./permission-matrix.component.scss",
@@ -122,14 +105,12 @@ export class PermissionMatrixComponent {
   readonly modelChange = output<MatrixModel>();
 
   /** CRUD columns with their headers baked in, so the template needs no per-cell method call */
-  readonly crudColumns: { key: CrudAction; label: string }[] = [
-    { key: "read", label: $localize`Read` },
-    { key: "create", label: $localize`Create` },
-    { key: "update", label: $localize`Update` },
-    { key: "delete", label: $localize`Delete` },
-  ];
-  readonly crudActions: CrudAction[] = this.crudColumns.map((c) => c.key);
-  readonly manageColLabel = $localize`Manage (all)`;
+  readonly crudColumns = CRUD_ACTION_COLUMNS.map((column) => ({
+    key: column.action,
+    label: column.label,
+  }));
+  readonly crudActions: CrudAction[] = [...CRUD_ACTIONS];
+  readonly manageColLabel = MANAGE_ALL_LABEL;
 
   // rowActions column is always present (empty in view mode)
   // so that column positions do not shift when toggling edit mode
@@ -298,7 +279,7 @@ export class PermissionMatrixComponent {
       case "wildcard":
         return $localize`Already granted by the "All record types" row of this role.`;
       case "default":
-        return $localize`Already granted to every logged-in user by the "${this.defaultRole.label}" role, so it cannot be revoked for a single role here.`;
+        return grantedByDefaultRoleTooltip();
     }
   }
 
@@ -331,17 +312,9 @@ export class PermissionMatrixComponent {
       if (rule.conditions && Object.keys(rule.conditions).length > 0) {
         return false;
       }
-      const subjects = asArray(rule.subject);
-      // the wildcard row itself is only covered by a default rule that applies
-      // to every record type, not by one for a single type
-      const matchesSubject =
-        subjects.includes("all") ||
-        (subject !== "all" && subjects.includes(subject));
-      const actions = asArray(rule.action);
-      return (
-        matchesSubject &&
-        (actions.includes(action) || actions.includes("manage"))
-      );
+      // the wildcard row is only covered by a rule that applies to every record
+      // type, which is what `ruleCoversAction` resolves for the "all" subject
+      return ruleCoversAction(rule, subject, action);
     });
   }
 
