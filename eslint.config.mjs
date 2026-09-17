@@ -111,6 +111,7 @@ export default defineConfig([
             "showLabel",
             "size",
             "startView",
+            "subscriptSizing",
             "tabIndexKey",
             "templateType",
             "theme",
