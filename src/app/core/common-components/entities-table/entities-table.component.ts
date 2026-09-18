@@ -236,7 +236,7 @@ export class EntitiesTableComponent<T extends Entity>
     });
     effect(() => {
       this.recordsDataSource().dataFilter();
-      this.recordsDataSource().selectableRows();
+      this.recordsDataSource().displayedData();
       if (untracked(this.selectedRecords)?.length > 0) {
         // reset selection if filter or input data changes
         this.selectedRecords.set([]);
@@ -255,7 +255,7 @@ export class EntitiesTableComponent<T extends Entity>
     // Connect selection store
     this.selectionStore.connect({
       selectedRecords: this.selectedRecords,
-      selectableRows: this.recordsDataSource().selectableRows,
+      selectableRows: this.recordsDataSource().displayedData,
       currentPageRows: this.recordsDataSource().renderedRows,
     });
   }
