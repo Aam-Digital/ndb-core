@@ -251,6 +251,42 @@ describe("EntitiesTableComponent", () => {
     expect(component.selectedRecords()).toEqual([]);
   });
 
+  it("should reset the selection if the free-text filter changes", () => {
+    const entities = [1, 2, 3].map(TestEntity.create);
+    fixture.componentRef.setInput("selectable", true);
+    component.recordsDataSource().allRecords.set(entities);
+    fixture.detectChanges();
+
+    component.selectedRecords.set(entities);
+    component.recordsDataSource().filter = "1";
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+  });
+
+  it("should only select the free-text filtered records when selecting all", () => {
+    fixture.componentRef.setInput("selectable", true);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", ["name"]);
+    fixture.detectChanges();
+
+    const matching = TestEntity.create("Matching");
+    const other = TestEntity.create("Other");
+    component.recordsDataSource().allRecords.set([matching, other]);
+    component.recordsDataSource().filter = "matching";
+    fixture.detectChanges();
+
+    const selectAllCheckbox = fixture.nativeElement.querySelector(
+      "th[mat-header-cell] mat-checkbox input",
+    );
+    selectAllCheckbox.click();
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([matching]);
+    expect(selectAllCheckbox.checked).toBe(true);
+  });
+
   it("should filter data based on filter definition", () => {
     const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());

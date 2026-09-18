@@ -90,4 +90,13 @@ export class InMemoryDataSource<
     }
     this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
   }
+
+  override _filterData(data: TableRow<T>[]): TableRow<T>[] {
+    const filtered = super._filterData(data);
+    // Aligning displayed data with the freetext filter.
+    // Making a safe call (...?.), because the method is already called in the
+    // constructor before `this.displayedData` is initialized
+    this.displayedData?.set(filtered);
+    return filtered;
+  }
 }
