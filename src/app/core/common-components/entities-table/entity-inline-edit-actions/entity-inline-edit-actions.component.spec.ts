@@ -62,6 +62,12 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(formGroup.get("name").value).toEqual("Child Name");
     expect(formGroup.get("projectNumber").value).toEqual("01");
     expect(formGroup.enabled).toBe(true);
+
+    // the row also exposes the full EntityForm (not just its formGroup), so that field-editing
+    // components relying on more than the formGroup (e.g. inherited-value syncing) still work
+    // for inline-edited table rows
+    expect(component.row().form).toBe(component.form);
+    expect(component.row().form.formGroup).toBe(formGroup);
   });
 
   it("should correctly save changes to an entity", async () => {
@@ -88,7 +94,11 @@ describe("EntityInlineEditActionsComponent", () => {
       entityForm.formGroup = formGroup;
 
       component.form = entityForm;
-      fixture.componentRef.setInput("row", { record: child, formGroup });
+      fixture.componentRef.setInput("row", {
+        record: child,
+        formGroup,
+        form: entityForm,
+      });
 
       component.save();
       await vi.advanceTimersByTimeAsync(0);
@@ -97,6 +107,7 @@ describe("EntityInlineEditActionsComponent", () => {
       expect(component.row().record.name).toBe("New Name");
       expect(component.row().record.gender).toBe(genders[2]);
       expect(component.row().formGroup).toBeUndefined();
+      expect(component.row().form).toBeUndefined();
     } finally {
       vi.useRealTimers();
     }
@@ -123,11 +134,13 @@ describe("EntityInlineEditActionsComponent", () => {
     fixture.componentRef.setInput("row", {
       record: new InlineEditEntity(),
       formGroup: new UntypedFormGroup({}),
+      form: {} as any,
     });
 
     component.resetChanges();
 
     expect(component.row().formGroup).toBeFalsy();
+    expect(component.row().form).toBeFalsy();
   });
 });
 

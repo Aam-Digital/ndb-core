@@ -53,6 +53,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     );
 
     this.row().formGroup = this.form.formGroup;
+    this.row().form = this.form;
 
     this.row().formGroup.enable();
   }
@@ -67,6 +68,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
         this.row().record,
       );
       delete this.row().formGroup;
+      delete this.row().form;
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
@@ -83,6 +85,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
    */
   resetChanges() {
     delete this.row().formGroup;
+    delete this.row().form;
     if (this.form) {
       this.unsavedChanges.setUnsavedChanges(this.form, false);
     }
