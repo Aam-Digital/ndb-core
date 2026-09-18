@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  EventEmitter,
   inject,
   signal,
 } from "@angular/core";
@@ -23,23 +22,13 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
-import { Entity } from "#src/app/core/entity/model/entity";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
-
-/** One row of the embedded table: its own form group plus a stub EntityForm to feed EntityFieldEditComponent. */
-interface EmbeddedRow {
-  formGroup: FormGroup;
-  form: EntityForm<any>;
-}
 
 export interface SchemaEmbedArrayDialogData {
   /** The field's FormControl - read once for the dialog's initial rows, written once on close. */
   formControl: FormControl<Record<string, any>[]>;
   /** The inner fields (table columns), resolved from the field's schema-embed configuration. */
   columns: FormFieldConfig[];
-  /** The parent entity, passed through only to satisfy EntityForm's typing - never read for row cells. */
-  entity?: Entity;
   /** Dialog title, typically the field's own label. */
   label?: string;
 }
@@ -93,13 +82,12 @@ export class SchemaEmbedArrayDialogComponent {
     ),
   );
 
-  /** Reactive view of rowsArray's rows (plus each row's EntityForm stub), for the template. */
-  rows = signal<EmbeddedRow[]>(
-    this.rowsArray.controls.map((formGroup) => ({
-      formGroup,
-      form: this.buildEntityForm(formGroup),
-    })),
-  );
+  /**
+   * Reactive view of rowsArray's rows, for the template. Seeded with a copy - `rowsArray.controls`
+   * is a live array that `push`/`removeAt` mutate in place, which would otherwise double-apply
+   * every change once addRow/removeRow also update this signal.
+   */
+  rows = signal<FormGroup[]>([...this.rowsArray.controls]);
 
   constructor() {
     // write the accumulated edits back to the field's FormControl in one shot, right before the
@@ -121,10 +109,7 @@ export class SchemaEmbedArrayDialogComponent {
     const formGroup = this.buildRowFormGroup({});
     this.rowsArray.push(formGroup);
     this.rowsArray.markAsDirty();
-    this.rows.set([
-      ...this.rows(),
-      { formGroup, form: this.buildEntityForm(formGroup) },
-    ]);
+    this.rows.set([...this.rows(), formGroup]);
   }
 
   removeRow(index: number) {
@@ -145,17 +130,5 @@ export class SchemaEmbedArrayDialogComponent {
       formGroup.disable({ emitEvent: false });
     }
     return formGroup;
-  }
-
-  /** Build the stub EntityForm a row's cells need to feed EntityFieldEditComponent. */
-  private buildEntityForm(formGroup: FormGroup): EntityForm<any> {
-    return {
-      formGroup: formGroup as any,
-      entity: this.data.entity,
-      fieldConfigs: this.columns,
-      onFormStateChange: new EventEmitter(),
-      inheritedParentValues: new Map(),
-      watcher: new Map(),
-    };
   }
 }

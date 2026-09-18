@@ -101,7 +101,7 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     fixture.detectChanges();
 
     expect(component.rows()).toHaveLength(1);
-    expect(component.rows()[0].formGroup.getRawValue()).toMatchObject({
+    expect(component.rows()[0].getRawValue()).toMatchObject({
       documentType: "ID Card",
       documentNumber: "B2",
     });
@@ -117,7 +117,7 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     const secondRowType = textInputs[2].componentInstance as EditTextComponent;
     secondRowType.formControl.setValue("Updated Type");
 
-    expect(component.rows()[1].formGroup.getRawValue()).toMatchObject({
+    expect(component.rows()[1].getRawValue()).toMatchObject({
       documentType: "Updated Type",
       documentNumber: "B2",
     });
@@ -166,7 +166,7 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     expect(
       fixture.debugElement.queryAll(By.css("button[mat-button]")),
     ).toHaveLength(0);
-    expect(component.rows()[0].formGroup.disabled).toBe(true);
+    expect(component.rows()[0].disabled).toBe(true);
   });
 
   it("renders only the blank leading header when there are no columns", async () => {

@@ -114,4 +114,42 @@ describe("EntityFieldEditComponent", () => {
       fixture.nativeElement.querySelector("app-entity-field-view"),
     ).toBeFalsy();
   });
+
+  it("resolves the formControl from a bare formGroup input when no form is set", () => {
+    mockFormService.extendFormFieldConfig.mockReturnValue({
+      id: "testField",
+      editComponent: "EditText",
+    });
+    fixture.componentRef.setInput("field", "testField");
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput(
+      "formGroup",
+      new FormGroup({ testField: new FormControl("") }),
+    );
+
+    expect(component.formControl()).toBeTruthy();
+  });
+
+  it("never shows the inherit button when only formGroup is set, regardless of hideInheritButton", () => {
+    mockFormService.extendFormFieldConfig.mockReturnValue({
+      id: "testField",
+      editComponent: "EditText",
+    });
+    fixture.componentRef.setInput("field", "testField");
+    fixture.componentRef.setInput("entity", new Entity());
+    fixture.componentRef.setInput(
+      "formGroup",
+      new FormGroup({ testField: new FormControl("") }),
+    );
+    fixture.componentRef.setInput("hideInheritButton", false);
+
+    try {
+      fixture.detectChanges();
+    } catch {
+      // dynamic edit component has its own dependencies, not provided in this test
+    }
+    expect(
+      fixture.nativeElement.querySelector("app-inherited-value-button"),
+    ).toBeFalsy();
+  });
 });

@@ -101,9 +101,8 @@ describe("EditSchemaEmbedArrayComponent", () => {
     expect(directive.tooltipDisabled()).toBe(true);
   });
 
-  it("opens the dialog with the field's formControl, resolved columns, entity and label", () => {
-    const entity = new TestEntity();
-    fixture.componentRef.setInput("entity", entity);
+  it("opens the dialog with the field's formControl, resolved columns and label", () => {
+    fixture.componentRef.setInput("entity", new TestEntity());
     fixture.detectChanges();
 
     fixture.debugElement.query(By.css("button")).nativeElement.click();
@@ -125,7 +124,6 @@ describe("EditSchemaEmbedArrayComponent", () => {
               viewComponent: "DisplayText",
             }),
           ],
-          entity,
           label: "Identification Documents",
         },
       }),

@@ -12,7 +12,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
-import { Entity } from "#src/app/core/entity/model/entity";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
@@ -58,7 +57,6 @@ export class EditSchemaEmbedArrayComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-  entity = input<Entity>();
 
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dialog = inject(MatDialog);
@@ -91,7 +89,6 @@ export class EditSchemaEmbedArrayComponent
       data: {
         formControl: this.formControl,
         columns: this.columns(),
-        entity: this.entity(),
         label: this.formFieldConfig()?.label,
       },
     });
