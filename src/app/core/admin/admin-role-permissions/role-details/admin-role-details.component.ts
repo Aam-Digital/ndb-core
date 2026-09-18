@@ -165,18 +165,6 @@ export class AdminRoleDetailsComponent implements OnInit {
 
   readonly editDisabledTooltip = $localize`Your account does not have permission to change the permissions of a role.`;
 
-  /**
-   * A new role is gated by the permission to create roles instead (enforced on
-   * the "Add role" button and by the authentication server), so it stays
-   * saveable even without write access to the existing permissions config.
-   */
-  readonly canSave = computed(() => this.isNew() || this.canEditPermissions());
-
-  /** whether the action button currently rendered points at the hidden reason text */
-  readonly showPermissionReason = computed(() =>
-    this.editing() ? !this.canSave() : !this.canEditPermissions(),
-  );
-
   /** protected roles (reserved + technical) cannot be deleted or have their description edited */
   readonly isProtected = computed(() => !!this.role()?.isProtected);
 
@@ -220,10 +208,17 @@ export class AdminRoleDetailsComponent implements OnInit {
   }
 
   async save() {
+    // the disabled Save button stays interactive (so its tooltip can explain
+    // why), which means it still emits clicks.
+    // This covers creating a role too: createRole() writes the realm role first
+    // and its rules second, so a save that cannot write the config would leave
+    // a role behind without any of the rules picked, and the retry would then
+    // fail because the role already exists.
+    if (!this.canEditPermissions()) return;
+
     if (this.isNew()) {
       return this.saveNewRole();
     }
-    if (!this.canSave()) return;
 
     try {
       await this.rolePermissionsService.saveRules(

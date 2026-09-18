@@ -184,6 +184,17 @@ describe("AdminRoleDetailsComponent", () => {
     expect(component.editing()).toBe(false);
   });
 
+  it("does not offer to create a new role whose rules cannot be persisted", async () => {
+    await fixture.whenStable();
+    component.isNew.set(true);
+    canEditPermissions.set(false);
+
+    // createRole() writes the realm role first and the rules second, so letting
+    // the save start would leave a role behind that has none of the rules picked
+    await component.save();
+    expect(mockRolePermissions.createRole).not.toHaveBeenCalled();
+  });
+
   it("names the missing permission instead of asking to retry", async () => {
     await fixture.whenStable();
     const openSpy = vi.spyOn(TestBed.inject(MatSnackBar), "open");
