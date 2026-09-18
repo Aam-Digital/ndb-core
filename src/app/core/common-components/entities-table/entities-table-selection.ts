@@ -169,7 +169,7 @@ type ModelSignal<T> = ReadSignal<T> & { set(value: T): void };
  */
 export interface EntitiesTableSelectionContext<T extends Entity> {
   selectedRecords: ModelSignal<T[]>;
-  /** rows that "select all" applies to, i.e. all rows loaded into the table */
+  /** rows that "select all" applies to, i.e. all filtered rows across all pages */
   selectableRows: ReadSignal<TableRow<T>[]>;
   /** rows of the currently displayed page, in displayed order */
   currentPageRows: ReadSignal<TableRow<T>[]>;

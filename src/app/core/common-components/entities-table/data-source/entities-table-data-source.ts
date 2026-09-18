@@ -1,7 +1,7 @@
 import { MatTableDataSource } from "@angular/material/table";
 import { TableRow } from "#src/app/core/common-components/entities-table/table-row";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
-import { DestroyRef, effect, inject, signal } from "@angular/core";
+import { computed, DestroyRef, effect, inject, signal } from "@angular/core";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { SortValueFns } from "#src/app/core/common-components/entities-table/table-sort/table-sort";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
@@ -65,6 +65,20 @@ export abstract class EntitiesTableDataSource<
    * Sorting and pagination are applied on top of this by the table, see {@link renderedRows}.
    */
   displayedData = signal<TableRow<T>[]>([]);
+  /** The free-text filter term currently set on the table, see {@link filter}. */
+  readonly freetextFilter = signal("");
+  /**
+   * The rows a "select all" applies to: all rows matching both the `dataFilter`
+   * and the free-text filter, across all pages.
+   */
+  readonly selectableRows = computed(() => {
+    const rows = this.displayedData();
+    const filter = this.freetextFilter();
+    if (!filter) {
+      return rows;
+    }
+    return rows.filter((row) => this.filterPredicate(row, filter));
+  });
   /**
    * The rows as currently rendered by the table:
    * filtered, sorted and reduced to the current page.
@@ -83,6 +97,18 @@ export abstract class EntitiesTableDataSource<
     // expose signal containing current data
     this.displayedData.set(data);
     super.data = data;
+  }
+
+  // The free-text filter is applied by the table itself (via `filterPredicate`),
+  // so it does not affect `displayedData`. Mirror it into a signal to keep
+  // derived state like `selectableRows` reactive to it.
+  override get filter(): string {
+    return super.filter;
+  }
+
+  override set filter(filter: string) {
+    this.freetextFilter.set(filter);
+    super.filter = filter;
   }
 
   // Make sure only one update subscription is active
