@@ -69,11 +69,9 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
   private readonly formControl = this.data.formControl;
   protected readonly columns = this.data.columns;
 
+  /** Authoritative row state - the only container for it; nothing else duplicates this. */
   rows = signal<EmbeddedRow[]>([]);
   isDisabled = signal(false);
-
-  /** Authoritative list of row entries (the signal above is a snapshot copy for the template). */
-  private rowEntries: EmbeddedRow[] = [];
 
   ngOnInit() {
     this.formControl.valueChanges
@@ -88,7 +86,7 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         const disabled = this.formControl.disabled;
         this.isDisabled.set(disabled);
-        this.rowEntries.forEach((entry) =>
+        this.rows().forEach((entry) =>
           disabled
             ? entry.formGroup.disable({ emitEvent: false })
             : entry.formGroup.enable({ emitEvent: false }),
@@ -117,16 +115,18 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
    * always already in sync with the value that triggered this call.
    */
   private syncRows(values: Record<string, any>[]) {
-    while (this.rowEntries.length < values.length) {
-      this.addRowEntry(values[this.rowEntries.length] ?? {});
+    const current = [...this.rows()];
+
+    while (current.length < values.length) {
+      current.push(this.buildRowEntry(values[current.length] ?? {}));
     }
-    while (this.rowEntries.length > values.length) {
-      const removed = this.rowEntries.pop();
+    while (current.length > values.length) {
+      const removed = current.pop();
       removed?.subscription.unsubscribe();
     }
 
     values.forEach((value, i) => {
-      const formGroup = this.rowEntries[i].formGroup;
+      const formGroup = current[i].formGroup;
       if (
         JSON.stringify(formGroup.getRawValue()) !== JSON.stringify(value ?? {})
       ) {
@@ -134,10 +134,10 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.rows.set([...this.rowEntries]);
+    this.rows.set(current);
   }
 
-  private addRowEntry(value: Record<string, any>) {
+  private buildRowEntry(value: Record<string, any>): EmbeddedRow {
     const formGroup = this.buildRowFormGroup(value);
     if (this.isDisabled()) {
       formGroup.disable({ emitEvent: false });
@@ -159,7 +159,7 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newValue) => this.onRowChange(entry, newValue));
 
-    this.rowEntries.push(entry);
+    return entry;
   }
 
   private buildRowFormGroup(value: Record<string, any>): FormGroup {
@@ -171,7 +171,7 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
   }
 
   private onRowChange(entry: EmbeddedRow, value: Record<string, any>) {
-    const index = this.rowEntries.indexOf(entry);
+    const index = this.rows().indexOf(entry);
     if (index === -1) {
       return;
     }
@@ -182,6 +182,6 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.rowEntries.forEach((entry) => entry.subscription.unsubscribe());
+    this.rows().forEach((entry) => entry.subscription.unsubscribe());
   }
 }
