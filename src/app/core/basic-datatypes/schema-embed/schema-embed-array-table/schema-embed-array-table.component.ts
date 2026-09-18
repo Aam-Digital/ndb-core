@@ -4,10 +4,6 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 
 /**
  * Small, read-only borderless table rendering a `schema-embed-array` field's rows/columns.
- *
- * Shared between {@link DisplaySchemaEmbedArrayComponent}'s and
- * `EditSchemaEmbedArrayComponent`'s hover-tooltip previews, so both show the same data the
- * same way, similar to the attendance datatype's tooltip preview.
  */
 @Component({
   selector: "app-schema-embed-array-table",

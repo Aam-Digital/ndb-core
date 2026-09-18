@@ -16,8 +16,7 @@ import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/sche
  * Generic view component for the `schema-embed-array` datatype.
  *
  * Shows just a small "N entries" text (nothing when there are no entries), and reveals a
- * read-only preview table on hover via {@link TemplateTooltipDirective} - the same pattern
- * the attendance datatype's display component uses for its participant list.
+ * read-only preview table on hover via {@link TemplateTooltipDirective}
  */
 @DynamicComponent("DisplaySchemaEmbedArray")
 @Component({
