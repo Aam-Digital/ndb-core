@@ -395,6 +395,7 @@
     "view:note/:id": {
       "component": "NoteDetails",
       "config": {
+        "entityType": "Note",
         "topForm": [
           "date",
           "warningLevel",
