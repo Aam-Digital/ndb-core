@@ -4,15 +4,21 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
-  OnDestroy,
-  OnInit,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { startWith, Subscription } from "rxjs";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
@@ -25,11 +31,10 @@ import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit
 interface EmbeddedRow {
   formGroup: FormGroup;
   form: EntityForm<any>;
-  subscription: Subscription;
 }
 
 export interface SchemaEmbedArrayDialogData {
-  /** The (live) outer FormControl holding the field's array value - edited directly, not copied. */
+  /** The field's FormControl - read once for the dialog's initial rows, written once on close. */
   formControl: FormControl<Record<string, any>[]>;
   /** The inner fields (table columns), resolved from the field's schema-embed configuration. */
   columns: FormFieldConfig[];
@@ -43,9 +48,11 @@ export interface SchemaEmbedArrayDialogData {
  * Popup for editing a `schema-embed-array` field: a full table of all entries,
  * with add/remove-row actions and one generic {@link EntityFieldEditComponent} per cell.
  *
- * Edits apply immediately to the field's own FormControl (the same one bound outside the
- * dialog), exactly like the previous inline table did - there is no separate save/cancel
- * step here, the outer entity form's own Save/Cancel governs persisting or discarding.
+ * The dialog is modal, so nothing outside it can observe or change the field's FormControl
+ * while it's open - edits accumulate purely locally (on `rowsArray`) for the dialog's whole
+ * lifetime, and are written back to the FormControl in one shot right before the dialog
+ * closes. There is no separate save/cancel step here, the outer entity form's own Save/Cancel
+ * still governs persisting or discarding.
  */
 @Component({
   selector: "app-schema-embed-array-dialog",
@@ -62,104 +69,70 @@ export interface SchemaEmbedArrayDialogData {
   styleUrls: ["./schema-embed-array-dialog.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
+export class SchemaEmbedArrayDialogComponent {
   protected readonly data = inject<SchemaEmbedArrayDialogData>(MAT_DIALOG_DATA);
-
+  private readonly dialogRef =
+    inject<MatDialogRef<SchemaEmbedArrayDialogComponent>>(MatDialogRef);
   private readonly destroyRef = inject(DestroyRef);
+
   private readonly formControl = this.data.formControl;
   protected readonly columns = this.data.columns;
 
-  /** Authoritative row state - the only container for it; nothing else duplicates this. */
-  rows = signal<EmbeddedRow[]>([]);
-  isDisabled = signal(false);
+  /**
+   * The field's disabled state as of when the dialog opened. Read once, not tracked live: the
+   * trigger button that opens this dialog is itself natively `[disabled]`, so this can only
+   * ever be `false` in practice - but every row still honors it defensively, in case that ever
+   * changes.
+   */
+  protected readonly isDisabled = this.formControl.disabled;
 
-  ngOnInit() {
-    this.formControl.valueChanges
-      .pipe(
-        startWith(this.formControl.value ?? []),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((values) => this.syncRows(values ?? []));
+  /** One FormGroup per row, built once from the field's value as of when the dialog opened. */
+  private readonly rowsArray = new FormArray<FormGroup>(
+    (this.formControl.value ?? []).map((value) =>
+      this.buildRowFormGroup(value),
+    ),
+  );
 
-    this.formControl.statusChanges
-      .pipe(startWith(null), takeUntilDestroyed(this.destroyRef))
+  /** Reactive view of rowsArray's rows (plus each row's EntityForm stub), for the template. */
+  rows = signal<EmbeddedRow[]>(
+    this.rowsArray.controls.map((formGroup) => ({
+      formGroup,
+      form: this.buildEntityForm(formGroup),
+    })),
+  );
+
+  constructor() {
+    // write the accumulated edits back to the field's FormControl in one shot, right before the
+    // dialog closes (however it closes - the Close button, the X, or Esc). Skipped entirely if
+    // nothing was actually added/removed/edited, so opening and closing without touching
+    // anything doesn't spuriously dirty the outer entity form.
+    this.dialogRef
+      .beforeClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        const disabled = this.formControl.disabled;
-        this.isDisabled.set(disabled);
-        this.rows().forEach((entry) =>
-          disabled
-            ? entry.formGroup.disable({ emitEvent: false })
-            : entry.formGroup.enable({ emitEvent: false }),
-        );
+        if (this.rowsArray.dirty) {
+          this.formControl.setValue(this.rowsArray.getRawValue());
+          this.formControl.markAsDirty();
+        }
       });
   }
 
   addRow() {
-    const current = this.formControl.value ?? [];
-    this.formControl.setValue([...current, {}]);
-    this.formControl.markAsDirty();
+    const formGroup = this.buildRowFormGroup({});
+    this.rowsArray.push(formGroup);
+    this.rowsArray.markAsDirty();
+    this.rows.set([
+      ...this.rows(),
+      { formGroup, form: this.buildEntityForm(formGroup) },
+    ]);
   }
 
   removeRow(index: number) {
-    const current = this.formControl.value ?? [];
-    this.formControl.setValue(current.filter((_, i) => i !== index));
-    this.formControl.markAsDirty();
-  }
-
-  /**
-   * Reconcile the internal row entries with an externally/self set array value.
-   *
-   * Only pushes/pops entries for added/removed rows and only patches a surviving row's
-   * FormGroup when its content actually differs - this is what avoids wiping out the
-   * user's focus/input on every keystroke, since the row currently being typed into is
-   * always already in sync with the value that triggered this call.
-   */
-  private syncRows(values: Record<string, any>[]) {
-    const current = [...this.rows()];
-
-    while (current.length < values.length) {
-      current.push(this.buildRowEntry(values[current.length] ?? {}));
-    }
-    while (current.length > values.length) {
-      const removed = current.pop();
-      removed?.subscription.unsubscribe();
-    }
-
-    values.forEach((value, i) => {
-      const formGroup = current[i].formGroup;
-      if (
-        JSON.stringify(formGroup.getRawValue()) !== JSON.stringify(value ?? {})
-      ) {
-        formGroup.patchValue(value ?? {}, { emitEvent: false });
-      }
-    });
-
-    this.rows.set(current);
-  }
-
-  private buildRowEntry(value: Record<string, any>): EmbeddedRow {
-    const formGroup = this.buildRowFormGroup(value);
-    if (this.isDisabled()) {
-      formGroup.disable({ emitEvent: false });
-    }
-
-    const entry: EmbeddedRow = {
-      formGroup,
-      form: {
-        formGroup: formGroup as any,
-        entity: this.data.entity,
-        fieldConfigs: this.columns,
-        onFormStateChange: new EventEmitter(),
-        inheritedParentValues: new Map(),
-        watcher: new Map(),
-      },
-      subscription: undefined,
-    };
-    entry.subscription = formGroup.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((newValue) => this.onRowChange(entry, newValue));
-
-    return entry;
+    this.rowsArray.removeAt(index);
+    this.rowsArray.markAsDirty();
+    const updated = [...this.rows()];
+    updated.splice(index, 1);
+    this.rows.set(updated);
   }
 
   private buildRowFormGroup(value: Record<string, any>): FormGroup {
@@ -167,21 +140,22 @@ export class SchemaEmbedArrayDialogComponent implements OnInit, OnDestroy {
     for (const column of this.columns) {
       controls[column.id] = new FormControl(value?.[column.id]);
     }
-    return new FormGroup(controls);
-  }
-
-  private onRowChange(entry: EmbeddedRow, value: Record<string, any>) {
-    const index = this.rows().indexOf(entry);
-    if (index === -1) {
-      return;
+    const formGroup = new FormGroup(controls);
+    if (this.isDisabled) {
+      formGroup.disable({ emitEvent: false });
     }
-    const current = this.formControl.value ?? [];
-    const updated = current.map((row, i) => (i === index ? value : row));
-    this.formControl.setValue(updated);
-    this.formControl.markAsDirty();
+    return formGroup;
   }
 
-  ngOnDestroy() {
-    this.rows().forEach((entry) => entry.subscription.unsubscribe());
+  /** Build the stub EntityForm a row's cells need to feed EntityFieldEditComponent. */
+  private buildEntityForm(formGroup: FormGroup): EntityForm<any> {
+    return {
+      formGroup: formGroup as any,
+      entity: this.data.entity,
+      fieldConfigs: this.columns,
+      onFormStateChange: new EventEmitter(),
+      inheritedParentValues: new Map(),
+      watcher: new Map(),
+    };
   }
 }

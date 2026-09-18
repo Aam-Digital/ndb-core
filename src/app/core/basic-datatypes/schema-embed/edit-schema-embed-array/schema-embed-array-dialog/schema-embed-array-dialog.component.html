@@ -16,7 +16,7 @@
         @for (row of rows(); track row; let i = $index) {
           <tr>
             <td>
-              @if (!isDisabled()) {
+              @if (!isDisabled) {
                 <button
                   type="button"
                   class="remove-btn"
@@ -45,7 +45,7 @@
     </table>
   </div>
 
-  @if (!isDisabled()) {
+  @if (!isDisabled) {
     <button type="button" mat-button (click)="addRow()">
       <fa-icon icon="plus"></fa-icon>
       <span i18n>Add entry</span>
