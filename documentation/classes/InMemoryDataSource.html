@@ -267,6 +267,11 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                <a href="#_filterData" >_filterData</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#getAllData" >getAllData</a>
                             </li>
@@ -763,6 +768,75 @@ filtered, sorted and reduced to the current page.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="_filterData"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>_filterData</b></span>
+                        <a href="#_filterData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>_filterData(data: <a href="../interfaces/TableRow.html" target="_self">TableRow&lt;T&gt;[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/in-memory-data-source.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                            <code><a href="../interfaces/TableRow.html" target="_self" >TableRow&lt;T&gt;[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/TableRow.html" target="_self" >TableRow[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getAllData"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -1165,6 +1239,15 @@ export class InMemoryDataSource&lt;
       );
     }
     this.allRecords.set(applyUpdate(this.allRecords(), updatedEntity));
+  }
+
+  override _filterData(data: TableRow&lt;T&gt;[]): TableRow&lt;T&gt;[] {
+    const filtered &#x3D; super._filterData(data);
+    // Aligning displayed data with the freetext filter.
+    // Making a safe call (...?.), because the method is already called in the
+    // constructor before &#x60;this.displayedData&#x60; is initialized
+    this.displayedData?.set(filtered);
+    return filtered;
   }
 }
 </code></pre>

@@ -286,7 +286,7 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-description"><p>rows that &quot;select all&quot; applies to, i.e. all rows loaded into the table</p>
+                            <div class="io-description"><p>rows that &quot;select all&quot; applies to, i.e. all filtered rows across all pages</p>
 </div>
                         </td>
                     </tr>
@@ -507,7 +507,7 @@ type ModelSignal&lt;T&gt; &#x3D; ReadSignal&lt;T&gt; &amp; { set(value: T): void
  */
 export interface EntitiesTableSelectionContext&lt;T extends Entity&gt; {
   selectedRecords: ModelSignal&lt;T[]&gt;;
-  /** rows that &quot;select all&quot; applies to, i.e. all rows loaded into the table */
+  /** rows that &quot;select all&quot; applies to, i.e. all filtered rows across all pages */
   selectableRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
   /** rows of the currently displayed page, in displayed order */
   currentPageRows: ReadSignal&lt;TableRow&lt;T&gt;[]&gt;;
