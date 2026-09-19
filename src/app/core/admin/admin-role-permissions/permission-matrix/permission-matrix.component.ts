@@ -518,7 +518,7 @@ export class PermissionMatrixComponent {
     const entityConstructor = this.entityRegistry.has(row.subject)
       ? this.entityRegistry.get(row.subject)
       : undefined;
-    const entityLabel = entityConstructor?.label ?? row.subject;
+    const entityLabel = this.subjectLabel(row.subject);
     const conditions = row.cells[action]?.conditions;
 
     this.dialog

@@ -25,6 +25,7 @@ import { Entity } from "../../../entity/model/entity";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FilterService } from "../../../filter/filter.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -233,7 +234,13 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private evaluateDisplayCondition(condition: any, entity: T): boolean {
     try {
       return this.filterService.getFilterPredicate(condition)(entity);
-    } catch {
+    } catch (err) {
+      Logging.error(
+        "error evaluating display condition for entity",
+        err,
+        entity,
+        condition,
+      );
       // an invalid/misconfigured condition should not hide the field entirely
       return true;
     }
