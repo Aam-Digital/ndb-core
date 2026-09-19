@@ -33,7 +33,7 @@ export interface SchemaEmbedArrayDialogData {
  * with add/remove-row actions and one generic {@link EntityFieldEditComponent} per cell.
  *
  * The dialog is modal, so nothing outside it can observe or change the field's FormControl
- * while it's open - edits accumulate purely locally (on `rowsArray`) for the dialog's whole
+ * while it's open - edits accumulate purely locally (on `rows`) for the dialog's whole
  * lifetime, and are written back to the FormControl in one shot right before the dialog
  * closes. There is no separate save/cancel step here, the outer entity form's own Save/Cancel
  * still governs persisting or discarding.
@@ -71,9 +71,7 @@ export class SchemaEmbedArrayDialogComponent {
   protected readonly isDisabled = this.formControl.disabled;
 
   /**
-   * Reactive view of rowsArray's rows, for the template. Seeded with a copy - `rowsArray.controls`
-   * is a live array that `push`/`removeAt` mutate in place, which would otherwise double-apply
-   * every change once addRow/removeRow also update this signal.
+   * Reactive view of the current state of the data.
    */
   rows = signal<FormGroup[]>(
     (this.formControl.value ?? []).map((value) =>
