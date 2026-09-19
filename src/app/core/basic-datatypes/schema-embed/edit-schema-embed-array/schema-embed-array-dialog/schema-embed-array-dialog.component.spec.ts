@@ -148,6 +148,19 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     expect(formControl.dirty).toBe(true);
   });
 
+  it("persists a newly added row even when the field never had a value before", async () => {
+    const freshControl = new FormControl<Record<string, any>[]>(undefined);
+    await setup({ formControl: freshControl });
+
+    component.addRow();
+    beforeClosed$.next();
+
+    expect(freshControl.value).toEqual([
+      { documentType: null, documentNumber: null },
+    ]);
+    expect(freshControl.dirty).toBe(true);
+  });
+
   it("does not touch the outer control on close if nothing was changed", () => {
     const originalValue = formControl.value;
 

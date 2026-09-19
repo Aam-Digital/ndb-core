@@ -89,7 +89,7 @@ export class SchemaEmbedArrayDialogComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         if (
-          this.rows().length !== this.formControl.value.length ||
+          this.rows().length !== this.formControl.value?.length ||
           this.rows().some((g) => g.dirty)
         ) {
           const rawData = this.rows().map((g) => g.getRawValue());
