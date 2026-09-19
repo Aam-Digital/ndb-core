@@ -6,12 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -75,19 +70,16 @@ export class SchemaEmbedArrayDialogComponent {
    */
   protected readonly isDisabled = this.formControl.disabled;
 
-  /** One FormGroup per row, built once from the field's value as of when the dialog opened. */
-  private readonly rowsArray = new FormArray<FormGroup>(
-    (this.formControl.value ?? []).map((value) =>
-      this.buildRowFormGroup(value),
-    ),
-  );
-
   /**
    * Reactive view of rowsArray's rows, for the template. Seeded with a copy - `rowsArray.controls`
    * is a live array that `push`/`removeAt` mutate in place, which would otherwise double-apply
    * every change once addRow/removeRow also update this signal.
    */
-  rows = signal<FormGroup[]>([...this.rowsArray.controls]);
+  rows = signal<FormGroup[]>(
+    (this.formControl.value ?? []).map((value) =>
+      this.buildRowFormGroup(value),
+    ),
+  );
 
   constructor() {
     // write the accumulated edits back to the field's FormControl in one shot, right before the
@@ -98,23 +90,24 @@ export class SchemaEmbedArrayDialogComponent {
       .beforeClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
-        if (this.rowsArray.dirty) {
-          this.formControl.setValue(this.rowsArray.getRawValue());
+        if (
+          this.rows().length !== this.formControl.value.length ||
+          this.rows().some((g) => g.dirty)
+        ) {
+          const rawData = this.rows().map((g) => g.getRawValue());
+          this.formControl.setValue(rawData);
           this.formControl.markAsDirty();
         }
       });
   }
 
   addRow() {
-    const formGroup = this.buildRowFormGroup({});
-    this.rowsArray.push(formGroup);
-    this.rowsArray.markAsDirty();
-    this.rows.set([...this.rows(), formGroup]);
+    const fg = this.buildRowFormGroup({});
+    fg.markAsDirty();
+    this.rows.set([...this.rows(), fg]);
   }
 
   removeRow(index: number) {
-    this.rowsArray.removeAt(index);
-    this.rowsArray.markAsDirty();
     const updated = [...this.rows()];
     updated.splice(index, 1);
     this.rows.set(updated);

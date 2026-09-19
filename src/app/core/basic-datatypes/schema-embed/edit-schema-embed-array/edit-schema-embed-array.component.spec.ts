@@ -4,7 +4,6 @@ import { By } from "@angular/platform-browser";
 import { MatDialog } from "@angular/material/dialog";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
-import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EditSchemaEmbedArrayComponent } from "./edit-schema-embed-array.component";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
 import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
@@ -102,7 +101,6 @@ describe("EditSchemaEmbedArrayComponent", () => {
   });
 
   it("opens the dialog with the field's formControl, resolved columns and label", () => {
-    fixture.componentRef.setInput("entity", new TestEntity());
     fixture.detectChanges();
 
     fixture.debugElement.query(By.css("button")).nativeElement.click();
