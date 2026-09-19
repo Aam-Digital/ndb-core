@@ -16,5 +16,5 @@ button {
   // Keep the label/icon readable while disabled, matching every other field's value text
   // (which stays full-strength in a disabled/view-mode form) instead of Material's default
   // washed-out disabled-button color.
-  --mdc-outlined-button-disabled-label-text-color: #{colors.$text};
+  --mat-button-outlined-disabled-label-text-color: #{colors.$text};
 }
