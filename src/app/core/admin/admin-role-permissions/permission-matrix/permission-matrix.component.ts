@@ -22,9 +22,9 @@ import { HintBoxComponent } from "../../../common-components/hint-box/hint-box.c
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
 import {
-  PermissionConditionDialogComponent,
-  PermissionConditionDialogData,
-} from "../condition-dialog/permission-condition-dialog.component";
+  ConditionEditorDialogComponent,
+  ConditionEditorDialogData,
+} from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
 import {
   CRUD_ACTIONS,
   CrudAction,
@@ -44,7 +44,10 @@ import {
   PermissionCellState,
   PermissionCheckboxComponent,
 } from "../../../permissions/permission-checkbox/permission-checkbox.component";
-import { DEFAULT_ROLE } from "../../../permissions/reserved-roles";
+import {
+  DEFAULT_ROLE,
+  roleDisplayName,
+} from "../../../permissions/reserved-roles";
 import { MatrixModel, MatrixRow, RuleConditions } from "../permission-matrix";
 import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
 
@@ -485,15 +488,21 @@ export class PermissionMatrixComponent {
 
   openConditionDialog(rowIndex: number, action: EntityActionPermission) {
     const row = this.model().rows[rowIndex];
+    const entityConstructor = this.entityRegistry.has(row.subject)
+      ? this.entityRegistry.get(row.subject)
+      : undefined;
+    const entityLabel = this.subjectLabel(row.subject);
+    const conditions = row.cells[action]?.conditions;
+
     this.dialog
-      .open(PermissionConditionDialogComponent, {
+      .open(ConditionEditorDialogComponent, {
         width: "600px",
         data: {
-          roleName: this.roleName(),
-          action,
-          subject: row.subject,
-          conditions: row.cells[action]?.conditions,
-        } satisfies PermissionConditionDialogData,
+          entityConstructor,
+          conditions,
+          explanation: this.buildConditionSentence(action, entityLabel),
+          showInternalIdField: true,
+        } satisfies ConditionEditorDialogData,
       })
       .afterClosed()
       .subscribe((result) => {
@@ -511,6 +520,29 @@ export class PermissionMatrixComponent {
           };
         });
       });
+  }
+
+  /**
+   * Full "<role> can <action> <entity> only where…" sentence as a single
+   * localized message per action, so translators can reorder role/entity.
+   */
+  private buildConditionSentence(
+    action: EntityActionPermission,
+    entityLabel: string,
+  ): string {
+    const role = roleDisplayName(this.roleName());
+    switch (action) {
+      case "read":
+        return $localize`:permission condition sentence:${role} can read ${entityLabel} only where…`;
+      case "create":
+        return $localize`:permission condition sentence:${role} can create ${entityLabel} only where…`;
+      case "update":
+        return $localize`:permission condition sentence:${role} can update ${entityLabel} only where…`;
+      case "delete":
+        return $localize`:permission condition sentence:${role} can delete ${entityLabel} only where…`;
+      case "manage":
+        return $localize`:permission condition sentence:${role} can manage ${entityLabel} only where…`;
+    }
   }
 
   /** whether the record-type picker is shown instead of the "Add Permission" button */

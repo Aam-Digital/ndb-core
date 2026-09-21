@@ -39,22 +39,28 @@
         </mat-form-field>
 
         @if (isBulk()) {
-          <mat-radio-group
-            [value]="combineIntoSinglePdf()"
-            (change)="combineIntoSinglePdf.set($event.value)"
-            class="flex-column"
-          >
-            <mat-radio-button [value]="false" i18n>
-              Create .zip file with multiple PDFs
-            </mat-radio-button>
-            <mat-radio-button
-              data-testid="combine-into-single-pdf"
-              [value]="true"
-              i18n
+          @if (selectedTemplateIsArrayReport()) {
+            <p data-testid="array-report-note" i18n>
+              This template combines all selected records into a single report.
+            </p>
+          } @else {
+            <mat-radio-group
+              [value]="combineIntoSinglePdf()"
+              (change)="combineIntoSinglePdf.set($event.value)"
+              class="flex-column"
             >
-              Combine all records into a single PDF
-            </mat-radio-button>
-          </mat-radio-group>
+              <mat-radio-button [value]="false" i18n>
+                Create .zip file with multiple PDFs
+              </mat-radio-button>
+              <mat-radio-button
+                data-testid="combine-into-single-pdf"
+                [value]="true"
+                i18n
+              >
+                Combine all records into a single PDF
+              </mat-radio-button>
+            </mat-radio-group>
+          }
         }
       }
 
