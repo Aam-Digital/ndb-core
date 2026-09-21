@@ -58,7 +58,10 @@ import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
  */
 type GrantedBy = "manage" | "wildcard" | "default";
 
-/** display state of one action cell */
+/**
+  * display state of one action cell
+  * with additional details required for permission conditions.
+  */
 interface CellState extends PermissionCellState {
   /** granted by an own rule of this row, so a condition can be attached to it */
   ownAllowed: boolean;
