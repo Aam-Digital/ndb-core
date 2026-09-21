@@ -62,6 +62,14 @@ type GrantedBy = "manage" | "wildcard" | "default";
  * with additional details required for permission conditions.
  */
 interface CellState extends PermissionCellState {
+  /**
+   * Granted by this row's own cell for the action, ignoring what the row's own
+   * "manage", the role's "all record types" row or the shared "_default" role
+   * add on top - all of which this grid's `allowed` does include. Only an own
+   * grant can carry a condition, which is what the "only where ..." link is
+   * offered for.
+   */
+  ownAllowed: boolean;
   hasCondition: boolean;
   /** readable summary of the condition, empty when none */
   summary: string;

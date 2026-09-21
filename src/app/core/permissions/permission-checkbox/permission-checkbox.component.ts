@@ -8,18 +8,18 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
- * The state of one cell of a permission grid, as far as the grids have it in
- * common. They extend it with what they need for their own editing.
+ * What {@link PermissionCheckboxComponent} renders for one cell of a permission
+ * grid: the display state only, not the rules it was derived from. Each grid
+ * extends it with the state it needs for its own editing - such as the row's
+ * own grant, which this component never reads.
  */
 export interface PermissionCellState {
-  /** shown as granted, either by an own rule of this row or by a broader one */
-  allowed: boolean;
   /**
-   * Granted by an own rule of this row, ignoring what a broader or inherited
-   * rule adds on top. This is the row's own intent: what a condition can be
-   * attached to, and what is written back when the row is saved.
+   * Whether the checkbox is shown as ticked. Each grid resolves this for
+   * itself, so it may well include access that a broader or inherited rule
+   * grants on top of what the row itself stores.
    */
-  ownAllowed: boolean;
+  allowed: boolean;
   /** whether the checkbox may be changed on this row */
   editable: boolean;
   /** why the checkbox cannot be changed; empty when it is editable */

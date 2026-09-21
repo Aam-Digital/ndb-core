@@ -61,11 +61,25 @@ interface PermissionCell extends PermissionCellState {
    * and otherwise the row's own grant as edited here - with what the `_default`
    * row adds on top layered in by
    * {@link FeaturePermissionDialogComponent.displayRows}.
+   *
+   * This is therefore *not* {@link FeatureActionPermission.allowed}, which
+   * always includes what `_default` grants as stored.
    */
   allowed: boolean;
   /**
+   * The row's own grant as stored, taken over from
+   * {@link FeatureActionPermission.ownAllowed} and not changed while editing:
+   * only `allowed` follows the checkboxes. It is what a row saves for a
+   * checkbox an advanced rule decides - where `allowed` shows that rule's
+   * effect - so that saving does not turn such a rule into the row's own.
+   */
+  ownAllowed: boolean;
+  /**
    * In `rows` whether an advanced rule leaves this checkbox editable at all; in
    * `displayRows` additionally `false` while `_default` grants the action.
+   *
+   * Together with `lockTooltip` this is what the grid makes of the service's
+   * {@link FeatureActionPermission.lockedByAdvancedRule}.
    */
   editable: boolean;
   ariaLabel: string;
@@ -81,6 +95,12 @@ interface RolePermissionRow {
   description?: string;
   /** true for the shared `_default` row shown above the roles */
   isDefaultRow: boolean;
+  /**
+   * Whether any checkbox of the row can be changed, i.e. whether the row is
+   * saved at all (see {@link RoleFeaturePermission.editable}). A single
+   * checkbox can still be locked on an editable row - that is
+   * {@link PermissionCell.editable}.
+   */
   editable: boolean;
   /** why the whole row cannot be changed; empty when it is editable */
   lockTooltip: string;

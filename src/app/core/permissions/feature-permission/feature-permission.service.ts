@@ -13,9 +13,23 @@ import {
 } from "../permission-types";
 import { PermissionsConfigService } from "../permissions-config.service";
 
-/** the state of a single action checkbox in one row */
+/**
+ * What the stored rules say about one action of one row - the rule state, not
+ * the display state of a checkbox. The dialog turns it into its own
+ * `PermissionCell` (which extends `PermissionCellState`) in
+ * `FeaturePermissionDialogComponent.toCell`; the two are deliberately kept
+ * apart, because `allowed` does not mean the same on both sides and because
+ * whether a checkbox is editable depends on the `_default` row *as currently
+ * edited*, which only the dialog knows.
+ */
 export interface FeatureActionPermission {
-  /** the effective access, i.e. what the checkbox shows when the dialog opens */
+  /**
+   * The effective access as stored: what the row's own rules grant together
+   * with the shared `_default` section, i.e. what the user can do right now.
+   *
+   * An editable checkbox does not show this but `ownAllowed`, with the
+   * `_default` row layered back on live while the dialog is open.
+   */
   allowed: boolean;
   /**
    * Whether the row's *own* rules for this entity type grant the action, ignoring
@@ -36,6 +50,9 @@ export interface FeatureActionPermission {
    * What the shared `_default` section grants is not reported here: the dialog
    * lets that section be edited alongside the roles, so it resolves those locks
    * against the edited state rather than the stored one.
+   *
+   * This is the *cause*, not the rendering: the dialog turns it into the
+   * checkbox's `editable` flag and the tooltip explaining it.
    */
   lockedByAdvancedRule: boolean;
 }
