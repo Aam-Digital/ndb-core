@@ -6,6 +6,11 @@ import { effect, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { merge } from "rxjs";
+import { inject } from "@angular/core";
+import {
+  EntitySpecialLoaderService,
+  supportsPagination,
+} from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 
 /**
  * Number of documents fetched per request when loading the complete dataset
@@ -19,6 +24,8 @@ const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
 export class PaginatedDataSource<
   T extends Entity,
 > extends EntitiesTableDataSource<T> {
+  private readonly specialLoader = inject(EntitySpecialLoaderService);
+
   private sortRef: MatSort;
   private sortState: { prop?: string; dir?: "asc" | "desc" } = {};
   override set sort(sort: MatSort) {
@@ -143,12 +150,18 @@ export class PaginatedDataSource<
     page: { limit: number; bookmark?: string },
     sort: { prop?: string; dir?: "asc" | "desc" },
   ): Promise<{ records: T[]; bookmark?: string }> {
-    return this.entityMapper.findType(
-      this.loadRecordConfig().entityCtr,
-      filter,
-      page,
-      sort,
-    );
+    const config = this.loadRecordConfig();
+    if (supportsPagination(config.loaderMethod)) {
+      // a loader that serves pages of its own: the pagination state stays here,
+      // only the fetching moves
+      return this.specialLoader.loadPage<T>(
+        config.loaderMethod,
+        config.forEntity,
+        filter,
+        page,
+      );
+    }
+    return this.entityMapper.findType(config.entityCtr, filter, page, sort);
   }
 
   override async getAllData(filtered = false): Promise<T[]> {

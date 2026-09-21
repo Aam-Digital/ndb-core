@@ -16,7 +16,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { FeatureDisabledInfoComponent } from "../../../core/common-components/feature-disabled-info/feature-disabled-info.component";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
-import { AuditDataSource } from "../audit-data-source";
+import { PaginatedDataSource } from "../../../core/common-components/entities-table/data-source/paginated-data-source";
+import { LoaderMethod } from "../../../core/entity/entity-special-loader/entity-special-loader.service";
 import { DateRangeFilterComponent } from "../../../core/basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { DateFilter } from "../../../core/filter/filters/dateFilter";
 import { DateRangeFilterConfigOption } from "../../../core/entity-list/EntityListConfig";
@@ -117,7 +118,7 @@ export class ChangeHistoryListComponent {
    * It also answers the related-record filter, which needs a different query
    * than the rest of the filter bar.
    */
-  readonly dataSource = new AuditDataSource();
+  readonly dataSource = new PaginatedDataSource<AuditRecord>();
 
   /**
    * Newest first. Pinned explicitly because the default would order by `_id`,
@@ -247,7 +248,7 @@ export class ChangeHistoryListComponent {
   constructor() {
     // the flag fetch is lazy, so nothing loads until a change-history UI asks
     this.service.loadAuditFeatureFlag();
-    this.dataSource.loadRecordConfig.set({ entityCtr: AuditRecord });
+    this.applyRelatedRecord();
   }
 
   setEntityTypeFilter(entityType: string | undefined) {
@@ -280,13 +281,21 @@ export class ChangeHistoryListComponent {
     }
   }
 
+  /**
+   * Point the list at the query the current filters need: the ordinary audit
+   * records, or - when a related record is named - the loader that serves the
+   * view keyed on it. Changing the config resets the paging, since everything
+   * loaded so far answered the previous query.
+   */
   private applyRelatedRecord() {
     const recordId = this.relatedEntityFilter();
-    this.dataSource.setRelatedRecord(
-      recordId
-        ? { recordId, from: this.dateFrom(), to: this.dateTo() }
+    this.dataSource.loadRecordConfig.set({
+      entityCtr: AuditRecord,
+      loaderMethod: recordId
+        ? LoaderMethod.AuditRecordsRelatedToEntity
         : undefined,
-    );
+      forEntity: recordId ? this.standInFor(recordId) : undefined,
+    });
   }
 
   /**
@@ -336,13 +345,14 @@ export class ChangeHistoryListComponent {
    * type is otherwise fine here - only the id is needed to load the history,
    * and the dialog's remaining content is optional.
    */
-  private standInFor(record: AuditRecord): Entity {
-    const ctor = this.entityRegistry.has(record.recordType)
-      ? this.entityRegistry.get(record.recordType)
+  private standInFor(recordId: string): Entity {
+    const recordType = Entity.extractTypeFromId(recordId);
+    const ctor = this.entityRegistry.has(recordType)
+      ? this.entityRegistry.get(recordType)
       : class extends Entity {
-          static override ENTITY_TYPE = record.recordType;
+          static override ENTITY_TYPE = recordType;
         };
-    return new ctor(record.record);
+    return new ctor(recordId);
   }
 
   private async loadRecord(record: AuditRecord): Promise<Entity> {
@@ -354,7 +364,7 @@ export class ChangeHistoryListComponent {
         record.record,
         err,
       );
-      return this.standInFor(record);
+      return this.standInFor(record.record);
     }
   }
 }
