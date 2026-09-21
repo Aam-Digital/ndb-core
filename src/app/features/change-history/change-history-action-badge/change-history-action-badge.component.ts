@@ -6,7 +6,11 @@ import {
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { BASELINE_NOTE, ChangeOperation } from "../change-history.types";
+import {
+  BASELINE_NOTE,
+  ChangeOperation,
+  OPERATION_LABELS,
+} from "../change-history.types";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 
@@ -34,26 +38,26 @@ interface OperationMeta {
 const OPERATION_META: Record<ChangeOperation, OperationMeta> = {
   baseline: {
     icon: "clock-rotate-left",
-    label: $localize`:Change action badge:Initial snapshot`,
+    label: OPERATION_LABELS.baseline,
     background: "#ECEFF1",
     color: "#4a525c",
     tooltip: BASELINE_NOTE,
   },
   create: {
     icon: "circle-plus",
-    label: $localize`:Change action badge:Created`,
+    label: OPERATION_LABELS.create,
     background: "#E6F4EA",
     color: "#1E6C33",
   },
   update: {
     icon: "pen-to-square",
-    label: $localize`:Change action badge:Updated`,
+    label: OPERATION_LABELS.update,
     background: "#CCEFFF",
     color: "#1565C0",
   },
   delete: {
     icon: "trash",
-    label: $localize`:Change action badge:Deleted`,
+    label: OPERATION_LABELS.delete,
     background: "#FBE2DE",
     color: "#B23A2C",
   },

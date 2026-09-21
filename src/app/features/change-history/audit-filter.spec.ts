@@ -1,64 +1,69 @@
-import { buildAuditFilter as build } from "./audit-filter";
-import { ChangeHistoryFilters } from "./change-history.types";
+import {
+  AUDIT_BASE_FILTER,
+  authorFilterOptions,
+  entityTypeFilterOptions,
+  operationFilterOptions,
+} from "./audit-filter";
 
 /** the built selector, which is an untyped Mango object at the database edge */
-function buildAuditFilter(filters: ChangeHistoryFilters): Record<string, any> {
-  return build(filters) as Record<string, any>;
+function optionFilter(option: { filter: unknown }): Record<string, any> {
+  return option.filter as Record<string, any>;
 }
 
-describe("buildAuditFilter", () => {
+describe("AUDIT_BASE_FILTER", () => {
   it("should exclude baselines, which are snapshots rather than changes", () => {
-    expect(buildAuditFilter({})).toEqual({
+    expect(AUDIT_BASE_FILTER).toEqual({
       timestamp: { $gt: null },
       operation: { $ne: "baseline" },
     });
   });
+});
 
-  it("should constrain the sort field even with no date range, so the index is usable", () => {
-    expect(buildAuditFilter({}).timestamp).toEqual({ $gt: null });
-  });
-
-  it("should narrow to one operation when one is selected", () => {
-    expect(buildAuditFilter({ operation: "delete" }).operation).toBe("delete");
-  });
-
+describe("entityTypeFilterOptions", () => {
   it("should match a record type as a prefix range on the stored id", () => {
-    expect(buildAuditFilter({ entityType: "Child" }).entityId).toEqual({
+    const [option] = entityTypeFilterOptions([
+      { key: "Child", label: "Child" },
+    ]);
+
+    expect(option.key).toBe("Child");
+    expect(optionFilter(option).entityId).toEqual({
       $gte: "Child:",
       $lt: "Child:￰",
     });
   });
+});
 
-  it("should include the whole of the selected end day", () => {
-    const filter = buildAuditFilter({
-      from: new Date("2026-08-01T09:00:00.000Z"),
-      to: new Date("2026-08-31T09:00:00.000Z"),
-    });
+describe("operationFilterOptions", () => {
+  it("should offer every filterable operation, labelled as the badge labels it", () => {
+    const options = operationFilterOptions();
 
-    expect(filter.timestamp.$gte).toBe("2026-08-01T09:00:00.000Z");
-    // a midnight bound would drop every change made on the last day
-    expect(new Date(filter.timestamp.$lte).getTime()).toBeGreaterThan(
-      new Date("2026-08-31T09:00:00.000Z").getTime(),
-    );
-  });
-
-  it("should match the author however the backend recorded them", () => {
-    // a token without a name leaves every record identified by id alone
-    expect(buildAuditFilter({ changedBy: "User:demo" }).$or).toEqual([
-      { "user.name": "User:demo" },
-      { "user.id": "User:demo" },
+    expect(options.map((option) => option.key)).toEqual([
+      "create",
+      "update",
+      "delete",
+    ]);
+    expect(options.map((option) => option.label)).toEqual([
+      "Created",
+      "Updated",
+      "Deleted",
     ]);
   });
 
-  it("should leave an unset filter unrestricted", () => {
-    const filter = buildAuditFilter({
-      entityType: undefined,
-      changedBy: undefined,
-      operation: undefined,
-    });
+  it("should narrow to the one operation", () => {
+    const [create] = operationFilterOptions();
 
-    expect(filter.entityId).toBeUndefined();
-    expect(filter.$or).toBeUndefined();
-    expect(filter.operation).toEqual({ $ne: "baseline" });
+    expect(optionFilter(create).operation).toBe("create");
+  });
+});
+
+describe("authorFilterOptions", () => {
+  it("should match the author however the backend recorded them", () => {
+    // a token without a name leaves every record identified by id alone
+    const [option] = authorFilterOptions(["User:demo"]);
+
+    expect(optionFilter(option).$or).toEqual([
+      { "user.name": "User:demo" },
+      { "user.id": "User:demo" },
+    ]);
   });
 });

@@ -27,6 +27,17 @@ export type ChangeOperation = (typeof CHANGE_OPERATIONS)[number];
 export const BASELINE_OPERATION = "baseline";
 
 /**
+ * The past-tense wording for each operation, shared by the badge and the
+ * filter's options so the two cannot drift apart.
+ */
+export const OPERATION_LABELS: Record<ChangeOperation, string> = {
+  baseline: $localize`:Change action badge:Initial snapshot`,
+  create: $localize`:Change action badge:Created`,
+  update: $localize`:Change action badge:Updated`,
+  delete: $localize`:Change action badge:Deleted`,
+};
+
+/**
  * The operations a user can filter the change log by, in the order the filter
  * offers them.
  *
@@ -68,65 +79,6 @@ export interface ChangeEvent {
   changes: FieldChange[];
   /** optional contextual note (e.g. the baseline explanation) */
   note?: string;
-}
-
-/**
- * One row of the system-wide change log: a single audited write, across all
- * records rather than within one entity's history.
- *
- * Carries only what the list displays. The field-level before/after is
- * deliberately absent: that needs the entity's full replayed state (see
- * `buildChangeEvents`), which the per-record change-history dialog provides.
- */
-export interface ChangeHistoryEntry {
-  /** the audit document `_id` */
-  id: string;
-  /** server-set time of the change */
-  at: Date;
-  /**
-   * authenticated author recorded by the backend (name, or id as fallback).
-   * This is the raw recorded value, and what the author filter matches on.
-   */
-  by: string;
-  /**
-   * {@link by} as an entity id, when the author was recorded as an app user
-   * record; unset for a plain username, which has no record to resolve.
-   */
-  byEntityId?: string;
-  operation: ChangeOperation;
-  /** the changed record's id, e.g. `Child:123` */
-  entityId: string;
-  /** the changed record's type prefix, e.g. `Child` */
-  entityType: string;
-  /** names of the fields this write changed; empty for a delete */
-  changedFields: string[];
-}
-
-/**
- * The active filters of the system-wide change log. An unset property means
- * "no restriction" on that dimension.
- */
-export interface ChangeHistoryFilters {
-  /** entity type prefix, e.g. `Child` */
-  entityType?: string;
-  /** author, matched against the recorded user name */
-  changedBy?: string;
-  /** only one kind of change; see {@link FILTERABLE_OPERATIONS}. */
-  operation?: ChangeOperation;
-  /**
-   * a record id, e.g. `User:1`: only changes *related* to that record — changes
-   * to the record itself, and changes to any other record that referenced it
-   * (a `Note`'s `authors` gaining or losing `User:1`).
-   *
-   * Served by a dedicated view rather than the log's default query, so it cannot
-   * be combined with {@link entityType} or {@link changedBy}; those are ignored
-   * (and disabled in the UI) while this is set.
-   */
-  relatedEntityId?: string;
-  /** only changes at or after this time */
-  from?: Date;
-  /** only changes up to this time (the whole day is included) */
-  to?: Date;
 }
 
 /**

@@ -80,41 +80,49 @@ it("should page through the audit records with the generic data source", async (
   expect(component.sortBy).toEqual({ active: "timestamp", direction: "desc" });
 });
 
-it("should start pre-filtered by the record type the caller navigated from", async () => {
-  await setup(true, true, { entityType: "Child" });
+it("should query only what the log always excludes while nothing is selected", async () => {
+  await setup();
 
-  expect(selector().entityId).toEqual({
-    $gte: "Child:",
-    $lt: "Child:￰",
+  expect(selector()).toEqual({
+    timestamp: { $gt: null },
+    operation: { $ne: "baseline" },
   });
 });
 
-it("should apply the selected record type, operation and author to the query", async () => {
+it("should apply the user's selection under what the log always excludes", async () => {
   await setup();
 
-  component.setEntityTypeFilter("School");
-  component.setOperationFilter("delete");
-  component.setChangedByFilter("priya");
+  component.onFilterChange({ operation: "delete" } as any);
 
-  expect(selector()).toMatchObject({
-    entityId: { $gte: "School:", $lt: "School:￰" },
-    operation: "delete",
-    $or: [{ "user.name": "priya" }, { "user.id": "priya" }],
-  });
+  // a baseline stays excluded whatever the user selects, so the restriction
+  // cannot be widened by clearing the filters
+  expect(selector().$and).toEqual([
+    { timestamp: { $gt: null }, operation: { $ne: "baseline" } },
+    { operation: "delete" },
+  ]);
 });
 
-it("should treat a cleared date range as no restriction", async () => {
+it("should offer a filter per dimension the ordinary query can narrow", async () => {
   await setup();
 
-  component.onDateRangeChange({
-    from: new Date("2026-06-01"),
-    to: new Date("2026-06-30"),
-  });
-  expect(selector().timestamp.$gte).toBeDefined();
+  expect(component.filterConfig().map((config) => config.id)).toEqual([
+    "entityType",
+    "operation",
+    "changedBy",
+    "timestamp",
+  ]);
+});
 
-  component.onDateRangeChange({ from: null, to: null });
+it("should offer only the date range once a related record is named", async () => {
+  // the view answering it is keyed on the referenced id, so the others would
+  // need a different key order - they are not offered rather than ignored
+  await setup();
 
-  expect(selector().timestamp).toEqual({ $gt: null });
+  component.setRelatedEntityFilter("User:1");
+
+  expect(component.filterConfig().map((config) => config.id)).toEqual([
+    "timestamp",
+  ]);
 });
 
 it("should not offer the table when the feature is switched off", async () => {
