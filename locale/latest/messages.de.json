@@ -1651,8 +1651,6 @@
   "3538880973227350722": "folgende Bedingungen sind erfüllt",
   "8859399695829816325": " Bedingung entfernen ",
   "2137695857644091530": " Bedingung anwenden ",
-  "6203026077386864474": "Datensätze stimmen überein, wenn eine der folgenden Bedingungen zutrifft (oder Bedingungen).",
-  "4059486942415838472": "Datensätze stimmen nur dann überein, wenn alle Bedingungen erfüllt sind (und-Bedingungen).",
   "6807269518684985325": "{$PH} kann {$PH_1} nur dort lesen, wo…",
   "4250956191046200679": "{$PH} kann {$PH_1} nur dann erstellen, wenn…",
   "2789524834724338841": "{$PH} kann {$PH_1} nur dort aktualisieren, wo…",
@@ -1736,5 +1734,11 @@
   "2818436142710859801": " Create profile ",
   "5918836789619678550": " Skip for now ",
   "7892910188550548387": "No record type in this configuration supports login accounts, so no profile was created for your account.",
-  "5797725100345356958": "Your profile \"{$profileName}\" was created, but could not be linked to your account automatically. An administrator can link it to your account later from user administration."
+  "5797725100345356958": "Your profile \"{$profileName}\" was created, but could not be linked to your account automatically. An administrator can link it to your account later from user administration.",
+  "230037563227577649": "Only show this field in forms if the record currently matches a condition, based on the values of other fields.",
+  "4627583257713875293": "Display Condition",
+  "3951589631848438004": "Condition configured",
+  "1128485605127100061": "This field is shown only while the record matches...",
+  "2343990751852583823": "Matches if any one of the conditions applies (\"or\" conditions).",
+  "3802391394601762698": "Matches only if all conditions apply (\"and\" conditions)."
 }
