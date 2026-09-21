@@ -270,6 +270,12 @@ This defines which property is displayed and how it should be displayed.</p>
                         </li>
                         <li>
                                     <span class="modifier">Optional</span>
+                                <a href="#displayCondition" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">displayCondition</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
                                 <a href="#displayFullLengthLabel" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">displayFullLengthLabel</span>
                                 </a>
@@ -706,7 +712,7 @@ E.g. when displaying a list of entities</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:74</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:75</a></div>
                                 </td>
                             </tr>
 
@@ -758,7 +764,7 @@ that are not part of the core datatypes and therefore not included in this core 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="152" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:152</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="153" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:153</a></div>
                                 </td>
                             </tr>
 
@@ -810,7 +816,7 @@ that are not part of the core datatypes and therefore not included in this core 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -861,7 +867,7 @@ that are not part of the core datatypes and therefore not included in this core 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:66</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:67</a></div>
                                 </td>
                             </tr>
 
@@ -913,13 +919,67 @@ The form will be disabled, until all default value configs are applied</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="132" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:132</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:133</a></div>
                                 </td>
                             </tr>
 
                     <tr>
                         <td class="col-md-4">
                             <div class="io-description"><p>A further description of the property which can be displayed in tooltips.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="displayCondition"></a>
+                                <span class="name "><b>displayCondition</b>
+                                    <a href="#displayCondition">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>displayCondition:         <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;any&gt;</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;any&gt;</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="169" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:169</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>(Optional) A Mango/MongoDB style query condition, evaluated against the current
+(possibly not yet saved) state of the entity, that determines whether this field
+is displayed in forms.</p>
+<p>If the condition is not met, the form field is hidden and its value is excluded
+from validation (e.g. a &quot;required&quot; validator is skipped while hidden).</p>
 </div>
                         </td>
                     </tr>
@@ -963,7 +1023,7 @@ The form will be disabled, until all default value configs are applied</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="121" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:121</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="122" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:122</a></div>
                                 </td>
                             </tr>
 
@@ -1013,7 +1073,7 @@ The form will be disabled, until all default value configs are applied</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="127" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:127</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="128" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:128</a></div>
                                 </td>
                             </tr>
 
@@ -1064,7 +1124,7 @@ The form will be disabled, until all default value configs are applied</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:105</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:106</a></div>
                                 </td>
                             </tr>
 
@@ -1117,7 +1177,7 @@ If nothing is defined, the default component for this datatype will be used.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:85</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:86</a></div>
                                 </td>
                             </tr>
 
@@ -1171,7 +1231,7 @@ Does this the entity containing this field (not the referenced entity) still hav
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:54</a></div>
                                 </td>
                             </tr>
 
@@ -1222,7 +1282,7 @@ Does this the entity containing this field (not the referenced entity) still hav
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:46</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:47</a></div>
                                 </td>
                             </tr>
 
@@ -1272,7 +1332,7 @@ Does this the entity containing this field (not the referenced entity) still hav
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="158" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:158</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="159" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:159</a></div>
                                 </td>
                             </tr>
 
@@ -1323,7 +1383,7 @@ that should not be shown in the admin form builder or saved to config.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:110</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:111</a></div>
                                 </td>
                             </tr>
 
@@ -1373,7 +1433,7 @@ that should not be shown in the admin form builder or saved to config.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:116</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="117" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:117</a></div>
                                 </td>
                             </tr>
 
@@ -1424,7 +1484,7 @@ If nothing is specified, the long name will be used.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:58</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:59</a></div>
                                 </td>
                             </tr>
 
@@ -1474,7 +1534,7 @@ If nothing is specified, the long name will be used.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="143" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:143</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:144</a></div>
                                 </td>
                             </tr>
 
@@ -1524,7 +1584,7 @@ If nothing is specified, the long name will be used.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:140</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="141" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:141</a></div>
                                 </td>
                             </tr>
 
@@ -1575,7 +1635,7 @@ Defaults to true (trimming enabled) for string fields.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="134" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:134</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:135</a></div>
                                 </td>
                             </tr>
 
@@ -1619,7 +1679,7 @@ Defaults to true (trimming enabled) for string fields.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:96</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/core/common-components/entity-form/FormConfig.ts:97</a></div>
                                 </td>
                             </tr>
 

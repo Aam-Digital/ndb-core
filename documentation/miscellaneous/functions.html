@@ -671,7 +671,7 @@
                             <a href="#maxLevelBelow" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>maxLevelBelow</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#mergeToAllConditions" title="src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mergeToAllConditions</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-dialog.component.ts)</span></a>
+                            <a href="#mergeToAllConditions" title="src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mergeToAllConditions</b>&nbsp;&nbsp;&nbsp;(src/.../condition-editor-dialog.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#messageText" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>messageText</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
@@ -908,7 +908,7 @@
                             <a href="#testEntitySubclass" title="src/app/core/entity/model/entity.test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>testEntitySubclass</b>&nbsp;&nbsp;&nbsp;(src/.../entity.test-utils.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#toEditorFormat" title="src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toEditorFormat</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-dialog.component.ts)</span></a>
+                            <a href="#toEditorFormat" title="src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toEditorFormat</b>&nbsp;&nbsp;&nbsp;(src/.../condition-editor-dialog.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#toFormFieldConfig" title="src/app/core/common-components/entity-form/FormConfig.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toFormFieldConfig</b>&nbsp;&nbsp;&nbsp;(src/.../FormConfig.ts)</span></a>
@@ -17471,7 +17471,7 @@ when rows are added or removed.</p>
         </tbody>
     </table>
 </section>
-    <h3>src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts</h3>
+    <h3>src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
         <tbody>
@@ -17546,7 +17546,7 @@ a single merged object if keys are unique, otherwise an explicit $and.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>toEditorFormat(conditions: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+<code>toEditorFormat(condition: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
                 </td>
             </tr>
 
@@ -17555,10 +17555,15 @@ a single merged object if keys are unique, otherwise an explicit $and.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Convert any stored conditions shape into the { $or: [...] } row format
+                        <div class="io-description"><p>Convert any stored condition shape into the { $or: [...] } row format
 that the conditions editor works with.</p>
 <p>Deep-copies the input so the editor (which mutates rows in place) cannot
-touch the matrix model: cancelling the dialog must leave the model untouched.</p>
+touch the caller&#39;s config: cancelling the dialog must leave it untouched.</p>
+<p>A condition can combine <code>$or</code>/<code>$and</code> with sibling keys (Mango&#39;s implicit AND,
+e.g. <code>{ status: &quot;active&quot;, $or: [...] }</code>). This editor has no concept of nested
+groups, so such a sibling key cannot be kept ANDed with the <code>$or</code>/<code>$and</code> array -
+instead it is folded in as one more row, to at least keep it visible and
+editable rather than silently dropping it.</p>
 </div>
 
                             <div class="io-description">
@@ -17574,7 +17579,7 @@ touch the matrix model: cancelling the dialog must leave the model untouched.</p
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>conditions</td>
+                                                <td>condition</td>
                                             <td>
                                                             <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
                                             </td>

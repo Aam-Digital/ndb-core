@@ -114,12 +114,12 @@
   <li class="breadcrumb-item">Components</li>
   <li class="breadcrumb-item"
   >
-  PrimaryActionComponent</li>
+  ConditionEditorDialogComponent</li>
 </ol>
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
     <span class="icon ion-ios-document" aria-hidden="true"></span>
-    <code>src/app/core/ui/primary-action/primary-action.component.ts</code>
+    <code>src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts</code>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -140,10 +140,6 @@
                 role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
         </li>
         <li class="nav-item">
-            <a href="#styleData" class="nav-link"
-                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
-        </li>
-        <li class="nav-item">
             <a href="#tree" class="nav-link"
                 role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
         </li>
@@ -155,19 +151,14 @@
         <h3>Description</h3>
     </p>
     <p class="comment">
-        <p>The &quot;Primary Action&quot; is always displayed hovering over the rest of the app as a quick action for the user.</p>
-<p>This is a UX concept also used in many Android apps.
-see <a href="https://material.io/components/buttons-floating-action-button/">https://material.io/components/buttons-floating-action-button/</a></p>
+        <p>Generic dialog to visually edit a Mango-query condition build from a list of
+field/value rows, combined with either &quot;any&quot; ($or) or &quot;all&quot; (merged / $and) semantics.</p>
+<p>Configured via <a href="../interfaces/ConditionEditorDialogData.html">ConditionEditorDialogData</a></p>
+<p>Closes with the new condition, <code>null</code> to remove it, or <code>undefined</code> when cancelled.</p>
 
     </p>
 
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.dev/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
-    </p>
 
     <p class="comment">
         <h3>Example</h3>
@@ -197,7 +188,7 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
 
             <tr>
                 <td class="col-md-3">selector</td>
-                <td class="col-md-9"><code>app-primary-action</code></td>
+                <td class="col-md-9"><code>app-condition-editor-dialog</code></td>
             </tr>
 
             <tr>
@@ -208,30 +199,28 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
+                        <div>    <code>MatDialogModule</code>
+</div>
                         <div>    <code>MatButtonModule</code>
 </div>
-                        <div>    <code>Angulartics2Module</code>
+                        <div>    <code>MatButtonToggleModule</code>
 </div>
-                        <div>        <code><a href="../directives/DisableEntityOperationDirective.html" target="_self" >DisableEntityOperationDirective</a></code>
+                        <div>    <code>MatTooltipModule</code>
 </div>
-                        <div>    <code>FontAwesomeModule</code>
+                        <div>        <code><a href="../components/ConditionsEditorComponent.html" target="_self" >ConditionsEditorComponent</a></code>
 </div>
-                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                        <div>        <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
 </div>
                 </td>
             </tr>
 
-            <tr>
-                <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./primary-action.component.scss</code></td>
-            </tr>
 
 
 
 
             <tr>
                 <td class="col-md-3">templateUrl</td>
-                <td class="col-md-9"><code>./primary-action.component.html</code></td>
+                <td class="col-md-9"><code>./condition-editor-dialog.component.html</code></td>
             </tr>
 
 
@@ -251,33 +240,29 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
             <div class="row pt-3">
                 <div class="col-sm-6">
                     <h4>Used by</h4>
-                        <ul class="list-unstyled relationships-list">
-                                <li>
-                                            <code><a href="../components/UiComponent.html" target="_self" >UiComponent</a></code>
-                                </li>
-                        </ul>
+                        <p class="comment"><i>No results matching.</i></p>
                 </div>
 
                 <div class="col-sm-6">
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
+                                        <code>MatDialogModule</code>
+                                </li>
+                                <li>
                                         <code>MatButtonModule</code>
                                 </li>
                                 <li>
-                                        <code>Angulartics2Module</code>
+                                        <code>MatButtonToggleModule</code>
                                 </li>
                                 <li>
-                                            <code><a href="../directives/DisableEntityOperationDirective.html" target="_self" >DisableEntityOperationDirective</a></code>
+                                        <code>MatTooltipModule</code>
                                 </li>
                                 <li>
-                                        <code>FontAwesomeModule</code>
+                                            <code><a href="../components/ConditionsEditorComponent.html" target="_self" >ConditionsEditorComponent</a></code>
                                 </li>
                                 <li>
-                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
-                                </li>
-                                <li>
-                                            <code><a href="https://angular.dev/api/core/OnDestroy" target="_blank" >OnDestroy</a></code>
+                                            <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -297,7 +282,27 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#config" >config</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#combinator" >combinator</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#combinatorHint" >combinatorHint</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#data" >data</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#editorConditions" >editorConditions</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hadCondition" >hadCondition</a>
                             </li>
                         </ul>
                     </td>
@@ -315,35 +320,30 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                <a href="#primaryAction" >primaryAction</a>
+                                <a href="#apply" >apply</a>
                             </li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-
-
-
-
-        <table class="table table-sm table-bordered index-table">
-            <tbody>
-                <tr>
-                    <td class="col-md-3">
-                        <h6><b>Accessors</b></h6>
-                    </td>
-                    <td class="col-md-9">
-                        <ul class="index-list">
                             <li>
-                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
-                                <a href="#entityConstructor" >entityConstructor</a>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#cancel" >cancel</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#onConditionsChange" >onConditionsChange</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#removeCondition" >removeCondition</a>
                             </li>
                         </ul>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+
+
+
+
 </section>
 
 
@@ -360,32 +360,171 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="primaryAction"></a>
+                    <a name="apply"></a>
                     <span class="name">
-                        <span ><b>primaryAction</b></span>
-                        <a href="#primaryAction"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>apply</b></span>
+                        <a href="#apply"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>primaryAction()</code>
+<code>apply()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="67"
-                                    class="link-to-prism">src/app/core/ui/primary-action/primary-action.component.ts:67</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="89"
+                                    class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:89</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>The primary action to be triggered when the user clicks the hovering button.</p>
-</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="cancel"></a>
+                    <span class="name">
+                        <span ><b>cancel</b></span>
+                        <a href="#cancel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>cancel()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:111</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onConditionsChange"></a>
+                    <span class="name">
+                        <span ><b>onConditionsChange</b></span>
+                        <a href="#onConditionsChange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onConditionsChange(conditions: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:85</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>conditions</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeCondition"></a>
+                    <span class="name">
+                        <span ><b>removeCondition</b></span>
+                        <a href="#removeCondition"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeCondition()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:107</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -406,27 +545,177 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="config"></a>
+                    <a name="combinator"></a>
                     <span class="name">
-                        <span ><b>config</b></span>
-                        <a href="#config"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>combinator</b></span>
+                        <a href="#combinator"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/PrimaryActionConfig.html" target="_self" >PrimaryActionConfig</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>this.primaryActionService.getCurrentConfig()</code>
+                        <i>Default value : </i><code>signal&lt;&quot;any&quot; | &quot;all&quot;&gt;(
+    Array.isArray(this.data.conditions?.$or) ? &quot;any&quot; : &quot;all&quot;,
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/ui/primary-action/primary-action.component.ts:49</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:68</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>whether all rows must match (&quot;all&quot;, implicit and / $and) or any row (&quot;any&quot;, $or)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="combinatorHint"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>combinatorHint</b></span>
+                        <a href="#combinatorHint"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    this.combinator() &#x3D;&#x3D;&#x3D; &quot;any&quot;
+      ? $localize&#x60;Matches if any one of the conditions applies (&quot;or&quot; conditions).&#x60;
+      : $localize&#x60;Matches only if all conditions apply (&quot;and&quot; conditions).&#x60;,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:79</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="data"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>data</b></span>
+                        <a href="#data"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ConditionEditorDialogData.html" target="_self" >ConditionEditorDialogData</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(MAT_DIALOG_DATA)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="editorConditions"></a>
+                    <span class="name">
+                        <span ><b>editorConditions</b></span>
+                        <a href="#editorConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>toEditorFormat(this.data.conditions)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:77</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Working state in the { $or: [...] } row format of the conditions editor.
+Deliberately not a signal: the conditions editor mutates this object in place
+and the template does not need to react to its changes.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hadCondition"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hadCondition</b></span>
+                        <a href="#hadCondition"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>!!(
+    this.data.conditions &amp;&amp; Object.keys(this.data.conditions).length &gt; 0
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -435,154 +724,236 @@ see <a href="https://material.io/components/buttons-floating-action-button/">htt
     </table>
 </section>
 
-    <section data-compodoc="block-accessors">
-    <h3 id="accessors">
-        Accessors
-    </h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="entityConstructor"></a>
-                        <span class="name"><b>entityConstructor</b><a href="#entityConstructor"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>entityConstructor()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/ui/primary-action/primary-action.component.ts:58</a></div>
-                                </td>
-                            </tr>
-
-            </tbody>
-        </table>
-</section>
 </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  Component,
-  inject,
-  ChangeDetectorRef,
-  OnDestroy,
   ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
 } from &quot;@angular/core&quot;;
-import { FormDialogService } from &quot;../../form-dialog/form-dialog.service&quot;;
-import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
-import { Angulartics2Module } from &quot;angulartics2&quot;;
-import { DisableEntityOperationDirective } from &quot;../../permissions/permission-directive/disable-entity-operation.directive&quot;;
-import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
-import { FaDynamicIconComponent } from &quot;../../common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
-import { Router } from &quot;@angular/router&quot;;
-import { ConfigService } from &quot;../../config/config.service&quot;;
-import { PrimaryActionConfig } from &quot;../../admin/admin-primary-action/primary-action-config&quot;;
-import { PrimaryActionService } from &quot;../../admin/admin-primary-action/primary-action.service&quot;;
+import { MatButtonToggleModule } from &quot;@angular/material/button-toggle&quot;;
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from &quot;@angular/material/dialog&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+
+import { ConditionsEditorComponent } from &quot;../conditions-editor/conditions-editor.component&quot;;
+import { DialogCloseComponent } from &quot;../dialog-close/dialog-close.component&quot;;
+import { EntityConstructor } from &quot;../../entity/model/entity&quot;;
+
+export interface ConditionEditorDialogData {
+  /** entity type whose fields can be selected in condition rows */
+  entityConstructor: EntityConstructor | undefined;
+
+  /** existing condition to edit, if any */
+  conditions?: any;
+
+  /** fully localized sentence shown above the conditions editor, explaining what the condition applies to */
+  explanation: string;
+
+  /** also offer the internal &quot;_id&quot; field in the field dropdown (e.g. for permission conditions) */
+  showInternalIdField?: boolean;
+}
 
 /**
- * The &quot;Primary Action&quot; is always displayed hovering over the rest of the app as a quick action for the user.
+ * Generic dialog to visually edit a Mango-query condition build from a list of
+ * field/value rows, combined with either &quot;any&quot; ($or) or &quot;all&quot; (merged / $and) semantics.
  *
- * This is a UX concept also used in many Android apps.
- * see {@link https://material.io/components/buttons-floating-action-button/}
+ * Configured via {@link ConditionEditorDialogData}
+ *
+ * Closes with the new condition, &#x60;null&#x60; to remove it, or &#x60;undefined&#x60; when cancelled.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: &quot;app-primary-action&quot;,
-  templateUrl: &quot;./primary-action.component.html&quot;,
-  styleUrls: [&quot;./primary-action.component.scss&quot;],
+  selector: &quot;app-condition-editor-dialog&quot;,
   imports: [
+    MatDialogModule,
     MatButtonModule,
-    Angulartics2Module,
-    DisableEntityOperationDirective,
-    FontAwesomeModule,
-    FaDynamicIconComponent,
+    MatButtonToggleModule,
+    MatTooltipModule,
+    ConditionsEditorComponent,
+    DialogCloseComponent,
   ],
+  templateUrl: &quot;./condition-editor-dialog.component.html&quot;,
 })
-export class PrimaryActionComponent implements OnDestroy {
-  ngOnDestroy() {
-    this.configSub.unsubscribe();
-  }
-  private formDialog &#x3D; inject(FormDialogService);
-  private readonly configService &#x3D; inject(ConfigService);
-  private readonly router &#x3D; inject(Router);
-  private readonly cdr: ChangeDetectorRef &#x3D; inject(ChangeDetectorRef);
-  private readonly primaryActionService &#x3D; inject(PrimaryActionService);
-
-  config: PrimaryActionConfig &#x3D; this.primaryActionService.getCurrentConfig();
-
-  private readonly configSub &#x3D; this.configService.configUpdates.subscribe(
-    () &#x3D;&gt; {
-      this.config &#x3D; this.primaryActionService.getCurrentConfig();
-      this.cdr.markForCheck();
-    },
+export class ConditionEditorDialogComponent {
+  private readonly dialogRef &#x3D; inject(
+    MatDialogRef&lt;ConditionEditorDialogComponent&gt;,
   );
 
-  get entityConstructor(): EntityConstructor {
-    return this.primaryActionService.getEntityConstructor(
-      this.config.entityType,
-    );
-  }
+  readonly data: ConditionEditorDialogData &#x3D; inject(MAT_DIALOG_DATA);
+
+  readonly hadCondition &#x3D; !!(
+    this.data.conditions &amp;&amp; Object.keys(this.data.conditions).length &gt; 0
+  );
+
+  /** whether all rows must match (&quot;all&quot;, implicit and / $and) or any row (&quot;any&quot;, $or) */
+  readonly combinator &#x3D; signal&lt;&quot;any&quot; | &quot;all&quot;&gt;(
+    Array.isArray(this.data.conditions?.$or) ? &quot;any&quot; : &quot;all&quot;,
+  );
 
   /**
-   * The primary action to be triggered when the user clicks the hovering button.
+   * Working state in the { $or: [...] } row format of the conditions editor.
+   * Deliberately not a signal: the conditions editor mutates this object in place
+   * and the template does not need to react to its changes.
    */
-  primaryAction() {
-    if (this.config.actionType &#x3D;&#x3D;&#x3D; &quot;createEntity&quot;) {
-      const ctor &#x3D; this.entityConstructor;
-      if (ctor) {
-        const newEntity &#x3D; new ctor();
-        this.formDialog.openView(newEntity);
-      }
-    } else if (this.config.actionType &#x3D;&#x3D;&#x3D; &quot;navigate&quot; &amp;&amp; this.config.route) {
-      this.router.navigate([this.config.route]);
+  editorConditions: any &#x3D; toEditorFormat(this.data.conditions);
+
+  readonly combinatorHint &#x3D; computed(() &#x3D;&gt;
+    this.combinator() &#x3D;&#x3D;&#x3D; &quot;any&quot;
+      ? $localize&#x60;Matches if any one of the conditions applies (&quot;or&quot; conditions).&#x60;
+      : $localize&#x60;Matches only if all conditions apply (&quot;and&quot; conditions).&#x60;,
+  );
+
+  onConditionsChange(conditions: any) {
+    this.editorConditions &#x3D; conditions;
+  }
+
+  apply() {
+    const rows: any[] &#x3D; (this.editorConditions?.$or ?? []).filter(
+      (row: any) &#x3D;&gt;
+        row &amp;&amp;
+        typeof row &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
+        Object.keys(row).length &gt; 0 &amp;&amp;
+        Object.values(row).every((v) &#x3D;&gt; v !&#x3D;&#x3D; null &amp;&amp; v !&#x3D;&#x3D; undefined),
+    );
+
+    if (rows.length &#x3D;&#x3D;&#x3D; 0) {
+      this.dialogRef.close(null);
+    } else if (this.combinator() &#x3D;&#x3D;&#x3D; &quot;any&quot;) {
+      this.dialogRef.close({ $or: rows });
+    } else {
+      this.dialogRef.close(mergeToAllConditions(rows));
     }
   }
+
+  removeCondition() {
+    this.dialogRef.close(null);
+  }
+
+  cancel() {
+    this.dialogRef.close(undefined);
+  }
+}
+
+/**
+ * Convert any stored condition shape into the { $or: [...] } row format
+ * that the conditions editor works with.
+ *
+ * Deep-copies the input so the editor (which mutates rows in place) cannot
+ * touch the caller&#x27;s config: cancelling the dialog must leave it untouched.
+ *
+ * A condition can combine &#x60;$or&#x60;/&#x60;$and&#x60; with sibling keys (Mango&#x27;s implicit AND,
+ * e.g. &#x60;{ status: &quot;active&quot;, $or: [...] }&#x60;). This editor has no concept of nested
+ * groups, so such a sibling key cannot be kept ANDed with the &#x60;$or&#x60;/&#x60;$and&#x60; array -
+ * instead it is folded in as one more row, to at least keep it visible and
+ * editable rather than silently dropping it.
+ */
+function toEditorFormat(condition: any): any {
+  if (!condition || typeof condition !&#x3D;&#x3D; &quot;object&quot;) {
+    return {};
+  }
+  const copy &#x3D; structuredClone(condition);
+  const rows: any[] &#x3D; [];
+
+  if (Array.isArray(copy.$or)) {
+    rows.push(...copy.$or);
+    delete copy.$or;
+  } else if (Array.isArray(copy.$and)) {
+    rows.push(...copy.$and);
+    delete copy.$and;
+  }
+  // remaining plain keys (either the whole condition, or siblings of $or/$and above)
+  rows.push(...Object.entries(copy).map(([key, value]) &#x3D;&gt; ({ [key]: value })));
+
+  return { $or: rows };
+}
+
+/**
+ * Combine rows into &quot;all must match&quot; conditions:
+ * a single merged object if keys are unique, otherwise an explicit $and.
+ */
+function mergeToAllConditions(rows: any[]): any {
+  const keys &#x3D; rows.flatMap((row) &#x3D;&gt; Object.keys(row));
+  if (new Set(keys).size &#x3D;&#x3D;&#x3D; keys.length) {
+    return Object.assign({}, ...rows);
+  }
+  return { $and: rows };
 }
 </code></pre>
     </div>
 
     <div class="tab-pane fade " id="templateData">
-        <pre class="line-numbers"><code class="language-html">@if (config.disabled !&#x3D;&#x3D; true) {
-  &lt;button
-    mat-fab
-    class&#x3D;&quot;primary-action&quot;
-    (click)&#x3D;&quot;primaryAction()&quot;
-    angulartics2On&#x3D;&quot;click&quot;
-    angularticsCategory&#x3D;&quot;Navigation&quot;
-    angularticsAction&#x3D;&quot;primary_action_click&quot;
-    *appDisabledEntityOperation&#x3D;&quot;{
-      entity: entityConstructor,
-      operation: &#x27;create&#x27;,
-    }&quot;
-  &gt;
-    &lt;app-fa-dynamic-icon [icon]&#x3D;&quot;config.icon&quot;&gt;&lt;/app-fa-dynamic-icon&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;h2 mat-dialog-title&gt;
+  @if (hadCondition) {
+    &lt;span i18n&gt;Edit Condition&lt;/span&gt;
+  } @else {
+    &lt;span i18n&gt;Add Condition&lt;/span&gt;
+  }
+  &lt;app-dialog-close mat-dialog-close&gt;&lt;/app-dialog-close&gt;
+&lt;/h2&gt;
+
+&lt;mat-dialog-content&gt;
+  &lt;p&gt;{{ data.explanation }}&lt;/p&gt;
+
+  &lt;!-- the combinator comes before the conditions it applies to, so the dialog
+       reads as one sentence: &quot;&lt;explanation&gt; … [Any|All] of the following conditions match: …&quot; --&gt;
+  &lt;div class&#x3D;&quot;flex-row align-center gap-regular margin-bottom-regular&quot;&gt;
+    &lt;mat-button-toggle-group
+      [value]&#x3D;&quot;combinator()&quot;
+      (change)&#x3D;&quot;combinator.set($event.value)&quot;
+      hideSingleSelectionIndicator
+    &gt;
+      &lt;mat-button-toggle
+        value&#x3D;&quot;any&quot;
+        matTooltip&#x3D;&#x27;A record matches as soon as one of the conditions below applies (&quot;or&quot;).&#x27;
+        i18n-matTooltip
+        i18n
+      &gt;
+        Any
+      &lt;/mat-button-toggle&gt;
+      &lt;mat-button-toggle
+        value&#x3D;&quot;all&quot;
+        matTooltip&#x3D;&#x27;A record matches only if every one of the conditions below applies (&quot;and&quot;).&#x27;
+        i18n-matTooltip
+        i18n
+      &gt;
+        All
+      &lt;/mat-button-toggle&gt;
+    &lt;/mat-button-toggle-group&gt;
+    &lt;span i18n&gt;of the following conditions match&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;app-conditions-editor
+    [conditions]&#x3D;&quot;editorConditions&quot;
+    [entityConstructor]&#x3D;&quot;data.entityConstructor&quot;
+    [hint]&#x3D;&quot;combinatorHint()&quot;
+    [showInternalIdField]&#x3D;&quot;!!data.showInternalIdField&quot;
+    (conditionsChange)&#x3D;&quot;onConditionsChange($event)&quot;
+  &gt;&lt;/app-conditions-editor&gt;
+&lt;/mat-dialog-content&gt;
+
+&lt;mat-dialog-actions align&#x3D;&quot;end&quot;&gt;
+  @if (hadCondition) {
+    &lt;button mat-button color&#x3D;&quot;warn&quot; (click)&#x3D;&quot;removeCondition()&quot; i18n&gt;
+      Remove condition
+    &lt;/button&gt;
+  }
+  &lt;button mat-stroked-button (click)&#x3D;&quot;cancel()&quot; i18n&gt;Cancel&lt;/button&gt;
+  &lt;button mat-raised-button color&#x3D;&quot;accent&quot; (click)&#x3D;&quot;apply()&quot; i18n&gt;
+    Apply Condition
   &lt;/button&gt;
-}
+&lt;/mat-dialog-actions&gt;
 </code></pre>
     </div>
 
-    <div class="tab-pane fade " id="styleData">
-                <p class="comment">
-                    <code>./primary-action.component.scss</code>
-                </p>
-                <pre class="line-numbers"><code class="language-scss">.primary-action {
-  font-size: 180%;
-}
-
-:host {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  z-index: 999;
-}
-</code></pre>
-    </div>
 
     <div class="tab-pane fade " id="tree">
         <div id="tree-container"></div>
@@ -609,10 +980,10 @@ export class PrimaryActionComponent implements OnDestroy {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div>@if (config.disabled !== true) {  <button    mat-fab    class="primary-action"    (click)="primaryAction()"    angulartics2On="click"    angularticsCategory="Navigation"    angularticsAction="primary_action_click"    *appDisabledEntityOperation="{      entity: entityConstructor,      operation: \'create\',    }"  >    <app-fa-dynamic-icon [icon]="config.icon"></app-fa-dynamic-icon>  </button>}</div>'
+        var COMPONENT_TEMPLATE = '<div><h2 mat-dialog-title>  @if (hadCondition) {    <span i18n>Edit Condition</span>  } @else {    <span i18n>Add Condition</span>  }  <app-dialog-close mat-dialog-close></app-dialog-close></h2><mat-dialog-content>  <p>{{ data.explanation }}</p>  <!-- the combinator comes before the conditions it applies to, so the dialog       reads as one sentence: "<explanation> … [Any|All] of the following conditions match: …" -->  <div class="flex-row align-center gap-regular margin-bottom-regular">    <mat-button-toggle-group      [value]="combinator()"      (change)="combinator.set($event.value)"      hideSingleSelectionIndicator    >      <mat-button-toggle        value="any"        matTooltip=\'A record matches as soon as one of the conditions below applies ("or").\'        i18n-matTooltip        i18n      >        Any      </mat-button-toggle>      <mat-button-toggle        value="all"        matTooltip=\'A record matches only if every one of the conditions below applies ("and").\'        i18n-matTooltip        i18n      >        All      </mat-button-toggle>    </mat-button-toggle-group>    <span i18n>of the following conditions match</span>  </div>  <app-conditions-editor    [conditions]="editorConditions"    [entityConstructor]="data.entityConstructor"    [hint]="combinatorHint()"    [showInternalIdField]="!!data.showInternalIdField"    (conditionsChange)="onConditionsChange($event)"  ></app-conditions-editor></mat-dialog-content><mat-dialog-actions align="end">  @if (hadCondition) {    <button mat-button color="warn" (click)="removeCondition()" i18n>      Remove condition    </button>  }  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>  <button mat-raised-button color="accent" (click)="apply()" i18n>    Apply Condition  </button></mat-dialog-actions></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionEditorDialogComponent', 'selector': 'app-condition-editor-dialog'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'UserProfileSetupComponent', 'selector': 'app-user-profile-setup'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'KeepPanelOpenOnSelectDirective', 'selector': 'input[appKeepPanelOpenOnSelect]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
-    var ACTUAL_COMPONENT = {'name': 'PrimaryActionComponent'};
+    var ACTUAL_COMPONENT = {'name': 'ConditionEditorDialogComponent'};
 </script>
 <script src="../js/tree.js"></script>
 
@@ -658,7 +1029,7 @@ export class PrimaryActionComponent implements OnDestroy {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
-            var COMPODOC_CURRENT_PAGE_URL = 'PrimaryActionComponent.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'ConditionEditorDialogComponent.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

@@ -918,6 +918,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ConditionalColorSectionComponent.html" data-type="entity-link" >ConditionalColorSectionComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ConditionEditorDialogComponent.html" data-type="entity-link" >ConditionEditorDialogComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/ConditionsEditorComponent.html" data-type="entity-link" >ConditionsEditorComponent</a>
                             </li>
                             <li class="link">
@@ -1390,9 +1393,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/ParsedFileInputComponent.html" data-type="entity-link" >ParsedFileInputComponent</a>
-                            </li>
-                            <li class="link">
-                                <a href="components/PermissionConditionDialogComponent.html" data-type="entity-link" >PermissionConditionDialogComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/PermissionMatrixComponent.html" data-type="entity-link" >PermissionMatrixComponent</a>
@@ -2418,6 +2418,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ColumnMapping.html" data-type="entity-link" >ColumnMapping</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ConditionEditorDialogData.html" data-type="entity-link" >ConditionEditorDialogData</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ConfigCleanupAnalysis.html" data-type="entity-link" >ConfigCleanupAnalysis</a>
                             </li>
                             <li class="link">
@@ -2806,9 +2809,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ParsedJWT.html" data-type="entity-link" >ParsedJWT</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/PermissionConditionDialogData.html" data-type="entity-link" >PermissionConditionDialogData</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/PrebuiltFilterConfig.html" data-type="entity-link" >PrebuiltFilterConfig&lt;T&gt;</a>

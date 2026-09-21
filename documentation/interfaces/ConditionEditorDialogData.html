@@ -123,12 +123,12 @@
   <li class="breadcrumb-item">Interfaces</li>
   <li class="breadcrumb-item"
   >
-  PermissionConditionDialogData</li>
+  ConditionEditorDialogData</li>
 </ol>
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
     <span class="icon ion-ios-document" aria-hidden="true"></span>
-    <code>src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts</code>
+    <code>src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts</code>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -170,24 +170,25 @@
                 <td class="col-md-9">
                     <ul class="index-list">
                         <li>
-                                <a href="#action" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">action</span>
-                                </a>
-                        </li>
-                        <li>
                                     <span class="modifier">Optional</span>
                                 <a href="#conditions" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">conditions</span>
                                 </a>
                         </li>
                         <li>
-                                <a href="#roleName" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">roleName</span>
+                                <a href="#entityConstructor" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityConstructor</span>
                                 </a>
                         </li>
                         <li>
-                                <a href="#subject" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">subject</span>
+                                <a href="#explanation" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">explanation</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#showInternalIdField" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">showInternalIdField</span>
                                 </a>
                         </li>
                     </ul>
@@ -201,45 +202,6 @@
 
     <section data-compodoc="block-properties">
         <h3 id="inputs">Properties</h3>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
-                                <a name="action"></a>
-                                <span class="name "><b>action</b>
-                                    <a href="#action">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>action:         <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
-
-                                </td>
-                            </tr>
-
-
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts:26</a></div>
-                                </td>
-                            </tr>
-
-                </tbody>
-            </table>
             <table class="table table-sm table-bordered">
                 <tbody>
                         <tr>
@@ -278,19 +240,25 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:26</a></div>
                                 </td>
                             </tr>
 
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>existing condition to edit, if any</p>
+</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <table class="table table-sm table-bordered">
                 <tbody>
                         <tr>
                             <td class="col-md-4">
-                                <a name="roleName"></a>
-                                <span class="name "><b>roleName</b>
-                                    <a href="#roleName">
+                                <a name="entityConstructor"></a>
+                                <span class="name "><b>entityConstructor</b>
+                                    <a href="#entityConstructor">
                                         <span class="icon ion-ios-link"></span>
                                     </a>
                                 </span>
@@ -298,7 +266,52 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>roleName:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                <code>entityConstructor:         <code><a href="../classes/Entity.html" target="_self" >EntityConstructor | undefined</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >EntityConstructor | undefined</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:23</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>entity type whose fields can be selected in condition rows</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="explanation"></a>
+                                <span class="name "><b>explanation</b>
+                                    <a href="#explanation">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>explanation:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 </code>
                             </td>
                         </tr>
@@ -317,19 +330,25 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts:25</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:29</a></div>
                                 </td>
                             </tr>
 
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>fully localized sentence shown above the conditions editor, explaining what the condition applies to</p>
+</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <table class="table table-sm table-bordered">
                 <tbody>
                         <tr>
                             <td class="col-md-4">
-                                <a name="subject"></a>
-                                <span class="name "><b>subject</b>
-                                    <a href="#subject">
+                                <a name="showInternalIdField"></a>
+                                <span class="name "><b>showInternalIdField</b>
+                                    <a href="#showInternalIdField">
                                         <span class="icon ion-ios-link"></span>
                                     </a>
                                 </span>
@@ -337,7 +356,7 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>subject:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                <code>showInternalIdField:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 </code>
                             </td>
                         </tr>
@@ -345,21 +364,32 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                                 </td>
                             </tr>
 
 
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
 
 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/admin/admin-role-permissions/condition-dialog/permission-condition-dialog.component.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:32</a></div>
                                 </td>
                             </tr>
 
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>also offer the internal &quot;_id&quot; field in the field dropdown (e.g. for permission conditions)</p>
+</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
     </section>
@@ -383,30 +413,35 @@ import {
 } from &quot;@angular/material/dialog&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 
-import { ConditionsEditorComponent } from &quot;../../../common-components/conditions-editor/conditions-editor.component&quot;;
-import { DialogCloseComponent } from &quot;../../../common-components/dialog-close/dialog-close.component&quot;;
-import { EntityRegistry } from &quot;../../../entity/database-entity.decorator&quot;;
-import { EntityConstructor } from &quot;../../../entity/model/entity&quot;;
-import { EntityActionPermission } from &quot;../../../permissions/permission-types&quot;;
-import { roleDisplayName } from &quot;../../../permissions/reserved-roles&quot;;
+import { ConditionsEditorComponent } from &quot;../conditions-editor/conditions-editor.component&quot;;
+import { DialogCloseComponent } from &quot;../dialog-close/dialog-close.component&quot;;
+import { EntityConstructor } from &quot;../../entity/model/entity&quot;;
 
-export interface PermissionConditionDialogData {
-  roleName: string;
-  action: EntityActionPermission;
-  subject: string;
+export interface ConditionEditorDialogData {
+  /** entity type whose fields can be selected in condition rows */
+  entityConstructor: EntityConstructor | undefined;
+
+  /** existing condition to edit, if any */
   conditions?: any;
+
+  /** fully localized sentence shown above the conditions editor, explaining what the condition applies to */
+  explanation: string;
+
+  /** also offer the internal &quot;_id&quot; field in the field dropdown (e.g. for permission conditions) */
+  showInternalIdField?: boolean;
 }
 
 /**
- * Dialog to visually edit the conditions restricting one permission
- * (e.g. &quot;user_app can read Children only where center is X&quot;).
+ * Generic dialog to visually edit a Mango-query condition build from a list of
+ * field/value rows, combined with either &quot;any&quot; ($or) or &quot;all&quot; (merged / $and) semantics.
  *
- * Closes with the new conditions object,
- * null to remove all conditions or undefined when cancelled.
+ * Configured via {@link ConditionEditorDialogData}
+ *
+ * Closes with the new condition, &#x60;null&#x60; to remove it, or &#x60;undefined&#x60; when cancelled.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: &quot;app-permission-condition-dialog&quot;,
+  selector: &quot;app-condition-editor-dialog&quot;,
   imports: [
     MatDialogModule,
     MatButtonModule,
@@ -415,27 +450,23 @@ export interface PermissionConditionDialogData {
     ConditionsEditorComponent,
     DialogCloseComponent,
   ],
-  templateUrl: &quot;./permission-condition-dialog.component.html&quot;,
+  templateUrl: &quot;./condition-editor-dialog.component.html&quot;,
 })
-export class PermissionConditionDialogComponent {
+export class ConditionEditorDialogComponent {
   private readonly dialogRef &#x3D; inject(
-    MatDialogRef&lt;PermissionConditionDialogComponent&gt;,
+    MatDialogRef&lt;ConditionEditorDialogComponent&gt;,
   );
-  private readonly entityRegistry &#x3D; inject(EntityRegistry);
 
-  readonly data: PermissionConditionDialogData &#x3D; inject(MAT_DIALOG_DATA);
+  readonly data: ConditionEditorDialogData &#x3D; inject(MAT_DIALOG_DATA);
 
-  readonly entityConstructor: EntityConstructor | undefined &#x3D;
-    this.entityRegistry.has(this.data.subject)
-      ? this.entityRegistry.get(this.data.subject)
-      : undefined;
+  readonly hadCondition &#x3D; !!(
+    this.data.conditions &amp;&amp; Object.keys(this.data.conditions).length &gt; 0
+  );
 
-  /** whether all rows must match (&quot;all&quot;, mongo implicit and) or any row (&quot;any&quot;, $or) */
+  /** whether all rows must match (&quot;all&quot;, implicit and / $and) or any row (&quot;any&quot;, $or) */
   readonly combinator &#x3D; signal&lt;&quot;any&quot; | &quot;all&quot;&gt;(
     Array.isArray(this.data.conditions?.$or) ? &quot;any&quot; : &quot;all&quot;,
   );
-
-  readonly hadConditions &#x3D; !!this.data.conditions;
 
   /**
    * Working state in the { $or: [...] } row format of the conditions editor.
@@ -444,38 +475,11 @@ export class PermissionConditionDialogComponent {
    */
   editorConditions: any &#x3D; toEditorFormat(this.data.conditions);
 
-  readonly entityLabel: string &#x3D;
-    this.entityConstructor?.label ?? this.data.subject;
-
   readonly combinatorHint &#x3D; computed(() &#x3D;&gt;
     this.combinator() &#x3D;&#x3D;&#x3D; &quot;any&quot;
-      ? $localize&#x60;Records match if any one of the conditions applies (&quot;or&quot; conditions).&#x60;
-      : $localize&#x60;Records match only if all conditions apply (&quot;and&quot; conditions).&#x60;,
+      ? $localize&#x60;Matches if any one of the conditions applies (&quot;or&quot; conditions).&#x60;
+      : $localize&#x60;Matches only if all conditions apply (&quot;and&quot; conditions).&#x60;,
   );
-
-  /**
-   * Full &quot;&lt;role&gt; can &lt;action&gt; &lt;entity&gt; only where…&quot; sentence as a single
-   * localized message per action, so translators can reorder role/entity.
-   */
-  readonly conditionSentence: string &#x3D; this.buildConditionSentence();
-
-  private buildConditionSentence(): string {
-    // reserved roles are referred to by their readable name (e.g. &quot;Default&quot;)
-    const role &#x3D; roleDisplayName(this.data.roleName);
-    const entity &#x3D; this.entityLabel;
-    switch (this.data.action) {
-      case &quot;read&quot;:
-        return $localize&#x60;:permission condition sentence:${role} can read ${entity} only where…&#x60;;
-      case &quot;create&quot;:
-        return $localize&#x60;:permission condition sentence:${role} can create ${entity} only where…&#x60;;
-      case &quot;update&quot;:
-        return $localize&#x60;:permission condition sentence:${role} can update ${entity} only where…&#x60;;
-      case &quot;delete&quot;:
-        return $localize&#x60;:permission condition sentence:${role} can delete ${entity} only where…&#x60;;
-      case &quot;manage&quot;:
-        return $localize&#x60;:permission condition sentence:${role} can manage ${entity} only where…&#x60;;
-    }
-  }
 
   onConditionsChange(conditions: any) {
     this.editorConditions &#x3D; conditions;
@@ -499,7 +503,7 @@ export class PermissionConditionDialogComponent {
     }
   }
 
-  removeConditions() {
+  removeCondition() {
     this.dialogRef.close(null);
   }
 
@@ -509,27 +513,36 @@ export class PermissionConditionDialogComponent {
 }
 
 /**
- * Convert any stored conditions shape into the { $or: [...] } row format
+ * Convert any stored condition shape into the { $or: [...] } row format
  * that the conditions editor works with.
  *
  * Deep-copies the input so the editor (which mutates rows in place) cannot
- * touch the matrix model: cancelling the dialog must leave the model untouched.
+ * touch the caller&#x27;s config: cancelling the dialog must leave it untouched.
+ *
+ * A condition can combine &#x60;$or&#x60;/&#x60;$and&#x60; with sibling keys (Mango&#x27;s implicit AND,
+ * e.g. &#x60;{ status: &quot;active&quot;, $or: [...] }&#x60;). This editor has no concept of nested
+ * groups, so such a sibling key cannot be kept ANDed with the &#x60;$or&#x60;/&#x60;$and&#x60; array -
+ * instead it is folded in as one more row, to at least keep it visible and
+ * editable rather than silently dropping it.
  */
-function toEditorFormat(conditions: any): any {
-  if (!conditions || typeof conditions !&#x3D;&#x3D; &quot;object&quot;) {
+function toEditorFormat(condition: any): any {
+  if (!condition || typeof condition !&#x3D;&#x3D; &quot;object&quot;) {
     return {};
   }
-  const copy &#x3D; structuredClone(conditions);
+  const copy &#x3D; structuredClone(condition);
+  const rows: any[] &#x3D; [];
+
   if (Array.isArray(copy.$or)) {
-    return { $or: copy.$or };
+    rows.push(...copy.$or);
+    delete copy.$or;
+  } else if (Array.isArray(copy.$and)) {
+    rows.push(...copy.$and);
+    delete copy.$and;
   }
-  if (Array.isArray(copy.$and)) {
-    return { $or: copy.$and };
-  }
-  // merged plain object: one row per key
-  return {
-    $or: Object.entries(copy).map(([key, value]) &#x3D;&gt; ({ [key]: value })),
-  };
+  // remaining plain keys (either the whole condition, or siblings of $or/$and above)
+  rows.push(...Object.entries(copy).map(([key, value]) &#x3D;&gt; ({ [key]: value })));
+
+  return { $or: rows };
 }
 
 /**
@@ -580,7 +593,7 @@ function mergeToAllConditions(rows: any[]): any {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'PermissionConditionDialogData.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'ConditionEditorDialogData.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

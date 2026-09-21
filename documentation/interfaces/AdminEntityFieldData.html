@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:67</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:71</a></div>
                                 </td>
                             </tr>
 
@@ -280,7 +280,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:74</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:78</a></div>
                                 </td>
                             </tr>
 
@@ -327,7 +327,7 @@ The entityType is not changed by this component.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:80</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:84</a></div>
                                 </td>
                             </tr>
 
@@ -405,6 +405,10 @@ import { SimpleDropdownValue } from &quot;app/core/common-components/basic-autoc
 import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { YesNoButtons } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import { AttendanceDatatype } from &quot;#src/app/features/attendance/model/attendance.datatype&quot;;
+import {
+  ConditionEditorDialogComponent,
+  ConditionEditorDialogData,
+} from &quot;app/core/common-components/condition-editor-dialog/condition-editor-dialog.component&quot;;
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -595,6 +599,7 @@ export class AdminEntityFieldComponent implements OnInit {
       showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
       generateIndex: [this.data.entitySchemaField.generateIndex],
       validators: [this.data.entitySchemaField.validators],
+      displayCondition: [this.data.entitySchemaField.displayCondition],
     });
     this.form &#x3D; this.fb.group({
       id: this.fieldIdForm,
@@ -931,6 +936,23 @@ export class AdminEntityFieldComponent implements OnInit {
 
   resetToBaseFieldSettings() {
     this.dialogRef.close(this.fieldIdForm.getRawValue());
+  }
+
+  openDisplayConditionDialog() {
+    const dialogRef &#x3D; this.dialog.open(ConditionEditorDialogComponent, {
+      data: {
+        entityConstructor: this.data.entityType,
+        conditions: this.schemaFieldsForm.get(&quot;displayCondition&quot;).value,
+        explanation: $localize&#x60;This field is shown only while the record matches...&#x60;,
+      } satisfies ConditionEditorDialogData,
+      width: &quot;600px&quot;,
+    });
+
+    dialogRef.afterClosed().subscribe((result) &#x3D;&gt; {
+      // &#x60;undefined&#x60; means the dialog was cancelled, leave the condition unchanged
+      if (result &#x3D;&#x3D;&#x3D; undefined) return;
+      this.schemaFieldsForm.get(&quot;displayCondition&quot;).setValue(result);
+    });
   }
 }
 </code></pre>
