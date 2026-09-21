@@ -32,7 +32,6 @@ import {
 } from "../../permission-action-labels";
 import { CRUD_ACTIONS, CrudAction } from "../../permission-types";
 import {
-  lockDescriptionId,
   PermissionCellState,
   PermissionCheckboxComponent,
 } from "../../permission-checkbox/permission-checkbox.component";
@@ -69,13 +68,6 @@ interface PermissionCell extends PermissionCellState {
    * `displayRows` additionally `false` while `_default` grants the action.
    */
   editable: boolean;
-  /**
-   * What is written for this action, i.e. the row's own grant. It differs from
-   * {@link PermissionCellState.allowed} where an uneditable rule decides the
-   * checkbox, so that such a rule is neither duplicated into the row nor
-   * silently dropped from it.
-   */
-  grantedByOwnRule: boolean;
   ariaLabel: string;
 }
 
@@ -212,7 +204,6 @@ export class FeaturePermissionDialogComponent {
               allowed: true,
               editable: false,
               lockTooltip: grantedByDefaultRoleTooltip(),
-              lockDescriptionId: lockDescriptionId(row.role, cell.action),
             }
           : cell,
       ),
@@ -265,12 +256,7 @@ export class FeaturePermissionDialogComponent {
       // `_default` grants locks single checkboxes, never the `_default` row itself
       lockTooltip: permission.editable ? "" : grantedByAdvancedRuleTooltip(),
       cells: this.actionColumns.map((column) =>
-        this.toCell(
-          column,
-          permission.actions[column.action],
-          permission.role,
-          label,
-        ),
+        this.toCell(column, permission.actions[column.action], label),
       ),
     };
   }
@@ -278,24 +264,20 @@ export class FeaturePermissionDialogComponent {
   private toCell(
     column: CrudActionColumn,
     permission: FeatureActionPermission,
-    role: string,
     rowLabel: string,
   ): PermissionCell {
-    const lockedByAdvancedRule = permission.lockedBy === "advanced-rule";
+    const { lockedByAdvancedRule } = permission;
     return {
       action: column.action,
       // a checkbox an uneditable rule decides shows that rule's effect; an
       // editable one shows the row's own grant, so that unticking `_default`
       // in `displayRows` reveals it again instead of discarding it
       allowed: lockedByAdvancedRule
-        ? permission.granted
-        : permission.grantedByOwnRule,
-      grantedByOwnRule: permission.grantedByOwnRule,
+        ? permission.allowed
+        : permission.ownAllowed,
+      ownAllowed: permission.ownAllowed,
       editable: !lockedByAdvancedRule,
       lockTooltip: lockedByAdvancedRule ? grantedByAdvancedRuleTooltip() : "",
-      lockDescriptionId: lockedByAdvancedRule
-        ? lockDescriptionId(role, column.action)
-        : "",
       ariaLabel: $localize`:Permission checkbox aria label:${column.label} ${this.entityLabel} as ${rowLabel}`,
     };
   }
@@ -367,7 +349,7 @@ export class FeaturePermissionDialogComponent {
                   cell.action === action &&
                   // a checkbox decided by an uneditable rule keeps whatever the
                   // row itself grants, rather than what that rule displays
-                  (cell.editable ? cell.allowed : cell.grantedByOwnRule),
+                  (cell.editable ? cell.allowed : cell.ownAllowed),
               ),
             ]),
           ) as Record<CrudAction, boolean>,

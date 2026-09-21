@@ -40,7 +40,6 @@ import {
   MANAGE_ALL_LABEL,
 } from "../../../permissions/permission-action-labels";
 import {
-  lockDescriptionId,
   PermissionCellState,
   PermissionCheckboxComponent,
 } from "../../../permissions/permission-checkbox/permission-checkbox.component";
@@ -59,12 +58,10 @@ import { ROLES_ADMIN_ROUTE } from "../role-permissions.service";
 type GrantedBy = "manage" | "wildcard" | "default";
 
 /**
-  * display state of one action cell
-  * with additional details required for permission conditions.
-  */
+ * display state of one action cell
+ * with additional details required for permission conditions.
+ */
 interface CellState extends PermissionCellState {
-  /** granted by an own rule of this row, so a condition can be attached to it */
-  ownAllowed: boolean;
   hasCondition: boolean;
   /** readable summary of the condition, empty when none */
   summary: string;
@@ -206,23 +203,17 @@ export class PermissionMatrixComponent {
       isInternal: false,
       conditionsEditable: false,
       manageAllowed,
-      manageState: this.defaultRowCellState("manage", manageAllowed),
+      manageState: this.defaultRowCellState(manageAllowed),
       actionStates: Object.fromEntries(
         this.crudActions.map((action) => [
           action,
-          this.defaultRowCellState(
-            action,
-            manageAllowed || !!cells[action]?.allowed,
-          ),
+          this.defaultRowCellState(manageAllowed || !!cells[action]?.allowed),
         ]),
       ) as Record<CrudAction, CellState>,
     };
   });
 
-  private defaultRowCellState(
-    action: EntityActionPermission,
-    allowed: boolean,
-  ): CellState {
+  private defaultRowCellState(allowed: boolean): CellState {
     return {
       allowed,
       ownAllowed: false,
@@ -230,7 +221,6 @@ export class PermissionMatrixComponent {
       hasCondition: false,
       summary: "",
       lockTooltip: $localize`:Default permissions row tooltip:These permissions apply to every logged-in user, in addition to their roles. They can only be changed in the "${this.defaultRole.label}" role.`,
-      lockDescriptionId: lockDescriptionId(DEFAULT_SECTION_KEY, action),
     };
   }
 
@@ -250,9 +240,6 @@ export class PermissionMatrixComponent {
         ? this.describeConditions(cell.conditions, row.subject)
         : "",
       lockTooltip: grantedBy ? this.grantedByTooltip(grantedBy) : "",
-      lockDescriptionId: grantedBy
-        ? lockDescriptionId(row.subject, action)
-        : "",
     };
   }
 

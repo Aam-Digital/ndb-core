@@ -27,12 +27,15 @@ describe("FeaturePermissionService", () => {
 
   /** which actions of a row are granted / editable, as a compact string per action */
   function summarize(row: {
-    actions: Record<CrudAction, { granted: boolean; editable: boolean }>;
+    actions: Record<
+      CrudAction,
+      { allowed: boolean; lockedByAdvancedRule: boolean }
+    >;
   }): Record<CrudAction, string> {
     return Object.fromEntries(
       Object.entries(row.actions).map(([action, state]) => [
         action,
-        `${state.granted ? "granted" : "-"}/${state.editable ? "editable" : "locked"}`,
+        `${state.allowed ? "granted" : "-"}/${state.lockedByAdvancedRule ? "locked" : "editable"}`,
       ]),
     ) as Record<CrudAction, string>;
   }
@@ -181,7 +184,7 @@ describe("FeaturePermissionService", () => {
     });
   });
 
-  it("should lock only the actions the shared default section grants, per role", async () => {
+  it("should report what the shared default section grants on a role, without locking it", async () => {
     mockConfig({
       _default: [{ subject: ENTITY_TYPE, action: "read" }],
       user_app: [{ subject: ENTITY_TYPE, action: "create" }],
@@ -195,12 +198,13 @@ describe("FeaturePermissionService", () => {
       read: "granted/editable",
     });
     expect(state.defaultRules.editable).toBe(true);
+    // "read" is in effect through the shared section, which the dialog may edit
+    // in the same go - so only an advanced rule is reported as a lock here
     expect(summarize(state.roles[0])).toEqual({
       ...allActions("-/editable"),
-      read: "granted/locked",
+      read: "granted/editable",
       create: "granted/editable",
     });
-    // a default grant alone does not make the row read-only
     expect(state.roles[0].editable).toBe(true);
   });
 
@@ -211,7 +215,7 @@ describe("FeaturePermissionService", () => {
 
     expect(summarize(state.defaultRules)).toEqual(allActions("granted/locked"));
     expect(state.defaultRules.editable).toBe(false);
-    expect(state.defaultRules.actions.read.lockedBy).toBe("advanced-rule");
+    expect(state.defaultRules.actions.read.lockedByAdvancedRule).toBe(true);
   });
 
   it("should lock only the actions a grouped-subject rule grants, leaving the rest of the row editable", async () => {
@@ -239,9 +243,9 @@ describe("FeaturePermissionService", () => {
 
     const state = await service.getPermissions(ENTITY_TYPE, ["user_app"]);
 
-    // both are locked and granted, but only "read" survives removing the default
-    expect(state.roles[0].actions.read.grantedByOwnRule).toBe(true);
-    expect(state.roles[0].actions.update.grantedByOwnRule).toBe(false);
+    // both are granted, but only "read" survives removing the default
+    expect(state.roles[0].actions.read.ownAllowed).toBe(true);
+    expect(state.roles[0].actions.update.ownAllowed).toBe(false);
   });
 
   it("should not list reserved section keys as roles", async () => {

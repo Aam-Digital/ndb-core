@@ -10,7 +10,6 @@ import { DEFAULT_ROLE } from "../../reserved-roles";
 import {
   FeatureActionPermission,
   FeaturePermissionService,
-  PermissionLockReason,
 } from "../feature-permission.service";
 import { CrudAction } from "../../permission-types";
 import { PermissionsConfigService } from "../../permissions-config.service";
@@ -38,25 +37,22 @@ describe("FeaturePermissionDialogComponent", () => {
 
   /**
    * The actions of one row as the service reports them.
-   * @param granted the effective grants, i.e. including what `_default` adds
-   * @param editable the checkboxes that are not decided by another rule
-   * @param lockedBy why the remaining checkboxes are locked
+   * @param allowed the effective grants, i.e. including what `_default` adds
+   * @param locked the checkboxes decided by a rule this UI does not own
    * @param ownRules the row's own grants, defaulting to the effective ones
    */
   function permissions(
-    granted: CrudAction[],
-    editable: CrudAction[],
-    lockedBy?: PermissionLockReason,
-    ownRules: CrudAction[] = granted,
+    allowed: CrudAction[],
+    locked: CrudAction[] = [],
+    ownRules: CrudAction[] = allowed,
   ): Record<CrudAction, FeatureActionPermission> {
     return Object.fromEntries(
       ALL_ACTIONS.map((action) => [
         action,
         {
-          granted: granted.includes(action),
-          grantedByOwnRule: ownRules.includes(action),
-          editable: editable.includes(action),
-          ...(editable.includes(action) ? {} : { lockedBy }),
+          allowed: allowed.includes(action),
+          ownAllowed: ownRules.includes(action),
+          lockedByAdvancedRule: locked.includes(action),
         },
       ]),
     ) as Record<CrudAction, FeatureActionPermission>;
@@ -71,25 +67,20 @@ describe("FeaturePermissionDialogComponent", () => {
       entityType: ENTITY_TYPE,
       defaultRules: {
         role: "_default",
-        actions: permissions(["read"], ALL_ACTIONS),
+        actions: permissions(["read"]),
         editable: true,
       },
       roles: [
         {
           // access comes from a rule this UI does not own, so nothing of its own
           role: "user_app",
-          actions: permissions(ALL_ACTIONS, [], "advanced-rule", []),
+          actions: permissions(ALL_ACTIONS, ALL_ACTIONS, []),
           editable: false,
         },
         {
           role: "assistant_app",
           // "read" is inherited from the shared section, nothing of its own
-          actions: permissions(
-            ["read"],
-            ["create", "update", "delete"],
-            "default",
-            [],
-          ),
+          actions: permissions(["read"], [], []),
           editable: true,
         },
       ],
@@ -244,12 +235,7 @@ describe("FeaturePermissionDialogComponent", () => {
   it("should reveal a role's own grant again when the shared section stops granting the action", async () => {
     const state = defaultState();
     // the role has an own "read" rule on top of the inherited one
-    state.roles[1].actions = permissions(
-      ["read"],
-      ["create", "update", "delete"],
-      "default",
-      ["read"],
-    );
+    state.roles[1].actions = permissions(["read"], [], ["read"]);
     mockPermissionService.getPermissions.mockResolvedValue(state);
 
     await createAndInit();
@@ -299,7 +285,7 @@ describe("FeaturePermissionDialogComponent", () => {
     const state = defaultState();
     state.defaultRules = {
       role: "_default",
-      actions: permissions(ALL_ACTIONS, [], "advanced-rule", []),
+      actions: permissions(ALL_ACTIONS, ALL_ACTIONS, []),
       editable: false,
     };
     mockPermissionService.getPermissions.mockResolvedValue(state);

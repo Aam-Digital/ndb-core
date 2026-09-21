@@ -13,24 +13,10 @@ import {
 } from "../permission-types";
 import { PermissionsConfigService } from "../permissions-config.service";
 
-/** why a checkbox is shown but cannot be changed here */
-export type PermissionLockReason =
-  /** granted to everyone by the shared `_default` section */
-  | "default"
-  /**
-   * The role's access comes from a rule this UI must not rewrite, because
-   * changing it would affect other roles or entity types:
-   * an `all` wildcard subject (the most common case, e.g. `admin_app`),
-   * a grouped subject (`subject: ["A", "B"]`), a rule carrying `conditions`,
-   * an inverted (deny) rule, or a rule the server manages itself
-   * (marked with {@link SYSTEM_DEFAULT_RULE_REASON}).
-   */
-  | "advanced-rule";
-
 /** the state of a single action checkbox in one row */
 export interface FeatureActionPermission {
   /** the effective access, i.e. what the checkbox shows when the dialog opens */
-  granted: boolean;
+  allowed: boolean;
   /**
    * Whether the row's *own* rules for this entity type grant the action, ignoring
    * what the shared `_default` section adds on top.
@@ -38,9 +24,20 @@ export interface FeatureActionPermission {
    * The dialog keeps this as the row's own intent, so that unticking an action on
    * the `_default` row reveals a role's own rule again instead of discarding it.
    */
-  grantedByOwnRule: boolean;
-  editable: boolean;
-  lockedBy?: PermissionLockReason;
+  ownAllowed: boolean;
+  /**
+   * The access comes from a rule this UI must not rewrite, because changing it
+   * would affect other roles or entity types: an `all` wildcard subject (the
+   * most common case, e.g. `admin_app`), a grouped subject
+   * (`subject: ["A", "B"]`), a rule carrying `conditions`, an inverted (deny)
+   * rule, or a rule the server manages itself (marked with
+   * {@link SYSTEM_DEFAULT_RULE_REASON}).
+   *
+   * What the shared `_default` section grants is not reported here: the dialog
+   * lets that section be edited alongside the roles, so it resolves those locks
+   * against the edited state rather than the stored one.
+   */
+  lockedByAdvancedRule: boolean;
 }
 
 /**
@@ -117,7 +114,6 @@ export class FeaturePermissionService {
   ): Promise<FeaturePermissionState> {
     const rules = (await this.permissionsConfig.load())?.data ?? {};
     const defaultRules = this.getDefaultRules(rules);
-    const grantedByDefault = this.getDefaultGrants(defaultRules, entityType);
 
     const roles = roleNames
       .filter((role) => !isReservedRuleConfigKey(role))
@@ -126,7 +122,6 @@ export class FeaturePermissionService {
           role,
           rules[role] ?? [],
           defaultRules,
-          grantedByDefault,
           entityType,
         ),
       );
@@ -134,12 +129,11 @@ export class FeaturePermissionService {
     return {
       entityType,
       // the shared section is read and written like any other row; it cannot
-      // inherit from itself, so nothing is locked as "granted by default" here
+      // inherit from itself, so it is resolved against its own rules alone
       defaultRules: this.getRolePermission(
         DEFAULT_SECTION_KEY,
         defaultRules,
         [],
-        this.mapActions(() => false),
         entityType,
       ),
       roles,
@@ -150,7 +144,6 @@ export class FeaturePermissionService {
     role: string,
     roleRules: DatabaseRule[],
     defaultRules: DatabaseRule[],
-    grantedByDefault: Record<CrudAction, boolean>,
     entityType: string,
   ): RoleFeaturePermission {
     // An inverted rule revokes access granted before it and cannot be expressed
@@ -170,47 +163,27 @@ export class FeaturePermissionService {
       (rule) => !this.isOwnedRule(rule, entityType),
     );
 
-    const actions = this.mapActions<FeatureActionPermission>((action) => {
-      const grantedByOwnRule = ownedRules.some((rule) =>
+    const actions = this.mapActions<FeatureActionPermission>((action) => ({
+      allowed: this.hasEffectiveAccess(effectiveRules, entityType, action),
+      ownAllowed: ownedRules.some((rule) =>
         ruleCoversAction(rule, entityType, action),
-      );
-
+      ),
       // a rule this UI cannot rewrite decides this single action - the other
       // actions of the same row stay editable, so that e.g. a shared
       // "read these four types" rule does not block granting "delete" here
-      if (
+      lockedByAdvancedRule:
         hasInvertedRule ||
-        unownedRules.some((rule) => ruleCoversAction(rule, entityType, action))
-      ) {
-        return {
-          granted: this.hasEffectiveAccess(effectiveRules, entityType, action),
-          grantedByOwnRule,
-          editable: false,
-          lockedBy: "advanced-rule",
-        };
-      }
-
-      // an action granted to everyone through `_default` cannot be revoked for a
-      // single role here (that would need an inverted rule), so it is locked
-      if (grantedByDefault[action]) {
-        return {
-          granted: true,
-          grantedByOwnRule,
-          editable: false,
-          lockedBy: "default",
-        };
-      }
-
-      return { granted: grantedByOwnRule, grantedByOwnRule, editable: true };
-    });
+        unownedRules.some((rule) => ruleCoversAction(rule, entityType, action)),
+    }));
 
     return {
       role,
       actions,
-      // only a row that is decided by uneditable rules throughout is read-only;
-      // a lock coming from `_default` is lifted again by unticking it there
+      // read-only only when an advanced rule decides every action - what the
+      // shared `_default` section grants never locks a row, and the dialog
+      // resolves those single checkboxes against the section as it is edited
       editable: CRUD_ACTIONS.some(
-        (action) => actions[action].lockedBy !== "advanced-rule",
+        (action) => !actions[action].lockedByAdvancedRule,
       ),
     };
   }
