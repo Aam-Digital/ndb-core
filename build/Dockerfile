@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:1.31.5-alpine AS app
+FROM nginxinc/nginx-unprivileged:1.31.6-alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 
 # Not under /etc/nginx/templates/: the base image auto-envsubsts every
