@@ -30,6 +30,7 @@
         [filterConfig]="filterConfig()"
         [entityType]="auditRecordType"
         [useUrlQueryParams]="true"
+        [filterObj]="selectedFilter()"
         (filterObjChange)="onFilterChange($event)"
       ></app-filter>
 

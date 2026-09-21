@@ -35,6 +35,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { AuditRecord } from "../model/audit-record";
+import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
 import {
   authorFilterOptions,
   AUDIT_BASE_FILTER,
@@ -103,6 +104,7 @@ export class ChangeHistoryListComponent {
   private readonly service = inject(ChangeHistoryService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
   private readonly dialog = inject(MatDialog);
 
   /** backend feature flag (undefined while loading, then true/false) */
@@ -163,8 +165,15 @@ export class ChangeHistoryListComponent {
     },
   ];
 
-  /** the selection the shared filter bar produces */
-  private readonly selectedFilter = signal<DataFilter<AuditRecord>>({});
+  /**
+   * The selection the shared filter bar produces.
+   *
+   * Bound back into it, not only read out of it: the bar compares each new
+   * selection against this before emitting, so leaving it unset would suppress
+   * the emission that clears the last filter - the list would go on querying a
+   * selection no longer shown.
+   */
+  readonly selectedFilter = signal<DataFilter<AuditRecord>>({});
 
   readonly relatedEntityFilter = signal<string | undefined>(undefined);
 
@@ -174,15 +183,18 @@ export class ChangeHistoryListComponent {
    * author would need a different key order. They are therefore not offered
    * while it is set, rather than offered and silently ignored.
    */
+  /** every dimension the ordinary query can be narrowed by */
+  private readonly allFilterConfigs = computed<FilterConfig[]>(() => [
+    this.entityTypeFilterConfig,
+    this.operationFilterConfig,
+    this.authorFilterConfig(),
+    this.dateFilterConfig,
+  ]);
+
   readonly filterConfig = computed<FilterConfig[]>(() =>
     this.relatedEntityFilter()
       ? [this.dateFilterConfig]
-      : [
-          this.entityTypeFilterConfig,
-          this.operationFilterConfig,
-          this.authorFilterConfig(),
-          this.dateFilterConfig,
-        ],
+      : this.allFilterConfigs(),
   );
 
   /** what the table queries: the user's selection under {@link AUDIT_BASE_FILTER} */
@@ -277,6 +289,19 @@ export class ChangeHistoryListComponent {
    */
   setRelatedEntityFilter(relatedEntityId: string | undefined) {
     this.relatedEntityFilter.set(relatedEntityId?.trim() || undefined);
+    if (this.relatedEntityFilter()) {
+      // the filters this mode no longer offers have to go from the URL too:
+      // the shared filter bar restores any parameter naming a field of the
+      // entity, so a left-over one would come back as an unconfigured filter -
+      // matching by substring rather than exactly, labelled by its field name,
+      // and narrowing a query the related-record view does not apply it to
+      const stillOffered = new Set(this.filterConfig().map((c) => c.id));
+      this.tableStateUrl.clearFilterParams(
+        this.allFilterConfigs()
+          .map((c) => c.id)
+          .filter((id) => !stillOffered.has(id)),
+      );
+    }
     this.applyRelatedRecord();
   }
 

@@ -11,6 +11,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { ChangeHistoryListComponent } from "./change-history-list.component";
 import { AuditRecord } from "../model/audit-record";
+import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
 
 /** the built selector, which is an untyped Mango object at the database edge */
 function selector(): Record<string, any> {
@@ -111,6 +112,41 @@ it("should offer a filter per dimension the ordinary query can narrow", async ()
     "changedBy",
     "timestamp",
   ]);
+});
+
+it("should stop querying a selection the filter bar no longer holds", async () => {
+  // the bar compares each new selection against what it was given before
+  // emitting. Left unbound, that comparison would see no change and suppress
+  // the emission that clears the last filter - the list would go on querying a
+  // selection that is no longer shown anywhere, and silently return nothing
+  await setup();
+
+  component.selectedFilter.set({ operation: "delete" } as any);
+  fixture.detectChanges();
+
+  expect(component.selectedFilter()).toEqual({});
+  expect(selector()).toEqual({
+    timestamp: { $gt: null },
+    operation: { $ne: "baseline" },
+  });
+});
+
+it("should drop the filters it stops offering from the URL too", async () => {
+  // the shared filter bar restores any URL parameter naming a field of the
+  // entity, so a left-over one would come back as an unconfigured filter -
+  // narrowing a query the related-record view does not apply it to
+  await setup();
+  const tableStateUrl = TestBed.inject(TableStateUrlService);
+  const clearFilterParams = vi.spyOn(tableStateUrl, "clearFilterParams");
+
+  component.setRelatedEntityFilter("User:1");
+
+  const cleared = clearFilterParams.mock.calls.at(-1)[0];
+  expect(cleared).toEqual(
+    expect.arrayContaining(["entityType", "operation", "changedBy"]),
+  );
+  // the one it still offers has to keep its selection
+  expect(cleared).not.toContain("timestamp");
 });
 
 it("should offer only the date range once a related record is named", async () => {
