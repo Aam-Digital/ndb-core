@@ -14,7 +14,7 @@ import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-en
 import { firstValueFrom } from "rxjs";
 import { AttendanceInitService } from "../features/attendance/attendance-init.service";
 import { DatabaseFactoryService } from "../core/database/database-factory.service";
-import { FindableMemoryPouchDatabase } from "./findable-memory-pouch-database";
+import { FindableMemoryPouchDatabase } from "../core/database/pouchdb/findable-memory-pouch-database";
 import { SyncStateSubject } from "../core/session/session-type";
 import { Database } from "../core/database/database";
 

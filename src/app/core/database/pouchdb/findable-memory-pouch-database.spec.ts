@@ -1,5 +1,5 @@
 import { FindableMemoryPouchDatabase } from "./findable-memory-pouch-database";
-import { SyncStateSubject } from "../core/session/session-type";
+import { SyncStateSubject } from "../../session/session-type";
 
 describe("FindableMemoryPouchDatabase", () => {
   let db: FindableMemoryPouchDatabase;
@@ -9,10 +9,10 @@ describe("FindableMemoryPouchDatabase", () => {
     db.init("find-test");
 
     await db.putAll([
-      { _id: "TestType:1", timestamp: "2026-01-01T00:00:00.000Z" },
-      { _id: "TestType:2", timestamp: "2026-01-02T00:00:00.000Z" },
-      { _id: "TestType:3", timestamp: "2026-01-03T00:00:00.000Z" },
-      { _id: "OtherType:1", timestamp: "2026-01-04T00:00:00.000Z" },
+      { _id: "TestType:1", timestamp: "2026-01-01T00:00:00.000Z", kind: "a" },
+      { _id: "TestType:2", timestamp: "2026-01-02T00:00:00.000Z", kind: "b" },
+      { _id: "TestType:3", timestamp: "2026-01-03T00:00:00.000Z", kind: "b" },
+      { _id: "OtherType:1", timestamp: "2026-01-04T00:00:00.000Z", kind: "a" },
     ]);
   });
 
@@ -46,6 +46,19 @@ describe("FindableMemoryPouchDatabase", () => {
 
     expect(first.docs.map((d) => d._id)).toEqual(["TestType:1", "TestType:2"]);
     expect(second.docs.map((d) => d._id)).toEqual(["TestType:3"]);
+  });
+
+  it("should reject sorting on one field while filtering on another", async () => {
+    // a documented limitation rather than a bug to work around here: the local
+    // Mango engine will only sort from an index that also covers the filtered
+    // fields, while CouchDB serves this happily. A test needing both has to
+    // filter on the sort field, or assert against a remote database instead.
+    await expect(
+      db.find("TestType", { kind: "b" }, undefined, {
+        prop: "timestamp",
+        dir: "desc",
+      }),
+    ).rejects.toThrow(/no index available/i);
   });
 
   it("should sort on an indexed field", async () => {

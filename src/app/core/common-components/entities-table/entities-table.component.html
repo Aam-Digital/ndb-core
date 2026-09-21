@@ -113,7 +113,7 @@
   <!--
   SHOW ARCHIVED TOGGLE
   -->
-  @if (supportsArchiving()) {
+  @if (showInactiveToggle()) {
     <div class="table-footer filter-inactive-toggle">
       <mat-slide-toggle
         [checked]="showInactive()"

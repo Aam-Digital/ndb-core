@@ -53,15 +53,6 @@ export const RESERVED_ROLE_PREFIX = "_";
 export const ADMIN_APP_ROLE = "admin_app";
 
 /**
- * The CASL subject that audit records are classified under.
- *
- * The backend derives it from each audit document's id prefix, so it is
- * all-or-nothing across record types: whoever may read it sees which records
- * changed and when, including records they may not open themselves.
- */
-export const AUDIT_RECORD_SUBJECT = "AuditRecord";
-
-/**
  * All section keys (current and legacy) that must never be resolved as if they
  * were user role names, even if a realm role with the same name exists.
  *

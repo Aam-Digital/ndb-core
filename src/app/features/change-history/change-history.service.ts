@@ -9,7 +9,6 @@ import { AuditRecord } from "./model/audit-record";
 import { DataFilter } from "../../core/filter/filters/filters";
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
-import { AUDIT_RECORD_SUBJECT } from "../../core/permissions/permission-types";
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeEvent } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
@@ -151,9 +150,8 @@ export class ChangeHistoryService {
   async getChangeAuthors(): Promise<string[]> {
     const res = await this.entityMapper.findType(
       AuditRecord,
-      // the same constraint the list's own filter carries: the sort field is
-      // named so the query describes the index it is served from, rather than
-      // relying on the pinned index alone
+      // the same constraint the list's own filter carries, for the same reason:
+      // it names the index that answers the query rather than requiring one
       { timestamp: { $gt: null } } as DataFilter<AuditRecord>,
       { limit: AUTHOR_SAMPLE_SIZE },
       { prop: "timestamp", dir: "desc" },
@@ -181,7 +179,7 @@ export class ChangeHistoryService {
    * data is denied.
    */
   hasHistoryPermission(): boolean {
-    return !!this.ability && this.ability.can("read", AUDIT_RECORD_SUBJECT);
+    return !!this.ability && this.ability.can("read", AuditRecord.ENTITY_TYPE);
   }
 
   /** Both: the entity qualifies and the user may read its audit data. */

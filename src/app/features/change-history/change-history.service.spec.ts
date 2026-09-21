@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
 import { of, throwError } from "rxjs";
 import { ChangeHistoryService } from "./change-history.service";
-import { AUDIT_RECORD_SUBJECT } from "../../core/permissions/permission-types";
+import { AuditRecord } from "./model/audit-record";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
@@ -124,7 +124,7 @@ it("propagates errors when the audit db is unavailable", async () => {
 it("allows viewing history for a saved entity when AuditRecord read is granted", () => {
   const service = setup([], true);
   expect(service.canViewHistory(savedEntity())).toBe(true);
-  expect(abilityCan).toHaveBeenCalledWith("read", AUDIT_RECORD_SUBJECT);
+  expect(abilityCan).toHaveBeenCalledWith("read", AuditRecord.ENTITY_TYPE);
 });
 
 it("denies viewing history when AuditRecord read is denied", () => {

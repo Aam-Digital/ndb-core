@@ -167,7 +167,7 @@ it("should open the history of a deleted record with a stand-in for the record",
   expect(standIn).toBeInstanceOf(TestEntity);
 });
 
-it("should not open a history for a record type that is no longer registered", async () => {
+it("should still open a history for a record type that is no longer registered", async () => {
   await setup();
   const dialogSpy = vi
     .spyOn(ChangeHistoryDialogComponent, "open")
@@ -175,5 +175,8 @@ it("should not open a history for a record type that is no longer registered", a
 
   await component.openHistory(auditRecord("RetiredType:1"));
 
-  expect(dialogSpy).not.toHaveBeenCalled();
+  // only the id is needed to query the history, and it must not be prefixed a
+  // second time or it would address a record that never existed
+  const [, standIn] = dialogSpy.mock.calls.at(-1);
+  expect(standIn.getId()).toBe("RetiredType:1");
 });

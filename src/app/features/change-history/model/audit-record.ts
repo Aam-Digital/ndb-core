@@ -6,15 +6,22 @@ import { ChangeAction, OPERATION_TO_ACTION } from "../change-history.types";
 import { changedFieldsOf } from "../change-history-normalize";
 
 /**
- * The `:<ISO timestamp>:<rev>` that the backend appends when it builds an audit
- * record's id.
+ * How many `:`-separated parts trail the changed record's id in an audit
+ * record's id, which the backend builds as
+ * `AuditRecord:<record id>:<ISO timestamp>:<rev>`.
  *
- * Matched as an anchored whole rather than by splitting on ":", so that the
- * changed record's own id may contain colons - which it does for every record,
- * since it is itself type-prefixed.
+ * Four, not two: an ISO timestamp carries two colons of its own
+ * (`2026-08-01T10:00:00.000Z`), so it accounts for three of them, plus one for
+ * the revision.
  */
-const AUDIT_ID_SUFFIX =
-  /:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z:[^:]*$/;
+const AUDIT_ID_TRAILING_PARTS = 4;
+
+/** the author of a change, as the backend records it */
+export interface AuditUser {
+  id?: string;
+  name?: string;
+  roles?: string[];
+}
 
 /**
  * One audited write, as recorded by the replication-backend in the derived
@@ -45,7 +52,7 @@ export class AuditRecord extends Entity {
   @DatabaseField() operation: "create" | "update" | "delete" | "baseline";
 
   /** server-set from the authenticated user */
-  @DatabaseField() user: { id?: string; name?: string; roles?: string[] };
+  @DatabaseField() user: AuditUser;
 
   /** `_rev` of the written revision, not of this audit document */
   @DatabaseField() rev: string;
@@ -57,16 +64,27 @@ export class AuditRecord extends Entity {
   @DatabaseField() database: string;
 
   /**
-   * For create/update/delete a jsondiffpatch delta, for baseline the full
-   * previous document. Passed through untyped: its keys are field names of
-   * whichever entity type was changed, so no schema of this type can describe
-   * them.
+   * What changed, in a shape that depends on {@link operation}:
+   *
+   * - `create`: a jsondiffpatch whole-value add, i.e. `[<the new document>]`
+   * - `update`: a jsondiffpatch delta keyed by field name, each value
+   *   `[<before>, <after>]`
+   * - `delete`: a structural delta of the tombstone. A deletion replicates
+   *   stripped of its content, so this names no displayable fields
+   * - `baseline`: the full document as it stood when logging was switched on,
+   *   not a delta - there is nothing prior to diff against
+   *
+   * Untyped on purpose: the keys are field names of whichever entity type was
+   * changed, so no schema of this type can describe them.
    */
   @DatabaseField() diff?: any;
 
   /** the changed record's id, e.g. `Child:123` */
   get record(): string {
-    return this.getId(true).replace(AUDIT_ID_SUFFIX, "");
+    // everything before the trailing timestamp and revision. The record's own
+    // id contains a colon too, so this counts from the end rather than the start
+    const parts = this.getId(true).split(":");
+    return parts.slice(0, -AUDIT_ID_TRAILING_PARTS).join(":");
   }
 
   /** the changed record's type, e.g. `Child` */

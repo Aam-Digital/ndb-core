@@ -15,10 +15,8 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { combineLatest, map, Observable, startWith } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
-import {
-  ADMIN_APP_ROLE,
-  AUDIT_RECORD_SUBJECT,
-} from "../../permissions/permission-types";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
+import { AuditRecord } from "../../../features/change-history/model/audit-record";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -147,7 +145,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       map(
         ([session]) =>
           (session?.roles?.includes(ADMIN_APP_ROLE) ?? false) &&
-          this.ability.can("read", AUDIT_RECORD_SUBJECT),
+          this.ability.can("read", AuditRecord.ENTITY_TYPE),
       ),
     ),
     { initialValue: false },

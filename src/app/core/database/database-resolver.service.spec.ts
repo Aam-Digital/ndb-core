@@ -181,17 +181,23 @@ describe("DatabaseResolverService", () => {
       entityRegistry.delete(TEST_TYPE);
     });
 
-    it("should hand out an already initialized remote database", () => {
-      // @ts-ignore - forcing this for stable test conditions
-      service["sessionType"] = SessionType.online;
-      vi.spyOn(factory, "createRemoteDatabase");
+    for (const sessionType of [SessionType.online, SessionType.mock]) {
+      it(`should hand out an already initialized remote database in ${sessionType} mode`, () => {
+        // @ts-ignore - forcing this for stable test conditions
+        service["sessionType"] = sessionType;
+        vi.spyOn(factory, "createRemoteDatabase");
 
-      const db = service.getDatabase(REMOTE_ONLY_DB);
+        const db = service.getDatabase(REMOTE_ONLY_DB);
 
-      expect(factory.createRemoteDatabase).toHaveBeenCalledWith(REMOTE_ONLY_DB);
-      // an uninitialized database makes every read wait forever rather than fail
-      expect(db.isInitialized()).toBe(true);
-    });
+        // remote whatever the session: the data exists only on the server, and
+        // this is the address requests must go to for a proxy to intercept them
+        expect(factory.createRemoteDatabase).toHaveBeenCalledWith(
+          REMOTE_ONLY_DB,
+        );
+        // an uninitialized database makes every read wait forever rather than fail
+        expect(db.isInitialized()).toBe(true);
+      });
+    }
 
     it("should not subscribe it to the global changes feed", () => {
       // @ts-ignore - forcing this for stable test conditions
@@ -207,18 +213,6 @@ describe("DatabaseResolverService", () => {
       service.getDatabase(REMOTE_ONLY_DB);
 
       expect(remoteDb.changes).not.toHaveBeenCalled();
-    });
-
-    it("should stay a remote handle even without a remote session", () => {
-      // sessionType is already mock. The data exists only on the server, so a
-      // local database could not answer for it - and this is the address the
-      // requests have to go to for a test or a proxy to intercept them.
-      vi.spyOn(factory, "createRemoteDatabase");
-
-      const db = service.getDatabase(REMOTE_ONLY_DB);
-
-      expect(factory.createRemoteDatabase).toHaveBeenCalledWith(REMOTE_ONLY_DB);
-      expect(db.isInitialized()).toBe(true);
     });
 
     it("should leave it untouched when local databases are reset or destroyed", async () => {

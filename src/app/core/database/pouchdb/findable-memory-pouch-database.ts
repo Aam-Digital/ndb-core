@@ -1,4 +1,4 @@
-import { MemoryPouchDatabase } from "../core/database/pouchdb/memory-pouch-database";
+import { MemoryPouchDatabase } from "./memory-pouch-database";
 
 /**
  * An in-memory database that also supports {@link PouchDatabase.find}, so that
@@ -8,6 +8,11 @@ import { MemoryPouchDatabase } from "../core/database/pouchdb/memory-pouch-datab
  * PouchDB's local Mango engine has no bookmark cursor, so the opaque bookmark
  * is the positional offset of the next unseen document. Callers only pass it
  * back unread, which is all the remote contract promises them.
+ *
+ * It is stricter than CouchDB in one way worth knowing: it sorts only from an
+ * index that also covers every filtered field, so sorting on one field while
+ * filtering on another is rejected here although a real CouchDB serves it (see
+ * the spec). A test needing both has to filter on the field it sorts by.
  */
 export class FindableMemoryPouchDatabase extends MemoryPouchDatabase {
   override async find(

@@ -2,19 +2,13 @@ import { ChangeDetectionStrategy, Component, computed } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-
-/** the author as the backend records it */
-export interface AuditUser {
-  id?: string;
-  name?: string;
-  roles?: string[];
-}
+import { AuditUser } from "../model/audit-record";
 
 /**
- * The author as an entity id, when one was recorded.
+ * The given author as an entity id, or undefined when it is not one.
  * An entity id is type-prefixed, which a plain username is not.
  */
-export function authorEntityId(author: string): string | undefined {
+export function ensureValidEntityId(author: string): string | undefined {
   return author?.includes(":") ? author : undefined;
 }
 
@@ -47,5 +41,5 @@ export class DisplayAuditUserComponent extends ViewDirective<AuditUser> {
     () => this.value()?.name ?? this.value()?.id ?? "",
   );
 
-  readonly userEntityId = computed(() => authorEntityId(this.author()));
+  readonly userEntityId = computed(() => ensureValidEntityId(this.author()));
 }

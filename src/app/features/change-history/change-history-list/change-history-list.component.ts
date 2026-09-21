@@ -29,7 +29,7 @@ import { FILTERABLE_ACTIONS } from "../change-history.types";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { authorEntityId } from "../display-audit-user/display-audit-user.component";
+import { ensureValidEntityId } from "../display-audit-user/display-audit-user.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { AuditRecord } from "../model/audit-record";
 import { buildAuditFilter } from "../audit-filter";
@@ -240,7 +240,7 @@ export class ChangeHistoryListComponent {
   readonly authors = computed(() =>
     (this.authorsResource.value() ?? []).map((value) => ({
       value,
-      entityId: authorEntityId(value),
+      entityId: ensureValidEntityId(value),
     })),
   );
 
@@ -290,12 +290,12 @@ export class ChangeHistoryListComponent {
   }
 
   /**
-   * Whether this row can be opened as a record history. Requires a known record
-   * type, which an old audit record of a type that is no longer registered does
-   * not have (the same case the record-type column falls back for).
+   * Whether this row can be opened as a record history, which takes only the
+   * changed record's id: the history is queried by id, and the dialog's other
+   * content (the record block, the created/updated metadata) is optional.
    */
   canOpenHistory(record: AuditRecord): boolean {
-    return !!record.record && this.entityRegistry.has(record.recordType);
+    return !!record.record;
   }
 
   /**
@@ -325,6 +325,26 @@ export class ChangeHistoryListComponent {
    * the id to query the history and the type for the field labels, and it hides
    * the created/last-updated metadata that such a stand-in has none of.
    */
+  /**
+   * A placeholder for a record that can no longer be loaded, carrying its id so
+   * the history can still be queried by it.
+   *
+   * Uses the registered constructor where there is one, so the dialog still
+   * shows the right type. Where there is not, the stand-in carries the record's
+   * type anyway: the plain Entity would prefix the id a second time
+   * ("Entity:Child:1") and query a history that does not exist. An unregistered
+   * type is otherwise fine here - only the id is needed to load the history,
+   * and the dialog's remaining content is optional.
+   */
+  private standInFor(record: AuditRecord): Entity {
+    const ctor = this.entityRegistry.has(record.recordType)
+      ? this.entityRegistry.get(record.recordType)
+      : class extends Entity {
+          static override ENTITY_TYPE = record.recordType;
+        };
+    return new ctor(record.record);
+  }
+
   private async loadRecord(record: AuditRecord): Promise<Entity> {
     try {
       return await this.entityMapper.load(record.recordType, record.record);
@@ -334,7 +354,7 @@ export class ChangeHistoryListComponent {
         record.record,
         err,
       );
-      return new (this.entityRegistry.get(record.recordType))(record.record);
+      return this.standInFor(record);
     }
   }
 }

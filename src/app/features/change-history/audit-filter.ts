@@ -33,8 +33,10 @@ export function buildAuditFilter(
   }
 
   const selector: Record<string, unknown> = {
-    // the sort field must be constrained for the index to be usable; a date
-    // bound already does that, otherwise match any record that has a timestamp
+    // naming the sort field keeps the query self-describing: it says which
+    // index answers it. Not strictly required - the data source pins
+    // `use_index`, and CouchDB serves the sort from it even with the field
+    // unconstrained - so this is documentation more than necessity
     timestamp: Object.keys(timestamp).length > 0 ? timestamp : { $gt: null },
     // a baseline is not a change but a snapshot the system captured, written
     // with the same timestamp and author as the first real change to that

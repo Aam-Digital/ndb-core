@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from "@angular/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -48,10 +53,10 @@ import { AuditRecord } from "../model/audit-record";
 export class ChangeHistoryChangedFieldsComponent extends ViewDirective<
   string[]
 > {
-  private readonly record = computed(() => this.entity() as AuditRecord);
+  override entity = input<AuditRecord>();
 
   readonly fields = computed(() => this.value() ?? []);
-  readonly action = computed(() => this.record()?.action);
+  readonly action = computed(() => this.entity()?.action);
   /** the changed record's type, which the field labels are resolved against */
-  readonly recordType = computed(() => this.record()?.recordType);
+  readonly recordType = computed(() => this.entity()?.recordType);
 }

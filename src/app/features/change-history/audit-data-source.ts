@@ -22,8 +22,8 @@ interface ViewResponse {
 }
 
 /**
- * The change log's records, from whichever of the two query routes the current
- * filters need.
+ * The change log's records, loaded one of two ways depending on the filters:
+ * every audited change, or only the changes involving one given record.
  *
  * "Which changes involved this record?" cannot be a Mango query: the referenced
  * ids sit inside each record's diff, and a JSON index stores an array-valued
@@ -39,8 +39,9 @@ export class AuditDataSource extends PaginatedDataSource<AuditRecord> {
   readonly relatedRecord = signal<RelatedRecordQuery | undefined>(undefined);
 
   /**
-   * Switch the log between its two questions. Everything paged through so far
-   * answered the previous one, so it is discarded.
+   * Switch between listing every change and listing only those involving one
+   * record. Everything paged through so far belongs to the previous mode, so
+   * it is discarded.
    */
   setRelatedRecord(related: RelatedRecordQuery | undefined) {
     this.relatedRecord.set(related);
@@ -80,7 +81,8 @@ export class AuditDataSource extends PaginatedDataSource<AuditRecord> {
         ? [related.recordId, related.from.toISOString()]
         : [related.recordId],
       descending: true,
-      // the backend only permission-filters - and only pages - a view response
+      // the rows are rendered from the documents. It also decides how the
+      // backend answers: it permission-filters and pages a view response only
       // when the documents are included
       include_docs: true,
       limit: page.limit,
