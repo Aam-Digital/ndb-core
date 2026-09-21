@@ -46,6 +46,13 @@ async function flush() {
   TestBed.tick();
 }
 
+/** A promise plus its resolver, to control exactly when a mocked `findType` call resolves. */
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => (resolve = res));
+  return { promise, resolve };
+}
+
 describe("PaginatedDataSource", () => {
   let dataSource: PaginatedDataSource<Entity>;
   let findTypeSpy: ReturnType<typeof vi.spyOn>;
@@ -438,6 +445,54 @@ describe("PaginatedDataSource", () => {
           expect(dataSource.filteredRecords()).toEqual(refetchedPage0);
         },
       );
+
+      it("should discard a stale request's results if it resolves after a newer request already updated filteredRecords", async () => {
+        // Reproduces #4405: the filter can still be resolving asynchronously
+        // (e.g. FilterComponent's resource-based filter generation) while an
+        // earlier request - started with the not-yet-filtered `dataFilter`
+        // default of `{}` - is already in flight against the DB. If that
+        // stale, unfiltered response is simply appended once it arrives, its
+        // records (e.g. completed Todos) leak into the now-filtered list.
+        dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+        const paginator = createFakePaginator(10, 0);
+        dataSource.paginator = paginator as unknown as MatPaginator;
+
+        const staleFetch = deferred<{
+          records: TestEntity[];
+          bookmark?: string;
+        }>();
+        findTypeSpy.mockReturnValueOnce(staleFetch.promise);
+        paginator.initialized.next();
+        await flush();
+        expect(findTypeSpy).toHaveBeenCalledTimes(1);
+
+        // the real filter resolves only now, invalidating the request above
+        const freshFetch = deferred<{
+          records: TestEntity[];
+          bookmark?: string;
+        }>();
+        findTypeSpy.mockReturnValueOnce(freshFetch.promise);
+        dataSource.dataFilter.set({ completed: { $exists: false } } as any);
+        TestBed.tick();
+        await flush();
+        expect(findTypeSpy).toHaveBeenCalledTimes(2);
+
+        // the correct, filtered request resolves first
+        const freshRecords = [new TestEntity("not-completed")];
+        freshFetch.resolve({ records: freshRecords, bookmark: "bm-fresh" });
+        await flush();
+        expect(dataSource.filteredRecords()).toEqual(freshRecords);
+
+        // the stale, unfiltered request (which could include completed records) resolves late
+        staleFetch.resolve({
+          records: [new TestEntity("stale-completed")],
+          bookmark: "bm-stale",
+        });
+        await flush();
+
+        // the stale response must not be merged in on top of the correct data
+        expect(dataSource.filteredRecords()).toEqual(freshRecords);
+      });
 
       it("should clear filteredRecords immediately, even before a paginator is bound", () => {
         dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
