@@ -2,9 +2,10 @@ import { Delta, patch } from "jsondiffpatch";
 import { isEqual } from "lodash-es";
 import {
   BASELINE_NOTE,
+  CHANGE_OPERATIONS,
   ChangeEvent,
+  ChangeOperation,
   FieldChange,
-  OPERATION_TO_ACTION,
 } from "./change-history.types";
 
 /**
@@ -97,12 +98,18 @@ export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
   const events: ChangeEvent[] = [];
 
   for (const doc of ordered) {
-    const action = OPERATION_TO_ACTION[doc.operation] ?? "updated";
+    // an operation the backend adds later renders as a plain update rather
+    // than an unlabelled badge
+    const operation: ChangeOperation = CHANGE_OPERATIONS.includes(
+      doc.operation as ChangeOperation,
+    )
+      ? (doc.operation as ChangeOperation)
+      : "update";
     const base = {
       id: doc._id,
       at: new Date(doc.timestamp),
       by: doc.user?.name ?? doc.user?.id ?? "",
-      action,
+      operation,
     };
 
     if (doc.operation === "baseline" || doc.operation === "create") {
@@ -111,7 +118,7 @@ export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
       events.push({
         ...base,
         changes: additions(snapshot),
-        note: action === "baseline" ? BASELINE_NOTE : undefined,
+        note: operation === "baseline" ? BASELINE_NOTE : undefined,
       });
     } else if (doc.operation === "delete") {
       events.push({ ...base, changes: [] });

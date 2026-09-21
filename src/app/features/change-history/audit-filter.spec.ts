@@ -18,8 +18,8 @@ describe("buildAuditFilter", () => {
     expect(buildAuditFilter({}).timestamp).toEqual({ $gt: null });
   });
 
-  it("should narrow to one operation when an action is selected", () => {
-    expect(buildAuditFilter({ action: "deleted" }).operation).toBe("delete");
+  it("should narrow to one operation when one is selected", () => {
+    expect(buildAuditFilter({ operation: "delete" }).operation).toBe("delete");
   });
 
   it("should match a record type as a prefix range on the stored id", () => {
@@ -54,7 +54,7 @@ describe("buildAuditFilter", () => {
     const filter = buildAuditFilter({
       entityType: undefined,
       changedBy: undefined,
-      action: undefined,
+      operation: undefined,
     });
 
     expect(filter.entityId).toBeUndefined();

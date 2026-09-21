@@ -89,11 +89,11 @@ it("should start pre-filtered by the record type the caller navigated from", asy
   });
 });
 
-it("should apply the selected record type, action and author to the query", async () => {
+it("should apply the selected record type, operation and author to the query", async () => {
   await setup();
 
   component.setEntityTypeFilter("School");
-  component.setActionFilter("deleted");
+  component.setOperationFilter("delete");
   component.setChangedByFilter("priya");
 
   expect(selector()).toMatchObject({

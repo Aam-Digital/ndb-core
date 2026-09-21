@@ -99,7 +99,7 @@ it("returns normalized events newest-first", async () => {
     "2026-06-02T10:00:00.000Z",
     "2026-06-01T10:00:00.000Z",
   ]);
-  expect(history[0].action).toBe("updated");
+  expect(history[0].operation).toBe("update");
   expect(history[0].changes).toEqual([{ field: "name", from: "B", to: "C" }]);
 });
 

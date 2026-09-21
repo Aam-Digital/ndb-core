@@ -4,7 +4,6 @@ import { AuditRecord } from "./model/audit-record";
 import {
   BASELINE_OPERATION,
   ChangeHistoryFilters,
-  FILTERABLE_ACTION_OPERATIONS,
 } from "./change-history.types";
 
 /** sorts after every string, so it closes an `_id` prefix range */
@@ -47,9 +46,8 @@ export function buildAuditFilter(
     operation: { $ne: BASELINE_OPERATION },
   };
 
-  const operation = FILTERABLE_ACTION_OPERATIONS[filters.action];
-  if (operation) {
-    selector.operation = operation;
+  if (filters.operation) {
+    selector.operation = filters.operation;
   }
 
   if (filters.entityType) {

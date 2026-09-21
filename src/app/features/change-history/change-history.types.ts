@@ -1,13 +1,20 @@
 /**
- * The kind of change an audit event represents. These are exactly the
- * operations emitted by the audit backend (replication-backend, issue #4026):
- * `create` -> `created`, `update` -> `updated`, `delete` -> `deleted`, plus the
- * synthetic `baseline` snapshot.
+ * The kind of change an audit event represents, named exactly as the audit
+ * backend emits it, so the stored value is also the one displayed and filtered
+ * on. Only the badge's wording is past tense, which is a label rather than a
+ * second vocabulary to map back and forth.
  *
  * (A future "edit-mode tag" may add `imported`/`merge`; until the backend emits
- * them, the action badge falls back to `updated`.)
+ * them, the badge falls back to `update`.)
  */
-export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
+export const CHANGE_OPERATIONS = [
+  "baseline",
+  "create",
+  "update",
+  "delete",
+] as const;
+
+export type ChangeOperation = (typeof CHANGE_OPERATIONS)[number];
 
 /**
  * The backend `operation` of a baseline record: the full-snapshot anchor written
@@ -20,32 +27,17 @@ export type ChangeAction = "baseline" | "created" | "updated" | "deleted";
 export const BASELINE_OPERATION = "baseline";
 
 /**
- * The actions a user can filter the change log by, and the backend `operation`
- * each one selects.
+ * The operations a user can filter the change log by, in the order the filter
+ * offers them.
  *
  * `baseline` is deliberately absent: the log never lists snapshots, so offering
  * it would only ever return nothing (see `buildChangeHistoryQuery`).
  */
-export const FILTERABLE_ACTION_OPERATIONS: Record<string, string> = {
-  created: "create",
-  updated: "update",
-  deleted: "delete",
-};
-
-/** The filterable actions, in the order the filter offers them. */
-export const FILTERABLE_ACTIONS = Object.keys(
-  FILTERABLE_ACTION_OPERATIONS,
-) as ChangeAction[];
-
-/**
- * Maps the backend audit `operation` to the displayed {@link ChangeAction}.
- */
-export const OPERATION_TO_ACTION: Record<string, ChangeAction> = {
-  create: "created",
-  update: "updated",
-  delete: "deleted",
-  baseline: "baseline",
-};
+export const FILTERABLE_OPERATIONS: ChangeOperation[] = [
+  "create",
+  "update",
+  "delete",
+];
 
 /**
  * A single field's before/after, in raw database format (enum ids, ISO date
@@ -71,8 +63,8 @@ export interface ChangeEvent {
   at: Date;
   /** authenticated author (user-entity id or name) recorded by the backend */
   by: string;
-  action: ChangeAction;
-  /** changed fields; empty for `deleted`, all-additions for `created`/`baseline` */
+  operation: ChangeOperation;
+  /** changed fields; empty for `delete`, all-additions for `create`/`baseline` */
   changes: FieldChange[];
   /** optional contextual note (e.g. the baseline explanation) */
   note?: string;
@@ -101,7 +93,7 @@ export interface ChangeHistoryEntry {
    * record; unset for a plain username, which has no record to resolve.
    */
   byEntityId?: string;
-  action: ChangeAction;
+  operation: ChangeOperation;
   /** the changed record's id, e.g. `Child:123` */
   entityId: string;
   /** the changed record's type prefix, e.g. `Child` */
@@ -119,11 +111,8 @@ export interface ChangeHistoryFilters {
   entityType?: string;
   /** author, matched against the recorded user name */
   changedBy?: string;
-  /**
-   * only one kind of change, keyed by displayed action (`created`/`updated`/
-   * `deleted`); see {@link FILTERABLE_ACTION_OPERATIONS}.
-   */
-  action?: string;
+  /** only one kind of change; see {@link FILTERABLE_OPERATIONS}. */
+  operation?: ChangeOperation;
   /**
    * a record id, e.g. `User:1`: only changes *related* to that record — changes
    * to the record itself, and changes to any other record that referenced it

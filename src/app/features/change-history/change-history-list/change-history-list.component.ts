@@ -26,7 +26,10 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { ChangeHistoryService } from "../change-history.service";
-import { FILTERABLE_ACTIONS } from "../change-history.types";
+import {
+  ChangeOperation,
+  FILTERABLE_OPERATIONS,
+} from "../change-history.types";
 import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -144,7 +147,7 @@ export class ChangeHistoryListComponent {
       viewComponent: "DisplayAuditRecord",
     },
     {
-      id: "action",
+      id: "operation",
       label: $localize`:Change log column:Action`,
       viewComponent: "ChangeHistoryActionBadge",
     },
@@ -161,10 +164,10 @@ export class ChangeHistoryListComponent {
   ];
 
   /**
-   * The actions offered by the filter. Each option renders the same badge the
-   * table uses, so there is no second copy of the action wording to keep in sync.
+   * The operations offered by the filter. Each option renders the same badge
+   * the table uses, so there is no second copy of the wording to keep in sync.
    */
-  readonly actions = FILTERABLE_ACTIONS;
+  readonly operations = FILTERABLE_OPERATIONS;
 
   readonly entityTypes = this.entityRegistry
     .getEntityTypes(true)
@@ -180,13 +183,13 @@ export class ChangeHistoryListComponent {
   );
   readonly changedByFilter = signal<string | undefined>(undefined);
   readonly relatedEntityFilter = signal<string | undefined>(undefined);
-  readonly actionFilter = signal<string | undefined>(undefined);
+  readonly operationFilter = signal<ChangeOperation | undefined>(undefined);
   readonly dateFrom = signal<Date | undefined>(undefined);
   readonly dateTo = signal<Date | undefined>(undefined);
 
   /**
    * The related-record filter is served by a view keyed on the referenced id, so
-   * only the date range narrows it further; record type, action and author would
+   * only the date range narrows it further; record type, operation and author would
    * need a different key order and are therefore unavailable while it is set.
    */
   readonly otherFiltersDisabled = computed(() => !!this.relatedEntityFilter());
@@ -217,7 +220,7 @@ export class ChangeHistoryListComponent {
         : {
             entityType: this.entityTypeFilter(),
             changedBy: this.changedByFilter(),
-            action: this.actionFilter(),
+            operation: this.operationFilter(),
             from: this.dateFrom(),
             to: this.dateTo(),
           },
@@ -255,8 +258,8 @@ export class ChangeHistoryListComponent {
     this.entityTypeFilter.set(entityType);
   }
 
-  setActionFilter(action: string | undefined) {
-    this.actionFilter.set(action);
+  setOperationFilter(operation: ChangeOperation | undefined) {
+    this.operationFilter.set(operation);
   }
 
   setChangedByFilter(changedBy: string | undefined) {

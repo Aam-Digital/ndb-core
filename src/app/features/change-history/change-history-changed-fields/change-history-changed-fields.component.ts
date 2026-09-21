@@ -34,11 +34,11 @@ import { AuditRecord } from "../model/audit-record";
           </mat-chip>
         }
       </mat-chip-set>
-    } @else if (action() === "created") {
+    } @else if (operation() === "create") {
       <span class="text-secondary" i18n="Change log changed fields"
         >new record</span
       >
-    } @else if (action() === "deleted") {
+    } @else if (operation() === "delete") {
       <span class="text-secondary" i18n="Change log changed fields"
         >record removed</span
       >
@@ -56,7 +56,7 @@ export class ChangeHistoryChangedFieldsComponent extends ViewDirective<
   override entity = input<AuditRecord>();
 
   readonly fields = computed(() => this.value() ?? []);
-  readonly action = computed(() => this.entity()?.action);
+  readonly operation = computed(() => this.entity()?.operation);
   /** the changed record's type, which the field labels are resolved against */
   readonly recordType = computed(() => this.entity()?.recordType);
 }

@@ -2,8 +2,8 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
-import { ChangeAction, OPERATION_TO_ACTION } from "../change-history.types";
 import { changedFieldsOf } from "../change-history-normalize";
+import { ChangeOperation } from "../change-history.types";
 
 /**
  * How many `:`-separated parts trail the changed record's id in an audit
@@ -49,7 +49,7 @@ export class AuditRecord extends Entity {
   @DatabaseField() timestamp: Date;
 
   /** the kind of write, as the backend names it */
-  @DatabaseField() operation: "create" | "update" | "delete" | "baseline";
+  @DatabaseField() operation: ChangeOperation;
 
   /** server-set from the authenticated user */
   @DatabaseField() user: AuditUser;
@@ -90,11 +90,6 @@ export class AuditRecord extends Entity {
   /** the changed record's type, e.g. `Child` */
   get recordType(): string {
     return Entity.extractTypeFromId(this.record);
-  }
-
-  /** the displayed action, which unlike {@link operation} is past tense */
-  get action(): ChangeAction {
-    return OPERATION_TO_ACTION[this.operation];
   }
 
   /**

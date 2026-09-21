@@ -88,10 +88,4 @@ describe("AuditRecord", () => {
 
     expect(record.record).toBe("Child:123");
   });
-
-  it("should map the backend operation to a displayed action", () => {
-    expect(load(rawDoc).action).toBe("updated");
-    expect(load({ ...rawDoc, operation: "delete" }).action).toBe("deleted");
-    expect(load({ ...rawDoc, operation: "baseline" }).action).toBe("baseline");
-  });
 });

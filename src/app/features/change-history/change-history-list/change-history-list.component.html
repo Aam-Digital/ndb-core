@@ -63,19 +63,19 @@
       >
         <mat-label i18n="Change log filter label">Action</mat-label>
         <mat-select
-          [value]="actionFilter()"
+          [value]="operationFilter()"
           [disabled]="otherFiltersDisabled()"
-          (valueChange)="setActionFilter($event)"
+          (valueChange)="setOperationFilter($event)"
         >
-          @for (action of actions; track action) {
-            <mat-option [value]="action">
+          @for (operation of operations; track operation) {
+            <mat-option [value]="operation">
               <app-change-history-action-badge
-                [action]="action"
+                [operation]="operation"
               ></app-change-history-action-badge>
             </mat-option>
           }
         </mat-select>
-        @if (actionFilter() && !otherFiltersDisabled()) {
+        @if (operationFilter() && !otherFiltersDisabled()) {
           <button
             matSuffix
             mat-icon-button
@@ -84,7 +84,7 @@
             i18n-matTooltip
             aria-label="Clear action filter"
             i18n-aria-label
-            (click)="$event.stopPropagation(); setActionFilter(undefined)"
+            (click)="$event.stopPropagation(); setOperationFilter(undefined)"
           >
             <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
           </button>
