@@ -397,15 +397,16 @@ describe("FeaturePermissionService", () => {
     });
   });
 
-  it("should seed an all-access default section when no permissions config exists yet", async () => {
+  it("should write only the saved rules when no permissions config exists yet", async () => {
     mockConfig(null);
 
     await service.setPermissions(ENTITY_TYPE, [
       { role: "user_app", actions: actions("read") },
     ]);
 
+    // no `_default` wildcard is added around them: it would keep granting every
+    // action on this feature to everyone, making the restriction a no-op
     expect(savedPermissions()).toEqual({
-      _default: [{ subject: "all", action: "manage" }],
       user_app: [{ subject: ENTITY_TYPE, action: "read" }],
     });
   });

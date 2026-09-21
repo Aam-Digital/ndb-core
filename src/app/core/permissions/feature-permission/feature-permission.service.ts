@@ -223,9 +223,7 @@ export class FeaturePermissionService {
   ): Promise<Config<DatabaseRules>> {
     const existing = await this.permissionsConfig.load();
     // the grants to suppress on the role rows are the ones that are in effect
-    // *after* this save, because `_default` can be edited in the same go.
-    // Read before seeding below, so a seeded `_default` does not count as one
-    // the admin saw as inherited.
+    // *after* this save, because `_default` can be edited in the same go
     const grantedByDefault = this.getUpdatedDefaultGrants(
       updates,
       existing,
@@ -396,6 +394,15 @@ export class FeaturePermissionService {
     return !!decidingRule && !decidingRule.inverted;
   }
 
+  /**
+   * The config document to write the updated rules into, created empty if this
+   * instance does not define any permissions yet.
+   *
+   * Nothing is added around the rules saved here: a seeded `all` wildcard would
+   * keep granting every action on this feature to every logged-in user (a rule
+   * granting less never overrides a broader grant), so the restriction just
+   * saved would have no effect at all.
+   */
   private ensurePermissionsConfig(
     existing: Config<DatabaseRules> | null,
   ): Config<DatabaseRules> {
@@ -403,14 +410,8 @@ export class FeaturePermissionService {
       return existing;
     }
 
-    // No permissions config yet means "everyone may do everything". Seed the
-    // `_default` all-access rule so that starting to restrict a single feature
-    // does not accidentally lock every logged-in user out of everything else.
-    // This is the one case in which this UI writes a `_default` section.
     const config = existing ?? new Config<DatabaseRules>(Config.PERMISSION_KEY);
-    config.data = {
-      [DEFAULT_SECTION_KEY]: [{ subject: "all", action: "manage" }],
-    };
+    config.data = {};
     return config;
   }
 }
