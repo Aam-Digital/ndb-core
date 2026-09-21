@@ -11,6 +11,7 @@ import {
   EntitySpecialLoaderService,
   supportsPagination,
 } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import { EntityPage } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
 /**
  * Number of documents fetched per request when loading the complete dataset
@@ -149,12 +150,12 @@ export class PaginatedDataSource<
     filter: DataFilter<T>,
     page: { limit: number; bookmark?: string },
     sort: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<{ records: T[]; bookmark?: string }> {
+  ): Promise<EntityPage<T>> {
     const config = this.loadRecordConfig();
     if (supportsPagination(config.loaderMethod)) {
       // a loader that serves pages of its own: the pagination state stays here,
       // only the fetching moves
-      return this.specialLoader.loadPage<T>(
+      return this.specialLoader.loadPageFor<T>(
         config.loaderMethod,
         config.forEntity,
         filter,

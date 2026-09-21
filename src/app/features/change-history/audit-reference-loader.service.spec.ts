@@ -1,16 +1,19 @@
 import { TestBed } from "@angular/core/testing";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { AuditReferenceLoaderService } from "./audit-reference-loader.service";
-import { ChangeHistoryService } from "./change-history.service";
 import { AuditRecord } from "./model/audit-record";
 import { Entity } from "../../core/entity/model/entity";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 
 let loader: AuditReferenceLoaderService;
-let queryReferenceView: ReturnType<typeof vi.fn>;
+let indexing: {
+  createIndex: ReturnType<typeof vi.fn>;
+  queryIndexRaw: ReturnType<typeof vi.fn>;
+};
 
 /** the view query of the last call */
 function lastQuery(): Record<string, any> {
-  return queryReferenceView.mock.calls.at(-1)[0];
+  return indexing.queryIndexRaw.mock.calls.at(-1)[1];
 }
 
 function rawDoc(id = "Child:1"): any {
@@ -27,18 +30,41 @@ function rawDoc(id = "Child:1"): any {
 const forEntity = new Entity("User:1");
 
 beforeEach(async () => {
-  queryReferenceView = vi.fn().mockResolvedValue({ offset: 0, rows: [] });
+  indexing = {
+    createIndex: vi.fn().mockResolvedValue(undefined),
+    queryIndexRaw: vi.fn().mockResolvedValue({ offset: 0, rows: [] }),
+  };
   await TestBed.configureTestingModule({
     imports: [MockedTestingModule.withState()],
-    providers: [
-      { provide: ChangeHistoryService, useValue: { queryReferenceView } },
-    ],
+    providers: [{ provide: DatabaseIndexingService, useValue: indexing }],
   }).compileComponents();
   loader = TestBed.inject(AuditReferenceLoaderService);
 });
 
+it("should query the audit database rather than the app database", async () => {
+  await loader.loadPageFor(forEntity, {}, { limit: 2 });
+
+  expect(indexing.createIndex).toHaveBeenCalledWith(
+    expect.anything(),
+    AuditRecord.DATABASE,
+  );
+  expect(indexing.queryIndexRaw.mock.calls.at(-1)[3]).toBe(
+    AuditRecord.DATABASE,
+  );
+});
+
+it("should still query when the view cannot be created", async () => {
+  // reading a view needs less permission than writing its design document,
+  // and it may well exist already from an earlier session or another admin
+  indexing.createIndex.mockRejectedValue(new Error("forbidden"));
+
+  await loader.loadPageFor(forEntity, {}, { limit: 2 });
+
+  expect(indexing.queryIndexRaw).toHaveBeenCalled();
+});
+
 it("should start at the range start, not at a position", async () => {
-  await loader.loadPage(forEntity, {}, { limit: 2 });
+  await loader.loadPageFor(forEntity, {}, { limit: 2 });
 
   expect(lastQuery().startkey).toEqual(["Entity:User:1", {}]);
   expect(lastQuery().skip).toBeUndefined();
@@ -49,13 +75,20 @@ it("should start at the range start, not at a position", async () => {
 
 it("should continue past everything already returned, not past the page size", async () => {
   // three rows were skipped over as denied, so the reported position ran ahead
-  queryReferenceView.mockResolvedValue({
+  indexing.queryIndexRaw.mockResolvedValue({
     offset: 3,
     rows: [{ doc: rawDoc() }, { doc: rawDoc("Child:2") }],
   });
 
-  const first = await loader.loadPage(forEntity, {}, { limit: 2 });
-  await loader.loadPage(forEntity, {}, { limit: 2, bookmark: first.bookmark });
+  const first = await loader.loadPageFor(forEntity, {}, { limit: 2 });
+  await loader.loadPageFor(
+    forEntity,
+    {},
+    {
+      limit: 2,
+      bookmark: first.bookmark,
+    },
+  );
 
   expect(first.bookmark).toBe("5");
   expect(lastQuery().skip).toBe(5);
@@ -64,12 +97,12 @@ it("should continue past everything already returned, not past the page size", a
 });
 
 it("should drop rows the backend's permission filter emptied", async () => {
-  queryReferenceView.mockResolvedValue({
+  indexing.queryIndexRaw.mockResolvedValue({
     offset: 0,
     rows: [{ doc: rawDoc() }, {}],
   });
 
-  const page = await loader.loadPage(forEntity, {}, { limit: 2 });
+  const page = await loader.loadPageFor(forEntity, {}, { limit: 2 });
 
   expect(page.records.length).toBe(1);
   expect(page.records[0]).toBeInstanceOf(AuditRecord);
@@ -79,7 +112,7 @@ it("should drop rows the backend's permission filter emptied", async () => {
 });
 
 it("should narrow the key range by the selected dates", async () => {
-  await loader.loadPage(
+  await loader.loadPageFor(
     forEntity,
     {
       timestamp: {

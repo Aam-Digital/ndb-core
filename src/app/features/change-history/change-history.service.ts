@@ -12,10 +12,6 @@ import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeEvent } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
-import {
-  AUDIT_REFERENCE_VIEW,
-  buildAuditReferenceIndex,
-} from "./audit-reference-index";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
 
 /** Response of the replication-backend central `GET /_features` endpoint. */
@@ -98,9 +94,6 @@ export class ChangeHistoryService {
     return this.featureFlags.value()?.audit?.enabled ?? false;
   });
 
-  /** in-flight or completed creation of the related-record view, attempted once */
-  private referenceIndexCreated?: Promise<unknown>;
-
   private getAuditDb(): Database {
     return this.dbResolver.getDatabase(AuditRecord.DATABASE);
   }
@@ -114,29 +107,6 @@ export class ChangeHistoryService {
     const prefix = `AuditRecord:${entity.getId()}:`;
     const docs = await this.getAuditDb().getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
-  }
-
-  /**
-   * Query the reference view, creating it first if it is not there yet.
-   *
-   * A failure to create it must not stop the query: the view may well exist
-   * already, from an earlier session or another admin - and writing a design
-   * document needs a permission that reading one does not.
-   */
-  async queryReferenceView(query: Record<string, unknown>): Promise<any> {
-    await this.ensureReferenceIndex();
-    return this.getAuditDb().query(AUDIT_REFERENCE_VIEW, query);
-  }
-
-  /** Create the view the related-record filter queries, once per session. */
-  private ensureReferenceIndex(): Promise<unknown> {
-    this.referenceIndexCreated ??= this.getAuditDb()
-      .saveDatabaseIndex(buildAuditReferenceIndex())
-      .catch((err) => {
-        Logging.debug("could not ensure the audit reference view", err);
-        this.referenceIndexCreated = undefined;
-      });
-    return this.referenceIndexCreated;
   }
 
   /**

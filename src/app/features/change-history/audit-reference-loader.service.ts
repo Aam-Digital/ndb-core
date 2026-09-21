@@ -1,11 +1,16 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity } from "../../core/entity/model/entity";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { LoaderPage } from "../../core/entity/entity-special-loader/entity-special-loader.service";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { EntityPage } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { AuditRecord } from "./model/audit-record";
-import { ChangeHistoryService } from "./change-history.service";
 import { RawAuditDoc } from "./change-history-normalize";
 import { DataFilter } from "../../core/filter/filters/filters";
+import { Logging } from "../../core/logging/logging.service";
+import {
+  AUDIT_REFERENCE_VIEW,
+  buildAuditReferenceIndex,
+} from "./audit-reference-index";
 
 /** one page of the reference view, as the backend proxies it */
 interface ViewResponse {
@@ -24,8 +29,28 @@ interface ViewResponse {
  */
 @Injectable({ providedIn: "root" })
 export class AuditReferenceLoaderService {
-  private readonly service = inject(ChangeHistoryService);
+  private readonly indexing = inject(DatabaseIndexingService);
   private readonly schemaService = inject(EntitySchemaService);
+
+  /** created once per session; writing it again is a no-op when unchanged */
+  private indexCreated?: Promise<void>;
+
+  /**
+   * Create the view this loader queries, once per session.
+   *
+   * A failure must not stop the query: the view may well exist already, from
+   * an earlier session or another admin - and writing a design document needs
+   * a permission that reading one does not.
+   */
+  private ensureIndex(): Promise<void> {
+    this.indexCreated ??= this.indexing
+      .createIndex(buildAuditReferenceIndex(), AuditRecord.DATABASE)
+      .catch((err) => {
+        Logging.debug("could not ensure the audit reference view", err);
+        this.indexCreated = undefined;
+      });
+    return this.indexCreated;
+  }
 
   /**
    * The backend pages a permission-filtered view by absolute position rather
@@ -34,11 +59,13 @@ export class AuditReferenceLoaderService {
    * position it actually reached - the start plus however many denied rows it
    * had to skip over - so `offset + rows.length` is the next unseen row.
    */
-  async loadPage(
+  async loadPageFor(
     forEntity: Entity,
     filter: DataFilter<AuditRecord>,
     page: { limit: number; bookmark?: string },
-  ): Promise<LoaderPage<AuditRecord>> {
+  ): Promise<EntityPage<AuditRecord>> {
+    await this.ensureIndex();
+
     const recordId = forEntity.getId();
     const skip = page.bookmark ? Number(page.bookmark) : 0;
     // the view is keyed [referencedId, timestamp], so the date range that the
@@ -63,7 +90,12 @@ export class AuditReferenceLoaderService {
       query.startkey = [recordId, bounds?.$lte ?? {}];
     }
 
-    const response: ViewResponse = await this.service.queryReferenceView(query);
+    const response: ViewResponse = await this.indexing.queryIndexRaw(
+      AUDIT_REFERENCE_VIEW,
+      query,
+      true,
+      AuditRecord.DATABASE,
+    );
     const rows = response.rows ?? [];
     const records = rows
       .map((row) => row.doc)

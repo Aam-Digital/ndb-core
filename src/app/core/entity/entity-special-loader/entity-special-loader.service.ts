@@ -1,6 +1,7 @@
-import { inject, Injectable, Injector } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity } from "../model/entity";
 import { DataFilter } from "../../filter/filters/filters";
+import { EntityPage } from "../entity-mapper/entity-mapper.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
 import { UpdatedEntity } from "../model/entity-update";
@@ -16,13 +17,6 @@ export enum LoaderMethod {
   ChildrenServiceQueryRelations = "ChildrenServiceQueryRelations",
   NotesRelatedToEntity = "NotesRelatedToEntity",
   TodosRelatedToEntity = "TodosRelatedToEntity",
-}
-
-/** One page of records, continuing from an opaque cursor. */
-export interface LoaderPage<E extends Entity = Entity> {
-  records: E[];
-  /** cursor for the next page; its meaning is the loader's own business */
-  bookmark?: string;
 }
 
 /**
@@ -48,12 +42,7 @@ export class EntitySpecialLoaderService {
   private readonly childrenService = inject(ChildrenService);
   private readonly historicalDataService = inject(HistoricalDataService);
   private readonly todoService = inject(TodoService);
-  /**
-   * Resolved on use rather than injected: this loader reaches the audit
-   * database, and every consumer of this service would otherwise carry that
-   * whole dependency chain whether or not it ever asks for audit records.
-   */
-  private readonly injector = inject(Injector);
+  private readonly auditReferenceLoader = inject(AuditReferenceLoaderService);
 
   loadData<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
@@ -93,19 +82,19 @@ export class EntitySpecialLoaderService {
    * Only for loaders {@link supportsPagination} reports: the rest have no notion
    * of a page and return everything through {@link loadDataFor}.
    */
-  loadPage<E extends Entity = Entity>(
+  loadPageFor<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
     forEntity: Entity,
     filter: DataFilter<E>,
     page: { limit: number; bookmark?: string },
-  ): Promise<LoaderPage<E>> {
+  ): Promise<EntityPage<E>> {
     switch (loaderMethod) {
       case LoaderMethod.AuditRecordsRelatedToEntity:
-        return this.injector
-          .get(AuditReferenceLoaderService)
-          .loadPage(forEntity, filter, page) as unknown as Promise<
-          LoaderPage<E>
-        >;
+        return this.auditReferenceLoader.loadPageFor(
+          forEntity,
+          filter,
+          page,
+        ) as unknown as Promise<EntityPage<E>>;
       default:
         throw new Error(`${loaderMethod} does not serve pages`);
     }
