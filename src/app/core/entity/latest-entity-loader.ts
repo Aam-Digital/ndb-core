@@ -3,6 +3,8 @@ import { filter } from "rxjs/operators";
 import { Entity, EntityConstructor } from "./model/entity";
 import { HttpStatusCode } from "@angular/common/http";
 import { Subject } from "rxjs";
+import { DestroyRef, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 /**
  * Implement an Angular Service extending this base class
@@ -12,6 +14,14 @@ import { Subject } from "rxjs";
 export abstract class LatestEntityLoader<T extends Entity> {
   /** subscribe to this and execute any actions required when the entity changes */
   entityUpdated = new Subject<T>();
+
+  /**
+   * Stops the live-updates subscription once this service's injector is destroyed.
+   * Without this, every instance created by a fresh injector (e.g. a new TestBed
+   * per test) keeps reacting to entity updates forever, accumulating across the
+   * process's lifetime.
+   */
+  protected readonly destroyRef = inject(DestroyRef);
 
   protected constructor(
     private entityCtor: EntityConstructor<T>,
@@ -46,6 +56,7 @@ export abstract class LatestEntityLoader<T extends Entity> {
       .pipe(
         filter(({ type }) => this.emitDeletions || type !== "remove"),
         filter(({ entity }) => entity.getId(true) === this.entityID),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(({ entity }) => this.entityUpdated.next(entity));
 

@@ -68,10 +68,6 @@ describe("EntityConfigService", () => {
     service = TestBed.inject(EntityConfigService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should add attributes to a entity class schema", () => {
     expect(Test.schema.has("name")).toBe(true);
     service.addConfigAttributes<Test>(Test);

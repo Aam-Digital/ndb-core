@@ -12,6 +12,25 @@
         <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
       } @else {
         <div class="flex-row gap-regular">
+          @if (canManagePermissions() && isFeatureType()) {
+            <button
+              mat-stroked-button
+              color="accent"
+              class="header-action-button"
+              (click)="openPermissionsDialog()"
+              matTooltip="Access to this feature is controlled by user roles"
+              i18n-matTooltip="Configure feature permissions tooltip"
+            >
+              <fa-icon
+                class="standard-icon-with-text"
+                aria-hidden="true"
+                icon="user-lock"
+              ></fa-icon>
+              <span i18n="Configure feature permissions button"
+                >Configure Permissions</span
+              >
+            </button>
+          }
           <app-entity-create-button
             [entityType]="entityConstructor()!"
             (entityCreate)="addNew()"
@@ -30,12 +49,12 @@
     <!-- Filters -->
     <div class="flex-row gap-regular flex-wrap">
       <div *ngTemplateOutlet="filterDialog"></div>
-      @if (!dataSource.isLoading()) {
+      @if (entityConstructor()) {
         <app-filter
           class="flex-row gap-regular flex-wrap"
           [filterConfig]="filters()"
           [entityType]="entityConstructor()!"
-          [entities]="dataSource.allRecords()"
+          [entities]="recordsDataSource().allRecords()"
           [useUrlQueryParams]="true"
           [(filterObj)]="filterObj"
           [filterString]="filterString"
@@ -99,37 +118,39 @@
 <!-- Templates and menus for both mobile and desktop -->
 
 <ng-template #filterDialog>
-  <mat-form-field class="full-width filter-field">
-    <mat-label
-      i18n="Filter placeholder|Allows the user to filter through entities"
-      >Filter
-    </mat-label>
-    <input
-      class="full-width"
-      matInput
-      i18n-placeholder="Examples of things to filter"
-      placeholder="e.g. name, age"
-      (ngModelChange)="applyFilter($event)"
-      [(ngModel)]="filterString"
-    />
-    @if (filterString) {
-      <button
-        mat-icon-button
-        matIconSuffix
-        i18n-aria-label
-        aria-label="Clear"
-        (click)="filterString = ''; applyFilter('')"
-      >
-        <fa-icon icon="times"></fa-icon>
-      </button>
-    }
-  </mat-form-field>
+  @if (showFreetextFilter()) {
+    <mat-form-field class="full-width filter-field">
+      <mat-label
+        i18n="Filter placeholder|Allows the user to filter through entities"
+        >Filter
+      </mat-label>
+      <input
+        class="full-width"
+        matInput
+        i18n-placeholder="Examples of things to filter"
+        placeholder="e.g. name, age"
+        (ngModelChange)="applyFilter($event)"
+        [(ngModel)]="filterString"
+      />
+      @if (filterString) {
+        <button
+          mat-icon-button
+          matIconSuffix
+          i18n-aria-label
+          aria-label="Clear"
+          (click)="filterString = ''; applyFilter('')"
+        >
+          <fa-icon icon="times"></fa-icon>
+        </button>
+      }
+    </mat-form-field>
+  }
 </ng-template>
 
 <ng-template #subrecord>
   <app-entities-table
     [entityType]="entityConstructor()!"
-    [recordsDataSource]="dataSource"
+    [recordsDataSource]="recordsDataSource()"
     [customColumns]="columns()"
     [editable]="false"
     [clickMode]="clickMode()"
@@ -176,6 +197,19 @@
       </fa-icon>
       <span i18n="Show filter options popup for list"> Filter options </span>
     </button>
+
+    @if (canManagePermissions() && isFeatureType()) {
+      <button mat-menu-item (click)="openPermissionsDialog()">
+        <fa-icon
+          class="standard-icon-with-text color-accent"
+          aria-hidden="true"
+          icon="user-lock"
+        ></fa-icon>
+        <span i18n="Configure feature permissions button">
+          Configure Permissions
+        </span>
+      </button>
+    }
   </div>
 
   <button

@@ -34,10 +34,6 @@ describe("AdminSectionHeaderComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only emit removeSection if user confirms confirmation dialog", async () => {
     vi.spyOn(component.remove, "emit");
 

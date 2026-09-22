@@ -92,6 +92,31 @@ export abstract class Database {
   }
 
   /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * There might be differences in queries between a local PouchDB and the CouchDB.
+   *
+   * Pagination uses an opaque `bookmark` cursor rather than `skip`: passing the
+   * `bookmark` returned by a previous call continues right after those
+   * results. Unlike `skip`, this also works correctly when the remote CouchDB
+   * applies permission filtering to the query (see
+   * {@link https://github.com/Aam-Digital/replication-backend/pull/330}).
+   * A bookmark is forward-only - it cannot be used to jump backwards - so
+   * callers that need to revisit earlier pages must cache them themselves.
+   *
+   * @param prefix of the entity to be queried
+   * @param query the Mango Query Language query
+   * @param page additional pagination options
+   * @param sort additional sorting options
+   */
+  abstract find(
+    prefix: string,
+    query: any,
+    page?: { limit?: number; bookmark?: string },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<{ docs: any[]; bookmark?: string }>;
+
+  /**
    * Query data from the database based on a more complex, indexed request.
    *
    * This is directly calling the PouchDB implementation of this function.

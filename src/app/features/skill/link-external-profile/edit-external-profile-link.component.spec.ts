@@ -75,10 +75,6 @@ describe("EditExternalProfileLinkComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should search external profiles and store externalId in form field", async () => {
     vi.useFakeTimers();
     try {

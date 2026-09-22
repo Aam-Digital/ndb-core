@@ -155,7 +155,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private async logSyncContext() {
     const lastSyncTime = localStorage.getItem(this.LAST_SYNC_KEY);
-    Logging.addContext("Aam Digital sync", {
+    // the context key includes the database name: every synced database (app,
+    // notifications, ...) writes its own block. With a shared key the last
+    // writer would overwrite the others, so a reported event could show the
+    // sync state of a different database than the one it is about.
+    Logging.addContext(`Aam Digital sync: ${this.dbName}`, {
       db: this.dbName,
       "last sync completed": lastSyncTime,
       "last sync docs pushed": this.lastSyncStats?.pushed,
@@ -272,13 +276,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
         if (this.isDocumentWriteError(err)) {
           Logging.warn(
             `sync failed: document write error (possible oversized document)`,
-            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
+            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
           this.corruptionRecovery?.handleKnownMultiTabCorruption(
             err,
-            `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+            "sync failed: likely multi-tab IndexedDB corruption",
+            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
           );
         } else if (
           this.isSyncConnectivityError(err) ||
@@ -308,7 +313,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
     } catch (err) {
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
-        `put failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+        "put failed: likely multi-tab IndexedDB corruption",
+        { db: this.dbName },
       );
       throw err;
     }
@@ -321,7 +327,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return super.query(fun, options).catch((err) => {
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
-        `query failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+        "query failed: likely multi-tab IndexedDB corruption",
+        { db: this.dbName },
       );
       throw err;
     });
@@ -343,39 +350,86 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
+   * How many document ids to include as an example in the logs below, which can
+   * report on thousands of documents (the count is logged in full alongside).
+   */
+  private readonly SAMPLE_IDS_LOGGED = 5;
+
+  /**
    * Purge local documents for which the server reported lost permissions
    * during the most recent sync's `_changes` calls.
+   *
+   * The server reports every document changed since this client's checkpoint
+   * that the user may not read - it has no knowledge of which of those the
+   * client actually holds locally. Most reported ids therefore do not exist
+   * locally at all and purging them is a no-op. Only an actual local deletion
+   * is reported as a warning, so that the log stays a signal for data being
+   * removed rather than a count of what the server reported.
    */
   private async purgeDocsWithLostPermissions(): Promise<void> {
-    const lostPermissionIds = this.remoteDatabase
+    const reportedIds = this.remoteDatabase
       .collectAndClearLostPermissions()
       // design docs for indices are managed locally (and shouldn't be synced anyway)
       .filter((id) => !id.startsWith("_design/"));
 
-    if (lostPermissionIds.length > 0) {
-      // deleting local data based on server response - log for traceability of possible data loss.
+    if (reportedIds.length === 0) {
+      return;
+    }
+
+    const purgedIds: string[] = [];
+    const failedIds: string[] = [];
+    let notPresentLocally = 0;
+    let firstError: unknown;
+
+    for (const _id of reportedIds) {
+      try {
+        if (await this.purge(_id)) {
+          purgedIds.push(_id);
+        } else {
+          notPresentLocally++;
+        }
+      } catch (err) {
+        failedIds.push(_id);
+        firstError ??= err;
+      }
+    }
+
+    const stats = {
+      db: this.dbName,
+      purged: purgedIds.length,
+      notPresentLocally,
+      failed: failedIds.length,
+      reportedByServer: reportedIds.length,
+    };
+
+    if (purgedIds.length > 0) {
+      // local data was actually deleted - log for traceability of possible data loss
       Logging.warn(
-        "sync: purging local docs after server reported lost permissions",
+        "sync: purged local docs that the server reported as no longer permitted",
         {
-          db: this.dbName,
-          count: lostPermissionIds.length,
-          // how far behind the server this client was: local edits made since then are lost
-          lastSyncCompleted: localStorage.getItem(this.LAST_SYNC_KEY),
+          ...stats,
+          sampleIds: purgedIds.slice(0, this.SAMPLE_IDS_LOGGED),
+          // the sync triggering this purge has replicated but not yet recorded its
+          // own timestamp, so this is the previously completed sync - i.e. how long
+          // this device had been out of sync *before* the sync that just succeeded.
+          previousSyncCompleted: localStorage.getItem(this.LAST_SYNC_KEY),
         },
+      );
+    } else {
+      Logging.debug(
+        "sync: no local docs to purge for server-reported lost permissions",
+        stats,
       );
     }
 
-    for (const _id of lostPermissionIds) {
-      try {
-        const purged = await this.purge(_id);
-        if (purged) {
-          Logging.debug(`Purged doc with lost permissions: ${_id}`);
-        } else {
-          Logging.debug(`Skipped purge for ${_id} (does not exist locally)`);
-        }
-      } catch (err) {
-        Logging.warn(`Error trying to purge doc`, _id, err);
-      }
+    if (failedIds.length > 0) {
+      // the local database keeps docs the user is no longer allowed to read
+      // (the legacy "idb" adapter does not implement purge at all, see purge())
+      Logging.warn(
+        "sync: failed to purge local docs that the server reported as no longer permitted",
+        { ...stats, sampleIds: failedIds.slice(0, this.SAMPLE_IDS_LOGGED) },
+        firstError,
+      );
     }
   }
 
@@ -450,5 +504,27 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
 type SyncResult = PouchDB.Replication.SyncResultComplete<any>;
 
+/**
+ * What of the last synced batch can be reported when a sync fails right after
+ * it: how much was in flight and which record types, but never the document
+ * ids themselves - those identify records and have no place in remote
+ * monitoring (see #4174), while as part of a message they would also open a
+ * separate issue per batch.
+ */
+function lastSyncedBatchContext(docIds: string[]): Record<string, unknown> {
+  return {
+    lastSyncedBatchSize: docIds.length,
+    lastSyncedEntityTypes: [...new Set(docIds.map((id) => id.split(":")[0]))],
+  };
+}
+
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {}
+class SyncStalledError extends Error {
+  constructor() {
+    super("Sync cancelled after making no progress");
+    // set explicitly: an Error subclass inherits the name "Error", and the class
+    // name is minified in production - remote monitoring would report this as
+    // "Error: No error message" (see logging module README)
+    this.name = "SyncStalledError";
+  }
+}

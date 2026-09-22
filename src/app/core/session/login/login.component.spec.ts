@@ -65,10 +65,6 @@ describe("LoginComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should be created", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should try to check session on startup", () => {
     expect(sessionManager.checkRemoteSession).toHaveBeenCalled();
   });

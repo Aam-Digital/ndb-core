@@ -91,11 +91,22 @@ This can happen after using multiple tabs in parallel.` +
     this.localDeviceReset.markResetPendingAndReload();
   }
 
-  handleKnownMultiTabCorruption(err: unknown, logMessage: string): void {
+  /**
+   * @param err the error to check and, if it is a known corruption, report
+   * @param logMessage what failed - static, so that remote monitoring keeps all
+   *   occurrences of the problem in one issue (see `core/logging/README.md`)
+   * @param context which database and other varying details, reported as
+   *   structured data alongside the message rather than interpolated into it
+   */
+  handleKnownMultiTabCorruption(
+    err: unknown,
+    logMessage: string,
+    context?: Record<string, unknown>,
+  ): void {
     if (!isKnownMultiTabDatabaseCorruption(err)) {
       return;
     }
-    Logging.warn(logMessage, err);
+    Logging.warn(logMessage, err, ...(context ? [context] : []));
     this.promptResetApplicationDialog().catch((callbackError) =>
       Logging.warn("onKnownMultiTabCorruption callback failed", callbackError),
     );

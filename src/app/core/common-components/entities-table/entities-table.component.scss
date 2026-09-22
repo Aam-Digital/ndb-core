@@ -16,9 +16,14 @@
   background: #f5f5f5;
 }
 
-.process-spinner {
-  display: flex;
-  justify-content: center;
+.loading-bar {
+  /* overlay the loading indicator at the top of the table so the current
+     content stays visible while new data is being loaded */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
 }
 
 .table {

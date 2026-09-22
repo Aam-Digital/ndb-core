@@ -59,10 +59,15 @@ export class EntitySpecialLoaderService {
     return updatedEntity;
   }
 
+  /**
+   * @param property the property of the loaded entity type that links to the given entity,
+   *        or several candidates if it cannot be determined unambiguously.
+   *        Each loader decides for itself whether and how it needs this.
+   */
   loadDataFor<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
     entity: Entity,
-    property?: string,
+    property?: string | string[],
   ): Promise<E[]> {
     switch (loaderMethod) {
       case LoaderMethod.HistoricalDataService:

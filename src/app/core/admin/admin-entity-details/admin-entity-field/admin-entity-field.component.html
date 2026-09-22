@@ -124,10 +124,7 @@
               ></app-basic-autocomplete>
             </mat-form-field>
 
-            @if (
-              formDataType.value === "configurable-enum" ||
-              formDataType.value === "entity"
-            ) {
+            @if (supportsMultiValue(formDataType.value)) {
               <mat-checkbox
                 formControlName="isArray"
                 matTooltip="Check this to let users select more than just one entry in this field."
@@ -260,6 +257,21 @@
               [fieldId]="fieldIdForm.value"
               [dataType]="schemaFieldsForm.get('dataType').value"
             ></app-admin-searchable-checkbox>
+
+            <div class="flex-row align-center gap-regular">
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="openDisplayConditionDialog()"
+                matTooltip="Only show this field in forms if the record currently matches a condition, based on the values of other fields."
+                i18n-matTooltip
+              >
+                <span i18n>Display Condition</span>
+              </button>
+              @if (schemaFieldsForm.get("displayCondition").value) {
+                <span i18n>Condition configured</span>
+              }
+            </div>
           </div>
         </div>
       </mat-tab>

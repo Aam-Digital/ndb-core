@@ -64,10 +64,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
       .schema.get("childId").additional = "Child";
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should change columns to be displayed via config", async () => {
     fixture.componentRef.setInput("entity", new TestEntity());
     fixture.componentRef.setInput("single", true);

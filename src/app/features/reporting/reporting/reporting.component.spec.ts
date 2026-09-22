@@ -144,10 +144,6 @@ describe("ReportingComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should call the reporting service with the aggregation config", async () => {
     vi.useFakeTimers();
     try {

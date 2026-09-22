@@ -5,7 +5,6 @@ import {
   DestroyRef,
   effect,
   inject,
-  Injectable,
   input,
   resource,
   ResourceRef,
@@ -29,12 +28,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
-import {
-  HAMMER_GESTURE_CONFIG,
-  HammerGestureConfig,
-  HammerModule,
-} from "@angular/platform-browser";
-import Hammer from "hammerjs";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -48,16 +41,6 @@ import {
 } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { RouteTarget } from "#src/app/route-target";
-
-// Only allow horizontal swiping
-@Injectable()
-class HorizontalHammerConfig extends HammerGestureConfig {
-  override overrides = {
-    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
-    pinch: { enable: false },
-    rotate: { enable: false },
-  };
-}
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -83,15 +66,8 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     FontAwesomeModule,
     EntityBlockComponent,
     RollCallTabComponent,
-    HammerModule,
     MatTooltipModule,
     ViewTitleComponent,
-  ],
-  providers: [
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: HorizontalHammerConfig,
-    },
   ],
 })
 export class RollCallComponent {

@@ -25,6 +25,7 @@ import { TestEntity } from "./test-utils/TestEntity";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { getDefaultConfigEntity } from "app/core/config/testing-config-service";
 import { getDefaultEnumEntities } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
@@ -71,7 +72,7 @@ import { parse, unparse } from "papaparse";
         unparse: (...args: Parameters<typeof unparse>) => unparse(...args),
       },
     },
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideHttpClientTesting(),
   ],
 })

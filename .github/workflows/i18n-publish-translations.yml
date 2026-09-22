@@ -91,7 +91,7 @@ jobs:
 
       - name: Clean up pre-release translations on stable release
         if: github.event_name == 'release' && !github.event.release.prerelease
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
 

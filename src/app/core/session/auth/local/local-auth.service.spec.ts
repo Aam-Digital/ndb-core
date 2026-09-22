@@ -33,10 +33,6 @@ describe("LocalAuthService", () => {
     environment.session_type = originalSessionType;
   });
 
-  it("should be created", () => {
-    expect(service).toBeDefined();
-  });
-
   it("should return saved users that have a local database", async () => {
     testUser = {
       name: TEST_USER,

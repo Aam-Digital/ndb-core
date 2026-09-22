@@ -36,10 +36,6 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should aggregate process states by title if set to summarize", async () => {
     vi.useFakeTimers();
     try {

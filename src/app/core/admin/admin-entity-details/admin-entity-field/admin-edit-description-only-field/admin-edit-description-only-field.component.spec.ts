@@ -38,10 +38,6 @@ describe("AdminEditDescriptionOnlyFieldComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize schemaFieldsForm with proper values", () => {
     component.formField = { id: "foo", label: "Test Label" };
     component.initSettings();

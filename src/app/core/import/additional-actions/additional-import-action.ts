@@ -13,7 +13,7 @@ interface AdditionalImportBaseAction {
    */
   sourceType: string;
 
-  targetType?: string;
+  targetType?: string | string[];
   targetId?: string;
 
   /**
@@ -30,7 +30,10 @@ export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
   mode: "direct";
 
   /**
-   * EntityType of the target entity (into which the entities should be linked)
+   * EntityType of the target entity (into which the entities should be linked).
+   * Always a single type in practice - a "direct" action updates one field on
+   * one target entity, unlike an "indirect" action's relationship field which
+   * can allow several target types (see AdditionalIndirectLinkAction.targetType).
    */
   targetType: string;
 
@@ -73,7 +76,8 @@ export interface AdditionalIndirectLinkAction extends AdditionalImportBaseAction
   relationshipTargetProperty: string;
 
   /**
-   * EntityType of the target entity (to which the entities should be linked)
+   * EntityType(s) of the target entity (to which the entities should be linked).
+   * An array when the relationship field allows linking to several record types.
    */
-  targetType: string;
+  targetType: string | string[];
 }

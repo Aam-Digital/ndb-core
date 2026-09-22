@@ -80,10 +80,6 @@ describe("ProgressDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load dashboard config on startup", async () => {
     vi.useFakeTimers();
     try {

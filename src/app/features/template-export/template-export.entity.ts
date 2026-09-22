@@ -56,6 +56,21 @@ export class TemplateExport extends Entity {
   applicableForEntityTypes: string[];
 
   /**
+   * Whether this template expects data of all selected records combined into a single
+   * top-level array (`d` becomes an array in the template, to be used with carbone's
+   * array/repetition syntax), instead of being applied to one record at a time.
+   *
+   * Such a report only makes sense for multiple records at once, so it is only offered
+   * as an option when generating a file for a bulk selection, never for a single record.
+   */
+  @DatabaseField({
+    label: $localize`:TemplateExport:Multi-Record Report`,
+    description: $localize`:TemplateExport:Enable this if the template uses carbone's array syntax to list all selected records within a single generated document (e.g. a table listing multiple people), instead of generating one file per record. Only offered when generating a file for multiple selected records at once (not for a single record).`,
+    dataType: "boolean",
+  })
+  arrayReport?: boolean;
+
+  /**
    * File (storing the file name) of the template uploaded to the server.
    */
   @DatabaseField({

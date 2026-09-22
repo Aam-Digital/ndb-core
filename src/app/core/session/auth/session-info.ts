@@ -39,6 +39,13 @@ export interface SessionInfo {
    * Email address of a user
    */
   email?: string;
+
+  /**
+   * Roles of the Keycloak "realm-management" client the user holds
+   * (e.g. "manage-realm", "manage-users"). Only present if the auth server's
+   * token includes client roles; undefined otherwise (capability unknown).
+   */
+  realmManagementRoles?: string[];
 }
 
 /**

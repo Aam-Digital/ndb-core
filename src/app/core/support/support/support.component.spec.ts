@@ -8,6 +8,7 @@ import {
   HttpClient,
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { MatDialogModule } from "@angular/material/dialog";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
@@ -92,7 +93,7 @@ describe("SupportComponent", () => {
           useValue: { getDatabase: () => mockDB },
         },
         SyncStateSubject,
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
@@ -103,10 +104,6 @@ describe("SupportComponent", () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
 
   it("should initialize application information", () => {
     expect(component.sessionInfo).toBe(testUser);

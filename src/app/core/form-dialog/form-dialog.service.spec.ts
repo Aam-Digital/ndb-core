@@ -47,10 +47,6 @@ describe("FormDialogService", () => {
     service = TestBed.inject<FormDialogService>(FormDialogService);
   }));
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should get columns from schema fields marked showInDetailsView", () => {
     @DatabaseEntity("TestWithShowInDetails")
     class TestWithShowInDetails extends Entity {

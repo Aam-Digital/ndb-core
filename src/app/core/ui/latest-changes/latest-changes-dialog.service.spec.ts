@@ -76,10 +76,6 @@ describe("LatestChangesDialogService", () => {
     );
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should not display changes on first visit (no version)", () => {
     service.showLatestChangesIfUpdated();
 

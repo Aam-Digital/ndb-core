@@ -65,10 +65,6 @@ describe("PublicFormComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should initialize for remote DB on startup", () => {
     expect(initRemoteDBSpy).toHaveBeenCalled();
   });

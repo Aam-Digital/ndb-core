@@ -63,10 +63,6 @@ describe("EditConfigurableEnumComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should extract the enum ID", () => {
     expect(component.enumId()).toBe("some-id");
   });

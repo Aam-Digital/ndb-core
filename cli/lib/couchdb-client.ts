@@ -104,6 +104,62 @@ export class Couchdb {
     return result?.docs ? result.docs : result;
   }
 
+  /**
+   * PUT a raw attachment binary. `path` must already include the attachment
+   * name and `?rev=` query string, e.g. `Child:abc123/dateienAusFreinet2?rev=3-xyz`
+   * — this method does not manage revs itself, callers own that (mirrors the
+   * app's own `CouchdbFileService` convention of the same shape).
+   */
+  async putAttachment(
+    path: string,
+    data: Buffer,
+    contentType: string,
+    db = "app-attachments",
+  ): Promise<{ ok: boolean; id: string; rev: string }> {
+    if (!path.startsWith("/")) path = "/" + path;
+    path = `/${db}${path}`;
+
+    const opts = {
+      method: "PUT",
+      headers: {
+        Authorization: this.authHeader,
+        "Content-Type": contentType,
+      },
+      // Node's fetch accepts a Buffer body fine at runtime; the mismatch here is
+      // this project's DOM+Node lib combination disagreeing on BodyInit's generic
+      // ArrayBuffer parameter, not an actual incompatibility.
+      body: data as BodyInit,
+    };
+    let res = await fetch(`${this.baseUrl}/couchdb${path}`, opts);
+    if (!res.ok && shouldTryAltPath(res.status)) {
+      res = await fetch(`${this.baseUrl}${path}`, opts);
+    }
+    if (!res.ok) throwHttpError(res);
+    return res.json();
+  }
+
+  /** Whether a database exists at all (as opposed to a doc within it). */
+  async databaseExists(db: string): Promise<boolean> {
+    const headers = { Authorization: this.authHeader };
+    let res = await fetch(`${this.baseUrl}/couchdb/${db}`, { headers });
+    if (!res.ok && shouldTryAltPath(res.status)) {
+      res = await fetch(`${this.baseUrl}/${db}`, { headers });
+    }
+    if (res.ok) return true;
+    if (res.status === 404) return false;
+    throwHttpError(res);
+  }
+
+  /** Idempotent: a 412 (already exists) is treated as success, not an error. */
+  async createDatabase(db: string): Promise<void> {
+    const opts = { method: "PUT", headers: { Authorization: this.authHeader } };
+    let res = await fetch(`${this.baseUrl}/couchdb/${db}`, opts);
+    if (!res.ok && shouldTryAltPath(res.status)) {
+      res = await fetch(`${this.baseUrl}/${db}`, opts);
+    }
+    if (!res.ok && res.status !== 412) throwHttpError(res);
+  }
+
   async post(path: string, data: unknown): Promise<unknown> {
     if (!path.startsWith("/")) path = "/" + path;
     let res = await this.post_(`${this.baseUrl}/couchdb${path}`, data);

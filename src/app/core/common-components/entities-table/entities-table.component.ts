@@ -11,6 +11,7 @@ import {
   OnInit,
   output,
   QueryList,
+  untracked,
   ViewChild,
 } from "@angular/core";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -38,6 +39,7 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
+import { Logging } from "../../logging/logging.service";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { TableRow } from "./table-row";
@@ -46,7 +48,7 @@ import {
   shouldSkipRowInteraction,
 } from "./entities-table-selection";
 import { EntitiesTableSortStore } from "./entities-table-sort.store";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 
 /**
  * A reusable table component for displaying, sorting, filtering, and selecting entities.
@@ -85,7 +87,7 @@ export class EntitiesTableComponent<T extends Entity>
   ) as EntitiesTableSelectionStore<T>;
 
   // --- Inputs ---
-  recordsDataSource = input.required<InMemoryDataSource<T>>();
+  recordsDataSource = input.required<EntitiesTableDataSource<T>>();
   customColumns = input<ColumnConfig[], ColumnConfig[] | undefined>([], {
     transform: (value) => value ?? [],
   });
@@ -115,14 +117,46 @@ export class EntitiesTableComponent<T extends Entity>
   readonly ACTIONCOLUMN_EDIT = "__edit";
 
   // --- Column state ---
-  readonly _customColumns = computed<FormFieldConfig[]>(() =>
-    this.customColumns().map((column) => {
-      const entityType = this.entityType();
-      return entityType
-        ? this.entityFormService.extendFormFieldConfig(column, entityType)
-        : toFormFieldConfig(column);
-    }),
-  );
+  readonly _customColumns = computed<FormFieldConfig[]>(() => {
+    const entityType = this.entityType();
+    const columns: FormFieldConfig[] = [];
+    for (const column of this.customColumns()) {
+      try {
+        const resolved = entityType
+          ? this.entityFormService.extendFormFieldConfig(column, entityType)
+          : toFormFieldConfig(column);
+        // toFormFieldConfig (used when no entityType is set) never throws, so a
+        // malformed column (e.g. null) has to be caught here explicitly instead
+        if (!resolved?.id) {
+          throw new Error("column has no id");
+        }
+        columns.push(resolved);
+      } catch (err) {
+        // an incompletely configured column must not block the rest of the table from rendering
+        Logging.error("Could not create table column config for a field", err, {
+          column,
+          entityType: entityType?.ENTITY_TYPE,
+        });
+      }
+    }
+    return columns;
+  });
+  /** All known columns (entity schema fields plus configured custom columns), used to validate ids and build columnDefs. */
+  readonly _allColumns = computed<FormFieldConfig[]>(() => {
+    const mappedCustomColumns = this._customColumns();
+    const entityType = this.entityType();
+    const entityColumns = entityType?.schema
+      ? [...entityType.schema.entries()].map(
+          ([id, field]) => ({ ...field, id }) as FormFieldConfig,
+        )
+      : [];
+    return [
+      ...entityColumns.filter(
+        (col) => !mappedCustomColumns.some((custom) => custom.id === col.id),
+      ),
+      ...mappedCustomColumns,
+    ];
+  });
   readonly _columnsToDisplay = computed<string[]>(() => {
     let colsToDisplay = this.columnsToDisplay();
     if (!colsToDisplay || colsToDisplay.length === 0) {
@@ -130,7 +164,24 @@ export class EntitiesTableComponent<T extends Entity>
         .filter((column) => !column.hideFromTable)
         .map((column) => column.id);
     }
-    const columns = colsToDisplay.filter((col) => !col.startsWith("__"));
+
+    const knownIds = new Set(this._allColumns().map((c) => c.id));
+    const columns: string[] = [];
+    for (const col of colsToDisplay) {
+      if (typeof col === "string" && col.startsWith("__")) {
+        continue; // reserved ids for the select/edit action columns added below
+      }
+      if (typeof col !== "string" || !knownIds.has(col)) {
+        // a dangling or incompletely configured column id must not block the rest of the table from rendering
+        Logging.error("Could not display an unknown table column", {
+          column: col,
+          entityType: this.entityType()?.ENTITY_TYPE,
+        });
+        continue;
+      }
+      columns.push(col);
+    }
+
     if (this.selectable()) {
       columns.unshift(this.ACTIONCOLUMN_SELECT);
     }
@@ -183,28 +234,21 @@ export class EntitiesTableComponent<T extends Entity>
     effect(() => {
       this.recordsDataSource().sortValueFns.set(this.sortStore.sortValueFns());
     });
+    effect(() => {
+      this.recordsDataSource().dataFilter();
+      this.recordsDataSource().displayedData();
+      if (untracked(this.selectedRecords)?.length > 0) {
+        // reset selection if filter or input data changes
+        this.selectedRecords.set([]);
+      }
+    });
   }
 
   ngOnInit() {
     // Connect sort store
     this.sortStore.connect({
       columnsToDisplay: this._columnsToDisplay,
-      columns: computed(() => {
-        const mappedCustomColumns = this._customColumns();
-        const entityType = this.entityType();
-        const entityColumns = entityType?.schema
-          ? [...entityType.schema.entries()].map(
-              ([id, field]) => ({ ...field, id }) as FormFieldConfig,
-            )
-          : [];
-        return [
-          ...entityColumns.filter(
-            (col) =>
-              !mappedCustomColumns.some((custom) => custom.id === col.id),
-          ),
-          ...mappedCustomColumns,
-        ];
-      }),
+      columns: this._allColumns,
       externalSort: this.sortBy,
     });
 

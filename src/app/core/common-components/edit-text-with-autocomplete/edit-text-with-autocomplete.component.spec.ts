@@ -59,10 +59,6 @@ describe("EditTextWithAutocompleteComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show all entities of the given type", async () => {
     const e1 = TestEntity.create("First Entity");
     const e2 = TestEntity.create("Second Entity");

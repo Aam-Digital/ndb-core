@@ -8,10 +8,12 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatFormFieldHarness } from "@angular/material/form-field/testing";
 import { MatInputHarness } from "@angular/material/input/testing";
+import { MatCheckboxHarness } from "@angular/material/checkbox/testing";
 import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
+import { LongTextDatatype } from "../../../basic-datatypes/string/long-text.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -22,6 +24,8 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { ConditionEditorDialogComponent } from "app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -89,10 +93,6 @@ describe("AdminEntityFieldComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
   }
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
 
   it("should generate id (if new field) from label", async () => {
     component.schemaFieldsForm.get("label").setValue("New Label");
@@ -217,6 +217,82 @@ describe("AdminEntityFieldComponent", () => {
     await fixture.whenStable();
 
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
+  });
+
+  it("should offer the multi-value option only for dataTypes supporting it", async () => {
+    const dataTypeForm = component.schemaFieldsForm.get("dataType");
+    async function findMultiValueCheckbox() {
+      const checkboxes = await loader.getAllHarnesses(
+        MatCheckboxHarness.with({ label: /allow multiple values/ }),
+      );
+      return checkboxes[0];
+    }
+
+    dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(await findMultiValueCheckbox()).toBeTruthy();
+
+    dataTypeForm.setValue(LongTextDatatype.dataType);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(await findMultiValueCheckbox()).toBeUndefined();
+  });
+
+  it("should remove isArray when switching to a dataType that does not support multiple values", async () => {
+    await recreateComponentWithData({
+      label: "interests",
+      dataType: ConfigurableEnumDatatype.dataType,
+      additional: "interests",
+      isArray: true,
+    } as EntitySchemaField);
+    await fixture.whenStable();
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(LongTextDatatype.dataType);
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("isArray").value).toBeFalsy();
+    // the flag has to be removed entirely, not just set to false
+    expect(dialogData.entitySchemaField.isArray).toBeUndefined();
+  });
+
+  it("should keep isArray when switching between dataTypes that support multiple values", async () => {
+    await recreateComponentWithData({
+      label: "related records",
+      dataType: ConfigurableEnumDatatype.dataType,
+      additional: "interests",
+      isArray: true,
+    } as EntitySchemaField);
+    await fixture.whenStable();
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(EntityDatatype.dataType);
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("isArray").value).toBe(true);
+    expect(dialogData.entitySchemaField.isArray).toBe(true);
+  });
+
+  it("should keep isArray when switching to a dataType that requires multiple values", async () => {
+    // "attendance" does not offer the checkbox but enforces isArray itself
+    await recreateComponentWithData({
+      label: "participants",
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+      isArray: true,
+    } as EntitySchemaField);
+    await fixture.whenStable();
+
+    component.schemaFieldsForm
+      .get("dataType")
+      .setValue(AttendanceDatatype.dataType);
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("isArray").value).toBe(true);
+    expect(dialogData.entitySchemaField.isArray).toBe(true);
   });
 
   it("should support array values for entity type additional", async () => {
@@ -461,6 +537,82 @@ describe("AdminEntityFieldComponent", () => {
     expect(component.fieldIdForm.errors).toEqual({
       uniqueProperty: expect.any(String),
     });
+  });
+
+  it("should open the display condition dialog with the current entityType and condition, and apply the result", async () => {
+    await recreateComponentWithData(
+      {
+        label: "Other",
+        dataType: StringDatatype.dataType,
+      } as EntitySchemaField,
+      TestEntity,
+    );
+
+    const newCondition = { $or: [{ name: "shown" }] };
+    const dialogSpy = vi
+      .spyOn((component as any).dialog, "open")
+      .mockReturnValue(mockMatDialogRef(newCondition) as any);
+
+    component.openDisplayConditionDialog();
+    await fixture.whenStable();
+
+    expect(dialogSpy).toHaveBeenCalledWith(
+      ConditionEditorDialogComponent,
+      expect.objectContaining({
+        data: expect.objectContaining({
+          entityConstructor: TestEntity,
+          // an unset FormControl value is `null`, not `undefined`
+          conditions: null,
+        }),
+      }),
+    );
+    expect(component.schemaFieldsForm.get("displayCondition").value).toEqual(
+      newCondition,
+    );
+  });
+
+  it("should clear the display condition when the dialog is closed with 'remove'", async () => {
+    await recreateComponentWithData(
+      {
+        label: "Other",
+        dataType: StringDatatype.dataType,
+        displayCondition: { $or: [{ name: "shown" }] },
+      } as EntitySchemaField,
+      TestEntity,
+    );
+
+    vi.spyOn((component as any).dialog, "open").mockReturnValue(
+      mockMatDialogRef(null) as any,
+    );
+
+    component.openDisplayConditionDialog();
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("displayCondition").value).toBeNull();
+    expect(dialogData.entitySchemaField.displayCondition).toBeUndefined();
+  });
+
+  it("should keep the display condition unchanged when the dialog is cancelled", async () => {
+    const existingCondition = { $or: [{ name: "shown" }] };
+    await recreateComponentWithData(
+      {
+        label: "Other",
+        dataType: StringDatatype.dataType,
+        displayCondition: existingCondition,
+      } as EntitySchemaField,
+      TestEntity,
+    );
+
+    vi.spyOn((component as any).dialog, "open").mockReturnValue(
+      mockMatDialogRef(undefined) as any,
+    );
+
+    component.openDisplayConditionDialog();
+    await fixture.whenStable();
+
+    expect(component.schemaFieldsForm.get("displayCondition").value).toEqual(
+      existingCondition,
+    );
   });
 
   it("should reject a field ID starting with underscore", async () => {

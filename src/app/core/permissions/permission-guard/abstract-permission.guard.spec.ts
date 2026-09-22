@@ -30,10 +30,6 @@ describe("EntityPermissionGuard", () => {
     guard = TestBed.inject(TestPermissionGuard);
   });
 
-  it("should be created", () => {
-    expect(guard).toBeTruthy();
-  });
-
   it("should get route config also for '**' path", async () => {
     const result = await guard.checkRoutePermissions("url");
 

@@ -1,0 +1,417 @@
+import type { Mock } from "vitest";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+
+import { LocalPermissionEnforcerService } from "./local-permission-enforcer.service";
+import { PermissionEnforcerService } from "./permission-enforcer.service";
+import { DatabaseRule } from "../permission-types";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { AbilityService } from "../ability/ability.service";
+import { AnalyticsService } from "../../analytics/analytics.service";
+import { Subject } from "rxjs";
+import { Config } from "../../config/config";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { TEST_USER } from "../../user/demo-user-generator.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
+
+describe("LocalPermissionEnforcerService", () => {
+  let service: LocalPermissionEnforcerService;
+  const userRules: DatabaseRule[] = [
+    { subject: "all", action: "manage" },
+    { subject: TestEntity.ENTITY_TYPE, action: "read", inverted: true },
+  ];
+  let entityUpdates: Subject<UpdatedEntity<Config>>;
+  let entityMapper: EntityMapperService;
+  let mockLocation: any;
+  let destroySpy: Mock;
+  let resetSyncSpy: Mock;
+  let mockDb: {
+    purge: Mock;
+  };
+  let isIndexedDbAdapterSpy: Mock;
+
+  beforeEach(waitForAsync(() => {
+    entityUpdates = new Subject();
+    mockLocation = {
+      reload: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      imports: [MockedTestingModule.withState()],
+      providers: [
+        LocalPermissionEnforcerService,
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+      ],
+    });
+    service = TestBed.inject(LocalPermissionEnforcerService);
+
+    entityMapper = TestBed.inject(EntityMapperService);
+    (entityMapper as MockEntityMapperService).clearAllData();
+    vi.spyOn(entityMapper, "receiveUpdates").mockReturnValue(entityUpdates);
+
+    const dbResolver = TestBed.inject(DatabaseResolverService);
+    dbResolver.destroyDatabases = () => null;
+    destroySpy = vi.spyOn(dbResolver, "destroyDatabases");
+    dbResolver.resetSync = () => Promise.resolve();
+    resetSyncSpy = vi
+      .spyOn(dbResolver, "resetSync")
+      .mockResolvedValue(undefined);
+    mockDb = { purge: vi.fn().mockResolvedValue(true) };
+    dbResolver.getDatabase = () => mockDb as any;
+    // Default to indexeddb adapter for tests unless overridden
+    dbResolver.isIndexedDbAdapterSupported = () => true;
+    isIndexedDbAdapterSpy = vi
+      .spyOn(dbResolver, "isIndexedDbAdapterSupported")
+      .mockReturnValue(true);
+
+    TestBed.inject(AbilityService).initializeRules();
+  }));
+
+  afterEach(() => {
+    window.localStorage.removeItem(
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
+    );
+  });
+
+  it("should write the users relevant permissions to local storage", async () => {
+    vi.useFakeTimers();
+    try {
+      service.enforcePermissionsOnLocalData(userRules);
+      await vi.advanceTimersByTimeAsync(0);
+
+      const storedRules = window.localStorage.getItem(
+        TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
+      );
+      expect(JSON.parse(storedRules)).toEqual(userRules);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should return the last enforced rules for the current user", async () => {
+    vi.useFakeTimers();
+    try {
+      service.enforcePermissionsOnLocalData(userRules);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(service.getLastEnforcedRules()).toEqual(userRules);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not return malformed stored rules", () => {
+    window.localStorage.setItem(
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
+      "not json",
+    );
+
+    expect(service.getLastEnforcedRules()).toBeUndefined();
+  });
+
+  it("should not reset if roles didnt change since last check", async () => {
+    vi.useFakeTimers();
+    try {
+      updateRulesAndTriggerEnforcer(userRules);
+      await vi.advanceTimersByTimeAsync(0);
+      resetSyncSpy.mockClear();
+
+      entityMapper.save(new TestEntity());
+      await vi.advanceTimersByTimeAsync(0);
+
+      updateRulesAndTriggerEnforcer(userRules);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(destroySpy).not.toHaveBeenCalled();
+      expect(mockLocation.reload).not.toHaveBeenCalled();
+      expect(resetSyncSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not fail if a non-entity rule exists", async () => {
+    vi.useFakeTimers();
+    try {
+      const rules: DatabaseRule[] = [
+        { subject: TestEntity.ENTITY_TYPE, action: "manage" },
+        { subject: "org.couchdb.user", action: "read", inverted: true },
+      ];
+      updateRulesAndTriggerEnforcer(rules);
+      await vi.advanceTimersByTimeAsync(0);
+
+      const storedRules = localStorage.getItem(
+        `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`,
+      );
+      expect(JSON.parse(storedRules)).toEqual(rules);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  describe("indexeddb adapter (purge supported)", () => {
+    // isIndexedDbAdapterSpy defaults to true from beforeEach
+
+    it("should purge inaccessible entities before and after resetSync (to handle push/pull race)", async () => {
+      vi.useFakeTimers();
+      try {
+        const inaccessible = new TestEntity();
+        entityMapper.save(inaccessible);
+        await vi.advanceTimersByTimeAsync(0);
+
+        // Track call order via a shared sequence log
+        const callSequence: string[] = [];
+        mockDb.purge.mockImplementation(() => {
+          callSequence.push("purge");
+          return Promise.resolve(true);
+        });
+        resetSyncSpy.mockImplementation(() => {
+          callSequence.push("sync");
+          return Promise.resolve();
+        });
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(mockDb.purge).toHaveBeenCalledWith(inaccessible.getId());
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+
+        // Verify the double-purge pattern: purge → sync → purge (at least once in sequence)
+        const firstPurgeIdx = callSequence.indexOf("purge");
+        const firstSyncIdx = callSequence.indexOf("sync");
+        const lastPurgeIdx = callSequence.lastIndexOf("purge");
+        expect(firstPurgeIdx).toBeLessThan(firstSyncIdx);
+        expect(lastPurgeIdx).toBeGreaterThan(firstSyncIdx);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should call resetSync even when no entities lack permissions", async () => {
+      vi.useFakeTimers();
+      try {
+        updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(resetSyncSpy).toHaveBeenCalled();
+        expect(mockDb.purge).not.toHaveBeenCalled();
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should track analytics event 're-sync triggered due to changed permissions' when rules change", async () => {
+      vi.useFakeTimers();
+      try {
+        const trackSpy = vi.spyOn(
+          TestBed.inject(AnalyticsService),
+          "eventTrack",
+        );
+
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(trackSpy).toHaveBeenCalledWith(
+          "re-sync triggered due to changed permissions",
+          { category: "Migration" },
+        );
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
+  describe("legacy idb adapter (purge not supported)", () => {
+    beforeEach(() => {
+      isIndexedDbAdapterSpy.mockReturnValue(false);
+    });
+
+    it("should reset page if entity with write restriction exists (inverted)", async () => {
+      vi.useFakeTimers();
+      try {
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).toHaveBeenCalled();
+        expect(mockLocation.reload).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should reset page if entity without read permission exists (non-inverted)", async () => {
+      vi.useFakeTimers();
+      try {
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer([
+          { subject: "School", action: "manage" },
+        ]);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).toHaveBeenCalled();
+        expect(mockLocation.reload).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should reset page if entity exists for which relevant rule is a read restriction", async () => {
+      vi.useFakeTimers();
+      try {
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer([
+          { subject: "all", action: "manage" },
+          {
+            subject: [TestEntity.ENTITY_TYPE, "School"],
+            action: ["read", "update"],
+            inverted: true,
+          },
+          { subject: "Note", action: "create", inverted: true },
+        ]);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).toHaveBeenCalled();
+        expect(mockLocation.reload).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should not reset page if only entities with read permission exist", async () => {
+      vi.useFakeTimers();
+      try {
+        destroySpy.mockClear();
+        mockLocation.reload.mockClear();
+
+        entityMapper.save(new TestEntity());
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer([
+          { subject: TestEntity.ENTITY_TYPE, action: ["read", "update"] },
+          { subject: "all", action: "delete", inverted: true },
+          { subject: ["Note"], action: "read" },
+        ]);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should destroy and reload when roles changed and entities without permissions now exist", async () => {
+      vi.useFakeTimers();
+      try {
+        const entityCurrentlyAccessible = createEntityOfType("School");
+        entityMapper.save(entityCurrentlyAccessible);
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+
+        const extendedRules = userRules.concat({
+          subject: entityCurrentlyAccessible.getType(),
+          action: "manage",
+          inverted: true,
+        });
+
+        updateRulesAndTriggerEnforcer(extendedRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).toHaveBeenCalled();
+        expect(mockLocation.reload).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should reset if read rule with condition is added", async () => {
+      vi.useFakeTimers();
+      try {
+        entityMapper.save(TestEntity.create("permitted"));
+        entityMapper.save(TestEntity.create("not-permitted"));
+
+        updateRulesAndTriggerEnforcer([
+          {
+            subject: TestEntity.ENTITY_TYPE,
+            action: "read",
+            conditions: { name: "permitted" },
+          },
+        ]);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).toHaveBeenCalled();
+        expect(mockLocation.reload).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should track analytics event 'destroying local db due to lost permissions' when destroying the local db", async () => {
+      vi.useFakeTimers();
+      try {
+        const trackSpy = vi.spyOn(
+          TestBed.inject(AnalyticsService),
+          "eventTrack",
+        );
+
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(trackSpy).toHaveBeenCalledWith(
+          "destroying local db due to lost permissions",
+          {
+            category: "Migration",
+          },
+        );
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should call resetSync if rules changed but no entities lack permissions", async () => {
+      vi.useFakeTimers();
+      try {
+        // No entities saved, so no permission violations
+        updateRulesAndTriggerEnforcer([{ subject: "all", action: "manage" }]);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+        expect(resetSyncSpy).toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
+  function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
+    const config = new Config(Config.PERMISSION_KEY, { ["user_app"]: rules });
+    entityUpdates.next({ entity: config, type: "update" });
+  }
+});

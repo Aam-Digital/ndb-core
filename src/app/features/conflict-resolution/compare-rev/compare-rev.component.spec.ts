@@ -71,10 +71,6 @@ describe("CompareRevComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load and analyse the given doc revision", async () => {
     component.onPanelOpen();
     fixture.detectChanges();
@@ -94,6 +90,9 @@ describe("CompareRevComponent", () => {
     mockResolutionService.shouldDeleteConflictingRevision.mockReturnValue(true);
 
     component.onPanelOpen();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    // the auto-resolution effect awaits internally before setting resolution()
     fixture.detectChanges();
     await fixture.whenStable();
 

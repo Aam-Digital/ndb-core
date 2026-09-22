@@ -72,10 +72,6 @@ describe("AttendanceCalendarComponent", () => {
     TestBed.inject(FaIconLibrary).addIcons(faCaretDown, faTimes);
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("sets min and max selectable date based on time range of given records", () => {
     fixture.componentRef.setInput("records", [
       TestEventEntity.generateEventWithAttendance([], new Date("2020-01-05")),
