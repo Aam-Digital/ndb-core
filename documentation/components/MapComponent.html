@@ -673,8 +673,8 @@ Hides address search, selected location, and save/cancel actions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="400"
-                                    class="link-to-prism">src/app/features/location/map/map.component.ts:400</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="407"
+                                    class="link-to-prism">src/app/features/location/map/map.component.ts:407</a></div>
                         </td>
                     </tr>
 
@@ -710,8 +710,8 @@ Hides address search, selected location, and save/cancel actions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="442"
-                                    class="link-to-prism">src/app/features/location/map/map.component.ts:442</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="449"
+                                    class="link-to-prism">src/app/features/location/map/map.component.ts:449</a></div>
                         </td>
                     </tr>
 
@@ -1090,7 +1090,14 @@ export class MapComponent implements AfterViewInit {
       .forEach((entity) &#x3D;&gt; {
         this.getMapProperties(entity)
           .map((prop) &#x3D;&gt; entity[prop]?.geoLookup)
-          .filter((loc: GeoResult) &#x3D;&gt; !!loc)
+          .filter(
+            (loc: GeoResult) &#x3D;&gt;
+              !!loc &amp;&amp;
+              loc.lat !&#x3D; null &amp;&amp;
+              loc.lon !&#x3D; null &amp;&amp;
+              !isNaN(Number(loc.lat)) &amp;&amp;
+              !isNaN(Number(loc.lon)),
+          )
           .forEach((loc: GeoResult) &#x3D;&gt; {
             const entityColor &#x3D; entity.getColor() || &quot;#808080&quot;;
             const marker &#x3D; L.marker([loc.lat, loc.lon], {
