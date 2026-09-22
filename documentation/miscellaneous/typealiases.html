@@ -176,7 +176,7 @@
                             <a href="#ConflictOutcome" title="src/app/core/database/pouchdb/pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ConflictOutcome</b>&nbsp;&nbsp;&nbsp;(src/.../pouch-database.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#CrudAction" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>CrudAction</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
+                            <a href="#CrudAction" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>CrudAction</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
                             <a href="#DashboardTheme" title="src/app/core/dashboard/dashboard-widget/dashboard-widget.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>DashboardTheme</b>&nbsp;&nbsp;&nbsp;(src/.../dashboard-widget.component.ts)</span></a>
@@ -699,7 +699,7 @@ confirms by default. Those are different test setups, not two spellings of one.<
         </tbody>
     </table>
 </section>
-    <h3>src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts</h3>
+    <h3>src/app/core/permissions/permission-types.ts</h3>
     <section data-compodoc="block-typealias">
     <table class="table table-sm table-bordered">
         <tbody>
@@ -711,64 +711,12 @@ confirms by default. Those are different test setups, not two spellings of one.<
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>the four individual CRUD actions shown as their own matrix columns (&quot;manage&quot; is separate)</p>
-</div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <code>    <code>&quot;read&quot; | &quot;create&quot; | &quot;update&quot; | &quot;delete&quot;</code>
+                    <code>        <code><a href="../miscellaneous/variables.html#CRUD_ACTIONS" target="_self" >typeof CRUD_ACTIONS[&#x27;number&#x27;]</a></code>
 </code>
                 </td>
             </tr>
         </tbody>
     </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="GrantedBy"></a>
-                    <span class="name "><b>GrantedBy</b><a href="#GrantedBy"><span class="icon ion-ios-link"></span></a></span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Where an action is granted from, if not by an own rule of its row:
-the row&#39;s own &quot;manage&quot;, the &quot;all record types&quot; row of this same role,
-or the shared &quot;_default&quot; role that applies to every logged-in user.</p>
-</div>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <code>    <code>&quot;manage&quot; | &quot;wildcard&quot; | &quot;default&quot;</code>
-</code>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/dashboard/dashboard-widget/dashboard-widget.component.ts</h3>
-    <section data-compodoc="block-typealias">
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="DashboardTheme"></a>
-                    <span class="name "><b>DashboardTheme</b><a href="#DashboardTheme"><span class="icon ion-ios-link"></span></a></span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <code>    <code>&quot;general&quot; | &quot;child&quot; | &quot;attendance&quot; | &quot;note&quot; | &quot;class&quot; | &quot;school&quot;</code>
-</code>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/permissions/permission-types.ts</h3>
-    <section data-compodoc="block-typealias">
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -835,6 +783,25 @@ E.g. <code>Child</code>, <code>new Note()</code> or <code>all</code></p>
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="../classes/Entity.html" target="_self" >EntityConstructor | Entity | string</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/dashboard/dashboard-widget/dashboard-widget.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DashboardTheme"></a>
+                    <span class="name "><b>DashboardTheme</b><a href="#DashboardTheme"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;general&quot; | &quot;child&quot; | &quot;attendance&quot; | &quot;note&quot; | &quot;class&quot; | &quot;school&quot;</code>
 </code>
                 </td>
             </tr>
@@ -1345,6 +1312,33 @@ the index of a field group in the form, or the toolbar of fields not used in the
             <tr>
                 <td class="col-md-4">
                     <code>    <code>PouchDB.Query.Options&lt;any | any&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="GrantedBy"></a>
+                    <span class="name "><b>GrantedBy</b><a href="#GrantedBy"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Where an action is granted from, if not by an own rule of its row:
+the row&#39;s own &quot;manage&quot;, the &quot;all record types&quot; row of this same role,
+or the shared &quot;_default&quot; role that applies to every logged-in user.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;manage&quot; | &quot;wildcard&quot; | &quot;default&quot;</code>
 </code>
                 </td>
             </tr>

@@ -506,6 +506,12 @@
                             <a href="#getWarningLevelColor" title="src/app/child-dev-project/warning-level.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getWarningLevelColor</b>&nbsp;&nbsp;&nbsp;(src/.../warning-level.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#grantedByAdvancedRuleTooltip" title="src/app/core/permissions/permission-action-labels.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>grantedByAdvancedRuleTooltip</b>&nbsp;&nbsp;&nbsp;(src/.../permission-action-labels.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#grantedByDefaultRoleTooltip" title="src/app/core/permissions/permission-action-labels.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>grantedByDefaultRoleTooltip</b>&nbsp;&nbsp;&nbsp;(src/.../permission-action-labels.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#groupAllowedActions" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>groupAllowedActions</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
                         </li>
                         <li>
@@ -626,7 +632,7 @@
                             <a href="#isPublicFormRoute" title="src/bootstrap-environment.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isPublicFormRoute</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#isReservedRuleConfigKey" title="src/app/core/admin/admin-role-permissions/role-permissions.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isReservedRuleConfigKey</b>&nbsp;&nbsp;&nbsp;(src/.../role-permissions.service.ts)</span></a>
+                            <a href="#isReservedRuleConfigKey" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isReservedRuleConfigKey</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isRetryableNetworkError" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isRetryableNetworkError</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</span></a>
@@ -651,9 +657,6 @@
                         </li>
                         <li>
                             <a href="#lastSyncedBatchContext" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lastSyncedBatchContext</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
-                        </li>
-                        <li>
-                            <a href="#lockDescriptionId" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lockDescriptionId</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#matches" title="src/app/utils/test-utils/array-test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>matches</b>&nbsp;&nbsp;&nbsp;(src/.../array-test-utils.ts)</span></a>
@@ -858,6 +861,12 @@
                         </li>
                         <li>
                             <a href="#roleDisplayName" title="src/app/core/permissions/reserved-roles.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>roleDisplayName</b>&nbsp;&nbsp;&nbsp;(src/.../reserved-roles.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#ruleAppliesToSubject" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>ruleAppliesToSubject</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#ruleCoversAction" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>ruleCoversAction</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
                             <a href="#rulesToMatrix" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rulesToMatrix</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
@@ -16049,6 +16058,78 @@ This also transforms date objects to <code>YYYY-MM-DD</code> format.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/permissions/permission-action-labels.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="grantedByAdvancedRuleTooltip"></a>
+                    <span class="name">
+                        <span ><b>grantedByAdvancedRuleTooltip</b></span>
+                        <a href="#grantedByAdvancedRuleTooltip"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>grantedByAdvancedRuleTooltip()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Explains a checkbox that is ticked but disabled because a rule this UI cannot
+express (wildcard subject, grouped subjects, conditions, an inverted rule or a
+rule managed by the server) decides the access.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="grantedByDefaultRoleTooltip"></a>
+                    <span class="name">
+                        <span ><b>grantedByDefaultRoleTooltip</b></span>
+                        <a href="#grantedByDefaultRoleTooltip"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>grantedByDefaultRoleTooltip()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Explains a checkbox that is ticked but disabled because the shared default
+role already grants the action to every logged-in user.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -16310,6 +16391,236 @@ applies to logged-in users would inherit the &quot;_default&quot; rules as usual
                                                 <td>roleName</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isReservedRuleConfigKey"></a>
+                    <span class="name">
+                        <span ><b>isReservedRuleConfigKey</b></span>
+                        <a href="#isReservedRuleConfigKey"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isReservedRuleConfigKey(key: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether a key in <a href="../interfaces/DatabaseRules.html">DatabaseRules</a> carries special semantics instead of
+naming a user role, so it must neither be resolved as a role nor rewritten by
+a per-role UI. Covers the reserved underscore prefix as well as the legacy
+(non-prefixed) spellings of not yet migrated configs.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>key</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ruleAppliesToSubject"></a>
+                    <span class="name">
+                        <span ><b>ruleAppliesToSubject</b></span>
+                        <a href="#ruleAppliesToSubject"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ruleAppliesToSubject(subject, entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the rule applies to the given entity type, ignoring conditions and
+inversion. <code>all</code> matches every entity type.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subject</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ruleCoversAction"></a>
+                    <span class="name">
+                        <span ><b>ruleCoversAction</b></span>
+                        <a href="#ruleCoversAction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ruleCoversAction(rule: <a href="../miscellaneous/typealiases.html#DatabaseRule" target="_self">DatabaseRule</a>, entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, action: <a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self">EntityActionPermission</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the rule grants the given action for the entity type, ignoring conditions
+and inversion. <code>manage</code> covers every other action, and a rule can list several
+actions as an array.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rule</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DatabaseRule" target="_self" >DatabaseRule</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
                                             </td>
 
                                             <td>
@@ -16993,73 +17304,6 @@ Can be configured to validate different properties (id, label, etc.) with option
         </tbody>
     </table>
 </section>
-    <h3>src/app/core/admin/admin-role-permissions/role-permissions.service.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isReservedRuleConfigKey"></a>
-                    <span class="name">
-                        <span ><b>isReservedRuleConfigKey</b></span>
-                        <a href="#isReservedRuleConfigKey"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>isReservedRuleConfigKey(key: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Whether a key of the permissions config carries special semantics instead of
-naming a user role, so it must never be listed as an ordinary, deletable role.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>key</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
     <h3>src/app/core/session/auth/keycloak/keycloak-auth.service.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -17381,86 +17625,6 @@ separate issue per batch.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="lockDescriptionId"></a>
-                    <span class="name">
-                        <span ><b>lockDescriptionId</b></span>
-                        <a href="#lockDescriptionId"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>lockDescriptionId(subject: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, action: <a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self">EntityActionPermission</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Stable id of the hidden element describing why a cell&#39;s checkbox is locked.
-Derived from subject and action rather than a row index, so it stays the same
-when rows are added or removed.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>subject</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>action</td>
-                                            <td>
-                                                            <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">

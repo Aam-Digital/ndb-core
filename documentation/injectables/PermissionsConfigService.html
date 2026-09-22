@@ -1,0 +1,811 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >PermissionsConfigService</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/permissions/permissions-config.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Shared access to the central <code>Config:Permissions</code> document for the different
+UIs that read or edit it (raw JSON editor, public form setup, feature grid).</p>
+<p>Editing permissions is a high-risk operation - a wrong write can lock users
+out of the whole app - so every write goes through <a href="saveWithBackup">saveWithBackup</a>,
+which keeps a timestamped copy of the previous state.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-metadata">
+            <h3>Metadata</h3>
+            <table class="table table-sm table-hover metadata">
+                <tbody>
+                    <tr>
+                        <td class="col-md-3">providedIn</td>
+                        <td class="col-md-9"><code>root</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#canManagePermissions$" >canManagePermissions$</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#canManagePermissions" >canManagePermissions</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#load" >load</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#offerUndo" >offerUndo</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#saveWithBackup" >saveWithBackup</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canManagePermissions"></a>
+                    <span class="name">
+                        <span ><b>canManagePermissions</b></span>
+                        <a href="#canManagePermissions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>canManagePermissions()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/app/core/permissions/permissions-config.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the current user may edit the permissions config.</p>
+<p>Derived from the actual CASL rules rather than a hardcoded role name, so
+that deployments granting this to a role other than <code>admin_app</code> get the
+editing UI, and deployments revoking it do not get a grid whose save fails.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="load"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>load</b></span>
+                        <a href="#load"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>load()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/permissions/permissions-config.service.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load the permissions config, or <code>null</code> if it does not exist yet.</p>
+<p>Any other load failure is rethrown: a caller must not mistake a temporary
+error for &quot;nothing configured yet&quot; and overwrite the existing document.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Config.html" target="_self" >Promise&lt;Config | null&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="offerUndo"></a>
+                    <span class="name">
+                        <span ><b>offerUndo</b></span>
+                        <a href="#offerUndo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>offerUndo(backup: <a href="../interfaces/DatabaseRules.html" target="_self">Config&lt;DatabaseRules&gt;</a>, message: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/permissions/permissions-config.service.ts:107</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Show a snackbar that restores the given backup when the user acts on it.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>backup</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DatabaseRules.html" target="_self" >Config&lt;DatabaseRules&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the Config returned by <a href="saveWithBackup">saveWithBackup</a></p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>what to show while the undo is available</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveWithBackup"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>saveWithBackup</b></span>
+                        <a href="#saveWithBackup"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveWithBackup(config: <a href="../interfaces/DatabaseRules.html" target="_self">Config&lt;DatabaseRules&gt;</a>, updatedData: <a href="../interfaces/DatabaseRules.html" target="_self">DatabaseRules</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/core/permissions/permissions-config.service.ts:84</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Store a timestamped backup of the config&#39;s current state, then save the
+updated rules.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DatabaseRules.html" target="_self" >Config&lt;DatabaseRules&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the currently stored config, still holding the previous data</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>updatedData</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DatabaseRules.html" target="_self" >DatabaseRules</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the rules to persist</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/DatabaseRules.html" target="_self" >Promise&lt;Config&lt;DatabaseRules&gt;&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the backup Config, so callers can offer an {@link offerUndo}</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canManagePermissions$"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>canManagePermissions$</b></span>
+                        <a href="#canManagePermissions$"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Observable&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Observable&lt;void&gt;(
+    (subscriber) &#x3D;&gt; this.ability.on(&quot;updated&quot;, () &#x3D;&gt; subscriber.next()),
+  ).pipe(
+    startWith(undefined),
+    map(() &#x3D;&gt; this.canManagePermissions()),
+    distinctUntilChanged(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/permissions/permissions-config.service.ts:47</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p><a href="canManagePermissions">canManagePermissions</a> as a stream, re-evaluated whenever the rules of
+the current user change (login, role change, updated permissions config).</p>
+<p>Shared, so that several consumers (e.g. one banner per open list view) do
+not each register their own listener on the ability.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
+import moment from &quot;moment&quot;;
+import { map, Observable, shareReplay, startWith } from &quot;rxjs&quot;;
+import { distinctUntilChanged } from &quot;rxjs/operators&quot;;
+import { Config } from &quot;../config/config&quot;;
+import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
+import { Logging } from &quot;../logging/logging.service&quot;;
+import { EntityAbility } from &quot;./ability/entity-ability&quot;;
+import { DatabaseRules } from &quot;./permission-types&quot;;
+
+/** how long the &quot;Undo&quot; action stays available after a permissions change */
+const UNDO_DURATION_MS &#x3D; 8000;
+
+/**
+ * Shared access to the central &#x60;Config:Permissions&#x60; document for the different
+ * UIs that read or edit it (raw JSON editor, public form setup, feature grid).
+ *
+ * Editing permissions is a high-risk operation - a wrong write can lock users
+ * out of the whole app - so every write goes through {@link saveWithBackup},
+ * which keeps a timestamped copy of the previous state.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class PermissionsConfigService {
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly ability &#x3D; inject(EntityAbility);
+  private readonly snackBar &#x3D; inject(MatSnackBar);
+
+  /**
+   * Whether the current user may edit the permissions config.
+   *
+   * Derived from the actual CASL rules rather than a hardcoded role name, so
+   * that deployments granting this to a role other than &#x60;admin_app&#x60; get the
+   * editing UI, and deployments revoking it do not get a grid whose save fails.
+   */
+  canManagePermissions(): boolean {
+    return this.ability.can(&quot;update&quot;, Config);
+  }
+
+  /**
+   * {@link canManagePermissions} as a stream, re-evaluated whenever the rules of
+   * the current user change (login, role change, updated permissions config).
+   *
+   * Shared, so that several consumers (e.g. one banner per open list view) do
+   * not each register their own listener on the ability.
+   */
+  readonly canManagePermissions$: Observable&lt;boolean&gt; &#x3D; new Observable&lt;void&gt;(
+    (subscriber) &#x3D;&gt; this.ability.on(&quot;updated&quot;, () &#x3D;&gt; subscriber.next()),
+  ).pipe(
+    startWith(undefined),
+    map(() &#x3D;&gt; this.canManagePermissions()),
+    distinctUntilChanged(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /**
+   * Load the permissions config, or &#x60;null&#x60; if it does not exist yet.
+   *
+   * Any other load failure is rethrown: a caller must not mistake a temporary
+   * error for &quot;nothing configured yet&quot; and overwrite the existing document.
+   */
+  async load(): Promise&lt;Config&lt;DatabaseRules&gt; | null&gt; {
+    try {
+      return await this.entityMapper.load&lt;Config&lt;DatabaseRules&gt;&gt;(
+        Config,
+        Config.PERMISSION_KEY,
+      );
+    } catch (error) {
+      if (error?.status &#x3D;&#x3D;&#x3D; 404 || error?.name &#x3D;&#x3D;&#x3D; &quot;not_found&quot;) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Store a timestamped backup of the config&#x27;s current state, then save the
+   * updated rules.
+   *
+   * @param config the currently stored config, still holding the previous data
+   * @param updatedData the rules to persist
+   * @returns the backup Config, so callers can offer an {@link offerUndo}
+   */
+  async saveWithBackup(
+    config: Config&lt;DatabaseRules&gt;,
+    updatedData: DatabaseRules,
+  ): Promise&lt;Config&lt;DatabaseRules&gt;&gt; {
+    const backup &#x3D; new Config&lt;DatabaseRules&gt;(
+      Config.PERMISSION_KEY + &quot;:&quot; + moment().format(&quot;YYYY-MM-DD_HH-mm-ss&quot;),
+      structuredClone(config.data),
+    );
+    await this.entityMapper.save(backup);
+
+    config.data &#x3D; updatedData;
+    // force past rev conflicts: the AbilityService also holds this doc live
+    await this.entityMapper.save(config, true);
+
+    return backup;
+  }
+
+  /**
+   * Show a snackbar that restores the given backup when the user acts on it.
+   *
+   * @param backup the Config returned by {@link saveWithBackup}
+   * @param message what to show while the undo is available
+   */
+  offerUndo(backup: Config&lt;DatabaseRules&gt;, message: string): void {
+    const snackBarRef &#x3D; this.snackBar.open(message, $localize&#x60;Undo&#x60;, {
+      duration: UNDO_DURATION_MS,
+    });
+
+    snackBarRef.onAction().subscribe(async () &#x3D;&gt; {
+      try {
+        // reload rather than reusing the in-memory doc, which may be outdated
+        const config &#x3D; await this.entityMapper.load&lt;Config&lt;DatabaseRules&gt;&gt;(
+          Config,
+          Config.PERMISSION_KEY,
+        );
+        config.data &#x3D; backup.data;
+        await this.entityMapper.save(config, true);
+        await this.entityMapper.remove(backup);
+      } catch (error) {
+        Logging.error(&quot;Failed to undo permission change&quot;, error);
+        this.snackBar.open(
+          $localize&#x60;Could not undo the change. Please try again.&#x60;,
+          undefined,
+          { duration: 5000 },
+        );
+      }
+    });
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'PermissionsConfigService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

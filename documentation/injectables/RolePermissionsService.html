@@ -215,6 +215,7 @@ stored in the Config:Permissions document and the authentication server.</p>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#loadPermissionsConfig" >loadPermissionsConfig</a>
                             </li>
                             <li>
@@ -277,8 +278,8 @@ stored in the Config:Permissions document and the authentication server.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="184"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:184</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="164"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:164</a></div>
                         </td>
                     </tr>
 
@@ -381,8 +382,8 @@ The realm role is created first; if that fails the config is left untouched
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="196"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:196</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="176"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:176</a></div>
                         </td>
                     </tr>
 
@@ -444,6 +445,7 @@ The realm role is deleted first; if that fails the config is left untouched.</p>
                 <td class="col-md-4">
                     <a name="loadPermissionsConfig"></a>
                     <span class="name">
+                            <span class="modifier">Async</span>
                         <span ><b>loadPermissionsConfig</b></span>
                         <a href="#loadPermissionsConfig"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -451,15 +453,16 @@ The realm role is deleted first; if that fails the config is left untouched.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>loadPermissionsConfig()</code>
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadPermissionsConfig()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="119"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:119</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -503,8 +506,8 @@ save a document that silently drops every already configured role.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:136</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="116"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:116</a></div>
                         </td>
                     </tr>
 
@@ -546,8 +549,8 @@ followed by all other config keys and remaining realm roles.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="232"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:232</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="212"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:212</a></div>
                         </td>
                     </tr>
 
@@ -618,8 +621,8 @@ keeping a backup of the previous state with an &quot;undo&quot; option.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="220"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:220</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="200"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:200</a></div>
                         </td>
                     </tr>
 
@@ -702,8 +705,8 @@ keeping a backup of the previous state with an &quot;undo&quot; option.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="210"
-                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:210</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:190</a></div>
                         </td>
                     </tr>
 
@@ -810,7 +813,7 @@ keeping a backup of the previous state with an &quot;undo&quot; option.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:101</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/admin/admin-role-permissions/role-permissions.service.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -835,34 +838,20 @@ True when the capability cannot be determined from the token
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Signal, computed, inject } from &quot;@angular/core&quot;;
 import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
-import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
-import moment from &quot;moment&quot;;
 import { firstValueFrom, of } from &quot;rxjs&quot;;
 import { catchError } from &quot;rxjs/operators&quot;;
 
 import { Config } from &quot;../../config/config&quot;;
-import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
+import { PermissionsConfigService } from &quot;../../permissions/permissions-config.service&quot;;
 import { SessionSubject } from &quot;../../session/auth/session-info&quot;;
 import {
   DatabaseRule,
   DatabaseRules,
-  RESERVED_ROLE_PREFIX,
-  RESERVED_RULE_CONFIG_KEYS,
+  isReservedRuleConfigKey,
 } from &quot;../../permissions/permission-types&quot;;
 import { RESERVED_ROLES } from &quot;../../permissions/reserved-roles&quot;;
 import { Role } from &quot;../../user/user-admin-service/user-account&quot;;
 import { UserAdminService } from &quot;../../user/user-admin-service/user-admin.service&quot;;
-
-/**
- * Whether a key of the permissions config carries special semantics instead of
- * naming a user role, so it must never be listed as an ordinary, deletable role.
- */
-function isReservedRuleConfigKey(key: string): boolean {
-  return (
-    key.startsWith(RESERVED_ROLE_PREFIX) ||
-    RESERVED_RULE_CONFIG_KEYS.includes(key)
-  );
-}
 
 /**
  * Base route of the role management admin UI, to link to a role&#x27;s details
@@ -919,9 +908,8 @@ export interface RoleWithPermissions {
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class RolePermissionsService {
-  private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly userAdminService &#x3D; inject(UserAdminService);
-  private readonly snackBar &#x3D; inject(MatSnackBar);
+  private readonly permissionsConfig &#x3D; inject(PermissionsConfigService);
   private readonly sessionInfo &#x3D; inject(SessionSubject);
 
   private readonly session &#x3D; toSignal(this.sessionInfo);
@@ -951,16 +939,11 @@ export class RolePermissionsService {
    * propagated: treating it as an empty config would make the callers below
    * save a document that silently drops every already configured role.
    */
-  loadPermissionsConfig(): Promise&lt;Config&lt;DatabaseRules&gt;&gt; {
-    return this.entityMapper
-      .load&lt;Config&lt;DatabaseRules&gt;&gt;(Config, Config.PERMISSION_KEY)
-      .catch((err) &#x3D;&gt; {
-        const error &#x3D; err as { status?: number; name?: string } | null;
-        if (error?.status &#x3D;&#x3D;&#x3D; 404 || error?.name &#x3D;&#x3D;&#x3D; &quot;not_found&quot;) {
-          return new Config(Config.PERMISSION_KEY, {});
-        }
-        throw err;
-      });
+  async loadPermissionsConfig(): Promise&lt;Config&lt;DatabaseRules&gt;&gt; {
+    return (
+      (await this.permissionsConfig.load()) ??
+      new Config&lt;DatabaseRules&gt;(Config.PERMISSION_KEY, {})
+    );
   }
 
   /**
@@ -1073,25 +1056,8 @@ export class RolePermissionsService {
     config: Config&lt;DatabaseRules&gt;,
     newData: DatabaseRules,
   ) {
-    const previousConfigBackup &#x3D; new Config(
-      Config.PERMISSION_KEY + &quot;:&quot; + moment().format(&quot;YYYY-MM-DD_HH-mm-ss&quot;),
-      config.data,
-    );
-    await this.entityMapper.save(previousConfigBackup);
-
-    config.data &#x3D; newData;
-    await this.entityMapper.save(config);
-
-    const snackBarRef &#x3D; this.snackBar.open(
-      $localize&#x60;Permissions updated&#x60;,
-      $localize&#x60;Undo&#x60;,
-      { duration: 8000 },
-    );
-    snackBarRef.onAction().subscribe(async () &#x3D;&gt; {
-      config.data &#x3D; previousConfigBackup.data;
-      await this.entityMapper.save(config);
-      await this.entityMapper.remove(previousConfigBackup);
-    });
+    const backup &#x3D; await this.permissionsConfig.saveWithBackup(config, newData);
+    this.permissionsConfig.offerUndo(backup, $localize&#x60;Permissions updated&#x60;);
   }
 }
 </code></pre>

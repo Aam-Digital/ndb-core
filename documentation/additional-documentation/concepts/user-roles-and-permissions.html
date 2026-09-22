@@ -152,6 +152,7 @@
 <li><code>ability/entity-ability.ts</code> — extends CASL <code>Ability</code>, converts <code>Entity</code> instances to CASL subjects</li>
 <li><code>ability/ability.service.ts</code> — loads <code>Config:Permissions</code> and builds the <code>EntityAbility</code></li>
 <li><code>../entity/entity-mapper/entity-mapper.service.ts</code> — calls <code>assertPermission()</code> before <code>save()</code> / <code>remove()</code> (write enforcement)</li>
+<li><code>feature-permission/feature-permission.service.ts</code> — admin-facing editing of per-role access to a single &quot;feature&quot; entity type</li>
 </ul>
 <p><em>Flow:</em></p>
 <ol>
@@ -203,12 +204,17 @@ Admins edit this document to control what each role can do.</p>
 <h3>How to edit permissions</h3>
 <p><strong>In the Aam Digital app:</strong></p>
 <ul>
-<li>Go to Admin &gt; Application Configuration &gt; Edit permissions config</li>
-<li>This opens the <code>Config:Permissions</code> document in the app&#39;s JSON editor</li>
+<li>Go to Admin &gt; User Roles &amp; Permissions to edit the rules of each role</li>
+<li>The same screen offers the raw <code>Config:Permissions</code> document through its &quot;Edit JSON&quot; menu entry</li>
 </ul>
 <p><strong>Directly in the database:</strong></p>
 <ul>
 <li>Use CouchDB Fauxton GUI or another database tool to edit the document directly</li>
+</ul>
+<p><strong>Per feature, from its admin list view:</strong></p>
+<ul>
+<li>On an internal &quot;feature&quot; type (e.g. Export Templates, Email Templates, Public Forms) use the &quot;Configure Permissions&quot; button</li>
+<li>This only writes plain rules for that one entity type; roles decided by an advanced rule stay read-only and have to be edited in the role administration</li>
 </ul>
 <h3>Permission structure</h3>
 <p>Permissions use JSON format with a role → rules mapping:</p>
@@ -325,7 +331,7 @@ export class MyService {
 Pass the entity and the operation (<code>create</code>, <code>read</code>, <code>update</code>, <code>delete</code>, <code>manage</code>).</p>
 <h2>Testing</h2>
 <ul>
-<li>Frontend: <code>src/app/core/permissions/ability/ability.service.spec.ts</code>, <code>entity-ability.spec.ts</code></li>
+<li>Frontend: <code>src/app/core/permissions/ability/ability.service.spec.ts</code>, <code>entity-ability.spec.ts</code>, <code>feature-permission/feature-permission.service.spec.ts</code></li>
 <li>Backend: <code>src/permissions/rules/rules.service.spec.ts</code>, <code>src/permissions/permission/permission.service.spec.ts</code></li>
 </ul>
 <p>When testing permissions:</p>

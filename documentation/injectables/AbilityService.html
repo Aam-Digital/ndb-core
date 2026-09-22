@@ -276,7 +276,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:58</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:57</a></div>
                             </td>
                         </tr>
 
@@ -311,8 +311,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="76"
-                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:76</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -507,7 +507,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/permissions/ability/ability.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -618,9 +618,8 @@ import {
   DatabaseRule,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
+  isReservedRuleConfigKey,
   PUBLIC_SECTION_KEY,
-  RESERVED_ROLE_PREFIX,
-  RESERVED_RULE_CONFIG_KEYS,
 } from &quot;../permission-types&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { PermissionEnforcerService } from &quot;../permission-enforcer/permission-enforcer.service&quot;;
@@ -812,10 +811,7 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
     }
     sessionInfo.roles.forEach((role) &#x3D;&gt; {
       // reserved section keys and underscore-prefixed names never resolve as roles
-      if (
-        role.startsWith(RESERVED_ROLE_PREFIX) ||
-        RESERVED_RULE_CONFIG_KEYS.includes(role)
-      ) {
+      if (isReservedRuleConfigKey(role)) {
         return;
       }
       const rulesForRole &#x3D; rules[role] || [];

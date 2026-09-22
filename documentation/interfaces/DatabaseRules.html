@@ -211,7 +211,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/permissions/permission-types.ts:86</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/permissions/permission-types.ts:138</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -258,7 +258,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/permissions/permission-types.ts:86</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/permissions/permission-types.ts:138</a></div>
                                 </td>
                             </tr>
 
@@ -302,7 +302,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/permissions/permission-types.ts:85</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/permissions/permission-types.ts:137</a></div>
                                 </td>
                             </tr>
 
@@ -317,15 +317,17 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
 import { Entity, EntityConstructor } from &quot;../entity/model/entity&quot;;
 
 /**
+ * The individual CRUD actions, in the order they are displayed as columns of the
+ * permission UIs.
+ */
+export const CRUD_ACTIONS &#x3D; [&quot;read&quot;, &quot;create&quot;, &quot;update&quot;, &quot;delete&quot;] as const;
+
+export type CrudAction &#x3D; (typeof CRUD_ACTIONS)[number];
+
+/**
  * The list of action strings that can be used for permissions
  */
-const actions &#x3D; [
-  &quot;read&quot;,
-  &quot;create&quot;,
-  &quot;update&quot;,
-  &quot;delete&quot;,
-  &quot;manage&quot;, // Matches any actions
-] as const;
+const actions &#x3D; [...CRUD_ACTIONS, &quot;manage&quot;] as const; // &quot;manage&quot; matches any action
 
 /**
  * The type which defines which actions can be used for permissions.
@@ -375,6 +377,56 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] &#x3D; [
   DEFAULT_SECTION_KEY,
   PUBLIC_SECTION_KEY,
 ];
+
+/**
+ * Whether a key in {@link DatabaseRules} carries special semantics instead of
+ * naming a user role, so it must neither be resolved as a role nor rewritten by
+ * a per-role UI. Covers the reserved underscore prefix as well as the legacy
+ * (non-prefixed) spellings of not yet migrated configs.
+ */
+export function isReservedRuleConfigKey(key: string): boolean {
+  return (
+    key.startsWith(RESERVED_ROLE_PREFIX) ||
+    RESERVED_RULE_CONFIG_KEYS.includes(key)
+  );
+}
+
+/**
+ * Marker written into a rule&#x27;s &#x60;reason&#x60; by the backend for rules it manages itself
+ * to guarantee a baseline. Such rules must not be rewritten by an admin UI.
+ */
+export const SYSTEM_DEFAULT_RULE_REASON &#x3D; &quot;[system-default]&quot;;
+
+/**
+ * Whether the rule applies to the given entity type, ignoring conditions and
+ * inversion. &#x60;all&#x60; matches every entity type.
+ */
+export function ruleAppliesToSubject(
+  subject: DatabaseRule[&quot;subject&quot;],
+  entityType: string,
+): boolean {
+  if (Array.isArray(subject)) {
+    return subject.includes(entityType) || subject.includes(&quot;all&quot;);
+  }
+  return subject &#x3D;&#x3D;&#x3D; entityType || subject &#x3D;&#x3D;&#x3D; &quot;all&quot;;
+}
+
+/**
+ * Whether the rule grants the given action for the entity type, ignoring conditions
+ * and inversion. &#x60;manage&#x60; covers every other action, and a rule can list several
+ * actions as an array.
+ */
+export function ruleCoversAction(
+  rule: DatabaseRule,
+  entityType: string,
+  action: EntityActionPermission,
+): boolean {
+  const actions &#x3D; Array.isArray(rule.action) ? rule.action : [rule.action];
+  return (
+    ruleAppliesToSubject(rule.subject, entityType) &amp;&amp;
+    (actions.includes(action) || actions.includes(&quot;manage&quot;))
+  );
+}
 
 /**
  * Whether users of the given role also receive the shared &quot;_default&quot; rules.

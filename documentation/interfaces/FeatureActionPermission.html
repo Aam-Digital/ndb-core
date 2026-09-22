@@ -1,0 +1,882 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  FeatureActionPermission</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/permissions/feature-permission/feature-permission.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>What the stored rules say about one action of one row - the rule state, not
+the display state of a checkbox. The dialog turns it into its own
+<code>PermissionCell</code> (which extends <code>PermissionCellState</code>) in
+<code>FeaturePermissionDialogComponent.toCell</code>; the two are deliberately kept
+apart, because <code>allowed</code> does not mean the same on both sides and because
+whether a checkbox is editable depends on the <code>_default</code> row <em>as currently
+edited</em>, which only the dialog knows.</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                <a href="#allowed" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">allowed</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#lockedByAdvancedRule" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">lockedByAdvancedRule</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#ownAllowed" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">ownAllowed</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="allowed"></a>
+                                <span class="name "><b>allowed</b>
+                                    <a href="#allowed">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>allowed:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/permissions/feature-permission/feature-permission.service.ts:33</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The effective access as stored: what the row&#39;s own rules grant together
+with the shared <code>_default</code> section, i.e. what the user can do right now.</p>
+<p>An editable checkbox does not show this but <code>ownAllowed</code>, with the
+<code>_default</code> row layered back on live while the dialog is open.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="lockedByAdvancedRule"></a>
+                                <span class="name "><b>lockedByAdvancedRule</b>
+                                    <a href="#lockedByAdvancedRule">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>lockedByAdvancedRule:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/core/permissions/feature-permission/feature-permission.service.ts:57</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The access comes from a rule this UI must not rewrite, because changing it
+would affect other roles or entity types: an <code>all</code> wildcard subject (the
+most common case, e.g. <code>admin_app</code>), a grouped subject
+(<code>subject: [&quot;A&quot;, &quot;B&quot;]</code>), a rule carrying <code>conditions</code>, an inverted (deny)
+rule, or a rule the server manages itself (marked with
+<a href="../miscellaneous/variables.html#SYSTEM_DEFAULT_RULE_REASON">SYSTEM_DEFAULT_RULE_REASON</a>).</p>
+<p>What the shared <code>_default</code> section grants is not reported here: the dialog
+lets that section be edited alongside the roles, so it resolves those locks
+against the edited state rather than the stored one.</p>
+<p>This is the <em>cause</em>, not the rendering: the dialog turns it into the
+checkbox&#39;s <code>editable</code> flag and the tooltip explaining it.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="ownAllowed"></a>
+                                <span class="name "><b>ownAllowed</b>
+                                    <a href="#ownAllowed">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>ownAllowed:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/permissions/feature-permission/feature-permission.service.ts:41</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether the row&#39;s <em>own</em> rules for this entity type grant the action, ignoring
+what the shared <code>_default</code> section adds on top.</p>
+<p>The dialog keeps this as the row&#39;s own intent, so that unticking an action on
+the <code>_default</code> row reveals a role&#39;s own rule again instead of discarding it.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Config } from &quot;../../config/config&quot;;
+import {
+  CRUD_ACTIONS,
+  CrudAction,
+  DatabaseRule,
+  DatabaseRules,
+  DEFAULT_SECTION_KEY,
+  EntityActionPermission,
+  isReservedRuleConfigKey,
+  ruleCoversAction,
+  SYSTEM_DEFAULT_RULE_REASON,
+} from &quot;../permission-types&quot;;
+import { PermissionsConfigService } from &quot;../permissions-config.service&quot;;
+
+/**
+ * What the stored rules say about one action of one row - the rule state, not
+ * the display state of a checkbox. The dialog turns it into its own
+ * &#x60;PermissionCell&#x60; (which extends &#x60;PermissionCellState&#x60;) in
+ * &#x60;FeaturePermissionDialogComponent.toCell&#x60;; the two are deliberately kept
+ * apart, because &#x60;allowed&#x60; does not mean the same on both sides and because
+ * whether a checkbox is editable depends on the &#x60;_default&#x60; row *as currently
+ * edited*, which only the dialog knows.
+ */
+export interface FeatureActionPermission {
+  /**
+   * The effective access as stored: what the row&#x27;s own rules grant together
+   * with the shared &#x60;_default&#x60; section, i.e. what the user can do right now.
+   *
+   * An editable checkbox does not show this but &#x60;ownAllowed&#x60;, with the
+   * &#x60;_default&#x60; row layered back on live while the dialog is open.
+   */
+  allowed: boolean;
+  /**
+   * Whether the row&#x27;s *own* rules for this entity type grant the action, ignoring
+   * what the shared &#x60;_default&#x60; section adds on top.
+   *
+   * The dialog keeps this as the row&#x27;s own intent, so that unticking an action on
+   * the &#x60;_default&#x60; row reveals a role&#x27;s own rule again instead of discarding it.
+   */
+  ownAllowed: boolean;
+  /**
+   * The access comes from a rule this UI must not rewrite, because changing it
+   * would affect other roles or entity types: an &#x60;all&#x60; wildcard subject (the
+   * most common case, e.g. &#x60;admin_app&#x60;), a grouped subject
+   * (&#x60;subject: [&quot;A&quot;, &quot;B&quot;]&#x60;), a rule carrying &#x60;conditions&#x60;, an inverted (deny)
+   * rule, or a rule the server manages itself (marked with
+   * {@link SYSTEM_DEFAULT_RULE_REASON}).
+   *
+   * What the shared &#x60;_default&#x60; section grants is not reported here: the dialog
+   * lets that section be edited alongside the roles, so it resolves those locks
+   * against the edited state rather than the stored one.
+   *
+   * This is the *cause*, not the rendering: the dialog turns it into the
+   * checkbox&#x27;s &#x60;editable&#x60; flag and the tooltip explaining it.
+   */
+  lockedByAdvancedRule: boolean;
+}
+
+/**
+ * The permission state of one row of the dialog - either a user role or the
+ * shared &#x60;_default&#x60; section - for one feature entity type.
+ */
+export interface RoleFeaturePermission {
+  /** the role&#x27;s technical name as used as a key in the permissions config */
+  role: string;
+  actions: Record&lt;CrudAction, FeatureActionPermission&gt;;
+  /**
+   * Whether any checkbox of this row can be edited.
+   *
+   * &#x60;false&#x60; only when *every* action is decided by a rule this UI does not own -
+   * a wildcard &#x60;all&#x60; subject, a grouped subject, a conditioned rule or an
+   * inverted (deny) rule - because such rules cannot be changed without
+   * affecting other entity types or roles.
+   *
+   * A rule covering only some actions locks just those checkboxes and leaves the
+   * rest of the row editable, so a shared &quot;read these four types&quot; rule does not
+   * stop an admin from granting the remaining actions for this feature.
+   *
+   * This applies to the &#x60;_default&#x60; row just like to a role row.
+   */
+  editable: boolean;
+}
+
+/**
+ * The editable permission state of one feature entity type across the given roles.
+ */
+export interface FeaturePermissionState {
+  entityType: string;
+
+  /**
+   * The shared &#x60;_default&#x60; section, shown as the first row so that checkboxes
+   * disabled on the role rows have a visible reason - and editable like any
+   * other row, matching the role administration (Admin &gt; Roles).
+   */
+  defaultRules: RoleFeaturePermission;
+
+  roles: RoleFeaturePermission[];
+}
+
+/** the actions of one row as sent back to {@link FeaturePermissionService.setPermissions} */
+export interface RoleFeaturePermissionUpdate {
+  role: string;
+  actions: Record&lt;CrudAction, boolean&gt;;
+}
+
+/**
+ * Read and edit the per-role permissions of a single feature (internal entity
+ * type such as EmailTemplate, TemplateExport, ReportConfig, ...) against the
+ * central &#x60;Config:Permissions&#x60; document.
+ *
+ * To keep the checkbox grid a faithful (non-destructive) projection of the
+ * arbitrarily complex CASL rules, this service only ever reads and writes rules
+ * that it &quot;owns&quot; for the exact entity type (single string subject, no conditions,
+ * only feature actions). Any other rule - grouped subjects, conditions, wildcards
+ * or inverted rules - is preserved untouched, and the roles it affects are
+ * reported as not editable, so the UI can defer to the role administration.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class FeaturePermissionService {
+  private readonly permissionsConfig &#x3D; inject(PermissionsConfigService);
+
+  /**
+   * Compute the current permission state of the given roles for one feature.
+   * @param entityType the feature&#x27;s ENTITY_TYPE (e.g. &quot;EmailTemplate&quot;)
+   * @param roleNames the roles to display (typically all assignable roles)
+   */
+  async getPermissions(
+    entityType: string,
+    roleNames: string[],
+  ): Promise&lt;FeaturePermissionState&gt; {
+    const rules &#x3D; (await this.permissionsConfig.load())?.data ?? {};
+    const defaultRules &#x3D; this.getDefaultRules(rules);
+
+    const roles &#x3D; roleNames
+      .filter((role) &#x3D;&gt; !isReservedRuleConfigKey(role))
+      .map((role) &#x3D;&gt;
+        this.getRolePermission(
+          role,
+          rules[role] ?? [],
+          defaultRules,
+          entityType,
+        ),
+      );
+
+    return {
+      entityType,
+      // the shared section is read and written like any other row; it cannot
+      // inherit from itself, so it is resolved against its own rules alone
+      defaultRules: this.getRolePermission(
+        DEFAULT_SECTION_KEY,
+        defaultRules,
+        [],
+        entityType,
+      ),
+      roles,
+    };
+  }
+
+  private getRolePermission(
+    role: string,
+    roleRules: DatabaseRule[],
+    defaultRules: DatabaseRule[],
+    entityType: string,
+  ): RoleFeaturePermission {
+    // An inverted rule revokes access granted before it and cannot be expressed
+    // through checkboxes. Because CASL resolves the rules in order, adding a
+    // rule next to it could silently do nothing, so the row stays read-only.
+    const hasInvertedRule &#x3D; roleRules.some(
+      (rule) &#x3D;&gt; rule.inverted &amp;&amp; this.affectsFeature(rule, entityType),
+    );
+    const effectiveRules &#x3D; [...defaultRules, ...roleRules];
+    const ownedRules &#x3D; roleRules.filter((rule) &#x3D;&gt;
+      this.isOwnedRule(rule, entityType),
+    );
+    // wildcard subjects, grouped subjects, conditions and rules the server
+    // manages: kept as they are, because rewriting one would affect other
+    // entity types or roles
+    const unownedRules &#x3D; roleRules.filter(
+      (rule) &#x3D;&gt; !this.isOwnedRule(rule, entityType),
+    );
+
+    const actions &#x3D; this.mapActions&lt;FeatureActionPermission&gt;((action) &#x3D;&gt; ({
+      allowed: this.hasEffectiveAccess(effectiveRules, entityType, action),
+      ownAllowed: ownedRules.some((rule) &#x3D;&gt;
+        ruleCoversAction(rule, entityType, action),
+      ),
+      // a rule this UI cannot rewrite decides this single action - the other
+      // actions of the same row stay editable, so that e.g. a shared
+      // &quot;read these four types&quot; rule does not block granting &quot;delete&quot; here
+      lockedByAdvancedRule:
+        hasInvertedRule ||
+        unownedRules.some((rule) &#x3D;&gt; ruleCoversAction(rule, entityType, action)),
+    }));
+
+    return {
+      role,
+      actions,
+      // read-only only when an advanced rule decides every action - what the
+      // shared &#x60;_default&#x60; section grants never locks a row, and the dialog
+      // resolves those single checkboxes against the section as it is edited
+      editable: CRUD_ACTIONS.some(
+        (action) &#x3D;&gt; !actions[action].lockedByAdvancedRule,
+      ),
+    };
+  }
+
+  /**
+   * Persist the updated permissions for the given rows (user roles and the
+   * shared &#x60;_default&#x60; section).
+   *
+   * Only rules this service owns for the exact entity type are replaced; every
+   * other rule (including &#x60;_public&#x60; and complex rules) is preserved.
+   * Actions already granted through &#x60;_default&#x60; are never written as a role rule,
+   * so that inherited access does not get duplicated into every role.
+   * A timestamped backup of the previous config is stored before saving.
+   *
+   * @returns the backup Config that was created, so callers can offer an &quot;undo&quot;.
+   */
+  async setPermissions(
+    entityType: string,
+    updates: RoleFeaturePermissionUpdate[],
+  ): Promise&lt;Config&lt;DatabaseRules&gt;&gt; {
+    const existing &#x3D; await this.permissionsConfig.load();
+    // the grants to suppress on the role rows are the ones that are in effect
+    // *after* this save, because &#x60;_default&#x60; can be edited in the same go
+    const grantedByDefault &#x3D; this.getUpdatedDefaultGrants(
+      updates,
+      existing,
+      entityType,
+    );
+    const config &#x3D; this.ensurePermissionsConfig(existing);
+    const updatedData &#x3D; structuredClone(config.data);
+
+    for (const { role, actions } of updates) {
+      const isDefaultSection &#x3D; role &#x3D;&#x3D;&#x3D; DEFAULT_SECTION_KEY;
+      // &#x60;_public&#x60; (and the legacy spellings) are never edited through this grid,
+      // as they carry semantics the per-role checkboxes cannot represent
+      if (!isDefaultSection &amp;&amp; isReservedRuleConfigKey(role)) {
+        continue;
+      }
+
+      const selected &#x3D; CRUD_ACTIONS.filter(
+        (action) &#x3D;&gt;
+          actions[action] &amp;&amp;
+          // the shared section is what grants the action in the first place
+          (isDefaultSection || !grantedByDefault[action]),
+      );
+
+      // keep every rule we don&#x27;t own, then re-add the selected actions
+      const preserved &#x3D; (updatedData[role] ?? []).filter(
+        (rule) &#x3D;&gt; !this.isOwnedRule(rule, entityType),
+      );
+      const updated &#x3D; [...preserved];
+      const grantedAction &#x3D; this.toRuleAction(selected);
+      if (grantedAction) {
+        updated.push({ subject: entityType, action: grantedAction });
+      }
+
+      if (updated.length &gt; 0) {
+        updatedData[role] &#x3D; updated;
+      } else {
+        delete updatedData[role];
+      }
+    }
+
+    return this.permissionsConfig.saveWithBackup(config, updatedData);
+  }
+
+  /**
+   * Which actions the shared &#x60;_default&#x60; section grants for this feature once the
+   * given updates are saved: taken from the submitted &#x60;_default&#x60; row if it was
+   * editable (and therefore sent along), and from the stored config otherwise.
+   */
+  private getUpdatedDefaultGrants(
+    updates: RoleFeaturePermissionUpdate[],
+    existing: Config&lt;DatabaseRules&gt; | null,
+    entityType: string,
+  ): Record&lt;CrudAction, boolean&gt; {
+    const defaultUpdate &#x3D; updates.find(
+      ({ role }) &#x3D;&gt; role &#x3D;&#x3D;&#x3D; DEFAULT_SECTION_KEY,
+    );
+    if (defaultUpdate) {
+      return this.mapActions((action) &#x3D;&gt; defaultUpdate.actions[action]);
+    }
+    return this.getDefaultGrants(
+      this.getDefaultRules(existing?.data ?? {}),
+      entityType,
+    );
+  }
+
+  /**
+   * The user roles that already appear in the permissions config, excluding the
+   * special &#x60;_default&#x60; (shared baseline) and &#x60;_public&#x60; (unauthenticated) keys.
+   *
+   * Used as a robust source of roles that does not depend on the Keycloak admin
+   * API being reachable.
+   */
+  async getConfiguredRoleNames(): Promise&lt;string[]&gt; {
+    const rules &#x3D; (await this.permissionsConfig.load())?.data ?? {};
+    return Object.keys(rules).filter((role) &#x3D;&gt; !isReservedRuleConfigKey(role));
+  }
+
+  /**
+   * The action to store for the given selection: &#x60;manage&#x60; if every feature action
+   * is selected (keeping the shape an admin would write by hand), a plain string
+   * for a single action and an array otherwise. &#x60;undefined&#x60; if nothing is selected.
+   */
+  private toRuleAction(
+    selected: CrudAction[],
+  ): EntityActionPermission | EntityActionPermission[] | undefined {
+    if (selected.length &#x3D;&#x3D;&#x3D; 0) {
+      return undefined;
+    }
+    if (selected.length &#x3D;&#x3D;&#x3D; CRUD_ACTIONS.length) {
+      return &quot;manage&quot;;
+    }
+    return selected.length &#x3D;&#x3D;&#x3D; 1 ? selected[0] : [...selected];
+  }
+
+  /** rules in &#x60;_default&#x60; apply to every logged-in user, on top of their role rules */
+  private getDefaultRules(rules: DatabaseRules): DatabaseRule[] {
+    return rules[DEFAULT_SECTION_KEY] ?? [];
+  }
+
+  /** which actions the shared &#x60;_default&#x60; section grants for this feature */
+  private getDefaultGrants(
+    defaultRules: DatabaseRule[],
+    entityType: string,
+  ): Record&lt;CrudAction, boolean&gt; {
+    return this.mapActions((action) &#x3D;&gt;
+      this.hasEffectiveAccess(defaultRules, entityType, action),
+    );
+  }
+
+  private mapActions&lt;T&gt;(
+    valueFor: (action: CrudAction) &#x3D;&gt; T,
+  ): Record&lt;CrudAction, T&gt; {
+    return Object.fromEntries(
+      CRUD_ACTIONS.map((action) &#x3D;&gt; [action, valueFor(action)]),
+    ) as Record&lt;CrudAction, T&gt;;
+  }
+
+  /**
+   * A rule is &quot;owned&quot; by this UI (and thus safe to read/rewrite) only if it grants
+   * feature actions to exactly this entity type without any conditions or
+   * inversion. Managed &#x60;[system-default]&#x60; rules (written by the backend to
+   * guarantee a baseline) are never owned, so they are left untouched.
+   */
+  private isOwnedRule(rule: DatabaseRule, entityType: string): boolean {
+    const actions &#x3D; Array.isArray(rule.action) ? rule.action : [rule.action];
+    return (
+      !rule.inverted &amp;&amp;
+      !rule.conditions &amp;&amp;
+      !rule.reason?.includes(SYSTEM_DEFAULT_RULE_REASON) &amp;&amp;
+      rule.subject &#x3D;&#x3D;&#x3D; entityType &amp;&amp;
+      actions.every(
+        (action) &#x3D;&gt;
+          action &#x3D;&#x3D;&#x3D; &quot;manage&quot; || CRUD_ACTIONS.includes(action as CrudAction),
+      )
+    );
+  }
+
+  /**
+   * Whether the rule has any say over this feature&#x27;s access, no matter whether it
+   * grants or denies it.
+   */
+  private affectsFeature(rule: DatabaseRule, entityType: string): boolean {
+    return CRUD_ACTIONS.some((action) &#x3D;&gt;
+      ruleCoversAction(rule, entityType, action),
+    );
+  }
+
+  /**
+   * Whether the given rules leave the role with the action in effect.
+   *
+   * CASL resolves overlapping rules so that the last matching one wins, so an
+   * inverted rule revokes a grant that came before it while a later granting
+   * rule re-enables access again. Ignoring that would make a row claim access
+   * the user does not have. This UI cannot express an inverted rule, which is
+   * why any role affected by one is rendered read-only.
+   *
+   * &#x60;rules&#x60; must be in the order the AbilityService applies them, i.e. the
+   * shared &#x60;_default&#x60; section first and the role&#x27;s own rules after it.
+   */
+  private hasEffectiveAccess(
+    rules: DatabaseRule[],
+    entityType: string,
+    action: EntityActionPermission,
+  ): boolean {
+    const decidingRule &#x3D; rules.findLast((rule) &#x3D;&gt;
+      ruleCoversAction(rule, entityType, action),
+    );
+    return !!decidingRule &amp;&amp; !decidingRule.inverted;
+  }
+
+  /**
+   * The config document to write the updated rules into, created empty if this
+   * instance does not define any permissions yet.
+   *
+   * Nothing is added around the rules saved here: a seeded &#x60;all&#x60; wildcard would
+   * keep granting every action on this feature to every logged-in user (a rule
+   * granting less never overrides a broader grant), so the restriction just
+   * saved would have no effect at all.
+   */
+  private ensurePermissionsConfig(
+    existing: Config&lt;DatabaseRules&gt; | null,
+  ): Config&lt;DatabaseRules&gt; {
+    if (existing?.data) {
+      return existing;
+    }
+
+    const config &#x3D; existing ?? new Config&lt;DatabaseRules&gt;(Config.PERMISSION_KEY);
+    config.data &#x3D; {};
+    return config;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'FeatureActionPermission.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

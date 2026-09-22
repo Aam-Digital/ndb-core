@@ -1236,6 +1236,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/FeatureDisabledInfoComponent.html" data-type="entity-link" >FeatureDisabledInfoComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/FeaturePermissionDialogComponent.html" data-type="entity-link" >FeaturePermissionDialogComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/FilterComponent.html" data-type="entity-link" >FilterComponent</a>
                             </li>
                             <li class="link">
@@ -1393,6 +1396,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/ParsedFileInputComponent.html" data-type="entity-link" >ParsedFileInputComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/PermissionCheckboxComponent.html" data-type="entity-link" >PermissionCheckboxComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/PermissionMatrixComponent.html" data-type="entity-link" >PermissionMatrixComponent</a>
@@ -2085,6 +2091,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/ExternalProfileDatatype.html" data-type="entity-link" >ExternalProfileDatatype</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/FeaturePermissionService.html" data-type="entity-link" >FeaturePermissionService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/FileService.html" data-type="entity-link" >FileService</a>
                                 </li>
                                 <li class="link">
@@ -2161,6 +2170,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="injectables/PermissionEnforcerService.html" data-type="entity-link" >PermissionEnforcerService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/PermissionsConfigService.html" data-type="entity-link" >PermissionsConfigService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/PouchdbCorruptionRecoveryService.html" data-type="entity-link" >PouchdbCorruptionRecoveryService</a>
@@ -2454,6 +2466,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/CreateOptionMarker.html" data-type="entity-link" >CreateOptionMarker&lt;O&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/CrudActionColumn.html" data-type="entity-link" >CrudActionColumn</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/DashboardConfig.html" data-type="entity-link" >DashboardConfig</a>
                             </li>
                             <li class="link">
@@ -2628,7 +2643,19 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ExternalSkill.html" data-type="entity-link" >ExternalSkill</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/FeatureActionPermission.html" data-type="entity-link" >FeatureActionPermission</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/FeatureFlag.html" data-type="entity-link" >FeatureFlag</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FeaturePermissionDialogData.html" data-type="entity-link" >FeaturePermissionDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FeaturePermissionRows.html" data-type="entity-link" >FeaturePermissionRows</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/FeaturePermissionState.html" data-type="entity-link" >FeaturePermissionState</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/FieldChange.html" data-type="entity-link" >FieldChange</a>
@@ -2811,6 +2838,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ParsedJWT.html" data-type="entity-link" >ParsedJWT</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/PermissionCell.html" data-type="entity-link" >PermissionCell</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/PermissionCellState.html" data-type="entity-link" >PermissionCellState</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/PrebuiltFilterConfig.html" data-type="entity-link" >PrebuiltFilterConfig&lt;T&gt;</a>
                             </li>
                             <li class="link">
@@ -2860,6 +2893,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/Role.html" data-type="entity-link" >Role</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RoleFeaturePermission.html" data-type="entity-link" >RoleFeaturePermission</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RoleFeaturePermissionUpdate.html" data-type="entity-link" >RoleFeaturePermissionUpdate</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/RolePermissionRow.html" data-type="entity-link" >RolePermissionRow</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/RoleWithPermissions.html" data-type="entity-link" >RoleWithPermissions</a>

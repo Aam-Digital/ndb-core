@@ -249,8 +249,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="182"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:182</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="157"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:157</a></div>
                         </td>
                     </tr>
 
@@ -326,8 +326,8 @@ and assists with adding missing permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:156</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="132"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:132</a></div>
                         </td>
                     </tr>
 
@@ -396,8 +396,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="172"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:172</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:148</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Returns true if save should proceed, false if cancelled or error.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="41"
+                                    class="link-to-prism">src/app/features/public-form/public-form-permission.service.ts:41</a></div>
                         </td>
                     </tr>
 
@@ -578,12 +578,12 @@ import { ConfirmationDialogService } from &quot;app/core/common-components/confi
 import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Config } from &quot;../../core/config/config&quot;;
 import {
-  ADMIN_APP_ROLE,
   DatabaseRules,
   DEFAULT_SECTION_KEY,
   PUBLIC_SECTION_KEY,
+  ruleCoversAction,
 } from &quot;../../core/permissions/permission-types&quot;;
-import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
+import { PermissionsConfigService } from &quot;../../core/permissions/permissions-config.service&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
 
 /**
@@ -597,7 +597,7 @@ import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity
 export class PublicFormPermissionService {
   private readonly alertService &#x3D; inject(AlertService);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
-  private readonly sessionInfo &#x3D; inject(SessionSubject);
+  private readonly permissionsConfigService &#x3D; inject(PermissionsConfigService);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
 
   /**
@@ -609,45 +609,21 @@ export class PublicFormPermissionService {
   }
 
   /**
-   * Helper method to check if a permission rule subject matches an entity type.
-   * Handles both single subject strings and grouped/array subjects.
-   * @param ruleSubject The subject field from a permission rule (string or string[])
-   * @param entityType The entity type to check
-   * @returns boolean true if the subject matches the entity type
-   */
-  private subjectMatches(
-    ruleSubject: string | string[] | undefined,
-    entityType: string,
-  ): boolean {
-    if (!ruleSubject) {
-      return false;
-    }
-    if (Array.isArray(ruleSubject)) {
-      return ruleSubject.includes(entityType);
-    }
-    return ruleSubject &#x3D;&#x3D;&#x3D; entityType;
-  }
-
-  /**
    * Checks if public users (not logged in) have create permissions for a specific entity type.
    * @param entityType The entity type to check (e.g., &quot;Child&quot;, &quot;School&quot;)
    * @returns Promise&lt;boolean&gt; true if public users can create entities of this type
    */
   async hasPublicCreatePermission(entityType: string): Promise&lt;boolean&gt; {
-    try {
-      const permissionsConfig &#x3D; await this.loadPermissionsConfig();
-      if (!permissionsConfig?.data) {
-        return false; // No permissions config means &quot;public&quot; users have no access
-      }
-      const publicRules &#x3D; permissionsConfig.data[PUBLIC_SECTION_KEY] ?? [];
-      return publicRules.some(
-        (rule) &#x3D;&gt;
-          this.subjectMatches(rule.subject, entityType) &amp;&amp;
-          (rule.action &#x3D;&#x3D;&#x3D; &quot;create&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
-      );
-    } catch {
-      return false; // If we can&#x27;t load permissions, assume no access
+    // a load failure is not caught here: treating it as &quot;no permission&quot; would
+    // claim the form is broken while we simply do not know
+    const permissionsConfig &#x3D; await this.permissionsConfigService.load();
+    if (!permissionsConfig?.data) {
+      return false; // No permissions config means &quot;public&quot; users have no access
     }
+    const publicRules &#x3D; permissionsConfig.data[PUBLIC_SECTION_KEY] ?? [];
+    return publicRules.some((rule) &#x3D;&gt;
+      ruleCoversAction(rule, entityType, &quot;create&quot;),
+    );
   }
 
   /**
@@ -745,8 +721,7 @@ export class PublicFormPermissionService {
    * @returns boolean true if user can manage permissions
    */
   hasAdminPermission(): boolean {
-    const userRoles &#x3D; this.sessionInfo.value?.roles || [];
-    return userRoles.includes(ADMIN_APP_ROLE);
+    return this.permissionsConfigService.canManagePermissions();
   }
 
   /**
@@ -755,41 +730,34 @@ export class PublicFormPermissionService {
    * @returns Promise&lt;void&gt;
    */
   async addPublicCreatePermission(entityType: string): Promise&lt;void&gt; {
-    let permissionsConfig &#x3D; await this.loadPermissionsConfig();
+    const storedConfig &#x3D; await this.permissionsConfigService.load();
+    const permissionsConfig &#x3D;
+      storedConfig ?? new Config&lt;DatabaseRules&gt;(Config.PERMISSION_KEY, {});
+    const isNewConfig &#x3D; !storedConfig;
 
-    const isNewConfig &#x3D; !permissionsConfig;
-    if (!permissionsConfig) {
-      permissionsConfig &#x3D; new Config(Config.PERMISSION_KEY, {});
-    }
+    // edit a copy so that the backup written on save still holds the previous state
+    const updatedData: DatabaseRules &#x3D; structuredClone(
+      permissionsConfig.data ?? {},
+    );
 
-    if (!permissionsConfig.data) {
-      permissionsConfig.data &#x3D; {};
-    }
-
-    if (!permissionsConfig.data[PUBLIC_SECTION_KEY]) {
-      permissionsConfig.data[PUBLIC_SECTION_KEY] &#x3D; [];
+    if (!updatedData[PUBLIC_SECTION_KEY]) {
+      updatedData[PUBLIC_SECTION_KEY] &#x3D; [];
     }
 
     // Only add default rule if creating a new config
     if (isNewConfig) {
       // all logged-in users should continue to have full access (which is default without a permission doc):
-      permissionsConfig.data[DEFAULT_SECTION_KEY] &#x3D; [
-        { subject: &quot;all&quot;, action: &quot;manage&quot; },
-      ];
+      updatedData[DEFAULT_SECTION_KEY] &#x3D; [{ subject: &quot;all&quot;, action: &quot;manage&quot; }];
     }
 
-    const publicRules &#x3D; permissionsConfig.data[PUBLIC_SECTION_KEY];
+    const publicRules &#x3D; updatedData[PUBLIC_SECTION_KEY];
 
     // basic read permissions on config elements is required for public forms to work:
-    const hasPublicFormConfigRead &#x3D; publicRules.some(
-      (rule) &#x3D;&gt;
-        this.subjectMatches(rule.subject, &quot;PublicFormConfig&quot;) &amp;&amp;
-        (rule.action &#x3D;&#x3D;&#x3D; &quot;read&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
+    const hasPublicFormConfigRead &#x3D; publicRules.some((rule) &#x3D;&gt;
+      ruleCoversAction(rule, &quot;PublicFormConfig&quot;, &quot;read&quot;),
     );
-    const hasConfigRead &#x3D; publicRules.some(
-      (rule) &#x3D;&gt;
-        this.subjectMatches(rule.subject, &quot;Config&quot;) &amp;&amp;
-        (rule.action &#x3D;&#x3D;&#x3D; &quot;read&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
+    const hasConfigRead &#x3D; publicRules.some((rule) &#x3D;&gt;
+      ruleCoversAction(rule, &quot;Config&quot;, &quot;read&quot;),
     );
     const formReadExists &#x3D; hasPublicFormConfigRead &amp;&amp; hasConfigRead;
 
@@ -806,10 +774,8 @@ export class PublicFormPermissionService {
     }
 
     // Check if public create permission already exists to avoid duplicates
-    const createExists &#x3D; publicRules.some(
-      (rule) &#x3D;&gt;
-        this.subjectMatches(rule.subject, entityType) &amp;&amp;
-        (rule.action &#x3D;&#x3D;&#x3D; &quot;create&quot; || rule.action &#x3D;&#x3D;&#x3D; &quot;manage&quot;),
+    const createExists &#x3D; publicRules.some((rule) &#x3D;&gt;
+      ruleCoversAction(rule, entityType, &quot;create&quot;),
     );
     if (!createExists) {
       publicRules.push({
@@ -818,22 +784,19 @@ export class PublicFormPermissionService {
       });
     }
 
-    if (!createExists || !formReadExists) {
-      await this.entityMapper.save(permissionsConfig, true);
+    if (createExists &amp;&amp; formReadExists) {
+      return;
     }
-  }
 
-  /**
-   * Loads the permissions configuration from the database.
-   */
-  private async loadPermissionsConfig(): Promise&lt;Config&lt;DatabaseRules&gt; | null&gt; {
-    try {
-      return await this.entityMapper.load&lt;Config&lt;DatabaseRules&gt;&gt;(
-        Config,
-        Config.PERMISSION_KEY,
+    if (isNewConfig) {
+      // nothing stored yet that a backup could preserve
+      permissionsConfig.data &#x3D; updatedData;
+      await this.entityMapper.save(permissionsConfig, true);
+    } else {
+      await this.permissionsConfigService.saveWithBackup(
+        permissionsConfig,
+        updatedData,
       );
-    } catch {
-      return null; // Config doesn&#x27;t exist yet
     }
   }
 }

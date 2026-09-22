@@ -1,0 +1,791 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  FeaturePermissionRows</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>what the dialog loads before it can display anything</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#loadFailed" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">loadFailed</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#rows" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">rows</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="loadFailed"></a>
+                                <span class="name "><b>loadFailed</b>
+                                    <a href="#loadFailed">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>loadFailed:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/core/permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component.ts:115</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>true when the roles or their permissions could not be loaded at all</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="rows"></a>
+                                <span class="name "><b>rows</b>
+                                    <a href="#rows">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>rows:     <code>RolePermissionRow[]</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>RolePermissionRow[]</code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/core/permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component.ts:113</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  linkedSignal,
+  resource,
+  signal,
+} from &quot;@angular/core&quot;;
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from &quot;@angular/material/dialog&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
+import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
+import { RouterLink } from &quot;@angular/router&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { firstValueFrom } from &quot;rxjs&quot;;
+import { DialogCloseComponent } from &quot;../../../common-components/dialog-close/dialog-close.component&quot;;
+import { HintBoxComponent } from &quot;../../../common-components/hint-box/hint-box.component&quot;;
+import { UserAdminService } from &quot;../../../user/user-admin-service/user-admin.service&quot;;
+import { Logging } from &quot;../../../logging/logging.service&quot;;
+import { ROLES_ADMIN_ROUTE } from &quot;../../../admin/admin-role-permissions/role-permissions.service&quot;;
+import {
+  CRUD_ACTION_COLUMNS,
+  CrudActionColumn,
+  grantedByAdvancedRuleTooltip,
+  grantedByDefaultRoleTooltip,
+} from &quot;../../permission-action-labels&quot;;
+import { CRUD_ACTIONS, CrudAction } from &quot;../../permission-types&quot;;
+import {
+  PermissionCellState,
+  PermissionCheckboxComponent,
+} from &quot;../../permission-checkbox/permission-checkbox.component&quot;;
+import { DEFAULT_ROLE } from &quot;../../reserved-roles&quot;;
+import { PermissionsConfigService } from &quot;../../permissions-config.service&quot;;
+import {
+  FeatureActionPermission,
+  FeaturePermissionService,
+  RoleFeaturePermission,
+} from &quot;../feature-permission.service&quot;;
+
+/**
+ * Input passed to the {@link FeaturePermissionDialogComponent} when opened.
+ */
+export interface FeaturePermissionDialogData {
+  /** the feature&#x27;s ENTITY_TYPE (e.g. &quot;EmailTemplate&quot;) */
+  entityType: string;
+  /** human-readable (plural) label of the feature, e.g. &quot;Email Templates&quot; */
+  entityLabel?: string;
+}
+
+/** one checkbox of a row, with everything the template needs precomputed */
+interface PermissionCell extends PermissionCellState {
+  action: CrudAction;
+  /**
+   * What the checkbox shows: the effective access where another rule decides it,
+   * and otherwise the row&#x27;s own grant as edited here - with what the &#x60;_default&#x60;
+   * row adds on top layered in by
+   * {@link FeaturePermissionDialogComponent.displayRows}.
+   *
+   * This is therefore *not* {@link FeatureActionPermission.allowed}, which
+   * always includes what &#x60;_default&#x60; grants as stored.
+   */
+  allowed: boolean;
+  /**
+   * The row&#x27;s own grant as stored, taken over from
+   * {@link FeatureActionPermission.ownAllowed} and not changed while editing:
+   * only &#x60;allowed&#x60; follows the checkboxes. It is what a row saves for a
+   * checkbox an advanced rule decides - where &#x60;allowed&#x60; shows that rule&#x27;s
+   * effect - so that saving does not turn such a rule into the row&#x27;s own.
+   */
+  ownAllowed: boolean;
+  /**
+   * In &#x60;rows&#x60; whether an advanced rule leaves this checkbox editable at all; in
+   * &#x60;displayRows&#x60; additionally &#x60;false&#x60; while &#x60;_default&#x60; grants the action.
+   *
+   * Together with &#x60;lockTooltip&#x60; this is what the grid makes of the service&#x27;s
+   * {@link FeatureActionPermission.lockedByAdvancedRule}.
+   */
+  editable: boolean;
+  ariaLabel: string;
+}
+
+/** per-role row shown in the dialog grid */
+interface RolePermissionRow {
+  /** the role&#x27;s technical name, or the reserved key of the shared default section */
+  role: string;
+  /** what to show in the first column */
+  label: string;
+  /** human-readable description from the auth server, if available */
+  description?: string;
+  /** true for the shared &#x60;_default&#x60; row shown above the roles */
+  isDefaultRow: boolean;
+  /**
+   * Whether any checkbox of the row can be changed, i.e. whether the row is
+   * saved at all (see {@link RoleFeaturePermission.editable}). A single
+   * checkbox can still be locked on an editable row - that is
+   * {@link PermissionCell.editable}.
+   */
+  editable: boolean;
+  /** why the whole row cannot be changed; empty when it is editable */
+  lockTooltip: string;
+  /** one entry per action, in the order of {@link FeaturePermissionDialogComponent.actionColumns} */
+  cells: PermissionCell[];
+}
+
+/** what the dialog loads before it can display anything */
+interface FeaturePermissionRows {
+  rows: RolePermissionRow[];
+  /** true when the roles or their permissions could not be loaded at all */
+  loadFailed?: boolean;
+}
+
+/**
+ * Dialog to review and edit which user roles can add, read, update or delete the
+ * records of a single feature (internal entity type), writing the changes back to
+ * the central permissions config via {@link FeaturePermissionService}.
+ */
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: &quot;app-feature-permission-dialog&quot;,
+  templateUrl: &quot;./feature-permission-dialog.component.html&quot;,
+  styleUrl: &quot;./feature-permission-dialog.component.scss&quot;,
+  imports: [
+    MatDialogModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    RouterLink,
+    FaIconComponent,
+    DialogCloseComponent,
+    HintBoxComponent,
+    PermissionCheckboxComponent,
+  ],
+})
+export class FeaturePermissionDialogComponent {
+  private readonly dialogRef &#x3D; inject(
+    MatDialogRef&lt;FeaturePermissionDialogComponent&gt;,
+  );
+  private readonly data &#x3D; inject&lt;FeaturePermissionDialogData&gt;(MAT_DIALOG_DATA);
+  private readonly permissionService &#x3D; inject(FeaturePermissionService);
+  private readonly permissionsConfig &#x3D; inject(PermissionsConfigService);
+  private readonly userAdminService &#x3D; inject(UserAdminService);
+  private readonly snackBar &#x3D; inject(MatSnackBar);
+
+  /** where to manage the roles and their rules in full */
+  readonly rolesAdminRoute &#x3D; ROLES_ADMIN_ROUTE;
+
+  readonly entityType &#x3D; this.data.entityType;
+  readonly entityLabel &#x3D; this.data.entityLabel ?? this.data.entityType;
+
+  /** the checkbox columns, shared with the permission matrix of the role administration */
+  readonly actionColumns &#x3D; CRUD_ACTION_COLUMNS;
+
+  readonly permissionRows &#x3D; resource&lt;FeaturePermissionRows, unknown&gt;({
+    // A failure is reported as a value rather than through the resource&#x27;s own
+    // error state: the ProxyZone the specs run in re-reports an error thrown
+    // inside a loader as an uncaught exception, failing the test run, even
+    // though &#x60;resource&#x60; itself stores it and keeps rendering.
+    loader: async () &#x3D;&gt; {
+      try {
+        return await this.loadPermissionRows();
+      } catch (error) {
+        Logging.error(&quot;Failed to load feature permissions&quot;, error);
+        return { rows: [], loadFailed: true };
+      }
+    },
+  });
+
+  /** whether the roles and their permissions could not be loaded */
+  readonly loadFailed &#x3D; computed(
+    () &#x3D;&gt; this.permissionRows.value()?.loadFailed &#x3D;&#x3D;&#x3D; true,
+  );
+
+  /**
+   * The edited state, one row per &#x60;_default&#x60; section and user role, holding each
+   * row&#x27;s *own* grants - i.e. what will be written for it. What a role inherits
+   * from the &#x60;_default&#x60; row is layered on top in {@link displayRows} only.
+   */
+  readonly rows &#x3D; linkedSignal(() &#x3D;&gt; this.permissionRows.value()?.rows ?? []);
+
+  /** the actions the &#x60;_default&#x60; row grants, as currently ticked in this dialog */
+  private readonly grantedByDefault &#x3D; computed(() &#x3D;&gt; {
+    const defaultRow &#x3D; this.rows().find((row) &#x3D;&gt; row.isDefaultRow);
+    return new Set(
+      defaultRow?.cells
+        .filter((cell) &#x3D;&gt; cell.allowed)
+        .map((cell) &#x3D;&gt; cell.action) ?? [],
+    );
+  });
+
+  /**
+   * The rows as displayed: on a role row an action granted by the &#x60;_default&#x60; row
+   * shows as ticked and locked, and follows changes to the &#x60;_default&#x60; row
+   * immediately, so that removing a shared grant does not silently leave the
+   * role rows claiming access.
+   */
+  readonly displayRows &#x3D; computed(() &#x3D;&gt; {
+    const grantedByDefault &#x3D; this.grantedByDefault();
+    return this.rows().map((row) &#x3D;&gt;
+      row.isDefaultRow ? row : this.applyDefaultGrants(row, grantedByDefault),
+    );
+  });
+
+  private applyDefaultGrants(
+    row: RolePermissionRow,
+    grantedByDefault: ReadonlySet&lt;CrudAction&gt;,
+  ): RolePermissionRow {
+    if (!row.editable) {
+      // an advanced rule decides this row as a whole, &#x60;_default&#x60; changes nothing
+      return row;
+    }
+
+    return {
+      ...row,
+      cells: row.cells.map((cell) &#x3D;&gt;
+        cell.editable &amp;&amp; grantedByDefault.has(cell.action)
+          ? {
+              ...cell,
+              allowed: true,
+              editable: false,
+              lockTooltip: grantedByDefaultRoleTooltip(),
+            }
+          : cell,
+      ),
+    };
+  }
+
+  readonly saving &#x3D; signal(false);
+
+  private async loadPermissionRows(): Promise&lt;FeaturePermissionRows&gt; {
+    const descriptions &#x3D; await this.loadRoles();
+    const roleNames &#x3D; [...descriptions.keys()];
+
+    if (roleNames.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new Error(&quot;no user roles available to configure&quot;);
+    }
+
+    const state &#x3D; await this.permissionService.getPermissions(
+      this.entityType,
+      roleNames,
+    );
+
+    return {
+      rows: [
+        this.toRow(
+          state.defaultRules,
+          DEFAULT_ROLE.label,
+          true,
+          DEFAULT_ROLE.appliesTo,
+        ),
+        ...state.roles.map((role) &#x3D;&gt;
+          this.toRow(role, role.role, false, descriptions.get(role.role)),
+        ),
+      ],
+    };
+  }
+
+  private toRow(
+    permission: RoleFeaturePermission,
+    label: string,
+    isDefaultRow: boolean,
+    description?: string,
+  ): RolePermissionRow {
+    return {
+      role: permission.role,
+      label,
+      description,
+      isDefaultRow,
+      editable: permission.editable,
+      // a whole row is only ever read-only because of an advanced rule - what
+      // &#x60;_default&#x60; grants locks single checkboxes, never the &#x60;_default&#x60; row itself
+      lockTooltip: permission.editable ? &quot;&quot; : grantedByAdvancedRuleTooltip(),
+      cells: this.actionColumns.map((column) &#x3D;&gt;
+        this.toCell(column, permission.actions[column.action], label),
+      ),
+    };
+  }
+
+  private toCell(
+    column: CrudActionColumn,
+    permission: FeatureActionPermission,
+    rowLabel: string,
+  ): PermissionCell {
+    const { lockedByAdvancedRule } &#x3D; permission;
+    return {
+      action: column.action,
+      // a checkbox an uneditable rule decides shows that rule&#x27;s effect; an
+      // editable one shows the row&#x27;s own grant, so that unticking &#x60;_default&#x60;
+      // in &#x60;displayRows&#x60; reveals it again instead of discarding it
+      allowed: lockedByAdvancedRule
+        ? permission.allowed
+        : permission.ownAllowed,
+      ownAllowed: permission.ownAllowed,
+      editable: !lockedByAdvancedRule,
+      lockTooltip: lockedByAdvancedRule ? grantedByAdvancedRuleTooltip() : &quot;&quot;,
+      ariaLabel: $localize&#x60;:Permission checkbox aria label:${column.label} ${this.entityLabel} as ${rowLabel}&#x60;,
+    };
+  }
+
+  /**
+   * Collect the roles to display as a name -&gt; description map. Roles known to the
+   * auth server (Keycloak) provide a human-readable description; roles already
+   * present in the permissions config are merged in (without a description) so the
+   * dialog still works when the Keycloak admin API is not reachable.
+   */
+  private async loadRoles(): Promise&lt;Map&lt;string, string | undefined&gt;&gt; {
+    const roles &#x3D; new Map&lt;string, string | undefined&gt;();
+
+    try {
+      const allRoles &#x3D; await firstValueFrom(
+        this.userAdminService.getAllRoles(),
+      );
+      for (const role of allRoles) {
+        roles.set(role.name, role.description || undefined);
+      }
+    } catch (error) {
+      Logging.debug(
+        &quot;Could not load roles from auth server, using config&quot;,
+        error,
+      );
+    }
+
+    const configuredRoles &#x3D;
+      await this.permissionService.getConfiguredRoleNames();
+    for (const role of configuredRoles) {
+      if (!roles.has(role)) {
+        roles.set(role, undefined);
+      }
+    }
+
+    return roles;
+  }
+
+  /** Update a single checkbox, replacing the array so OnPush re-renders. */
+  setAction(role: string, action: CrudAction, checked: boolean): void {
+    this.rows.update((rows) &#x3D;&gt;
+      rows.map((row) &#x3D;&gt;
+        row.role &#x3D;&#x3D;&#x3D; role
+          ? {
+              ...row,
+              cells: row.cells.map((cell) &#x3D;&gt;
+                cell.action &#x3D;&#x3D;&#x3D; action ? { ...cell, allowed: checked } : cell,
+              ),
+            }
+          : row,
+      ),
+    );
+  }
+
+  async confirm(): Promise&lt;void&gt; {
+    this.saving.set(true);
+    try {
+      // only editable rows are persisted (the &#x60;_default&#x60; row included); rows
+      // decided by an advanced rule are display-only
+      const updates &#x3D; this.rows()
+        .filter((row) &#x3D;&gt; row.editable)
+        .map((row) &#x3D;&gt; ({
+          role: row.role,
+          actions: Object.fromEntries(
+            CRUD_ACTIONS.map((action) &#x3D;&gt; [
+              action,
+              row.cells.some(
+                (cell) &#x3D;&gt;
+                  cell.action &#x3D;&#x3D;&#x3D; action &amp;&amp;
+                  // a checkbox decided by an uneditable rule keeps whatever the
+                  // row itself grants, rather than what that rule displays
+                  (cell.editable ? cell.allowed : cell.ownAllowed),
+              ),
+            ]),
+          ) as Record&lt;CrudAction, boolean&gt;,
+        }));
+
+      const backup &#x3D; await this.permissionService.setPermissions(
+        this.entityType,
+        updates,
+      );
+      this.permissionsConfig.offerUndo(
+        backup,
+        $localize&#x60;Permissions for &quot;${this.entityLabel}&quot; updated&#x60;,
+      );
+      this.dialogRef.close(true);
+    } catch (error) {
+      Logging.error(&quot;Failed to save feature permissions&quot;, error);
+      this.snackBar.open(
+        $localize&#x60;Could not save permissions. Please try again.&#x60;,
+        undefined,
+        { duration: 5000 },
+      );
+    } finally {
+      this.saving.set(false);
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'FeaturePermissionRows.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
