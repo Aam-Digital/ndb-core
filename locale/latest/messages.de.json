@@ -1740,5 +1740,20 @@
   "3951589631848438004": "Condition configured",
   "1128485605127100061": "This field is shown only while the record matches...",
   "2343990751852583823": "Matches if any one of the conditions applies (\"or\" conditions).",
-  "3802391394601762698": "Matches only if all conditions apply (\"and\" conditions)."
+  "3802391394601762698": "Matches only if all conditions apply (\"and\" conditions).",
+  "7631979915555608857": "Access to this feature is controlled by user roles",
+  "6705680186286156258": "Configure Permissions",
+  "8379565640124047532": " Configure Permissions ",
+  "1028585198256404826": " Permissions for {$INTERPOLATION}\n",
+  "6070831453515237499": " Could not load the list of user roles. Please try again later or edit permissions in the user role administration. ",
+  "7686899188315728517": " Select which user roles can use or manage this feature. ",
+  "87882967947630481": " Give at least {$START_TAG_STRONG}Read{$CLOSE_TAG_STRONG} permissions, if users should be able to use the feature (i.e. create files). ",
+  "4553833061228767307": "Manage user roles",
+  "3182084073935091216": " No user roles available to configure. ",
+  "6249484391846924804": " Confirm ",
+  "7561176763575345049": "{$PH} {$PH_1} as {$PH_2}",
+  "3246584775525309004": "Permissions for \"{$PH}\" updated",
+  "3342943884364203683": "Could not save permissions. Please try again.",
+  "5625368824294303564": "This access comes from an advanced permission rule and can only be changed in the user role administration.",
+  "80127929565548450": "Could not undo the change. Please try again."
 }
