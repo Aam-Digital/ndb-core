@@ -7,6 +7,7 @@ import { Location } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  LOCALE_ID,
   computed,
   inject,
   input,
@@ -28,6 +29,9 @@ import {
 } from "../../admin/admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
+import { resolveTranslatableConfig } from "../../config/multi-lingual-config";
+import { DEFAULT_LANGUAGE } from "../../language/language-statics";
+import { availableLocales } from "../../language/languages";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
@@ -68,7 +72,7 @@ export class AdminDashboardComponent {
 
   private readonly dashboardViewConfig = computed(
     () =>
-      this.configService.getConfig(this.dashboardViewConfigKey()) as
+      this.configService.getRawConfig(this.dashboardViewConfigKey()) as
         DynamicComponentConfig<DashboardConfig> | undefined,
   );
 
@@ -76,6 +80,18 @@ export class AdminDashboardComponent {
     structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
   );
 
+  /** resolved copies, for the live widget preview only */
+  readonly previewWidgets = computed(() =>
+    resolveTranslatableConfig(
+      this.dashboardConfig().widgets,
+      this.locale,
+      DEFAULT_LANGUAGE,
+      this.validLocaleIds,
+    ),
+  );
+
+  private readonly locale = inject(LOCALE_ID);
+  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);
   private readonly location = inject(Location);

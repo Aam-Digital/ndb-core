@@ -69,8 +69,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
     component.onSave();
 
     expect(dialogRef.close).toHaveBeenCalledWith({
-      "en-US": "Name",
-      de: "Vorname",
+      value: { "en-US": "Name", de: "Vorname" },
     });
   });
 
@@ -80,7 +79,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
 
     component.onSave();
 
-    expect(dialogRef.close).toHaveBeenCalledWith("Name");
+    expect(dialogRef.close).toHaveBeenCalledWith({ value: "Name" });
   });
 
   it("should keep a single non-default translation as a one-entry map", async () => {
@@ -89,7 +88,9 @@ describe("ConfigureTranslationsPopupComponent", () => {
 
     component.onSave();
 
-    expect(dialogRef.close).toHaveBeenCalledWith({ de: "Vorname" });
+    expect(dialogRef.close).toHaveBeenCalledWith({
+      value: { de: "Vorname" },
+    });
   });
 
   it("should read a single non-default translation back into its own language", async () => {
@@ -106,7 +107,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
 
     component.onSave();
 
-    expect(dialogRef.close).toHaveBeenCalledWith("Name");
+    expect(dialogRef.close).toHaveBeenCalledWith({ value: "Name" });
   });
 
   it("should close without a value when cancelled, leaving the config untouched", async () => {

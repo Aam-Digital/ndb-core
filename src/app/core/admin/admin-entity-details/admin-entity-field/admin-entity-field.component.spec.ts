@@ -665,7 +665,17 @@ describe("AdminEntityFieldComponent", () => {
       await fixture.whenStable();
 
       // tests run in the default language
-      expect(component.resolvedLabel).toBe("Name");
+      expect(component.resolvedLabel()).toBe("Name");
+    });
+
+    it("should show the active language's text already when the dialog opens", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: TRANSLATIONS,
+        dataType: "string",
+      } as unknown as EntitySchemaField);
+
+      expect(component.resolvedLabel()).toBe("Name");
     });
 
     it("should generate the field id from the text, not from a translation map", async () => {

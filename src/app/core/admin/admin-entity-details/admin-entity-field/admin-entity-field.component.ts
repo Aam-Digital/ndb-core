@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   LOCALE_ID,
@@ -137,6 +138,13 @@ export class AdminEntityFieldComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly entityConfigService = inject(EntityConfigService);
+  private readonly labelValue = signal<TranslatableText | undefined>(undefined);
+
+  /** the label text of the active language, for display outside the form field */
+  readonly resolvedLabel = computed(
+    () => this.resolveForDisplay(this.labelValue()) ?? "",
+  );
+
   private readonly locale = inject(LOCALE_ID);
   private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
@@ -275,6 +283,12 @@ export class AdminEntityFieldComponent implements OnInit {
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
     });
+
+    const labelControl = this.schemaFieldsForm.get("label");
+    this.labelValue.set(labelControl.value);
+    labelControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.labelValue.set(value));
 
     this.schemaFieldsForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -644,13 +658,6 @@ export class AdminEntityFieldComponent implements OnInit {
 
     // a field that is not in the config yet (newly added) has no raw value
     return rawValue ?? this.data.entitySchemaField[property];
-  }
-
-  /** the label text of the active language, for display outside the form field */
-  get resolvedLabel(): string {
-    return (
-      this.resolveForDisplay(this.schemaFieldsForm?.get("label")?.value) ?? ""
-    );
   }
 
   private resolveForDisplay(value: TranslatableText): string | undefined {

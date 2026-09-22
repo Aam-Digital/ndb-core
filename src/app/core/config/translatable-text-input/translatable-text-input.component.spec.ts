@@ -28,8 +28,13 @@ describe("TranslatableTextInputComponent", () => {
     fixture.detectChanges();
   });
 
-  /** simulate the translations dialog being confirmed with the given result */
-  function confirmDialogWith(result: unknown) {
+  /** simulate saving the translations dialog with the given value */
+  function saveDialogWith(value: unknown) {
+    closeDialogWith({ value });
+  }
+
+  /** simulate the dialog closing with a raw result (undefined = cancelled) */
+  function closeDialogWith(result: unknown) {
     mockDialog.open.mockReturnValue({ afterClosed: () => of(result) });
     component.openTranslations({ stopPropagation: () => undefined } as Event);
   }
@@ -57,6 +62,22 @@ describe("TranslatableTextInputComponent", () => {
     expect(component.value).toEqual({ "en-US": "Full Name", de: "Vorname" });
   });
 
+  it("falls back to another language when the active one has no slot yet", () => {
+    component.value = { de: "Vorname" };
+
+    expect(component.displayText()).toBe("Vorname");
+  });
+
+  it("clears the field when the active language's text is deleted", () => {
+    component.value = { "en-US": "Name", de: "Vorname" };
+
+    component.onTextInput("");
+
+    expect(component.value).toEqual({ "en-US": "", de: "Vorname" });
+    // must not fall back to another language, or the admin cannot clear it
+    expect(component.displayText()).toBe("");
+  });
+
   it("should keep a plain string plain when the text field is edited", () => {
     component.value = "Name";
 
@@ -68,15 +89,23 @@ describe("TranslatableTextInputComponent", () => {
   it("should take the value configured in the translations dialog", () => {
     component.value = "Name";
 
-    confirmDialogWith({ "en-US": "Name", de: "Vorname" });
+    saveDialogWith({ "en-US": "Name", de: "Vorname" });
 
     expect(component.value).toEqual({ "en-US": "Name", de: "Vorname" });
+  });
+
+  it("clears the value when every translation is removed in the dialog", () => {
+    component.value = { "en-US": "Name", de: "Vorname" };
+
+    saveDialogWith(undefined);
+
+    expect(component.value).toBeUndefined();
   });
 
   it("should keep the previous value when the dialog is cancelled", () => {
     component.value = { "en-US": "Name", de: "Vorname" };
 
-    confirmDialogWith(undefined);
+    closeDialogWith(undefined);
 
     expect(component.value).toEqual({ "en-US": "Name", de: "Vorname" });
   });
