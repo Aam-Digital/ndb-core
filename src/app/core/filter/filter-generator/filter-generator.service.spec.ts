@@ -616,6 +616,53 @@ describe("FilterGeneratorService", () => {
     expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
   });
 
+  it("should build an $elemMatch filter for multi-select (isArray) configurable-enum options, not plain equality (#4406)", async () => {
+    // A plain equality selector (e.g. `{ tags: "A" }`) only matches an array
+    // field client-side, where ucast treats it as "array contains" - CouchDB's
+    // Mango `_find` does not, and never matches in online-only mode.
+    @DatabaseEntity("ArrayEnumFilterTestEntity")
+    class ArrayEnumFilterTestEntity extends Entity {}
+    ArrayEnumFilterTestEntity.schema.set("tags", {
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      label: "Tags",
+      isArray: true,
+    });
+    ArrayEnumFilterTestEntity.schema.set("category", {
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      label: "Category",
+    });
+
+    vi.spyOn(
+      TestBed.inject(FilterGeneratorService)["enumService"],
+      "getEnumValues",
+    ).mockReturnValue([{ id: "A", label: "A" }]);
+
+    const e1 = new ArrayEnumFilterTestEntity();
+    e1["tags"] = [{ id: "A", label: "A" }];
+    const e2 = new ArrayEnumFilterTestEntity();
+    e2["tags"] = [{ id: "B", label: "B" }];
+
+    const [tagsFilter, categoryFilter] = (await service.generate(
+      [{ id: "tags" }, { id: "category" }],
+      ArrayEnumFilterTestEntity,
+      [e1, e2],
+    )) as ConfigurableEnumFilter<Entity>[];
+
+    const arrayOption = tagsFilter.options.find((opt) => opt.key === "A");
+    expect(arrayOption.filter).toEqual({
+      "tags.id": { $elemMatch: { $eq: "A" } },
+    });
+    // still matches correctly client-side (in-memory/demo mode)
+    const filtered = filterService.getFilterPredicate(arrayOption.filter);
+    expect([e1, e2].filter((item) => filtered(item))).toEqual([e1]);
+
+    // the single-select case is untouched: still a plain equality selector
+    const singleOption = categoryFilter.options.find((opt) => opt.key === "A");
+    expect(singleOption.filter).toEqual({ "category.id": "A" });
+  });
+
   function filter<T extends Entity>(
     data: T[],
     option: FilterSelectionOption<T>,
