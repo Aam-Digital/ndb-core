@@ -36,10 +36,6 @@ describe("GroupedChildAttendanceComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load activities from attendance service", async () => {
     const activity = TestEntity.create("test activity");
     mockAttendanceService.getActivitiesForParticipant.mockResolvedValue([

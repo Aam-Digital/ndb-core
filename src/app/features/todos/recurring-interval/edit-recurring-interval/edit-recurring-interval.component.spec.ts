@@ -39,10 +39,6 @@ describe.skip("EditRecurringIntervalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should create the custom selected option on init if necessary", () => {
     const customInterval: TimeInterval = { amount: 99, unit: "days" };
     component.formControl.setValue(customInterval);

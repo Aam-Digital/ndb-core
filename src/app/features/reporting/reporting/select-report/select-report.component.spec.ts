@@ -31,10 +31,6 @@ describe("SelectReportComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should select the first report if only one exists", () => {
     const report = new ReportEntity();
     fixture.componentRef.setInput("reports", [report]);

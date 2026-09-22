@@ -75,10 +75,6 @@ describe("ConfigurableEnumCleanupComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load analysis on initialization", () => {
     expect(
       configCleanupServiceMock.analyzeUnusedConfigurableEnums,

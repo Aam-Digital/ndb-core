@@ -53,10 +53,6 @@ describe("NotesDashboardComponent", () => {
       fixture.detectChanges();
     });
 
-    it("should create", () => {
-      expect(component).toBeTruthy();
-    });
-
     it("should only count children with recent note", async () => {
       vi.useFakeTimers();
       try {
@@ -88,10 +84,6 @@ describe("NotesDashboardComponent", () => {
       component = fixture.componentInstance;
       fixture.componentRef.setInput("mode", "without-recent-notes");
       fixture.detectChanges();
-    });
-
-    it("should create", () => {
-      expect(component).toBeTruthy();
     });
 
     it("should add only children without recent note", async () => {

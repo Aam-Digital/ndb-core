@@ -45,10 +45,6 @@ describe("EntityBlockComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load entity if only id is given", async () => {
     fixture.componentRef.setInput("entityId", testEntity.getId());
     fixture.detectChanges();

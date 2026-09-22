@@ -88,10 +88,6 @@ describe("SqlReportService", () => {
     service = TestBed.inject(SqlReportService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should create a new report calculation if no one exist", async () => {
     // Given
     mockHttpClient.get

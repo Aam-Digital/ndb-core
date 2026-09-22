@@ -40,11 +40,18 @@ export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
    */
   showInternalTypes = input(false);
 
+  /**
+   * ENTITY_TYPE keys to omit from the dropdown, e.g. types that are already
+   * selected elsewhere and should not be offered again.
+   */
+  hiddenTypes = input<string[]>([]);
+
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly availableEntityTypes = computed(() =>
     this.entityRegistry
       .getEntityTypes(!this.showInternalTypes())
-      .map(({ value }) => value),
+      .map(({ value }) => value)
+      .filter((type) => !this.hiddenTypes().includes(type.ENTITY_TYPE)),
   );
 
   protected override optionsSource = computed(() =>

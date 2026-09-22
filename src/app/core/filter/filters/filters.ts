@@ -64,6 +64,7 @@ export function createEmptyValueFilter<T extends Entity>(
     { [fieldName]: undefined } as DataFilter<T>,
     { [fieldName]: null } as DataFilter<T>,
     { [fieldName]: "" } as DataFilter<T>,
+    { [fieldName]: { $exists: false } } as DataFilter<T>,
   ];
 
   if (includeNestedId) {
@@ -71,6 +72,7 @@ export function createEmptyValueFilter<T extends Entity>(
       { [fieldName + ".id"]: undefined } as DataFilter<T>,
       { [fieldName + ".id"]: null } as DataFilter<T>,
       { [fieldName + ".id"]: "" } as DataFilter<T>,
+      { [fieldName + ".id"]: { $exists: false } } as DataFilter<T>,
     );
   }
 
@@ -112,7 +114,7 @@ export abstract class Filter<T extends Entity> {
     );
   }
 
-  abstract getFilter(): DataFilter<T>;
+  abstract getFilter(): DataFilter<T> | undefined;
 }
 
 /**
@@ -161,6 +163,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * @param options An array of different filtering variants to chose between
    * @param label The user-friendly label describing this filter-selection
    * (optional, defaults to the name of the selection)
+   * @param singleSelectOnly if true, only one option can be selected at a time
    */
   constructor(
     public override name: string,
@@ -186,7 +189,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * Get the filter query for the given option.
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
-  public getFilter(): DataFilter<T> {
+  public getFilter(): DataFilter<T> | undefined {
     const filters: DataFilter<T>[] = this.selectedOptionValues
       .map((value: string) => this.getOption(value))
       .filter((value: FilterSelectionOption<T>) => value !== undefined)
@@ -195,7 +198,10 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
       });
 
     if (filters.length === 0) {
-      return {} as DataFilter<T>;
+      return undefined;
+    }
+    if (filters.length === 1) {
+      return filters[0];
     }
     return {
       $or: [...filters],

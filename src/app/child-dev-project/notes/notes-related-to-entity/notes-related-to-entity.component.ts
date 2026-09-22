@@ -1,9 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   inject,
   input,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { Note } from "../model/note";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -38,7 +38,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   override loaderMethod = input<LoaderMethod>(
     LoaderMethod.NotesRelatedToEntity,
   );
-
   protected override getDefaultColumns(): FormFieldConfig[] {
     return structuredClone(
       RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns,

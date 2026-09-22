@@ -30,8 +30,8 @@ jobs:
       PW_DISABLE_TS_ESM: 1
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ needs.toolchain.outputs.node-version }}
           cache: npm
@@ -41,7 +41,7 @@ jobs:
 
       - name: Cache playwright
         id: cache-playwright
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
@@ -50,7 +50,7 @@ jobs:
         run: npx playwright install chromium
 
       - name: Cache angular
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .angular/cache
           key: angular-v1-devel-${{ hashFiles('package-lock.json') }}

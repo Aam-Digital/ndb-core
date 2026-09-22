@@ -60,10 +60,6 @@ describe("InheritedValueService", () => {
     cleanUpTemporarySchemaFields();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should do nothing, if field in parent entity is missing", () => {
     // given
     let entity = new Entity();

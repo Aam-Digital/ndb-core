@@ -3,6 +3,7 @@ import { DatabaseException, PouchDatabase } from "./pouch-database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
+import { Logging } from "../../logging/logging.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { environment } from "environments/environment";
 
@@ -483,6 +484,145 @@ describe("RemotePouchDatabase tests", () => {
       );
 
       expect((database as any).extractLostPermissions).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("4XX logging", () => {
+    let warn: Mock;
+
+    beforeEach(() => {
+      // spy set up after the outer beforeEach, and cleared per test:
+      // vi.spyOn returns the existing spy when one is already installed
+      warn = vi.spyOn(Logging, "warn") as unknown as Mock;
+      warn.mockClear();
+    });
+
+    afterEach(() => {
+      // the shared teardown destroys the database, which fetches - leave the
+      // mock succeeding again so it does not fail on this test's 4XX response
+      (PouchDB.fetch as Mock).mockReturnValue(
+        Promise.resolve(new Response("{}", { status: HttpStatusCode.Ok })),
+      );
+    });
+
+    /** The DB response warnings logged, ignoring anything else the app logs. */
+    const warningsLogged = () =>
+      warn.mock.calls.filter(([message]) =>
+        String(message).startsWith("Unexpected DB response"),
+      );
+
+    const fetch4xx = async (status: number, method?: string) => {
+      database.init("");
+      (PouchDB.fetch as Mock).mockReturnValue(
+        Promise.resolve(new Response("{}", { status })),
+      );
+      await (database as any).defaultFetch(
+        `${environment.DB_PROXY_PREFIX}/unit-test-db/Entity:ABC`,
+        { headers: {}, method },
+      );
+    };
+
+    it("should report the status and method of an unexpected 4XX, not an unserializable Response", async () => {
+      // Reproduces AAM-DIGITAL-77H: passing the Response itself logged `context: [{}]`,
+      // because a Response has no own enumerable properties - so the status,
+      // the only thing distinguishing these failures, never reached monitoring.
+      await fetch4xx(HttpStatusCode.BadRequest);
+
+      const [, context] = warningsLogged()[0];
+      expect(context).toEqual(
+        expect.objectContaining({
+          status: HttpStatusCode.BadRequest,
+          method: "GET",
+        }),
+      );
+      expect(JSON.stringify(context)).toContain("400");
+    });
+
+    it("should report each status under its own message, so monitoring separates the root causes", async () => {
+      // the wording itself is covered by the http-response-logging spec; what
+      // matters here is that two statuses do not end up in one bucket
+      await fetch4xx(HttpStatusCode.BadRequest);
+      await fetch4xx(HttpStatusCode.TooManyRequests);
+
+      const [first, second] = warningsLogged().map(([message]) => message);
+      expect(first).not.toEqual(second);
+    });
+
+    it("should keep the numeric status in the context of an unnamed 4XX", async () => {
+      await fetch4xx(423); // Locked - not one we expect from CouchDB
+
+      expect(warningsLogged()[0][1]).toEqual(
+        expect.objectContaining({ status: 423 }),
+      );
+    });
+
+    it("should not report expected 4XX statuses as warnings", async () => {
+      await fetch4xx(HttpStatusCode.Forbidden);
+
+      expect(warningsLogged()).toEqual([]);
+    });
+
+    it("should not report a conflict as a warning, as only the caller knows its outcome", async () => {
+      // a 409 is always surfaced to whoever made the write - either
+      // PouchDatabase.resolveConflict or PouchDB's own replication - so warning
+      // here alerts on something nobody can act on
+      await fetch4xx(HttpStatusCode.Conflict, "PUT");
+
+      expect(warningsLogged()).toEqual([]);
+    });
+  });
+
+  describe("find", () => {
+    it("sends limit and bookmark to the _find endpoint and returns the response's docs and bookmark", async () => {
+      database.init("");
+
+      let requestBody: any;
+      (PouchDB.fetch as Mock).mockImplementation(async (url: string, opts) => {
+        if (typeof url === "string" && url.includes("/_find")) {
+          requestBody = JSON.parse(opts.body as string);
+          return new Response(
+            JSON.stringify({
+              docs: [{ _id: "Test:3" }],
+              bookmark: "next-bookmark",
+            }),
+            { status: HttpStatusCode.Ok },
+          );
+        }
+        return new Response("{}", { status: HttpStatusCode.Ok });
+      });
+
+      const res = await (database as RemotePouchDatabase).find(
+        "Test",
+        {},
+        { limit: 1, bookmark: "prev-bookmark" },
+      );
+
+      expect(requestBody).toEqual(
+        expect.objectContaining({ limit: 1, bookmark: "prev-bookmark" }),
+      );
+      expect(res).toEqual({
+        docs: [{ _id: "Test:3" }],
+        bookmark: "next-bookmark",
+      });
+    });
+
+    it("does not send a bookmark for the first page", async () => {
+      database.init("");
+
+      let requestBody: any;
+      (PouchDB.fetch as Mock).mockImplementation(async (url: string, opts) => {
+        if (typeof url === "string" && url.includes("/_find")) {
+          requestBody = JSON.parse(opts.body as string);
+          return new Response(JSON.stringify({ docs: [], bookmark: "bm1" }), {
+            status: HttpStatusCode.Ok,
+          });
+        }
+        return new Response("{}", { status: HttpStatusCode.Ok });
+      });
+
+      await (database as RemotePouchDatabase).find("Test", {}, { limit: 5 });
+
+      expect(requestBody.bookmark).toBeUndefined();
     });
   });
 

@@ -1,10 +1,12 @@
-@if (recordsDataSource().isLoading()) {
-  <div class="process-spinner">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
-}
-
-<div [hidden]="recordsDataSource().isLoading()" class="table-container">
+<div class="table-container">
+  @if (recordsDataSource().isLoading()) {
+    <!-- shown on top of the (possibly stale) table while data is (re)loaded,
+         e.g. after a filter/sort/page change with the server-side data source -->
+    <mat-progress-bar
+      mode="indeterminate"
+      class="loading-bar"
+    ></mat-progress-bar>
+  }
   <table
     mat-table
     [dataSource]="recordsDataSource()"

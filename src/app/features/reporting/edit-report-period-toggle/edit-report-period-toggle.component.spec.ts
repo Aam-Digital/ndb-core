@@ -43,10 +43,6 @@ describe("EditReportPeriodToggleComponent", () => {
     }).compileComponents();
   });
 
-  it("should create", () => {
-    expect(create("sql", []).component).toBeTruthy();
-  });
-
   it("derives usesDateRange from date placeholders ($start/$end for sql, ? for non-sql)", () => {
     expect(
       create("sql", [{ query: "SELECT * FROM c" }]).component.usesDateRange(),

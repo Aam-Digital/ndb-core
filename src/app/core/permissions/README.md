@@ -27,6 +27,7 @@ _Key files:_
 - `ability/entity-ability.ts` — extends CASL `Ability`, converts `Entity` instances to CASL subjects
 - `ability/ability.service.ts` — loads `Config:Permissions` and builds the `EntityAbility`
 - `../entity/entity-mapper/entity-mapper.service.ts` — calls `assertPermission()` before `save()` / `remove()` (write enforcement)
+- `feature-permission/feature-permission.service.ts` — admin-facing editing of per-role access to a single "feature" entity type
 
 _Flow:_
 
@@ -56,7 +57,7 @@ _Flow:_
 3. `getRulesForUser(user)` merges rules: for authenticated users, `[...admin-default, ...role-rules]` (rule order same as frontend).
 4. Rules are interpolated and passed to `PermissionService.getAbilityFor(user)`.
 5. Every access point (changes feed, bulk-doc, REST write, design-doc) calls `.can()` on this ability or goes through `isAllowedTo()`.
-6. CASL's deny-by-default means unauthenticated (anonymous) users only get access via the `_public` rules (legacy `public` read as a fallback).
+6. CASL's deny-by-default means unauthenticated (anonymous) users only get access via the `_public` rules.
 
 _Choke points:_
 
@@ -69,6 +70,7 @@ Both repos use CASL v6.8.1. Key facts:
 - **Deny-by-default**: If no rule matches a subject/action pair, access is denied.
 - **No specificity**: CASL does not rank rules by how specific they are. Instead, it uses **last matching rule wins** — the last rule in the array that matches the subject/action/conditions determines the result, regardless of whether earlier rules are more specific.
 - **Inverted rules**: A rule with `inverted: true` works as a deny, not a grant. This can be confusing with multiple roles; use with care.
+  - The Admin UI does not ensure the order or rules is kept, so inverted rules effects might change!
 - **Conditions**: Rules can specify MongoDB-style conditions to restrict access to specific documents or fields. Conditions are only evaluated if the document is passed to `ability.can(subject, doc)` — not just the subject type string.
 - **`cannot()`**: Calling `ability.cannot(action, subject)` is literally `!ability.can(action, subject)`.
 
@@ -81,12 +83,17 @@ Admins edit this document to control what each role can do.
 
 **In the Aam Digital app:**
 
-- Go to Admin > Application Configuration > Edit permissions config
-- This opens the `Config:Permissions` document in the app's JSON editor
+- Go to Admin > User Roles & Permissions to edit the rules of each role
+- The same screen offers the raw `Config:Permissions` document through its "Edit JSON" menu entry
 
 **Directly in the database:**
 
 - Use CouchDB Fauxton GUI or another database tool to edit the document directly
+
+**Per feature, from its admin list view:**
+
+- On an internal "feature" type (e.g. Export Templates, Email Templates, Public Forms) use the "Configure Permissions" button
+- This only writes plain rules for that one entity type; roles decided by an advanced rule stay read-only and have to be edited in the role administration
 
 ### Permission structure
 
@@ -135,7 +142,7 @@ Permissions use JSON format with a role → rules mapping:
 - **`action`**: What users can do — `read`, `create`, `update`, `delete`, or `manage` (all operations)
 - **`_default`**: Rules applied to all authenticated users (regardless of role)
 - **`_public`**: Rules applied to anonymous (not logged-in) visitors
-- **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules. Older documents may still use the non-prefixed `default` / `public` names; these are read as a fallback and migrated to the underscore form by the `oneoff-20260724-permissions-key-rename` migration (see `cli/migration/`). `_default` and `_public` are the only allowed underscore-prefixed keys; do not create realm roles, or any other rule section, whose name starts with `_`.
+- **Reserved section keys**: `_default` and `_public` are reserved section keys, not roles. The leading underscore keeps them from colliding with a realm role of the same name, and any user role that starts with `_` is ignored when resolving rules.
 - **Combining roles**: If a user has multiple roles, their rules are appended in order (the `_default` rules first, then each role's rules). CASL evaluates them so that the **last matching rule wins** — this is not necessarily the most permissive one. This ordering matters when deny/inverted rules are involved: a later `"inverted": true` rule can revoke access granted earlier, and a later granting rule can re-enable access a previous inverted rule denied.
 
 ### Restricting access (inverted rules)
@@ -240,7 +247,7 @@ Pass the entity and the operation (`create`, `read`, `update`, `delete`, `manage
 
 ## Testing
 
-- Frontend: `src/app/core/permissions/ability/ability.service.spec.ts`, `entity-ability.spec.ts`
+- Frontend: `src/app/core/permissions/ability/ability.service.spec.ts`, `entity-ability.spec.ts`, `feature-permission/feature-permission.service.spec.ts`
 - Backend: `src/permissions/rules/rules.service.spec.ts`, `src/permissions/permission/permission.service.spec.ts`
 
 When testing permissions:

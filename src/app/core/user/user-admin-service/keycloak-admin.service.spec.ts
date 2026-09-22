@@ -1,14 +1,16 @@
 import { TestBed } from "@angular/core/testing";
+import { firstValueFrom } from "rxjs";
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { KeycloakAdminService } from "./keycloak-admin.service";
-import { environment } from "../../../../environments/environment.spec";
+import { environment } from "../../../../environments/environment";
 import { Role } from "./user-account";
 import { UserAdminApiError, UserAdminService } from "./user-admin.service";
 import { Logging } from "app/core/logging/logging.service";
 import { SessionSubject } from "../../session/auth/session-info";
+import { SessionType } from "../../session/session-type";
 
 describe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
@@ -18,6 +20,8 @@ describe("KeycloakAdminService", () => {
   const BASE_URL = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
 
   beforeEach(() => {
+    // the service only talks to the auth server outside of demo/mock mode
+    environment.session_type = SessionType.synced;
     sessionSubject = new SessionSubject();
     sessionSubject.next({
       id: "admin",
@@ -39,10 +43,7 @@ describe("KeycloakAdminService", () => {
 
   afterEach(() => {
     httpTestingController.verify();
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
+    environment.session_type = SessionType.mock;
   });
 
   it("should delete user", async () => {
@@ -198,6 +199,66 @@ describe("KeycloakAdminService", () => {
       .flush({});
   });
 
+  it("should preserve unrelated fields and merge attributes when updating only the linked profile", async () => {
+    // given
+    const mockUser = {
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+      attributes: { locale: ["en"] },
+    };
+
+    // when
+    service
+      .updateUser("test-id", { userEntityId: "User:new-entity-id" })
+      .subscribe((result) => {
+        expect(result).toEqual({ userUpdated: true });
+      });
+
+    // then
+    const reqGet = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqGet.request.method).toEqual("GET");
+    reqGet.flush(mockUser);
+
+    const reqPut = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqPut.request.method).toEqual("PUT");
+    expect(reqPut.request.body).toEqual({
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+      attributes: {
+        locale: ["en"],
+        exact_username: ["User:new-entity-id"],
+      },
+    });
+    reqPut.flush({});
+  });
+
+  it("should send enabled:false as an explicit value, not drop it as an unset key", async () => {
+    // given
+    const mockUser = {
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+    };
+
+    // when
+    service.updateUser("test-id", { enabled: false }).subscribe();
+
+    // then
+    const reqGet = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    reqGet.flush(mockUser);
+
+    const reqPut = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqPut.request.body).toEqual(
+      expect.objectContaining({ enabled: false }),
+    );
+    reqPut.flush({});
+  });
+
   it("should handle error when updating user", async () => {
     // when
     service
@@ -238,6 +299,17 @@ describe("KeycloakAdminService", () => {
     req.flush(mockRoles);
   });
 
+  it("should not contact the auth server without one, e.g. in a demo deployment", async () => {
+    // the placeholder auth server URL points at localhost, where a request
+    // would make the browser ask the user for local network access
+    environment.session_type = SessionType.mock;
+
+    const roles = await firstValueFrom(service.getAllRoles());
+
+    expect(roles).toEqual([]);
+    httpTestingController.expectNone(`${BASE_URL}/roles`);
+  });
+
   it("should handle network error when server is unreachable", async () => {
     service.getAllUsers().subscribe({
       next: () => fail("Should have failed"),
@@ -263,6 +335,77 @@ describe("KeycloakAdminService", () => {
     const userReq = httpTestingController.expectOne(`${BASE_URL}/users`);
     expect(userReq.request.method).toEqual("GET");
     userReq.flush("Access denied", { status: 403, statusText: "Forbidden" });
+  });
+
+  it("should create a realm role", () => {
+    let created = false;
+    service
+      .createRole({ name: "field_supervisor", description: "Supervisors" })
+      .subscribe(() => (created = true));
+
+    const req = httpTestingController.expectOne(`${BASE_URL}/roles`);
+    expect(req.request.method).toEqual("POST");
+    expect(req.request.body).toEqual({
+      name: "field_supervisor",
+      description: "Supervisors",
+    });
+    req.flush({});
+    expect(created).toBe(true);
+  });
+
+  it("should map 409 on role creation to a role-exists error", () => {
+    let error: UserAdminApiError;
+    service
+      .createRole({ name: "existing_role" })
+      .subscribe({ error: (err) => (error = err) });
+
+    httpTestingController
+      .expectOne(`${BASE_URL}/roles`)
+      .flush("conflict", { status: 409, statusText: "Conflict" });
+
+    expect(error).toBeInstanceOf(UserAdminApiError);
+    expect(error.status).toBe(409);
+  });
+
+  it("should update a realm role description", () => {
+    let updated = false;
+    service
+      .updateRole("field_supervisor", { description: "changed" })
+      .subscribe(() => (updated = true));
+
+    const req = httpTestingController.expectOne(
+      `${BASE_URL}/roles/field_supervisor`,
+    );
+    expect(req.request.method).toEqual("PUT");
+    expect(req.request.body).toEqual({
+      name: "field_supervisor",
+      description: "changed",
+    });
+    req.flush({});
+    expect(updated).toBe(true);
+  });
+
+  it("should delete a realm role", () => {
+    let deleted = false;
+    service.deleteRole("field_supervisor").subscribe(() => (deleted = true));
+
+    const req = httpTestingController.expectOne(
+      `${BASE_URL}/roles/field_supervisor`,
+    );
+    expect(req.request.method).toEqual("DELETE");
+    req.flush({});
+    expect(deleted).toBe(true);
+  });
+
+  it("should treat deleting an already-missing role (404) as success", () => {
+    let deleted = false;
+    service.deleteRole("orphan_role").subscribe(() => (deleted = true));
+
+    const req = httpTestingController.expectOne(
+      `${BASE_URL}/roles/orphan_role`,
+    );
+    req.flush("not found", { status: 404, statusText: "Not Found" });
+    expect(deleted).toBe(true);
   });
 
   it("should handle offline scenario", async () => {

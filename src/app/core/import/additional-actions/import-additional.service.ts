@@ -147,7 +147,9 @@ export class ImportAdditionalService {
 
     for (const entityType of this.linkableEntities.keys()) {
       const matchingActions = (this.linkableEntities.get(entityType) ?? [])
-        .filter((a) => a.targetType === targetEntityType)
+        // targetType can be an array (a relationship field allowing several
+        // target types), so a plain `===` would never match such an action
+        .filter((a) => asArray(a.targetType).includes(targetEntityType))
         .filter((a) => this.hasAllReferencedTypes(a));
       linkingTypes.push(...matchingActions);
     }

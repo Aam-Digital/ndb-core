@@ -48,10 +48,6 @@ describe("SiteSettingsService", () => {
     localStorage.removeItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should only publish changes if property has changed", () => {
     const titleSpy = vi.spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();

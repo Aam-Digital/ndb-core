@@ -31,10 +31,6 @@ describe("TodosRelatedToEntityComponent", () => {
 
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should load data from index when having a single relation", async () => {
     const child = createEntityOfType("Child");
     const relatedTodo = new Todo();
@@ -62,7 +58,7 @@ describe("TodosRelatedToEntityComponent", () => {
         { relatedEntities: { $elemMatch: { $eq: child.getId() } } },
       ],
     });
-    expect(component.dataSource.allRecords()).toEqual([relatedTodo]);
+    expect(component.recordsDataSource().allRecords()).toEqual([relatedTodo]);
   });
 
   it("should load data with entity mapper when having multiple relations", waitForAsync(async () => {
@@ -94,7 +90,7 @@ describe("TodosRelatedToEntityComponent", () => {
     await new Promise((resolve) => setTimeout(resolve));
 
     expect(loadTypeSpy).toHaveBeenCalledWith(Todo);
-    expectArrayWithExactContents(component.dataSource.allRecords(), [
+    expectArrayWithExactContents(component.recordsDataSource().allRecords(), [
       relatedTodo,
       relatedTodo2,
       unrelatedTodo,

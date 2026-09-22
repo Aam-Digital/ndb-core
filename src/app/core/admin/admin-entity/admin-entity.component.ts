@@ -160,14 +160,23 @@ export class AdminEntityComponent {
       }
     }
 
-    viewConfig.config = viewConfig.config ?? { entityType: this.entityType() };
+    // `getRawConfig` hands back the config document's own object - edit a copy
+    const editableConfig: DynamicComponentConfig = JSON.parse(
+      JSON.stringify(viewConfig),
+    );
+
+    editableConfig.config = editableConfig.config ?? {
+      entityType: this.entityType(),
+    };
 
     // cleanup note details config, which should not have an entity instance assigned
-    if (viewConfig.config.entity && viewConfig.component === "NoteDetails") {
-      delete viewConfig.config.entity;
+    if (
+      editableConfig.config.entity &&
+      editableConfig.component === "NoteDetails"
+    ) {
+      delete editableConfig.config.entity;
     }
-    // work on a deep copy as we are editing in place (for titles, sections, etc.)
-    return JSON.parse(JSON.stringify(viewConfig));
+    return editableConfig;
   }
 
   cancel() {

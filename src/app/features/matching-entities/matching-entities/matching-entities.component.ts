@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   Injector,
@@ -58,7 +59,7 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/in-memory-data-source";
+import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "#src/app/core/logging/logging.service";
 
 export interface MatchingSide extends MatchingSideConfig {
@@ -117,6 +118,7 @@ export class MatchingEntitiesComponent implements OnInit {
   private entityRegistry = inject(EntityRegistry);
   private filterService = inject(FilterService);
   private injector = inject(Injector);
+  private destroyRef = inject(DestroyRef);
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   entity = input<Entity>();
@@ -197,10 +199,22 @@ export class MatchingEntitiesComponent implements OnInit {
 
   async ngOnInit() {
     this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
-    const sides: [MatchingSide, MatchingSide] = [
-      await this.initSideDetails(this.resolvedLeftSide(), 0),
-      await this.initSideDetails(this.resolvedRightSide(), 1),
-    ];
+
+    // Both sides are started before the first `await` so that their data sources
+    // (which need an injection context, see `initSideDetails`) are created while
+    // this component is certainly still alive. Loading the records then happens
+    // in parallel instead of one side after the other.
+    const sides = await Promise.all([
+      this.initSideDetails(this.resolvedLeftSide(), 0),
+      this.initSideDetails(this.resolvedRightSide(), 1),
+    ]);
+
+    if (this.destroyRef.destroyed) {
+      // the user navigated away while the records were still loading:
+      // drop the half-finished setup instead of writing it into a destroyed view
+      return;
+    }
+
     this.sideDetails.set(sides);
     sides.forEach((side, index) => this.initDistanceColumn(side, index));
   }
@@ -246,6 +260,7 @@ export class MatchingEntitiesComponent implements OnInit {
     }
 
     if (!newSide.selected) {
+      // Currently this component only works with the InMemoryDataSource because all records should be displayed on the map
       runInInjectionContext(
         this.injector,
         () => (newSide.dataSource = new InMemoryDataSource()),

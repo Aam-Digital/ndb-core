@@ -77,10 +77,6 @@ describe("AnalyticsService", () => {
     window["_paq"] = [];
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   // TODO these tests currently dont work because init is called before config is loaded
   it.skip("should not track if no url or site_id", () => {
     mockConfigService.getConfig.mockReturnValue({});

@@ -80,10 +80,6 @@ describe("SyncStatusComponent", () => {
     fixtureRef.detectChanges();
   }
 
-  it("should be created", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should update backgroundProcesses details on sync", async () => {
     syncState.next(SyncState.STARTED);
     fixture.detectChanges();

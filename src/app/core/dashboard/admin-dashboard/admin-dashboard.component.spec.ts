@@ -15,17 +15,14 @@ describe("AdminDashboardComponent", () => {
   const mockConfigService = {
     getConfig: vi.fn().mockName("ConfigService.getConfig"),
     getRawConfig: vi.fn().mockName("ConfigService.getRawConfig"),
+    exportConfig: vi.fn().mockName("ConfigService.exportConfig"),
+    saveConfig: vi.fn().mockName("ConfigService.saveConfig"),
   };
   const mockDialog = {
     open: vi.fn().mockName("MatDialog.open"),
   };
 
   beforeEach(async () => {
-    mockConfigService.getConfig.mockReturnValue({
-      config: {
-        widgets: [],
-      },
-    });
     mockConfigService.getRawConfig.mockReturnValue({
       config: {
         widgets: [],
@@ -53,8 +50,39 @@ describe("AdminDashboardComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  it("keeps a widget's other languages when saving", async () => {
+    const label = { "en-US": "Record Attendance", de: "Anwesenheit" };
+    const widgets = (shortcutLabel) => [
+      {
+        component: "ShortcutDashboard",
+        config: { shortcuts: [{ label: shortcutLabel }] },
+      },
+    ];
+    // as the real service behaves: getConfig resolves to the active language,
+    // getRawConfig keeps every language
+    mockConfigService.getRawConfig.mockReturnValue({
+      component: "Dashboard",
+      config: { widgets: widgets(label) },
+    });
+    mockConfigService.getConfig.mockReturnValue({
+      component: "Dashboard",
+      config: { widgets: widgets("Record Attendance") },
+    });
+    mockConfigService.exportConfig.mockReturnValue({});
+    mockConfigService.saveConfig.mockResolvedValue(undefined);
+
+    fixture = TestBed.createComponent(AdminDashboardComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput("dashboardViewId", "Dashboard");
+    // no detectChanges: rendering the preview needs the widget registry, and
+    // the signals read below compute lazily anyway
+
+    await component.save();
+
+    const saved = mockConfigService.saveConfig.mock.calls[0][0];
+    expect(
+      saved["view:Dashboard"].config.widgets[0].config.shortcuts[0].label,
+    ).toEqual(label);
   });
 
   it("should add a new widget", async () => {

@@ -45,56 +45,6 @@ export class FilterGeneratorService {
   private schemaService = inject(EntitySchemaService);
   private placeholderService = inject(DynamicPlaceholderValueService);
 
-  private isEmptyValue(value: unknown): boolean {
-    return value === undefined || value === null || value === "";
-  }
-
-  private hasEmptyValue<T extends Entity>(
-    data: T[],
-    fieldName: string,
-    includeNestedId = false,
-    includeEmptyArray = false,
-  ): boolean {
-    return (data ?? []).some((entity) => {
-      const value = entity?.[fieldName];
-      if (this.isEmptyValue(value)) {
-        return true;
-      }
-
-      if (includeEmptyArray && Array.isArray(value) && value.length === 0) {
-        return true;
-      }
-
-      if (
-        includeNestedId &&
-        value &&
-        typeof value === "object" &&
-        "id" in value
-      ) {
-        return this.isEmptyValue((value as { id?: unknown }).id);
-      }
-
-      return false;
-    });
-  }
-
-  private createEmptyOption<T extends Entity>(
-    fieldName: string,
-    includeNestedId = false,
-    includeEmptyArray = false,
-  ): FilterSelectionOption<T> {
-    return {
-      key: EMPTY_FILTER_OPTION_KEY,
-      label: $localize`:filter option:not defined`,
-      isEmpty: true,
-      filter: createEmptyValueFilter(
-        fieldName,
-        includeNestedId,
-        includeEmptyArray,
-      ),
-    };
-  }
-
   /**
    *
    * @param filterConfigs
@@ -162,11 +112,9 @@ export class FilterGeneratorService {
         );
         filter = enumFilter;
         const isArrayField = schema.isArray === true;
-        if (this.hasEmptyValue(data, filterConfig.id, true, isArrayField)) {
-          enumFilter.options.unshift(
-            this.createEmptyOption(filterConfig.id, true, isArrayField),
-          );
-        }
+        enumFilter.options.unshift(
+          this.createEmptyOption(filterConfig.id, true, isArrayField),
+        );
       } else if (type == "boolean") {
         filter = new BooleanFilter(
           filterConfig.id,
@@ -209,21 +157,17 @@ export class FilterGeneratorService {
         );
         filter = entityFilter;
         const isArrayField = schema.isArray === true;
-        if (this.hasEmptyValue(data, filterConfig.id, false, isArrayField)) {
-          entityFilter.options.unshift(
-            this.createEmptyOption(filterConfig.id, false, isArrayField),
-          );
-        }
+        entityFilter.options.unshift(
+          this.createEmptyOption(filterConfig.id, false, isArrayField),
+        );
       } else {
         const options = [...new Set(data.map((c) => c[filterConfig.id]))];
         const fSO: FilterSelectionOption<T>[] =
           SelectableFilter.generateOptions(options, filterConfig.id);
         const isArrayField = schema.isArray === true;
-        if (this.hasEmptyValue(data, filterConfig.id, false, isArrayField)) {
-          fSO.unshift(
-            this.createEmptyOption(filterConfig.id, false, isArrayField),
-          );
-        }
+        fSO.unshift(
+          this.createEmptyOption(filterConfig.id, false, isArrayField),
+        );
 
         filter = new SelectableFilter<T>(filterConfig.id, fSO, label);
       }
@@ -254,6 +198,23 @@ export class FilterGeneratorService {
       filters.push(filter);
     }
     return filters;
+  }
+
+  private createEmptyOption<T extends Entity>(
+    fieldName: string,
+    includeNestedId = false,
+    includeEmptyArray = false,
+  ): FilterSelectionOption<T> {
+    return {
+      key: EMPTY_FILTER_OPTION_KEY,
+      label: $localize`:filter option:not defined`,
+      isEmpty: true,
+      filter: createEmptyValueFilter(
+        fieldName,
+        includeNestedId,
+        includeEmptyArray,
+      ),
+    };
   }
 
   /**

@@ -76,6 +76,7 @@ describe("DashboardListWidgetComponent", () => {
       parentComponent.entries = testEntries;
       fixture.detectChanges();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.isLoading()).toBe(false);
     } finally {
@@ -94,8 +95,9 @@ describe("DashboardListWidgetComponent", () => {
 
       parentComponent.entries = [{ name: "ignored direct entry" }];
       parentComponent.entityType = "Note";
-      fixture.detectChanges();
+      TestBed.tick();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.dataSource.data).toEqual(testEntries);
       expect(component.isLoading()).toBe(false);
@@ -110,12 +112,14 @@ describe("DashboardListWidgetComponent", () => {
       const initialEntry = Note.create(new Date("2022-01-01"));
       mockEntityMapper.loadType.mockResolvedValue([initialEntry]);
       parentComponent.entityType = "Note";
-      fixture.detectChanges();
+      TestBed.tick();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       const newEntity = Note.create(new Date());
       mockEntityUpdates.next({ type: "new", entity: newEntity });
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.dataSource.data).toContain(newEntity);
       expect(component.dataSource.data).toContain(initialEntry);
@@ -140,8 +144,9 @@ describe("DashboardListWidgetComponent", () => {
           .sort((a, b) => a.date.getTime() - b.date.getTime());
 
       parentComponent.entityType = "Note";
-      fixture.detectChanges();
+      TestBed.tick();
       await vi.advanceTimersByTimeAsync(0);
+      TestBed.tick();
 
       expect(component.dataSource.data).toEqual([
         testEntries[1],

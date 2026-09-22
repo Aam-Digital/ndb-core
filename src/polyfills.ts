@@ -30,11 +30,12 @@ import "@angular/localize/init";
  * Need to import at least one locale-data with intl.
  */
 // import 'intl/locale-data/jsonp/en';
-// Import hammer.js to enable gestures
-// on mobile devices
-import "hammerjs";
 import * as buffer from "buffer";
 import * as process from "process";
+// polyfills window.setImmediate, required by memdown (pouchdb-adapter-memory)
+// when the dev server's dependency prebundling skips memdown's package.json
+// "browser" field remapping to a browser-safe implementation
+import "setimmediate";
 
 // WARNING: workaround to allow PouchDB with Angular v6: https://github.com/pouchdb/pouchdb/issues/7263
 (window as any).global = window;

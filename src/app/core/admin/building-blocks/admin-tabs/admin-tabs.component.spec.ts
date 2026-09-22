@@ -29,15 +29,26 @@ describe("AdminTabsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should add new tab to config", () => {
     component.createTab();
 
     expect(component.tabs().length).toBe(3);
   });
+
+  it("should show a renamed tab's title on the non-selected tab label", () => {
+    tabs[1].title = "Renamed";
+    fixture.detectChanges();
+
+    // tab 0 is selected and renders the editable header instead of plain text
+    expect(labelTexts()[1]).toBe("Renamed");
+  });
+
+  /** the rendered text of every tab label */
+  function labelTexts(): string[] {
+    return Array.from(fixture.nativeElement.querySelectorAll(".drop-item")).map(
+      (el: HTMLElement) => el.textContent.trim(),
+    );
+  }
 
   it("should detect whether tab title is 'title' or 'name' property", () => {
     // default

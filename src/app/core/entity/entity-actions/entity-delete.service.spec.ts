@@ -31,6 +31,7 @@ import { AttendanceDatatype } from "#src/app/features/attendance/model/attendanc
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 import type { Mock } from "vitest";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
@@ -68,9 +69,9 @@ describe("EntityDeleteService", () => {
       showProgressDialog: vi.fn(),
     };
     mockConfirmationDialog.getConfirmation.mockResolvedValue(true);
-    mockConfirmationDialog.showProgressDialog.mockReturnValue({
-      close: vi.fn(),
-    });
+    mockConfirmationDialog.showProgressDialog.mockReturnValue(
+      mockMatDialogRef(),
+    );
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],

@@ -58,10 +58,6 @@ describe("MenuItemListEditorComponent", () => {
       distance: { x: draggedLevels * component.indentPerLevel, y: 0 },
     } as CdkDragDrop<unknown>);
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should add a new item when dialog returns result", () => {
     // Arrange
     const mockResult = {

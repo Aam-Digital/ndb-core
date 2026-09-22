@@ -1,8 +1,12 @@
 import { LogLevel } from "./log-level";
+import type * as Sentry from "@sentry/angular";
 import {
+  LoggedError,
   LoggingService,
   MAX_REPEATED_SENTRY_EVENTS,
   processSentryEvent,
+  resetSentryEventCounts,
+  toReportedError,
 } from "./logging.service";
 
 describe("LoggingService", () => {
@@ -13,10 +17,6 @@ describe("LoggingService", () => {
     loggingService = new LoggingService();
     vi.spyOn(loggingService as any, "logToConsole");
     vi.spyOn(loggingService as any, "logToRemoteMonitoring");
-  });
-
-  it("should be created", () => {
-    expect(loggingService).toBeTruthy();
   });
 
   it("should log a debug message with additional context", function () {
@@ -79,7 +79,32 @@ describe("LoggingService", () => {
     );
   });
 
+  describe("reporting errors to remote monitoring", () => {
+    it("should report a thrown Error as it is", () => {
+      const err = new Error("some failure");
+
+      expect(toReportedError(err, [])).toBe(err);
+    });
+
+    it("should report the log message as the error, keeping the original as its cause", () => {
+      const cause = new Error("Failed to fetch");
+
+      const reported = toReportedError("Could not download file", [cause]);
+
+      expect(reported).toBeInstanceOf(LoggedError);
+      // the message identifies the problem better than the underlying error and
+      // becomes both the issue title and (through the fingerprint) the grouping key
+      expect(reported.message).toBe("Could not download file");
+      // Sentry links the cause into the reported chain, so its stack is not lost
+      expect(reported.cause).toBe(cause);
+    });
+  });
+
   describe("processSentryEvent (beforeSend)", () => {
+    // the repeat budget is per issue and lives for a whole app session, so
+    // without this the events of one test count against the next one's
+    beforeEach(() => resetSentryEventCounts());
+
     it("should drop an identical event after MAX_REPEATED_SENTRY_EVENTS occurrences", () => {
       const event = () =>
         ({
@@ -112,6 +137,42 @@ describe("LoggingService", () => {
       expect(processSentryEvent(other, {})).not.toBeNull();
     });
 
+    describe("document update conflicts", () => {
+      // normal operation for an offline-first app: the user is told the save was
+      // rejected, and the occurrence is counted in usage analytics instead
+      const dbFailure = (value: string, hint: Sentry.EventHint = {}) =>
+        processSentryEvent(
+          {
+            exception: { values: [{ type: "DatabaseException", value }] },
+          } as any,
+          hint,
+        );
+
+      it("should drop a conflict identified by its status", () => {
+        expect(
+          dbFailure("whatever PouchDB said", {
+            originalException: { status: 409 },
+          }),
+        ).toBeNull();
+      });
+
+      it("should drop a conflict identified by its message, however PouchDB worded it", () => {
+        expect(
+          dbFailure("Document update conflict. (unable to resolve)"),
+        ).toBeNull();
+        expect(
+          dbFailure("Document update conflict (unable to resolve)"),
+        ).toBeNull();
+        expect(dbFailure("document update conflict")).toBeNull();
+      });
+
+      it("should still report other database failures", () => {
+        expect(
+          dbFailure("not_found", { originalException: { status: 404 } }),
+        ).not.toBeNull();
+      });
+    });
+
     it("should count message-only events (captureMessage) separately by message", () => {
       const messageEvent = () => ({ message: "repeated warning C" }) as any;
 
@@ -119,6 +180,29 @@ describe("LoggingService", () => {
         expect(processSentryEvent(messageEvent(), {})).not.toBeNull();
       }
       expect(processSentryEvent(messageEvent(), {})).toBeNull();
+    });
+
+    it("should budget repeats per issue, so one problem does not silence another", () => {
+      // both wrappers share a root cause, as everything does while a device is
+      // on a flaky connection - but they are separate issues to be reported
+      const wrapped = (type: string) => {
+        const values: Sentry.Exception[] = [
+          { type: "DatabaseException", value: "Failed to fetch from DB" },
+          { type, value: `Failed to load the ${type} document` },
+        ];
+        return { exception: { values } } as Sentry.ErrorEvent;
+      };
+
+      for (let i = 0; i < MAX_REPEATED_SENTRY_EVENTS; i++) {
+        expect(
+          processSentryEvent(wrapped("ConfigLoadError"), {}),
+        ).not.toBeNull();
+      }
+      expect(processSentryEvent(wrapped("ConfigLoadError"), {})).toBeNull();
+
+      expect(
+        processSentryEvent(wrapped("PermissionRulesLoadError"), {}),
+      ).not.toBeNull();
     });
 
     describe("grouping fingerprint", () => {
@@ -131,10 +215,15 @@ describe("LoggingService", () => {
           exception: { values: [rootCause, thrown] },
         }) as any;
 
+      const deniedEvent = (value: string) =>
+        ({
+          exception: { values: [{ type: "DatabaseException", value }] },
+        }) as any;
+
       it("should group our wrapper errors by thrown error and root cause", () => {
         const event = processSentryEvent(
           chainedEvent(
-            { type: "DatabaseException", value: "Failed to fetch from DB" },
+            { type: "DatabaseException", value: "Unknown kid" },
             {
               type: "ConfigLoadError",
               value: "Failed to load configuration from the database.",
@@ -145,10 +234,69 @@ describe("LoggingService", () => {
 
         expect(event.fingerprint).toEqual([
           "ConfigLoadError",
-          "Failed to load configuration from the database.",
+          "failed to load configuration from the database",
           "DatabaseException",
-          "Failed to fetch from DB",
+          "unknown kid",
         ]);
+      });
+
+      it("should group a wrapper error by the problem, however the browser worded a failed request", () => {
+        const chrome = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { type: "DatabaseException", value: "Failed to fetch from DB" },
+              ],
+            },
+          } as any,
+          {},
+        );
+        const safari = processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "DatabaseException", value: "Load failed" }],
+            },
+          } as any,
+          {},
+        );
+        // the same failure, reported with the browser's error still in the chain
+        const chained = processSentryEvent(
+          chainedEvent(
+            { type: "TypeError", value: "Failed to fetch" },
+            { type: "DatabaseException", value: "Failed to fetch from DB" },
+          ),
+          {},
+        );
+
+        expect(safari.fingerprint).toEqual(chrome.fingerprint);
+        expect(chained.fingerprint).toEqual(chrome.fingerprint);
+        // ... reported under a title that does not depend on the browser
+        expect(safari.exception.values[0].value).toBe(
+          "Failed to reach the server",
+        );
+        expect(safari.extra.originalError).toBe("Load failed");
+      });
+
+      it("should keep wrapper errors with a different kind of root cause apart", () => {
+        const offline = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Load failed" },
+            { type: "ConfigLoadError", value: "Failed to load configuration" },
+          ),
+          {},
+        );
+        const missingKey = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Unknown kid" },
+            { type: "ConfigLoadError", value: "Failed to load configuration" },
+          ),
+          {},
+        );
+
+        expect(offline.fingerprint).not.toEqual(missingKey.fingerprint);
+        expect(offline.exception.values[1].value).toBe(
+          "Failed to load configuration (caused by DatabaseException: network failure)",
+        );
       });
 
       it("should give the same wrapper error a different fingerprint per root cause", () => {
@@ -161,13 +309,45 @@ describe("LoggingService", () => {
         );
         const unauthorized = processSentryEvent(
           chainedEvent(
-            { type: "DatabaseException", value: "unauthorized" },
+            { type: "DatabaseException", value: "Access denied" },
             { type: "ConfigLoadError", value: "Failed to load configuration." },
           ),
           {},
         );
 
         expect(offline.fingerprint).not.toEqual(unauthorized.fingerprint);
+      });
+
+      it("should name the root cause in the message, so that issues split by it are distinguishable", () => {
+        const event = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Unknown kid" },
+            {
+              type: "ConfigLoadError",
+              value: "Failed to load configuration.",
+            },
+          ),
+          {},
+        );
+
+        expect(event.exception.values[1].value).toBe(
+          "Failed to load configuration. (caused by DatabaseException: Unknown kid)",
+        );
+      });
+
+      it("should keep the message of an error that has no distinct root cause", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { type: "DatabaseException", value: "Document not found" },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].value).toBe("Document not found");
       });
 
       it("should mask ids, urls and numbers so the same problem matches", () => {
@@ -178,7 +358,7 @@ describe("LoggingService", () => {
                 {
                   type: "DatabaseException",
                   value:
-                    'Document update conflict. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
+                    'missing: no document found. ID: "8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"',
                 },
               ],
             },
@@ -192,7 +372,7 @@ describe("LoggingService", () => {
                 {
                   type: "DatabaseException",
                   value:
-                    'Document update conflict. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
+                    'missing: no document found. ID: "1a2b3c4d-9999-4eee-8fff-abcdef012345"',
                 },
               ],
             },
@@ -201,6 +381,26 @@ describe("LoggingService", () => {
         );
 
         expect(withId.fingerprint).toEqual(withOtherId.fingerprint);
+      });
+
+      it("should ignore punctuation and casing, which third-party errors are inconsistent about", () => {
+        // PouchDB reports the same failure as both "Unauthorized" and
+        // "unauthorized", with and without a trailing period
+        const withPeriod = processSentryEvent(
+          deniedEvent("Unauthorized. (name or password is incorrect)"),
+          {},
+        );
+        const withoutPeriod = processSentryEvent(
+          deniedEvent("Unauthorized (name or password is incorrect)"),
+          {},
+        );
+        const lowercased = processSentryEvent(
+          deniedEvent("unauthorized (name or password is incorrect)"),
+          {},
+        );
+
+        expect(withoutPeriod.fingerprint).toEqual(withPeriod.fingerprint);
+        expect(lowercased.fingerprint).toEqual(withPeriod.fingerprint);
       });
 
       it("should give a self-wrapping error the same fingerprint as the unwrapped one", () => {
@@ -243,11 +443,49 @@ describe("LoggingService", () => {
         expect(otherKey.fingerprint).not.toEqual(fromPipe.fingerprint);
       });
 
+      it("should group an error logged with a message by that message, not by the stack", () => {
+        const loggedEvent = (frame: string) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "TypeError",
+                  value: "cannot read property",
+                  stacktrace: { frames: [{ filename: frame }] },
+                },
+                { type: "Error", value: "Could not download file" },
+              ],
+            },
+          }) as any;
+        const hint = {
+          originalException: new LoggedError("Could not download file"),
+        } as any;
+
+        const fromOneCallSite = processSentryEvent(loggedEvent("a.ts"), hint);
+        const fromAnotherCallSite = processSentryEvent(
+          loggedEvent("b.ts"),
+          hint,
+        );
+
+        expect(fromOneCallSite.fingerprint).toEqual(
+          fromAnotherCallSite.fingerprint,
+        );
+        expect(fromOneCallSite.fingerprint).toContain(
+          "could not download file",
+        );
+      });
+
       it("should not fingerprint generic errors, keeping Sentry's stack-based grouping", () => {
         const event = processSentryEvent(
           {
             exception: {
-              values: [{ type: "TypeError", value: "x is not a function" }],
+              values: [
+                {
+                  type: "TypeError",
+                  value: "x is not a function",
+                  stacktrace: { frames: [{ filename: "some.component.ts" }] },
+                },
+              ],
             },
           } as any,
           {},
@@ -256,13 +494,402 @@ describe("LoggingService", () => {
         expect(event.fingerprint).toBeUndefined();
       });
 
-      it("should not fingerprint message-only events", () => {
-        const event = processSentryEvent(
-          { message: "some static warning" } as any,
+      it("should fingerprint exceptions reported without a stack, which Sentry would split by message", () => {
+        const httpEvent = (id: string) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "HttpErrorResponse",
+                  value: `Http failure response for /db/app-attachments/Child:${id}/photo: 404 Not Found`,
+                },
+              ],
+            },
+          }) as any;
+
+        const one = processSentryEvent(
+          httpEvent("8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d"),
+          {},
+        );
+        const other = processSentryEvent(
+          httpEvent("1a2b3c4d-9999-4eee-8fff-abcdef012345"),
           {},
         );
 
-        expect(event.fingerprint).toBeUndefined();
+        expect(one.fingerprint).toEqual(other.fingerprint);
+      });
+
+      it("should group an error a framework re-threw like the unwrapped one", () => {
+        const lookupFailure = {
+          type: "RegistryLookupError",
+          value:
+            "Requested item is not registered in EntityRegistry. Key: Child",
+        };
+
+        const thrownDirectly = processSentryEvent(
+          { exception: { values: [{ ...lookupFailure }] } } as any,
+          {},
+        );
+        // Angular re-throws an error raised in a `resource()` loader as an error
+        // of its own, copying the message and reporting the inherited "Error"
+        const fromResourceLoader = processSentryEvent(
+          chainedEvent(
+            { ...lookupFailure },
+            {
+              type: "Error",
+              value: `Error: ${lookupFailure.value}`,
+            },
+          ),
+          {},
+        );
+
+        expect(fromResourceLoader.fingerprint).toEqual(
+          thrownDirectly.fingerprint,
+        );
+      });
+
+      it("should keep grouping a wrapper that describes the failed operation by itself", () => {
+        const cause = {
+          type: "DatabaseException",
+          value: "unauthorized",
+        };
+
+        const configLoad = processSentryEvent(
+          chainedEvent(
+            { ...cause },
+            {
+              type: "ConfigLoadError",
+              value: "Failed to load configuration from the database.",
+            },
+          ),
+          {},
+        );
+        const permissionsLoad = processSentryEvent(
+          chainedEvent(
+            { ...cause },
+            {
+              type: "PermissionRulesLoadError",
+              value: "Failed to load permission rules",
+            },
+          ),
+          {},
+        );
+
+        // two operations failing for the same reason stay two problems
+        expect(configLoad.fingerprint).not.toEqual(permissionsLoad.fingerprint);
+        expect(configLoad.fingerprint[0]).toBe("ConfigLoadError");
+      });
+
+      it("should not treat a wrapper that merely mentions the cause's message as repeating it", () => {
+        const event = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "unauthorized" },
+            {
+              type: "Error",
+              value: "Failed to load configuration: unauthorized",
+            },
+          ),
+          {},
+        );
+
+        const causeAlone = processSentryEvent(deniedEvent("unauthorized"), {});
+
+        // the wrapper's message contains the cause's as a substring without
+        // repeating it, so it must not be merged into the cause's own issue
+        expect(event.fingerprint).not.toEqual(causeAlone.fingerprint);
+      });
+
+      it('should report an exception without a type under a generic one, which Sentry lists as "<unknown>"', () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { value: "Http failure response for /db/app-attachments: 404" },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].type).toBe("Error");
+      });
+
+      it("should report an exception grouped by its message under that normalized message", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "HttpErrorResponse",
+                  value:
+                    "Http failure response for https://example.org/db/app-attachments/Child:8f2b1c7e-1234-4a5b-9c8d-0e1f2a3b4c5d/photo: 404 Not Found",
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.exception.values[0].value).toBe(
+          "Http failure response for <url> <n> Not Found",
+        );
+        expect(event.extra.originalError).toContain("8f2b1c7e");
+      });
+
+      it("should drop a quoted response body, which as a title hides every other issue", () => {
+        const errorPage = (status: number) =>
+          ({
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: `Server returned code ${status} with body "<html>\r\n<head><title>${status} Request Entity Too Large</title></head>\r\n</html>"`,
+                },
+              ],
+            },
+          }) as any;
+
+        const event = processSentryEvent(errorPage(413), {});
+
+        expect(event.exception.values[0].value).toBe(
+          "Server returned code <n>",
+        );
+        expect(event.fingerprint).toEqual([
+          "Error",
+          "server returned code <n>",
+        ]);
+      });
+
+      it("should group message-only events by their normalized message", () => {
+        const one = processSentryEvent(
+          { message: "Report failed after 12 rows" } as any,
+          {},
+        );
+        const other = processSentryEvent(
+          { message: "Report failed after 7 rows" } as any,
+          {},
+        );
+
+        expect(one.fingerprint).toEqual(other.fingerprint);
+      });
+    });
+
+    describe("structured extra data", () => {
+      it("should surface a custom error's properties as extra data, even when they are deliberately left out of a generic message", () => {
+        // EntityPermissionError keeps its message a static, generic string (so
+        // that occurrences group instead of fragmenting), but still exposes
+        // action/entityId/entityType as plain properties for exactly this case
+        const error = Object.assign(
+          new Error("Current user is not permitted this action"),
+          {
+            name: "EntityPermissionError",
+            action: "create",
+            entityId: "Config:CONFIG_ENTITY",
+            entityType: "Config",
+          },
+        );
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "EntityPermissionError", value: error.message }],
+            },
+          } as any,
+          { originalException: error },
+        );
+
+        expect(event.extra).toMatchObject({
+          action: "create",
+          entityId: "Config:CONFIG_ENTITY",
+          entityType: "Config",
+        });
+      });
+    });
+
+    describe("a status the library nested inside a Response", () => {
+      it('should report it, so "invalid status" says which status', () => {
+        const thrown = Object.assign(
+          new Error("Server responded with an invalid status."),
+          { response: { status: 403, statusText: "Forbidden" } },
+        );
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "Server responded with an invalid status.",
+                  stacktrace: { frames: [{ filename: "keycloak.js" }] },
+                },
+              ],
+            },
+          } as any,
+          { originalException: thrown },
+        );
+
+        expect(event.extra.status).toBe(403);
+      });
+
+      it("should keep an explicit status over the nested one", () => {
+        const thrown = Object.assign(new Error("failed"), {
+          status: 401,
+          response: { status: 403 },
+        });
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "failed",
+                  stacktrace: { frames: [{ filename: "app.ts" }] },
+                },
+              ],
+            },
+          } as any,
+          { originalException: thrown },
+        );
+
+        expect(event.extra.status).toBe(401);
+      });
+    });
+
+    describe("network errors", () => {
+      beforeEach(() => vi.stubGlobal("navigator", { onLine: true }));
+      afterEach(() => vi.unstubAllGlobals());
+
+      const fetchFailure = (value: string, filename: string) =>
+        ({
+          exception: {
+            values: [
+              {
+                type: "TypeError",
+                value,
+                stacktrace: { frames: [{ filename }] },
+              },
+            ],
+          },
+        }) as any;
+
+      it("should collect connectivity failures of any wording and call site in one issue", () => {
+        const chrome = processSentryEvent(
+          fetchFailure("Failed to fetch", "sync.ts"),
+          {},
+        );
+        const safari = processSentryEvent(
+          fetchFailure("Load failed", "file.service.ts"),
+          {},
+        );
+
+        expect(chrome.fingerprint).toEqual(["network-error"]);
+        expect(safari.fingerprint).toEqual(chrome.fingerprint);
+      });
+
+      it("should collect chunk load failures of any browser wording in the same issue", () => {
+        const chrome = processSentryEvent(
+          fetchFailure(
+            "Failed to fetch dynamically imported module: https://example.org/chunk-SL2Y43UW.js",
+            "main.ts",
+          ),
+          {},
+        );
+        const firefox = processSentryEvent(
+          fetchFailure(
+            "error loading dynamically imported module: https://example.org/chunk-UFUS7D7Q.js",
+            "main.ts",
+          ),
+          {},
+        );
+        const safari = processSentryEvent(
+          fetchFailure("Importing a module script failed.", "main.ts"),
+          {},
+        );
+
+        expect(chrome.fingerprint).toEqual(["network-error"]);
+        expect(firefox.fingerprint).toEqual(chrome.fingerprint);
+        expect(safari.fingerprint).toEqual(chrome.fingerprint);
+      });
+
+      it("should report a stable title and keep the original message searchable", () => {
+        const event = processSentryEvent(
+          fetchFailure(
+            "NetworkError when attempting to fetch resource",
+            "a.ts",
+          ),
+          {},
+        );
+
+        expect(event.exception.values[0].type).toBe("NetworkError");
+        expect(event.exception.values[0].value).toBe(
+          "Failed to reach the server",
+        );
+        expect(event.tags.network_error).toBe(
+          "TypeError: NetworkError when attempting to fetch resource",
+        );
+        expect(event.extra.originalError).toBe(
+          "NetworkError when attempting to fetch resource",
+        );
+      });
+
+      it("should recognize a request that was aborted or timed out", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                {
+                  type: "AbortError",
+                  value: "signal is aborted without reason",
+                  stacktrace: { frames: [{ filename: "b.ts" }] },
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.fingerprint).toEqual(["network-error"]);
+      });
+
+      it("should recognize a gateway status, which names the problem instead of the message", () => {
+        const event = processSentryEvent(
+          {
+            extra: { status: 503 },
+            exception: {
+              values: [
+                {
+                  type: "Error",
+                  value: "Server responded with an invalid status.",
+                  stacktrace: { frames: [{ filename: "c.ts" }] },
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.fingerprint).toEqual(["network-error"]);
+      });
+
+      it("should keep a named error out of the network bucket, as its own message says more", () => {
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { type: "DatabaseException", value: "Failed to fetch from DB" },
+                {
+                  type: "ConfigLoadError",
+                  value: "Failed to load the configuration",
+                },
+              ],
+            },
+          } as any,
+          {},
+        );
+
+        expect(event.fingerprint).toContain("ConfigLoadError");
+        expect(event.fingerprint).not.toEqual(["network-error"]);
       });
     });
 

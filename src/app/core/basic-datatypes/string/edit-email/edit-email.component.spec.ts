@@ -21,10 +21,6 @@ describe("EditEmailComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should validate a proper email as valid", () => {
     component.formControl.setValue("test@example.com");
     fixture.detectChanges();

@@ -5,15 +5,14 @@ import { ImportConfigDialogService } from "./import-config-dialog.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ColumnMapping } from "../column-mapping";
+import { mockMatDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("ImportConfigDialogService", () => {
   let service: ImportConfigDialogService;
   let mockDialog: { open: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    mockDialog = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }),
-    };
+    mockDialog = mockMatDialog();
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],

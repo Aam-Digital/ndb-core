@@ -52,10 +52,6 @@ describe("GpsService", () => {
     });
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return coordinates if permission is granted", async () => {
     setPermissions("granted");
     setGeolocationSuccess();

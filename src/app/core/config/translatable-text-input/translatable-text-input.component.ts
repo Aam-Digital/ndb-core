@@ -18,7 +18,10 @@ import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import { availableLocales } from "../../language/languages";
 import { DynamicComponent } from "../dynamic-components/dynamic-component.decorator";
-import { ConfigureTranslationsPopupComponent } from "../configure-translations-popup/configure-translations-popup.component";
+import {
+  ConfigureTranslationsPopupComponent,
+  ConfigureTranslationsResult,
+} from "../configure-translations-popup/configure-translations-popup.component";
 import {
   isTranslatableText,
   resolveTranslatableText,
@@ -153,12 +156,13 @@ export class TranslatableTextInputComponent
         disableClose: true,
       })
       .afterClosed()
-      .subscribe((result?: TranslatableText) => {
-        if (result === undefined) {
-          // dialog cancelled: keep the previously configured value
+      .subscribe((result?: ConfigureTranslationsResult) => {
+        if (!result) {
+          // cancelled: keep the previously configured value
           return;
         }
-        this.applyValue(result);
+        // saved, possibly with every language cleared
+        this.applyValue(result.value);
         this.onTouched();
       });
   }
