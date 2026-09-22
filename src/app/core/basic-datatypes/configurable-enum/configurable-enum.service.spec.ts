@@ -53,6 +53,35 @@ describe("ConfigurableEnumService", () => {
     expect(options[0]).not.toBe(enumEntity.values[0]);
   });
 
+  it("reuses the resolved options instead of rebuilding them on every call", () => {
+    const enumEntity = service.getEnum("genders");
+    enumEntity.values = [{ id: "M", label: { "en-US": "Male" } } as any];
+
+    expect(service.getEnumValues("genders")).toBe(
+      service.getEnumValues("genders"),
+    );
+  });
+
+  it("re-resolves the options when the list is replaced, as saving the edit popup does", () => {
+    const enumEntity = service.getEnum("genders");
+    enumEntity.values = [{ id: "M", label: { "en-US": "Male" } } as any];
+    expect(service.getEnumValues("genders")[0].label).toBe("Male");
+
+    enumEntity.values = [{ id: "M", label: { "en-US": "Man" } } as any];
+
+    expect(service.getEnumValues("genders")[0].label).toBe("Man");
+  });
+
+  it("re-resolves the options when one is added in place, as addOption() does", () => {
+    const enumEntity = service.getEnum("genders");
+    enumEntity.values = [{ id: "M", label: { "en-US": "Male" } } as any];
+    expect(service.getEnumValues("genders")).toHaveLength(1);
+
+    enumEntity.values.push({ id: "F", label: { "en-US": "Female" } } as any);
+
+    expect(service.getEnumValues("genders")[1].label).toBe("Female");
+  });
+
   it("never translates option ids, since entity data references them", () => {
     const enumEntity = service.getEnum("some-enum");
     enumEntity.values = [

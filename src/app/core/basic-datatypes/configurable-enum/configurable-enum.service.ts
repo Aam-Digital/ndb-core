@@ -7,12 +7,25 @@ import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
 import { resolveActiveText } from "../../language/active-locale";
 
+function sameOptions(
+  a: readonly ConfigurableEnumValue[],
+  b: readonly ConfigurableEnumValue[],
+): boolean {
+  return a.length === b.length && a.every((option, i) => option === b[i]);
+}
+
 @Injectable({ providedIn: "root" })
 export class ConfigurableEnumService {
   private entityMapper = inject(EntityMapperService);
   private ability = inject(EntityAbility);
 
   private enums = new Map<string, ConfigurableEnum>();
+
+  /** resolved options per enum, with the raw list they were built from */
+  private resolvedValues = new Map<
+    string,
+    { source: ConfigurableEnumValue[]; resolved: ConfigurableEnumValue[] }
+  >();
 
   constructor() {
     this.entityMapper
@@ -33,6 +46,9 @@ export class ConfigurableEnumService {
    * The options with their labels resolved to the active language, as copies so
    * the cached entity keeps every language (#3862). Ids are never translated.
    * Use {@link getEnum} when the enum is to be edited and saved.
+   *
+   * Resolved once per enum, not per call: this sits on a per-record hot path,
+   * and switching language reloads the page, so it cannot go stale.
    */
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
     id: string,
@@ -42,10 +58,20 @@ export class ConfigurableEnumService {
       return [];
     }
 
-    return configurableEnum.values.map((option) => ({
+    const key = configurableEnum.getId();
+    const options = configurableEnum.values;
+    const cached = this.resolvedValues.get(key);
+    if (cached && sameOptions(cached.source, options)) {
+      return cached.resolved as T[];
+    }
+
+    const resolved = options.map((option) => ({
       ...option,
       label: resolveActiveText(option.label),
-    })) as T[];
+    }));
+    // snapshot, because editing an enum mutates the live list in place
+    this.resolvedValues.set(key, { source: [...options], resolved });
+    return resolved as T[];
   }
 
   getEnum(id: string): ConfigurableEnum | undefined {

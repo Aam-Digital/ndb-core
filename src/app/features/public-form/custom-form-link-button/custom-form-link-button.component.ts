@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   input,
   resource,
   inject,
@@ -28,10 +29,6 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
   ],
 })
 export class CustomFormLinkButtonComponent {
-  formTitle(form: PublicFormConfig | undefined): string {
-    return resolveActiveText(form?.title) ?? "";
-  }
-
   private entityMapper = inject(EntityMapperService);
   private publicFormsService = inject(PublicFormsService);
 
@@ -79,6 +76,14 @@ export class CustomFormLinkButtonComponent {
       return selectedForms;
     },
   });
+
+  /** the matching forms, with their titles resolved for display */
+  readonly matchingForms = computed(() =>
+    (this.matchingCustomForms.value() ?? []).map((config) => ({
+      config,
+      title: resolveActiveText(config.title) ?? "",
+    })),
+  );
 
   async copyLink(matchingCustomForm: PublicFormConfig) {
     const linkedEntity = this.linkedEntity();

@@ -127,7 +127,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly injector = inject(Injector);
 
-  public publicFormConfigs: PublicFormConfig[] = [];
+  /** public forms for this entity type, with titles resolved for display */
+  public publicForms: { config: PublicFormConfig; title: string }[] = [];
 
   /**
    * Whether the current user may import records of this type.
@@ -272,18 +273,19 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     await this.loadPublicFormConfig();
   }
 
-  publicFormTitle(formConfig: PublicFormConfig): string {
-    return resolveActiveText(formConfig.title) ?? "";
-  }
-
   private async loadPublicFormConfig() {
     const allForms = await this.publicFormsService.getAllPublicFormConfigs();
-    this.publicFormConfigs = allForms.filter(
-      (config) =>
-        config.entity &&
-        config.entity.toLowerCase() ===
-          this.entityConstructor()?.ENTITY_TYPE?.toLowerCase(),
-    );
+    this.publicForms = allForms
+      .filter(
+        (config) =>
+          config.entity &&
+          config.entity.toLowerCase() ===
+            this.entityConstructor()?.ENTITY_TYPE?.toLowerCase(),
+      )
+      .map((config) => ({
+        config,
+        title: resolveActiveText(config.title) ?? "",
+      }));
     this.cdr.markForCheck();
   }
 
