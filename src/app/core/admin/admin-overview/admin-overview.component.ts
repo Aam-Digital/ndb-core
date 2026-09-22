@@ -30,6 +30,8 @@ import { Config } from "#src/app/core/config/config";
 import { environment } from "#src/environments/environment";
 import moment from "moment";
 import { AdminOverviewService } from "./admin-overview.service";
+import { SetupWizardService } from "../setup-wizard/setup-wizard.service";
+import { SETUP_WIZARD_ROUTE } from "../setup-wizard/setup-wizard-config";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { Logging } from "#src/app/core/logging/logging.service";
 
@@ -66,9 +68,17 @@ export class AdminOverviewComponent {
   private jsonEditorService = inject(JsonEditorService);
   private entityMapper = inject(EntityMapperService);
   private readonly sectionStateService = inject(AdminSectionStateService);
+  private readonly setupWizardService = inject(SetupWizardService);
 
   public templates: MenuItem[] = [];
-  public configurationMenuItems: MenuItem[] = [];
+
+  public readonly configurationMenuItems = computed<MenuItem[]>(() =>
+    this.adminOverviewService.configurationMenuItems.filter(
+      (item) =>
+        item.link !== SETUP_WIZARD_ROUTE ||
+        this.setupWizardService.state() !== "unavailable",
+    ),
+  );
   expandedSection = computed(() => this.sectionStateService.getExpanded());
   isUploadingConfig = signal(false);
 
@@ -76,8 +86,6 @@ export class AdminOverviewComponent {
 
   constructor() {
     this.templates = this.adminOverviewService.templates;
-    this.configurationMenuItems =
-      this.adminOverviewService.configurationMenuItems;
     this.isSaasEnvironment = environment.SaaS === true;
   }
 
