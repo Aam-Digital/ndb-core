@@ -50,7 +50,17 @@ ENV KEYCLOAK_URL=""
 ENV KEYCLOAK_REALM=""
 
 # The url to the backend API, see https://github.com/Aam-Digital/aam-services
-ENV API_URL="http://localhost:3000"
+#
+# Left empty here, with the real default applied in CMD below, so that an
+# unset API_URL is distinguishable from an explicitly set one - that is what
+# lets the deprecated QUERY_URL still win (same pattern as COUCHDB_DIRECT_URL
+# above). Giving this a non-empty default instead would make the fallback in
+# CMD dead code.
+ENV API_URL=""
+# @deprecated: the former name of API_URL, still honoured so that a deployment
+# on an older docker-compose config keeps working when it pulls this image.
+# Remove with the next major release.
+ENV QUERY_URL=""
 
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
@@ -72,9 +82,16 @@ ENV CSP_EXTRA_FRAME_ANCESTORS=""
 # variables are inserted into the nginx config
 # RESOLVER is all IPv4 nameservers from /etc/resolv.conf, joined by spaces, used so nginx can
 # re-resolve upstreams (CouchDB, Nominatim) at runtime with IPv6 disabled (see default.conf).
+#
+# The awk program below reads `$1`/`$2`, not `$$1`/`$$2` as it did previously. This is
+# load-bearing, not cosmetic: awk reads `$$1` as `$($1)`, which never matches a nameserver
+# line, so RESOLVER always fell through to the 8.8.8.8 fallback. 8.8.8.8 cannot resolve
+# docker/Kubernetes service names, so reverting this would break the /db routes (which
+# resolve COUCHDB_URL through `resolver` at request time) for every deployment.
 CMD export RESOLVER=$(awk '$1=="nameserver" && $2 !~ /:/ {print $2}' /etc/resolv.conf | xargs) &&\
     if [ -z "$RESOLVER" ]; then export RESOLVER=8.8.8.8; fi &&\
     export COUCHDB_DIRECT_URL="${COUCHDB_DIRECT_URL:-$COUCHDB_URL}" &&\
+    export API_URL="${API_URL:-${QUERY_URL:-http://localhost:3000}}" &&\
     if [ -n "$KEYCLOAK_URL" ] && [ -n "$KEYCLOAK_REALM" ]; then\
       envsubst '$$KEYCLOAK_URL $$KEYCLOAK_REALM' < /etc/nginx/keycloak.json.template > /usr/share/nginx/html/assets/keycloak.json ||\
         echo 'WARN: KEYCLOAK_URL/KEYCLOAK_REALM are set but assets/keycloak.json could not be written (e.g. still bind-mounted read-only by an older deployment config) - serving the existing file unchanged' >&2;\
