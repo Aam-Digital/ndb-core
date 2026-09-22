@@ -366,6 +366,9 @@ describe("CouchdbFileService", () => {
     events.error(new HttpErrorResponse({ status: 0 }));
 
     expect(secondSubscriberError).not.toHaveBeenCalled();
+    // the progress bar has to end as well: swallowing the error means the
+    // snackbar is dismissed on completion rather than on an error callback
+    expect(dismiss).toHaveBeenCalled();
   });
 
   it("should not fail removeAllFiles if the attachments document does not exist", () => {
