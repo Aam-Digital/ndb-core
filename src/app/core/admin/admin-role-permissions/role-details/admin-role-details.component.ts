@@ -163,7 +163,6 @@ export class AdminRoleDetailsComponent implements OnInit {
   readonly deleteDisabledTooltip = $localize`Your account does not have permission to delete roles in the user account server.`;
 
   /** whether the user may write the permissions config holding the rule matrix (reactive) */
-  /** whether the user may write the permissions config holding the rule matrix (reactive) */
   readonly canEditPermissions = toSignal(
     this.permissionsConfig.canManagePermissions$,
     { requireSync: true },
