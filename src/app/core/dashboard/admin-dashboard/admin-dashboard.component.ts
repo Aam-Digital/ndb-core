@@ -68,7 +68,7 @@ export class AdminDashboardComponent {
   );
 
   // raw, because save() writes this back to the config document - a resolved
-  // value would drop every other configured language (#3862)
+  // value would drop every other configured language
   private readonly dashboardViewConfig = computed(
     () =>
       this.configService.getRawConfig(this.dashboardViewConfigKey()) as
