@@ -140,8 +140,6 @@ export abstract class FileService {
         }
       },
       error: (err) => {
-        Logging.warn("Could not download file", entity?.getId(), property, err);
-
         let errorMessage: string;
         if (err?.status === HttpStatusCode.NotFound) {
           errorMessage = $localize`:File Download Error Message:File attachment "${entity[property]}" not found.`;
@@ -151,6 +149,7 @@ export abstract class FileService {
         ) {
           errorMessage = $localize`:File Download Error Message:You do not have permission to open this file.`;
         } else {
+          Logging.warn("Could not download file", entity?.getId(), property, err);
           errorMessage = $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
         }
 
