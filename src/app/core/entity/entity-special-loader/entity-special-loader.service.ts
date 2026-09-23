@@ -1,17 +1,33 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity } from "../model/entity";
+import { DataFilter } from "../../filter/filters/filters";
+import { EntityPage } from "../entity-mapper/entity-mapper.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
 import { UpdatedEntity } from "../model/entity-update";
 import { Logging } from "../../logging/logging.service";
 import { TodoService } from "#src/app/features/todos/todo.service";
+import { AuditReferenceLoaderService } from "#src/app/features/change-history/audit-reference-loader.service";
 
 export enum LoaderMethod {
   ChildrenService = "ChildrenService",
+  /** audit records that involve one given record, served by a CouchDB view */
+  AuditRecordsRelatedToEntity = "AuditRecordsRelatedToEntity",
   HistoricalDataService = "HistoricalDataService",
   ChildrenServiceQueryRelations = "ChildrenServiceQueryRelations",
   NotesRelatedToEntity = "NotesRelatedToEntity",
   TodosRelatedToEntity = "TodosRelatedToEntity",
+}
+
+/**
+ * Whether this loader can serve one page at a time.
+ *
+ * The others load everything they have in a single call, so a list using them
+ * has to page in memory. A plain function so the data-source resolver can ask
+ * without injecting the service.
+ */
+export function supportsPagination(loaderMethod?: LoaderMethod): boolean {
+  return loaderMethod === LoaderMethod.AuditRecordsRelatedToEntity;
 }
 
 /**
@@ -26,6 +42,7 @@ export class EntitySpecialLoaderService {
   private readonly childrenService = inject(ChildrenService);
   private readonly historicalDataService = inject(HistoricalDataService);
   private readonly todoService = inject(TodoService);
+  private readonly auditReferenceLoader = inject(AuditReferenceLoaderService);
 
   loadData<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
@@ -57,6 +74,28 @@ export class EntitySpecialLoaderService {
         })) as T;
     }
     return updatedEntity;
+  }
+
+  /**
+   * Load one page of the records this loader serves for the given entity.
+   *
+   * Only for loaders {@link supportsPagination} reports: the rest have no notion
+   * of a page and return everything through {@link loadDataFor}.
+   */
+  loadPageFor<E extends Entity = Entity>(
+    loaderMethod: LoaderMethod,
+    forEntity: Entity,
+    filter: DataFilter<E>,
+    page: { limit: number; bookmark?: string },
+  ): Promise<EntityPage<E>> {
+    if (loaderMethod === LoaderMethod.AuditRecordsRelatedToEntity) {
+      return this.auditReferenceLoader.loadPageFor(
+        forEntity,
+        filter,
+        page,
+      ) as unknown as Promise<EntityPage<E>>;
+    }
+    throw new Error(`${loaderMethod} does not serve pages`);
   }
 
   /**

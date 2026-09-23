@@ -8,7 +8,10 @@ import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import {
+  LoaderMethod,
+  supportsPagination,
+} from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 
 export function resolveDataSource<T extends Entity>(
   injector: Injector,
@@ -35,8 +38,9 @@ function getDataSource(
     return availableDataSources[dataSource];
   }
 
-  if (loaderMethod) {
-    // special loaders are not supported by the paginated data source
+  if (loaderMethod && !supportsPagination(loaderMethod)) {
+    // a loader with no notion of a page loads everything it has, so the list
+    // pages it in memory
     return InMemoryDataSource;
   }
 

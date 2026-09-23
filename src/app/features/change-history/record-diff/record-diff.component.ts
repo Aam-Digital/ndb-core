@@ -50,7 +50,7 @@ export class RecordDiffComponent {
   private readonly schemaService = inject(EntitySchemaService);
 
   /** a deleted record has no before/after pairs — show a structural message */
-  readonly isStructural = computed(() => this.event().action === "deleted");
+  readonly isStructural = computed(() => this.event().operation === "delete");
 
   readonly rows = computed<DiffRow[]>(() => {
     const ctor = this.entityType();

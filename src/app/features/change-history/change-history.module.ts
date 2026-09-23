@@ -5,8 +5,9 @@ import { Entity } from "../../core/entity/model/entity";
 import { ChangeHistoryService } from "./change-history.service";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
 import { changeHistoryRoutes } from "./change-history.routing";
-
-export { AUDIT_RECORD_SUBJECT } from "./change-history.service";
+import { AuditRecord } from "./model/audit-record";
+import { changeHistoryComponents } from "./change-history-components";
+import { ComponentRegistry } from "../../dynamic-components";
 
 function asSingle(entity: Entity | Entity[]): Entity | undefined {
   return Array.isArray(entity) ? entity[0] : entity;
@@ -23,12 +24,15 @@ function asSingle(entity: Entity | Entity[]): Entity | undefined {
 @NgModule({})
 export class ChangeHistoryModule {
   static readonly routes = changeHistoryRoutes;
+  static readonly databaseEntities = [AuditRecord];
 
   private readonly entityActionsMenu = inject(EntityActionsMenuService);
   private readonly dialog = inject(MatDialog);
   private readonly changeHistory = inject(ChangeHistoryService);
 
   constructor() {
+    inject(ComponentRegistry).addAll(changeHistoryComponents);
+
     this.entityActionsMenu.registerActions([
       {
         action: "view-change-history",

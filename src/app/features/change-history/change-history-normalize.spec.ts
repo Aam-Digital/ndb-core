@@ -17,13 +17,13 @@ function doc(partial: Partial<RawAuditDoc>): RawAuditDoc {
   };
 }
 
-it("sets server timestamp, authenticated user and action", () => {
+it("sets server timestamp, authenticated user and operation", () => {
   const [event] = buildChangeEvents([
     doc({ operation: "create", rev: "1-a", diff: [{ name: "A" }] }),
   ]);
   expect(event.at).toEqual(new Date("2026-06-03T10:00:00.000Z"));
   expect(event.by).toBe("User:demo-admin");
-  expect(event.action).toBe("created");
+  expect(event.operation).toBe("create");
 });
 
 it("renders a create record as all-field additions", () => {
@@ -48,7 +48,7 @@ it("renders a baseline as additions with the baseline note", () => {
       diff: { _id: "Child:1", created: { at: "t", by: "U" }, name: "Asha" },
     }),
   ]);
-  expect(event.action).toBe("baseline");
+  expect(event.operation).toBe("baseline");
   expect(event.note).toBe(BASELINE_NOTE);
   expect(event.changes).toEqual([
     { field: "name", from: undefined, to: "Asha" },
@@ -71,7 +71,7 @@ it("replays a scalar update to full before -> after", () => {
     }),
   ]);
   // newest first
-  expect(event.action).toBe("updated");
+  expect(event.operation).toBe("update");
   expect(event.changes).toEqual([{ field: "gender", from: "M", to: "X" }]);
 });
 
@@ -140,7 +140,7 @@ it("renders a delete as structural (no field changes)", () => {
   const [event] = buildChangeEvents([
     doc({ operation: "delete", rev: "3-c", diff: { _deleted: [true] } }),
   ]);
-  expect(event.action).toBe("deleted");
+  expect(event.operation).toBe("delete");
   expect(event.changes).toEqual([]);
 });
 

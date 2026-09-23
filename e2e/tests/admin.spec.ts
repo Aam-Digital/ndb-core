@@ -714,14 +714,22 @@ const CHANGE_LOG_SCHOOL = "Change Log School";
 const DELETED_RECORD_ID = "Child:cl-gone";
 const OTHER_AUTHOR = "priya";
 
+/** The conditions of the change log's Mango query this stub needs to honour. */
+interface StubSelector {
+  operation?: string | { $ne?: string };
+  entityId?: { $gte?: string };
+  /**
+   * The author is matched on either recorded field: the backend writes
+   * `user.name` only when the access token carried one.
+   */
+  $or?: { "user.name"?: string; "user.id"?: string }[];
+  /** the filter bar puts each selection in its own branch */
+  $and?: StubSelector[];
+}
+
 /** The subset of the change log's Mango query this stub needs to honour. */
 interface StubMangoQuery {
-  selector?: {
-    operation?: string | { $ne?: string };
-    entityId?: { $gte?: string };
-    "user.name"?: string;
-  };
-  skip?: number;
+  selector?: StubSelector;
   limit?: number;
 }
 
@@ -777,6 +785,23 @@ const AUDIT_DOCS: StubAuditDoc[] = [
  * what comes back — otherwise the filter assertions below would pass even if
  * the screen never sent the filter at all.
  */
+/**
+ * Collapse a selector's `$and` branches into one object of conditions.
+ *
+ * The filter bar combines each selection into its own branch, so the conditions
+ * this stub matches on are nested rather than top-level. A later branch wins
+ * over an earlier one on the same field, as it does in the database.
+ */
+function flattenSelector(selector: StubSelector): StubSelector {
+  const flat: StubSelector = {};
+  const visit = ({ $and, ...conditions }: StubSelector) => {
+    Object.assign(flat, conditions);
+    $and?.forEach(visit);
+  };
+  visit(selector);
+  return flat;
+}
+
 async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
   await page.route("**/db/_features", (route) =>
     route.fulfill({
@@ -797,7 +822,7 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
 
   await page.route("**/db/app-audit/_find", (route) => {
     const query = route.request().postDataJSON() as StubMangoQuery;
-    const selector = query.selector ?? {};
+    const selector = flattenSelector(query.selector ?? {});
 
     const matched = AUDIT_DOCS.filter((doc) => {
       const operation = selector.operation;
@@ -812,8 +837,17 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
       if (idPrefix && !doc.entityId.startsWith(idPrefix)) {
         return false;
       }
-      const author = selector["user.name"];
-      if (author && doc.user.name !== author) {
+      // the author filter offers every shape the backend may have recorded,
+      // so any one of the branches matching is enough
+      const authors = selector.$or;
+      if (
+        authors?.length &&
+        !authors.some(
+          (branch) =>
+            branch["user.name"] === doc.user.name ||
+            branch["user.id"] === doc.user.name,
+        )
+      ) {
         return false;
       }
       return true;
@@ -822,16 +856,14 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
     const newestFirst = [...matched].sort((a, b) =>
       b.timestamp.localeCompare(a.timestamp),
     );
-    const skip = query.skip ?? 0;
-    const docs = newestFirst.slice(
-      skip,
-      skip + (query.limit ?? matched.length),
-    );
+    // the list pages by cursor, so it asks for a page at a time rather than
+    // by position; this stub holds too few records for a second page
+    const docs = newestFirst.slice(0, query.limit ?? matched.length);
 
     return route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ docs }),
+      body: JSON.stringify({ docs, bookmark: "stub-end" }),
     });
   });
 }
@@ -841,7 +873,11 @@ test("Change Log lists changes across records and narrows them by author", async
 }) => {
   await stubAuditBackend(page);
 
-  const users = generateUsers();
+  // the author filter offers the records a login account can belong to, so the
+  // author of the change filtered for below has to be one of them
+  const otherAuthor = createEntityOfType("User", OTHER_AUTHOR);
+  otherAuthor["name"] = OTHER_AUTHOR;
+  const users = [...generateUsers(), otherAuthor];
   const child = generateChild({ id: "cl-1", name: CHANGE_LOG_CHILD });
   const school = createEntityOfType("School", "cl-school");
   school["name"] = CHANGE_LOG_SCHOOL;
@@ -880,7 +916,7 @@ test("Change Log lists changes across records and narrows them by author", async
   await argosScreenshot(page, "change-log");
 
   // filtering by author leaves only that author's change
-  await page.getByRole("combobox", { name: "Changed by" }).click();
+  await page.getByRole("textbox", { name: "Changed by" }).click();
   await page.getByRole("option", { name: OTHER_AUTHOR }).click();
 
   await expect(
@@ -891,7 +927,7 @@ test("Change Log lists changes across records and narrows them by author", async
   );
 
   // clearing it brings the other records back
-  await page.getByRole("button", { name: "Clear changed-by filter" }).click();
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
 
   await expect(
     page.getByRole("cell", { name: CHANGE_LOG_CHILD }),

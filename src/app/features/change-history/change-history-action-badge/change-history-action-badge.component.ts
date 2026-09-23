@@ -6,10 +6,16 @@ import {
 } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { BASELINE_NOTE, ChangeAction } from "../change-history.types";
+import {
+  BASELINE_NOTE,
+  ChangeOperation,
+  OPERATION_LABELS,
+} from "../change-history.types";
+import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 
-/** Display metadata for one {@link ChangeAction} badge. */
-interface ActionMeta {
+/** Display metadata for one {@link ChangeOperation} badge. */
+interface OperationMeta {
   /** FontAwesome (solid) icon name, resolved via app-fa-dynamic-icon */
   icon: string;
   label: string;
@@ -22,33 +28,36 @@ interface ActionMeta {
 }
 
 /**
- * Display metadata per action. Orange is reserved for app chrome, so even
- * `imported` uses an orange-tint background with deep-orange text — never the
- * brand primary fill.
+ * Display metadata per operation. The labels are past tense while the keys are
+ * the backend's own operation names, so the wording stays a label rather than a
+ * second vocabulary the rest of the feature has to map back and forth.
+ *
+ * Orange is reserved for app chrome, so even `imported` would use an
+ * orange-tint background with deep-orange text — never the brand primary fill.
  */
-const ACTION_META: Record<ChangeAction, ActionMeta> = {
+const OPERATION_META: Record<ChangeOperation, OperationMeta> = {
   baseline: {
     icon: "clock-rotate-left",
-    label: $localize`:Change action badge:Initial snapshot`,
+    label: OPERATION_LABELS.baseline,
     background: "#ECEFF1",
     color: "#4a525c",
     tooltip: BASELINE_NOTE,
   },
-  created: {
+  create: {
     icon: "circle-plus",
-    label: $localize`:Change action badge:Created`,
+    label: OPERATION_LABELS.create,
     background: "#E6F4EA",
     color: "#1E6C33",
   },
-  updated: {
+  update: {
     icon: "pen-to-square",
-    label: $localize`:Change action badge:Updated`,
+    label: OPERATION_LABELS.update,
     background: "#CCEFFF",
     color: "#1565C0",
   },
-  deleted: {
+  delete: {
     icon: "trash",
-    label: $localize`:Change action badge:Deleted`,
+    label: OPERATION_LABELS.delete,
     background: "#FBE2DE",
     color: "#B23A2C",
   },
@@ -58,6 +67,7 @@ const ACTION_META: Record<ChangeAction, ActionMeta> = {
  * A small colored pill showing the icon + label of a change action
  * (Created / Updated / Deleted / Baseline / ...).
  */
+@DynamicComponent("ChangeHistoryActionBadge")
 @Component({
   selector: "app-change-history-action-badge",
   standalone: true,
@@ -87,10 +97,16 @@ const ACTION_META: Record<ChangeAction, ActionMeta> = {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangeHistoryActionBadgeComponent {
-  readonly action = input.required<ChangeAction>();
-  /** display metadata, falling back to `updated` for any unknown action */
+export class ChangeHistoryActionBadgeComponent extends ViewDirective<ChangeOperation> {
+  /**
+   * The operation to display, for the callers that have one to hand.
+   * As a table column it comes through `value` instead.
+   */
+  readonly operation = input<ChangeOperation>();
+
+  /** display metadata, falling back to `update` for any unknown operation */
   readonly meta = computed(
-    () => ACTION_META[this.action()] ?? ACTION_META.updated,
+    () =>
+      OPERATION_META[this.operation() ?? this.value()] ?? OPERATION_META.update,
   );
 }
