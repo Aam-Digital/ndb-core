@@ -77,10 +77,6 @@ describe("LanguageService", () => {
     } as SessionInfo);
   }
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return the current locale", () => {
     expect(service.getCurrentLocale()).toBe("en-US");
   });

@@ -11,7 +11,10 @@ export async function loadCredentials(opts: {
 } | null> {
   let file: Awaited<ReturnType<typeof getCredentials>>;
   try {
-    file = await getCredentials(opts.credentials);
+    file = await getCredentials(opts.credentials, {
+      org: opts.org,
+      category: opts.category,
+    });
   } catch (e: unknown) {
     console.error(e instanceof Error ? e.message : String(e));
     return null;

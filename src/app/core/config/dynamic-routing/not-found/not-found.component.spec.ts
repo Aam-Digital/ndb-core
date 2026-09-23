@@ -16,7 +16,6 @@ import {
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 
 describe("NotFoundComponent", () => {
-  let component: NotFoundComponent;
   let fixture: ComponentFixture<NotFoundComponent>;
 
   beforeEach(async () => {
@@ -37,12 +36,7 @@ describe("NotFoundComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NotFoundComponent);
-    component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should call logging service with current route", () => {

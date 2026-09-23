@@ -14,6 +14,7 @@ import {
   HttpResponse,
   provideHttpClient,
   withInterceptorsFromDi,
+  withXhr,
 } from "@angular/common/http";
 import { TemplateExport } from "../template-export.entity";
 import {
@@ -40,7 +41,7 @@ describe("TemplateExportApiService", () => {
           useValue: of(SyncState.COMPLETED),
         },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(withXhr(), withInterceptorsFromDi()),
         provideHttpClientTesting(),
       ],
     });
@@ -50,10 +51,6 @@ describe("TemplateExportApiService", () => {
       EntityMapperService,
     ) as MockEntityMapperService;
     currentUser = TestBed.inject(CurrentUserSubject);
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
   });
 
   it("should skip deletion requests silently", async () => {
@@ -140,6 +137,33 @@ describe("TemplateExportApiService", () => {
       },
       expect.any(Object),
     );
+  });
+
+  it("should fall back to fallbackFilename when Content-Disposition cannot be decoded", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    templateEntity.title = "My Welcome Letter";
+    const dataEntity = { name: "abc" };
+
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(10),
+      headers: new HttpHeaders({
+        // "%_o" is not a valid percent-escape, so decodeURIComponent throws
+        "Content-Disposition": 'filename="100%_off.pdf"',
+      }),
+      status: 200,
+    });
+    vi.spyOn(TestBed.inject(HttpClient), "post").mockReturnValue(
+      of(mockResponse),
+    );
+
+    const result = await lastValueFrom(
+      service.generatePdfFromTemplate(templateEntity, dataEntity),
+    );
+
+    expect(result).toEqual({
+      filename: "My Welcome Letter",
+      file: mockResponse.body,
+    });
   });
 
   it("should request a generated file from API with default fileName derived from the template title", async () => {

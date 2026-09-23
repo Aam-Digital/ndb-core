@@ -20,8 +20,8 @@ jobs:
     needs: toolchain
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ needs.toolchain.outputs.node-version }}
           cache: npm
@@ -32,7 +32,7 @@ jobs:
       - run: npx tsc -p .
       - run: npx tsc -p e2e
       - name: actionlint
-        uses: raven-actions/actionlint@205b530c5d9fa8f44ae9ed59f341a0db994aa6f8 # v2.1.2
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
 
   test-unit:
     needs: toolchain
@@ -42,10 +42,16 @@ jobs:
     env:
       TZ: Europe/Berlin
       FORCE_COLOR: 1
-    timeout-minutes: 10
+    # The Angular 22 upgrade made the ~470-file suite noticeably heavier
+    # (extra TestBed.tick() flushes, ApplicationRef.afterTick subscription).
+    # 10 minutes was no longer enough for it to finish - it got cancelled.
+    # Trimming the suite (see doc/unit-test-inventory.md) brings it back well
+    # under this; a suite that grows into 20 minutes again should be split
+    # across matrix jobs rather than given a bigger number.
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ needs.toolchain.outputs.node-version }}
           cache: npm
@@ -54,7 +60,7 @@ jobs:
       - run: npm ci --no-progress
 
       - name: Cache angular
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .angular/cache
           key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}

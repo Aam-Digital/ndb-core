@@ -49,10 +49,6 @@ describe("AddressSearchComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should only lookup results after 1s of not typing", async () => {
     vi.useFakeTimers();
     try {

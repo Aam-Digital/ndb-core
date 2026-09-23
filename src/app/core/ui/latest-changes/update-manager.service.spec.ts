@@ -105,7 +105,11 @@ describe("UpdateManagerService", () => {
         { provide: LatestChangesDialogService, useValue: latestChangesDialog },
         { provide: UnsavedChangesService, useValue: unsavedChanges },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
-        { provide: ApplicationRef, useValue: { isStable: of(true) } },
+        {
+          provide: ApplicationRef,
+          // Angular 22 ChangeDetectionSchedulerImpl subscribes to ApplicationRef.afterTick
+          useValue: { isStable: of(true), afterTick: new Subject<void>() },
+        },
       ],
     });
 
@@ -113,10 +117,6 @@ describe("UpdateManagerService", () => {
   }
 
   afterEach(() => localStorage.clear());
-
-  it("should create", () => {
-    expect(service).toBeTruthy();
-  });
 
   it("should show a snackBar that allows to reload the page when an update is available", () => {
     service.listenToAppUpdates();

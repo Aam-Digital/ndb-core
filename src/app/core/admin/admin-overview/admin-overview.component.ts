@@ -168,14 +168,24 @@ export class AdminOverviewComponent {
           Config.CONFIG_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
           originalData,
         );
-        await this.entityMapper.save(previousConfigBackup);
+        try {
+          await this.entityMapper.save(previousConfigBackup);
+          await this.configService.saveConfig(updatedData);
 
-        await this.configService.saveConfig(updatedData);
-
-        this.showConfirmationWithUndoOption(async () => {
-          await this.configService.saveConfig(originalData);
-          await this.entityMapper.remove(previousConfigBackup);
-        });
+          this.showConfirmationWithUndoOption(async () => {
+            await this.configService.saveConfig(originalData);
+            await this.entityMapper.remove(previousConfigBackup);
+          });
+        } catch (e) {
+          Logging.error("Failed to save configuration changes", e);
+          this.snackBar.open(
+            $localize`Update failed: ${e.message}`,
+            undefined,
+            {
+              duration: 5000,
+            },
+          );
+        }
       });
   }
 
@@ -193,8 +203,16 @@ export class AdminOverviewComponent {
       const progressRef = this.confirmationDialog.showProgressDialog(
         signal($localize`Reverting configuration changes ...`),
       );
-      await undoAction();
-      progressRef.close();
+      try {
+        await undoAction();
+      } catch (e) {
+        Logging.error("Failed to revert configuration changes", e);
+        this.snackBar.open($localize`Revert failed: ${e.message}`, undefined, {
+          duration: 5000,
+        });
+      } finally {
+        progressRef.close();
+      }
     });
   }
 

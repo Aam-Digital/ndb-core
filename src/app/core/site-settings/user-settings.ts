@@ -12,8 +12,8 @@ import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/conf
  */
 @DatabaseEntity("UserSettings")
 export class UserSettings extends Entity {
-  static override isInternalEntity = true;
-  static override label = $localize`:UserSettings:User Settings`;
+  static override readonly isInternalEntity = true;
+  static override readonly label = $localize`:UserSettings:User Settings`;
 
   @DatabaseField({
     label: $localize`Default language`,

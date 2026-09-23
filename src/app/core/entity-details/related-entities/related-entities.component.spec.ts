@@ -36,10 +36,6 @@ describe("RelatedEntitiesComponent", () => {
     await fixture.whenStable();
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should create a filter for the passed entity", async () => {
     const entity = new TestEntity();
     const columns = ["name"];

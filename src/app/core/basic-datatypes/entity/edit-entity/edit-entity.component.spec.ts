@@ -98,10 +98,6 @@ describe("EditEntityComponent", () => {
     );
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   function testMultiFlag(
     formFieldConfig: Partial<FormFieldConfig>,
     expectedMulti: boolean,

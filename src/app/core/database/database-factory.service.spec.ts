@@ -59,4 +59,37 @@ describe("DatabaseFactoryService", () => {
     const db = service.createDatabase("test-db") as SyncedPouchDatabase;
     expect(db.adapter).toBe("indexeddb");
   });
+
+  describe("analytics access", () => {
+    // what a database reports through it is covered by the pouch-database spec;
+    // here only the wiring matters, as a database cannot inject the service
+    it("should give a database from either entry point an analytics accessor", async () => {
+      const analytics = { eventTrack: vi.fn() };
+      // stubbed rather than provided: AnalyticsService is resolved lazily to
+      // break a DI cycle, and importing it here would defeat that
+      vi.spyOn<any, any>(service, "getAnalyticsService").mockResolvedValue(
+        analytics,
+      );
+      environment.session_type = SessionType.mock;
+
+      // easy to wire on one entry point and forget on the other
+      for (const db of [
+        service.createDatabase("test-db") as PouchDatabase,
+        service.createRemoteDatabase("test-remote-db") as PouchDatabase,
+      ]) {
+        await expect(db.analytics()).resolves.toBe(analytics);
+      }
+    });
+  });
+
+  it("should resolve analytics lazily to null when it is not available, and only once", async () => {
+    // the lazy resolution is what keeps the AnalyticsService -> ConfigService ->
+    // EntityMapperService -> DatabaseResolver -> DatabaseFactoryService cycle
+    // from being closed during bootstrap
+    const first = (service as any).getAnalyticsService();
+    const second = (service as any).getAnalyticsService();
+
+    expect(second).toBe(first);
+    await expect(first).resolves.toBeNull();
+  });
 });

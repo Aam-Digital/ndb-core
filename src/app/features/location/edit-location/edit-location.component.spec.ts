@@ -55,10 +55,6 @@ describe("EditLocationComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should open map dialog and pass current location and text to address search", () => {
     component.value = {
       locationString: "manual address",

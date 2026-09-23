@@ -98,11 +98,6 @@ export class AdminEntityGeneralSettingsComponent {
     );
   }
 
-  /** the entity label of the active language, used as the plural's placeholder */
-  protected get resolvedLabel(): string {
-    return this.resolveText(this.basicSettingsForm?.get("label")?.value) ?? "";
-  }
-
   entityConstructor = input.required<EntityConstructor>();
   generalSettings = input.required<EntityConfig>();
   showPIIDetailsInput = input<boolean>(false);
@@ -130,6 +125,19 @@ export class AdminEntityGeneralSettingsComponent {
 
   private readonly selectedStringAttributes = linkedSignal<string[]>(
     () => this.generalSettings().toStringAttributes ?? [],
+  );
+
+  /**
+   * the label's current value, seeded from the input because the form is patched
+   * with `emitEvent: false` and kept up to date from the form below
+   */
+  private readonly labelValue = linkedSignal<TranslatableText | null>(
+    () => this.generalSettings().label ?? null,
+  );
+
+  /** the entity label of the active language, used as the plural's placeholder */
+  protected readonly resolvedLabel = computed(
+    () => this.resolveText(this.labelValue()) ?? "",
   );
 
   toStringAttributesOptions = computed<SimpleDropdownValue[]>(() => {
@@ -227,6 +235,7 @@ export class AdminEntityGeneralSettingsComponent {
         const selectedKeys: string[] =
           this.basicSettingsForm.get("toStringAttributes").value ?? [];
         this.selectedStringAttributes.set(selectedKeys);
+        this.labelValue.set(this.basicSettingsForm.get("label").value);
         this.generalSettingsChange.emit(
           this.basicSettingsForm.getRawValue() as unknown as EntityConfig,
         );

@@ -12,6 +12,10 @@ import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import {
+  describeResponse,
+  unexpectedResponseMessage,
+} from "../../logging/http-response-logging";
 
 /**
  * 4XX statuses that occur during normal operation
@@ -23,6 +27,11 @@ const EXPECTED_4XX_STATUSES: number[] = [
   HttpStatusCode.Forbidden,
   HttpStatusCode.NotFound,
 ];
+
+/** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
+function requestMethod(opts: RequestInit | undefined): string {
+  return (opts?.method ?? "GET").toUpperCase();
+}
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -164,19 +173,22 @@ export class RemotePouchDatabase extends PouchDatabase {
       }
     }
 
+    const method = requestMethod(opts);
+
     if (!result || result.status >= 500) {
       Logging.debug("Actual DB Fetch response", result);
       Logging.debug("navigator.onLine", navigator.onLine);
       throw new DatabaseException({
         message: "Failed to fetch from DB",
         requestedUrl: remoteUrl,
-        actualResponse: JSON.stringify(result),
+        actualResponse: JSON.stringify(describeResponse(result, method)),
         actualResponseBody: await result?.text(),
       });
     }
 
     // additional output for debugging
     if (result?.status >= 400) {
+      const response = describeResponse(result, method);
       if (this.isNotificationsDatabase() && result.status === 404) {
         Logging.debug(
           "Notifications database not found (404) - may be expected",
@@ -184,9 +196,25 @@ export class RemotePouchDatabase extends PouchDatabase {
       } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
         // expired session (401), permission-filtered doc (403) and missing doc (404)
         // are part of normal operation and handled by callers
-        Logging.debug("Failed to fetch from DB with 40X error", result);
+        Logging.debug("Expected 4XX response from DB", response);
+      } else if (result.status === HttpStatusCode.Conflict) {
+        // A 409 is CouchDB rejecting a write whose revision is out of date. This
+        // layer cannot tell whether that cost anyone anything, but whoever made
+        // the request always can:
+        //  - remote-only session: the write came from PouchDatabase.put(), and
+        //    PouchDatabase.resolveConflict() decides between merging,
+        //    overwriting and failing - and counts the outcome it chose.
+        //  - synced session: writes go to the local database, so the only 409s
+        //    reaching here are replication's own `PUT /_local/<checkpoint>`
+        //    races between concurrent tabs, which PouchDB retries internally.
+        // Reporting it here would therefore be an alert nobody can act on, and
+        // it is what buried the genuinely unexpected statuses in the same issue.
+        Logging.debug("Document update conflict from DB", response);
       } else {
-        Logging.warn("Failed to fetch from DB with 40X error", result);
+        Logging.warn(unexpectedResponseMessage(result.status), {
+          ...response,
+          requestedUrl: remoteUrl,
+        });
       }
     }
 
@@ -256,7 +284,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     url: string,
     opts: RequestInit,
   ): Promise<Response> {
-    const method = (opts.method ?? "GET").toUpperCase();
+    const method = requestMethod(opts);
     const isSafeMethod = method === "GET" || method === "HEAD";
 
     if (!isSafeMethod) {
@@ -320,6 +348,74 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected = this.pendingLostPermissions;
     this.pendingLostPermissions = [];
     return collected;
+  }
+
+  /**
+   * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
+   * to query the remote CouchDB (via the replication-backend) using the Mango
+   * Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}.
+   *
+   * Pagination uses CouchDB's real `bookmark` cursor: pass the `bookmark`
+   * returned by a previous call to continue right after those results. This
+   * is forward-only - there is no way to jump back to an earlier page - and
+   * (unlike `skip`) it also works correctly when the server applies
+   * permission filtering to the query (see
+   * {@link https://github.com/Aam-Digital/replication-backend/pull/330}).
+   *
+   * Only implemented here: PouchDB's local Mango query engine has no
+   * bookmark support at all (see {@link PouchDatabase.find}).
+   */
+  override async find(
+    prefix = "",
+    query = {},
+    page?: { limit?: number; bookmark?: string },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<{ docs: any[]; bookmark?: string }> {
+    // the installed @types/pouchdb-find does not declare `bookmark`, although
+    // both CouchDB and pouchdb-find's own request/response objects support it
+    const findOptions: PouchDB.Find.FindRequest<any> & { bookmark?: string } = {
+      selector: {
+        ...query,
+        _id: { $lt: `${prefix}:￰`, $gte: `${prefix}:` },
+      },
+    };
+    if (Number.isInteger(page?.limit)) {
+      findOptions.limit = page.limit;
+    }
+    if (page?.bookmark) {
+      findOptions.bookmark = page.bookmark;
+    }
+    const pouchDB = await this.getPouchDBOnceReady();
+    if (sort?.prop) {
+      // TODO delete indexes at one point? e.g. when column is removed
+      const indexRes = await pouchDB
+        .createIndex({
+          index: {
+            name: prefix + "_" + sort.prop,
+            partial_filter_selector: {
+              _id: findOptions.selector._id,
+            },
+            fields: [sort.prop],
+          },
+        })
+        .catch((err) => {
+          throw new DatabaseException(err);
+        });
+      // deleted because already included in partial_filter_selector
+      delete findOptions.selector._id;
+      findOptions.sort = [{ [sort.prop]: sort.dir }];
+      findOptions.use_index = indexRes["id"];
+    }
+    return this.withReadRetry(
+      () =>
+        pouchDB.find(findOptions) as Promise<
+          PouchDB.Find.FindResponse<any> & { bookmark?: string }
+        >,
+    )
+      .then((res) => ({ docs: res.docs, bookmark: res.bookmark }))
+      .catch((err) => {
+        throw new DatabaseException(err);
+      });
   }
 
   protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {

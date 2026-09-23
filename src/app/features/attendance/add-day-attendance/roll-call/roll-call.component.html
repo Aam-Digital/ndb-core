@@ -113,8 +113,6 @@
           let i = $index
         ) {
           <app-roll-call-tab
-            (swiperight)="goToParticipantWithIndex(currentIndex() - 1)"
-            (swipeleft)="goToParticipantWithIndex(currentIndex() + 1)"
             class="tab-body"
             [class.tab-body-active]="currentIndex() === i"
             [position]="i - currentIndex()"

@@ -10,8 +10,16 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { debounceTime, distinctUntilChanged } from "rxjs/operators";
 import { Entity } from "../../entity/model/entity";
 import { StringFilter } from "../filters/stringFilter";
+
+/**
+ * Delay (ms) before a changed search text is applied, so that typing does not
+ * trigger a filter update (and, for server-side data sources, a DB request) on
+ * every single keystroke.
+ */
+export const STRING_FILTER_DEBOUNCE_MS = 400;
 
 /**
  * A simple text input to filter entities by free-text properties
@@ -32,7 +40,11 @@ export class StringFilterComponent<E extends Entity> {
 
   constructor() {
     this.textControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        debounceTime(STRING_FILTER_DEBOUNCE_MS),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((text) => {
         this.filterConfig().selectedOptionChange.emit(text ? [text] : []);
       });

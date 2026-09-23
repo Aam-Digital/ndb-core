@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   LOCALE_ID,
@@ -68,6 +69,10 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import {
+  ConditionEditorDialogComponent,
+  ConditionEditorDialogData,
+} from "app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -133,6 +138,13 @@ export class AdminEntityFieldComponent implements OnInit {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly entityConfigService = inject(EntityConfigService);
+  private readonly labelValue = signal<TranslatableText | undefined>(undefined);
+
+  /** the label text of the active language, for display outside the form field */
+  readonly resolvedLabel = computed(
+    () => this.resolveForDisplay(this.labelValue()) ?? "",
+  );
+
   private readonly locale = inject(LOCALE_ID);
   private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
@@ -153,6 +165,15 @@ export class AdminEntityFieldComponent implements OnInit {
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
   attendanceParticipantTypesForm = new FormControl<string[]>([]);
+
+  /**
+   * dataTypes for which a field can hold multiple values (`isArray`),
+   * so that the "allow multiple values" option is offered to the user.
+   */
+  private static readonly MULTI_VALUE_DATATYPES: string[] = [
+    ConfigurableEnumDatatype.dataType,
+    EntityDatatype.dataType,
+  ];
 
   ngOnInit() {
     this.entityType = this.data.entityType;
@@ -256,11 +277,18 @@ export class AdminEntityFieldComponent implements OnInit {
       showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
       generateIndex: [this.data.entitySchemaField.generateIndex],
       validators: [this.data.entitySchemaField.validators],
+      displayCondition: [this.data.entitySchemaField.displayCondition],
     });
     this.form = this.fb.group({
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
     });
+
+    const labelControl = this.schemaFieldsForm.get("label");
+    this.labelValue.set(labelControl.value);
+    labelControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.labelValue.set(value));
 
     this.schemaFieldsForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -294,6 +322,7 @@ export class AdminEntityFieldComponent implements OnInit {
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((v) => {
         this.updateDataTypeAdditional(v);
+        this.resetIsArrayIfUnsupported(v);
       });
     this.updateForNewOrExistingField();
   }
@@ -365,6 +394,44 @@ export class AdminEntityFieldComponent implements OnInit {
   createNewAdditionalOptionAsync = async (input) =>
     this.createNewAdditionalOption(input);
 
+  /**
+   * Whether the user can choose to hold multiple values in one field of the given dataType,
+   * i.e. whether the "allow multiple values" option is offered.
+   */
+  supportsMultiValue(dataType: string): boolean {
+    return AdminEntityFieldComponent.MULTI_VALUE_DATATYPES.includes(dataType);
+  }
+
+  /**
+   * Whether the dataType itself requires multiple values, independent of the user's choice
+   * (see {@link DefaultDatatype.normalizeSchemaField}, e.g. "attendance").
+   */
+  private enforcesMultiValue(dataType: string): boolean {
+    const datatype = (
+      this.allDataTypes as unknown as DefaultDatatype<any, any>[]
+    ).find((d) => d.dataType === dataType);
+    return !!datatype?.normalizeSchemaField({ dataType })?.isArray;
+  }
+
+  /**
+   * Remove the `isArray` flag if the newly selected dataType does not use multiple values.
+   *
+   * The "allow multiple values" checkbox is only displayed for some dataTypes.
+   * Without this reset a previously set `isArray: true` silently remains in the config
+   * (e.g. when a multi-select "configurable-enum" field is changed to "long-text"),
+   * making the field's value an array that the dataType's display component cannot handle.
+   */
+  private resetIsArrayIfUnsupported(dataType: string) {
+    if (this.supportsMultiValue(dataType) || this.enforcesMultiValue(dataType))
+      return;
+
+    const isArrayControl = this.schemaFieldsForm.get("isArray");
+    if (!isArrayControl?.value) return;
+
+    // `null` (rather than `false`) so that the flag is removed from the schema entirely
+    isArrayControl.setValue(null);
+  }
+
   private updateDataTypeAdditional(
     dataType: string,
     newAdditional: any = this.data.entitySchemaField.additional,
@@ -405,7 +472,8 @@ export class AdminEntityFieldComponent implements OnInit {
     } else if (this.schemaFieldsForm.get("label").value) {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
       const newOption = this.createNewAdditionalOption(
-        this.schemaFieldsForm.get("label").value,
+        // resolve first: `generateIdFromLabel` returns undefined for a per-language map
+        this.resolveForDisplay(this.schemaFieldsForm.get("label").value),
       );
       this.typeAdditionalOptions.push(newOption);
       this.additionalForm.setValue(newOption.value);
@@ -555,6 +623,22 @@ export class AdminEntityFieldComponent implements OnInit {
   resetToBaseFieldSettings() {
     this.dialogRef.close(this.fieldIdForm.getRawValue());
   }
+  openDisplayConditionDialog() {
+    const dialogRef = this.dialog.open(ConditionEditorDialogComponent, {
+      data: {
+        entityConstructor: this.data.entityType,
+        conditions: this.schemaFieldsForm.get("displayCondition").value,
+        explanation: $localize`This field is shown only while the record matches...`,
+      } satisfies ConditionEditorDialogData,
+      width: "600px",
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // `undefined` means the dialog was cancelled, leave the condition unchanged
+      if (result === undefined) return;
+      this.schemaFieldsForm.get("displayCondition").setValue(result);
+    });
+  }
 
   /**
    * The raw, unresolved value of a schema field property, taken from the config
@@ -574,13 +658,6 @@ export class AdminEntityFieldComponent implements OnInit {
 
     // a field that is not in the config yet (newly added) has no raw value
     return rawValue ?? this.data.entitySchemaField[property];
-  }
-
-  /** the label text of the active language, for display outside the form field */
-  get resolvedLabel(): string {
-    return (
-      this.resolveForDisplay(this.schemaFieldsForm?.get("label")?.value) ?? ""
-    );
   }
 
   private resolveForDisplay(value: TranslatableText): string | undefined {

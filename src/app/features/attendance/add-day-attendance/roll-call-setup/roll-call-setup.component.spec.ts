@@ -68,10 +68,6 @@ describe("RollCallSetupComponent", () => {
     fixture.detectChanges();
   }));
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("shows events returned by the service", async () => {
     const event1 = wrapEvent(TestEventEntity.create());
     const event2 = wrapEvent(TestEventEntity.create());

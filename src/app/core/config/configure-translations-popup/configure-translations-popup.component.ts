@@ -13,6 +13,11 @@ import { availableLocales } from "../../language/languages";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import { isTranslatableText, TranslatableText } from "../multi-lingual-config";
 
+export interface ConfigureTranslationsResult {
+  /** the new value, or undefined when every language was cleared */
+  value: TranslatableText | undefined;
+}
+
 export interface ConfigureTranslationsDialogData {
   /** the raw configured value: a plain string or a per-language map */
   value?: TranslatableText;
@@ -74,17 +79,17 @@ export class ConfigureTranslationsPopupComponent {
   }
 
   onSave() {
-    this.dialogRef.close(this.buildValue());
+    this.dialogRef.close({ value: this.buildValue() });
   }
 
   onCancel() {
-    // closing without a result leaves the existing value untouched
+    // no result at all, so the caller keeps the existing value
     this.dialogRef.close(undefined);
   }
 
   /**
-   * Build the new raw value: a plain string while only one language is filled in,
-   * a per-language map as soon as there are several.
+   * Build the new raw value. Only the default language on its own collapses to a
+   * plain string: {@link initialTextFor} reads one back as that language's text.
    */
   private buildValue(): TranslatableText | undefined {
     const filled = this.rows.filter((row) => !!row.text?.trim());
@@ -92,7 +97,7 @@ export class ConfigureTranslationsPopupComponent {
     if (filled.length === 0) {
       return undefined;
     }
-    if (filled.length === 1) {
+    if (filled.length === 1 && filled[0].locale === DEFAULT_LANGUAGE) {
       return filled[0].text.trim();
     }
 

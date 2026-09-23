@@ -20,10 +20,6 @@ describe("EditMonthComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should save the selected moment on the form control", () => {
     const selected = new Date("2021-05-01");
     const closeSpy = vi.fn();

@@ -15,7 +15,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import { availableLocales } from "../../language/languages";
-import { ConfigureTranslationsPopupComponent } from "../configure-translations-popup/configure-translations-popup.component";
+import {
+  ConfigureTranslationsPopupComponent,
+  ConfigureTranslationsResult,
+} from "../configure-translations-popup/configure-translations-popup.component";
 import {
   isTranslatableText,
   resolveTranslatableText,
@@ -74,15 +77,22 @@ export class TranslatableTextInputComponent extends CustomFormControlDirective<T
   private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   /** the text of the currently active language, shown in the text field */
-  readonly displayText = computed(
-    () =>
+  readonly displayText = computed(() => {
+    const value = this.valueSignal();
+    const resolved =
       resolveTranslatableText(
-        this.valueSignal(),
+        value,
         this.locale,
         DEFAULT_LANGUAGE,
         this.validLocaleIds,
-      ) ?? "",
-  );
+      ) ?? "";
+
+    if (!isTranslatableText(value, this.validLocaleIds)) {
+      return resolved;
+    }
+
+    return value[this.locale] ?? resolved;
+  });
 
   /** whether this text is currently configured in more than one language */
   readonly isMultiLingual = computed(() =>
@@ -109,12 +119,13 @@ export class TranslatableTextInputComponent extends CustomFormControlDirective<T
         disableClose: true,
       })
       .afterClosed()
-      .subscribe((result?: TranslatableText) => {
-        if (result === undefined) {
-          // dialog cancelled: keep the previously configured value
+      .subscribe((result?: ConfigureTranslationsResult) => {
+        if (!result) {
+          // cancelled: keep the previously configured value
           return;
         }
-        this.value = result;
+        // saved, possibly with every language cleared
+        this.value = result.value;
         this.onTouched();
       });
   }

@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DisplayTextComponent } from "./display-text.component";
 
 describe("DisplayTextComponent", () => {
-  let component: DisplayTextComponent;
   let fixture: ComponentFixture<DisplayTextComponent>;
 
   beforeEach(waitForAsync(() => {
@@ -14,12 +13,19 @@ describe("DisplayTextComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayTextComponent);
-    component = fixture.componentInstance;
-    fixture.componentRef.setInput("value", "text");
-    fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  // as the fallback for fields without a dataType, this receives non-strings;
+  // objects would otherwise interpolate as "[object Object]"
+  it.each([
+    ["plain text", "plain text"],
+    [["startup", "referral"], "startup,referral"],
+    [{ foo: "bar" }, `{"foo":"bar"}`],
+    [[{ foo: "bar" }, { baz: "qux" }], `{"foo":"bar"},{"baz":"qux"}`],
+  ])("renders %j as %s", (value, expected) => {
+    fixture.componentRef.setInput("value", value);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent.trim()).toBe(expected);
   });
 });

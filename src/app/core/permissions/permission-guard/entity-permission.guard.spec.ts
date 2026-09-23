@@ -24,10 +24,6 @@ describe("EntityPermissionGuard", () => {
     guard = TestBed.inject(EntityPermissionGuard);
   });
 
-  it("should be created", () => {
-    expect(guard).toBeTruthy();
-  });
-
   it("should use ability to check if current user is allowed", async () => {
     mockAbility.can.mockReturnValue(true);
 
