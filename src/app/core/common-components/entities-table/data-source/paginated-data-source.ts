@@ -2,11 +2,10 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { MatSort } from "@angular/material/sort";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { MatPaginator } from "@angular/material/paginator";
-import { effect, signal } from "@angular/core";
+import { effect, inject, signal } from "@angular/core";
 import { EntityFilter } from "#src/app/core/filter/filters/entityFilter";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { merge } from "rxjs";
-import { inject } from "@angular/core";
 import {
   EntitySpecialLoaderService,
   supportsPagination,

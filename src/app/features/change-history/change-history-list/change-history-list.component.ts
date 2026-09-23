@@ -374,7 +374,7 @@ export class ChangeHistoryListComponent {
     const ctor = this.entityRegistry.has(recordType)
       ? this.entityRegistry.get(recordType)
       : class extends Entity {
-          static override ENTITY_TYPE = recordType;
+          static override readonly ENTITY_TYPE = recordType;
         };
     return new ctor(recordId);
   }

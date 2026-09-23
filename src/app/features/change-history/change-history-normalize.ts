@@ -16,7 +16,7 @@ export interface RawAuditDoc {
   _id: string;
   entityId: string;
   database?: string;
-  operation: "create" | "update" | "delete" | "baseline";
+  operation: ChangeOperation;
   rev?: string;
   parentRev?: string;
   timestamp: string;
@@ -100,10 +100,8 @@ export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
   for (const doc of ordered) {
     // an operation the backend adds later renders as a plain update rather
     // than an unlabelled badge
-    const operation: ChangeOperation = CHANGE_OPERATIONS.includes(
-      doc.operation as ChangeOperation,
-    )
-      ? (doc.operation as ChangeOperation)
+    const operation: ChangeOperation = CHANGE_OPERATIONS.includes(doc.operation)
+      ? doc.operation
       : "update";
     const base = {
       id: doc._id,

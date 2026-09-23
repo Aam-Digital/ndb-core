@@ -88,16 +88,14 @@ export class EntitySpecialLoaderService {
     filter: DataFilter<E>,
     page: { limit: number; bookmark?: string },
   ): Promise<EntityPage<E>> {
-    switch (loaderMethod) {
-      case LoaderMethod.AuditRecordsRelatedToEntity:
-        return this.auditReferenceLoader.loadPageFor(
-          forEntity,
-          filter,
-          page,
-        ) as unknown as Promise<EntityPage<E>>;
-      default:
-        throw new Error(`${loaderMethod} does not serve pages`);
+    if (loaderMethod === LoaderMethod.AuditRecordsRelatedToEntity) {
+      return this.auditReferenceLoader.loadPageFor(
+        forEntity,
+        filter,
+        page,
+      ) as unknown as Promise<EntityPage<E>>;
     }
+    throw new Error(`${loaderMethod} does not serve pages`);
   }
 
   /**
