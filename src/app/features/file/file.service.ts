@@ -149,7 +149,12 @@ export abstract class FileService {
         ) {
           errorMessage = $localize`:File Download Error Message:You do not have permission to open this file.`;
         } else {
-          Logging.warn("Could not download file", entity?.getId(), property, err);
+          Logging.warn(
+            "Could not download file",
+            entity?.getId(),
+            property,
+            err,
+          );
           errorMessage = $localize`:File Download Error Message:Failed to download file attachment. Please try again.`;
         }
 
