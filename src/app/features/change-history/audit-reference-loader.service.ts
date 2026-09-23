@@ -32,24 +32,28 @@ export class AuditReferenceLoaderService {
   private readonly indexing = inject(DatabaseIndexingService);
   private readonly schemaService = inject(EntitySchemaService);
 
-  /** created once per session; writing it again is a no-op when unchanged */
-  private indexCreated?: Promise<void>;
+  /** creating the view writes a document, so it is requested once per session */
+  private indexRequested = false;
 
   /**
-   * Create the view this loader queries, once per session.
+   * Register the view this loader queries, so the indexing service can report
+   * it as ready and hold the query until it is.
    *
-   * A failure must not stop the query: the view may well exist already, from
-   * an earlier session or another admin - and writing a design document needs
-   * a permission that reading one does not.
+   * A failure must not stop the query: the view may well exist already, from an
+   * earlier session or another admin - and writing a design document needs a
+   * permission that reading one does not. The failed registration still counts
+   * as settled, so the query goes ahead and finds the view already there.
    */
-  private ensureIndex(): Promise<void> {
-    this.indexCreated ??= this.indexing
+  private ensureIndex(): void {
+    if (this.indexRequested) {
+      return;
+    }
+    this.indexRequested = true;
+    this.indexing
       .createIndex(buildAuditReferenceIndex(), AuditRecord.DATABASE)
-      .catch((err) => {
-        Logging.debug("could not ensure the audit reference view", err);
-        this.indexCreated = undefined;
-      });
-    return this.indexCreated;
+      .catch((err) =>
+        Logging.debug("could not ensure the audit reference view", err),
+      );
   }
 
   /**
@@ -64,7 +68,7 @@ export class AuditReferenceLoaderService {
     filter: DataFilter<AuditRecord>,
     page: { limit: number; bookmark?: string },
   ): Promise<EntityPage<AuditRecord>> {
-    await this.ensureIndex();
+    this.ensureIndex();
 
     const recordId = forEntity.getId();
     const skip = page.bookmark ? Number(page.bookmark) : 0;
@@ -90,10 +94,12 @@ export class AuditReferenceLoaderService {
       query.startkey = [recordId, bounds?.$lte ?? {}];
     }
 
+    // not `doNotWaitForIndexCreation`: the indexing service holds the query
+    // until the view it was just asked to create is ready
     const response: ViewResponse = await this.indexing.queryIndexRaw(
       AUDIT_REFERENCE_VIEW,
       query,
-      true,
+      false,
       AuditRecord.DATABASE,
     );
     const rows = response.rows ?? [];

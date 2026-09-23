@@ -53,6 +53,22 @@ it("should query the audit database rather than the app database", async () => {
   );
 });
 
+it("should let the indexing service hold the query until the view is ready", async () => {
+  await loader.loadPageFor(forEntity, {}, { limit: 2 });
+
+  // the view is requested just above, so the query has to wait for it rather
+  // than run against one that may not exist yet
+  expect(indexing.queryIndexRaw.mock.calls.at(-1)[2]).toBeFalsy();
+});
+
+it("should request the view only once, however many pages are read", async () => {
+  // creating it writes a design document, which a page turn must not repeat
+  await loader.loadPageFor(forEntity, {}, { limit: 2 });
+  await loader.loadPageFor(forEntity, {}, { limit: 2, bookmark: "2" });
+
+  expect(indexing.createIndex).toHaveBeenCalledTimes(1);
+});
+
 it("should still query when the view cannot be created", async () => {
   // reading a view needs less permission than writing its design document,
   // and it may well exist already from an earlier session or another admin
