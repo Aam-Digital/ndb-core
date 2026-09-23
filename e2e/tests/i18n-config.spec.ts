@@ -97,8 +97,6 @@ test("translates the whole app when the user picks a language on the welcome scr
     page.getByRole("button", { name: "System erkunden" }),
   ).not.toBeVisible();
 
-  // FIXME: The dashboard may load before demo data is generated and not display
-  // it. As a workaround we move to a different view and back to the dashboard
   await page.getByRole("navigation").getByText("Schüler:innen").click();
 
   // Extract the count from the paginator (e.g., "1 – 10 von 99" in German)

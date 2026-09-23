@@ -164,4 +164,12 @@ describe("LanguageService", () => {
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
     expect(reloadSpy).toHaveBeenCalled();
   });
+
+  it("should not store a locale that is not a string", () => {
+    service.initDefaultLanguage();
+    languageSubject.next({ id: { id: "de", label: "de" } as any, label: "de" });
+
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(null);
+    expect(reloadSpy).not.toHaveBeenCalled();
+  });
 });

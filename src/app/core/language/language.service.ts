@@ -1,6 +1,6 @@
 import { inject, Injectable, LOCALE_ID } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
+import { isValidLocale, LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 import { SiteSettings } from "../site-settings/site-settings";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -94,6 +94,12 @@ export class LanguageService {
    * @param newLocale
    */
   switchLocale(newLocale: string): void {
+    if (newLocale && !isValidLocale(newLocale)) {
+      // storing this would stringify it and break loading translations on the next reload
+      Logging.warn("Ignoring an invalid locale.", { newLocale });
+      return;
+    }
+
     const currentLocale = this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
     if (newLocale === currentLocale || !newLocale) return;
 
