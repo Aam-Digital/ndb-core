@@ -8,7 +8,7 @@ import { resolveActiveText } from "../language/active-locale";
 import { TranslatableText } from "./multi-lingual-config";
 
 /**
- * A user-facing text that admins can configure in several languages (#3862).
+ * A user-facing text that admins can configure in several languages.
  *
  * The transforms stay the identity on purpose: the entity holds the raw value,
  * because resolving here would make every `entityMapper.save()` write back the
