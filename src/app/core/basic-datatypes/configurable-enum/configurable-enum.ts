@@ -44,7 +44,7 @@ export class ConfigurableEnum extends Entity {
       return;
     }
 
-    // check for duplicates by the text of the active language (#3862)
+    // check for duplicates by the text of the active language
     const newLabel = displayLabel(option.label);
     if (this.values.some((v) => displayLabel(v.label) === newLabel)) {
       throw new DuplicateEnumOptionException(newOptionInput);
