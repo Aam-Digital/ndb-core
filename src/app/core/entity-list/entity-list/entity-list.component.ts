@@ -58,7 +58,7 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
-import { resolveActiveText } from "../../language/active-locale";
+import { resolveLocaleText } from "../../language/active-locale";
 import { TranslatableText } from "../../config/multi-lingual-config";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import {
@@ -284,7 +284,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       )
       .map((config) => ({
         config,
-        title: resolveActiveText(config.title) ?? "",
+        title: resolveLocaleText(config.title) ?? "",
       }));
     this.cdr.markForCheck();
   }
@@ -334,7 +334,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
       // the fallback needs a text that matches the first group in some language
-      const firstGroup = resolveActiveText(columnGroup.groups[0].name) ?? "";
+      const firstGroup = resolveLocaleText(columnGroup.groups[0].name) ?? "";
       this.defaultColumnGroup =
         columnGroup.default && this.configuredTabExists(columnGroup.default)
           ? columnGroup.default
@@ -359,7 +359,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
     this.displayGroups = this.groups.map((group) => ({
       ...group,
-      name: resolveActiveText(group.name) ?? "",
+      name: resolveLocaleText(group.name) ?? "",
     }));
   }
 

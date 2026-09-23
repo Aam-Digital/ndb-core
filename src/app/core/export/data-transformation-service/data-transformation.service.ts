@@ -6,7 +6,7 @@ import {
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../query.service";
 import { groupBy } from "../../../utils/utils";
-import { resolveActiveText } from "../../language/active-locale";
+import { resolveLocaleText } from "../../language/active-locale";
 import { TranslatableText } from "../../config/multi-lingual-config";
 
 /**
@@ -40,7 +40,7 @@ export class DataTransformationService {
           )),
         );
       } else {
-        totalRow[resolveActiveText(c.label)] = baseData;
+        totalRow[resolveLocaleText(c.label)] = baseData;
       }
 
       combinedResults.push(...result);
@@ -161,7 +161,7 @@ export class DataTransformationService {
     // a configured label may be a per-language map, but it is used as the column
     // key here and in the downloaded file, so it has to be plain text
     const label =
-      resolveActiveText(exportColumnConfig.label) ??
+      resolveLocaleText(exportColumnConfig.label) ??
       exportColumnConfig.query.replace(".", "");
     const value = this.getValueForQuery(exportColumnConfig, data, from, to);
 

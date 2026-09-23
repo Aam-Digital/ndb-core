@@ -24,7 +24,7 @@ import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { resolveActiveText } from "app/core/language/active-locale";
+import { resolveLocaleText } from "app/core/language/active-locale";
 
 export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -101,7 +101,7 @@ export class SelectReportComponent {
       reports?.length === 1 ? reports[0] : previous?.value,
   });
   readonly selectedReportTitle = computed(() =>
-    resolveActiveText(this.selectedReport()?.title),
+    resolveLocaleText(this.selectedReport()?.title),
   );
 
   fromDate = signal<Date | undefined>(undefined);

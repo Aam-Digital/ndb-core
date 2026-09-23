@@ -26,7 +26,7 @@ import { Logging } from "../../logging/logging.service";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
-import { resolveActiveConfig } from "../../language/active-locale";
+import { resolveLocaleConfig } from "../../language/active-locale";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,7 +73,7 @@ export class SetupWizardComponent implements OnInit {
         Config<SetupWizardConfig>
       >(Config, CONFIG_SETUP_WIZARD_ID);
       // display only - `configEntity` stays raw so saving keeps all languages
-      this.steps = resolveActiveConfig(this.configEntity?.data.steps);
+      this.steps = resolveLocaleConfig(this.configEntity?.data.steps);
     } catch (e) {
       Logging.debug("no setup wizard config loaded", e);
     }

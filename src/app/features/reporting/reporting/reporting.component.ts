@@ -34,7 +34,7 @@ import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 import { ConfigService } from "app/core/config/config.service";
-import { resolveActiveText } from "app/core/language/active-locale";
+import { resolveLocaleText } from "app/core/language/active-locale";
 import {
   DateRangeFilterConfig,
   DateRangeFilterConfigOption,
@@ -100,8 +100,7 @@ export class ReportingComponent {
           // resolve once here, so everything downstream works on plain strings.
           .map((report) => {
             const forDisplay = report.copy();
-            forDisplay.title = resolveActiveText(report.title);
-            forDisplay.description = resolveActiveText(report.description);
+            forDisplay.title = resolveLocaleText(report.title);
             return forDisplay;
           })
           .sort((a, b) =>

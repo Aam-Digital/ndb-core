@@ -1,7 +1,7 @@
 import {
   configureActiveLocale,
-  resolveActiveConfig,
-  resolveActiveText,
+  resolveLocaleConfig,
+  resolveLocaleText,
 } from "./active-locale";
 import { AVAILABLE_LOCALE_IDS } from "./available-locales";
 import { DEFAULT_LANGUAGE } from "./language-statics";
@@ -11,17 +11,17 @@ describe("active-locale", () => {
     configureActiveLocale(DEFAULT_LANGUAGE, AVAILABLE_LOCALE_IDS);
   });
 
-  describe("resolveActiveText", () => {
+  describe("resolveLocaleText", () => {
     it("returns a plain string unchanged", () => {
       configureActiveLocale("de", AVAILABLE_LOCALE_IDS);
 
-      expect(resolveActiveText("Name")).toBe("Name");
+      expect(resolveLocaleText("Name")).toBe("Name");
     });
 
     it("resolves a translation map to the active locale", () => {
       configureActiveLocale("de", AVAILABLE_LOCALE_IDS);
 
-      expect(resolveActiveText({ "en-US": "Name", de: "Vorname" })).toBe(
+      expect(resolveLocaleText({ "en-US": "Name", de: "Vorname" })).toBe(
         "Vorname",
       );
     });
@@ -29,18 +29,18 @@ describe("active-locale", () => {
     it("falls back to the default language when the active one is missing", () => {
       configureActiveLocale("fr", AVAILABLE_LOCALE_IDS);
 
-      expect(resolveActiveText({ "en-US": "Name", de: "Vorname" })).toBe(
+      expect(resolveLocaleText({ "en-US": "Name", de: "Vorname" })).toBe(
         "Name",
       );
     });
 
     it("returns undefined for a missing value", () => {
-      expect(resolveActiveText(undefined)).toBeUndefined();
+      expect(resolveLocaleText(undefined)).toBeUndefined();
     });
 
     it("resolves with the app's locales even before configureActiveLocale ran", () => {
       // defaults matter for unit tests, the CLI and e2e fixtures
-      expect(resolveActiveText({ "en-US": "Name", de: "Vorname" })).toBe(
+      expect(resolveLocaleText({ "en-US": "Name", de: "Vorname" })).toBe(
         "Name",
       );
     });
@@ -48,14 +48,14 @@ describe("active-locale", () => {
     it("leaves values that are not translation maps untouched", () => {
       const date = new Date("2025-01-31");
 
-      expect(resolveActiveText(date)).toBe(date);
-      expect(resolveActiveText({ label: "FromLabel" })).toEqual({
+      expect(resolveLocaleText(date)).toBe(date);
+      expect(resolveLocaleText({ label: "FromLabel" })).toEqual({
         label: "FromLabel",
       });
     });
   });
 
-  describe("resolveActiveConfig", () => {
+  describe("resolveLocaleConfig", () => {
     it("resolves nested maps, including inside arrays", () => {
       configureActiveLocale("de", AVAILABLE_LOCALE_IDS);
       const raw = {
@@ -66,7 +66,7 @@ describe("active-locale", () => {
         ],
       };
 
-      expect(resolveActiveConfig(raw)).toEqual({
+      expect(resolveLocaleConfig(raw)).toEqual({
         title: "Fortschritt",
         parts: [
           { label: "Schulen", currentValue: 1 },
@@ -79,7 +79,7 @@ describe("active-locale", () => {
       configureActiveLocale("de", AVAILABLE_LOCALE_IDS);
       const raw = { title: { "en-US": "Progress", de: "Fortschritt" } };
 
-      resolveActiveConfig(raw);
+      resolveLocaleConfig(raw);
 
       expect(raw.title).toEqual({ "en-US": "Progress", de: "Fortschritt" });
     });

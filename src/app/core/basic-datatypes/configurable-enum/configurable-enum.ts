@@ -5,10 +5,10 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { Logging } from "../../logging/logging.service";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
-import { resolveActiveText } from "../../language/active-locale";
+import { resolveLocaleText } from "../../language/active-locale";
 
 function displayLabel(label: ConfigurableEnumValue["label"]): string {
-  return (resolveActiveText(label) ?? "").trim().toLowerCase();
+  return (resolveLocaleText(label) ?? "").trim().toLowerCase();
 }
 
 @DatabaseEntity("ConfigurableEnum")

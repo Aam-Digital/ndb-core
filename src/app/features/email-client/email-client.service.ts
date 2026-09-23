@@ -11,7 +11,7 @@ import { lastValueFrom } from "rxjs";
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EmailTemplate } from "./email-template.entity";
-import { resolveActiveText } from "#src/app/core/language/active-locale";
+import { resolveLocaleText } from "#src/app/core/language/active-locale";
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogConfig,
@@ -70,8 +70,8 @@ export class EmailClientService {
       isBulk
         ? asArray(recipients).join(sendSemicolonSeparated ? ";" : ",")
         : recipients[0],
-      resolveActiveText(template.subject),
-      resolveActiveText(template.body),
+      resolveLocaleText(template.subject),
+      resolveLocaleText(template.body),
       sendAsBCC,
     );
 
@@ -144,8 +144,8 @@ export class EmailClientService {
     const note = new Note();
 
     // the note records what was sent, so it stores plain text, not the language map
-    note.subject = resolveActiveText(template.subject);
-    note.text = resolveActiveText(template.body);
+    note.subject = resolveLocaleText(template.subject);
+    note.text = resolveLocaleText(template.body);
     note.category = template.category;
 
     const entityType = (Array.isArray(entities) ? entities[0] : entities)

@@ -14,6 +14,7 @@ import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 import { availableLocales } from "app/core/language/languages";
+import { asArray } from "app/utils/asArray";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatCheckbox } from "@angular/material/checkbox";
@@ -85,9 +86,9 @@ export class SystemInitAssistantComponent implements OnInit {
 
   private getAvailableLocalesForUseCases() {
     const availableDemoLocale = new Set(
-      this.availableUseCases()
-        .map((useCase) => useCase.locale)
-        .filter(Boolean),
+      this.availableUseCases().flatMap((useCase) =>
+        useCase.locale ? asArray(useCase.locale) : [],
+      ),
     );
 
     return availableLocales.values.filter((locale) =>

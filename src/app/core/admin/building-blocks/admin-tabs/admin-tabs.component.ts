@@ -25,7 +25,7 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { resolveActiveText } from "../../../language/active-locale";
+import { resolveLocaleText } from "../../../language/active-locale";
 import { TranslatableText } from "../../../config/multi-lingual-config";
 
 /**
@@ -85,7 +85,7 @@ export class AdminTabsComponent<
   /** the tab's title as text - a translatable title may hold a per-language map */
   tabTitle(tab: E): string {
     const title: TranslatableText = tab[this.tabTitleProperty()];
-    return resolveActiveText(title) ?? "";
+    return resolveLocaleText(title) ?? "";
   }
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })

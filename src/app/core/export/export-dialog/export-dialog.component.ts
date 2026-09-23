@@ -28,7 +28,7 @@ import {
   normalizeQueryKey,
 } from "../data-transformation-service/export-column-config";
 import { ColumnGroupsConfig } from "../../entity-list/EntityListConfig";
-import { resolveActiveText } from "../../language/active-locale";
+import { resolveLocaleText } from "../../language/active-locale";
 
 export interface ExportDialogData {
   /** Resolves with all records (unfiltered, permissions-limited) */
@@ -90,7 +90,7 @@ export class ExportDialogComponent {
     this.data.columnGroups?.groups ?? []
   ).map((group) => ({
     ...group,
-    name: resolveActiveText(group.name) ?? "",
+    name: resolveLocaleText(group.name) ?? "",
   }));
 
   /** Currently selected column group name (if any) */
@@ -115,7 +115,7 @@ export class ExportDialogComponent {
   });
 
   columnToString = (col: ExportColumnConfig) =>
-    resolveActiveText(col.label) ?? col.query;
+    resolveLocaleText(col.label) ?? col.query;
   columnToValue = (col: ExportColumnConfig) => normalizeQueryKey(col.query);
 
   clearSelection() {

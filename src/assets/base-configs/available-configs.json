@@ -19,8 +19,16 @@
   },
   {
     "id": "education",
-    "name": "Education Project",
-    "description": "Manage students, attendance, personal development and counselling activities.\n\nThis example was designed for school or after-school support programs.",
+    "name": {
+      "en-US": "Education Project",
+      "de": "Bildungsprojekt",
+      "fr": "Projet d'éducation"
+    },
+    "description": {
+      "en-US": "Manage students, attendance, personal development and counselling activities.\n\nThis example was designed for school or after-school support programs.",
+      "de": "Verwalten Sie Schüler:innen, Anwesenheit, persönliche Entwicklung und Beratungsaktivitäten.\n\nDieses Beispiel wurde für schulische oder außerschulische Förderprogramme entworfen.",
+      "fr": "Gestion des élèves, de l'assiduité, du développement personnel et des activités de conseil.\n\nCet exemple a été conçu pour les programmes de soutien scolaire ou périscolaire."
+    },
     "entitiesToImport": [
       "education/ProgressDashboardConfig_examples.json",
       "education/Config_CONFIG_ENTITY.json",
@@ -37,51 +45,11 @@
       "education/ReportConfig.json",
       "education/EmailTemplate_birthday.json"
     ],
-    "locale": "en-US"
-  },
-  {
-    "id": "education_de",
-    "name": "Bildungsprojekt",
-    "description": "Verwalten Sie Schüler:innen, Anwesenheit, persönliche Entwicklung und Beratungsaktivitäten.\n\nDieses Beispiel wurde für schulische oder außerschulische Förderprogramme entworfen.",
-    "entitiesToImport": [
-      "education/ProgressDashboardConfig_examples.json",
-      "education/Config_CONFIG_ENTITY.json",
-      "education/configurable-enums.json",
-      "basic/ConfigurableEnum_attendance-status.json",
-      "basic/ConfigurableEnum_warning-levels.json",
-      "basic/ConfigurableEnum_genders.json",
-      "basic/ConfigurableEnum_rating-answer.json",
-      "basic/Config_SetupWizard.json",
-      "basic/MarkdownContent_help.json",
-      "basic/Config_Permissions.json",
-      "basic/SiteSettings_global.json",
-      "education/PublicFormConfig_example.json",
-      "education/ReportConfig.json",
-      "education/EmailTemplate_birthday.json"
-    ],
-    "locale": "de"
-  },
-  {
-    "id": "education_fr",
-    "name": "Projet d'éducation",
-    "description": "Gestion des élèves, de l'assiduité, du développement personnel et des activités de conseil.\n\nCet exemple a été conçu pour les programmes de soutien scolaire ou périscolaire.",
-    "entitiesToImport": [
-      "education/ProgressDashboardConfig_examples.json",
-      "education/Config_CONFIG_ENTITY.json",
-      "education/configurable-enums.json",
-      "basic/ConfigurableEnum_attendance-status.json",
-      "basic/ConfigurableEnum_warning-levels.json",
-      "basic/ConfigurableEnum_genders.json",
-      "basic/ConfigurableEnum_rating-answer.json",
-      "basic/Config_SetupWizard.json",
-      "basic/MarkdownContent_help.json",
-      "basic/Config_Permissions.json",
-      "basic/SiteSettings_global.json",
-      "education/PublicFormConfig_example.json",
-      "education/ReportConfig.json",
-      "education/EmailTemplate_birthday.json"
-    ],
-    "locale": "fr"
+    "locale": [
+      "en-US",
+      "de",
+      "fr"
+    ]
   },
   {
     "id": "event-management",

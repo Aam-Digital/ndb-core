@@ -5,7 +5,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
-import { resolveActiveText } from "../../language/active-locale";
+import { resolveLocaleText } from "../../language/active-locale";
 
 function sameOptions(
   a: readonly ConfigurableEnumValue[],
@@ -67,7 +67,7 @@ export class ConfigurableEnumService {
 
     const resolved = options.map((option) => ({
       ...option,
-      label: resolveActiveText(option.label),
+      label: resolveLocaleText(option.label),
     }));
     // snapshot, because editing an enum mutates the live list in place
     this.resolvedValues.set(key, { source: [...options], resolved });

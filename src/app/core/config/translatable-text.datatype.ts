@@ -4,7 +4,7 @@ import {
   ExportColumnMapping,
 } from "../entity/default-datatype/default.datatype";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { resolveActiveText } from "../language/active-locale";
+import { resolveLocaleText } from "../language/active-locale";
 import { TranslatableText } from "./multi-lingual-config";
 
 /**
@@ -27,7 +27,7 @@ export class TranslatableTextDatatype extends DefaultDatatype<
   override editComponent = "EditTranslatableText";
 
   override sortValue(value: TranslatableText): string | undefined {
-    return resolveActiveText(value);
+    return resolveLocaleText(value);
   }
 
   override getExportColumns(
@@ -35,7 +35,7 @@ export class TranslatableTextDatatype extends DefaultDatatype<
   ): ExportColumnMapping<TranslatableText>[] {
     return super.getExportColumns(schemaField).map((column) => ({
       ...column,
-      resolveValue: (value: TranslatableText) => resolveActiveText(value),
+      resolveValue: (value: TranslatableText) => resolveLocaleText(value),
     }));
   }
 }

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../dynamic-components/dynamic-component.decorator";
 import { TranslatableText } from "../multi-lingual-config";
-import { resolveActiveText } from "../../language/active-locale";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /** Display a configurable text in the user's active language. */
 @DynamicComponent("DisplayTranslatableText")
@@ -13,5 +13,5 @@ import { resolveActiveText } from "../../language/active-locale";
   standalone: true,
 })
 export class DisplayTranslatableTextComponent extends ViewDirective<TranslatableText> {
-  readonly displayText = computed(() => resolveActiveText(this.value()));
+  readonly displayText = computed(() => resolveLocaleText(this.value()));
 }

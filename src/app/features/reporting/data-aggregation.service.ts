@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { QueryService } from "../../core/export/query.service";
 import { GroupByDescription, ReportRow } from "./report-row";
 import { groupBy } from "../../utils/utils";
-import { resolveActiveText } from "../../core/language/active-locale";
+import { resolveLocaleText } from "../../core/language/active-locale";
 import { TranslatableText } from "../../core/config/multi-lingual-config";
 
 export interface Aggregation {
@@ -62,7 +62,7 @@ export class DataAggregationService {
       if (aggregation.label) {
         const newRow = {
           header: {
-            label: resolveActiveText(aggregation.label),
+            label: resolveLocaleText(aggregation.label),
             groupedBy: additionalValues,
             result: queryResult?.length,
           },
@@ -114,7 +114,7 @@ export class DataAggregationService {
         });
         const newRow: ReportRow = {
           header: {
-            label: resolveActiveText(label),
+            label: resolveLocaleText(label),
             groupedBy: groupingValues,
             result: entries.length,
           },

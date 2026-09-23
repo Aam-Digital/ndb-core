@@ -38,7 +38,7 @@ import {
   PublicFormLinkingService,
 } from "./public-form-linking.service";
 import { UpdateMetadata } from "../../core/entity/model/update-metadata";
-import { resolveActiveText } from "../../core/language/active-locale";
+import { resolveLocaleText } from "../../core/language/active-locale";
 import { availableLocales } from "../../core/language/languages";
 import { LanguageSelectComponent } from "../../core/language/language-select/language-select.component";
 
@@ -75,10 +75,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   /** display only - `formConfig` stays raw so every language is kept */
   readonly formTitle = computed(() =>
-    resolveActiveText(this.formConfig()?.title),
+    resolveLocaleText(this.formConfig()?.title),
   );
   readonly formDescription = computed(() =>
-    resolveActiveText(this.formConfig()?.description),
+    resolveLocaleText(this.formConfig()?.description),
   );
 
   /**

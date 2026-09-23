@@ -28,11 +28,11 @@ export function configureActiveLocale(
 }
 
 /** Values that are not translation maps are returned unchanged. */
-export function resolveActiveText(
+export function resolveLocaleText(
   value: TranslatableText | null | undefined,
 ): string | undefined;
-export function resolveActiveText(value: unknown): unknown;
-export function resolveActiveText(value: unknown): unknown {
+export function resolveLocaleText(value: unknown): unknown;
+export function resolveLocaleText(value: unknown): unknown {
   return resolveTranslatableText(
     value as TranslatableText,
     activeLocale,
@@ -42,7 +42,7 @@ export function resolveActiveText(value: unknown): unknown {
 }
 
 /** Deep-resolve, returning a new structure so the input stays raw. */
-export function resolveActiveConfig<T>(value: T): T {
+export function resolveLocaleConfig<T>(value: T): T {
   return resolveTranslatableConfig(
     value,
     activeLocale,

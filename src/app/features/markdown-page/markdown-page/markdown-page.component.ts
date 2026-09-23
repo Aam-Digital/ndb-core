@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { RouteTarget } from "../../../route-target";
-import { resolveActiveText } from "app/core/language/active-locale";
+import { resolveLocaleText } from "app/core/language/active-locale";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MarkdownContent } from "../markdown-content";
 
@@ -39,7 +39,7 @@ export class MarkdownPageComponent {
         markdownEntityId,
       );
       // the content may be configured per language - show the active one
-      return resolveActiveText(markdownEntity?.content) ?? "";
+      return resolveLocaleText(markdownEntity?.content) ?? "";
     },
   });
 
