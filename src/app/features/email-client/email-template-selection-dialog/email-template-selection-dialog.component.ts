@@ -28,6 +28,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RouterLink } from "@angular/router";
 import { EmailTemplate } from "../email-template.entity";
+import { resolveActiveText } from "#src/app/core/language/active-locale";
 import { getEntityRuntimeRoute } from "#src/app/core/entity/entity-config.service";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -123,9 +124,10 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
       .subscribe((template: EmailTemplate | null) => {
         this.selectedTemplate = template;
         if (template) {
+          // the one resolution point: these plain strings flow on to the mail client and the note
           this.emailContentForm.patchValue({
-            subject: template.subject,
-            body: template.body,
+            subject: resolveActiveText(template.subject),
+            body: resolveActiveText(template.body),
           });
         } else {
           this.emailContentForm.patchValue({

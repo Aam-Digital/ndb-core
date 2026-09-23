@@ -26,6 +26,7 @@
       [tabs]="columnGroups().groups"
       (tabsChange)="updateGroups($event)"
       [newTabFactory]="newColumnGroupFactory"
+      [translatableTitle]="true"
     >
       <ng-template [appAdminTabTemplate]="columnGroups().groups" let-item>
         <app-admin-list-manager

@@ -9,6 +9,7 @@ import {
 import { MatSelectModule } from "@angular/material/select";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { LanguageService } from "#src/app/core/language/language.service";
+import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved-changes.service";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -22,6 +23,7 @@ import { LanguageService } from "#src/app/core/language/language.service";
 })
 export class LanguageSelectComponent {
   private readonly languageService = inject(LanguageService);
+  private readonly unsavedChanges = inject(UnsavedChangesService);
 
   availableLocales = input<ConfigurableEnumValue[]>([]);
 
@@ -43,8 +45,19 @@ export class LanguageSelectComponent {
 
   currentLocale = signal(this.languageService.getCurrentLocale());
 
-  changeLocale(lang: string): void {
+  /**
+   * Switching reloads the page, which would silently discard anything already
+   * typed into a form (e.g. a half-filled public form), so ask first.
+   */
+  async changeLocale(lang: string): Promise<void> {
+    const previous = this.currentLocale();
     this.currentLocale.set(lang);
+
+    if (!(await this.unsavedChanges.checkUnsavedChanges())) {
+      this.currentLocale.set(previous);
+      return;
+    }
+
     this.localeChange.emit(lang);
 
     if (this.applyImmediately()) {

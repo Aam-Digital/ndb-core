@@ -152,10 +152,10 @@ export class DiscreteImportDialogComponent implements OnInit {
 
     let enumOptions = [];
     if (this.schema?.additional) {
-      const enumEntity = this.configurableEnumService.getEnum(
+      // labels resolved for display / matching against the imported values
+      enumOptions = this.configurableEnumService.getEnumValues(
         this.schema.additional,
       );
-      enumOptions = enumEntity?.values ?? [];
     }
 
     const formObj = {};

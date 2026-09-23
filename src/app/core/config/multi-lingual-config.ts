@@ -124,7 +124,7 @@ export const TRANSLATABLE_CONFIG_KEYS = [
  * Admin UIs read config through the *resolved* view (plain strings) and write the
  * whole object back. Without this merge, saving would replace a translation map
  * with the single string of the editing admin's language and silently drop every
- * other language (#3862).
+ * other language.
  *
  * For each translatable key, if the raw value is a translation map:
  * - unchanged (the edited text still equals what the admin was shown) -> keep the map

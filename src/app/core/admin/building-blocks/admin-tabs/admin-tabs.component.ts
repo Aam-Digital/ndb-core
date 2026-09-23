@@ -1,12 +1,10 @@
 import {
   Component,
   ContentChild,
-  LOCALE_ID,
   TemplateRef,
   ViewChild,
   computed,
   ChangeDetectionStrategy,
-  inject,
   input,
   model,
 } from "@angular/core";
@@ -27,12 +25,8 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import {
-  resolveTranslatableText,
-  TranslatableText,
-} from "../../../config/multi-lingual-config";
-import { availableLocales } from "../../../language/languages";
-import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
+import { resolveActiveText } from "../../../language/active-locale";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -69,9 +63,6 @@ import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
 export class AdminTabsComponent<
   E extends { title: TranslatableText } | { name: TranslatableText },
 > {
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
-
   tabs = model<E[]>([]);
 
   /**
@@ -83,18 +74,6 @@ export class AdminTabsComponent<
     () => ({ [this.tabTitleProperty()]: "" }) as E,
   );
 
-  tabTitle(tab: E): string {
-    const title: TranslatableText = tab[this.tabTitleProperty()];
-    return (
-      resolveTranslatableText(
-        title,
-        this.locale,
-        DEFAULT_LANGUAGE,
-        this.validLocaleIds,
-      ) ?? ""
-    );
-  }
-
   tabTitleProperty = computed<"title" | "name">(() => {
     const tabs = this.tabs();
     if (!tabs || tabs.length < 1) {
@@ -102,6 +81,12 @@ export class AdminTabsComponent<
     }
     return tabs[0].hasOwnProperty("name") ? "name" : "title";
   });
+
+  /** the tab's title as text - a translatable title may hold a per-language map */
+  tabTitle(tab: E): string {
+    const title: TranslatableText = tab[this.tabTitleProperty()];
+    return resolveActiveText(title) ?? "";
+  }
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })
   tabTemplate: TemplateRef<any>;

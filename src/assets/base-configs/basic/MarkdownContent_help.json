@@ -1,4 +1,8 @@
 {
   "_id": "MarkdownContent:help",
-  "content": "# How can we help you?\n\nDo you have a question or technical problems? Contact us:\n\n- [support@aam-digital.app](mailto:support@aam-digital.app)\n\n_We are happy to hear from you and help!_"
+  "content": {
+    "en-US": "# How can we help you?\n\nDo you have a question or technical problems? Contact us:\n\n- [support@aam-digital.app](mailto:support@aam-digital.app)\n\n_We are happy to hear from you and help!_",
+    "de": "# Wie können wir Ihnen helfen?\n\nHaben Sie Fragen oder technische Probleme? Kontaktieren Sie uns:\n\n- [support@aam-digital.app](mailto:support@aam-digital.app)\n\n_Wir freuen uns, von Ihnen zu hören und zu helfen!_",
+    "fr": "# Comment pouvons-nous vous aider ?\n\nVous avez une question ou un problème technique ? Contactez-nous :\n\n- [support@aam-digital.app](mailto:support@aam-digital.app)\n\n_Nous sommes heureux de vous entendre et de vous aider !_"
+  }
 }

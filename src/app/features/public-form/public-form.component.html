@@ -14,7 +14,7 @@
         </p>
       }
       @case ("no_permissions") {
-        <h1 i18n>No access to public form "{{ formConfig()?.title }}"</h1>
+        <h1 i18n>No access to public form "{{ formTitle() }}"</h1>
         <p i18n>
           Unfortunately, you do not have the required permissions to submit data
           through this form. Please contact the person who shared this link with
@@ -25,10 +25,18 @@
     }
   </div>
 } @else {
+  @if (showLanguageSelect) {
+    <div class="language-select-container">
+      <app-language-select
+        [availableLocales]="availableLocales"
+      ></app-language-select>
+    </div>
+  }
+
   <mat-card>
     <mat-card-header>
       <div class="card-container">
-        <mat-card-title>{{ formConfig()?.title }}</mat-card-title>
+        <mat-card-title>{{ formTitle() }}</mat-card-title>
         <div class="public-form-container">
           @if (formConfig()?.logo) {
             <app-display-img
@@ -38,10 +46,10 @@
             ></app-display-img>
           }
         </div>
-        @if (formConfig()?.description) {
+        @if (formDescription()) {
           <!-- needs the @if wrapper because <markdown> doesn't seem to do good change detection -->
           <mat-card-subtitle>
-            <markdown>{{ formConfig()?.description }}</markdown>
+            <markdown>{{ formDescription() }}</markdown>
           </mat-card-subtitle>
         }
       </div>
