@@ -209,7 +209,7 @@ export class EntityConfigService {
    * Like {@link getEntityConfig}, but with raw values: any multi-lingual texts
    * are returned as their full per-language map rather than resolved to the
    * active language. Required when editing config values that are saved back
-   * to the config document (see #3862).
+   * to the config document.
    */
   public getRawEntityConfig(entityType: EntityConstructor): EntityConfig {
     const configName =
