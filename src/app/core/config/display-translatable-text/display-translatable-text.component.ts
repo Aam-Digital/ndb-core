@@ -4,7 +4,7 @@ import { DynamicComponent } from "../dynamic-components/dynamic-component.decora
 import { TranslatableText } from "../multi-lingual-config";
 import { resolveActiveText } from "../../language/active-locale";
 
-/** Display a configurable text in the user's active language (#3862). */
+/** Display a configurable text in the user's active language. */
 @DynamicComponent("DisplayTranslatableText")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
