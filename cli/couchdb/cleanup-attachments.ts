@@ -2,7 +2,7 @@ import type { Couchdb } from "../lib/couchdb-client.js";
 
 interface AllDocsRow {
   id: string;
-  value?: { rev: string };
+  value: { rev: string };
 }
 
 export interface OrphanedAttachment {
@@ -18,17 +18,15 @@ export interface OrphanedAttachment {
 export async function findOrphanedAttachments(
   couchdb: Couchdb,
 ): Promise<OrphanedAttachment[]> {
-  const attachmentRows = (await couchdb.get<AllDocsRow[]>(
+  const attachmentRows = await couchdb.get<AllDocsRow[]>(
     "/app-attachments/_all_docs",
-  )) as AllDocsRow[];
-  const entityRows = (await couchdb.get<AllDocsRow[]>(
-    "/app/_all_docs",
-  )) as AllDocsRow[];
+  );
+  const entityRows = await couchdb.get<AllDocsRow[]>("/app/_all_docs");
   const entityIds = new Set(entityRows.map((row) => row.id));
 
   return attachmentRows
     .filter((row) => !entityIds.has(row.id))
-    .map((row) => ({ _id: row.id, _rev: row.value!.rev }));
+    .map((row) => ({ _id: row.id, _rev: row.value.rev }));
 }
 
 export async function deleteOrphanedAttachments(
