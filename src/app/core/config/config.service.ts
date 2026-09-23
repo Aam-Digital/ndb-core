@@ -34,7 +34,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   /**
    * The current config with all multi-lingual values resolved to the active
-   * locale (see #3862). This is the display view returned by
+   * locale. This is the display view returned by
    * getConfig()/getAllConfigs(); currentConfig stays raw (translation maps
    * intact) as the persisted source of truth.
    */
