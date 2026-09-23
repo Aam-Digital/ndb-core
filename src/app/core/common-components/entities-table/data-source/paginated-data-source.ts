@@ -89,7 +89,6 @@ export class PaginatedDataSource<
    * cases the existing bookmark chain is no longer valid.
    */
   private resetPaginationCache() {
-    this.loadGeneration++;
     this.filteredRecords.set([]);
     this.bookmark = undefined;
     this.reachedEnd = false;

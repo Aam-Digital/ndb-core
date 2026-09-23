@@ -124,27 +124,8 @@ export abstract class EntitiesTableDataSource<
   };
 
   /**
-   * Incremented on every {@link executeLoad}. Lets a load's completion handlers
-   * (below) tell whether a newer load has since been kicked off, so a request
-   * that is no longer the most recent one cannot dismiss/show the shared error
-   * snackbar or clear {@link isLoading} on behalf of a load that superseded it.
-   *
-   * Deliberately separate from {@link loadGeneration}: this bumps on *every*
-   * load (pagination included), while `loadGeneration` only bumps when a
-   * subclass's accumulated state is actually invalidated - a plain "next page"
-   * must still count as the current load here, without discarding a
-   * concurrently in-flight page's data over in PaginatedDataSource.
-   */
-  private loadSequence = 0;
-
-  /**
-   * Incremented by a subclass (see PaginatedDataSource.resetPaginationCache)
-   * whenever accumulated load state - e.g. a pagination bookmark chain - is
-   * invalidated by a filter/sort/entity-update change. A load that captured
-   * an earlier value can tell its result is now stale (e.g. completed Todos
-   * that don't match a since-applied "not completed" filter) and discard it
-   * instead of merging it in, even though it is still the most recent
-   * *executed* load as far as {@link loadSequence} is concerned.
+   * Incremented whenever a new configuration triggers loading of new data.
+   * This allows stale requests to be detected.
    */
   protected loadGeneration = 0;
 
@@ -173,8 +154,8 @@ export abstract class EntitiesTableDataSource<
   private executeLoad(): void {
     const reload = this.pendingReload;
     this.pendingReload = undefined;
-    const sequence = ++this.loadSequence;
-    const isCurrentLoad = () => sequence === this.loadSequence;
+    const generation = ++this.loadGeneration;
+    const isCurrentLoad = () => generation === this.loadGeneration;
     const load = this.loadRecords()
       .then((data) => {
         if (isCurrentLoad()) {
