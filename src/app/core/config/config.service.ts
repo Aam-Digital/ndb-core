@@ -192,7 +192,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   /**
    * Like getAllConfigs(), but with raw values (multi-lingual maps left intact).
-   * Required for any read-modify-save flow (see #3862).
+   * Required for any read-modify-save flow.
    */
   public getAllRawConfigs<T>(prefix: string): T[] {
     return ConfigService.collectConfigsByPrefix<T>(
