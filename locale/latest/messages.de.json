@@ -474,7 +474,6 @@
   "4204232858147199020": "Datei anzeigen",
   "8605421971099461066": "Datei hochladen",
   "878939938766774780": "Änderungen an Datei-Anhängen sind offline nicht mögich.",
-  "5207928085441628335": "Datei zu groß. Dateien bis 5MB werden unterstützt.",
   "1155903752025647007": "Änderungen an Datei-Anhängen sind offline nicht möglich.",
   "8743818386993039028": "Datei-Anhang konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.",
   "2381267598974852900": "Datei \"{$PH}\" gelöscht",
@@ -1755,5 +1754,8 @@
   "3246584775525309004": "Permissions for \"{$PH}\" updated",
   "3342943884364203683": "Could not save permissions. Please try again.",
   "5625368824294303564": "This access comes from an advanced permission rule and can only be changed in the user role administration.",
-  "80127929565548450": "Could not undo the change. Please try again."
+  "80127929565548450": "Could not undo the change. Please try again.",
+  "2396933785864555359": "File too large. Usually files up to 5 MB are supported (or your system administrator's custom limit).",
+  "2458761240393527286": "Upload was interrupted. Please check your internet connection and try again.",
+  "5614674169733644295": "You do not have permission to open this file."
 }
