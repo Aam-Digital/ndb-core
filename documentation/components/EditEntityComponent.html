@@ -1057,8 +1057,8 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="332"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:332</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="339"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:339</a></div>
                         </td>
                     </tr>
 
@@ -1144,7 +1144,7 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:362</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:369</a></code>
 </div>
                         </td>
                     </tr>
@@ -1211,8 +1211,8 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="326"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:326</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="333"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:333</a></div>
                         </td>
                     </tr>
 
@@ -1278,8 +1278,8 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="320"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:320</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="327"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:327</a></div>
                         </td>
                     </tr>
 
@@ -1860,6 +1860,13 @@ that links the form control value to the component value</p>
           continue;
         }
 
+        // a misconfigured default value can put a whole object into the form control,
+        // which would blow up the id parsing below and break the whole view
+        if (typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+          Logging.debug(&quot;[ENTITY_SELECT] Ignoring a non-id value.&quot;, { id });
+          continue;
+        }
+
         if (availableEntities.find((e) &#x3D;&gt; id &#x3D;&#x3D;&#x3D; e.getId())) {
           continue;
         }
@@ -2122,7 +2129,7 @@ with the base <code>formControl</code> getter.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="286" class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:286</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="293" class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:293</a></div>
                         </td>
                     </tr>
 
@@ -3054,6 +3061,13 @@ export class EditEntityComponent&lt;
 
       for (const id of params.values) {
         if (id &#x3D;&#x3D;&#x3D; null || id &#x3D;&#x3D;&#x3D; undefined || id &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+          continue;
+        }
+
+        // a misconfigured default value can put a whole object into the form control,
+        // which would blow up the id parsing below and break the whole view
+        if (typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+          Logging.debug(&quot;[ENTITY_SELECT] Ignoring a non-id value.&quot;, { id });
           continue;
         }
 

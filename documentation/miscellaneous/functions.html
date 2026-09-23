@@ -644,6 +644,9 @@
                             <a href="#isValidDate" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isValidDate</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isValidLocale" title="src/app/core/language/language-statics.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isValidLocale</b>&nbsp;&nbsp;&nbsp;(src/.../language-statics.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isValidRegex" title="src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isValidRegex</b>&nbsp;&nbsp;&nbsp;(src/.../configure-entity-field-validator.component.ts)</span></a>
                         </li>
                         <li>
@@ -17432,6 +17435,71 @@ while the status is one click away in the event&#39;s data.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/language/language-statics.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isValidLocale"></a>
+                    <span class="name">
+                        <span ><b>isValidLocale</b></span>
+                        <a href="#isValidLocale"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isValidLocale(value)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the given value can be used as a locale to look up translations.</p>
+<p>Non-string values (e.g. a whole dropdown option object) are silently stringified
+by localStorage and would end up being requested from the translations CDN,
+so they have to be rejected before they are stored or used.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">
