@@ -346,8 +346,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="157"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:157</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="168"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:168</a></div>
                         </td>
                     </tr>
 
@@ -429,8 +429,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="164"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:164</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:175</a></div>
                         </td>
                     </tr>
 
@@ -673,8 +673,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="178"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:178</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="189"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:189</a></div>
                         </td>
                     </tr>
 
@@ -842,8 +842,8 @@ Files can be uploaded, shown and removed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="172"
-                                    class="link-to-prism">src/app/features/file/file.service.ts:172</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/app/features/file/file.service.ts:183</a></div>
                         </td>
                     </tr>
 
@@ -1198,11 +1198,11 @@ Files can be uploaded, shown and removed.</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity, EntityConstructor } from &quot;../../core/entity/model/entity&quot;;
-import { Observable } from &quot;rxjs&quot;;
+import { EMPTY, Observable } from &quot;rxjs&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
 import { EntityRegistry } from &quot;../../core/entity/database-entity.decorator&quot;;
 import { EntitySchemaService } from &quot;../../core/entity/schema/entity-schema.service&quot;;
-import { filter, map, shareReplay } from &quot;rxjs/operators&quot;;
+import { catchError, filter, map, shareReplay } from &quot;rxjs/operators&quot;;
 import { Logging } from &quot;../../core/logging/logging.service&quot;;
 import { SafeUrl } from &quot;@angular/platform-browser&quot;;
 import { FileDatatype } from &quot;./file.datatype&quot;;
@@ -1339,12 +1339,23 @@ export abstract class FileService {
         }
       },
       error: (err) &#x3D;&gt; {
-        Logging.warn(&quot;Could not download file&quot;, entity?.getId(), property, err);
-
-        const errorMessage &#x3D;
-          err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.NotFound
-            ? $localize&#x60;:File Download Error Message:File attachment &quot;${entity[property]}&quot; not found.&#x60;
-            : $localize&#x60;:File Download Error Message:Failed to download file attachment. Please try again.&#x60;;
+        let errorMessage: string;
+        if (err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.NotFound) {
+          errorMessage &#x3D; $localize&#x60;:File Download Error Message:File attachment &quot;${entity[property]}&quot; not found.&#x60;;
+        } else if (
+          err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Unauthorized ||
+          err?.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Forbidden
+        ) {
+          errorMessage &#x3D; $localize&#x60;:File Download Error Message:You do not have permission to open this file.&#x60;;
+        } else {
+          Logging.warn(
+            &quot;Could not download file&quot;,
+            entity?.getId(),
+            property,
+            err,
+          );
+          errorMessage &#x3D; $localize&#x60;:File Download Error Message:Failed to download file attachment. Please try again.&#x60;;
+        }
 
         this.alertService.addWarning(errorMessage);
       },
@@ -1385,14 +1396,17 @@ export abstract class FileService {
           e.type &#x3D;&#x3D;&#x3D; HttpEventType.UploadProgress,
       ),
       map((e: HttpProgressEvent) &#x3D;&gt; Math.round(100 * (e.loaded / e.total))),
+      // &#x60;progress&#x60; is handed to ProgressComponent&#x27;s template as &#x60;config.progress | async&#x60;,
+      // a second, independent subscription to this same (unshared) observable, with no
+      // error handler of its own. Without this, an error here would be rethrown by the
+      // AsyncPipe to Angular&#x27;s global ErrorHandler. The caller handles the actual error
+      // on its own subscription to &#x60;obs&#x60;, so here it&#x27;s enough to end the progress bar.
+      catchError(() &#x3D;&gt; EMPTY),
     );
     const ref &#x3D; this.snackbar.openFromComponent(ProgressComponent, {
       data: { message, progress },
     });
-    progress.subscribe({
-      complete: () &#x3D;&gt; ref.dismiss(),
-      error: () &#x3D;&gt; ref.dismiss(),
-    });
+    progress.subscribe({ complete: () &#x3D;&gt; ref.dismiss() });
   }
 }
 </code></pre>

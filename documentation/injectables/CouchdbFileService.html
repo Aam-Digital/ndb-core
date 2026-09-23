@@ -335,7 +335,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:143</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:148</a></code>
 </div>
                         </td>
                     </tr>
@@ -420,7 +420,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:147</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:152</a></code>
 </div>
                         </td>
                     </tr>
@@ -782,7 +782,7 @@ Running upload and download processes are shown with progress bars.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:178</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:189</a></code>
 </div>
                         </td>
                     </tr>
@@ -1395,13 +1395,18 @@ export class CouchdbFileService extends FileService {
 
   private runAllFilesRemoval(entity: Entity) {
     const attachmentPath &#x3D; &#x60;${this.attachmentsUrl}/${entity.getId()}&#x60;;
-    return this.httpClient
-      .get&lt;{ _rev: string }&gt;(attachmentPath)
-      .pipe(
-        concatMap(({ _rev }) &#x3D;&gt;
-          this.httpClient.delete(&#x60;${attachmentPath}?rev&#x3D;${_rev}&#x60;),
-        ),
-      );
+    return this.httpClient.get&lt;{ _rev: string }&gt;(attachmentPath).pipe(
+      concatMap(({ _rev }) &#x3D;&gt;
+        this.httpClient.delete(&#x60;${attachmentPath}?rev&#x3D;${_rev}&#x60;),
+      ),
+      catchError((err) &#x3D;&gt; {
+        if (err.status &#x3D;&#x3D;&#x3D; HttpStatusCode.NotFound) {
+          return of({ ok: true });
+        } else {
+          throw err;
+        }
+      }),
+    );
   }
 
   protected override getShowFileUrl(entity: Entity, property: string): string {
