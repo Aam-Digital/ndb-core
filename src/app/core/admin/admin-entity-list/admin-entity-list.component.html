@@ -13,7 +13,7 @@
 <div>
   <app-admin-list-manager
     [items]="filters()"
-    [additionalFields]="config().columns"
+    [additionalFields]="filterAdditionalFields()"
     [entityType]="entityConstructor()"
     templateType="filter"
     fieldLabel="Add Filter:"

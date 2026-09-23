@@ -1,7 +1,9 @@
 import {
   Component,
   input,
+  computed,
   effect,
+  inject,
   linkedSignal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -17,6 +19,13 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import {
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+} from "../../entity/schema/embedded-schema-field.util";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,10 +42,31 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   styleUrls: ["./admin-entity-list.component.scss"],
 })
 export class AdminEntityListComponent {
+  private schemaService = inject(EntitySchemaService);
+
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
 
   filters = linkedSignal(() => (this.config().filters ?? []).map((f) => f.id));
+
+  /**
+   * Properties nested inside embedded fields (e.g. "childrenAttendance.participant"),
+   * offered as additional filter options besides the entity's normal, flat schema fields
+   * (see {@link FilterGeneratorService.generate}).
+   */
+  private embeddedFilterFields = computed<ColumnConfig[]>(() =>
+    getEmbeddedFieldRefs(this.schemaService, this.entityConstructor()).map(
+      (ref) => ({
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      }),
+    ),
+  );
+
+  filterAdditionalFields = computed<ColumnConfig[]>(() => [
+    ...(this.config().columns ?? []),
+    ...this.embeddedFilterFields(),
+  ]);
 
   columnGroups = linkedSignal(
     () =>

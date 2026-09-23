@@ -52,6 +52,9 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
+import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -86,6 +89,16 @@ describe("FilterGeneratorService", () => {
         { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
         { provide: DefaultDatatype, useClass: EmailDatatype, multi: true },
         { provide: DefaultDatatype, useClass: UrlDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: SchemaEmbedDatatype,
+          multi: true,
+        },
         // EntityDatatype only uses this to offer entity actions, which filters don't
         { provide: EntityActionsService, useValue: {} },
       ],
@@ -614,6 +627,173 @@ describe("FilterGeneratorService", () => {
       emptyOption.filter,
     );
     expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
+  });
+
+  describe("filters for properties nested in an embedded field (e.g. Note.childrenAttendance.participant)", () => {
+    it("should create an entity filter for a reference nested in an embedded array field, matching if any entry has the selected value", async () => {
+      const outerSchema = Note.schema.get("childrenAttendance");
+      const participantSchema = outerSchema.additional.participant;
+      const original = {
+        outerLabel: outerSchema.label,
+        participantLabel: participantSchema.label,
+        participantAdditional: participantSchema.additional,
+      };
+      outerSchema.label = "Children attendance";
+      participantSchema.label = "Participant";
+      // simplify the test to not depend on the real "Child" entity type
+      participantSchema.additional = TestEntity.ENTITY_TYPE;
+
+      try {
+        const child1 = new TestEntity();
+        child1.name = "Child One";
+        const child2 = new TestEntity();
+        child2.name = "Child Two";
+        await TestBed.inject(EntityMapperService).saveAll([child1, child2]);
+
+        const note1 = new Note();
+        note1.childrenAttendance = [
+          new AttendanceItem(undefined, undefined, child1.getId()),
+        ];
+        const note2 = new Note();
+        note2.childrenAttendance = [
+          new AttendanceItem(undefined, undefined, child2.getId()),
+          new AttendanceItem(undefined, undefined, child1.getId()),
+        ];
+        const note3 = new Note(); // no attendance entries at all
+        const note4 = new Note();
+        note4.childrenAttendance = [new AttendanceItem()]; // entry without a participant
+        const allNotes = [note1, note2, note3, note4];
+
+        const filterOptions = (
+          await service.generate(
+            [{ id: "childrenAttendance.participant" }],
+            Note,
+            allNotes,
+          )
+        )[0] as EntityFilter<TestEntity>;
+
+        expect(filterOptions.label).toEqual(
+          "Children attendance -> Participant",
+        );
+        expect(filterOptions.name).toEqual("childrenAttendance.participant");
+
+        const child1Option = filterOptions.options.find(
+          (opt) => opt.key === child1.getId(),
+        );
+        expect(child1Option.label).toEqual(child1.name);
+        expect(filter(allNotes, child1Option)).toEqual([note1, note2]);
+
+        const child2Option = filterOptions.options.find(
+          (opt) => opt.key === child2.getId(),
+        );
+        expect(filter(allNotes, child2Option)).toEqual([note2]);
+
+        const emptyOption = filterOptions.options.find(
+          (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+        );
+        // notes without any attendance entries, or with an entry lacking a participant
+        expect(filter(allNotes, emptyOption)).toEqual([note3, note4]);
+      } finally {
+        // restore even on a failed assertion, the schema is shared across spec files
+        outerSchema.label = original.outerLabel;
+        participantSchema.label = original.participantLabel;
+        participantSchema.additional = original.participantAdditional;
+      }
+    });
+
+    it("should create a configurable-enum filter for a property nested in an embedded array field", async () => {
+      @DatabaseEntity("EmbeddedEnumTestEntity")
+      class EmbeddedEnumTestEntity extends Entity {}
+      const enumAdditional = Note.schema.get("category").additional;
+      EmbeddedEnumTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          type: {
+            dataType: "configurable-enum",
+            label: "Type",
+            additional: enumAdditional,
+          },
+        },
+      });
+
+      const e1 = new EmbeddedEnumTestEntity();
+      e1["logEntries"] = [{ type: defaultInteractionTypes[1] }];
+      const e2 = new EmbeddedEnumTestEntity();
+      e2["logEntries"] = [
+        { type: defaultInteractionTypes[2] },
+        { type: defaultInteractionTypes[1] },
+      ];
+      const e3 = new EmbeddedEnumTestEntity();
+      e3["logEntries"] = [];
+      const allEntities = [e1, e2, e3];
+
+      const filterOptions = (
+        await service.generate(
+          [{ id: "logEntries.type" }],
+          EmbeddedEnumTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedEnumTestEntity>;
+
+      expect(filterOptions.label).toEqual("Log Entries -> Type");
+
+      const option1 = filterOptions.options.find(
+        (opt) => opt.key === defaultInteractionTypes[1].id,
+      );
+      expect(filter(allEntities, option1)).toEqual([e1, e2]);
+
+      const emptyOption = filterOptions.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      expect(filter(allEntities, emptyOption)).toEqual([e3]);
+    });
+
+    it("should create a string filter for a property nested in a single (non-array) embedded object field, using a flat dot-path query", async () => {
+      @DatabaseEntity("EmbeddedObjectTestEntity")
+      class EmbeddedObjectTestEntity extends Entity {}
+      EmbeddedObjectTestEntity.schema.set("contact", {
+        dataType: "schema-embed",
+        label: "Contact",
+        additional: {
+          phoneType: {
+            dataType: "string",
+            label: "Phone Type",
+          },
+        },
+      });
+
+      const e1 = new EmbeddedObjectTestEntity();
+      e1["contact"] = { phoneType: "mobile" };
+      const e2 = new EmbeddedObjectTestEntity();
+      e2["contact"] = { phoneType: "landline" };
+      const e3 = new EmbeddedObjectTestEntity(); // no contact at all
+      const allEntities = [e1, e2, e3];
+
+      const filterOptions = (
+        await service.generate(
+          [{ id: "contact.phoneType" }],
+          EmbeddedObjectTestEntity,
+          allEntities,
+        )
+      )[0] as StringFilter<EmbeddedObjectTestEntity>;
+
+      expect(filterOptions).toBeInstanceOf(StringFilter);
+      expect(filterOptions.label).toEqual("Contact -> Phone Type");
+
+      filterOptions.selectedOptionValues = ["mobile"];
+      expect(filterOptions.getFilter()).toEqual({
+        "contact.phoneType": { $regex: "mobile", $options: "i" },
+      });
+      expect(
+        filter(allEntities, {
+          key: "x",
+          label: "x",
+          filter: filterOptions.getFilter(),
+        }),
+      ).toEqual([e1]);
+    });
   });
 
   function filter<T extends Entity>(
