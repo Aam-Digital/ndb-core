@@ -24,7 +24,7 @@ class ReportConfig extends Entity {
   static override readonly route = "admin/report-config";
   static override readonly icon: IconName = "chart-line";
 
-  /** human-readable title of the report (may be a per-language map, #3862) */
+  /** human-readable title of the report (may be a per-language map) */
   @DatabaseField({
     label: $localize`:ReportConfig:Title`,
     dataType: TranslatableTextDatatype.dataType,
