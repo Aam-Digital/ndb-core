@@ -1,4 +1,8 @@
 import type { Command } from "commander";
+import {
+  deleteOrphanedAttachments,
+  findOrphanedAttachments,
+} from "../couchdb/cleanup-attachments.js";
 import { getConflicts } from "../couchdb/conflicts.js";
 import { editEntities, searchEntities } from "../couchdb/search-and-replace.js";
 import { loadCredentials } from "../lib/load-credentials.js";
@@ -67,6 +71,51 @@ export function registerCouchdbCommand(program: Command): void {
         editEntities(couchdb, regex, replace, cmdOpts.type as string, false),
       );
       console.log("\nWritten:");
+      console.log(JSON.stringify(results, null, 2));
+    });
+
+  couchdbCmd
+    .command("cleanup-attachments")
+    .description(
+      "Delete app-attachments docs whose entity no longer exists in app (use --dry-run to preview)",
+    )
+    .option("--dry-run", "Preview without deleting")
+    .option("--yes", "Skip confirmation")
+    .action(async (cmdOpts) => {
+      const opts = { ...program.opts(), ...cmdOpts };
+      const creds = await loadCredentials(opts);
+      if (!creds) return process.exit(2);
+      const { orgs } = creds;
+
+      const preview = await runForAllOrgs(orgs, (couchdb) =>
+        findOrphanedAttachments(couchdb),
+      );
+      console.log("\nOrphaned attachments (no matching entity in app):");
+      console.log(JSON.stringify(preview, null, 2));
+
+      if (opts.dryRun) return;
+
+      const totalOrphans = Object.values(preview).flat().length;
+      if (totalOrphans === 0) {
+        console.log("\nNo orphaned attachments — nothing to delete.\n");
+        return;
+      }
+
+      if (!opts.yes) {
+        const confirmed = await askConfirmation(
+          `\nDelete ${totalOrphans} orphaned attachment doc(s)? [y/N]`,
+        );
+        if (!confirmed) {
+          console.log("\nAborted.\n");
+          return;
+        }
+      }
+
+      const results = await runForAllOrgs(orgs, async (couchdb) => {
+        const orphans = await findOrphanedAttachments(couchdb);
+        return deleteOrphanedAttachments(couchdb, orphans);
+      });
+      console.log("\nDeleted:");
       console.log(JSON.stringify(results, null, 2));
     });
 
