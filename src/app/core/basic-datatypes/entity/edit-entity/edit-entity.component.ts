@@ -267,7 +267,7 @@ export class EditEntityComponent<
         // a misconfigured default value can put a whole object into the form control,
         // which would blow up the id parsing below and break the whole view
         if (typeof id !== "string") {
-          Logging.warn("[ENTITY_SELECT] Ignoring a non-id value.", { id });
+          Logging.debug("[ENTITY_SELECT] Ignoring a non-id value.", { id });
           continue;
         }
 
