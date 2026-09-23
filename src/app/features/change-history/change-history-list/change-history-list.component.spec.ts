@@ -11,6 +11,9 @@ import { ChangeHistoryService } from "../change-history.service";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { ChangeHistoryListComponent } from "./change-history-list.component";
 import { AuditRecord } from "../model/audit-record";
+import { By } from "@angular/platform-browser";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
+import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
 
 /** the built selector, which is an untyped Mango object at the database edge */
 function selector(): Record<string, any> {
@@ -80,41 +83,102 @@ it("should page through the audit records with the generic data source", async (
   expect(component.sortBy).toEqual({ active: "timestamp", direction: "desc" });
 });
 
-it("should start pre-filtered by the record type the caller navigated from", async () => {
-  await setup(true, true, { entityType: "Child" });
+it("should query only what the log always excludes while nothing is selected", async () => {
+  await setup();
 
-  expect(selector().entityId).toEqual({
-    $gte: "Child:",
-    $lt: "Child:￰",
+  expect(selector()).toEqual({
+    timestamp: { $gt: null },
+    operation: { $ne: "baseline" },
   });
 });
 
-it("should apply the selected record type, operation and author to the query", async () => {
+it("should apply the user's selection under what the log always excludes", async () => {
   await setup();
 
-  component.setEntityTypeFilter("School");
-  component.setOperationFilter("delete");
-  component.setChangedByFilter("priya");
+  component.onFilterChange({ operation: "delete" } as any);
 
-  expect(selector()).toMatchObject({
-    entityId: { $gte: "School:", $lt: "School:￰" },
-    operation: "delete",
-    $or: [{ "user.name": "priya" }, { "user.id": "priya" }],
+  // a baseline stays excluded whatever the user selects, so the restriction
+  // cannot be widened by clearing the filters
+  expect(selector().$and).toEqual([
+    { timestamp: { $gt: null }, operation: { $ne: "baseline" } },
+    { operation: "delete" },
+  ]);
+});
+
+it("should offer a filter per dimension the ordinary query can narrow", async () => {
+  await setup();
+
+  expect(component.filterConfig().map((config) => config.id)).toEqual([
+    "entityType",
+    "operation",
+    "changedBy",
+    "timestamp",
+  ]);
+});
+
+it("should follow the filter bar when a selection is made and cleared again", async () => {
+  await setup();
+  const bar = fixture.debugElement.query(By.directive(FilterComponent))
+    .componentInstance as FilterComponent<AuditRecord>;
+
+  // the bar builds its filters asynchronously
+  const operationFilter = await vi.waitFor(() => {
+    fixture.detectChanges();
+    const generated = bar
+      .filterSelections()
+      .find((f) => f.name === "operation");
+    expect(generated).toBeDefined();
+    return generated;
+  });
+
+  bar.filterOptionSelected(operationFilter, ["delete"]);
+  fixture.detectChanges();
+
+  expect(selector().$and).toEqual([
+    { timestamp: { $gt: null }, operation: { $ne: "baseline" } },
+    { operation: "delete" },
+  ]);
+
+  bar.filterOptionSelected(operationFilter, []);
+  fixture.detectChanges();
+
+  // clearing has to reach the query as well: the bar only emits a selection
+  // that differs from the one it was given, so a list that never tells it what
+  // it queries would keep the filter it just removed from view
+  expect(selector()).toEqual({
+    timestamp: { $gt: null },
+    operation: { $ne: "baseline" },
   });
 });
 
-it("should treat a cleared date range as no restriction", async () => {
+it("should drop the filters it stops offering from the URL too", async () => {
+  // the shared filter bar restores any URL parameter naming a field of the
+  // entity, so a left-over one would come back as an unconfigured filter -
+  // narrowing a query the related-record view does not apply it to
+  await setup();
+  const tableStateUrl = TestBed.inject(TableStateUrlService);
+  const clearFilterParams = vi.spyOn(tableStateUrl, "clearFilterParams");
+
+  component.setRelatedEntityFilter("User:1");
+
+  const cleared = clearFilterParams.mock.calls.at(-1)[0];
+  expect(cleared).toEqual(
+    expect.arrayContaining(["entityType", "operation", "changedBy"]),
+  );
+  // the one it still offers has to keep its selection
+  expect(cleared).not.toContain("timestamp");
+});
+
+it("should offer only the date range once a related record is named", async () => {
+  // the view answering it is keyed on the referenced id, so the others would
+  // need a different key order - they are not offered rather than ignored
   await setup();
 
-  component.onDateRangeChange({
-    from: new Date("2026-06-01"),
-    to: new Date("2026-06-30"),
-  });
-  expect(selector().timestamp.$gte).toBeDefined();
+  component.setRelatedEntityFilter("User:1");
 
-  component.onDateRangeChange({ from: null, to: null });
-
-  expect(selector().timestamp).toEqual({ $gt: null });
+  expect(component.filterConfig().map((config) => config.id)).toEqual([
+    "timestamp",
+  ]);
 });
 
 it("should not offer the table when the feature is switched off", async () => {

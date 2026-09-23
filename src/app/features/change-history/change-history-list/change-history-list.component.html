@@ -25,126 +25,18 @@
     </div>
   } @else {
     <div class="flex-row flex-wrap gap-regular align-baseline">
-      <mat-form-field
-        [matTooltip]="disabledFilterHint"
-        [matTooltipDisabled]="!otherFiltersDisabled()"
-      >
-        <mat-label i18n="Change log filter label">Record type</mat-label>
-        <mat-select
-          [value]="entityTypeFilter()"
-          [disabled]="otherFiltersDisabled()"
-          (valueChange)="setEntityTypeFilter($event)"
-        >
-          @for (type of entityTypes; track type.key) {
-            <mat-option [value]="type.key">{{ type.label }}</mat-option>
-          }
-        </mat-select>
-        <!-- no "all types" option: an unset filter is the unrestricted state,
-             so clearing is what removes the restriction -->
-        @if (entityTypeFilter() && !otherFiltersDisabled()) {
-          <button
-            matSuffix
-            mat-icon-button
-            type="button"
-            matTooltip="Clear record type filter"
-            i18n-matTooltip
-            aria-label="Clear record type filter"
-            i18n-aria-label
-            (click)="$event.stopPropagation(); setEntityTypeFilter(undefined)"
-          >
-            <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
-          </button>
-        }
-      </mat-form-field>
+      <app-filter
+        class="flex-row gap-regular flex-wrap"
+        [filterConfig]="filterConfig()"
+        [entityType]="auditRecordType"
+        [useUrlQueryParams]="true"
+        [filterObj]="selectedFilter()"
+        (filterObjChange)="onFilterChange($event)"
+      ></app-filter>
 
-      <mat-form-field
-        [matTooltip]="disabledFilterHint"
-        [matTooltipDisabled]="!otherFiltersDisabled()"
-      >
-        <mat-label i18n="Change log filter label">Action</mat-label>
-        <mat-select
-          [value]="operationFilter()"
-          [disabled]="otherFiltersDisabled()"
-          (valueChange)="setOperationFilter($event)"
-        >
-          @for (operation of operations; track operation) {
-            <mat-option [value]="operation">
-              <app-change-history-action-badge
-                [operation]="operation"
-              ></app-change-history-action-badge>
-            </mat-option>
-          }
-        </mat-select>
-        @if (operationFilter() && !otherFiltersDisabled()) {
-          <button
-            matSuffix
-            mat-icon-button
-            type="button"
-            matTooltip="Clear action filter"
-            i18n-matTooltip
-            aria-label="Clear action filter"
-            i18n-aria-label
-            (click)="$event.stopPropagation(); setOperationFilter(undefined)"
-          >
-            <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <mat-form-field
-        [matTooltip]="disabledFilterHint"
-        [matTooltipDisabled]="!otherFiltersDisabled()"
-      >
-        <mat-label i18n="Change log filter label">Changed by</mat-label>
-        <mat-select
-          [value]="changedByFilter()"
-          [disabled]="otherFiltersDisabled()"
-          (valueChange)="setChangedByFilter($event)"
-        >
-          @for (author of authors(); track author.value) {
-            <mat-option [value]="author.value">
-              @if (author.entityId) {
-                <app-entity-block
-                  [entityId]="author.entityId"
-                  [linkDisabled]="true"
-                ></app-entity-block>
-              } @else {
-                {{ author.value }}
-              }
-            </mat-option>
-          }
-        </mat-select>
-        @if (changedByFilter() && !otherFiltersDisabled()) {
-          <button
-            matSuffix
-            mat-icon-button
-            type="button"
-            matTooltip="Clear changed-by filter"
-            i18n-matTooltip
-            aria-label="Clear changed-by filter"
-            i18n-aria-label
-            (click)="$event.stopPropagation(); setChangedByFilter(undefined)"
-          >
-            <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <!-- the same date-range control as the reports screen, so its presets and
-           manual from/to inputs behave identically in both places -->
-      <app-date-range-filter
-        [filterConfig]="dateFilterConfig"
-        (dateRangeChange)="onDateRangeChange($event)"
-      ></app-date-range-filter>
-
-      <!-- a plain id input rather than a record picker: the id is what is copied
-           from a URL or another screen, and it still matches a record that has
-           since been deleted, which no picker could offer -->
-      <mat-form-field
-        class="related-record-filter"
-        matTooltip="Show every change involving this record, including changes to other records that reference it"
-        i18n-matTooltip="Change log filter tooltip"
-      >
+      <!-- not one of the filters above: it selects a different query rather
+           than narrowing this one, and takes a record id instead of an option -->
+      <mat-form-field>
         <mat-label i18n="Change log filter label">Related record</mat-label>
         <input
           matInput

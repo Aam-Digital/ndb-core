@@ -7,10 +7,8 @@ import {
   signal,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { ActivatedRoute } from "@angular/router";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
@@ -18,25 +16,32 @@ import { FeatureDisabledInfoComponent } from "../../../core/common-components/fe
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { PaginatedDataSource } from "../../../core/common-components/entities-table/data-source/paginated-data-source";
 import { LoaderMethod } from "../../../core/entity/entity-special-loader/entity-special-loader.service";
-import { DateRangeFilterComponent } from "../../../core/basic-datatypes/date/date-range-filter/date-range-filter.component";
-import { DateFilter } from "../../../core/filter/filters/dateFilter";
-import { DateRangeFilterConfigOption } from "../../../core/entity-list/EntityListConfig";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
+import {
+  combineFilterConditions,
+  DataFilter,
+} from "../../../core/filter/filters/filters";
+import {
+  DateRangeFilterConfig,
+  DateRangeFilterConfigOption,
+  FilterConfig,
+  PrebuiltFilterConfig,
+} from "../../../core/entity-list/EntityListConfig";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { ChangeHistoryService } from "../change-history.service";
-import {
-  ChangeOperation,
-  FILTERABLE_OPERATIONS,
-} from "../change-history.types";
-import { ChangeHistoryActionBadgeComponent } from "../change-history-action-badge/change-history-action-badge.component";
-import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { ensureValidEntityId } from "../display-audit-user/display-audit-user.component";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { AuditRecord } from "../model/audit-record";
-import { buildAuditFilter } from "../audit-filter";
+import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
+import {
+  authorFilterOptions,
+  AUDIT_BASE_FILTER,
+  entityTypeFilterOptions,
+  operationFilterOptions,
+} from "../audit-filter";
 
 /**
  * Presets offered by the date-range filter, alongside the two date inputs the
@@ -84,15 +89,12 @@ export const CHANGE_HISTORY_DATE_RANGES: DateRangeFilterConfigOption[] = [
   imports: [
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatButtonModule,
     MatTooltipModule,
     ViewTitleComponent,
     FeatureDisabledInfoComponent,
     EntitiesTableComponent,
-    DateRangeFilterComponent,
-    ChangeHistoryActionBadgeComponent,
-    EntityBlockComponent,
+    FilterComponent,
     FaDynamicIconComponent,
   ],
   templateUrl: "./change-history-list.component.html",
@@ -101,8 +103,8 @@ export const CHANGE_HISTORY_DATE_RANGES: DateRangeFilterConfigOption[] = [
 export class ChangeHistoryListComponent {
   private readonly service = inject(ChangeHistoryService);
   private readonly entityRegistry = inject(EntityRegistry);
-  private readonly route = inject(ActivatedRoute);
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly tableStateUrl = inject(TableStateUrlService);
   private readonly dialog = inject(MatDialog);
 
   /** backend feature flag (undefined while loading, then true/false) */
@@ -164,67 +166,89 @@ export class ChangeHistoryListComponent {
   ];
 
   /**
-   * The operations offered by the filter. Each option renders the same badge
-   * the table uses, so there is no second copy of the wording to keep in sync.
+   * The selection the shared filter bar produces.
+   *
+   * Bound back into it, not only read out of it: the bar compares each new
+   * selection against this before emitting, so leaving it unset would suppress
+   * the emission that clears the last filter - the list would go on querying a
+   * selection no longer shown.
    */
-  readonly operations = FILTERABLE_OPERATIONS;
+  readonly selectedFilter = signal<DataFilter<AuditRecord>>({});
 
-  readonly entityTypes = this.entityRegistry
-    .getEntityTypes(true)
-    .map(({ key, value }) => ({ key, label: value.label }))
-    .sort((a, b) => a.label.localeCompare(b.label));
-
-  /**
-   * Pre-filled from the `entityType` query parameter, so an entity list can link
-   * here for its own record type and land on that type's changes.
-   */
-  readonly entityTypeFilter = signal<string | undefined>(
-    this.route.snapshot.queryParamMap.get("entityType") ?? undefined,
-  );
-  readonly changedByFilter = signal<string | undefined>(undefined);
   readonly relatedEntityFilter = signal<string | undefined>(undefined);
-  readonly operationFilter = signal<ChangeOperation | undefined>(undefined);
-  readonly dateFrom = signal<Date | undefined>(undefined);
-  readonly dateTo = signal<Date | undefined>(undefined);
 
   /**
-   * The related-record filter is served by a view keyed on the referenced id, so
-   * only the date range narrows it further; record type, operation and author would
-   * need a different key order and are therefore unavailable while it is set.
+   * The related-record filter is served by a view keyed on the referenced id,
+   * so only the date range can narrow it further: record type, operation and
+   * author would need a different key order. They are therefore not offered
+   * while it is set, rather than offered and silently ignored.
    */
-  readonly otherFiltersDisabled = computed(() => !!this.relatedEntityFilter());
+  /** every dimension the ordinary query can be narrowed by */
+  private readonly allFilterConfigs = computed<FilterConfig[]>(() => [
+    this.entityTypeFilterConfig,
+    this.operationFilterConfig,
+    this.authorFilterConfig(),
+    this.dateFilterConfig,
+  ]);
 
-  readonly disabledFilterHint = $localize`:Change log filter hint:Not available while filtering by a related record`;
-
-  /**
-   * Drives the shared date-range filter, the same control (and presets shape)
-   * the reports screen uses, rather than a change-history-specific dropdown.
-   */
-  readonly dateFilterConfig = new DateFilter<Entity>(
-    "timestamp",
-    $localize`:Change log filter label:Date range`,
-    CHANGE_HISTORY_DATE_RANGES,
+  readonly filterConfig = computed<FilterConfig[]>(() =>
+    this.relatedEntityFilter()
+      ? [this.dateFilterConfig]
+      : this.allFilterConfigs(),
   );
+
+  /** what the table queries: the user's selection under {@link AUDIT_BASE_FILTER} */
+  readonly filter = computed(() =>
+    combineFilterConditions<AuditRecord>(
+      AUDIT_BASE_FILTER,
+      this.selectedFilter(),
+    ),
+  );
+
+  private readonly entityTypeFilterConfig: PrebuiltFilterConfig<AuditRecord> = {
+    id: "entityType",
+    type: "prebuilt",
+    label: $localize`:Change log filter label:Record type`,
+    singleSelectOnly: true,
+    options: entityTypeFilterOptions(
+      this.entityRegistry
+        .getEntityTypes(true)
+        .map(({ key, value }) => ({ key, label: value.label }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    ),
+  };
+
+  private readonly operationFilterConfig: PrebuiltFilterConfig<AuditRecord> = {
+    id: "operation",
+    type: "prebuilt",
+    label: $localize`:Change log filter label:Action`,
+    singleSelectOnly: true,
+    options: operationFilterOptions(),
+  };
+
+  private readonly authorFilterConfig = computed<
+    PrebuiltFilterConfig<AuditRecord>
+  >(() => ({
+    id: "changedBy",
+    type: "prebuilt",
+    label: $localize`:Change log filter label:Changed by`,
+    singleSelectOnly: true,
+    options: authorFilterOptions(this.authors()),
+  }));
+
+  /**
+   * The shared date-range filter, the same control (and presets shape) the
+   * reports screen uses, rather than a change-history-specific dropdown.
+   */
+  private readonly dateFilterConfig: DateRangeFilterConfig = {
+    id: "timestamp",
+    label: $localize`:Change log filter label:Date range`,
+    options: CHANGE_HISTORY_DATE_RANGES,
+  };
 
   /** Whether the audit data can be queried at all. */
   private readonly canQuery = computed(
     () => this.auditEnabled() === true && this.hasPermission,
-  );
-
-  readonly filter = computed(() =>
-    buildAuditFilter(
-      // the disabled filters keep their selection but must not be applied, or
-      // the list would silently contradict the query it ran
-      this.otherFiltersDisabled()
-        ? { from: this.dateFrom(), to: this.dateTo() }
-        : {
-            entityType: this.entityTypeFilter(),
-            changedBy: this.changedByFilter(),
-            operation: this.operationFilter(),
-            from: this.dateFrom(),
-            to: this.dateTo(),
-          },
-    ),
   );
 
   private readonly authorsResource = resource({
@@ -241,12 +265,7 @@ export class ChangeHistoryListComponent {
     },
   });
 
-  readonly authors = computed(() =>
-    (this.authorsResource.value() ?? []).map((value) => ({
-      value,
-      entityId: ensureValidEntityId(value),
-    })),
-  );
+  private readonly authors = computed(() => this.authorsResource.value() ?? []);
 
   constructor() {
     // the flag fetch is lazy, so nothing loads until a change-history UI asks
@@ -254,16 +273,14 @@ export class ChangeHistoryListComponent {
     this.applyRelatedRecord();
   }
 
-  setEntityTypeFilter(entityType: string | undefined) {
-    this.entityTypeFilter.set(entityType);
-  }
-
-  setOperationFilter(operation: ChangeOperation | undefined) {
-    this.operationFilter.set(operation);
-  }
-
-  setChangedByFilter(changedBy: string | undefined) {
-    this.changedByFilter.set(changedBy);
+  /** Adopt what the shared filter bar built from the user's selection. */
+  onFilterChange(filter: DataFilter<AuditRecord>) {
+    this.selectedFilter.set(filter);
+    // the related-record view is keyed on the date range too, so a changed
+    // range has to re-query it
+    if (this.relatedEntityFilter()) {
+      this.applyRelatedRecord();
+    }
   }
 
   /**
@@ -272,16 +289,20 @@ export class ChangeHistoryListComponent {
    */
   setRelatedEntityFilter(relatedEntityId: string | undefined) {
     this.relatedEntityFilter.set(relatedEntityId?.trim() || undefined);
-    this.applyRelatedRecord();
-  }
-
-  onDateRangeChange(range: { from: Date | null; to: Date | null }) {
-    this.dateFrom.set(range.from ?? undefined);
-    this.dateTo.set(range.to ?? undefined);
-    // the view is keyed on the date range too, so it has to be re-queried
     if (this.relatedEntityFilter()) {
-      this.applyRelatedRecord();
+      // the filters this mode no longer offers have to go from the URL too:
+      // the shared filter bar restores any parameter naming a field of the
+      // entity, so a left-over one would come back as an unconfigured filter -
+      // matching by substring rather than exactly, labelled by its field name,
+      // and narrowing a query the related-record view does not apply it to
+      const stillOffered = new Set(this.filterConfig().map((c) => c.id));
+      this.tableStateUrl.clearFilterParams(
+        this.allFilterConfigs()
+          .map((c) => c.id)
+          .filter((id) => !stillOffered.has(id)),
+      );
     }
+    this.applyRelatedRecord();
   }
 
   /**
