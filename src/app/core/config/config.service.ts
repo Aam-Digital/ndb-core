@@ -162,7 +162,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
    * Get a config item, with any multi-lingual values resolved to the active locale.
    *
    * Use getRawConfig() instead if you will edit the value and save it back to the
-   * config document, otherwise translations for other languages would be lost (#3862).
+   * config document, otherwise translations for other languages would be lost.
    */
   public getConfig<T>(id: string): T | undefined {
     return this.resolvedConfigData?.[id];
