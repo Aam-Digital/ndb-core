@@ -6,7 +6,6 @@ import { environment } from "../../../environments/environment";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { AuditRecord } from "./model/audit-record";
-import { DataFilter } from "../../core/filter/filters/filters";
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
