@@ -73,4 +73,15 @@ describe("LanguageSelectComponent", () => {
     expect(mockLanguageService.switchLocale).not.toHaveBeenCalled();
     expect(component.currentLocale()).toBe("en-US");
   });
+
+  it("should not report a discarded pick to the caller", async () => {
+    mockUnsavedChanges.checkUnsavedChanges.mockResolvedValue(false);
+    const emitted: string[] = [];
+    component.localeChange.subscribe((lang) => emitted.push(lang));
+
+    await component.changeLocale("de");
+
+    // a caller that persists the choice must not save one the user backed out of
+    expect(emitted).toEqual([]);
+  });
 });
