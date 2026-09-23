@@ -62,7 +62,7 @@ export class ProgressDashboardComponent {
 
   overallPercentage = computed(() => this.getOverallProgressPercentage());
 
-  // display only - `data` keeps the raw values because it is what gets saved (#3862)
+  // display only - `data` keeps the raw values because it is what gets saved
   readonly displayTitle = computed(() => resolveActiveText(this.data().title));
   readonly displayParts = computed(() =>
     (this.data().parts ?? []).map((part) => ({
