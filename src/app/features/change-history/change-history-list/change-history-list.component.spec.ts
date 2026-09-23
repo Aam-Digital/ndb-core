@@ -11,6 +11,7 @@ import { ChangeHistoryService } from "../change-history.service";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { ChangeHistoryListComponent } from "./change-history-list.component";
 import { AuditRecord } from "../model/audit-record";
+import { Entity } from "../../../core/entity/model/entity";
 import { By } from "@angular/platform-browser";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
@@ -60,7 +61,9 @@ async function setup(
           isAuditEnabled: auditEnabled,
           hasHistoryPermission: () => canRead,
           loadAuditFeatureFlag: vi.fn(),
-          getChangeAuthors: vi.fn().mockResolvedValue(["demo-admin", "priya"]),
+          getChangeAuthors: vi
+            .fn()
+            .mockResolvedValue([new Entity("demo-admin"), new Entity("priya")]),
         },
       },
       { provide: MatDialog, useValue: { open: dialogOpen } },

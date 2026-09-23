@@ -1,3 +1,4 @@
+import { Entity } from "../../core/entity/model/entity";
 import {
   AUDIT_BASE_FILTER,
   authorFilterOptions,
@@ -58,12 +59,22 @@ describe("operationFilterOptions", () => {
 
 describe("authorFilterOptions", () => {
   it("should match the author however the backend recorded them", () => {
-    // a token without a name leaves every record identified by id alone
-    const [option] = authorFilterOptions(["User:demo"]);
+    // a token without a name leaves the record identified by id alone
+    const [option] = authorFilterOptions([new Entity("demo")]);
 
     expect(optionFilter(option).$or).toEqual([
-      { "user.name": "User:demo" },
-      { "user.id": "User:demo" },
+      { "user.name": "Entity:demo" },
+      { "user.id": "Entity:demo" },
     ]);
+  });
+
+  it("should offer the record's name rather than its id", () => {
+    const author = new Entity("demo");
+    vi.spyOn(author, "toString").mockReturnValue("Demo Admin");
+
+    const [option] = authorFilterOptions([author]);
+
+    expect(option.label).toBe("Demo Admin");
+    expect(option.key).toBe("Entity:demo");
   });
 });

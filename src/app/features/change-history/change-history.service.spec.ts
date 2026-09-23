@@ -8,6 +8,11 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../core/entity/database-entity.decorator";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
 
 let mockDb: {
@@ -17,6 +22,7 @@ let mockDb: {
 };
 let dbResolver: { getDatabase: ReturnType<typeof vi.fn> };
 let findType: ReturnType<typeof vi.fn>;
+let loadType: ReturnType<typeof vi.fn>;
 let abilityCan: ReturnType<typeof vi.fn>;
 let httpPost: ReturnType<typeof vi.fn>;
 
@@ -28,13 +34,15 @@ function setup(docs: any[] = [], canRead = true) {
   };
   dbResolver = { getDatabase: vi.fn().mockReturnValue(mockDb) };
   findType = vi.fn().mockResolvedValue({ records: [] });
+  loadType = vi.fn().mockResolvedValue([]);
   abilityCan = vi.fn().mockReturnValue(canRead);
   httpPost = vi.fn().mockReturnValue(of({ docs: [], bookmark: "bm-next" }));
   TestBed.configureTestingModule({
     providers: [
       ChangeHistoryService,
       { provide: DatabaseResolverService, useValue: dbResolver },
-      { provide: EntityMapperService, useValue: { findType } },
+      { provide: EntityMapperService, useValue: { findType, loadType } },
+      { provide: EntityRegistry, useValue: entityRegistry },
       { provide: EntityAbility, useValue: { can: abilityCan } },
       {
         provide: KeycloakAuthService,
@@ -47,6 +55,12 @@ function setup(docs: any[] = [], canRead = true) {
     ],
   });
   return TestBed.inject(ChangeHistoryService);
+}
+
+/** a record type a login account can belong to */
+@DatabaseEntity("AccountEntity")
+class AccountEntity extends Entity {
+  static override readonly enableUserAccounts = true;
 }
 
 class InternalEntity extends Entity {
@@ -147,27 +161,26 @@ it("denies viewing history when no entity is given", () => {
   expect(service.canViewHistory(undefined)).toBe(false);
 });
 
-it("samples recent records for the distinct authors of the filter dropdown", async () => {
+it("offers the records a login account can belong to as the filter's authors", async () => {
+  // reading them from the audit documents instead would mean scanning a
+  // database with no index of its authors, and still only seeing recent ones
   const service = setup();
-  findType.mockResolvedValue({
-    records: [
-      { author: "User:demo" },
-      { author: "priya" },
-      { author: "User:demo" },
-    ],
-  });
+  loadType.mockResolvedValue([new AccountEntity("b"), new AccountEntity("a")]);
 
   const authors = await service.getChangeAuthors();
 
-  // the same sort index the list uses, rather than a query of its own, and
-  // naming the sort field so the query is not served by the pinned index alone
-  expect(findType).toHaveBeenCalledWith(
-    expect.anything(),
-    { timestamp: { $gt: null } },
-    { limit: 1000 },
-    { prop: "timestamp", dir: "desc" },
-  );
-  expect(authors).toEqual(["priya", "User:demo"]);
+  expect(loadType).toHaveBeenCalledWith(AccountEntity);
+  expect(authors.map((a) => a.getId())).toEqual([
+    "AccountEntity:a",
+    "AccountEntity:b",
+  ]);
+});
+
+it("keeps the filter usable when a record type cannot be read", async () => {
+  const service = setup();
+  loadType.mockRejectedValue(new Error("denied"));
+
+  await expect(service.getChangeAuthors()).resolves.toEqual([]);
 });
 
 it("reads the audit feature status from the replication-backend /_features endpoint (lazily)", async () => {
@@ -179,11 +192,13 @@ it("reads the audit feature status from the replication-backend /_features endpo
   };
   dbResolver = { getDatabase: vi.fn().mockReturnValue(mockDb) };
   findType = vi.fn().mockResolvedValue({ records: [] });
+  loadType = vi.fn().mockResolvedValue([]);
   TestBed.configureTestingModule({
     providers: [
       ChangeHistoryService,
       { provide: DatabaseResolverService, useValue: dbResolver },
-      { provide: EntityMapperService, useValue: { findType } },
+      { provide: EntityMapperService, useValue: { findType, loadType } },
+      { provide: EntityRegistry, useValue: entityRegistry },
       { provide: EntityAbility, useValue: { can: () => true } },
       { provide: HttpClient, useValue: { get: httpGet } },
     ],

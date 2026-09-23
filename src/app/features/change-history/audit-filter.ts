@@ -3,6 +3,7 @@ import {
   FilterSelectionOption,
 } from "../../core/filter/filters/filters";
 import { AuditRecord } from "./model/audit-record";
+import { Entity } from "../../core/entity/model/entity";
 import {
   BASELINE_OPERATION,
   ChangeOperation,
@@ -63,20 +64,19 @@ export function operationFilterOptions(): FilterSelectionOption<AuditRecord>[] {
 }
 
 /**
- * One filter option per recorded author.
+ * One filter option per record a login account can belong to.
  *
- * The backend writes `user.name` only when the token carried one, so on some
- * systems every record identifies its author by id alone. The options are
- * sampled from the same fallback, so both have to be matched.
+ * Matched on either recorded field: the backend writes `user.name` only when
+ * the access token carried one, and falls back to the account's own id.
  */
 export function authorFilterOptions(
-  authors: string[],
+  authors: Entity[],
 ): FilterSelectionOption<AuditRecord>[] {
   return authors.map((author) => ({
-    key: author,
-    label: author,
+    key: author.getId(),
+    label: author.toString(),
     filter: {
-      $or: [{ "user.name": author }, { "user.id": author }],
+      $or: [{ "user.name": author.getId() }, { "user.id": author.getId() }],
     } as DataFilter<AuditRecord>,
   }));
 }

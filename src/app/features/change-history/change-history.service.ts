@@ -13,18 +13,12 @@ import { Entity } from "../../core/entity/model/entity";
 import { ChangeEvent } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
 import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 /** Response of the replication-backend central `GET /_features` endpoint. */
 interface AuditFeatureStatus {
   audit: { enabled: boolean };
 }
-
-/**
- * How many of the most recent audit records the author filter samples. The
- * audit database has no index of its authors, so the options can only come from
- * a bounded look at recent data.
- */
-const AUTHOR_SAMPLE_SIZE = 1000;
 
 /**
  * Reads an entity's change history from the audit database recorded by the
@@ -39,6 +33,7 @@ const AUTHOR_SAMPLE_SIZE = 1000;
 export class ChangeHistoryService {
   private readonly dbResolver = inject(DatabaseResolverService);
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly entityRegistry = inject(EntityRegistry);
   private readonly ability = inject(EntityAbility, { optional: true });
   private readonly httpClient = inject(HttpClient);
   private readonly authService = inject(KeycloakAuthService, {
@@ -110,26 +105,33 @@ export class ChangeHistoryService {
   }
 
   /**
-   * The authors to offer in the change log's "changed by" filter, sampled from
-   * the most recent records since the audit database holds no index of its
-   * authors.
+   * The authors to offer in the change log's "changed by" filter.
    *
-   * Goes through the entity layer like the list itself, so it reuses the same
-   * sort index rather than creating one of its own.
+   * Taken from the records a login account can belong to, not from the audit
+   * documents: the audit database has no index of its authors, so reading them
+   * from there means scanning it and still only seeing whoever happens to be
+   * recent. The account-bearing records are a small, complete set, and they
+   * carry the names to show instead of the bare ids the audit documents hold.
    */
-  async getChangeAuthors(): Promise<string[]> {
-    const res = await this.entityMapper.findType(
-      AuditRecord,
-      // the same constraint the list's own filter carries, for the same reason:
-      // it names the index that answers the query rather than requiring one
-      { timestamp: { $gt: null } } as DataFilter<AuditRecord>,
-      { limit: AUTHOR_SAMPLE_SIZE },
-      { prop: "timestamp", dir: "desc" },
+  async getChangeAuthors(): Promise<Entity[]> {
+    const accountTypes = this.entityRegistry
+      .getEntityTypes()
+      .filter(({ value }) => value.enableUserAccounts)
+      .map(({ value }) => value);
+
+    const loaded = await Promise.all(
+      accountTypes.map((type) =>
+        this.entityMapper.loadType(type).catch((err) => {
+          // one unreadable type must not cost the filter its other options
+          Logging.debug("could not load change log author options", type, err);
+          return [] as Entity[];
+        }),
+      ),
     );
-    const authors = new Set(
-      res.records.map((record) => record.author).filter(Boolean),
-    );
-    return [...authors].sort((a, b) => a.localeCompare(b));
+
+    return loaded
+      .flat()
+      .sort((a, b) => a.toString().localeCompare(b.toString()));
   }
 
   /**
