@@ -8,6 +8,6 @@ import { Entity } from "app/core/entity/model/entity";
  */
 @DatabaseEntity("MarkdownContent")
 export class MarkdownContent extends Entity {
-  /** markdown content, may hold a per-language map (#3862) */
+  /** markdown content, may hold a per-language map */
   @DatabaseField() content: TranslatableText;
 }
