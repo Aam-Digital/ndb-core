@@ -66,17 +66,28 @@ export function operationFilterOptions(): FilterSelectionOption<AuditRecord>[] {
 /**
  * One filter option per record a login account can belong to.
  *
- * Matched on either recorded field: the backend writes `user.name` only when
- * the access token carried one, and falls back to the account's own id.
+ * Matched on every shape the author can be recorded in: the backend writes what
+ * the access token carried, which is the record's id where the account names
+ * one and the plain username otherwise. The username is the record id without
+ * its type prefix, which is how an account without an explicit id is linked to
+ * its record in the first place (see KeycloakAuthService).
  */
 export function authorFilterOptions(
   authors: Entity[],
 ): FilterSelectionOption<AuditRecord>[] {
-  return authors.map((author) => ({
-    key: author.getId(),
-    label: author.toString(),
-    filter: {
-      $or: [{ "user.name": author.getId() }, { "user.id": author.getId() }],
-    } as DataFilter<AuditRecord>,
-  }));
+  return authors.map((author) => {
+    const id = author.getId();
+    const username = author.getId(true);
+    return {
+      key: id,
+      label: author.toString(),
+      filter: {
+        $or: [
+          { "user.name": id },
+          { "user.id": id },
+          { "user.name": username },
+        ],
+      } as DataFilter<AuditRecord>,
+    };
+  });
 }

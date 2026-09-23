@@ -59,12 +59,14 @@ describe("operationFilterOptions", () => {
 
 describe("authorFilterOptions", () => {
   it("should match the author however the backend recorded them", () => {
-    // a token without a name leaves the record identified by id alone
+    // the backend writes what the token carried: the record's id where the
+    // account names one, and the plain username otherwise
     const [option] = authorFilterOptions([new Entity("demo")]);
 
     expect(optionFilter(option).$or).toEqual([
       { "user.name": "Entity:demo" },
       { "user.id": "Entity:demo" },
+      { "user.name": "demo" },
     ]);
   });
 

@@ -837,8 +837,17 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
       if (idPrefix && !doc.entityId.startsWith(idPrefix)) {
         return false;
       }
-      const author = selector.$or?.[0]?.["user.name"];
-      if (author && doc.user.name !== author) {
+      // the author filter offers every shape the backend may have recorded,
+      // so any one of the branches matching is enough
+      const authors = selector.$or;
+      if (
+        authors?.length &&
+        !authors.some(
+          (branch) =>
+            branch["user.name"] === doc.user.name ||
+            branch["user.id"] === doc.user.name,
+        )
+      ) {
         return false;
       }
       return true;
@@ -864,7 +873,11 @@ test("Change Log lists changes across records and narrows them by author", async
 }) => {
   await stubAuditBackend(page);
 
-  const users = generateUsers();
+  // the author filter offers the records a login account can belong to, so the
+  // author of the change filtered for below has to be one of them
+  const otherAuthor = createEntityOfType("User", OTHER_AUTHOR);
+  otherAuthor["name"] = OTHER_AUTHOR;
+  const users = [...generateUsers(), otherAuthor];
   const child = generateChild({ id: "cl-1", name: CHANGE_LOG_CHILD });
   const school = createEntityOfType("School", "cl-school");
   school["name"] = CHANGE_LOG_SCHOOL;
