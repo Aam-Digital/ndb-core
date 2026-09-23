@@ -6,7 +6,7 @@
       [(ngModel)]="selectedUseCase"
       (selectionChange)="onSelectionChange()"
     >
-      @for (useCase of availableUseCases(); track useCase.id) {
+      @for (useCase of availableUseCases(); track useCase.config.id) {
         <mat-option [value]="useCase">
           {{ useCase.name }}
         </mat-option>

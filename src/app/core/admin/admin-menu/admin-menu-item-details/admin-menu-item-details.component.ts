@@ -15,6 +15,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
+import { EditableMenuItem } from "../menu-item-for-admin-ui";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
 import { MenuItemFormComponent } from "#src/app/core/admin/admin-menu/menu-item-form/menu-item-form.component";
@@ -59,7 +60,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
     allowEntityLinks?: boolean;
   }>(MAT_DIALOG_DATA);
 
-  item: MenuItem | EntityMenuItem;
+  item: EditableMenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
   /** Whether entity type links are allowed (false for shortcuts, true for admin menu) */

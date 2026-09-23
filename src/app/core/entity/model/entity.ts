@@ -18,6 +18,7 @@
 import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
+import { resolveLocaleText } from "../../language/active-locale";
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -357,6 +358,9 @@ export class Entity {
         if (value?.label) {
           value = value.label;
         }
+        // a configured text may be a per-language map; anything else
+        // is returned unchanged
+        value = resolveLocaleText(value);
         if (value instanceof Date) {
           value = value.toLocaleDateString();
         }

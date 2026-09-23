@@ -1,5 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Logging } from "../../logging/logging.service";
+import { resolveLocaleText } from "../../language/active-locale";
 import {
   ExportColumnConfig,
   normalizeQueryKey,
@@ -226,7 +227,8 @@ export class DownloadService {
     );
     const labelOverrides = new Map<string, string>();
     for (const c of selectedColumns ?? []) {
-      if (c.label) labelOverrides.set(normalizeQueryKey(c.query), c.label);
+      const label = resolveLocaleText(c.label);
+      if (label) labelOverrides.set(normalizeQueryKey(c.query), label);
     }
 
     let entityConstructor: EntityConstructor | undefined;

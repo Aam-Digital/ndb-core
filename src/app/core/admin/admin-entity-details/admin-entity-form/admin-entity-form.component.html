@@ -21,6 +21,7 @@
             <!-- GROUP HEADER -->
             <app-admin-section-header
               class="flex-grow"
+              [translatable]="true"
               [title]="group.header"
               (titleChange)="updateGroupHeader(i, $event)"
               (remove)="removeGroup(i)"

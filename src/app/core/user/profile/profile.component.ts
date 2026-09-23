@@ -26,6 +26,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NotificationSettingsComponent } from "../../../features/notification/notification-settings/notification-settings.component";
 import { UserDetailsComponent } from "../user-details/user-details.component";
+import { UserLanguageSettingsComponent } from "../user-language-settings/user-language-settings.component";
 import {
   Role,
   UserAccount,
@@ -47,6 +48,7 @@ import { SessionSubject } from "#src/app/core/session/auth/session-info";
     MatTooltipModule,
     UserDetailsComponent,
     NotificationSettingsComponent,
+    UserLanguageSettingsComponent,
   ],
 })
 export class ProfileComponent {

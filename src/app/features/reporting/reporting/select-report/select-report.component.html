@@ -53,7 +53,7 @@
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="calculate"
-        [angularticsLabel]="selectedReport()?.title"
+        [angularticsLabel]="selectedReportTitle()"
         matTooltip="Please select a report and a date range"
         i18n-matTooltip
         [matTooltipDisabled]="!calculateButton.disabled"
@@ -71,7 +71,7 @@
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="export"
-        [angularticsLabel]="selectedReport()?.title"
+        [angularticsLabel]="selectedReportTitle()"
       >
         <app-fa-dynamic-icon
           icon="download"

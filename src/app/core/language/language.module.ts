@@ -7,6 +7,8 @@ import { getLocaleFirstDayOfWeek } from "@angular/common";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { TranslatableMatPaginator } from "./TranslatableMatPaginator";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { configureActiveLocale } from "./active-locale";
+import { availableLocales } from "./languages";
 
 /**
  * Module that aids in the management and choice of translations/languages
@@ -31,6 +33,12 @@ export class LanguageModule {
   constructor() {
     const translationService = inject(LanguageService);
     const locale = inject(LOCALE_ID);
+
+    // make the locale available to model classes that cannot inject it
+    configureActiveLocale(
+      locale,
+      availableLocales.values.map((v) => v.id),
+    );
 
     translationService.initDefaultLanguage();
 

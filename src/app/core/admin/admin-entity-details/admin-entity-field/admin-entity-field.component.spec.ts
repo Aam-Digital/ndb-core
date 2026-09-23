@@ -43,6 +43,7 @@ describe("AdminEntityFieldComponent", () => {
   beforeEach(() => {
     mockEnumService = {
       getEnum: vi.fn(),
+      getEnumValues: vi.fn().mockReturnValue([]),
       listEnums: vi.fn(),
       preLoadEnums: vi.fn(),
     };
@@ -625,5 +626,72 @@ describe("AdminEntityFieldComponent", () => {
     component.fieldIdForm.setValue("valid_id");
     await fixture.whenStable();
     expect(component.fieldIdForm.errors).toBeNull();
+  });
+
+  describe("multi-lingual config", () => {
+    const TRANSLATIONS = { "en-US": "Name", de: "Vorname" };
+
+    it("should keep configured translations when other settings are edited afterwards", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: "Name",
+        dataType: "string",
+      } as EntitySchemaField);
+
+      // the translatable input writes the full value (all languages) to the control
+      component.schemaFieldsForm.get("label").setValue(TRANSLATIONS);
+      await fixture.whenStable();
+
+      // editing any other setting writes the whole form back onto the schema
+      // field - the translations must not be lost by that
+      component.schemaFieldsForm
+        .get("description")
+        .setValue("Some description");
+      await fixture.whenStable();
+
+      await component.save();
+
+      expect(dialogData.entitySchemaField.label).toEqual(TRANSLATIONS);
+      expect(dialogData.entitySchemaField.description).toBe("Some description");
+    });
+
+    it("should show the text of the active language outside the form field", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: "Name",
+        dataType: "string",
+      } as EntitySchemaField);
+
+      component.schemaFieldsForm.get("label").setValue(TRANSLATIONS);
+      await fixture.whenStable();
+
+      // tests run in the default language
+      expect(component.resolvedLabel()).toBe("Name");
+    });
+
+    it("should show the active language's text already when the dialog opens", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: TRANSLATIONS,
+        dataType: "string",
+      } as unknown as EntitySchemaField);
+
+      expect(component.resolvedLabel()).toBe("Name");
+    });
+
+    it("should generate the field id from the text, not from a translation map", async () => {
+      await recreateComponentWithData({
+        dataType: "string",
+      } as EntitySchemaField);
+
+      component.schemaFieldsForm
+        .get("label")
+        .setValue({ "en-US": "My New Field", de: "Mein neues Feld" });
+      await fixture.whenStable();
+
+      expect(component.fieldIdForm.value).toBe(
+        generateIdFromLabel("My New Field"),
+      );
+    });
   });
 });
