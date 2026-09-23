@@ -10,6 +10,7 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 /**
  * A minimal fake MatPaginator: PaginatedDataSource only reads `pageSize`/
@@ -46,11 +47,18 @@ async function flush() {
   TestBed.tick();
 }
 
-/** A promise plus its resolver, to control exactly when a mocked `findType` call resolves. */
+/** A promise plus its resolver/rejecter, to control exactly when a mocked `findType` call settles. */
 function deferred<T>() {
   let resolve!: (value: T) => void;
-  const promise = new Promise<T>((res) => (resolve = res));
-  return { promise, resolve };
+  let reject!: (reason: any) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  // an unhandled rejection would otherwise fail the test even once the
+  // rejection is later handled by whichever code actually awaits `promise`
+  promise.catch(() => {});
+  return { promise, resolve, reject };
 }
 
 describe("PaginatedDataSource", () => {
@@ -564,5 +572,91 @@ describe("PaginatedDataSource", () => {
     TestBed.tick();
 
     expect(dataSource.isLoading()).toBe(false);
+  });
+
+  describe("stale requests do not affect loading/error state of a newer request", () => {
+    let snackBarOpen: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      snackBarOpen = vi.fn().mockReturnValue({
+        onAction: () => new Subject<void>(),
+        dismiss: vi.fn(),
+      });
+      vi.spyOn(TestBed.inject(MatSnackBar), "open").mockImplementation(
+        snackBarOpen as any,
+      );
+    });
+
+    it("should not show an error toast when a stale request rejects after a newer request already succeeded", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+
+      const staleFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(staleFetch.promise);
+      paginator.initialized.next();
+      await flush();
+
+      const freshFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(freshFetch.promise);
+      dataSource.dataFilter.set({ name: "test" } as any);
+      TestBed.tick();
+      await flush();
+
+      // the newer, now-relevant request succeeds
+      freshFetch.resolve({ records: [], bookmark: undefined });
+      await flush();
+      expect(dataSource.isLoading()).toBe(false);
+      expect(snackBarOpen).not.toHaveBeenCalled();
+
+      // the older, superseded request fails only afterwards
+      staleFetch.reject(new Error("stale request failed"));
+      await flush();
+
+      // must not surface an error for data that is no longer relevant
+      expect(snackBarOpen).not.toHaveBeenCalled();
+      expect(dataSource.isLoading()).toBe(false);
+    });
+
+    it("should not clear isLoading when a stale request resolves while a newer request is still pending", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+
+      const staleFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(staleFetch.promise);
+      paginator.initialized.next();
+      await flush();
+
+      const freshFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(freshFetch.promise);
+      dataSource.dataFilter.set({ name: "test" } as any);
+      TestBed.tick();
+      await flush();
+      expect(dataSource.isLoading()).toBe(true);
+
+      // the stale request settles first, while the newer one is still pending
+      staleFetch.resolve({ records: [], bookmark: undefined });
+      await flush();
+
+      // the still-relevant, newer request has not finished yet
+      expect(dataSource.isLoading()).toBe(true);
+
+      freshFetch.resolve({ records: [], bookmark: undefined });
+      await flush();
+      expect(dataSource.isLoading()).toBe(false);
+    });
   });
 });

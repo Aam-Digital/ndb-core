@@ -124,6 +124,14 @@ export abstract class EntitiesTableDataSource<
   };
 
   /**
+   * Incremented on every {@link executeLoad}. Lets a load's completion handlers
+   * (below) tell whether a newer load has since been kicked off, so a request
+   * that is no longer the most recent one cannot dismiss/show the shared error
+   * snackbar or clear {@link isLoading} on behalf of a load that superseded it.
+   */
+  private loadSequence = 0;
+
+  /**
    * Request a (re)load of the records for the current config/filter/sort/page.
    *
    * All the triggers that fire while a view initializes are debounced into a
@@ -148,11 +156,15 @@ export abstract class EntitiesTableDataSource<
   private executeLoad(): void {
     const reload = this.pendingReload;
     this.pendingReload = undefined;
+    const sequence = ++this.loadSequence;
+    const isCurrentLoad = () => sequence === this.loadSequence;
     const load = this.loadRecords()
       .then((data) => {
-        // a previous failure has now recovered
-        this.loadErrorSnackBarRef?.dismiss();
-        this.loadErrorSnackBarRef = undefined;
+        if (isCurrentLoad()) {
+          // a previous failure has now recovered
+          this.loadErrorSnackBarRef?.dismiss();
+          this.loadErrorSnackBarRef = undefined;
+        }
         return data;
       })
       .catch((err) => {
@@ -161,10 +173,16 @@ export abstract class EntitiesTableDataSource<
           err,
           this.loadRecordConfig(),
         );
-        this.showLoadErrorToast();
+        if (isCurrentLoad()) {
+          this.showLoadErrorToast();
+        }
         return [];
       })
-      .finally(() => this.isLoading.set(false));
+      .finally(() => {
+        if (isCurrentLoad()) {
+          this.isLoading.set(false);
+        }
+      });
     // let awaiters (e.g. bulk operations) adopt the actual load's outcome
     reload?.resolve(load);
   }
