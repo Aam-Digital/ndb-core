@@ -170,7 +170,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   /**
    * Get a config item with its raw values (multi-lingual maps left intact).
-   * Required for any read-modify-save flow (see #3862).
+   * Required for any read-modify-save flow.
    */
   public getRawConfig<T>(id: string): T | undefined {
     return this.currentConfig?.data?.[id];
