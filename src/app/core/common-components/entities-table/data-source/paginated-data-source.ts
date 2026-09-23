@@ -83,16 +83,6 @@ export class PaginatedDataSource<
   }
 
   /**
-   * Incremented every time {@link resetPaginationCache} invalidates the bookmark chain.
-   * A {@link loadRecords} fetch that is still in flight when this happens (e.g. the
-   * filter changes while an earlier, now-obsolete request has not resolved yet) is
-   * detected via this and its results are discarded instead of being appended to
-   * {@link filteredRecords} - otherwise records from the stale query (e.g. completed
-   * Todos that don't match a since-applied "not completed" filter) could leak in.
-   */
-  private loadGeneration = 0;
-
-  /**
    * Discard all loaded records/cursor state and move back to the first page.
    * Necessary whenever the query itself changes (filter, sort, page size) or
    * the underlying data may have changed (entity update) - in all these

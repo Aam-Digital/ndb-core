@@ -128,8 +128,25 @@ export abstract class EntitiesTableDataSource<
    * (below) tell whether a newer load has since been kicked off, so a request
    * that is no longer the most recent one cannot dismiss/show the shared error
    * snackbar or clear {@link isLoading} on behalf of a load that superseded it.
+   *
+   * Deliberately separate from {@link loadGeneration}: this bumps on *every*
+   * load (pagination included), while `loadGeneration` only bumps when a
+   * subclass's accumulated state is actually invalidated - a plain "next page"
+   * must still count as the current load here, without discarding a
+   * concurrently in-flight page's data over in PaginatedDataSource.
    */
   private loadSequence = 0;
+
+  /**
+   * Incremented by a subclass (see PaginatedDataSource.resetPaginationCache)
+   * whenever accumulated load state - e.g. a pagination bookmark chain - is
+   * invalidated by a filter/sort/entity-update change. A load that captured
+   * an earlier value can tell its result is now stale (e.g. completed Todos
+   * that don't match a since-applied "not completed" filter) and discard it
+   * instead of merging it in, even though it is still the most recent
+   * *executed* load as far as {@link loadSequence} is concerned.
+   */
+  protected loadGeneration = 0;
 
   /**
    * Request a (re)load of the records for the current config/filter/sort/page.
