@@ -12,17 +12,17 @@ npm run cli -- migrate --help
 npm run cli -- migrate run --help
 ```
 
-| Command                          | Description                                   |
-| -------------------------------- | --------------------------------------------- |
-| `check`                          | Verify connectivity to all (or selected) orgs |
-| `migrate list`                   | List all available migrations                 |
-| `migrate run <id> [args...]`     | Run a migration (preview → confirm → apply)   |
-| `couchdb search <regex>`         | Find entity documents matching a regex        |
-| `couchdb edit <regex> <replace>` | Regex replace inside entity documents         |
-| `couchdb conflicts`              | List conflicted documents                     |
+| Command                          | Description                                                        |
+| -------------------------------- | ------------------------------------------------------------------ |
+| `check`                          | Verify connectivity to all (or selected) orgs                      |
+| `migrate list`                   | List all available migrations                                      |
+| `migrate run <id> [args...]`     | Run a migration (preview → confirm → apply)                        |
+| `couchdb search <regex>`         | Find entity documents matching a regex                             |
+| `couchdb edit <regex> <replace>` | Regex replace inside entity documents                              |
+| `couchdb conflicts`              | List conflicted documents                                          |
 | `couchdb cleanup-attachments`    | Delete orphaned `app-attachments` docs (preview → confirm → apply) |
-| `statistics`                     | Print entity and user counts per org          |
-| `credentials merge <file>`       | Merge a server-collected credentials.json in  |
+| `statistics`                     | Print entity and user counts per org                               |
+| `credentials merge <file>`       | Merge a server-collected credentials.json in                       |
 
 The `statistics` command requires Keycloak credentials (see below).
 It supports `--format csv` for spreadsheet export — use `npm run --silent` to suppress npm's script header when redirecting to a file:
