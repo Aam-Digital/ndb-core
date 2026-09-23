@@ -358,7 +358,7 @@ export class Entity {
         if (value?.label) {
           value = value.label;
         }
-        // a configured text may be a per-language map (#3862); anything else
+        // a configured text may be a per-language map; anything else
         // is returned unchanged
         value = resolveActiveText(value);
         if (value instanceof Date) {
