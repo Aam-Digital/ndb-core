@@ -11,6 +11,8 @@ import { ChangeHistoryService } from "../change-history.service";
 import { ChangeHistoryDialogComponent } from "../change-history-dialog/change-history-dialog.component";
 import { ChangeHistoryListComponent } from "./change-history-list.component";
 import { AuditRecord } from "../model/audit-record";
+import { By } from "@angular/platform-browser";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { TableStateUrlService } from "../../../core/common-components/entities-table/table-state-url.service";
 
 /** the built selector, which is an untyped Mango object at the database edge */
@@ -114,17 +116,35 @@ it("should offer a filter per dimension the ordinary query can narrow", async ()
   ]);
 });
 
-it("should stop querying a selection the filter bar no longer holds", async () => {
-  // the bar compares each new selection against what it was given before
-  // emitting. Left unbound, that comparison would see no change and suppress
-  // the emission that clears the last filter - the list would go on querying a
-  // selection that is no longer shown anywhere, and silently return nothing
+it("should follow the filter bar when a selection is made and cleared again", async () => {
   await setup();
+  const bar = fixture.debugElement.query(By.directive(FilterComponent))
+    .componentInstance as FilterComponent<AuditRecord>;
 
-  component.selectedFilter.set({ operation: "delete" } as any);
+  // the bar builds its filters asynchronously
+  const operationFilter = await vi.waitFor(() => {
+    fixture.detectChanges();
+    const generated = bar
+      .filterSelections()
+      .find((f) => f.name === "operation");
+    expect(generated).toBeDefined();
+    return generated;
+  });
+
+  bar.filterOptionSelected(operationFilter, ["delete"]);
   fixture.detectChanges();
 
-  expect(component.selectedFilter()).toEqual({});
+  expect(selector().$and).toEqual([
+    { timestamp: { $gt: null }, operation: { $ne: "baseline" } },
+    { operation: "delete" },
+  ]);
+
+  bar.filterOptionSelected(operationFilter, []);
+  fixture.detectChanges();
+
+  // clearing has to reach the query as well: the bar only emits a selection
+  // that differs from the one it was given, so a list that never tells it what
+  // it queries would keep the filter it just removed from view
   expect(selector()).toEqual({
     timestamp: { $gt: null },
     operation: { $ne: "baseline" },
