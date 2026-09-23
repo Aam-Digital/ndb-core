@@ -1,5 +1,5 @@
 import { Ordering } from "../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
-import enumJson from "../../assets/base-configs/basic/ConfigurableEnum_warning-levels.json";
+import demoEnums from "../core/demo-data/demo-enums.json";
 
 export enum WarningLevel {
   WARNING = "WARNING",
@@ -21,4 +21,7 @@ export function getWarningLevelColor(warningLevel: WarningLevel) {
   }
 }
 
-export const warningLevels: Ordering.EnumValue[] = enumJson.values;
+// kept separate from the shipped config, whose texts can be configured per language
+export const warningLevels: Ordering.EnumValue[] = demoEnums.find(
+  (e) => e._id === "ConfigurableEnum:warning-levels",
+).values;

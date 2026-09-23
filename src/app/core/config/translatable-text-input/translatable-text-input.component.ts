@@ -13,8 +13,11 @@ import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import { availableLocales } from "../../language/languages";
+import { DynamicComponent } from "../dynamic-components/dynamic-component.decorator";
 import {
   ConfigureTranslationsPopupComponent,
   ConfigureTranslationsResult,
@@ -41,11 +44,12 @@ import {
  * </mat-form-field>
  * ```
  */
+@DynamicComponent("EditTranslatableText")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-translatable-text-input",
   host: {
-    "[class.is-multiline]": "multiline()",
+    "[class.is-multiline]": "isMultiline()",
     // the placeholder belongs on the inner text field only - leaving it on
     // the host too would make it match twice when queried by placeholder
     "[attr.placeholder]": "null",
@@ -65,12 +69,27 @@ import {
     },
   ],
 })
-export class TranslatableTextInputComponent extends CustomFormControlDirective<TranslatableText> {
+export class TranslatableTextInputComponent
+  extends CustomFormControlDirective<TranslatableText>
+  implements EditComponent
+{
   override controlType = "translatable-text-input";
+
+  formFieldConfig = input<FormFieldConfig>();
 
   /** show a multi-line textarea instead of a single-line input */
   multiline = input(false);
   rows = input(3);
+
+  readonly isMultiline = computed(
+    () => this.multiline() || !!this.formFieldConfig()?.additional?.multiline,
+  );
+  readonly rowCount = computed(
+    () => this.formFieldConfig()?.additional?.rows ?? this.rows(),
+  );
+
+  /** set false when the form field has its own suffix icon row, and call {@link openTranslations} from there */
+  showTranslationsButton = input(true);
 
   private readonly dialog = inject(MatDialog);
   private readonly locale = inject(LOCALE_ID);
@@ -90,7 +109,8 @@ export class TranslatableTextInputComponent extends CustomFormControlDirective<T
     if (!isTranslatableText(value, this.validLocaleIds)) {
       return resolved;
     }
-
+    // an already-present slot wins over the resolved fallback, even when empty -
+    // otherwise clearing the text would snap back to another language
     return value[this.locale] ?? resolved;
   });
 
@@ -105,9 +125,26 @@ export class TranslatableTextInputComponent extends CustomFormControlDirective<T
    */
   onTextInput(text: string) {
     const current = this.valueSignal();
-    this.value = isTranslatableText(current, this.validLocaleIds)
-      ? { ...current, [this.locale]: text }
-      : text;
+    this.applyValue(
+      isTranslatableText(current, this.validLocaleIds)
+        ? { ...current, [this.locale]: text }
+        : text,
+    );
+  }
+
+  /**
+   * As an `editComponent` the surrounding DynamicEditComponent is the registered
+   * ControlValueAccessor, so `onChange` here is a no-op - write to the bound
+   * FormControl as well, or the edit is discarded on save.
+   */
+  private applyValue(newValue: TranslatableText | undefined) {
+    this.value = newValue;
+
+    const control = this.formControl;
+    if (control && control.value !== newValue) {
+      control.setValue(newValue);
+      control.markAsDirty();
+    }
   }
 
   openTranslations(event: Event) {
@@ -125,7 +162,7 @@ export class TranslatableTextInputComponent extends CustomFormControlDirective<T
           return;
         }
         // saved, possibly with every language cleared
-        this.value = result.value;
+        this.applyValue(result.value);
         this.onTouched();
       });
   }

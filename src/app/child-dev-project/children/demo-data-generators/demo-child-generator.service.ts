@@ -12,7 +12,7 @@ import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
 import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
-import configurableEnums from "../../../../assets/base-configs/education/configurable-enums.json";
+import configurableEnums from "../../../core/demo-data/demo-enums.json";
 
 export class DemoChildConfig {
   count: number;

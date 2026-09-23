@@ -1,3 +1,5 @@
+import { TranslatableText } from "../../config/multi-lingual-config";
+
 /**
  * Basic definition of a field / column to be included in an export through the ExportService.
  */
@@ -6,8 +8,9 @@ export interface ExportColumnConfig {
    * label shown in the header row.
    *
    * If not specified, query is used.
+   * May be configured per language, so resolve it before using it as a column key.
    */
-  label?: string;
+  label?: TranslatableText;
 
   /** The query to access the value for this column from the object to be exported */
   query: string;
@@ -29,7 +32,7 @@ export interface ExportColumnConfig {
    * Group the results of the query based on unique values at `property`.
    * This will also add another column to the list with the title `label` and the distinct values in the rows.
    */
-  groupBy?: { label: string; property: string };
+  groupBy?: { label: TranslatableText; property: string };
 }
 
 /**

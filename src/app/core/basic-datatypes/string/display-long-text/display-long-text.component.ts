@@ -1,6 +1,8 @@
 import { Component, computed, ChangeDetectionStrategy } from "@angular/core";
 import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
+import { resolveActiveText } from "#src/app/core/language/active-locale";
 
 /**
  * Config for details of how a long-text field should be displayed.
@@ -22,11 +24,11 @@ export interface LongTextFieldConfig {
   standalone: true,
 })
 export class DisplayLongTextComponent extends ViewDirective<
-  string,
+  TranslatableText,
   LongTextFieldConfig
 > {
   readonly formattedValue = computed(() => {
-    const value = this.value();
+    const value = resolveActiveText(this.value());
     if (value === undefined) return "";
 
     const config = this.config();

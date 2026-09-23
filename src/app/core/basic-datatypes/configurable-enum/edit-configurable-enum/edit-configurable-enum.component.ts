@@ -118,7 +118,10 @@ export class EditConfigurableEnumComponent
   });
   readonly options = computed<ConfigurableEnumValue[]>(() => {
     this.enumRefreshTick();
-    return [...(this.enumEntity()?.values ?? []), ...this.invalidOptions()];
+    const enumId = this.enumId();
+    // via the service for resolved labels; `enumEntity` stays raw for saving
+    const configured = enumId ? this.enumService.getEnumValues(enumId) : [];
+    return [...configured, ...this.invalidOptions()];
   });
 
   ngOnInit() {

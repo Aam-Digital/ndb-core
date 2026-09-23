@@ -4,6 +4,8 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { DefaultValueConfig } from "#src/app/core/default-values/default-value-config";
+import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";
+import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
 
 /**
  * Configuration for a single entity form within a public form.
@@ -65,8 +67,9 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Title`,
+    dataType: TranslatableTextDatatype.dataType,
   })
-  title: string;
+  title: TranslatableText;
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Form Link ID`,
@@ -79,9 +82,12 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Description`,
-    dataType: LongTextDatatype.dataType,
+    dataType: TranslatableTextDatatype.dataType,
+    // long text: keep the truncating display
+    viewComponent: "DisplayLongText",
+    additional: { multiline: true, rows: 5 },
   })
-  description: string;
+  description: TranslatableText;
 
   /** @deprecated Use `forms` array instead for multi-form support */
   @DatabaseField({

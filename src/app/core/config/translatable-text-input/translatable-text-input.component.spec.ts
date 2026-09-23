@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -108,5 +109,37 @@ describe("TranslatableTextInputComponent", () => {
     closeDialogWith(undefined);
 
     expect(component.value).toEqual({ "en-US": "Name", de: "Vorname" });
+  });
+
+  describe("when used as an edit component (onChange not registered)", () => {
+    let formControl: FormControl;
+
+    beforeEach(() => {
+      formControl = new FormControl<any>("Attendance Report");
+      component.ngControl = { control: formControl } as any;
+    });
+
+    it("writes text typed in the field to the bound form control", () => {
+      component.value = "Attendance Report";
+
+      component.onTextInput("Anwesenheitsbericht");
+
+      expect(formControl.value).toBe("Anwesenheitsbericht");
+      expect(formControl.dirty).toBe(true);
+    });
+
+    it("writes the translations dialog result to the bound form control", () => {
+      component.value = "Attendance Report";
+
+      saveDialogWith({
+        "en-US": "Attendance Report",
+        de: "Anwesenheitsbericht",
+      });
+
+      expect(formControl.value).toEqual({
+        "en-US": "Attendance Report",
+        de: "Anwesenheitsbericht",
+      });
+    });
   });
 });

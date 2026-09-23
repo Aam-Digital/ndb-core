@@ -1,6 +1,7 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import enums from "../../../../../assets/base-configs/education/configurable-enums.json";
+import demoEnums from "app/core/demo-data/demo-enums.json";
 
-export const materials: ConfigurableEnumValue[] = enums.find(
+// kept separate from the shipped config, whose texts can be configured per language
+export const materials: ConfigurableEnumValue[] = demoEnums.find(
   (e) => e._id === "ConfigurableEnum:materials",
 ).values;
