@@ -24,7 +24,7 @@ import { TranslatableText } from "../../../../core/config/multi-lingual-config";
 export class ProgressDashboardConfig extends Entity {
   static override isInternalEntity = true;
 
-  /** may hold a per-language map, resolve for display only (#3862) */
+  /** may hold a per-language map, resolve for display only */
   @DatabaseField() title: TranslatableText = $localize`Progress Widget`;
   @DatabaseField({ isArray: true }) parts: Array<ProgressDashboardPart> = [];
 
