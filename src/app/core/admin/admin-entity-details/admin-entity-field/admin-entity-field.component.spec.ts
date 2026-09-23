@@ -43,6 +43,7 @@ describe("AdminEntityFieldComponent", () => {
   beforeEach(() => {
     mockEnumService = {
       getEnum: vi.fn(),
+      getEnumValues: vi.fn().mockReturnValue([]),
       listEnums: vi.fn(),
       preLoadEnums: vi.fn(),
     };
