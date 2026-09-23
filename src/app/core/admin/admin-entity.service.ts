@@ -107,7 +107,7 @@ export class AdminEntityService {
         continue;
       }
       // the runtime schema holds values resolved to the active language, so merge
-      // onto the raw config to keep translations of other languages (#3862)
+      // onto the raw config to keep translations of other languages
       entitySchemaConfig.attributes[fieldId] = this.mergeTranslations(
         entitySchemaConfig.attributes[fieldId],
         field,
