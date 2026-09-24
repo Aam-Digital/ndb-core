@@ -12,7 +12,13 @@
       <button
         mat-raised-button
         color="accent"
-        [disabled]="isNew() && nameControl.invalid"
+        [disabled]="(isNew() && nameControl.invalid) || !canEditPermissions()"
+        [disabledInteractive]="!canEditPermissions()"
+        [matTooltip]="editDisabledTooltip"
+        [matTooltipDisabled]="canEditPermissions()"
+        [attr.aria-describedby]="
+          canEditPermissions() ? null : 'role-permissions-disabled-reason'
+        "
         (click)="save()"
         i18n
       >
@@ -20,7 +26,18 @@
       </button>
       <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
     } @else {
-      <button mat-raised-button color="accent" (click)="startEditing()">
+      <button
+        mat-raised-button
+        color="accent"
+        [disabled]="!canEditPermissions()"
+        [disabledInteractive]="!canEditPermissions()"
+        [matTooltip]="editDisabledTooltip"
+        [matTooltipDisabled]="canEditPermissions()"
+        [attr.aria-describedby]="
+          canEditPermissions() ? null : 'role-permissions-disabled-reason'
+        "
+        (click)="startEditing()"
+      >
         <fa-icon icon="pen" class="standard-icon-with-text"></fa-icon>
         <span i18n>Edit</span>
       </button>
@@ -48,6 +65,11 @@
           }}</span>
         }
       }
+    }
+    @if (!canEditPermissions()) {
+      <span class="visually-hidden" id="role-permissions-disabled-reason">{{
+        editDisabledTooltip
+      }}</span>
     }
   </div>
 </div>
