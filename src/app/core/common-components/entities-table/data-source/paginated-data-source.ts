@@ -112,12 +112,18 @@ export class PaginatedDataSource<
 
     if (loadedLength < requiredLength && !this.reachedEnd) {
       const deficit = requiredLength - loadedLength;
+      const generation = this.loadGeneration;
       const res = await this.entityMapper.findType(
         this.loadRecordConfig().entityCtr,
         this.effectiveFilter,
         { limit: deficit, bookmark: this.bookmark },
         this.sortState,
       );
+      if (generation !== this.loadGeneration) {
+        // filter/sort/entity-update invalidated this request while it was in
+        // flight - a new load for the current state is already under way.
+        return [];
+      }
       // update signal to trigger effect for data update in super-class
       this.filteredRecords.update((records) => [...records, ...res.records]);
       this.bookmark = res.bookmark;
