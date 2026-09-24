@@ -700,10 +700,7 @@ test("Change log of a single record is reachable from the entity actions menu", 
 
   // the entry point is offered to every user, not only those who may read the
   // audit data - the dialog itself explains why there is nothing to show
-  await page
-    .locator("app-entity-actions-menu button[mat-icon-button]")
-    .first()
-    .click();
+  await page.getByRole("button", { name: /more actions/i }).click();
   await page.getByRole("menuitem", { name: /View change log/i }).click();
 
   const dialog = page.getByRole("dialog");

@@ -126,6 +126,12 @@ export class EntitySpecialLoaderService {
           entity,
           property,
         ) as unknown as Promise<E[]>;
+      default:
+        // returning nothing here reaches the caller as a missing promise, which
+        // fails far from the cause. A loader that only serves pages (see
+        // `loadPageFor`) ends up here when a list is configured for it without
+        // the data source that can page
+        throw new Error(`${loaderMethod} cannot load all records at once`);
     }
   }
 }
