@@ -338,8 +338,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="62"
-                                    class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.ts:62</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="64"
+                                    class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.ts:64</a></div>
                         </td>
                     </tr>
 
@@ -450,8 +450,10 @@ export class SetupWizardButtonComponent implements OnInit {
       .subscribe((update) &#x3D;&gt; this.updateStatus(update.entity.data));
   }
 
-  private updateStatus(config: SetupWizardConfig) {
-    this.showSetupWizard &#x3D; !config.finished &amp;&amp; !environment.demo_mode;
+  private updateStatus(config: SetupWizardConfig | undefined) {
+    // a deleted config is emitted without any data
+    this.showSetupWizard &#x3D;
+      !!config &amp;&amp; !config.finished &amp;&amp; !environment.demo_mode;
     // demo_mode is showing the wizard in the assistant dialog
   }
 

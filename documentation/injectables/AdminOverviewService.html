@@ -261,8 +261,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="23"
-                                    class="link-to-prism">src/app/core/admin/admin-overview/admin-overview.service.ts:23</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/app/core/admin/admin-overview/admin-overview.service.ts:24</a></div>
                         </td>
                     </tr>
 
@@ -350,7 +350,7 @@ Use this from feature modules to extend the Admin UI.</p>
     },
     {
       label: $localize&#x60;:admin menu item:Setup Wizard&#x60;,
-      link: &quot;/admin/setup-wizard&quot;,
+      link: SETUP_WIZARD_ROUTE,
       subtitle: $localize&#x60;:admin menu item subtitle:A quick guide to help with essential setup steps and configuration.&#x60;,
     },
     {
@@ -368,7 +368,7 @@ Use this from feature modules to extend the Admin UI.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/admin/admin-overview/admin-overview.service.ts:30</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/admin/admin-overview/admin-overview.service.ts:31</a></div>
                         </td>
                     </tr>
 
@@ -403,7 +403,7 @@ Use this from feature modules to extend the Admin UI.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/admin/admin-overview/admin-overview.service.ts:15</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/admin/admin-overview/admin-overview.service.ts:16</a></div>
                                 </td>
                             </tr>
 
@@ -416,6 +416,7 @@ Use this from feature modules to extend the Admin UI.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
 import { MenuItem } from &quot;../../ui/navigation/menu-item&quot;;
+import { SETUP_WIZARD_ROUTE } from &quot;../setup-wizard/setup-wizard-config&quot;;
 
 /**
  * Settings for the Admin Overview page.
@@ -456,7 +457,7 @@ export class AdminOverviewService {
     },
     {
       label: $localize&#x60;:admin menu item:Setup Wizard&#x60;,
-      link: &quot;/admin/setup-wizard&quot;,
+      link: SETUP_WIZARD_ROUTE,
       subtitle: $localize&#x60;:admin menu item subtitle:A quick guide to help with essential setup steps and configuration.&#x60;,
     },
     {

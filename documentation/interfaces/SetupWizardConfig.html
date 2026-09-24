@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-config.ts:7</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-config.ts:12</a></div>
                                 </td>
                             </tr>
 
@@ -285,7 +285,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-config.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-config.ts:15</a></div>
                                 </td>
                             </tr>
 
@@ -330,7 +330,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-config.ts:12</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/core/admin/setup-wizard/setup-wizard-config.ts:17</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,12 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { MenuItem } from &quot;../../ui/navigation/menu-item&quot;;
 
-export const CONFIG_SETUP_WIZARD_ID &#x3D; &quot;Config:SetupWizard&quot;;
+/** id of the SetupWizard Config entity, without the entity type prefix */
+export const SETUP_WIZARD_CONFIG_KEY &#x3D; &quot;SetupWizard&quot;;
+
+export const CONFIG_SETUP_WIZARD_ID &#x3D; &quot;Config:&quot; + SETUP_WIZARD_CONFIG_KEY;
+
+export const SETUP_WIZARD_ROUTE &#x3D; &quot;/admin/setup-wizard&quot;;
 
 export interface SetupWizardConfig {
   /** whether the wizard has been completed overall and should be hidden */
