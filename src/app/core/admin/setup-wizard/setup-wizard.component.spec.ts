@@ -39,12 +39,14 @@ describe("SetupWizardComponent", () => {
   let setupWizardService: {
     state: any;
     config: any;
+    markAsFinished: any;
   };
 
   beforeEach(async () => {
     setupWizardService = {
       state: signal<SetupWizardState>("loaded"),
       config: signal(new Config(CONFIG_SETUP_WIZARD_ID, { ...testConfig })),
+      markAsFinished: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -73,23 +75,10 @@ describe("SetupWizardComponent", () => {
     localStorage.removeItem(component.LOCAL_STORAGE_KEY);
   });
 
-  it("should mark the config as finished in the last step", async () => {
-    const entityMapper = TestBed.inject(EntityMapperService) as any;
-
+  it("should mark the wizard as finished in the last step", async () => {
     await component.finishWizard();
 
-    const actualSavedConfig = vi.mocked(entityMapper.save).mock
-      .lastCall[0] as Config<SetupWizardConfig>;
-    expect(actualSavedConfig.data.finished).toBe(true);
-  });
-
-  it("should not attempt to save anything if no config is available", async () => {
-    const entityMapper = TestBed.inject(EntityMapperService) as any;
-    setupWizardService.config.set(undefined);
-
-    await component.finishWizard();
-
-    expect(entityMapper.save).not.toHaveBeenCalled();
+    expect(setupWizardService.markAsFinished).toHaveBeenCalled();
   });
 
   it("should show a loading indicator while the config is not available yet", () => {

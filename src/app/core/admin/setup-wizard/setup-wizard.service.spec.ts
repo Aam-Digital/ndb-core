@@ -10,7 +10,7 @@ import {
 } from "./setup-wizard-config";
 
 describe("SetupWizardService", () => {
-  let entityMapper: { load: any; receiveUpdates: any };
+  let entityMapper: { load: any; save: any; receiveUpdates: any };
   let updates: Subject<UpdatedEntity<Config<SetupWizardConfig>>>;
 
   function createConfig(data: Partial<SetupWizardConfig> = {}) {
@@ -31,6 +31,7 @@ describe("SetupWizardService", () => {
     updates = new Subject();
     entityMapper = {
       load: vi.fn(),
+      save: vi.fn(),
       receiveUpdates: vi.fn().mockReturnValue(updates),
     };
   });
@@ -101,6 +102,14 @@ describe("SetupWizardService", () => {
     },
   );
 
+  it("treats a config without any steps like a missing one", async () => {
+    entityMapper.load.mockResolvedValue(createConfig({ steps: [] }));
+    const service = initService();
+
+    await vi.waitFor(() => expect(service.state()).toBe("unavailable"));
+    expect(service.config()).toBeUndefined();
+  });
+
   it("becomes unavailable when the config is deleted", async () => {
     entityMapper.load.mockResolvedValue(createConfig());
     const service = initService();
@@ -126,5 +135,29 @@ describe("SetupWizardService", () => {
     });
 
     expect(service.isPending()).toBe(false);
+  });
+  it("saves the wizard as finished without waiting for the database to report back", async () => {
+    entityMapper.load.mockResolvedValue(createConfig({ finished: false }));
+    const service = initService();
+    await vi.waitFor(() => expect(service.isPending()).toBe(true));
+
+    await service.markAsFinished();
+
+    // no update is emitted through the changes feed here, so this only passes
+    // if the service updates its own state
+    expect(service.isPending()).toBe(false);
+    const saved = entityMapper.save.mock
+      .lastCall[0] as Config<SetupWizardConfig>;
+    expect(saved.data.finished).toBe(true);
+  });
+
+  it("does not save anything as finished if no config is available", async () => {
+    entityMapper.load.mockRejectedValue({ status: 404 });
+    const service = initService();
+    await vi.waitFor(() => expect(service.state()).toBe("unavailable"));
+
+    await service.markAsFinished();
+
+    expect(entityMapper.save).not.toHaveBeenCalled();
   });
 });

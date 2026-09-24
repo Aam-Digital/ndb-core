@@ -52,8 +52,8 @@ export class SetupWizardService extends LatestEntityLoader<
    */
   protected override onInit() {
     this.entityUpdated.subscribe((entity) => {
-      if (!entity?.data) {
-        // a deleted doc is emitted without any data
+      if (!entity?.data?.steps?.length) {
+        // a deleted doc is emitted without any data, and a config without steps has nothing to show
         this.setUnavailable();
         return;
       }
@@ -78,6 +78,22 @@ export class SetupWizardService extends LatestEntityLoader<
         this._state.set("error");
       }
     }
+  }
+
+  /**
+   * Mark the wizard as completed, so that it is not actively offered anymore.
+   */
+  async markAsFinished(): Promise<void> {
+    const config = this._config();
+    if (!config) {
+      return;
+    }
+
+    // a copy, because mutating the current entity would not notify the signal's consumers
+    const updated = config.copy();
+    updated.data.finished = true;
+    await this.entityMapper.save(updated);
+    this._config.set(updated);
   }
 
   private setUnavailable() {

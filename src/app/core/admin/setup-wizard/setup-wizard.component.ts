@@ -21,7 +21,6 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { SetupWizardService } from "./setup-wizard.service";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,7 +44,6 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 })
 export class SetupWizardComponent implements OnInit {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
-  private readonly entityMapper = inject(EntityMapperService);
   private readonly setupWizardService = inject(SetupWizardService);
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, {
     optional: true,
@@ -94,13 +92,7 @@ export class SetupWizardComponent implements OnInit {
   }
 
   async finishWizard() {
-    const configEntity = this.setupWizardService.config();
-    if (!configEntity) {
-      return;
-    }
-
-    configEntity.data.finished = true;
-    await this.entityMapper.save(configEntity);
+    await this.setupWizardService.markAsFinished();
     this.dialogRef?.close();
   }
 }

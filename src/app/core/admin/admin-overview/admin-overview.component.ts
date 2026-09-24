@@ -75,8 +75,7 @@ export class AdminOverviewComponent {
   public readonly configurationMenuItems = computed<MenuItem[]>(() =>
     this.adminOverviewService.configurationMenuItems.filter(
       (item) =>
-        item.link !== SETUP_WIZARD_ROUTE ||
-        this.setupWizardService.state() !== "unavailable",
+        item.link !== SETUP_WIZARD_ROUTE || this.setupWizardService.exists(),
     ),
   );
   expandedSection = computed(() => this.sectionStateService.getExpanded());
