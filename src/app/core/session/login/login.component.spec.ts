@@ -27,6 +27,8 @@ import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { SessionInfo } from "../auth/session-info";
 import { environment } from "../../../../environments/environment";
 import type { Mock } from "vitest";
+import { LOCAL_STORAGE_TOKEN, LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { createFakeStorage } from "../../../utils/test-utils/fake-storage";
 
 type KeycloakAuthServiceMock = Pick<
   KeycloakAuthService,
@@ -42,15 +44,24 @@ describe("LoginComponent", () => {
   let loginState: LoginStateSubject;
   let mockKeycloak: KeycloakAuthServiceMock;
   let sessionManager: SessionManagerService;
+  let mockLocation: { reload: Mock };
+  let storage: Storage;
+  const originalSessionType = environment.session_type;
 
   beforeEach(waitForAsync(() => {
     mockKeycloak = {
       login: vi.fn(),
       checkSession: vi.fn().mockResolvedValue(null),
     };
+    mockLocation = { reload: vi.fn() };
+    storage = createFakeStorage();
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule.withState()],
-      providers: [{ provide: KeycloakAuthService, useValue: mockKeycloak }],
+      providers: [
+        { provide: KeycloakAuthService, useValue: mockKeycloak },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+        { provide: LOCAL_STORAGE_TOKEN, useValue: storage },
+      ],
     }).compileComponents();
     sessionManager = TestBed.inject(SessionManagerService);
     vi.spyOn(sessionManager, "checkRemoteSession").mockResolvedValue(undefined);
@@ -63,6 +74,41 @@ describe("LoginComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    environment.session_type = originalSessionType;
+  });
+
+  function toggleOnlineOnlyCheckbox() {
+    fixture.detectChanges();
+    const checkbox: HTMLInputElement = fixture.nativeElement.querySelector(
+      "mat-checkbox input[type=checkbox]",
+    );
+    checkbox.click();
+    fixture.detectChanges();
+  }
+
+  it("should persist the online-only preference and reload instead of switching the session type of the running app", () => {
+    toggleOnlineOnlyCheckbox();
+
+    expect(storage.getItem("session_online_only")).toBe("true");
+    expect(mockLocation.reload).toHaveBeenCalled();
+    // databases were already created for "synced" - a login without page reload must not use them as "online"
+    expect(environment.session_type).toBe(SessionType.synced);
+  });
+
+  it("should remove the online-only preference and reload when unticking it", () => {
+    environment.session_type = SessionType.online;
+    storage.setItem("session_online_only", "true");
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+
+    toggleOnlineOnlyCheckbox();
+
+    expect(storage.getItem("session_online_only")).toBeNull();
+    expect(mockLocation.reload).toHaveBeenCalled();
+    expect(environment.session_type).toBe(SessionType.online);
   });
 
   it("should try to check session on startup", () => {

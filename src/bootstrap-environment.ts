@@ -108,12 +108,11 @@ async function initConfigJsonToEnvironment() {
  * LoginComponent ran, the wrong DB class would already have been instantiated.
  *
  * The flow is:
- *   1. User toggles checkbox on login page → LoginComponent writes localStorage
- *   2. Keycloak login triggers a full page reload (redirectUri: location.href)
- *   3. On reload, this function runs and applies the preference to environment
- *   4. Angular DI starts → correct DB class (RemotePouchDatabase) is created
+ *   1. User toggles checkbox on login page → LoginComponent writes localStorage and reloads the page
+ *   2. On reload, this function runs and applies the preference to environment
+ *   3. Angular DI starts → correct DB class (RemotePouchDatabase) is created
  *
- * See also: LoginComponent.applyOnlineOnlyMode() and ONLINE_ONLY_KEY.
+ * See also: LoginComponent.onOnlineOnlyChanged() and ONLINE_ONLY_KEY.
  */
 function applyOnlineOnlyPreference() {
   if (
