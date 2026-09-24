@@ -7,7 +7,6 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 

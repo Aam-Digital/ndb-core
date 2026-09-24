@@ -1,7 +1,7 @@
 import { ApplicationRef } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { ChangeHistoryService } from "./change-history.service";
 import { AuditRecord } from "./model/audit-record";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
@@ -9,7 +9,6 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import {
-  DatabaseEntity,
   EntityRegistry,
   entityRegistry,
 } from "../../core/entity/database-entity.decorator";
@@ -58,10 +57,16 @@ function setup(docs: any[] = [], canRead = true) {
 }
 
 /** a record type a login account can belong to */
-@DatabaseEntity("AccountEntity")
 class AccountEntity extends Entity {
+  static override readonly ENTITY_TYPE = "AccountEntity";
   static override readonly enableUserAccounts = true;
 }
+
+// registered by hand rather than through the decorator, so it can be taken out
+// again: the registry is shared, and a type left in it changes what every later
+// spec sees
+beforeEach(() => entityRegistry.add(AccountEntity.ENTITY_TYPE, AccountEntity));
+afterEach(() => entityRegistry.delete(AccountEntity.ENTITY_TYPE));
 
 class InternalEntity extends Entity {
   static override readonly isInternalEntity = true;
@@ -165,7 +170,14 @@ it("offers the records a login account can belong to as the filter's authors", a
   // reading them from the audit documents instead would mean scanning a
   // database with no index of its authors, and still only seeing recent ones
   const service = setup();
-  loadType.mockResolvedValue([new AccountEntity("b"), new AccountEntity("a")]);
+  // per type, so the assertion holds whatever else the registry happens to hold
+  loadType.mockImplementation((type) =>
+    Promise.resolve(
+      type === AccountEntity
+        ? [new AccountEntity("b"), new AccountEntity("a")]
+        : [],
+    ),
+  );
 
   const authors = await service.getChangeAuthors();
 
