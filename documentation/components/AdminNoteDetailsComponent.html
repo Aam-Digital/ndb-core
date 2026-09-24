@@ -435,8 +435,8 @@ Allows users to configure the three form sections with full field editing capabi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="84"
-                                    class="link-to-prism">src/app/child-dev-project/notes/admin-note-details/admin-note-details.component.ts:84</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/child-dev-project/notes/admin-note-details/admin-note-details.component.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -605,6 +605,7 @@ export class AdminNoteDetailsComponent {
     );
 
     return {
+      ...this.config(),
       topForm: topGroup ? (topGroup.fields as string[]) : [],
       middleForm: middleGroup ? (middleGroup.fields as string[]) : [],
       bottomForm: bottomGroup ? (bottomGroup.fields as string[]) : [],

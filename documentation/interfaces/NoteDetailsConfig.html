@@ -185,6 +185,12 @@ Defines the three configurable form sections that can be edited in the Admin UI.
                         </li>
                         <li>
                                     <span class="modifier">Optional</span>
+                                <a href="#entityType" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityType</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
                                 <a href="#middleForm" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">middleForm</span>
                                 </a>
@@ -244,13 +250,63 @@ Defines the three configurable form sections that can be edited in the Admin UI.
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:19</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:24</a></div>
                                 </td>
                             </tr>
 
                     <tr>
                         <td class="col-md-4">
                             <div class="io-description"><p>Field names to be displayed in the bottom form section.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="entityType"></a>
+                                <span class="name "><b>entityType</b>
+                                    <a href="#entityType">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>entityType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:9</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Entity type this view displays, required for entity loading and permission checks.</p>
 </div>
                         </td>
                     </tr>
@@ -294,7 +350,7 @@ Defines the three configurable form sections that can be edited in the Admin UI.
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:19</a></div>
                                 </td>
                             </tr>
 
@@ -344,7 +400,7 @@ Defines the three configurable form sections that can be edited in the Admin UI.
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="9" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:9</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details-config.interface.ts:14</a></div>
                                 </td>
                             </tr>
 
@@ -362,6 +418,11 @@ Defines the three configurable form sections that can be edited in the Admin UI.
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export interface NoteDetailsConfig {
+  /**
+   * Entity type this view displays, required for entity loading and permission checks.
+   */
+  entityType?: string;
+
   /**
    * Field names to be displayed in the top form section.
    */

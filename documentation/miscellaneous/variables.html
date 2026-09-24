@@ -578,6 +578,9 @@
                             <a href="#migrateNavigationMenuEntityLinks" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateNavigationMenuEntityLinks</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#migrateNoteDetailsEntityType" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateNoteDetailsEntityType</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#migrateNotesManagerComponent" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>migrateNotesManagerComponent</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
@@ -3250,6 +3253,7 @@ reload-loop and flood error monitoring.</p>
   migrateEditDescriptionOnly,
   migrateEditAttendanceComponent,
   migrateNotesManagerComponent,
+  migrateNoteDetailsEntityType,
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
@@ -4101,6 +4105,52 @@ Report queries selecting on it have to use the equivalent query helpers instead.
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>Migrate navigationMenu items that use a hardcoded entity route <code>link</code> to the <code>entityType</code> format.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="migrateNoteDetailsEntityType"></a>
+                    <span class="name">
+                        <span ><b>migrateNoteDetailsEntityType</b></span>
+                        <a href="#migrateNoteDetailsEntityType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ConfigMigration" target="_self" >ConfigMigration</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(key, configPart) &#x3D;&gt; {
+  if (key !&#x3D;&#x3D; &quot;view:note/:id&quot; || typeof configPart !&#x3D;&#x3D; &quot;object&quot;) {
+    return configPart;
+  }
+
+  configPart.config &#x3D; configPart.config ?? {};
+  if (!configPart.config.entityType) {
+    configPart.config.entityType &#x3D; &quot;Note&quot;;
+  }
+
+  return configPart;
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Older <code>view:note/:id</code> configs (including base-configs bundled before the
+NoteDetails <code>entityType</code> input was introduced) do not set <code>entityType</code>.
+Without it, NoteDetailsComponent&#39;s entity-loading is never triggered and
+the Note details page stays on the loading spinner indefinitely.</p>
 </div>
                 </td>
             </tr>
