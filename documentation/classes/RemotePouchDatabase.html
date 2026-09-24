@@ -285,6 +285,11 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#supportsFind" >supportsFind</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
@@ -901,7 +906,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:368</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:372</a></code>
 </div>
                         </td>
                     </tr>
@@ -1135,7 +1140,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:421</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:425</a></code>
 </div>
                         </td>
                     </tr>
@@ -1212,7 +1217,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:444</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:448</a></code>
 </div>
                         </td>
                     </tr>
@@ -1234,6 +1239,51 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                             <div class="io-description">
                                 
                             </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="supportsFind"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>supportsFind</b></span>
+                        <a href="#supportsFind"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>supportsFind()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:353</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
                 </td>
             </tr>
         </tbody>
@@ -2509,7 +2559,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:143</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:151</a></code>
 </div>
                         </td>
                     </tr>
@@ -2595,7 +2645,7 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:164</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:172</a></code>
 </div>
                         </td>
                     </tr>
@@ -3026,6 +3076,10 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected &#x3D; this.pendingLostPermissions;
     this.pendingLostPermissions &#x3D; [];
     return collected;
+  }
+
+  override supportsFind(): boolean {
+    return true;
   }
 
   /**

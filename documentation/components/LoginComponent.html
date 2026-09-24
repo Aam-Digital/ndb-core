@@ -402,7 +402,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="120" class="link-to-prism">src/app/core/session/login/login.component.ts:120</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/session/login/login.component.ts:124</a></div>
                             </td>
                         </tr>
 
@@ -439,14 +439,23 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="176"
-                                    class="link-to-prism">src/app/core/session/login/login.component.ts:176</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="185"
+                                    class="link-to-prism">src/app/core/session/login/login.component.ts:185</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Persist the online-only preference and reload the page to apply it.</p>
+<p>The preference must NOT be applied by changing environment.session_type here:
+the database instances were already created during Angular DI startup (before this component exists)
+with the class matching the session type at that time.
+Not every login path reloads the page afterwards (offline login, remote login reusing an existing SSO session),
+so a changed environment.session_type would disagree with the database for the whole page session
+(e.g. paginated lists running against a local database, see #4392).</p>
+<p>After the reload, bootstrap-environment.ts applies the preference before any database is created.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -506,8 +515,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="242"
-                                    class="link-to-prism">src/app/core/session/login/login.component.ts:242</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="227"
+                                    class="link-to-prism">src/app/core/session/login/login.component.ts:227</a></div>
                         </td>
                     </tr>
 
@@ -554,7 +563,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/session/login/login.component.ts:81</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/session/login/login.component.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -593,7 +602,7 @@ so the user always has a fallback path to enter the app.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/core/session/login/login.component.ts:96</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/core/session/login/login.component.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -633,7 +642,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/session/login/login.component.ts:82</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/session/login/login.component.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -664,7 +673,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/session/login/login.component.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/session/login/login.component.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -695,7 +704,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="99" class="link-to-prism">src/app/core/session/login/login.component.ts:99</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="100" class="link-to-prism">src/app/core/session/login/login.component.ts:100</a></div>
                         </td>
                     </tr>
 
@@ -732,7 +741,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/session/login/login.component.ts:75</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/session/login/login.component.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -758,18 +767,19 @@ state we expect to render the login form).</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>signal(false)</code>
+                        <i>Default value : </i><code>signal(environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="120" class="link-to-prism">src/app/core/session/login/login.component.ts:120</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/session/login/login.component.ts:124</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>User preference: use online-only mode instead of synced.</p>
+                    <div class="io-description"><p>Whether online-only mode is active in the current page load.
+bootstrap-environment.ts has already applied a stored preference to environment.session_type.</p>
 </div>
                 </td>
             </tr>
@@ -800,7 +810,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/session/login/login.component.ts:71</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/session/login/login.component.ts:72</a></div>
                         </td>
                     </tr>
 
@@ -831,7 +841,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/session/login/login.component.ts:85</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/session/login/login.component.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -870,7 +880,7 @@ state we expect to render the login form).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="114" class="link-to-prism">src/app/core/session/login/login.component.ts:114</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/core/session/login/login.component.ts:115</a></div>
                         </td>
                     </tr>
 
@@ -910,7 +920,7 @@ Hidden when session_type_choice is false (operator enforces a fixed session type
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/session/login/login.component.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/core/session/login/login.component.ts:74</a></div>
                         </td>
                     </tr>
 
@@ -941,7 +951,7 @@ Hidden when session_type_choice is false (operator enforces a fixed session type
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/session/login/login.component.ts:88</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/session/login/login.component.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -986,7 +996,7 @@ import { environment } from &quot;../../../../environments/environment&quot;;
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
 import { FormsModule } from &quot;@angular/forms&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
-import { LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { LOCAL_STORAGE_TOKEN, LOCATION_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -1011,6 +1021,7 @@ import { LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 })
 export class LoginComponent implements OnInit {
   private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
+  private readonly location &#x3D; inject&lt;Location&gt;(LOCATION_TOKEN);
   private router &#x3D; inject(Router);
   private route &#x3D; inject(ActivatedRoute);
   sessionManager &#x3D; inject(SessionManagerService);
@@ -1061,18 +1072,14 @@ export class LoginComponent implements OnInit {
     (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.synced ||
       environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online);
 
-  /** User preference: use online-only mode instead of synced. */
-  onlineOnly &#x3D; signal(false);
+  /**
+   * Whether online-only mode is active in the current page load.
+   * bootstrap-environment.ts has already applied a stored preference to environment.session_type.
+   */
+  onlineOnly &#x3D; signal(environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online);
 
   constructor() {
     const sessionManager &#x3D; this.sessionManager;
-
-    // restore previous online-only preference from localStorage
-    const initialOnlineOnly &#x3D;
-      this.localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) &#x3D;&#x3D;&#x3D; &quot;true&quot; ||
-      environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online;
-    this.onlineOnly.set(initialOnlineOnly);
-    this.applyOnlineOnlyMode(initialOnlineOnly);
 
     this.enableOfflineLogin.set(!this.sessionManager.remoteLoginAvailable());
     this.showOfflineSection.set(!navigator.onLine);
@@ -1118,6 +1125,18 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  /**
+   * Persist the online-only preference and reload the page to apply it.
+   *
+   * The preference must NOT be applied by changing environment.session_type here:
+   * the database instances were already created during Angular DI startup (before this component exists)
+   * with the class matching the session type at that time.
+   * Not every login path reloads the page afterwards (offline login, remote login reusing an existing SSO session),
+   * so a changed environment.session_type would disagree with the database for the whole page session
+   * (e.g. paginated lists running against a local database, see #4392).
+   *
+   * After the reload, bootstrap-environment.ts applies the preference before any database is created.
+   */
   onOnlineOnlyChanged(checked: boolean) {
     this.onlineOnly.set(checked);
     if (checked) {
@@ -1125,31 +1144,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.localStorage.removeItem(LoginComponent.ONLINE_ONLY_KEY);
     }
-    this.applyOnlineOnlyMode(checked);
-  }
-
-  /**
-   * Mutate environment.session_type so that the correct database class is used
-   * when initDatabasesForSession() is called after login.
-   *
-   * NOTE: The actual database instances are created lazily on first access during
-   * Angular DI startup — long before LoginComponent exists. For that reason,
-   * bootstrap-environment.ts also reads the localStorage preference early and
-   * applies it before Angular starts. This in-component mutation covers the case
-   * where the user toggles the checkbox in the *same page load* (i.e. before
-   * the Keycloak redirect has happened), so the preference is applied consistently
-   * regardless of whether the DB was already created or not yet.
-   *
-   * The authoritative path is: user changes checkbox → localStorage updated here →
-   * Keycloak login triggers full page reload → bootstrap-environment.ts applies
-   * the preference → Angular DI creates the correct DB type from the start.
-   */
-  private applyOnlineOnlyMode(onlineOnly: boolean) {
-    if (onlineOnly) {
-      environment.session_type &#x3D; SessionType.online;
-    } else if (environment.session_type &#x3D;&#x3D;&#x3D; SessionType.online) {
-      environment.session_type &#x3D; SessionType.synced;
-    }
+    this.location.reload();
   }
 
   private routeAfterLogin() {

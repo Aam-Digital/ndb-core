@@ -212,7 +212,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/core/database/database.ts:200</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="208" class="link-to-prism">src/app/core/database/database.ts:208</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -259,7 +259,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/core/database/database.ts:200</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="208" class="link-to-prism">src/app/core/database/database.ts:208</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="198" class="link-to-prism">src/app/core/database/database.ts:198</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="206" class="link-to-prism">src/app/core/database/database.ts:206</a></div>
                                 </td>
                             </tr>
 
@@ -337,7 +337,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/core/database/database.ts:199</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="207" class="link-to-prism">src/app/core/database/database.ts:207</a></div>
                                 </td>
                             </tr>
 
@@ -422,6 +422,14 @@ export abstract class Database {
    */
   purge(_id: string): Promise&lt;boolean&gt; {
     throw new Error(&quot;purge() is not supported by this database implementation&quot;);
+  }
+
+  /**
+   * Whether {@link find} (bookmark-based pagination) is supported by this implementation.
+   * Callers should fall back to loading all docs otherwise.
+   */
+  supportsFind(): boolean {
+    return false;
   }
 
   /**

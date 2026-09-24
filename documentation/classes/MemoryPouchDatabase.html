@@ -362,6 +362,10 @@ not persisting any data after the page is closed.</p>
                                     <span class="modifier">Async</span>
                                 <a href="#removeAll" >removeAll</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#supportsFind" >supportsFind</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -2356,7 +2360,7 @@ run exactly once and are never routed through it.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:143</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:151</a></code>
 </div>
                         </td>
                     </tr>
@@ -2442,7 +2446,7 @@ run exactly once and are never routed through it.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:164</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:172</a></code>
 </div>
                         </td>
                     </tr>
@@ -2508,6 +2512,52 @@ Pass a specialized document type if the filter reads fields other than <code>_id
                                 <p>the number of deleted documents</p>
 
                             </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="supportsFind"></a>
+                    <span class="name">
+                        <span ><b>supportsFind</b></span>
+                        <a href="#supportsFind"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>supportsFind()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:98</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether <a href="find">find</a> (bookmark-based pagination) is supported by this implementation.
+Callers should fall back to loading all docs otherwise.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
                 </td>
             </tr>
         </tbody>

@@ -908,6 +908,9 @@
                             <a href="#subtreeLength" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>subtreeLength</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#supportsPagination" title="src/app/core/common-components/entities-table/data-source/data-source-resolver.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>supportsPagination</b>&nbsp;&nbsp;&nbsp;(src/.../data-source-resolver.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#tableSort" title="src/app/core/common-components/entities-table/table-sort/table-sort.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>tableSort</b>&nbsp;&nbsp;&nbsp;(src/.../table-sort.ts)</span></a>
                         </li>
                         <li>
@@ -3370,12 +3373,11 @@ Angular DI startup, before LoginComponent even exists). If we waited until
 LoginComponent ran, the wrong DB class would already have been instantiated.</p>
 <p>The flow is:</p>
 <ol>
-<li>User toggles checkbox on login page → LoginComponent writes localStorage</li>
-<li>Keycloak login triggers a full page reload (redirectUri: location.href)</li>
+<li>User toggles checkbox on login page → LoginComponent writes localStorage and reloads the page</li>
 <li>On reload, this function runs and applies the preference to environment</li>
 <li>Angular DI starts → correct DB class (RemotePouchDatabase) is created</li>
 </ol>
-<p>See also: LoginComponent.applyOnlineOnlyMode() and ONLINE_ONLY_KEY.</p>
+<p>See also: LoginComponent.onOnlineOnlyChanged() and ONLINE_ONLY_KEY.</p>
 </div>
 
                 </td>
@@ -14284,6 +14286,67 @@ This generates a camelCase string, removing special characters.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../classes/EntitiesTableDataSource.html" target="_self" >EntitiesTableDataSource&lt;T&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="supportsPagination"></a>
+                    <span class="name">
+                        <span ><b>supportsPagination</b></span>
+                        <a href="#supportsPagination"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>supportsPagination(injector: <a href="https://angular.dev/api/core/Injector" target="_blank">Injector</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>injector</td>
+                                            <td>
+                                                            <code><a href="https://angular.dev/api/core/Injector" target="_blank" >Injector</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                             <div class="io-description">
