@@ -1759,5 +1759,6 @@
   "2458761240393527286": "Upload was interrupted. Please check your internet connection and try again.",
   "5614674169733644295": "You do not have permission to open this file.",
   "2561393307023371744": " The setup wizard could not be loaded. Please check your internet connection and reload the page. ",
-  "8704370526414242834": "No setup wizard is configured for this system."
+  "8704370526414242834": "No setup wizard is configured for this system.",
+  "1798094148246010040": "Your account does not have permission to change the permissions of a role."
 }
