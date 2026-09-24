@@ -12,14 +12,13 @@ export class ConfigurableEnumFilter<
     enumValues: ConfigurableEnumValue[],
     singleSelectOnly: boolean = false,
     invalidOptions: FilterSelectionOption<T>[] = [],
-    isArrayField: boolean = false,
   ) {
     const options: FilterSelectionOption<T>[] = [
       ...enumValues.map((enumValue: ConfigurableEnumValue) => ({
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
-        filter: buildEnumValueFilter<T>(name, enumValue.id, isArrayField),
+        filter: buildEnumValueFilter<T>(name, enumValue.id),
       })),
       ...invalidOptions,
     ];
@@ -28,20 +27,24 @@ export class ConfigurableEnumFilter<
 }
 
 /**
- * A plain equality selector only matches a multi-select (isArray) field
- * client-side (ucast implicitly treats it as "array contains"): CouchDB's
- * Mango `_find` does not, so a multi-select field needs `$elemMatch` to be
- * filtered correctly once online-only mode sends the query to CouchDB (#4406).
+ * Match records holding the given enum value, whether stored as a single value
+ * or inside an array (multi-select / `isArray` field).
+ *
+ * Always both variants are matched, independent of the field's current `isArray`
+ * setting, because that can be toggled in the admin UI while existing records
+ * still hold values in the previous shape (same approach as `EntityFilter`).
+ * A plain equality selector alone does not match array values in CouchDB's Mango
+ * `_find` (unlike client-side, where ucast treats it as "array contains"), so
+ * `$elemMatch` is needed for online-only mode (#4406).
  */
 export function buildEnumValueFilter<T extends Entity>(
   name: string,
   enumValueId: string,
-  isArrayField: boolean,
 ): DataFilter<T> {
-  if (isArrayField) {
-    return {
-      [name + ".id"]: { $elemMatch: { $eq: enumValueId } },
-    } as DataFilter<T>;
-  }
-  return { [name + ".id"]: enumValueId } as DataFilter<T>;
+  return {
+    $or: [
+      { [name + ".id"]: enumValueId },
+      { [name + ".id"]: { $elemMatch: { $eq: enumValueId } } },
+    ],
+  } as DataFilter<T>;
 }

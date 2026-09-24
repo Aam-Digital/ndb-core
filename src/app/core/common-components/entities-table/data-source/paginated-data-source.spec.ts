@@ -92,6 +92,22 @@ describe("PaginatedDataSource", () => {
         category: "SCHOOL",
       });
     });
+
+    it("should strip the '.id' suffix also within nested $or / $elemMatch conditions of enum filters", () => {
+      expect(
+        processFilter({
+          $or: [
+            { "category.id": "SCHOOL" },
+            { "category.id": { $elemMatch: { $eq: "SCHOOL" } } },
+          ],
+        }),
+      ).toEqual({
+        $or: [
+          { category: "SCHOOL" },
+          { category: { $elemMatch: { $eq: "SCHOOL" } } },
+        ],
+      });
+    });
   });
 
   describe("getAllData", () => {

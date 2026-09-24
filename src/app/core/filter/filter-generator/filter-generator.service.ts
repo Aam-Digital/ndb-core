@@ -68,7 +68,6 @@ export class FilterGeneratorService {
       const label = filterConfig.label ?? schema.labelShort ?? schema.label;
       const type = filterConfig.type ?? schema.dataType;
       if (type == "configurable-enum") {
-        const isArrayField = schema.isArray === true;
         // Add invalid and empty options
         const enumValues =
           this.enumService.getEnumValues(schema.additional) || [];
@@ -104,11 +103,7 @@ export class FilterGeneratorService {
             key: `invalid:${invalidId}`,
             label: $localize`:filter option:[Invalid: ${invalidId}]`,
             isInvalid: true,
-            filter: buildEnumValueFilter<T>(
-              filterConfig.id,
-              invalidId,
-              isArrayField,
-            ),
+            filter: buildEnumValueFilter<T>(filterConfig.id, invalidId),
           }));
 
         const enumFilter = new ConfigurableEnumFilter(
@@ -117,9 +112,9 @@ export class FilterGeneratorService {
           enumValues,
           filterConfig.singleSelectOnly,
           invalidOptions,
-          isArrayField,
         );
         filter = enumFilter;
+        const isArrayField = schema.isArray === true;
         enumFilter.options.unshift(
           this.createEmptyOption(filterConfig.id, true, isArrayField),
         );
