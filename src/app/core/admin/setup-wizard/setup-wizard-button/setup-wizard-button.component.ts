@@ -54,8 +54,10 @@ export class SetupWizardButtonComponent implements OnInit {
       .subscribe((update) => this.updateStatus(update.entity.data));
   }
 
-  private updateStatus(config: SetupWizardConfig) {
-    this.showSetupWizard = !config.finished && !environment.demo_mode;
+  private updateStatus(config: SetupWizardConfig | undefined) {
+    // a deleted config is emitted without any data
+    this.showSetupWizard =
+      !!config && !config.finished && !environment.demo_mode;
     // demo_mode is showing the wizard in the assistant dialog
   }
 

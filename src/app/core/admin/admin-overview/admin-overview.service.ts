@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { MenuItem } from "../../ui/navigation/menu-item";
+import { SETUP_WIZARD_ROUTE } from "../setup-wizard/setup-wizard-config";
 
 /**
  * Settings for the Admin Overview page.
@@ -40,7 +41,7 @@ export class AdminOverviewService {
     },
     {
       label: $localize`:admin menu item:Setup Wizard`,
-      link: "/admin/setup-wizard",
+      link: SETUP_WIZARD_ROUTE,
       subtitle: $localize`:admin menu item subtitle:A quick guide to help with essential setup steps and configuration.`,
     },
     {
