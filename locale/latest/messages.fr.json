@@ -1757,5 +1757,7 @@
   "80127929565548450": "Could not undo the change. Please try again.",
   "2396933785864555359": "File too large. Usually files up to 5 MB are supported (or your system administrator's custom limit).",
   "2458761240393527286": "Upload was interrupted. Please check your internet connection and try again.",
-  "5614674169733644295": "You do not have permission to open this file."
+  "5614674169733644295": "You do not have permission to open this file.",
+  "2561393307023371744": " The setup wizard could not be loaded. Please check your internet connection and reload the page. ",
+  "8704370526414242834": "No setup wizard is configured for this system."
 }
