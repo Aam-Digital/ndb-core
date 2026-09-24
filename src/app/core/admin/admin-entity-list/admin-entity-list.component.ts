@@ -49,25 +49,6 @@ export class AdminEntityListComponent {
 
   filters = linkedSignal(() => (this.config().filters ?? []).map((f) => f.id));
 
-  /**
-   * Properties nested inside embedded fields (e.g. "childrenAttendance.participant"),
-   * offered as additional filter options besides the entity's normal, flat schema fields
-   * (see {@link FilterGeneratorService.generate}).
-   */
-  private embeddedFilterFields = computed<ColumnConfig[]>(() =>
-    getEmbeddedFieldRefs(this.schemaService, this.entityConstructor()).map(
-      (ref) => ({
-        id: getEmbeddedFieldId(ref),
-        label: getEmbeddedFieldLabel(ref),
-      }),
-    ),
-  );
-
-  filterAdditionalFields = computed<ColumnConfig[]>(() => [
-    ...(this.config().columns ?? []),
-    ...this.embeddedFilterFields(),
-  ]);
-
   columnGroups = linkedSignal(
     () =>
       this.config().columnGroups ?? {
@@ -81,6 +62,30 @@ export class AdminEntityListComponent {
         ],
       },
   );
+
+  /**
+   * Properties nested inside embedded fields (e.g. "childrenAttendance.participant"),
+   * offered as additional filter options - but only for those embedded fields that are
+   * themselves currently displayed as a column, mirroring how a custom (non-schema) column
+   * is only offered as a filter option once it has been added as a column (see
+   * `filterAdditionalFields`).
+   */
+  private embeddedFilterFields = computed<ColumnConfig[]>(() => {
+    const displayedColumnIds = new Set(
+      this.columnGroups().groups.flatMap((g) => g.columns),
+    );
+    return getEmbeddedFieldRefs(this.schemaService, this.entityConstructor())
+      .filter((ref) => displayedColumnIds.has(ref.outerProp))
+      .map((ref) => ({
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      }));
+  });
+
+  filterAdditionalFields = computed<ColumnConfig[]>(() => [
+    ...(this.config().columns ?? []),
+    ...this.embeddedFilterFields(),
+  ]);
 
   constructor() {
     // keep the config object updated in-place while using signals for the component
