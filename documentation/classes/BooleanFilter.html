@@ -995,8 +995,17 @@ export class BooleanFilter&lt;T extends Entity&gt; extends SelectableFilter&lt;T
           key: &quot;false&quot;,
           label:
             config.false ?? $localize&#x60;:Filter label default boolean true:No&#x60;,
+          // not &#x60;$in: [false, undefined]&#x60;: CouchDB (3.5.2) crashes with a
+          // &quot;function_clause&quot; 500 error on a Mango &#x60;$in&#x60; selector containing
+          // &#x60;null&#x60; whenever the query is forced to a specific &#x60;use_index&#x60;
+          // (as every sorted online-only list does) - &#x60;$eq&#x60;/&#x60;$exists&#x60; don&#x27;t
+          // trigger that bug.
           filter: {
-            [config.id]: { $in: [false, undefined] },
+            $or: [
+              { [config.id]: false },
+              { [config.id]: { $exists: false } },
+              { [config.id]: { $eq: null } },
+            ],
           } as DataFilter&lt;T&gt;,
         },
       ],

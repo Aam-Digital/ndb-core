@@ -557,19 +557,24 @@ export class FilterService {
         // e.g. { children: { $elemMatch: { $eq: &quot;Child:some-id&quot; } } }
         this.assignValueToEntity(
           key,
-          [value[&quot;$elemMatch&quot;][&quot;$eq&quot;]],
+          value[&quot;$elemMatch&quot;][&quot;$eq&quot;],
           schema,
           entity,
+          true,
         );
       }
     });
   }
 
+  /**
+   * @param isElemMatch whether the value comes from an &#x60;$elemMatch&#x60; filter condition.
+   */
   private assignValueToEntity&lt;T extends Entity&gt;(
     key: string,
     value,
     schema: Map&lt;string, EntitySchemaField&gt;,
     newEntity: T,
+    isElemMatch &#x3D; false,
   ) {
     if (key.includes(&quot;.&quot;)) {
       // TODO only one level deep nesting is supported (also by ucast https://github.com/stalniy/ucast/issues/32)
@@ -581,6 +586,12 @@ export class FilterService {
       // not a schema property
       return;
     }
+    if (isElemMatch &amp;&amp; !property.isArray) {
+      // Filter options (e.g. of ConfigurableEnumFilter, EntityFilter) offer a plain equality and an
+      // &#x60;$elemMatch&#x60; variant side by side to also match data saved while the field had the other
+      // (single / multi select) setting. Only the variant fitting the current field applies here.
+      return;
+    }
 
     if (property?.dataType &#x3D;&#x3D;&#x3D; &quot;configurable-enum&quot;) {
       value &#x3D; this.parseConfigurableEnumValue(property, value);
@@ -588,7 +599,7 @@ export class FilterService {
     if (property?.dataType.includes(&quot;date&quot;)) {
       value &#x3D; moment(value).toDate();
     }
-    newEntity[key] &#x3D; value;
+    newEntity[key] &#x3D; property.isArray ? [value] : value;
   }
 
   private transformNestedKey(key: string, value): any[] {

@@ -191,6 +191,9 @@
                             <a href="#buildEntityBasePaths" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>buildEntityBasePaths</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#buildEnumValueFilter" title="src/app/core/filter/filters/configurableEnumFilter.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>buildEnumValueFilter</b>&nbsp;&nbsp;&nbsp;(src/.../configurableEnumFilter.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#buildExportColumnResolvers" title="src/app/core/export/download-service/download.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>buildExportColumnResolvers</b>&nbsp;&nbsp;&nbsp;(src/.../download.service.ts)</span></a>
                         </li>
                         <li>
@@ -4602,6 +4605,99 @@ may be undefined or null. In this event, the entities-array is returned as is.</
 
 
 
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/filter/filters/configurableEnumFilter.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildEnumValueFilter"></a>
+                    <span class="name">
+                        <span ><b>buildEnumValueFilter</b></span>
+                        <a href="#buildEnumValueFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>buildEnumValueFilter&lt;T extends Entity&gt;(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, enumValueId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T extends Entity</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Match records holding the given enum value, whether stored as a single value
+or inside an array (multi-select / <code>isArray</code> field).</p>
+<p>Always both variants are matched, independent of the field&#39;s current <code>isArray</code>
+setting, because that can be toggled in the admin UI while existing records
+still hold values in the previous shape (same approach as <code>EntityFilter</code>).
+A plain equality selector alone does not match array values in CouchDB&#39;s Mango
+<code>_find</code> (unlike client-side, where ucast treats it as &quot;array contains&quot;), so
+<code>$elemMatch</code> is needed for online-only mode (#4406).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>enumValueId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
         </tbody>
     </table>
 </section>

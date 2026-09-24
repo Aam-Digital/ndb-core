@@ -537,6 +537,12 @@ export abstract class EntitiesTableDataSource&lt;
   };
 
   /**
+   * Incremented whenever a new configuration triggers loading of new data.
+   * This allows stale requests to be detected.
+   */
+  protected loadGeneration &#x3D; 0;
+
+  /**
    * Request a (re)load of the records for the current config/filter/sort/page.
    *
    * All the triggers that fire while a view initializes are debounced into a
@@ -561,11 +567,15 @@ export abstract class EntitiesTableDataSource&lt;
   private executeLoad(): void {
     const reload &#x3D; this.pendingReload;
     this.pendingReload &#x3D; undefined;
+    const generation &#x3D; ++this.loadGeneration;
+    const isCurrentLoad &#x3D; () &#x3D;&gt; generation &#x3D;&#x3D;&#x3D; this.loadGeneration;
     const load &#x3D; this.loadRecords()
       .then((data) &#x3D;&gt; {
-        // a previous failure has now recovered
-        this.loadErrorSnackBarRef?.dismiss();
-        this.loadErrorSnackBarRef &#x3D; undefined;
+        if (isCurrentLoad()) {
+          // a previous failure has now recovered
+          this.loadErrorSnackBarRef?.dismiss();
+          this.loadErrorSnackBarRef &#x3D; undefined;
+        }
         return data;
       })
       .catch((err) &#x3D;&gt; {
@@ -574,10 +584,16 @@ export abstract class EntitiesTableDataSource&lt;
           err,
           this.loadRecordConfig(),
         );
-        this.showLoadErrorToast();
+        if (isCurrentLoad()) {
+          this.showLoadErrorToast();
+        }
         return [];
       })
-      .finally(() &#x3D;&gt; this.isLoading.set(false));
+      .finally(() &#x3D;&gt; {
+        if (isCurrentLoad()) {
+          this.isLoading.set(false);
+        }
+      });
     // let awaiters (e.g. bulk operations) adopt the actual load&#x27;s outcome
     reload?.resolve(load);
   }

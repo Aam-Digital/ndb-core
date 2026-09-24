@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -370,7 +370,10 @@ import { LongTextDatatype } from &quot;../../basic-datatypes/string/long-text.da
 import { DateFilter } from &quot;../filters/dateFilter&quot;;
 import { StringFilter } from &quot;../filters/stringFilter&quot;;
 import { BooleanFilter } from &quot;../filters/booleanFilter&quot;;
-import { ConfigurableEnumFilter } from &quot;../filters/configurableEnumFilter&quot;;
+import {
+  buildEnumValueFilter,
+  ConfigurableEnumFilter,
+} from &quot;../filters/configurableEnumFilter&quot;;
 import { EntityFilter } from &quot;../filters/entityFilter&quot;;
 import { DynamicPlaceholderValueService } from &quot;app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service&quot;;
 import { todoDueStatusFilter } from &quot;../../../features/todos/add-default-todo-views&quot;;
@@ -443,7 +446,7 @@ export class FilterGeneratorService {
             key: &#x60;invalid:${invalidId}&#x60;,
             label: $localize&#x60;:filter option:[Invalid: ${invalidId}]&#x60;,
             isInvalid: true,
-            filter: { [filterConfig.id + &quot;.id&quot;]: invalidId } as DataFilter&lt;T&gt;,
+            filter: buildEnumValueFilter&lt;T&gt;(filterConfig.id, invalidId),
           }));
 
         const enumFilter &#x3D; new ConfigurableEnumFilter(

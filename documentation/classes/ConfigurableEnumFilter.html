@@ -1020,12 +1020,35 @@ export class ConfigurableEnumFilter&lt;
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
-        filter: { [name + &quot;.id&quot;]: enumValue.id } as DataFilter&lt;T&gt;,
+        filter: buildEnumValueFilter&lt;T&gt;(name, enumValue.id),
       })),
       ...invalidOptions,
     ];
     super(name, options, label, singleSelectOnly);
   }
+}
+
+/**
+ * Match records holding the given enum value, whether stored as a single value
+ * or inside an array (multi-select / &#x60;isArray&#x60; field).
+ *
+ * Always both variants are matched, independent of the field&#x27;s current &#x60;isArray&#x60;
+ * setting, because that can be toggled in the admin UI while existing records
+ * still hold values in the previous shape (same approach as &#x60;EntityFilter&#x60;).
+ * A plain equality selector alone does not match array values in CouchDB&#x27;s Mango
+ * &#x60;_find&#x60; (unlike client-side, where ucast treats it as &quot;array contains&quot;), so
+ * &#x60;$elemMatch&#x60; is needed for online-only mode (#4406).
+ */
+export function buildEnumValueFilter&lt;T extends Entity&gt;(
+  name: string,
+  enumValueId: string,
+): DataFilter&lt;T&gt; {
+  return {
+    $or: [
+      { [name + &quot;.id&quot;]: enumValueId },
+      { [name + &quot;.id&quot;]: { $elemMatch: { $eq: enumValueId } } },
+    ],
+  } as DataFilter&lt;T&gt;;
 }
 </code></pre>
     </div>
