@@ -98,10 +98,6 @@ describe("EditEntityComponent", () => {
     );
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   function testMultiFlag(
     formFieldConfig: Partial<FormFieldConfig>,
     expectedMulti: boolean,
@@ -305,6 +301,23 @@ describe("EditEntityComponent", () => {
     expect(component.availableEntitiesResource.value()).toEqual(
       expect.arrayContaining([...test1Entities, test2Entities[0]]),
     );
+  });
+
+  it("should ignore a value that is not an entity id", async () => {
+    // e.g. a misconfigured inherited default value can put a whole object here
+    const warnSpy = vi.spyOn(Logging, "warn");
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    component
+      .control()
+      .setValue([{ id: "SOME_OPTION", label: "Some option" } as any]);
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+
+    expect(component.availableEntitiesResource.error()).toBeUndefined();
+    expect(component.availableEntitiesResource.value()).toEqual(
+      expect.arrayContaining(test1Entities),
+    );
+    expect(warnSpy).toHaveBeenCalled();
   });
 
   it("should expose one create option per entity type when multiple types are configured", () => {

@@ -46,10 +46,6 @@ describe("EditPrefilledValuesComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create the component", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should remove a field from prefilled values", () => {
     component.prefilledValues.push(
       new FormBuilder().group({

@@ -57,10 +57,6 @@ describe("EntitySpecialLoaderService", () => {
     service = TestBed.inject(EntitySpecialLoaderService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should load via ChildrenService", async () => {
     const testData = [new TestEntity()];
     mockChildrenService.getChildren.mockResolvedValue(testData);

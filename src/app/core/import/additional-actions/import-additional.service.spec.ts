@@ -49,6 +49,12 @@ describe("ImportAdditionalService", () => {
   @DatabaseEntity("GroupEntity")
   class GroupEntity extends Entity {}
 
+  @DatabaseEntity("OtherGroupEntity")
+  class OtherGroupEntity extends Entity {}
+
+  @DatabaseEntity("YetAnotherGroupEntity")
+  class YetAnotherGroupEntity extends Entity {}
+
   @DatabaseEntity("RelationshipEntity")
   class RelationshipEntity extends Entity {
     @DatabaseField({
@@ -64,6 +70,16 @@ describe("ImportAdditionalService", () => {
     // a config where the referenced type was renamed or removed leaves such a dangling reference behind
     @DatabaseField({ dataType: "entity", additional: "RemovedEntity" })
     removedGroup: string;
+
+    // a relationship field allowing several target record types: `additional` is an array
+    @DatabaseField({
+      dataType: "entity",
+      additional: [
+        OtherGroupEntity.ENTITY_TYPE,
+        YetAnotherGroupEntity.ENTITY_TYPE,
+      ],
+    })
+    groupOrOther: string;
   }
 
   beforeEach(async () => {
@@ -106,6 +122,18 @@ describe("ImportAdditionalService", () => {
         targetType: GroupEntity.ENTITY_TYPE,
         expertOnly: false,
       },
+      {
+        sourceType: ImportedEntity.ENTITY_TYPE,
+        mode: "indirect",
+        relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
+        relationshipProperty: "participant",
+        relationshipTargetProperty: "groupOrOther",
+        targetType: [
+          OtherGroupEntity.ENTITY_TYPE,
+          YetAnotherGroupEntity.ENTITY_TYPE,
+        ],
+        expertOnly: false,
+      },
       // the action for RelationshipEntity.removedGroup is omitted because "RemovedEntity" is not registered
     ]);
   });
@@ -133,6 +161,23 @@ describe("ImportAdditionalService", () => {
         relationshipProperty: "participant",
         relationshipTargetProperty: "group",
         targetType: GroupEntity.ENTITY_TYPE,
+      }),
+    ]);
+  });
+
+  it("should get actions linking imported data to a target type referenced via a multi-type relationship field", async () => {
+    const actual = service.getActionsLinkingTo(OtherGroupEntity.ENTITY_TYPE);
+    expect(actual).toEqual([
+      expect.objectContaining({
+        sourceType: ImportedEntity.ENTITY_TYPE,
+        mode: "indirect",
+        relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
+        relationshipProperty: "participant",
+        relationshipTargetProperty: "groupOrOther",
+        targetType: [
+          OtherGroupEntity.ENTITY_TYPE,
+          YetAnotherGroupEntity.ENTITY_TYPE,
+        ],
       }),
     ]);
   });

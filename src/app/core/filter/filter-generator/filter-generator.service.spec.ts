@@ -95,10 +95,6 @@ describe("FilterGeneratorService", () => {
     await TestBed.inject(ConfigurableEnumService).preLoadEnums();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should create a boolean filter", async () => {
     @DatabaseEntity("BooleanFilterTestEntity")
     class BooleanFilterTestEntity extends Entity {}

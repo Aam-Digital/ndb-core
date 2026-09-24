@@ -77,10 +77,6 @@ describe("LocalPermissionEnforcerService", () => {
     );
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should write the users relevant permissions to local storage", async () => {
     vi.useFakeTimers();
     try {

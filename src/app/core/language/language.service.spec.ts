@@ -48,10 +48,6 @@ describe("LanguageService", () => {
     window.localStorage.removeItem(LANGUAGE_LOCAL_STORAGE_KEY);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should return the current locale", () => {
     expect(service.getCurrentLocale()).toBe("en-US");
   });
@@ -81,5 +77,13 @@ describe("LanguageService", () => {
     service.switchLocale("de");
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
     expect(reloadSpy).toHaveBeenCalled();
+  });
+
+  it("should not store a locale that is not a string", () => {
+    service.initDefaultLanguage();
+    languageSubject.next({ id: { id: "de", label: "de" } as any, label: "de" });
+
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(null);
+    expect(reloadSpy).not.toHaveBeenCalled();
   });
 });

@@ -48,6 +48,31 @@ const TOKEN_REFRESH_RETRY_DELAYS_MS = [2_000, 5_000];
 const TOKEN_MIN_VALIDITY_SECONDS = 30;
 
 /**
+ * What a failed Keycloak operation can say about itself beyond its message.
+ *
+ * `keycloak-js` reports every rejected response as
+ * `Server responded with an invalid status.` and attaches the whole `Response`
+ * as `NetworkError.response` rather than lifting the status out of it - so the
+ * report names neither which status it was nor which endpoint refused, and the
+ * error cannot be told apart from any other by reading it.
+ *
+ * Passed as log context rather than interpolated into the message, so that all
+ * occurrences stay one issue in remote monitoring (see `core/logging/README.md`)
+ * while the status is one click away in the event's data.
+ */
+function keycloakFailureContext(err: any): Record<string, unknown> {
+  const status = err?.response?.status;
+  if (typeof status !== "number") {
+    // the library also rejects for reasons that never reached the server
+    return { responseStatus: "none" };
+  }
+  return {
+    responseStatus: status,
+    responseStatusText: err.response.statusText,
+  };
+}
+
+/**
  * Check whether an error is a retryable network/connectivity error,
  * including keycloak-specific transient failures.
  */
@@ -95,7 +120,11 @@ export class KeycloakAuthService {
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
-        Logging.debug("Keycloak updateToken failed (offline/unavailable)", err);
+        Logging.debug(
+          "Keycloak updateToken failed (offline/unavailable)",
+          err,
+          keycloakFailureContext(err),
+        );
         throw new RemoteLoginNotAvailableError(err);
       }
       throw err;
@@ -174,10 +203,14 @@ export class KeycloakAuthService {
       );
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
-        Logging.debug("Keycloak init failed (offline/unavailable)", err);
+        Logging.debug(
+          "Keycloak init failed (offline/unavailable)",
+          err,
+          keycloakFailureContext(err),
+        );
         err = new RemoteLoginNotAvailableError(err);
       } else {
-        Logging.error("Keycloak init failed", err);
+        Logging.error("Keycloak init failed", err, keycloakFailureContext(err));
       }
 
       this.initKeycloak.cache.clear();

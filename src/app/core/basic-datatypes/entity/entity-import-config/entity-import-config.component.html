@@ -12,14 +12,21 @@
   <div class="flex-row gap-regular align-center">
     <mat-form-field class="margin-left-small">
       <mat-label i18n="import - entity - match by property label">
-        Match by {{ referencedEntity()?.label }} property
+        Match by {{ referencedEntityLabel() }} property
       </mat-label>
       <mat-select
         [ngModel]="selectedRefField()"
         (ngModelChange)="onRefFieldChange($event)"
       >
         @for (prop of availableProperties(); track prop.property) {
-          <mat-option [value]="prop.property">{{ prop.label }}</mat-option>
+          <mat-option [value]="prop.property">
+            {{ prop.label }}
+            @if (prop.typeHint) {
+              <span class="hint-text margin-left-small">{{
+                prop.typeHint
+              }}</span>
+            }
+          </mat-option>
         }
       </mat-select>
     </mat-form-field>

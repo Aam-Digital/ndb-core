@@ -34,10 +34,6 @@ describe("NotesRelatedToEntityComponent", () => {
       originalNoteSchema_relatedEntities;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should not filter out notes linked to a non-Child entity through relatedEntities", async () => {
     // the loader returns notes related through any of the linking properties,
     // so the display filter must not narrow this down to a single property (#4330)

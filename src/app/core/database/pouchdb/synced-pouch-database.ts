@@ -276,13 +276,14 @@ export class SyncedPouchDatabase extends PouchDatabase {
         if (this.isDocumentWriteError(err)) {
           Logging.warn(
             `sync failed: document write error (possible oversized document)`,
-            { db: this.dbName, lastSyncedBatch: lastSyncedDocIds },
+            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
             err,
           );
         } else if (isKnownMultiTabDatabaseCorruption(err)) {
           this.corruptionRecovery?.handleKnownMultiTabCorruption(
             err,
-            `sync failed [${this.dbName}]: likely multi-tab IndexedDB corruption. Last synced batch: [${lastSyncedDocIds.join(", ")}]`,
+            "sync failed: likely multi-tab IndexedDB corruption",
+            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
           );
         } else if (
           this.isSyncConnectivityError(err) ||
@@ -312,7 +313,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
     } catch (err) {
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
-        `put failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+        "put failed: likely multi-tab IndexedDB corruption",
+        { db: this.dbName },
       );
       throw err;
     }
@@ -325,7 +327,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
     return super.query(fun, options).catch((err) => {
       this.corruptionRecovery?.handleKnownMultiTabCorruption(
         err,
-        `query failed [${this.dbName}]: likely multi-tab IndexedDB corruption`,
+        "query failed: likely multi-tab IndexedDB corruption",
+        { db: this.dbName },
       );
       throw err;
     });
@@ -500,6 +503,20 @@ export class SyncedPouchDatabase extends PouchDatabase {
 }
 
 type SyncResult = PouchDB.Replication.SyncResultComplete<any>;
+
+/**
+ * What of the last synced batch can be reported when a sync fails right after
+ * it: how much was in flight and which record types, but never the document
+ * ids themselves - those identify records and have no place in remote
+ * monitoring (see #4174), while as part of a message they would also open a
+ * separate issue per batch.
+ */
+function lastSyncedBatchContext(docIds: string[]): Record<string, unknown> {
+  return {
+    lastSyncedBatchSize: docIds.length,
+    lastSyncedEntityTypes: [...new Set(docIds.map((id) => id.split(":")[0]))],
+  };
+}
 
 /** Thrown internally when a sync is cancelled for making no progress. */
 class SyncStalledError extends Error {

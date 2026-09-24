@@ -59,10 +59,6 @@ describe("BasicAutocompleteComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should correctly show the autocomplete values", async () => {
     const school1 = TestEntity.create({ name: "Aaa" });
     const school2 = TestEntity.create({ name: "aab" });

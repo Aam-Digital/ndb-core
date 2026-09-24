@@ -42,10 +42,6 @@ describe("ConflictResolutionListComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should create database index for querying conflicts", async () => {
     await component.ngAfterViewInit();
 

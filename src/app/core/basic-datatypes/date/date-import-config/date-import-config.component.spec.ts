@@ -29,10 +29,6 @@ describe("DateImportConfigComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should mark the column as not configured until a date format is set", () => {
     fixture.componentRef.setInput("col", {
       column: "date",

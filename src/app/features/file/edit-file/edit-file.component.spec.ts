@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { HttpErrorResponse } from "@angular/common/http";
 import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -8,6 +9,7 @@ import { of, Subject } from "rxjs";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { Logging } from "../../../core/logging/logging.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
 import { FileService } from "../file.service";
@@ -53,10 +55,6 @@ describe("EditFileComponent", () => {
 
     fixture = TestBed.createComponent(EditFileComponent);
     component = fixture.componentInstance;
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should use acceptedFileTypes from field config", () => {
@@ -279,6 +277,42 @@ describe("EditFileComponent", () => {
           testProp: "old.file",
         }),
       );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should name the connection for an upload aborted mid-flight, without reporting it", async () => {
+    vi.useFakeTimers();
+    const loggingError = vi
+      .spyOn(Logging, "error")
+      .mockImplementation(() => {});
+    try {
+      setupComponent("old.file");
+      mockEntityMapper.load.mockResolvedValue(
+        Object.assign(new Entity(component.entity().getId()), {
+          _rev: "2",
+          testProp: "old.file",
+        }),
+      );
+      const subject = new Subject();
+      mockFileService.uploadFile.mockReturnValue(subject);
+      component.formControl.enable();
+
+      component.onFileSelected(file);
+      component.entity()[component.formFieldConfig().id] = file.name;
+      component.formControl.disable();
+
+      // a request that never reached the server, e.g. a mobile connection
+      // dropping mid-upload, arrives as status 0
+      subject.error(new HttpErrorResponse({ status: 0 }));
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(mockAlertService.addDanger).toHaveBeenCalledWith(
+        expect.stringContaining("connection"),
+      );
+      // a transient network abort is not a defect worth reporting
+      expect(loggingError).not.toHaveBeenCalled();
     } finally {
       vi.useRealTimers();
     }

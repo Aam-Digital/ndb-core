@@ -58,6 +58,10 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import {
+  ConditionEditorDialogComponent,
+  ConditionEditorDialogData,
+} from "app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -248,6 +252,7 @@ export class AdminEntityFieldComponent implements OnInit {
       showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
       generateIndex: [this.data.entitySchemaField.generateIndex],
       validators: [this.data.entitySchemaField.validators],
+      displayCondition: [this.data.entitySchemaField.displayCondition],
     });
     this.form = this.fb.group({
       id: this.fieldIdForm,
@@ -584,5 +589,22 @@ export class AdminEntityFieldComponent implements OnInit {
 
   resetToBaseFieldSettings() {
     this.dialogRef.close(this.fieldIdForm.getRawValue());
+  }
+
+  openDisplayConditionDialog() {
+    const dialogRef = this.dialog.open(ConditionEditorDialogComponent, {
+      data: {
+        entityConstructor: this.data.entityType,
+        conditions: this.schemaFieldsForm.get("displayCondition").value,
+        explanation: $localize`This field is shown only while the record matches...`,
+      } satisfies ConditionEditorDialogData,
+      width: "600px",
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // `undefined` means the dialog was cancelled, leave the condition unchanged
+      if (result === undefined) return;
+      this.schemaFieldsForm.get("displayCondition").setValue(result);
+    });
   }
 }

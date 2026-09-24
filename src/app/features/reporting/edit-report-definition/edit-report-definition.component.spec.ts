@@ -64,10 +64,6 @@ describe("EditReportDefinitionComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("uses the structured SQL editor for sql mode and the JSON editor otherwise", () => {
     expect(createWithMode("sql").isSql()).toBe(true);
     expect(createWithMode("reporting").isSql()).toBe(false);

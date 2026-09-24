@@ -69,10 +69,6 @@ describe("EditPhotoComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should show the image once it is selected", async () => {
     const mockedCanvas = {
       width: 0,

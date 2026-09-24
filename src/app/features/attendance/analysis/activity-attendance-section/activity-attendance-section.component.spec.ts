@@ -64,10 +64,6 @@ describe("ActivityAttendanceSectionComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should init recent records by default", () => {
     TestBed.tick();
 

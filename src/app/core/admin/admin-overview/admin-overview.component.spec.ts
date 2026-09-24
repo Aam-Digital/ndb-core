@@ -14,6 +14,7 @@ import { Entity } from "../../entity/model/entity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { JsonEditorService } from "../json-editor/json-editor.service";
 import { of } from "rxjs";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("AdminComponent", () => {
   let component: AdminOverviewComponent;
@@ -36,7 +37,7 @@ describe("AdminComponent", () => {
   const confirmationDialogMock = {
     getConfirmation: vi.fn(),
     getConfirmationWithKeyword: vi.fn(),
-    showProgressDialog: vi.fn().mockReturnValue({ close: vi.fn() }),
+    showProgressDialog: vi.fn().mockReturnValue(mockMatDialogRef()),
   };
   const mockJsonEditorService = {
     openJsonEditorDialog: vi.fn(),
@@ -95,10 +96,6 @@ describe("AdminComponent", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should call backup service for json export", async () => {
@@ -269,7 +266,7 @@ describe("AdminComponent", () => {
     vi.spyOn(TestBed.inject(ConfigService), "saveConfig")
       .mockResolvedValueOnce(null) // initial save while editing
       .mockRejectedValueOnce(new Error("not permitted")); // revert on undo
-    const progressDialogRef = { close: vi.fn() };
+    const progressDialogRef = mockMatDialogRef();
     confirmationDialogMock.showProgressDialog.mockReturnValue(
       progressDialogRef,
     );

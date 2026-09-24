@@ -8,6 +8,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import type { Mock } from "vitest";
+import { mockMatDialog } from "#src/app/utils/test-utils/dialog-mocks";
 
 describe("AdminMenuItemComponent", () => {
   let component: AdminMenuItemComponent;
@@ -15,9 +16,7 @@ describe("AdminMenuItemComponent", () => {
   let mockDialog: { open: Mock };
 
   beforeEach(async () => {
-    mockDialog = {
-      open: vi.fn().mockReturnValue({ afterClosed: () => of(undefined) }),
-    };
+    mockDialog = mockMatDialog();
     await TestBed.configureTestingModule({
       imports: [
         AdminMenuItemComponent,
@@ -43,10 +42,6 @@ describe("AdminMenuItemComponent", () => {
       subMenu: [],
     } as MenuItemForAdminUi);
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should show warning when item has no link and no sub-items", () => {

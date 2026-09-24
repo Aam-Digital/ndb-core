@@ -61,10 +61,6 @@ describe("AdminEntityDetailsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should add new Default Section to config", () => {
     const defaultConfig = {
       title: "New Section",

@@ -21,10 +21,6 @@ describe("ConditionalColorConfigComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should detect selected field from existing value", () => {
     const testMappings: ColorMapping[] = [
       { condition: { $or: [{ status: "active" }] }, color: "#00FF00" },

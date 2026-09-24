@@ -61,10 +61,6 @@ describe("LinkExternalProfileDialogComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should automatically search upon init, update loading status and show results", async () => {
     vi.useFakeTimers();
     try {

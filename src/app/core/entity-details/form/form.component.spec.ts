@@ -35,10 +35,6 @@ describe("FormComponent", () => {
     }
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should change the creating state", () => {
     expect(component.creatingNew()).toBe(false);
 

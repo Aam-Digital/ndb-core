@@ -13,6 +13,7 @@ import { KeycloakUserDto } from "./keycloak-user-dto";
 import { Logging } from "../../logging/logging.service";
 import { Role, UserAccount } from "./user-account";
 import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
 
 /**
  * Admin functionalities to manage users in Keycloak server.
@@ -37,6 +38,16 @@ export class KeycloakAdminService extends UserAdminService {
   ];
 
   private readonly keycloakUrl: string;
+
+  /**
+   * Whether this instance runs without a real authentication server (demo and
+   * preview deployments). Requests would go to the placeholder URL shipped in
+   * `assets/keycloak.json`, which points at localhost - browsers then ask the
+   * user for permission to access services on their device.
+   */
+  private hasNoAuthServer(): boolean {
+    return environment.session_type === SessionType.mock;
+  }
 
   constructor() {
     super();
@@ -164,7 +175,19 @@ export class KeycloakAdminService extends UserAdminService {
     }
 
     // first update the user object, then run other actions
-    const newUser = { ...currentUser, ...updatedUser }; // make sure we don't lose unchanged properties
+    const newUser: Record<string, unknown> = {
+      ...currentUser,
+      ...updatedUser, // make sure we don't lose unchanged properties
+      // merge rather than let `updatedUser.attributes` replace the whole map,
+      // which would drop every other Keycloak attribute the user has
+      attributes: { ...currentUser.attributes, ...updatedUser.attributes },
+    };
+    Object.keys(newUser).forEach((key) => {
+      if (newUser[key] === undefined) {
+        delete newUser[key];
+      }
+    });
+
     return this.http
       .put(`${this.keycloakUrl}/users/${currentUser.id}`, newUser)
       .pipe(concatWith(...actions));
@@ -280,6 +303,10 @@ export class KeycloakAdminService extends UserAdminService {
   }
 
   getAllRoles(): Observable<Role[]> {
+    if (this.hasNoAuthServer()) {
+      return of([]);
+    }
+
     return this.http
       .get<Role[]>(`${this.keycloakUrl}/roles`)
       .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));

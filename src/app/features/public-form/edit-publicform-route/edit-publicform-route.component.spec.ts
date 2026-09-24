@@ -23,10 +23,6 @@ describe("EditPublicformRouteComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should be valid for lowercase letters, digits, hyphens and underscores", () => {
     const formControl = component.formControl;
 

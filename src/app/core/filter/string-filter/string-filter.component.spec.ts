@@ -27,10 +27,6 @@ describe("StringFilterComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should not emit on every keystroke but coalesce into a single emit after the debounce", () => {
     vi.useFakeTimers();
     component.textControl.setValue("a");

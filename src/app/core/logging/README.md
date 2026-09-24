@@ -85,21 +85,47 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    (`Failed to load configuration. (caused by DatabaseException: Unknown kid)`): several issues would
    otherwise share one title and could only be told apart by opening each of them.
 
+   This also applies when a framework re-throws such an error as a generic one — Angular does that
+   for anything raised inside a `resource()` loader, wrapping it in an error that copies the message
+   and reports the `"Error"` name a subclass inherits. A wrapper that only repeats its cause's
+   message contributes nothing but its own stack trace, so the event is grouped by the recognized
+   error underneath it (`rewrappedCauseGroupedError`) and lands in the same issue as the unwrapped
+   one. A wrapper with a message of its own (`Failed to load configuration from the database.`) says
+   more about the failure than its cause does, and stays what the event is grouped by.
+
 2. **Network failures** — anything whose chain contains a connectivity error (see
    `isConnectivityErrorMessage`) is collected into the single `network-error` issue. The browser
    raises these at whatever point a request happened to be made, so by stack trace they are an
    open-ended stream of near-identical issues with the same (non-)answer. They are still reported
    rather than dropped, because a server outage surfaces exactly this way — as one issue, whose
-   number of affected users and sessions is the signal (not its event count, see the cap below).
+   number of affected sessions and deployments is the signal (not its event count, see the cap
+   below).
    The browsers' differing wordings would make the merged issue's title flip-flop, so it is
    replaced by a stable one and kept as the searchable `network_error` tag.
+
+   The status counts as well as the message: an event whose error carries a gateway status
+   (`0`/`502`/`503`/`504`) is a request that never reached the backend, whatever the message says.
+   That status is read from `err.status` or, where a library hands on the whole `fetch` Response
+   instead of lifting the status out of it, from `err.response.status` — which is how `keycloak-js`
+   reports every rejected response, all of them worded `Server responded with an invalid status.`
+
+   A chunk that fails to load counts as one of these: a lazily loaded part of the app not arriving
+   means either that the device is offline or that a deployment replaced the chunk the running app
+   asks for, and the error says neither which of the two it was nor anything actionable about the
+   chunk. Without this they arrive as one issue per browser wording (Chrome's "Failed to fetch
+   dynamically imported module", Firefox's "error loading …", Safari's "Importing a module script
+   failed") and per chunk URL.
 
    This runs _after_ case 1 on purpose: a `ConfigLoadError` caused by a failed request is about the
    config load, not about the network, and keeps its own issue.
 
 3. **Exceptions reported without a stack** (e.g. an `HttpErrorResponse`) — Sentry falls back to
    grouping those by message, so an id or url interpolated into it opens a new issue every time.
-   They are fingerprinted by type and normalized message instead.
+   They are fingerprinted by type and normalized message instead, and _reported_ under that same
+   normalized message (`reportNormalized`). Otherwise the issue list still shows the raw one: a row
+   per document id, or — where a library quotes a response body into the message, as PouchDB does
+   for a proxy error — a whole HTML error page pushing every other row off the screen. The raw
+   message stays available as the event's `originalError`.
 
 4. **Message-only events** (`Logging.warn(...)`) group by their normalized message, which enforces the
    "keep message strings static" rule above: a message that does interpolate variable data still
@@ -117,8 +143,14 @@ starves issues that merely share a cause: while a device is on a flaky connectio
 failure is the root cause of the config load, the permission rules, the sync and every file download
 alike, and whichever of them failed first would silence all the others.
 
-An issue's **event count is therefore not a measure of how often a problem occurs** — how many users
-and sessions it affects is.
+An issue's **event count is therefore not a measure of how often a problem occurs.** What to weigh
+instead is how many sessions it affects, how many deployments and releases it spans (the `url` and
+`release` tags), and whether it is still recurring.
+
+Not the number of affected _users_, which Sentry shows as 0 for every issue: reported events
+deliberately carry no user identity, as data minimization under the GDPR. Sentry's own session
+counting is anonymous and stays on, so "how many sessions" remains available; "how many users" is a
+question this project has chosen not to be able to answer.
 
 Values that go into a fingerprint are normalized (`fingerprintKey`): ids, URLs and numbers are masked,
 and punctuation and casing are dropped, so that occurrences of the same problem match even where a
@@ -136,6 +168,9 @@ a literal — an `Error` subclass otherwise inherits `"Error"` from `Error.proto
 fall out of this list, and the constructor name is minified. Both the dedicated classes
 (`RegistryLookupError`) and the plain errors that just set `error.name` (`ConfigLoadError`) do this.
 An `Error` subclass with neither a name nor a message is reported as `Error: No error message`.
+An exception that reaches Sentry with no type at all is listed as `<unknown>`, which says nothing in
+a list of issues and hides the message that would — so `enrichSentryEvent` falls back to the generic
+`"Error"` for those.
 
 Fingerprinting inverts the message rule stated above: once an error is fingerprinted its message _is_
 part of the grouping key, so whatever stays in it becomes a deliberate grouping dimension. Interpolate

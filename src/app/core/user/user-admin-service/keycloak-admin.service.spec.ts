@@ -1,14 +1,16 @@
 import { TestBed } from "@angular/core/testing";
+import { firstValueFrom } from "rxjs";
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { KeycloakAdminService } from "./keycloak-admin.service";
-import { environment } from "../../../../environments/environment.spec";
+import { environment } from "../../../../environments/environment";
 import { Role } from "./user-account";
 import { UserAdminApiError, UserAdminService } from "./user-admin.service";
 import { Logging } from "app/core/logging/logging.service";
 import { SessionSubject } from "../../session/auth/session-info";
+import { SessionType } from "../../session/session-type";
 
 describe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
@@ -18,6 +20,8 @@ describe("KeycloakAdminService", () => {
   const BASE_URL = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
 
   beforeEach(() => {
+    // the service only talks to the auth server outside of demo/mock mode
+    environment.session_type = SessionType.synced;
     sessionSubject = new SessionSubject();
     sessionSubject.next({
       id: "admin",
@@ -39,10 +43,7 @@ describe("KeycloakAdminService", () => {
 
   afterEach(() => {
     httpTestingController.verify();
-  });
-
-  it("should be created", () => {
-    expect(service).toBeTruthy();
+    environment.session_type = SessionType.mock;
   });
 
   it("should delete user", async () => {
@@ -198,6 +199,66 @@ describe("KeycloakAdminService", () => {
       .flush({});
   });
 
+  it("should preserve unrelated fields and merge attributes when updating only the linked profile", async () => {
+    // given
+    const mockUser = {
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+      attributes: { locale: ["en"] },
+    };
+
+    // when
+    service
+      .updateUser("test-id", { userEntityId: "User:new-entity-id" })
+      .subscribe((result) => {
+        expect(result).toEqual({ userUpdated: true });
+      });
+
+    // then
+    const reqGet = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqGet.request.method).toEqual("GET");
+    reqGet.flush(mockUser);
+
+    const reqPut = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqPut.request.method).toEqual("PUT");
+    expect(reqPut.request.body).toEqual({
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+      attributes: {
+        locale: ["en"],
+        exact_username: ["User:new-entity-id"],
+      },
+    });
+    reqPut.flush({});
+  });
+
+  it("should send enabled:false as an explicit value, not drop it as an unset key", async () => {
+    // given
+    const mockUser = {
+      id: "test-id",
+      email: "existing@example.com",
+      enabled: true,
+      emailVerified: true,
+    };
+
+    // when
+    service.updateUser("test-id", { enabled: false }).subscribe();
+
+    // then
+    const reqGet = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    reqGet.flush(mockUser);
+
+    const reqPut = httpTestingController.expectOne(`${BASE_URL}/users/test-id`);
+    expect(reqPut.request.body).toEqual(
+      expect.objectContaining({ enabled: false }),
+    );
+    reqPut.flush({});
+  });
+
   it("should handle error when updating user", async () => {
     // when
     service
@@ -236,6 +297,17 @@ describe("KeycloakAdminService", () => {
     const req = httpTestingController.expectOne(`${BASE_URL}/roles`);
     expect(req.request.method).toEqual("GET");
     req.flush(mockRoles);
+  });
+
+  it("should not contact the auth server without one, e.g. in a demo deployment", async () => {
+    // the placeholder auth server URL points at localhost, where a request
+    // would make the browser ask the user for local network access
+    environment.session_type = SessionType.mock;
+
+    const roles = await firstValueFrom(service.getAllRoles());
+
+    expect(roles).toEqual([]);
+    httpTestingController.expectNone(`${BASE_URL}/roles`);
   });
 
   it("should handle network error when server is unreachable", async () => {

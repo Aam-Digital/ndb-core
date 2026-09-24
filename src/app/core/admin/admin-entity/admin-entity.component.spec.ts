@@ -110,10 +110,6 @@ describe("AdminEntityComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should reset all entity schema changes on cancel", () => {
     // simulate schema changes done through the field config popup form
     AdminTestEntity.schema.set("testCancelField", { label: "New field" });

@@ -79,10 +79,6 @@ describe("FilterComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should have no filter selected when url params are empty", async () => {
     await setComponentInputs({
       entityType: Note,

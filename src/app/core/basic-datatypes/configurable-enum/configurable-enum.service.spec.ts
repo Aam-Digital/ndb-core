@@ -24,10 +24,6 @@ describe("ConfigurableEnumService", () => {
     await service.preLoadEnums();
   });
 
-  it("should create", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should create a new enum if it cannot be found", () => {
     const newEnum = service.getEnum("new-id");
 

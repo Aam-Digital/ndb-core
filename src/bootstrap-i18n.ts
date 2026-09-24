@@ -1,5 +1,6 @@
 import {
   DEFAULT_LANGUAGE,
+  isValidLocale,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./app/core/language/language-statics";
 import { loadTranslations } from "@angular/localize";
@@ -12,10 +13,21 @@ import { Logging } from "#src/app/core/logging/logging.service";
  * @param locale (Optional) overwrite the locale to use (otherwise loaded from local storage)
  */
 export async function initLanguage(locale?: string): Promise<void> {
-  locale =
-    locale ??
-    localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ??
-    DEFAULT_LANGUAGE;
+  const storedLocale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
+  locale = locale ?? storedLocale ?? DEFAULT_LANGUAGE;
+
+  if (!isValidLocale(locale)) {
+    Logging.warn(
+      "Discarding an invalid locale, falling back to the default language.",
+      { locale },
+    );
+    if (storedLocale !== null && !isValidLocale(storedLocale)) {
+      // otherwise the app would keep failing on every reload
+      localStorage.removeItem(LANGUAGE_LOCAL_STORAGE_KEY);
+    }
+    return;
+  }
+
   if (locale === DEFAULT_LANGUAGE) {
     return;
   }
@@ -63,7 +75,10 @@ async function fetchTranslations(
   }
 
   Logging.warn(
-    `Could not load translations for locale '${locale}', falling back to default language.`,
+    // the locale is context, not part of the message: interpolated it would
+    // open a separate remote-monitoring issue per locale (see logging/README.md)
+    "Could not load translations for the requested locale, falling back to the default language.",
+    { locale },
   );
   return undefined;
 }

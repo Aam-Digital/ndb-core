@@ -30,13 +30,26 @@ Override any of them (e.g. via `docker run -e`, a `docker-compose.yml`
 `environment:` block, or a Helm chart's pod spec) to change that behavior;
 anything left unset keeps the default below.
 
-| Variable                                             | Default                               | Purpose                                                                                                    |
-| ---------------------------------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `PORT`                                               | `8080`                                | Port nginx listens on inside the container.                                                                |
-| `COUCHDB_URL`                                        | `http://localhost`                    | Proxy target for the app's `/db` path.                                                                     |
-| `QUERY_URL`                                          | `http://localhost:3000`               | Proxy target for the app's `/api` path (and the deprecated `/query` alias).                                |
-| `NOMINATIM_URL`                                      | `https://nominatim.openstreetmap.org` | Proxy target for the app's `/nominatim` path, used for geocoding.                                          |
-| `CSP`, `CSP_REPORT_URI`, `CSP_EXTRA_FRAME_ANCESTORS` | see below                             | Content Security Policy headers — see [Content Security Policy (CSP)](#content-security-policy-csp) below. |
+| Variable                                             | Default                               | Purpose                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`                                               | `8080`                                | Port nginx listens on inside the container.                                                                                                                                                                                                                                                                               |
+| `COUCHDB_URL`                                        | `http://localhost`                    | Proxy target for the app's `/db` path — the "database entrypoint" (CouchDB directly, or whatever a deployment puts in front of it, e.g. replication-backend). See the constraint on resolvable hostnames below.                                                                                                           |
+| `COUCHDB_DIRECT_URL`                                 | same as `COUCHDB_URL`                 | Proxy target for the app's `/db/couchdb` path — always raw CouchDB, for direct admin access, bypassing whatever `COUCHDB_URL` points at. Set this explicitly whenever `COUCHDB_URL` is not CouchDB itself, or `/db/couchdb` silently becomes just another alias for `/db`.                                                |
+| `KEYCLOAK_URL`, `KEYCLOAK_REALM`                     | unset                                 | Set **both** to generate `assets/keycloak.json` at container start, so a deployment no longer has to mount that file itself. Leaving them unset serves the file as shipped in the image (this repo's dummy dev realm, or whatever a deployment mounts over it) unchanged.                                                 |
+| `API_URL`                                            | `http://localhost:3000`               | Proxy target for the app's `/api` path — the [aam-backend-service](https://github.com/Aam-Digital/aam-services).                                                                                                                                                                                                          |
+| `QUERY_URL`                                          | unset                                 | **Deprecated**, renamed to `API_URL` — still honoured (and still serving the deprecated `/query` path) so that a deployment pulling a newer image without updating its config keeps working. Where both are set explicitly, `API_URL` wins, so adding it is enough to migrate. Will be removed in the next major release. |
+| `NOMINATIM_URL`                                      | `https://nominatim.openstreetmap.org` | Proxy target for the app's `/nominatim` path, used for geocoding.                                                                                                                                                                                                                                                         |
+| `CSP`, `CSP_REPORT_URI`, `CSP_EXTRA_FRAME_ANCESTORS` | see below                             | Content Security Policy headers — see [Content Security Policy (CSP)](#content-security-policy-csp) below.                                                                                                                                                                                                                |
+
+The app's `/query` path is a deprecated alias of `/api` and proxies to the same
+target. It is kept only for callers that have not migrated yet and will be
+removed alongside `QUERY_URL`; use `/api` for anything new.
+
+`COUCHDB_URL` and `COUCHDB_DIRECT_URL` must be resolvable **without relying on
+a DNS search list** (see `default.conf` for why). In Kubernetes, use the
+fully-qualified service name (e.g. `couchdb.<namespace>.svc.cluster.local`),
+not the bare service name — a plain docker-compose service name works fine as
+is.
 
 ## How does the release process work?
 

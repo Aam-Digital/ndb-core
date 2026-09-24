@@ -64,10 +64,6 @@ describe("AdminMenuItemDetailsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should allow saving without a link when noLinkMode is active", () => {
     component.item = { label: "Section", icon: "folder" } as MenuItem;
     fixture.detectChanges();

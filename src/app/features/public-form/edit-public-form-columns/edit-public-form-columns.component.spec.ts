@@ -81,10 +81,6 @@ describe("EditPublicFormColumnsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create the component", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("should migrate old columns config to new columns config", () => {
     const control = formGroup.get("testProperty") as FormControl;
     control.setValue(oldColumnConfig as any);

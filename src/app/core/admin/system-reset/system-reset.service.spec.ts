@@ -26,6 +26,7 @@ import "../../basic-datatypes/configurable-enum/configurable-enum";
 import "../../site-settings/site-settings";
 import "../../import/import-metadata";
 import "#src/app/features/reporting/report-config";
+import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
 
 /** a record type that login accounts can be linked to (i.e. holding "user profiles") */
 @DatabaseEntity("SystemResetUserProfileTestEntity")
@@ -57,7 +58,7 @@ describe("SystemResetService", () => {
   const confirmationDialogMock = {
     getConfirmation: vi.fn(),
     getConfirmationWithKeyword: vi.fn(),
-    showProgressDialog: vi.fn().mockReturnValue({ close: vi.fn() }),
+    showProgressDialog: vi.fn().mockReturnValue(mockMatDialogRef()),
   };
 
   /** confirm every dialog, as the user does before an action actually runs */
@@ -73,9 +74,9 @@ describe("SystemResetService", () => {
     // read the real database, so that the restore point reflects when it was taken
     mockBackupService.getDatabaseExport.mockImplementation(() => db.getAll());
     mockSnackBar.open.mockReturnValue(mockSnackBarRef);
-    confirmationDialogMock.showProgressDialog.mockReturnValue({
-      close: vi.fn(),
-    });
+    confirmationDialogMock.showProgressDialog.mockReturnValue(
+      mockMatDialogRef(),
+    );
 
     db = new MemoryPouchDatabase("unit-test-db", new SyncStateSubject());
     db.init();

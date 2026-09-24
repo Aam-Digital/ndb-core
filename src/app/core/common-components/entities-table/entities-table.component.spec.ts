@@ -6,7 +6,7 @@ import moment from "moment/moment";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { toFormFieldConfig } from "../entity-form/FormConfig";
+import { FormFieldConfig, toFormFieldConfig } from "../entity-form/FormConfig";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { NOT_ARCHIVED_FILTER } from "../../filter/not-archived-filter";
@@ -19,6 +19,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { Logging } from "../../logging/logging.service";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -79,10 +80,6 @@ describe("EntitiesTableComponent", () => {
       TestBed.inject(InMemoryDataSource),
     );
     fixture.detectChanges();
-  });
-
-  it("should create", () => {
-    expect(component).toBeTruthy();
   });
 
   it("should apply default sort on first column and order dates descending", () => {
@@ -254,6 +251,42 @@ describe("EntitiesTableComponent", () => {
     expect(component.selectedRecords()).toEqual([]);
   });
 
+  it("should reset the selection if the free-text filter changes", () => {
+    const entities = [1, 2, 3].map(TestEntity.create);
+    fixture.componentRef.setInput("selectable", true);
+    component.recordsDataSource().allRecords.set(entities);
+    fixture.detectChanges();
+
+    component.selectedRecords.set(entities);
+    component.recordsDataSource().filter = "1";
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+  });
+
+  it("should only select the free-text filtered records when selecting all", () => {
+    fixture.componentRef.setInput("selectable", true);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", ["name"]);
+    fixture.detectChanges();
+
+    const matching = TestEntity.create("Matching");
+    const other = TestEntity.create("Other");
+    component.recordsDataSource().allRecords.set([matching, other]);
+    component.recordsDataSource().filter = "matching";
+    fixture.detectChanges();
+
+    const selectAllCheckbox = fixture.nativeElement.querySelector(
+      "th[mat-header-cell] mat-checkbox input",
+    );
+    selectAllCheckbox.click();
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([matching]);
+    expect(selectAllCheckbox.checked).toBe(true);
+  });
+
   it("should filter data based on filter definition", () => {
     const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
@@ -374,6 +407,74 @@ describe("EntitiesTableComponent", () => {
     expect(
       component._columns().find((c) => c.id === customField.id).label,
     ).toBe(customField.label);
+  });
+
+  it("should skip an incompletely configured column instead of failing the whole table", () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    mockFormService.extendFormFieldConfig.mockImplementation((c) => {
+      if (c?.id === "broken") {
+        throw new Error("field has no id");
+      }
+      return toFormFieldConfig(c);
+    });
+
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("customColumns", [
+      { id: "name" },
+      { id: "broken" },
+      { id: "other" },
+    ]);
+    fixture.detectChanges();
+
+    expect(component._customColumns().map((c) => c.id)).toEqual([
+      "name",
+      "other",
+    ]);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should skip a malformed customColumns entry when no entityType is set", () => {
+    // toFormFieldConfig (the path used without an entityType) never throws,
+    // so a null/malformed entry needs an explicit id check, not just a try/catch
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    fixture.componentRef.setInput("customColumns", [
+      { id: "a" },
+      null as unknown as FormFieldConfig,
+      { id: "b" },
+    ]);
+    fixture.detectChanges();
+
+    expect(component._customColumns().map((c) => c.id)).toEqual(["a", "b"]);
+    expect(component._columnsToDisplay()).toEqual(["a", "b"]);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should skip a null/non-string entry in columnsToDisplay instead of failing the whole table", () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", [
+      "name",
+      null as unknown as string,
+      "other",
+    ]);
+    fixture.detectChanges();
+
+    expect(component._columnsToDisplay()).toEqual(["name", "other"]);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should skip a dangling column id with no matching column instead of failing the whole table", () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", [
+      "name",
+      "field-that-was-deleted",
+      "other",
+    ]);
+    fixture.detectChanges();
+
+    expect(component._columnsToDisplay()).toEqual(["name", "other"]);
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   it("should set noSorting if dataType cannot be sorted properly", () => {

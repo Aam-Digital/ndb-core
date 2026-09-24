@@ -31,10 +31,6 @@ describe("TodoService", () => {
     service = TestBed.inject(TodoService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   describe("getTodosFor", () => {
     it("should query the index of the given relation property", async () => {
       const entity = new TestEntity("1");
