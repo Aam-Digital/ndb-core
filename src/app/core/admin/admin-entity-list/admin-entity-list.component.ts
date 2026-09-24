@@ -1,7 +1,9 @@
 import {
   Component,
   input,
+  computed,
   effect,
+  inject,
   linkedSignal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -17,6 +19,13 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import {
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+} from "../../entity/schema/embedded-schema-field.util";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +42,8 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   styleUrls: ["./admin-entity-list.component.scss"],
 })
 export class AdminEntityListComponent {
+  private schemaService = inject(EntitySchemaService);
+
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
 
@@ -51,6 +62,30 @@ export class AdminEntityListComponent {
         ],
       },
   );
+
+  /**
+   * Properties nested inside embedded fields (e.g. "childrenAttendance.participant"),
+   * offered as additional filter options - but only for those embedded fields that are
+   * themselves currently displayed as a column, mirroring how a custom (non-schema) column
+   * is only offered as a filter option once it has been added as a column (see
+   * `filterAdditionalFields`).
+   */
+  private embeddedFilterFields = computed<ColumnConfig[]>(() => {
+    const displayedColumnIds = new Set(
+      this.columnGroups().groups.flatMap((g) => g.columns),
+    );
+    return getEmbeddedFieldRefs(this.schemaService, this.entityConstructor())
+      .filter((ref) => displayedColumnIds.has(ref.outerProp))
+      .map((ref) => ({
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      }));
+  });
+
+  filterAdditionalFields = computed<ColumnConfig[]>(() => [
+    ...(this.config().columns ?? []),
+    ...this.embeddedFilterFields(),
+  ]);
 
   constructor() {
     // keep the config object updated in-place while using signals for the component
