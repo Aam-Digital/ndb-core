@@ -185,11 +185,14 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     this.ability.update(userRules);
     this.ability.initialized = true;
 
-    if (this.isLinkedUserEntityMissing(user)) {
-      // Without the user entity, variables like `${user.projects}` resolve to [],
-      // so these are not the user's actual rules. Enforcing them would act on an
-      // artificial difference (on the legacy adapter: destroy the local database,
-      // repeatedly while a re-created database has not synced the user entity yet).
+    if (
+      this.isLinkedUserEntityMissing(user) &&
+      this.rulesDependOnUserEntity(rawUserRules)
+    ) {
+      // Without the user entity, `${user.projects}` resolves to [], so these are
+      // not the user's actual rules. Enforcing them would act on an artificial
+      // difference (on the legacy adapter: destroy the local database, repeatedly
+      // while a re-created database has not synced the user entity yet).
       // Enforcement runs once the user entity is available (currentUser emits).
       Logging.debug(
         "Not enforcing permissions on local data while the user entity is not available",
@@ -219,6 +222,14 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
    */
   private isLinkedUserEntityMissing(user: Entity | null | undefined): boolean {
     return !!this.sessionInfo.value?.entityId && user === null;
+  }
+
+  /**
+   * Whether the rules use a variable that is read from the user entity
+   * (see {@link interpolateUserVariables}) rather than the session.
+   */
+  private rulesDependOnUserEntity(rules: DatabaseRule[]): boolean {
+    return JSON.stringify(rules).includes("${user.projects}");
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
