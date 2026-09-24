@@ -337,6 +337,34 @@ describe("AbilityService", () => {
     }
   });
 
+  it("should not enforce rules on local data until the linked user entity is available", async () => {
+    vi.useFakeTimers();
+    try {
+      // user account is linked to an entity that is not (yet) in the local database
+      const currentUser = TestBed.inject(CurrentUserSubject);
+      currentUser.next(null);
+      const enforceSpy = TestBed.inject(PermissionEnforcerService)
+        .enforcePermissionsOnLocalData as Mock;
+
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      entityUpdates.next({
+        entity: new Config(Config.PERMISSION_KEY, rules),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(enforceSpy).not.toHaveBeenCalled();
+
+      currentUser.next(new TestEntity(TEST_USER));
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(enforceSpy).toHaveBeenCalledWith(rules["user_app"]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should allow to check conditions with complex data types", async () => {
     vi.useFakeTimers();
     try {
