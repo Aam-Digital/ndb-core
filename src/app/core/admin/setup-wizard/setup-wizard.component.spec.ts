@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { signal } from "@angular/core";
 
 import { SetupWizardComponent } from "./setup-wizard.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { SetupWizardService, SetupWizardState } from "./setup-wizard.service";
 import {
   CONFIG_SETUP_WIZARD_ID,
   SetupWizardConfig,
@@ -19,7 +21,34 @@ describe("SetupWizardComponent", () => {
   let component: SetupWizardComponent;
   let fixture: ComponentFixture<SetupWizardComponent>;
 
+  const testConfig: SetupWizardConfig = {
+    openOnStart: true,
+    steps: [
+      {
+        title: "Welcome",
+        text: "# Welcome to Aam Digital!\nWe are here ...",
+      },
+      {
+        title: "Import Data",
+        text: "...",
+        actions: [{ label: "Import Data", link: "/import" }],
+      },
+    ],
+  };
+
+  let setupWizardService: {
+    state: any;
+    config: any;
+    markAsFinished: any;
+  };
+
   beforeEach(async () => {
+    setupWizardService = {
+      state: signal<SetupWizardState>("loaded"),
+      config: signal(new Config(CONFIG_SETUP_WIZARD_ID, { ...testConfig })),
+      markAsFinished: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         SetupWizardComponent,
@@ -30,15 +59,10 @@ describe("SetupWizardComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: {
-            load: vi.fn(),
-            save: vi.fn(),
-          },
+          useValue: { load: vi.fn(), save: vi.fn() },
         },
-        {
-          provide: EntityRegistry,
-          useValue: { entityRegistry },
-        },
+        { provide: SetupWizardService, useValue: setupWizardService },
+        { provide: EntityRegistry, useValue: { entityRegistry } },
       ],
     }).compileComponents();
 
@@ -51,60 +75,39 @@ describe("SetupWizardComponent", () => {
     localStorage.removeItem(component.LOCAL_STORAGE_KEY);
   });
 
-  it("should load config on init and save if finished in last step", async () => {
-    vi.useFakeTimers();
-    try {
-      const testConfig: SetupWizardConfig = {
-        openOnStart: true,
-        steps: [
-          {
-            title: "Welcome",
-            text: "# Welcome to Aam Digital!\nWe are here ...",
-          },
-          {
-            title: "Import Data",
-            text: "...",
-            actions: [
-              {
-                label: "Import Data",
-                link: "/import",
-              },
-            ],
-          },
-        ],
-      };
+  it("should mark the wizard as finished in the last step", async () => {
+    await component.finishWizard();
 
-      const entityMapper = TestBed.inject(EntityMapperService) as any;
-      entityMapper.load.mockResolvedValue(
-        new Config(CONFIG_SETUP_WIZARD_ID, testConfig),
-      );
-
-      component.ngOnInit();
-      await vi.advanceTimersByTimeAsync(0);
-      expect(component.steps).toEqual(testConfig.steps);
-
-      component.finishWizard();
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(entityMapper.save).toHaveBeenCalled();
-      const actualSavedConfig = vi.mocked(entityMapper.save).mock
-        .lastCall[0] as Config<SetupWizardConfig>;
-      expect(actualSavedConfig.data.finished).toBe(true);
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(setupWizardService.markAsFinished).toHaveBeenCalled();
   });
+
+  it("should show a loading indicator while the config is not available yet", () => {
+    setupWizardService.state.set("loading");
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector('[role="progressbar"]'),
+    ).toBeTruthy();
+  });
+
+  it.each([
+    ["error", "could not be loaded"],
+    ["unavailable", "No setup wizard is configured"],
+  ])(
+    "should explain the %s state instead of showing an empty wizard",
+    (state, expectedText) => {
+      setupWizardService.state.set(state);
+      setupWizardService.config.set(undefined);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain(expectedText);
+    },
+  );
 
   it("should load local progress/status on init and save to local storage", async () => {
     vi.useFakeTimers();
     try {
-      const testStatus: {
-        currentStep: number;
-        completedSteps: number[];
-      } = {
-        currentStep: 2,
-        completedSteps: [0, 2],
-      };
+      const testStatus = { currentStep: 2, completedSteps: [0, 2] };
       localStorage.setItem(
         component.LOCAL_STORAGE_KEY,
         JSON.stringify(testStatus),

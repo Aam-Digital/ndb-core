@@ -92,6 +92,14 @@ export abstract class Database {
   }
 
   /**
+   * Whether {@link find} (bookmark-based pagination) is supported by this implementation.
+   * Callers should fall back to loading all docs otherwise.
+   */
+  supportsFind(): boolean {
+    return false;
+  }
+
+  /**
    * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
    * This supports querying using the Mango Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
    * There might be differences in queries between a local PouchDB and the CouchDB.

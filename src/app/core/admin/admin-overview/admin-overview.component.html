@@ -45,7 +45,7 @@
       >
     </mat-expansion-panel-header>
     <mat-nav-list class="section-nav-list">
-      @for (item of configurationMenuItems; track item.label) {
+      @for (item of configurationMenuItems(); track item.label) {
         @if (item.link) {
           <mat-list-item
             [routerLink]="[item.link]"

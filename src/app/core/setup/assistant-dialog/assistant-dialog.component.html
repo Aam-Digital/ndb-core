@@ -14,7 +14,7 @@
     </mat-tab>
   }
 
-  @if (assistants.setupWizard) {
+  @if (showSetupWizard()) {
     <mat-tab id="setupWizard" label="Setup Wizard" i18n-label>
       <app-setup-wizard></app-setup-wizard>
     </mat-tab>
@@ -32,16 +32,15 @@
   <fa-icon icon="ellipsis-v"></fa-icon>
 </button>
 <mat-menu #contextMenu>
-  <button
-    mat-menu-item
-    (click)="updateSetupWizardVisible(!assistants.setupWizard)"
-  >
-    <fa-icon
-      [icon]="assistants.setupWizard ? 'eye' : 'eye-slash'"
-      class="standard-icon-with-text"
-    ></fa-icon>
-    <span i18n>Setup Wizard</span>
-  </button>
+  @if (canToggleSetupWizard()) {
+    <button mat-menu-item (click)="toggleSetupWizardVisible()">
+      <fa-icon
+        [icon]="showSetupWizard() ? 'eye' : 'eye-slash'"
+        class="standard-icon-with-text"
+      ></fa-icon>
+      <span i18n>Setup Wizard</span>
+    </button>
+  }
 
   <button
     mat-menu-item
