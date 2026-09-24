@@ -350,6 +350,10 @@ export class RemotePouchDatabase extends PouchDatabase {
     return collected;
   }
 
+  override supportsFind(): boolean {
+    return true;
+  }
+
   /**
    * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
    * to query the remote CouchDB (via the replication-backend) using the Mango

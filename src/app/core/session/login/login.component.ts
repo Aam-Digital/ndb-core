@@ -41,7 +41,7 @@ import { environment } from "../../../../environments/environment";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormsModule } from "@angular/forms";
 import { Logging } from "../../logging/logging.service";
-import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
+import { LOCAL_STORAGE_TOKEN, LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -66,6 +66,7 @@ import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 })
 export class LoginComponent implements OnInit {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
+  private readonly location = inject<Location>(LOCATION_TOKEN);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   sessionManager = inject(SessionManagerService);
@@ -116,18 +117,14 @@ export class LoginComponent implements OnInit {
     (environment.session_type === SessionType.synced ||
       environment.session_type === SessionType.online);
 
-  /** User preference: use online-only mode instead of synced. */
-  onlineOnly = signal(false);
+  /**
+   * Whether online-only mode is active in the current page load.
+   * bootstrap-environment.ts has already applied a stored preference to environment.session_type.
+   */
+  onlineOnly = signal(environment.session_type === SessionType.online);
 
   constructor() {
     const sessionManager = this.sessionManager;
-
-    // restore previous online-only preference from localStorage
-    const initialOnlineOnly =
-      this.localStorage.getItem(LoginComponent.ONLINE_ONLY_KEY) === "true" ||
-      environment.session_type === SessionType.online;
-    this.onlineOnly.set(initialOnlineOnly);
-    this.applyOnlineOnlyMode(initialOnlineOnly);
 
     this.enableOfflineLogin.set(!this.sessionManager.remoteLoginAvailable());
     this.showOfflineSection.set(!navigator.onLine);
@@ -173,6 +170,18 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  /**
+   * Persist the online-only preference and reload the page to apply it.
+   *
+   * The preference must NOT be applied by changing environment.session_type here:
+   * the database instances were already created during Angular DI startup (before this component exists)
+   * with the class matching the session type at that time.
+   * Not every login path reloads the page afterwards (offline login, remote login reusing an existing SSO session),
+   * so a changed environment.session_type would disagree with the database for the whole page session
+   * (e.g. paginated lists running against a local database, see #4392).
+   *
+   * After the reload, bootstrap-environment.ts applies the preference before any database is created.
+   */
   onOnlineOnlyChanged(checked: boolean) {
     this.onlineOnly.set(checked);
     if (checked) {
@@ -180,31 +189,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.localStorage.removeItem(LoginComponent.ONLINE_ONLY_KEY);
     }
-    this.applyOnlineOnlyMode(checked);
-  }
-
-  /**
-   * Mutate environment.session_type so that the correct database class is used
-   * when initDatabasesForSession() is called after login.
-   *
-   * NOTE: The actual database instances are created lazily on first access during
-   * Angular DI startup — long before LoginComponent exists. For that reason,
-   * bootstrap-environment.ts also reads the localStorage preference early and
-   * applies it before Angular starts. This in-component mutation covers the case
-   * where the user toggles the checkbox in the *same page load* (i.e. before
-   * the Keycloak redirect has happened), so the preference is applied consistently
-   * regardless of whether the DB was already created or not yet.
-   *
-   * The authoritative path is: user changes checkbox → localStorage updated here →
-   * Keycloak login triggers full page reload → bootstrap-environment.ts applies
-   * the preference → Angular DI creates the correct DB type from the start.
-   */
-  private applyOnlineOnlyMode(onlineOnly: boolean) {
-    if (onlineOnly) {
-      environment.session_type = SessionType.online;
-    } else if (environment.session_type === SessionType.online) {
-      environment.session_type = SessionType.synced;
-    }
+    this.location.reload();
   }
 
   private routeAfterLogin() {

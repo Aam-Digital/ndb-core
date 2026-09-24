@@ -18,6 +18,8 @@ import { FeaturePermissionDialogComponent } from "../../permissions/feature-perm
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
+import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { Database } from "#src/app/core/database/database";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -388,6 +390,10 @@ describe("EntityListComponent", () => {
     const tmpSessionType = environment.session_type;
     try {
       environment.session_type = SessionType.online;
+      vi.spyOn(
+        TestBed.inject(DatabaseResolverService),
+        "getDatabase",
+      ).mockReturnValue({ supportsFind: () => true } as Database);
       createComponent();
 
       expect(component.showFreetextFilter()).toBe(false);
