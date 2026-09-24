@@ -33,6 +33,11 @@ function requestMethod(opts: RequestInit | undefined): string {
   return (opts?.method ?? "GET").toUpperCase();
 }
 
+/** Identifies one specific revision of one document. */
+function revisionKey(doc: { _id?: string; _rev?: string } | undefined): string {
+  return `${doc?._id}@${doc?._rev}`;
+}
+
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
@@ -61,6 +66,24 @@ export class RemotePouchDatabase extends PouchDatabase {
    * @private
    */
   private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
+
+  /**
+   * `<id>@<rev>` of writes this client already emitted through {@link announceOwnWrite},
+   * so the poll that later echoes them back does not emit them a second time.
+   *
+   * A duplicate is not just wasted work: consumers rebuild on it (a repeated config
+   * update resets the routing and re-navigates the current view), so it would undo
+   * what the immediate emission achieved.
+   */
+  private readonly announcedRevisions = new Set<string>();
+
+  /**
+   * Upper bound for {@link announcedRevisions}. An entry is normally removed when the
+   * poll echoes it, but a revision superseded before the next poll is never echoed and
+   * would linger. Dropping the whole set past this size keeps memory bounded; the only
+   * cost is that a duplicate may slip through, which is the behaviour without this set.
+   */
+  private readonly MAX_ANNOUNCED_REVISIONS = 1000;
 
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
@@ -432,6 +455,83 @@ export class RemotePouchDatabase extends PouchDatabase {
   }
 
   /**
+   * Unlike a synced database, which writes locally and hears about it on the local
+   * changes feed in the same tick, this database writes over HTTP and would only learn
+   * of its own write on the next poll - up to {@link CHANGES_POLLING_INTERVAL} later.
+   * Announcing the stored document here closes that gap, so the app reacts to its own
+   * writes immediately in both session types.
+   */
+  override async put(object: any, forceOverwrite = false): Promise<any> {
+    const result = await super.put(object, forceOverwrite);
+    this.announceOwnWrite(object, result);
+    return result;
+  }
+
+  override async putAll(objects: any[], forceOverwrite = false): Promise<any> {
+    try {
+      const results = await super.putAll(objects, forceOverwrite);
+      this.announceStoredDocs(objects, results);
+      return results;
+    } catch (results) {
+      // putAll rejects *with* its results array when any document failed; the ones
+      // that did store are still stored and must be announced like any other write.
+      if (Array.isArray(results)) {
+        this.announceStoredDocs(objects, results);
+      }
+      throw results;
+    }
+  }
+
+  /**
+   * A deletion has the same delay as a write, so it is announced the same way.
+   * The emitted document is the tombstone the changes feed would deliver - id,
+   * revision and the deleted flag, without the data fields - which is what
+   * subscribers read to tell a removal apart from an update.
+   */
+  override async remove(object: any): Promise<any> {
+    const result = await super.remove(object);
+    this.announceOwnWrite({ _id: object?._id, _deleted: true }, result);
+    return result;
+  }
+
+  private announceStoredDocs(objects: any[], results: any[]) {
+    for (const result of results ?? []) {
+      const stored = objects.find((obj) => obj._id === result?.id);
+      if (stored) {
+        this.announceOwnWrite(stored, result);
+      }
+    }
+  }
+
+  /**
+   * Emit a document this client just stored, tagged with the revision the server
+   * assigned, so subscribers see the same shape the changes feed would deliver.
+   */
+  private announceOwnWrite(object: any, result: any) {
+    if (!result?.ok || !this.changesFeed) {
+      return;
+    }
+    if (typeof object?._id === "string" && object._id.startsWith("_design/")) {
+      // index definitions, not entities: no subscriber reacts to them, and the
+      // server's _changes does not echo them, so tracking them would only fill
+      // announcedRevisions with entries that never match.
+      return;
+    }
+
+    const doc = { ...object, _rev: result.rev };
+    if (this.announcedRevisions.size >= this.MAX_ANNOUNCED_REVISIONS) {
+      this.announcedRevisions.clear();
+    }
+    this.announcedRevisions.add(revisionKey(doc));
+
+    if (this.ngZone) {
+      this.ngZone.run(() => this.changesFeed.next(doc));
+    } else {
+      this.changesFeed.next(doc);
+    }
+  }
+
+  /**
    * Poll the _changes endpoint periodically to detect document changes.
    * Emits individual documents that have changed since the last poll.
    *
@@ -463,6 +563,12 @@ export class RemotePouchDatabase extends PouchDatabase {
               if (result?.results) {
                 result.results.forEach(
                   (change: PouchDB.Core.ChangesResponseChange<{}>) => {
+                    if (
+                      this.announcedRevisions.delete(revisionKey(change.doc))
+                    ) {
+                      // this client's own write, already emitted by announceOwnWrite
+                      return;
+                    }
                     if (this.ngZone) {
                       this.ngZone.run(() => this.changesFeed.next(change.doc));
                     } else {
