@@ -46,7 +46,6 @@
     "@angular/service-worker": "^22.1.7",
     "@aytek/material-color-picker": "^1.0.4",
     "@casl/ability": "^6.8.1",
-    "@casl/angular": "^9.0.6",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-sql": "^6.10.0",
     "@codemirror/language": "^6.12.4",
@@ -146,9 +145,6 @@
   },
   "overrides": {
     "@angular-devkit/build-angular": "^22.1.5",
-    "@casl/angular": {
-      "@angular/core": "$@angular/core"
-    },
     "madge": {
       "typescript": "$typescript"
     },
