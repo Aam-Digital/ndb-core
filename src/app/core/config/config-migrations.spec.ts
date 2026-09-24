@@ -334,6 +334,47 @@ describe("applyConfigMigrations", () => {
     });
   });
 
+  describe("migrateNoteDetailsEntityType", () => {
+    it("adds entityType to an existing view:note/:id config that lacks it", () => {
+      const old = {
+        "view:note/:id": {
+          component: "NoteDetails",
+          config: { topForm: ["date"], bottomForm: ["relatedEntities"] },
+        },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual({
+        "view:note/:id": {
+          component: "NoteDetails",
+          config: {
+            entityType: "Note",
+            topForm: ["date"],
+            bottomForm: ["relatedEntities"],
+          },
+        },
+      });
+    });
+
+    it("does not override an already-set entityType", () => {
+      const old = {
+        "view:note/:id": {
+          component: "NoteDetails",
+          config: { entityType: "CustomNote" },
+        },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual(old);
+    });
+
+    it("leaves other view configs untouched", () => {
+      const old = {
+        "view:child/:id": { component: "EntityDetails", config: {} },
+      };
+
+      expect(applyConfigMigrations(old)).toEqual(old);
+    });
+  });
+
   it("drops stored options of the prebuilt todo filter", () => {
     const old = {
       filters: [
