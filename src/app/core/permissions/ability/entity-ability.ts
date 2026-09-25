@@ -7,12 +7,13 @@ import {
   MongoQuery,
   mongoQueryMatcher,
   subject,
+  Subject,
 } from "@casl/ability";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
 
 /** The action and subject types this ability checks permissions for. */
-type EntityAbilityTuple = [EntityActionPermission, string | any];
+type EntityAbilityTuple = [EntityActionPermission, Subject];
 
 /**
  * An extension of the Ability class which can check permissions on Entities.
