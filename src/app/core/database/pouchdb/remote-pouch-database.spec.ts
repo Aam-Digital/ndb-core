@@ -715,4 +715,198 @@ describe("RemotePouchDatabase tests", () => {
       }
     });
   });
+
+  describe("emitting the app's own writes", () => {
+    /**
+     * Mocks the database's writes and its changes poll, and collects everything the
+     * changes feed emits. `polled` is what the next poll returns, so a test can make
+     * the server echo a write back.
+     */
+    function setupFeed(polled: any[] = []): { pouchDB: any; received: any[] } {
+      database.init("");
+      const pouchDB = (database as any).pouchDB;
+      vi.spyOn(pouchDB, "changes")
+        .mockResolvedValueOnce({
+          results: polled.map((doc, i) => ({ doc, seq: i + 1 })),
+          last_seq: polled.length,
+        })
+        .mockResolvedValue({ results: [], last_seq: polled.length });
+      const received: any[] = [];
+      database.changes().subscribe((doc) => received.push(doc));
+      return { pouchDB, received };
+    }
+
+    /** Runs the polling timer through one cycle. */
+    async function runPoll() {
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(10000);
+    }
+
+    it("should announce a stored document with the revision the server assigned", async () => {
+      const { pouchDB, received } = setupFeed();
+      vi.spyOn(pouchDB, "put").mockResolvedValue({
+        ok: true,
+        id: "Entity:1",
+        rev: "2-new",
+      });
+
+      await database.put({ _id: "Entity:1", _rev: "1-old", name: "Test" });
+
+      expect(received).toEqual([
+        { _id: "Entity:1", _rev: "2-new", name: "Test" },
+      ]);
+    });
+
+    it("should announce a deletion as the tombstone the changes feed would deliver", async () => {
+      const { pouchDB, received } = setupFeed();
+      vi.spyOn(pouchDB, "remove").mockResolvedValue({
+        ok: true,
+        id: "Entity:1",
+        rev: "2-deleted",
+      });
+
+      await database.remove({ _id: "Entity:1", _rev: "1-old", name: "Test" });
+
+      // no data fields: subscribers read _deleted to tell a removal from an update
+      expect(received).toEqual([
+        { _id: "Entity:1", _rev: "2-deleted", _deleted: true },
+      ]);
+    });
+
+    it("should announce only the documents that putAll actually stored", async () => {
+      const { pouchDB, received } = setupFeed();
+      vi.spyOn(pouchDB, "bulkDocs").mockResolvedValue([
+        { ok: true, id: "Entity:1", rev: "2-new" },
+        { error: true, id: "Entity:2", status: 403 },
+      ]);
+
+      await database
+        .putAll([
+          { _id: "Entity:1", name: "Stored" },
+          { _id: "Entity:2", name: "Refused" },
+        ])
+        .catch(() => undefined);
+
+      expect(received).toEqual([
+        { _id: "Entity:1", _rev: "2-new", name: "Stored" },
+      ]);
+    });
+
+    it("should announce a conflict-resolved write only once", async () => {
+      const { pouchDB, received } = setupFeed();
+      vi.spyOn(pouchDB, "get").mockResolvedValue({
+        _id: "Entity:1",
+        _rev: "5-existing",
+        name: "Server",
+      });
+      // the first attempt conflicts, so the base class retries through put(),
+      // which is this same overridden method
+      let attempts = 0;
+      vi.spyOn(pouchDB, "put").mockImplementation(async () => {
+        attempts++;
+        if (attempts === 1) {
+          // PouchDB rejects with an Error carrying the HTTP status
+          throw Object.assign(new Error("Document update conflict"), {
+            status: HttpStatusCode.Conflict,
+          });
+        }
+        return { ok: true, id: "Entity:1", rev: "6-resolved" };
+      });
+
+      await database.put({ _id: "Entity:1", name: "Mine" }, true);
+
+      expect(received.map((d) => d._rev)).toEqual(["6-resolved"]);
+    });
+
+    it("should not emit again when the poll echoes a revision it announced", async () => {
+      vi.useFakeTimers();
+      try {
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "2-new", name: "Test" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "2-new",
+        });
+
+        await database.put({ _id: "Entity:1", _rev: "1-old", name: "Test" });
+        expect(received.length).toBe(1); // announced before any poll ran
+
+        await runPoll();
+
+        expect(received.length).toBe(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should not emit a poll result older than a revision it announced", async () => {
+      vi.useFakeTimers();
+      try {
+        // a poll that read the server before the local write committed and whose
+        // response only arrives afterwards - emitting it would move subscribers back
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "2-older", name: "Stale" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "3-mine",
+        });
+
+        await database.put({ _id: "Entity:1", _rev: "2-older", name: "Mine" });
+        await runPoll();
+
+        expect(received.map((d) => d._rev)).toEqual(["3-mine"]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should still emit a conflicting revision of the same generation", async () => {
+      vi.useFakeTimers();
+      try {
+        // a synced peer replicated its own edit of the same parent, so both
+        // revisions exist and the server picked theirs as the winner
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "2-b", name: "Theirs" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "2-a",
+        });
+
+        await database.put({ _id: "Entity:1", _rev: "1-old", name: "Mine" });
+        await runPoll();
+
+        expect(received.map((d) => d._rev)).toEqual(["2-a", "2-b"]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should still emit a poll result newer than the revision it announced", async () => {
+      vi.useFakeTimers();
+      try {
+        // somebody else edited the same document after our write
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "3-other", name: "Theirs" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "2-new",
+        });
+
+        await database.put({ _id: "Entity:1", _rev: "1-old", name: "Test" });
+        await runPoll();
+
+        expect(received.map((d) => d._rev)).toEqual(["2-new", "3-other"]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
 });
