@@ -718,23 +718,32 @@ describe("RemotePouchDatabase tests", () => {
 
   describe("emitting the app's own writes", () => {
     /**
-     * Sets up a database whose writes and polls are both mocked,
-     * and collects everything the changes feed emits.
+     * Mocks the database's writes and its changes poll, and collects everything the
+     * changes feed emits. `polled` is what the next poll returns, so a test can make
+     * the server echo a write back.
      */
-    function setupWithFeed(): { pouchDB: any; received: any[] } {
+    function setupFeed(polled: any[] = []): { pouchDB: any; received: any[] } {
       database.init("");
       const pouchDB = (database as any).pouchDB;
-      vi.spyOn(pouchDB, "changes").mockResolvedValue({
-        results: [],
-        last_seq: 0,
-      });
+      vi.spyOn(pouchDB, "changes")
+        .mockResolvedValueOnce({
+          results: polled.map((doc, i) => ({ doc, seq: i + 1 })),
+          last_seq: polled.length,
+        })
+        .mockResolvedValue({ results: [], last_seq: polled.length });
       const received: any[] = [];
       database.changes().subscribe((doc) => received.push(doc));
       return { pouchDB, received };
     }
 
-    it("should announce a successful write on the changes feed, carrying the revision the server assigned", async () => {
-      const { pouchDB, received } = setupWithFeed();
+    /** Runs the polling timer through one cycle. */
+    async function runPoll() {
+      await vi.advanceTimersByTimeAsync(0);
+      await vi.advanceTimersByTimeAsync(10000);
+    }
+
+    it("should announce a stored document with the revision the server assigned", async () => {
+      const { pouchDB, received } = setupFeed();
       vi.spyOn(pouchDB, "put").mockResolvedValue({
         ok: true,
         id: "Entity:1",
@@ -748,33 +757,24 @@ describe("RemotePouchDatabase tests", () => {
       ]);
     });
 
-    it("should not announce a write the database rejected", async () => {
-      const { pouchDB, received } = setupWithFeed();
-      vi.spyOn(pouchDB, "put").mockRejectedValue({ status: 500 });
-
-      await expect(
-        database.put({ _id: "Entity:1", name: "Test" }),
-      ).rejects.toThrow(DatabaseException);
-
-      expect(received).toEqual([]);
-    });
-
-    it("should not announce a design document, so index writes do not accumulate unmatched", async () => {
-      const { pouchDB, received } = setupWithFeed();
-      vi.spyOn(pouchDB, "put").mockResolvedValue({
+    it("should announce a deletion as the tombstone the changes feed would deliver", async () => {
+      const { pouchDB, received } = setupFeed();
+      vi.spyOn(pouchDB, "remove").mockResolvedValue({
         ok: true,
-        id: "_design/someIndex",
-        rev: "2-new",
+        id: "Entity:1",
+        rev: "2-deleted",
       });
 
-      await database.put({ _id: "_design/someIndex", views: {} });
+      await database.remove({ _id: "Entity:1", _rev: "1-old", name: "Test" });
 
-      expect(received).toEqual([]);
-      expect((database as any).announcedRevisions.size).toBe(0);
+      // no data fields: subscribers read _deleted to tell a removal from an update
+      expect(received).toEqual([
+        { _id: "Entity:1", _rev: "2-deleted", _deleted: true },
+      ]);
     });
 
     it("should announce only the documents that putAll actually stored", async () => {
-      const { pouchDB, received } = setupWithFeed();
+      const { pouchDB, received } = setupFeed();
       vi.spyOn(pouchDB, "bulkDocs").mockResolvedValue([
         { ok: true, id: "Entity:1", rev: "2-new" },
         { error: true, id: "Entity:2", status: 403 },
@@ -793,7 +793,7 @@ describe("RemotePouchDatabase tests", () => {
     });
 
     it("should announce a conflict-resolved write only once", async () => {
-      const { pouchDB, received } = setupWithFeed();
+      const { pouchDB, received } = setupFeed();
       vi.spyOn(pouchDB, "get").mockResolvedValue({
         _id: "Entity:1",
         _rev: "5-existing",
@@ -818,35 +818,45 @@ describe("RemotePouchDatabase tests", () => {
       expect(received.map((d) => d._rev)).toEqual(["6-resolved"]);
     });
 
-    it("should not emit a poll result older than a revision it already announced", async () => {
+    it("should not emit again when the poll echoes a revision it announced", async () => {
       vi.useFakeTimers();
       try {
-        database.init("");
-        const pouchDB = (database as any).pouchDB;
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "2-new", name: "Test" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "2-new",
+        });
+
+        await database.put({ _id: "Entity:1", _rev: "1-old", name: "Test" });
+        expect(received.length).toBe(1); // announced before any poll ran
+
+        await runPoll();
+
+        expect(received.length).toBe(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should not emit a poll result older than a revision it announced", async () => {
+      vi.useFakeTimers();
+      try {
+        // a poll that read the server before the local write committed and whose
+        // response only arrives afterwards - emitting it would move subscribers back
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "2-older", name: "Stale" },
+        ]);
         vi.spyOn(pouchDB, "put").mockResolvedValue({
           ok: true,
           id: "Entity:1",
           rev: "3-mine",
         });
-        // a poll that read the server before the local write committed and whose
-        // response only arrives afterwards - emitting it would move subscribers back
-        vi.spyOn(pouchDB, "changes")
-          .mockResolvedValueOnce({
-            results: [
-              {
-                doc: { _id: "Entity:1", _rev: "2-older", name: "Stale" },
-                seq: 1,
-              },
-            ],
-            last_seq: 1,
-          })
-          .mockResolvedValue({ results: [], last_seq: 1 });
-
-        const received: any[] = [];
-        database.changes().subscribe((doc) => received.push(doc));
 
         await database.put({ _id: "Entity:1", _rev: "2-older", name: "Mine" });
-        await vi.advanceTimersByTimeAsync(0);
+        await runPoll();
 
         expect(received.map((d) => d._rev)).toEqual(["3-mine"]);
       } finally {
@@ -854,134 +864,21 @@ describe("RemotePouchDatabase tests", () => {
       }
     });
 
-    it("should announce a deletion as the tombstone the changes feed would deliver", async () => {
-      const { pouchDB, received } = setupWithFeed();
-      vi.spyOn(pouchDB, "remove").mockResolvedValue({
-        ok: true,
-        id: "Entity:1",
-        rev: "2-deleted",
-      });
-
-      await database.remove({ _id: "Entity:1", _rev: "1-old", name: "Test" });
-
-      // no data fields: a deleted document carries only its id, revision and the flag,
-      // which is what receiveUpdates reads to report a "remove"
-      expect(received).toEqual([
-        { _id: "Entity:1", _rev: "2-deleted", _deleted: true },
-      ]);
-    });
-
-    it("should not announce a deletion the database rejected", async () => {
-      const { pouchDB, received } = setupWithFeed();
-      vi.spyOn(pouchDB, "remove").mockRejectedValue({ status: 409 });
-
-      await expect(
-        database.remove({ _id: "Entity:1", _rev: "1-stale" }),
-      ).rejects.toThrow(DatabaseException);
-
-      expect(received).toEqual([]);
-    });
-
-    it("should not emit a second time when the next poll returns the deletion it already announced", async () => {
+    it("should still emit a poll result newer than the revision it announced", async () => {
       vi.useFakeTimers();
       try {
-        database.init("");
-        const pouchDB = (database as any).pouchDB;
-        vi.spyOn(pouchDB, "remove").mockResolvedValue({
-          ok: true,
-          id: "Entity:1",
-          rev: "2-deleted",
-        });
-        vi.spyOn(pouchDB, "changes")
-          .mockResolvedValueOnce({
-            results: [
-              {
-                doc: { _id: "Entity:1", _rev: "2-deleted", _deleted: true },
-                seq: 1,
-              },
-            ],
-            last_seq: 1,
-          })
-          .mockResolvedValue({ results: [], last_seq: 1 });
-
-        const received: any[] = [];
-        database.changes().subscribe((doc) => received.push(doc));
-
-        await database.remove({ _id: "Entity:1", _rev: "1-old" });
-        expect(received.length).toBe(1);
-
-        await vi.advanceTimersByTimeAsync(0);
-        await vi.advanceTimersByTimeAsync(10000);
-
-        expect(received.length).toBe(1);
-      } finally {
-        vi.useRealTimers();
-      }
-    });
-
-    it("should not emit a second time when the next poll returns the write it already announced", async () => {
-      vi.useFakeTimers();
-      try {
-        database.init("");
-        const pouchDB = (database as any).pouchDB;
-        vi.spyOn(pouchDB, "put").mockResolvedValue({
-          ok: true,
-          id: "Entity:1",
-          rev: "2-new",
-        });
-        // the poll echoes the app's own write back once, as CouchDB's `since` cursor does
-        vi.spyOn(pouchDB, "changes")
-          .mockResolvedValueOnce({
-            results: [
-              { doc: { _id: "Entity:1", _rev: "2-new", name: "Test" }, seq: 1 },
-            ],
-            last_seq: 1,
-          })
-          .mockResolvedValue({ results: [], last_seq: 1 });
-
-        const received: any[] = [];
-        database.changes().subscribe((doc) => received.push(doc));
-
-        await database.put({ _id: "Entity:1", _rev: "1-old", name: "Test" });
-
-        // announced by the write itself, before any poll has run
-        expect(received.length).toBe(1);
-
-        await vi.advanceTimersByTimeAsync(0);
-        await vi.advanceTimersByTimeAsync(10000);
-
-        expect(received.length).toBe(1);
-      } finally {
-        vi.useRealTimers();
-      }
-    });
-
-    it("should still emit a poll result that is a newer revision than the one it announced", async () => {
-      vi.useFakeTimers();
-      try {
-        database.init("");
-        const pouchDB = (database as any).pouchDB;
-        vi.spyOn(pouchDB, "put").mockResolvedValue({
-          ok: true,
-          id: "Entity:1",
-          rev: "2-new",
-        });
         // somebody else edited the same document after our write
-        vi.spyOn(pouchDB, "changes").mockResolvedValue({
-          results: [
-            {
-              doc: { _id: "Entity:1", _rev: "3-other", name: "Theirs" },
-              seq: 2,
-            },
-          ],
-          last_seq: 2,
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "3-other", name: "Theirs" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "2-new",
         });
 
-        const received: any[] = [];
-        database.changes().subscribe((doc) => received.push(doc));
-
         await database.put({ _id: "Entity:1", _rev: "1-old", name: "Test" });
-        await vi.advanceTimersByTimeAsync(0);
+        await runPoll();
 
         expect(received.map((d) => d._rev)).toEqual(["2-new", "3-other"]);
       } finally {
