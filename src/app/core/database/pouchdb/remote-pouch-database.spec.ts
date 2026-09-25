@@ -792,6 +792,65 @@ describe("RemotePouchDatabase tests", () => {
       ]);
     });
 
+    it("should announce a conflict-resolved write only once", async () => {
+      const { pouchDB, received } = setupWithFeed();
+      vi.spyOn(pouchDB, "get").mockResolvedValue({
+        _id: "Entity:1",
+        _rev: "5-existing",
+        name: "Server",
+      });
+      // the first attempt conflicts, so the base class retries through put(),
+      // which is this same overridden method
+      let attempts = 0;
+      vi.spyOn(pouchDB, "put").mockImplementation(async () => {
+        attempts++;
+        if (attempts === 1) {
+          throw { status: HttpStatusCode.Conflict };
+        }
+        return { ok: true, id: "Entity:1", rev: "6-resolved" };
+      });
+
+      await database.put({ _id: "Entity:1", name: "Mine" }, true);
+
+      expect(received.map((d) => d._rev)).toEqual(["6-resolved"]);
+    });
+
+    it("should not emit a poll result older than a revision it already announced", async () => {
+      vi.useFakeTimers();
+      try {
+        database.init("");
+        const pouchDB = (database as any).pouchDB;
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "3-mine",
+        });
+        // a poll that read the server before the local write committed and whose
+        // response only arrives afterwards - emitting it would move subscribers back
+        vi.spyOn(pouchDB, "changes")
+          .mockResolvedValueOnce({
+            results: [
+              {
+                doc: { _id: "Entity:1", _rev: "2-older", name: "Stale" },
+                seq: 1,
+              },
+            ],
+            last_seq: 1,
+          })
+          .mockResolvedValue({ results: [], last_seq: 1 });
+
+        const received: any[] = [];
+        database.changes().subscribe((doc) => received.push(doc));
+
+        await database.put({ _id: "Entity:1", _rev: "2-older", name: "Mine" });
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(received.map((d) => d._rev)).toEqual(["3-mine"]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it("should announce a deletion as the tombstone the changes feed would deliver", async () => {
       const { pouchDB, received } = setupWithFeed();
       vi.spyOn(pouchDB, "remove").mockResolvedValue({

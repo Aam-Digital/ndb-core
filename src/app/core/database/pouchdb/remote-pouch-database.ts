@@ -34,8 +34,13 @@ function requestMethod(opts: RequestInit | undefined): string {
 }
 
 /** Identifies one specific revision of one document. */
-function revisionKey(doc: { _id?: string; _rev?: string } | undefined): string {
-  return `${doc?._id}@${doc?._rev}`;
+/**
+ * The generation number of a CouchDB revision (the `3` of `3-abc...`), which increases
+ * with every write to a document. NaN if it cannot be read, so callers fall back to
+ * emitting rather than suppressing a document they cannot place in order.
+ */
+function revisionNumber(rev: string | undefined): number {
+  return Number.parseInt(rev ?? "", 10);
 }
 
 /**
@@ -68,20 +73,23 @@ export class RemotePouchDatabase extends PouchDatabase {
   private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
 
   /**
-   * `<id>@<rev>` of writes this client already emitted through {@link announceOwnWrite},
-   * so the poll that later echoes them back does not emit them a second time.
+   * Document id to the highest revision number this client announced for it through
+   * {@link announceOwnWrite}. Anything at or below that revision is already reflected
+   * in every subscriber, so the changes feed skips it.
    *
-   * A duplicate is not just wasted work: consumers rebuild on it (a repeated config
-   * update resets the routing and re-navigates the current view), so it would undo
-   * what the immediate emission achieved.
+   * This covers three cases at once: the poll echoing a write back, a conflict retry
+   * announcing the revision its caller then announces again, and a poll response that
+   * read the server before a local write and only arrives afterwards. The last one
+   * matters most - emitting a superseded revision after a newer one would leave
+   * subscribers on stale data until that document changes again.
    */
-  private readonly announcedRevisions = new Set<string>();
+  private readonly announcedRevisions = new Map<string, number>();
 
   /**
-   * Upper bound for {@link announcedRevisions}. An entry is normally removed when the
-   * poll echoes it, but a revision superseded before the next poll is never echoed and
-   * would linger. Dropping the whole set past this size keeps memory bounded; the only
-   * cost is that a duplicate may slip through, which is the behaviour without this set.
+   * Upper bound for {@link announcedRevisions}, which holds one entry per document this
+   * client has written and so grows over a long session. Dropping it past this size keeps
+   * memory bounded; the only cost is that a duplicate may slip through, which is the
+   * behaviour without this map.
    */
   private readonly MAX_ANNOUNCED_REVISIONS = 1000;
 
@@ -504,6 +512,17 @@ export class RemotePouchDatabase extends PouchDatabase {
   }
 
   /**
+   * Whether subscribers already have this document at this revision or a newer one,
+   * because this client announced it. An unreadable revision is treated as new, so an
+   * unexpected format delays nothing - it only forgoes the deduplication.
+   */
+  private isAlreadyAnnounced(doc: { _id?: string; _rev?: string }): boolean {
+    const announced = this.announcedRevisions.get(doc?._id);
+    const incoming = revisionNumber(doc?._rev);
+    return announced !== undefined && !isNaN(incoming) && incoming <= announced;
+  }
+
+  /**
    * Emit a document this client just stored, tagged with the revision the server
    * assigned, so subscribers see the same shape the changes feed would deliver.
    */
@@ -519,10 +538,15 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
 
     const doc = { ...object, _rev: result.rev };
+    if (this.isAlreadyAnnounced(doc)) {
+      // a conflict retry announced this same revision through the nested put()
+      return;
+    }
+
     if (this.announcedRevisions.size >= this.MAX_ANNOUNCED_REVISIONS) {
       this.announcedRevisions.clear();
     }
-    this.announcedRevisions.add(revisionKey(doc));
+    this.announcedRevisions.set(doc._id, revisionNumber(doc._rev));
 
     if (this.ngZone) {
       this.ngZone.run(() => this.changesFeed.next(doc));
@@ -563,10 +587,9 @@ export class RemotePouchDatabase extends PouchDatabase {
               if (result?.results) {
                 result.results.forEach(
                   (change: PouchDB.Core.ChangesResponseChange<{}>) => {
-                    if (
-                      this.announcedRevisions.delete(revisionKey(change.doc))
-                    ) {
-                      // this client's own write, already emitted by announceOwnWrite
+                    if (this.isAlreadyAnnounced(change.doc)) {
+                      // this client's own write, already emitted by announceOwnWrite,
+                      // or a response that read the server before that write
                       return;
                     }
                     if (this.ngZone) {
