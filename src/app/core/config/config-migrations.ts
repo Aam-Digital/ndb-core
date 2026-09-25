@@ -497,6 +497,25 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
 };
 
 /**
+ * Older `view:note/:id` configs (including base-configs bundled before the
+ * NoteDetails `entityType` input was introduced) do not set `entityType`.
+ * Without it, NoteDetailsComponent's entity-loading is never triggered and
+ * the Note details page stays on the loading spinner indefinitely.
+ */
+const migrateNoteDetailsEntityType: ConfigMigration = (key, configPart) => {
+  if (key !== "view:note/:id" || typeof configPart !== "object") {
+    return configPart;
+  }
+
+  configPart.config = configPart.config ?? {};
+  if (!configPart.config.entityType) {
+    configPart.config.entityType = "Note";
+  }
+
+  return configPart;
+};
+
+/**
  * Migrate ShortcutDashboard widget `link` values that point to entity routes
  * to use the runtime `/c/` prefix.
  *
@@ -757,6 +776,7 @@ export const configMigrations: ConfigMigration[] = [
   migrateEditDescriptionOnly,
   migrateEditAttendanceComponent,
   migrateNotesManagerComponent,
+  migrateNoteDetailsEntityType,
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,

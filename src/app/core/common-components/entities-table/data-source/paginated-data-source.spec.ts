@@ -9,6 +9,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 /**
  * A minimal fake MatPaginator: PaginatedDataSource only reads `pageSize`/
@@ -43,6 +44,20 @@ function firePage(
 async function flush() {
   await new Promise((resolve) => setTimeout(resolve));
   TestBed.tick();
+}
+
+/** A promise plus its resolver/rejecter, to control exactly when a mocked `findType` call settles. */
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason: any) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  // an unhandled rejection would otherwise fail the test even once the
+  // rejection is later handled by whichever code actually awaits `promise`
+  promise.catch(() => {});
+  return { promise, resolve, reject };
 }
 
 describe("PaginatedDataSource", () => {
@@ -85,6 +100,25 @@ describe("PaginatedDataSource", () => {
       // `other` is a plain field, so its value is an object of its own and
       // rewriting this would silently match nothing
       expect(processFilter({ "other.id": "x" })).toEqual({ "other.id": "x" });
+    });
+
+    it("should strip the '.id' suffix also within nested $or / $elemMatch conditions of enum filters", () => {
+      // the rewrite consults the field's datatype, so the type has to be known
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+
+      expect(
+        processFilter({
+          $or: [
+            { "category.id": "SCHOOL" },
+            { "category.id": { $elemMatch: { $eq: "SCHOOL" } } },
+          ],
+        }),
+      ).toEqual({
+        $or: [
+          { category: "SCHOOL" },
+          { category: { $elemMatch: { $eq: "SCHOOL" } } },
+        ],
+      });
     });
   });
 
@@ -448,6 +482,54 @@ describe("PaginatedDataSource", () => {
         },
       );
 
+      it("should discard a stale request's results if it resolves after a newer request already updated filteredRecords", async () => {
+        // Reproduces #4405: the filter can still be resolving asynchronously
+        // (e.g. FilterComponent's resource-based filter generation) while an
+        // earlier request - started with the not-yet-filtered `dataFilter`
+        // default of `{}` - is already in flight against the DB. If that
+        // stale, unfiltered response is simply appended once it arrives, its
+        // records (e.g. completed Todos) leak into the now-filtered list.
+        dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+        const paginator = createFakePaginator(10, 0);
+        dataSource.paginator = paginator as unknown as MatPaginator;
+
+        const staleFetch = deferred<{
+          records: TestEntity[];
+          bookmark?: string;
+        }>();
+        findTypeSpy.mockReturnValueOnce(staleFetch.promise);
+        paginator.initialized.next();
+        await flush();
+        expect(findTypeSpy).toHaveBeenCalledTimes(1);
+
+        // the real filter resolves only now, invalidating the request above
+        const freshFetch = deferred<{
+          records: TestEntity[];
+          bookmark?: string;
+        }>();
+        findTypeSpy.mockReturnValueOnce(freshFetch.promise);
+        dataSource.dataFilter.set({ completed: { $exists: false } } as any);
+        TestBed.tick();
+        await flush();
+        expect(findTypeSpy).toHaveBeenCalledTimes(2);
+
+        // the correct, filtered request resolves first
+        const freshRecords = [new TestEntity("not-completed")];
+        freshFetch.resolve({ records: freshRecords, bookmark: "bm-fresh" });
+        await flush();
+        expect(dataSource.filteredRecords()).toEqual(freshRecords);
+
+        // the stale, unfiltered request (which could include completed records) resolves late
+        staleFetch.resolve({
+          records: [new TestEntity("stale-completed")],
+          bookmark: "bm-stale",
+        });
+        await flush();
+
+        // the stale response must not be merged in on top of the correct data
+        expect(dataSource.filteredRecords()).toEqual(freshRecords);
+      });
+
       it("should clear filteredRecords immediately, even before a paginator is bound", () => {
         dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
         // simulate already having some (stale) records, e.g. from a previous config
@@ -518,5 +600,91 @@ describe("PaginatedDataSource", () => {
     TestBed.tick();
 
     expect(dataSource.isLoading()).toBe(false);
+  });
+
+  describe("stale requests do not affect loading/error state of a newer request", () => {
+    let snackBarOpen: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      snackBarOpen = vi.fn().mockReturnValue({
+        onAction: () => new Subject<void>(),
+        dismiss: vi.fn(),
+      });
+      vi.spyOn(TestBed.inject(MatSnackBar), "open").mockImplementation(
+        snackBarOpen as any,
+      );
+    });
+
+    it("should not show an error toast when a stale request rejects after a newer request already succeeded", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+
+      const staleFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(staleFetch.promise);
+      paginator.initialized.next();
+      await flush();
+
+      const freshFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(freshFetch.promise);
+      dataSource.dataFilter.set({ name: "test" } as any);
+      TestBed.tick();
+      await flush();
+
+      // the newer, now-relevant request succeeds
+      freshFetch.resolve({ records: [], bookmark: undefined });
+      await flush();
+      expect(dataSource.isLoading()).toBe(false);
+      expect(snackBarOpen).not.toHaveBeenCalled();
+
+      // the older, superseded request fails only afterwards
+      staleFetch.reject(new Error("stale request failed"));
+      await flush();
+
+      // must not surface an error for data that is no longer relevant
+      expect(snackBarOpen).not.toHaveBeenCalled();
+      expect(dataSource.isLoading()).toBe(false);
+    });
+
+    it("should not clear isLoading when a stale request resolves while a newer request is still pending", async () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+      const paginator = createFakePaginator(10, 0);
+      dataSource.paginator = paginator as unknown as MatPaginator;
+
+      const staleFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(staleFetch.promise);
+      paginator.initialized.next();
+      await flush();
+
+      const freshFetch = deferred<{
+        records: TestEntity[];
+        bookmark?: string;
+      }>();
+      findTypeSpy.mockReturnValueOnce(freshFetch.promise);
+      dataSource.dataFilter.set({ name: "test" } as any);
+      TestBed.tick();
+      await flush();
+      expect(dataSource.isLoading()).toBe(true);
+
+      // the stale request settles first, while the newer one is still pending
+      staleFetch.resolve({ records: [], bookmark: undefined });
+      await flush();
+
+      // the still-relevant, newer request has not finished yet
+      expect(dataSource.isLoading()).toBe(true);
+
+      freshFetch.resolve({ records: [], bookmark: undefined });
+      await flush();
+      expect(dataSource.isLoading()).toBe(false);
+    });
   });
 });

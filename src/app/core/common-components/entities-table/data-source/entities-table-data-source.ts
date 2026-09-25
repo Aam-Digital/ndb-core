@@ -124,6 +124,12 @@ export abstract class EntitiesTableDataSource<
   };
 
   /**
+   * Incremented whenever a new configuration triggers loading of new data.
+   * This allows stale requests to be detected.
+   */
+  protected loadGeneration = 0;
+
+  /**
    * Request a (re)load of the records for the current config/filter/sort/page.
    *
    * All the triggers that fire while a view initializes are debounced into a
@@ -148,11 +154,15 @@ export abstract class EntitiesTableDataSource<
   private executeLoad(): void {
     const reload = this.pendingReload;
     this.pendingReload = undefined;
+    const generation = ++this.loadGeneration;
+    const isCurrentLoad = () => generation === this.loadGeneration;
     const load = this.loadRecords()
       .then((data) => {
-        // a previous failure has now recovered
-        this.loadErrorSnackBarRef?.dismiss();
-        this.loadErrorSnackBarRef = undefined;
+        if (isCurrentLoad()) {
+          // a previous failure has now recovered
+          this.loadErrorSnackBarRef?.dismiss();
+          this.loadErrorSnackBarRef = undefined;
+        }
         return data;
       })
       .catch((err) => {
@@ -161,10 +171,16 @@ export abstract class EntitiesTableDataSource<
           err,
           this.loadRecordConfig(),
         );
-        this.showLoadErrorToast();
+        if (isCurrentLoad()) {
+          this.showLoadErrorToast();
+        }
         return [];
       })
-      .finally(() => this.isLoading.set(false));
+      .finally(() => {
+        if (isCurrentLoad()) {
+          this.isLoading.set(false);
+        }
+      });
     // let awaiters (e.g. bulk operations) adopt the actual load's outcome
     reload?.resolve(load);
   }
