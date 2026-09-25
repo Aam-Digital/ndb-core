@@ -805,7 +805,10 @@ describe("RemotePouchDatabase tests", () => {
       vi.spyOn(pouchDB, "put").mockImplementation(async () => {
         attempts++;
         if (attempts === 1) {
-          throw { status: HttpStatusCode.Conflict };
+          // PouchDB rejects with an Error carrying the HTTP status
+          throw Object.assign(new Error("Document update conflict"), {
+            status: HttpStatusCode.Conflict,
+          });
         }
         return { ok: true, id: "Entity:1", rev: "6-resolved" };
       });
