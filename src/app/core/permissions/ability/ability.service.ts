@@ -10,6 +10,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
+import { Entity } from "../../entity/model/entity";
 import { Logging } from "../../logging/logging.service";
 import { get, has } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
@@ -175,12 +176,60 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       ? this.getRulesForUser(rules)
       : [{ action: "manage", subject: "all" }];
 
-    const userRules: DatabaseRule[] =
-      await this.interpolateUserVariables(rawUserRules);
+    const user = await this.resolveCurrentUser();
+    const userRules: DatabaseRule[] = this.interpolateUserVariables(
+      rawUserRules,
+      user,
+    );
 
     this.ability.update(userRules);
     this.ability.initialized = true;
+
+    if (
+      this.isLinkedUserEntityMissing(user) &&
+      this.rulesDependOnUserEntity(rawUserRules)
+    ) {
+      // Without the user entity, `${user.projects}` resolves to [], so these are
+      // not the user's actual rules. Enforcing them would act on an artificial
+      // difference (on the legacy adapter: destroy the local database, repeatedly
+      // while a re-created database has not synced the user entity yet).
+      // Enforcement runs once the user entity is available (currentUser emits).
+      Logging.debug(
+        "Not enforcing permissions on local data while the user entity is not available",
+      );
+      return;
+    }
     return this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
+  }
+
+  /**
+   * Wait for the entity linked to the current user
+   * (`null` for a user account without (loadable) entity, `undefined` if not logged in).
+   */
+  private async resolveCurrentUser(): Promise<Entity | null | undefined> {
+    if (!this.sessionInfo.value) {
+      return undefined;
+    }
+    return firstValueFrom(
+      // only emit once user entity is loaded (or "null" for user account without entity)
+      this.currentUser.pipe(filter((x) => x !== undefined)),
+    );
+  }
+
+  /**
+   * The user account is linked to an entity, but that entity could not be loaded
+   * (e.g. not synced into the local database yet).
+   */
+  private isLinkedUserEntityMissing(user: Entity | null | undefined): boolean {
+    return !!this.sessionInfo.value?.entityId && user === null;
+  }
+
+  /**
+   * Whether the rules use a variable that is read from the user entity
+   * (see {@link interpolateUserVariables}) rather than the session.
+   */
+  private rulesDependOnUserEntity(rules: DatabaseRule[]): boolean {
+    return JSON.stringify(rules).includes("${user.projects}");
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
@@ -213,19 +262,16 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     return rawUserRules;
   }
 
-  private async interpolateUserVariables(
+  private interpolateUserVariables(
     rules: DatabaseRule[],
-  ): Promise<DatabaseRule[]> {
+    user: Entity | null | undefined,
+  ): DatabaseRule[] {
     const sessionInfo: SessionInfo = this.sessionInfo.value;
     if (!sessionInfo) {
       // for unauthenticated users, no user variables are available and interpolated
       return rules;
     }
 
-    const user = await firstValueFrom(
-      // only emit once user entity is loaded (or "null" for user account without entity)
-      this.currentUser.pipe(filter((x) => x !== undefined)),
-    );
     if (user && user["projects"]) {
       sessionInfo.projects = user["projects"];
     } else {

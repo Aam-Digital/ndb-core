@@ -93,6 +93,17 @@ export class DatabaseResolverService {
   }
 
   /**
+   * Whether a sync of the current user's app database has ever completed on
+   * this device (the marker is cleared when the local databases are destroyed).
+   */
+  hasCompletedSync(): boolean {
+    const dbName = this.dbConfig?.dbNames?.app;
+    return (
+      !!dbName && !!this.localStorage.getItem(LAST_SYNC_KEY_PREFIX + dbName)
+    );
+  }
+
+  /**
    * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
    */

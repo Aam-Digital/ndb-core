@@ -28,7 +28,8 @@ import { Logging } from "../../logging/logging.service";
  * **Legacy `idb` adapter (PouchDB < 8, purge not supported):**
  * Falls back to the classic behaviour — if any inaccessible entity is found
  * locally, calls `destroyDatabases()` + `location.reload()` to force a clean
- * re-sync.
+ * re-sync. Only once the local database has completed a sync, otherwise it
+ * just resets the sync.
  */
 @Injectable()
 export class LocalPermissionEnforcerService extends PermissionEnforcerService {
@@ -76,8 +77,14 @@ export class LocalPermissionEnforcerService extends PermissionEnforcerService {
       await this.purgeEntitiesWithoutPermissions(subjects);
     } else {
       // Legacy idb adapter: purge() not available — fall back to destroy + reload when needed.
+      // A database that never completed a sync only holds what the server already
+      // filtered by permissions plus local, unsynced changes - destroying it gains
+      // nothing and loses those changes.
       const subjects = this.getSubjectsWithReadRestrictions(userRules);
-      if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
+      if (
+        this.dbResolver.hasCompletedSync() &&
+        (await this.dbHasEntitiesWithoutPermissions(subjects))
+      ) {
         // deleting ALL local data (incl. possibly unsynced docs) - log for traceability of possible data loss
         Logging.warn(
           "Detected changed permissions for user. Destroying local db due to lost permissions ...",

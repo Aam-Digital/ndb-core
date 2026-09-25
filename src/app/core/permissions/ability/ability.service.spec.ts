@@ -337,6 +337,78 @@ describe("AbilityService", () => {
     }
   });
 
+  describe("linked user entity not (yet) in the local database", () => {
+    const projectRules: DatabaseRule[] = [
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        conditions: { projects: { $in: "${user.projects}" } },
+      },
+    ];
+
+    async function applyRules(userRules: DatabaseRule[]) {
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      entityUpdates.next({
+        entity: new Config(Config.PERMISSION_KEY, { user_app: userRules }),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+    }
+
+    function enforceSpy(): Mock {
+      return TestBed.inject(PermissionEnforcerService)
+        .enforcePermissionsOnLocalData as Mock;
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+      TestBed.inject(CurrentUserSubject).next(null);
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("should not enforce rules using ${user.projects} until the user entity is available", async () => {
+      await applyRules(projectRules);
+
+      expect(enforceSpy()).not.toHaveBeenCalled();
+
+      const user = new TestEntity(TEST_USER);
+      user["projects"] = ["p1"];
+      TestBed.inject(CurrentUserSubject).next(user);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(enforceSpy()).toHaveBeenCalledWith([
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "read",
+          conditions: { projects: { $in: ["p1"] } },
+        },
+      ]);
+    });
+
+    it("should still enforce rules that do not depend on the user entity", async () => {
+      await applyRules(rules["user_app"]);
+
+      expect(enforceSpy()).toHaveBeenCalledWith(rules["user_app"]);
+    });
+
+    it("should still enforce for an account without linked entity", async () => {
+      TestBed.inject(SessionSubject).next({
+        name: "user-without-entity",
+        id: "1",
+        roles: ["user_app"],
+        entityId: undefined,
+      });
+
+      await applyRules(projectRules);
+
+      expect(enforceSpy()).toHaveBeenCalled();
+    });
+  });
+
   it("should allow to check conditions with complex data types", async () => {
     vi.useFakeTimers();
     try {
