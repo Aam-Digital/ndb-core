@@ -14,6 +14,7 @@ import {
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
+import { isRemoteOnlyDatabase } from "./remote-only-databases";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "#src/app/utils/di-tokens";
 import { Logging } from "../logging/logging.service";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
@@ -41,6 +42,9 @@ export class DatabaseResolverService {
 
   private databases: Map<string, Database> = new Map();
 
+  /** names of the registered databases that exist on the server only */
+  private readonly remoteOnlyDbNames = new Set<string>();
+
   /** Resolved DB config for the current session (set during initDatabasesForSession). */
   private dbConfig: DbConfig;
 
@@ -55,9 +59,34 @@ export class DatabaseResolverService {
   private _changesFeed: Subject<any> = new Subject();
 
   private registerDatabase(dbName: string) {
+    if (isRemoteOnlyDatabase(dbName)) {
+      this.databases.set(dbName, this.createRemoteOnlyDatabase(dbName));
+      this.remoteOnlyDbNames.add(dbName);
+      return;
+    }
+
     const newDb = this.databaseFactory.createDatabase(dbName);
     this.databases.set(dbName, newDb);
     newDb.changes().subscribe((change) => this._changesFeed.next(change));
+  }
+
+  /**
+   * Create a database that lives on the server only.
+   *
+   * It has to initialize itself here: unlike the app and notifications
+   * databases, nothing else in the session lifecycle will call `init()` for it,
+   * and reads on an uninitialized database wait forever rather than fail.
+   *
+   * It is also deliberately left out of the global changes feed. Subscribing
+   * would poll the server continuously for documents no list in the app is
+   * watching, and feed them to consumers that reload on every update.
+   */
+  private createRemoteOnlyDatabase(dbName: string): Database {
+    // always a remote handle, whatever the session type: the data exists only
+    // on the server, so a local database could not answer for it. Without a
+    // server the requests fail fast rather than hanging, and the feature that
+    // owns such a database is gated on the server reporting it as available.
+    return this.databaseFactory.createRemoteDatabase(dbName);
   }
 
   getDatabase(dbName: string = Entity.DATABASE): Database {
@@ -70,14 +99,22 @@ export class DatabaseResolverService {
   }
 
   async resetDatabases() {
-    for (const db of this.databases.values()) {
+    for (const [dbName, db] of this.databases.entries()) {
+      if (this.remoteOnlyDbNames.has(dbName)) {
+        // server-owned data, of which the client holds no copy to reset
+        continue;
+      }
       await db.reset();
     }
   }
 
   async destroyDatabases() {
     clearLastSyncMarkers();
-    for (const db of this.databases.values()) {
+    for (const [dbName, db] of this.databases.entries()) {
+      if (this.remoteOnlyDbNames.has(dbName)) {
+        // for a remote handle this would delete the database on the server
+        continue;
+      }
       await db.destroy();
     }
   }
@@ -95,6 +132,9 @@ export class DatabaseResolverService {
   /**
    * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
+   *
+   * Remote-only databases need no exclusion here: they are never a
+   * SyncedPouchDatabase, so they have no checkpoints to clear.
    */
   async resetSync() {
     for (const db of this.databases.values()) {

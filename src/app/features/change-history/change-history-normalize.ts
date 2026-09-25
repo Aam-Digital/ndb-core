@@ -2,9 +2,10 @@ import { Delta, patch } from "jsondiffpatch";
 import { isEqual } from "lodash-es";
 import {
   BASELINE_NOTE,
+  CHANGE_OPERATIONS,
   ChangeEvent,
+  ChangeOperation,
   FieldChange,
-  OPERATION_TO_ACTION,
 } from "./change-history.types";
 
 /**
@@ -15,7 +16,7 @@ export interface RawAuditDoc {
   _id: string;
   entityId: string;
   database?: string;
-  operation: "create" | "update" | "delete" | "baseline";
+  operation: ChangeOperation;
   rev?: string;
   parentRev?: string;
   timestamp: string;
@@ -28,6 +29,13 @@ export interface RawAuditDoc {
   diff?: unknown;
 }
 
+/**
+ * The part of an audit record that says which fields a single write touched.
+ * Narrower than {@link RawAuditDoc} so that an already-loaded AuditRecord can
+ * be passed just as well as a raw document.
+ */
+export type AuditDelta = Pick<RawAuditDoc, "operation" | "diff">;
+
 /** Doc fields that are internal/metadata and never shown as user-facing field changes. */
 const HIDDEN_FIELDS = new Set([
   "_id",
@@ -39,6 +47,36 @@ const HIDDEN_FIELDS = new Set([
 
 function isHidden(field: string): boolean {
   return field.startsWith("_") || HIDDEN_FIELDS.has(field);
+}
+
+/**
+ * The names of the fields one audit record changed, read directly from its raw
+ * `diff`, without replaying the entity's full document state.
+ *
+ * This is what the system-wide change log needs: a top-level jsondiffpatch
+ * delta is already keyed by field name, so the *names* (unlike the before/after
+ * *values*, see {@link buildChangeEvents}) need no prior state. That makes a row
+ * renderable from its own audit doc alone, so the log can page over records of
+ * many different entities without loading a history per entity.
+ *
+ * A `delete` returns no fields on purpose: a deletion replicates as a tombstone
+ * stripped of its content, so the delta would list every field of the record as
+ * removed rather than the one thing that happened.
+ */
+export function changedFieldsOf(doc: AuditDelta): string[] {
+  if (doc.operation === "delete") {
+    return [];
+  }
+
+  const changed =
+    doc.operation === "create" || doc.operation === "baseline"
+      ? snapshotOf(doc)
+      : doc.diff;
+
+  if (!changed || typeof changed !== "object") {
+    return [];
+  }
+  return Object.keys(changed).filter((field) => !isHidden(field));
 }
 
 /**
@@ -60,12 +98,16 @@ export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
   const events: ChangeEvent[] = [];
 
   for (const doc of ordered) {
-    const action = OPERATION_TO_ACTION[doc.operation] ?? "updated";
+    // an operation the backend adds later renders as a plain update rather
+    // than an unlabelled badge
+    const operation: ChangeOperation = CHANGE_OPERATIONS.includes(doc.operation)
+      ? doc.operation
+      : "update";
     const base = {
       id: doc._id,
       at: new Date(doc.timestamp),
       by: doc.user?.name ?? doc.user?.id ?? "",
-      action,
+      operation,
     };
 
     if (doc.operation === "baseline" || doc.operation === "create") {
@@ -74,7 +116,7 @@ export function buildChangeEvents(rawDocs: RawAuditDoc[]): ChangeEvent[] {
       events.push({
         ...base,
         changes: additions(snapshot),
-        note: action === "baseline" ? BASELINE_NOTE : undefined,
+        note: operation === "baseline" ? BASELINE_NOTE : undefined,
       });
     } else if (doc.operation === "delete") {
       events.push({ ...base, changes: [] });
@@ -100,7 +142,7 @@ function revGeneration(rev?: string): number {
 }
 
 /** the full document snapshot carried by a baseline (raw doc) or create (`[doc]`) record */
-function snapshotOf(doc: RawAuditDoc): Record<string, unknown> {
+function snapshotOf(doc: AuditDelta): Record<string, unknown> {
   const full =
     doc.operation === "create" && Array.isArray(doc.diff)
       ? doc.diff[0]

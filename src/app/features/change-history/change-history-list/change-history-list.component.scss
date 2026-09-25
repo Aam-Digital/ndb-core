@@ -1,0 +1,9 @@
+/* record ids can be long (a type prefix plus a uuid), so give the input more
+   room than the selects next to it get by default */
+.related-record-filter {
+  min-width: 260px;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
+  justify-content: flex-start;
+}

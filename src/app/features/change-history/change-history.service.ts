@@ -3,15 +3,16 @@ import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../core/logging/logging.service";
 import { environment } from "../../../environments/environment";
-import { DatabaseFactoryService } from "../../core/database/database-factory.service";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { AuditRecord } from "./model/audit-record";
 import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeEvent } from "./change-history.types";
 import { buildChangeEvents, RawAuditDoc } from "./change-history-normalize";
-
-/** CASL subject the audit records are keyed under (see replication-backend #4026). */
-export const AUDIT_RECORD_SUBJECT = "AuditRecord";
+import { KeycloakAuthService } from "../../core/session/auth/keycloak/keycloak-auth.service";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 /** Response of the replication-backend central `GET /_features` endpoint. */
 interface AuditFeatureStatus {
@@ -22,22 +23,21 @@ interface AuditFeatureStatus {
  * Reads an entity's change history from the audit database recorded by the
  * replication-backend (issue #4026).
  *
- * The audit database `<db>-audit` is opened as a read-only remote database and
- * queried on demand per entity (it grows unboundedly, so it is never synced
- * locally). Records are keyed `AuditRecord:<entityId>:<ts>:<rev>`, so a single
- * `_id` prefix range query returns one entity's full history with no extra
- * index.
+ * The audit database is registered as a remote-only database of the AuditRecord
+ * entity type, so it is never synced locally - it grows unboundedly. Records are
+ * keyed `AuditRecord:<entityId>:<ts>:<rev>`, so a single `_id` prefix range
+ * query returns one entity's full history with no extra index.
  */
 @Injectable({ providedIn: "root" })
 export class ChangeHistoryService {
-  private readonly dbFactory = inject(DatabaseFactoryService);
+  private readonly dbResolver = inject(DatabaseResolverService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly entityRegistry = inject(EntityRegistry);
   private readonly ability = inject(EntityAbility, { optional: true });
   private readonly httpClient = inject(HttpClient);
-
-  /** the derived audit db name, e.g. `app-audit` */
-  static auditDbName(): string {
-    return `${Entity.DATABASE}-audit`;
-  }
+  private readonly authService = inject(KeycloakAuthService, {
+    optional: true,
+  });
 
   /**
    * Lazy trigger for the feature-flag fetch. Kept off until
@@ -88,15 +88,8 @@ export class ChangeHistoryService {
     return this.featureFlags.value()?.audit?.enabled ?? false;
   });
 
-  private auditDb?: Database;
-
   private getAuditDb(): Database {
-    if (!this.auditDb) {
-      this.auditDb = this.dbFactory.createRemoteDatabase(
-        ChangeHistoryService.auditDbName(),
-      );
-    }
-    return this.auditDb;
+    return this.dbResolver.getDatabase(AuditRecord.DATABASE);
   }
 
   /**
@@ -108,6 +101,36 @@ export class ChangeHistoryService {
     const prefix = `AuditRecord:${entity.getId()}:`;
     const docs = await this.getAuditDb().getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
+  }
+
+  /**
+   * The authors to offer in the change log's "changed by" filter.
+   *
+   * Taken from the records a login account can belong to, not from the audit
+   * documents: the audit database has no index of its authors, so reading them
+   * from there means scanning it and still only seeing whoever happens to be
+   * recent. The account-bearing records are a small, complete set, and they
+   * carry the names to show instead of the bare ids the audit documents hold.
+   */
+  async getChangeAuthors(): Promise<Entity[]> {
+    const accountTypes = this.entityRegistry
+      .getEntityTypes()
+      .filter(({ value }) => value.enableUserAccounts)
+      .map(({ value }) => value);
+
+    const loaded = await Promise.all(
+      accountTypes.map((type) =>
+        this.entityMapper.loadType(type).catch((err) => {
+          // one unreadable type must not cost the filter its other options
+          Logging.debug("could not load change log author options", type, err);
+          return [] as Entity[];
+        }),
+      ),
+    );
+
+    return loaded
+      .flat()
+      .sort((a, b) => a.toString().localeCompare(b.toString()));
   }
 
   /**
@@ -127,7 +150,7 @@ export class ChangeHistoryService {
    * data is denied.
    */
   hasHistoryPermission(): boolean {
-    return !!this.ability && this.ability.can("read", AUDIT_RECORD_SUBJECT);
+    return !!this.ability && this.ability.can("read", AuditRecord.ENTITY_TYPE);
   }
 
   /** Both: the entity qualifies and the user may read its audit data. */

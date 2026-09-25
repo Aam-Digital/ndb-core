@@ -14,6 +14,8 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { SessionSubject } from "../../session/auth/session-info";
+import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 import { FeaturePermissionDialogComponent } from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
@@ -333,6 +335,22 @@ describe("EntityListComponent", () => {
       afterClosed: () => of(result),
     } as any;
   }
+
+  it("should offer the change log once the permission rules have loaded", () => {
+    const session = TestBed.inject(SessionSubject);
+    session.next({ name: "admin", id: "a", roles: [ADMIN_APP_ROLE] } as any);
+    const ability = TestBed.inject(EntityAbility);
+    // rules load asynchronously, so start with none at all
+    ability.update([]);
+
+    createComponent();
+    expect(component.canViewChangeHistory()).toBe(false);
+
+    // the session already emitted, so only a rule update can reveal the link
+    ability.update([{ subject: "AuditRecord", action: "read" }]);
+
+    expect(component.canViewChangeHistory()).toBe(true);
+  });
 
   it("should not allow import when user cannot create ImportMetadata", () => {
     const ability = TestBed.inject(EntityAbility);
