@@ -864,6 +864,29 @@ describe("RemotePouchDatabase tests", () => {
       }
     });
 
+    it("should still emit a conflicting revision of the same generation", async () => {
+      vi.useFakeTimers();
+      try {
+        // a synced peer replicated its own edit of the same parent, so both
+        // revisions exist and the server picked theirs as the winner
+        const { pouchDB, received } = setupFeed([
+          { _id: "Entity:1", _rev: "2-b", name: "Theirs" },
+        ]);
+        vi.spyOn(pouchDB, "put").mockResolvedValue({
+          ok: true,
+          id: "Entity:1",
+          rev: "2-a",
+        });
+
+        await database.put({ _id: "Entity:1", _rev: "1-old", name: "Mine" });
+        await runPoll();
+
+        expect(received.map((d) => d._rev)).toEqual(["2-a", "2-b"]);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it("should still emit a poll result newer than the revision it announced", async () => {
       vi.useFakeTimers();
       try {

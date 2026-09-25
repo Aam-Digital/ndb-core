@@ -33,7 +33,6 @@ function requestMethod(opts: RequestInit | undefined): string {
   return (opts?.method ?? "GET").toUpperCase();
 }
 
-/** Identifies one specific revision of one document. */
 /**
  * The generation number of a CouchDB revision (the `3` of `3-abc...`), which increases
  * with every write to a document. NaN if it cannot be read, so callers fall back to
@@ -73,17 +72,17 @@ export class RemotePouchDatabase extends PouchDatabase {
   private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
 
   /**
-   * Document id to the highest revision number this client announced for it through
-   * {@link announceOwnWrite}. Anything at or below that revision is already reflected
-   * in every subscriber, so the changes feed skips it.
+   * Document id to the most recent revision this client announced for it through
+   * {@link announceOwnWrite}, used by {@link isAlreadyAnnounced} to decide what the
+   * changes feed can skip.
    *
-   * This covers three cases at once: the poll echoing a write back, a conflict retry
-   * announcing the revision its caller then announces again, and a poll response that
-   * read the server before a local write and only arrives afterwards. The last one
-   * matters most - emitting a superseded revision after a newer one would leave
-   * subscribers on stale data until that document changes again.
+   * This covers the poll echoing a write back, a conflict retry announcing the
+   * revision its caller then announces again, and a poll response that read the
+   * server before a local write and only arrives afterwards. The last one matters
+   * most - emitting a superseded revision after a newer one would leave subscribers
+   * on stale data until that document changes again.
    */
-  private readonly announcedRevisions = new Map<string, number>();
+  private readonly announcedRevisions = new Map<string, string>();
 
   /**
    * Upper bound for {@link announcedRevisions}, which holds one entry per document this
@@ -518,8 +517,21 @@ export class RemotePouchDatabase extends PouchDatabase {
    */
   private isAlreadyAnnounced(doc: { _id?: string; _rev?: string }): boolean {
     const announced = this.announcedRevisions.get(doc?._id);
+    if (announced === undefined) {
+      return false;
+    }
+    if (announced === doc?._rev) {
+      // the server echoing back the exact revision this client wrote
+      return true;
+    }
+
+    // A different revision of the same generation is a conflicting sibling, not an
+    // echo - two clients edited the same parent and the server picked a winner
+    // between them. Suppressing it would hide that winner from every subscriber,
+    // so only a strictly older generation counts as superseded.
     const incoming = revisionNumber(doc?._rev);
-    return announced !== undefined && !isNaN(incoming) && incoming <= announced;
+    const mine = revisionNumber(announced);
+    return !isNaN(incoming) && !isNaN(mine) && incoming < mine;
   }
 
   /**
@@ -546,7 +558,7 @@ export class RemotePouchDatabase extends PouchDatabase {
     if (this.announcedRevisions.size >= this.MAX_ANNOUNCED_REVISIONS) {
       this.announcedRevisions.clear();
     }
-    this.announcedRevisions.set(doc._id, revisionNumber(doc._rev));
+    this.announcedRevisions.set(doc._id, doc._rev);
 
     if (this.ngZone) {
       this.ngZone.run(() => this.changesFeed.next(doc));
