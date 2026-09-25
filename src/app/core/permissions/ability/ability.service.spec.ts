@@ -368,6 +368,62 @@ describe("AbilityService", () => {
     }
   });
 
+  it("should apply rules that are restricted to individual fields", async () => {
+    vi.useFakeTimers();
+    try {
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+        user_app: [
+          { subject: "TestEntity", action: "update", fields: ["name"] },
+        ],
+      });
+      entityUpdates.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+
+      const entity = new TestEntity();
+      expect(ability.can("update", entity, "name")).toBe(true);
+      expect(ability.can("update", entity, "other")).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should ignore rule conditions when checking create, but still honour field restrictions", async () => {
+    vi.useFakeTimers();
+    try {
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+
+      const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+        user_app: [
+          {
+            subject: "TestEntity",
+            action: "create",
+            fields: ["name"],
+            conditions: { name: "only this one" },
+          },
+        ],
+      });
+      entityUpdates.next({ entity: config, type: "update" });
+      await vi.advanceTimersByTimeAsync(0);
+
+      // a new entity cannot fulfil the conditions yet, so create is granted
+      // regardless of them - but the field restriction still applies
+      const entity = new TestEntity();
+      expect(ability.can("create", entity, "name")).toBe(true);
+      expect(ability.can("create", entity, "other")).toBe(false);
+
+      // ... unless the caller explicitly asks for the conditions to be enforced
+      expect(ability.can("create", entity, "name", true)).toBe(false);
+      entity.name = "only this one";
+      expect(ability.can("create", entity, "name", true)).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should log a warning if no rules are found for a user", async () => {
     vi.useFakeTimers();
     try {
