@@ -105,7 +105,7 @@
     "@compodoc/compodoc": "^2.0.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "1.63.0",
-    "@schematics/angular": "^21.2.24",
+    "@schematics/angular": "^22.2.0",
     "@sentry/cli": "^3.8.0",
     "@standard-schema/spec": "^1.1.0",
     "@storybook/addon-docs": "^10.6.0",
