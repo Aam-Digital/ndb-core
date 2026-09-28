@@ -269,7 +269,7 @@ See EntityRegistry for an example</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:76</a></div>
                             </td>
                         </tr>
 
@@ -338,7 +338,7 @@ See EntityRegistry for an example</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -385,8 +385,8 @@ which is neither understandable nor searchable.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="78"
-                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:78</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -466,8 +466,8 @@ which is neither understandable nor searchable.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="86"
-                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:86</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -535,8 +535,8 @@ which is neither understandable nor searchable.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -612,8 +612,8 @@ This is useful for storybook where live-updates re-trigger the decorator while t
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -675,13 +675,20 @@ This is useful for storybook where live-updates re-trigger the decorator while t
 /**
  * Thrown when an item that the config refers to - a dynamic component, an entity
  * type, a route - is looked up in a {@link Registry} without having been registered.
+ *
+ * The key is deliberately not part of the message, only carried as a property:
+ * remote monitoring groups this error by its message, and one missing
+ * registration rarely comes alone (a config referring to entity types of
+ * another setup misses several at once), so a key in the message opens a
+ * separate issue per key for what is one problem. The key is attached to the
+ * report as extra data instead (see &#x60;enrichSentryEvent&#x60; in logging.service.ts).
  */
 export class RegistryLookupError extends Error {
   constructor(
     readonly registryName: string,
     readonly key: string,
   ) {
-    super(&#x60;Requested item is not registered in ${registryName}. Key: ${key}&#x60;);
+    super(&#x60;Requested item is not registered in ${registryName}&#x60;);
 
     // Set explicitly, and to a literal: remote monitoring reads the exception
     // type as &#x60;error.name || error.constructor.name&#x60;. A subclass inherits
@@ -706,12 +713,11 @@ export class RegistryDuplicateError extends Error {
     readonly registryName: string,
     readonly key: string,
   ) {
-    // the already-registered element is deliberately not interpolated here:
-    // stringifying it dumps a whole class constructor or async import function
-    // into the message
-    super(
-      &#x60;${registryName}: Duplicate definition, &quot;${key}&quot; is already registered&#x60;,
-    );
+    // neither the key (for the same reason as in RegistryLookupError above) nor
+    // the already-registered element are interpolated here: stringifying the
+    // latter dumps a whole class constructor or async import function into
+    // the message
+    super(&#x60;${registryName}: Duplicate definition of an already registered key&#x60;);
 
     // set explicitly for the same reason as in RegistryLookupError above
     this.name &#x3D; &quot;RegistryDuplicateError&quot;;
@@ -763,7 +769,7 @@ export abstract class Registry&lt;T&gt; extends Map&lt;string, T&gt; {
     if (!this.has(key)) {
       // A missing registration is one problem no matter which component, pipe or
       // route hit it first. The dedicated error type lets remote monitoring group
-      // it by registry and key instead of by stack trace, which otherwise opens a
+      // it by registry instead of by stack trace, which otherwise opens a
       // separate issue per call site (see CAUSE_GROUPED_ERROR_TYPES).
       throw new RegistryLookupError(this.registryName, key);
       // To register a component, add @DynamicComponent(&quot;COMPONENTNAME&quot;) to the components .ts-file and implement the onInitFromDynamicConfig method, e.g. onInitFromDynamicConfig(config: any) {}

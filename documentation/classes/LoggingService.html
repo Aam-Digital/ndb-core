@@ -257,8 +257,8 @@ that allows developers to monitor and analyse problems.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:79</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="83"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -374,8 +374,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="100"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:100</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="104"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -464,8 +464,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="126"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:126</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="130"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:130</a></div>
                         </td>
                     </tr>
 
@@ -545,8 +545,8 @@ especially in remote logging.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -587,8 +587,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="108"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:108</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -656,8 +656,8 @@ that should be added to the providers array of the AppModule.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="40"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -728,8 +728,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:136</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -844,8 +844,8 @@ If set up this will be used to send errors to a remote endpoint for analysis.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="117"
-                                    class="link-to-prism">src/app/core/logging/logging.service.ts:117</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -934,6 +934,10 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   isConnectivityErrorMessage,
 } from &quot;#src/app/utils/connectivity-error&quot;;
+import {
+  RegistryDuplicateError,
+  RegistryLookupError,
+} from &quot;#src/app/core/config/registry/dynamic-registry&quot;;
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -1742,6 +1746,31 @@ function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
 const FALLBACK_EXCEPTION_TYPE &#x3D; &quot;Error&quot;;
 
 /**
+ * Which registration a registry error is about, if there is one in the chain.
+ *
+ * The key is not part of the error message, so that all keys of one registry
+ * share one issue (see {@link RegistryLookupError}) - this is what still names
+ * it in each report. The cause chain is searched as well, because Angular
+ * re-throws an error raised in a &#x60;resource()&#x60; loader as an error of its own
+ * (see {@link rewrappedCauseGroupedError}), which does not carry the key.
+ */
+function registryErrorContext(err: unknown): Record&lt;string, string&gt; {
+  const seen &#x3D; new Set&lt;unknown&gt;();
+  let e &#x3D; err;
+  while (e &amp;&amp; typeof e &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; !seen.has(e)) {
+    if (
+      e instanceof RegistryLookupError ||
+      e instanceof RegistryDuplicateError
+    ) {
+      return { registry: e.registryName, registryKey: e.key };
+    }
+    seen.add(e);
+    e &#x3D; (e as { cause?: unknown }).cause;
+  }
+  return {};
+}
+
+/**
  * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException&#x27;s entityId, status, reason).
  */
@@ -1777,6 +1806,8 @@ function enrichSentryEvent(
         extras.status &#x3D; status;
       }
     }
+
+    Object.assign(extras, registryErrorContext(err));
 
     if (Object.keys(extras).length &gt; 0) {
       event.extra &#x3D; { ...event.extra, ...extras };

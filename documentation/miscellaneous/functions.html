@@ -806,6 +806,9 @@
                             <a href="#registerPWAInstallListener" title="src/bootstrap-pwa-install.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>registerPWAInstallListener</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-pwa-install.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#registryErrorContext" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>registryErrorContext</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#removeFollowUpMarkerForOldNotes" title="src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>removeFollowUpMarkerForOldNotes</b>&nbsp;&nbsp;&nbsp;(src/.../demo-note-generator.service.ts)</span></a>
                         </li>
                         <li>
@@ -9740,6 +9743,70 @@ which is what the fingerprint defines (see <a href="../miscellaneous/functions.h
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Sentry.ErrorEvent | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="registryErrorContext"></a>
+                    <span class="name">
+                        <span ><b>registryErrorContext</b></span>
+                        <a href="#registryErrorContext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>registryErrorContext(err)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Which registration a registry error is about, if there is one in the chain.</p>
+<p>The key is not part of the error message, so that all keys of one registry
+share one issue (see <a href="../classes/RegistryLookupError.html">RegistryLookupError</a>) - this is what still names
+it in each report. The cause chain is searched as well, because Angular
+re-throws an error raised in a <code>resource()</code> loader as an error of its own
+(see <a href="../miscellaneous/functions.html#rewrappedCauseGroupedError">rewrappedCauseGroupedError</a>), which does not carry the key.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Record&lt;string, string&gt;</code>
 
                         </div>
                             <div class="io-description">

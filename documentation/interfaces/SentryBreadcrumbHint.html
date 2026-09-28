@@ -260,7 +260,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="237" class="link-to-prism">src/app/core/logging/logging.service.ts:237</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="241" class="link-to-prism">src/app/core/logging/logging.service.ts:241</a></div>
                                 </td>
                             </tr>
 
@@ -311,7 +311,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="239" class="link-to-prism">src/app/core/logging/logging.service.ts:239</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="243" class="link-to-prism">src/app/core/logging/logging.service.ts:243</a></div>
                                 </td>
                             </tr>
 
@@ -350,7 +350,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="244" class="link-to-prism">src/app/core/logging/logging.service.ts:244</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="248" class="link-to-prism">src/app/core/logging/logging.service.ts:248</a></div>
                                 </td>
                             </tr>
 
@@ -400,7 +400,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="247" class="link-to-prism">src/app/core/logging/logging.service.ts:247</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="251" class="link-to-prism">src/app/core/logging/logging.service.ts:251</a></div>
                                 </td>
                             </tr>
 
@@ -444,7 +444,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="246" class="link-to-prism">src/app/core/logging/logging.service.ts:246</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="250" class="link-to-prism">src/app/core/logging/logging.service.ts:250</a></div>
                                 </td>
                             </tr>
 
@@ -488,7 +488,7 @@ This can be used to extract data from the target DOM element into a breadcrumb, 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="248" class="link-to-prism">src/app/core/logging/logging.service.ts:248</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="252" class="link-to-prism">src/app/core/logging/logging.service.ts:252</a></div>
                                 </td>
                             </tr>
 
@@ -517,6 +517,10 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   isConnectivityErrorMessage,
 } from &quot;#src/app/utils/connectivity-error&quot;;
+import {
+  RegistryDuplicateError,
+  RegistryLookupError,
+} from &quot;#src/app/core/config/registry/dynamic-registry&quot;;
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -1325,6 +1329,31 @@ function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
 const FALLBACK_EXCEPTION_TYPE &#x3D; &quot;Error&quot;;
 
 /**
+ * Which registration a registry error is about, if there is one in the chain.
+ *
+ * The key is not part of the error message, so that all keys of one registry
+ * share one issue (see {@link RegistryLookupError}) - this is what still names
+ * it in each report. The cause chain is searched as well, because Angular
+ * re-throws an error raised in a &#x60;resource()&#x60; loader as an error of its own
+ * (see {@link rewrappedCauseGroupedError}), which does not carry the key.
+ */
+function registryErrorContext(err: unknown): Record&lt;string, string&gt; {
+  const seen &#x3D; new Set&lt;unknown&gt;();
+  let e &#x3D; err;
+  while (e &amp;&amp; typeof e &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; !seen.has(e)) {
+    if (
+      e instanceof RegistryLookupError ||
+      e instanceof RegistryDuplicateError
+    ) {
+      return { registry: e.registryName, registryKey: e.key };
+    }
+    seen.add(e);
+    e &#x3D; (e as { cause?: unknown }).cause;
+  }
+  return {};
+}
+
+/**
  * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException&#x27;s entityId, status, reason).
  */
@@ -1360,6 +1389,8 @@ function enrichSentryEvent(
         extras.status &#x3D; status;
       }
     }
+
+    Object.assign(extras, registryErrorContext(err));
 
     if (Object.keys(extras).length &gt; 0) {
       event.extra &#x3D; { ...event.extra, ...extras };
