@@ -665,6 +665,9 @@
                             <a href="#lastSyncedBatchContext" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lastSyncedBatchContext</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#loggedUnreachableServer" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>loggedUnreachableServer</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#matches" title="src/app/utils/test-utils/array-test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>matches</b>&nbsp;&nbsp;&nbsp;(src/.../array-test-utils.ts)</span></a>
                         </li>
                         <li>
@@ -9013,7 +9016,7 @@ replaced by a stable one and kept as a searchable tag instead.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>groupByErrorChain(event, values, thrownError)</code>
+<code>groupByErrorChain(event, values, groupedError)</code>
                 </td>
             </tr>
 
@@ -9029,6 +9032,9 @@ shows up as one issue.</p>
 error says which operation failed, the root cause says why (e.g. a config
 load failing because the device is offline is a different problem from the
 same load failing because the user is unauthorized).</p>
+<p>The error the event is grouped by is usually the thrown one, but can be a
+link further down the chain when the ones above it add nothing (see
+<a href="../miscellaneous/functions.html#rewrappedCauseGroupedError">rewrappedCauseGroupedError</a> and <a href="../miscellaneous/functions.html#loggedUnreachableServer">loggedUnreachableServer</a>).</p>
 <p>Because the root cause is part of the grouping key, it is also appended to
 the reported message: otherwise several issues share one title (a dozen
 &quot;Failed to load configuration from the database.&quot; rows) and can only be told
@@ -9067,7 +9073,7 @@ be filtered by where it happened without splitting it into separate issues.</p>
 
                                         </tr>
                                         <tr>
-                                                <td>thrownError</td>
+                                                <td>groupedError</td>
 
                                             <td>
                                                     No
@@ -9545,6 +9551,84 @@ diagnostic value (server outages still surface through online users).</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loggedUnreachableServer"></a>
+                    <span class="name">
+                        <span ><b>loggedUnreachableServer</b></span>
+                        <a href="#loggedUnreachableServer"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loggedUnreachableServer(values)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The failed request that a <a href="../classes/LoggedError.html">LoggedError</a> directly wraps, if that is all
+it has to report.</p>
+<p>The message an error is logged with says where it happened (&quot;Failed to load
+important notes&quot;), which for most errors is what tells two problems apart.
+For a request that never reached the server it is not: the connection
+failed, and every component loading data at that moment logs it under a
+message of its own. Grouped by those, a single connectivity drop opens one
+issue per component - next to the issue the same failure already has where
+it is reported without a message. Grouping them by the wrapped error puts
+them into that one issue instead; the logged message is kept as a tag, and
+the route is still the <code>transaction</code> tag.</p>
+<p>Only an error of a recognized type (see <a href="../miscellaneous/variables.html#CAUSE_GROUPED_ERROR_TYPES">CAUSE_GROUPED_ERROR_TYPES</a>)
+directly below the wrapper qualifies:</p>
+<ul>
+<li>a named error in between (a <code>ConfigLoadError</code> caused by a failed fetch)
+says more than the fact that a request failed, and keeps its own issue;</li>
+<li>any other failed request has no issue of its own to go to, only the shared
+network bucket - where a chunk that did not load during bootstrap, so that
+the app never started, would disappear among requests of no consequence.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>values</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Sentry.Exception | undefined</code>
 
                         </div>
                             <div class="io-description">

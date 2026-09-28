@@ -192,6 +192,9 @@ message contributes nothing but its own stack trace, so the event is grouped by 
 error underneath it (<code>rewrappedCauseGroupedError</code>) and lands in the same issue as the unwrapped
 one. A wrapper with a message of its own (<code>Failed to load configuration from the database.</code>) says
 more about the failure than its cause does, and stays what the event is grouped by.</p>
+<p>Where the event is grouped by an error further down the chain like this, the thrown error takes
+on that error&#39;s type and reported message, as Sentry titles an event by its thrown error: the
+issue would otherwise hold the same problem under two titles.</p>
 </li>
 <li><p><strong>Network failures</strong> — anything whose chain contains a connectivity error (see
 <code>isConnectivityErrorMessage</code>) is collected into the single <code>network-error</code> issue. The browser

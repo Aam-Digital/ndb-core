@@ -840,10 +840,20 @@ function groupSentryEvent(
   const thrownError &#x3D; values[values.length - 1];
   const thrownType &#x3D; thrownError.type ?? &quot;&quot;;
 
-  if (
-    CAUSE_GROUPED_ERROR_TYPES.includes(thrownType) ||
-    hint?.originalException instanceof LoggedError
-  ) {
+  if (CAUSE_GROUPED_ERROR_TYPES.includes(thrownType)) {
+    return groupByErrorChain(event, values, thrownError);
+  }
+
+  if (hint?.originalException instanceof LoggedError) {
+    const unreachableServer &#x3D; loggedUnreachableServer(values);
+    if (unreachableServer) {
+      event.tags &#x3D; {
+        ...event.tags,
+        // Sentry rejects tag values longer than 200 characters
+        logged_message: normalizeErrorValue(thrownError.value).slice(0, 200),
+      };
+      return groupByErrorChain(event, values, unreachableServer);
+    }
     return groupByErrorChain(event, values, thrownError);
   }
 
@@ -903,6 +913,39 @@ function rewrappedCauseGroupedError(
 }
 
 /**
+ * The failed request that a {@link LoggedError} directly wraps, if that is all
+ * it has to report.
+ *
+ * The message an error is logged with says where it happened (&quot;Failed to load
+ * important notes&quot;), which for most errors is what tells two problems apart.
+ * For a request that never reached the server it is not: the connection
+ * failed, and every component loading data at that moment logs it under a
+ * message of its own. Grouped by those, a single connectivity drop opens one
+ * issue per component - next to the issue the same failure already has where
+ * it is reported without a message. Grouping them by the wrapped error puts
+ * them into that one issue instead; the logged message is kept as a tag, and
+ * the route is still the &#x60;transaction&#x60; tag.
+ *
+ * Only an error of a recognized type (see {@link CAUSE_GROUPED_ERROR_TYPES})
+ * directly below the wrapper qualifies:
+ * - a named error in between (a &#x60;ConfigLoadError&#x60; caused by a failed fetch)
+ *   says more than the fact that a request failed, and keeps its own issue;
+ * - any other failed request has no issue of its own to go to, only the shared
+ *   network bucket - where a chunk that did not load during bootstrap, so that
+ *   the app never started, would disappear among requests of no consequence.
+ */
+function loggedUnreachableServer(
+  values: Sentry.Exception[],
+): Sentry.Exception | undefined {
+  const wrapped &#x3D; values[values.length - 2];
+  return wrapped &amp;&amp;
+    CAUSE_GROUPED_ERROR_TYPES.includes(wrapped.type ?? &quot;&quot;) &amp;&amp;
+    isConnectivityException(wrapped)
+    ? wrapped
+    : undefined;
+}
+
+/**
  * Report an exception under the normalized message it is grouped by, keeping
  * the original one as extra data.
  *
@@ -950,6 +993,10 @@ const MAX_REPORTED_MESSAGE_LENGTH &#x3D; 300;
  * load failing because the device is offline is a different problem from the
  * same load failing because the user is unauthorized).
  *
+ * The error the event is grouped by is usually the thrown one, but can be a
+ * link further down the chain when the ones above it add nothing (see
+ * {@link rewrappedCauseGroupedError} and {@link loggedUnreachableServer}).
+ *
  * Because the root cause is part of the grouping key, it is also appended to
  * the reported message: otherwise several issues share one title (a dozen
  * &quot;Failed to load configuration from the database.&quot; rows) and can only be told
@@ -961,11 +1008,11 @@ const MAX_REPORTED_MESSAGE_LENGTH &#x3D; 300;
 function groupByErrorChain(
   event: Sentry.ErrorEvent,
   values: Sentry.Exception[],
-  thrownError: Sentry.Exception,
+  groupedError: Sentry.Exception,
 ): Sentry.ErrorEvent {
-  const thrownType &#x3D; thrownError.type ?? &quot;&quot;;
-  const thrownValue &#x3D; groupingValue(thrownError);
-  const fingerprint &#x3D; [thrownType, thrownValue];
+  const groupedType &#x3D; groupedError.type ?? &quot;&quot;;
+  const groupedValue &#x3D; groupingValue(groupedError);
+  const fingerprint &#x3D; [groupedType, groupedValue];
 
   const rootCause &#x3D; values[0];
   const rootType &#x3D; rootCause.type ?? &quot;&quot;;
@@ -976,17 +1023,26 @@ function groupByErrorChain(
   // Two links that are both network failures are one such case - which of them
   // the chain happens to include says nothing about the problem.
   const isDistinctCause &#x3D;
-    !(thrownValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE &amp;&amp; rootValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE) &amp;&amp;
-    (rootType !&#x3D;&#x3D; thrownType || rootValue !&#x3D;&#x3D; thrownValue);
+    !(groupedValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE &amp;&amp; rootValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE) &amp;&amp;
+    (rootType !&#x3D;&#x3D; groupedType || rootValue !&#x3D;&#x3D; groupedValue);
 
   if (isDistinctCause) {
     fingerprint.push(rootType, rootValue);
-    thrownError.value &#x3D; &#x60;${thrownError.value} ${describeCause(rootCause)}&#x60;;
+    groupedError.value &#x3D; &#x60;${groupedError.value} ${describeCause(rootCause)}&#x60;;
   }
 
-  if (thrownValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE) {
+  if (groupedValue &#x3D;&#x3D;&#x3D; NETWORK_FAILURE) {
     // the wordings collected here differ per browser, so use a stable title
-    reportAsUnreachableServer(event, thrownError);
+    reportAsUnreachableServer(event, groupedError);
+  }
+
+  const thrownError &#x3D; values[values.length - 1];
+  if (thrownError !&#x3D;&#x3D; groupedError) {
+    // Sentry titles an event by its thrown error, so a title taken from the
+    // links above the grouped one would differ from the title the same problem
+    // has everywhere else in its issue
+    thrownError.type &#x3D; groupedError.type;
+    thrownError.value &#x3D; groupedError.value;
   }
 
   event.fingerprint &#x3D; fingerprint;
