@@ -93,6 +93,10 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    one. A wrapper with a message of its own (`Failed to load configuration from the database.`) says
    more about the failure than its cause does, and stays what the event is grouped by.
 
+   Where the event is grouped by an error further down the chain like this, the thrown error takes
+   on that error's type and reported message, as Sentry titles an event by its thrown error: the
+   issue would otherwise hold the same problem under two titles.
+
 2. **Network failures** — anything whose chain contains a connectivity error (see
    `isConnectivityErrorMessage`) is collected into the single `network-error` issue. The browser
    raises these at whatever point a request happened to be made, so by stack trace they are an

@@ -10,6 +10,37 @@ import {
 } from "./logging.service";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 
+/** How Sentry titles an event: by its last (thrown) exception. */
+function reportedTitle(event: any): string {
+  const values = event.exception.values;
+  const thrown = values[values.length - 1];
+  return `${thrown.type}: ${thrown.value}`;
+}
+
+/** An event for `Logging.error(message, err)`, where `chain` is `err` innermost-first. */
+function loggedEvent(message: string, ...chain: object[]): any {
+  return processSentryEvent(
+    {
+      exception: { values: [...chain, { type: "Error", value: message }] },
+    } as any,
+    { originalException: new LoggedError(message) } as any,
+  );
+}
+
+/** An event for a failed database request that reached the global error handler. */
+function unloggedDbFailure(): any {
+  return processSentryEvent(
+    {
+      exception: {
+        values: [
+          { type: "DatabaseException", value: "Failed to fetch from DB" },
+        ],
+      },
+    } as any,
+    {},
+  );
+}
+
 describe("LoggingService", () => {
   const testMessage = "FANCY_TEST_MESSAGE";
 
@@ -573,6 +604,24 @@ describe("LoggingService", () => {
         );
       });
 
+      it("should report an error a framework re-threw under the title of the unwrapped one", () => {
+        const thrownDirectly = unloggedDbFailure();
+        const fromResourceLoader = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Failed to fetch from DB" },
+            { type: "Error", value: "Failed to fetch from DB" },
+          ),
+          {},
+        );
+
+        expect(reportedTitle(thrownDirectly)).toBe(
+          "DatabaseException: Failed to reach the server",
+        );
+        expect(reportedTitle(fromResourceLoader)).toBe(
+          reportedTitle(thrownDirectly),
+        );
+      });
+
       it("should keep grouping a wrapper that describes the failed operation by itself", () => {
         const cause = {
           type: "DatabaseException",
@@ -943,6 +992,60 @@ describe("LoggingService", () => {
 
         expect(event.fingerprint).toContain("ConfigLoadError");
         expect(event.fingerprint).not.toEqual(["network-error"]);
+      });
+
+      it("should group a logged failed database request with the unlogged one, whichever component logged it", () => {
+        const notes = loggedEvent("Failed to load important notes", {
+          type: "DatabaseException",
+          value: "Failed to fetch",
+        });
+        const list = loggedEvent("Error loading data in datasource", {
+          type: "DatabaseException",
+          value: "Load failed",
+        });
+        const unlogged = unloggedDbFailure();
+
+        expect(notes.fingerprint).toEqual(unlogged.fingerprint);
+        expect(list.fingerprint).toEqual(unlogged.fingerprint);
+        // ... under the same title
+        expect(reportedTitle(notes)).toBe(reportedTitle(unlogged));
+        // ... still telling which component failed
+        expect(notes.tags.logged_message).toBe(
+          "Failed to load important notes",
+        );
+      });
+
+      it("should keep a logged named error caused by a failed request in its own issue", () => {
+        const event = loggedEvent(
+          "Application Bootstrap failed",
+          { type: "DatabaseException", value: "Failed to fetch" },
+          {
+            type: "ConfigLoadError",
+            value: "Failed to load configuration from the database.",
+          },
+        );
+
+        expect(event.fingerprint).not.toEqual(unloggedDbFailure().fingerprint);
+      });
+
+      it("should keep a logged failed chunk load in its own issue, as the app may never have started", () => {
+        const event = loggedEvent("Application Bootstrap failed", {
+          type: "TypeError",
+          value:
+            "Failed to fetch dynamically imported module: https://example.org/chunk-SL2Y43UW.js",
+        });
+
+        expect(event.fingerprint).not.toEqual(["network-error"]);
+        expect(event.fingerprint).toContain("application bootstrap failed");
+      });
+
+      it("should keep grouping other logged database failures by the logged message", () => {
+        const event = loggedEvent("Failed to load important notes", {
+          type: "DatabaseException",
+          value: "Unauthorized",
+        });
+
+        expect(event.fingerprint).toContain("failed to load important notes");
       });
     });
 
