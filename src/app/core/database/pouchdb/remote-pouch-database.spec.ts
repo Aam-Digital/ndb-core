@@ -368,25 +368,49 @@ describe("RemotePouchDatabase tests", () => {
       );
     });
 
-    it("should tell the user again after the session was renewed in between", async () => {
-      mockAuthService.login
-        .mockRejectedValueOnce(new RemoteLoginNotAvailableError())
-        .mockResolvedValueOnce(undefined)
-        .mockRejectedValueOnce(new RemoteLoginNotAvailableError());
+    it("should tell the user again once the server accepted a request in between", async () => {
+      mockAuthService.login.mockRejectedValue(
+        new RemoteLoginNotAvailableError(),
+      );
 
       await fetchDoc();
+      // e.g. another tab or database instance renewed the session meanwhile
+      (PouchDB.fetch as Mock).mockImplementationOnce(
+        async () => new Response("{}", { status: HttpStatusCode.Ok }),
+      );
       await fetchDoc();
       await fetchDoc();
 
       expect(mockAlertService.addWarning).toHaveBeenCalledTimes(2);
     });
 
-    it("should not show the alert if the re-login fails for another reason", async () => {
+    it("should report instead of alerting if the re-login fails for another reason", async () => {
       mockAuthService.login.mockRejectedValue(new Error("unexpected"));
+      const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
 
-      await fetchDoc();
+      const result = await fetchDoc();
 
+      expect(result.status).toBe(HttpStatusCode.Unauthorized);
       expect(mockAlertService.addWarning).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(
+        "Could not renew session after 401",
+        expect.any(Error),
+      );
+      warn.mockRestore();
+    });
+
+    it("should fail like any unreachable server if the repeated request gets no response", async () => {
+      mockAuthService.login.mockResolvedValue(undefined);
+      (PouchDB.fetch as Mock)
+        .mockImplementationOnce(
+          async () =>
+            new Response('{ "reason": "exp not in future" }', {
+              status: HttpStatusCode.Unauthorized,
+            }),
+        )
+        .mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+      await expect(fetchDoc()).rejects.toThrow("Failed to fetch from DB");
     });
   });
 

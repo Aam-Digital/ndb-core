@@ -203,7 +203,7 @@ export abstract class EntitiesTableDataSource<
   private showLoadErrorToast(sessionExpired = false): void {
     this.loadErrorSnackBarRef?.dismiss();
     const message = sessionExpired
-      ? $localize`:Table data loading failed because the login session expired:Could not load the list because your login session could not be renewed. The login server cannot be reached right now, please try again later.`
+      ? $localize`:Table data loading failed because the login session expired:Could not load the list because your login session has expired and could not be renewed. Please try again later.`
       : $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`;
     this.loadErrorSnackBarRef = this.snackBar.open(
       message,
