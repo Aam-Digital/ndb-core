@@ -3025,9 +3025,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="pipes/EntityFunctionPipe.html" data-type="entity-link" >EntityFunctionPipe</a>
                                 </li>
                                 <li class="link">
-                                    <a href="pipes/EntityLoadPipe.html" data-type="entity-link" >EntityLoadPipe</a>
-                                </li>
-                                <li class="link">
                                     <a href="pipes/EntityTypeLabelPipe.html" data-type="entity-link" >EntityTypeLabelPipe</a>
                                 </li>
                                 <li class="link">

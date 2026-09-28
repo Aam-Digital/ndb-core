@@ -208,7 +208,7 @@ exception chain, so its stack trace is not lost.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="266" class="link-to-prism">src/app/core/logging/logging.service.ts:266</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="267" class="link-to-prism">src/app/core/logging/logging.service.ts:267</a></div>
                             </td>
                         </tr>
 
@@ -287,6 +287,7 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   isConnectivityErrorMessage,
 } from &quot;#src/app/utils/connectivity-error&quot;;
+import { isExpiredSessionError } from &quot;#src/app/utils/expired-session-error&quot;;
 import {
   RegistryDuplicateError,
   RegistryLookupError,
@@ -601,7 +602,11 @@ export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event) || isDocumentUpdateConflict(event, hint)) {
+  if (
+    isOfflineNetworkError(event) ||
+    isDocumentUpdateConflict(event, hint) ||
+    isCausedByExpiredSession(hint)
+  ) {
     return null;
   }
 
@@ -646,6 +651,40 @@ function isDocumentUpdateConflict(
 
 /** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
 const CONFLICT_MESSAGE &#x3D; &quot;document update conflict&quot;;
+
+/** How many &#x60;cause&#x60; levels {@link isCausedByExpiredSession} follows. */
+const MAX_CAUSE_DEPTH &#x3D; 5;
+
+/**
+ * Whether the reported error is (or was caused by) the server rejecting an
+ * expired access token that could not be renewed.
+ *
+ * &#x60;RemotePouchDatabase&#x60; renews the session and repeats such a request, so this
+ * only surfaces while the login server cannot be reached - a transient state
+ * the user is told about there, which says nothing about the code that
+ * happened to be waiting for the data. Filtering it here spares every consumer
+ * of the database from having to recognize it (whether it logs the failure,
+ * wraps it or lets it go unhandled).
+ *
+ * The trade-off is deliberate: a consumer that mishandles a failed load is not
+ * reported while the failure is an expired session (only through other causes,
+ * e.g. connectivity). This also applies to errors that merely wrap it, like a
+ * &#x60;ConfigLoadError&#x60; - which tells the user and reloads the app itself. Other &#x60;401&#x60; reasons (e.g. an invalid token signature)
+ * are still reported, see {@link isExpiredSessionError}.
+ *
+ * The original error is inspected rather than the serialized event, as that
+ * loses the &#x60;status&#x60; and &#x60;reason&#x60; of a wrapped &#x60;DatabaseException&#x60;.
+ */
+function isCausedByExpiredSession(hint: Sentry.EventHint): boolean {
+  let error: unknown &#x3D; hint?.originalException;
+  for (let depth &#x3D; 0; error &amp;&amp; depth &lt;&#x3D; MAX_CAUSE_DEPTH; depth++) {
+    if (isExpiredSessionError(error)) {
+      return true;
+    }
+    error &#x3D; (error as { cause?: unknown }).cause;
+  }
+  return false;
+}
 
 /**
  * Whether the event is a network-layer fetch failure that occurred while the

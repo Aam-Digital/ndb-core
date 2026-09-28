@@ -572,6 +572,9 @@
                             <a href="#insertChild" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>insertChild</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isCausedByExpiredSession" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isCausedByExpiredSession</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isCheckboxTarget" title="src/app/core/common-components/entities-table/entities-table-selection.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isCheckboxTarget</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</span></a>
                         </li>
                         <li>
@@ -603,6 +606,9 @@
                         </li>
                         <li>
                             <a href="#isExcessiveRepeat" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isExcessiveRepeat</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isExpiredSessionError" title="src/app/utils/expired-session-error.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isExpiredSessionError</b>&nbsp;&nbsp;&nbsp;(src/.../expired-session-error.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isFunction" title="src/app/utils/test-utils/vitest-proxy-zone-compat.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isFunction</b>&nbsp;&nbsp;&nbsp;(src/.../vitest-proxy-zone-compat.ts)</span></a>
@@ -9304,6 +9310,79 @@ attached by <a href="../miscellaneous/functions.html#enrichSentryEvent">enrichSe
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="isCausedByExpiredSession"></a>
+                    <span class="name">
+                        <span ><b>isCausedByExpiredSession</b></span>
+                        <a href="#isCausedByExpiredSession"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isCausedByExpiredSession(hint)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the reported error is (or was caused by) the server rejecting an
+expired access token that could not be renewed.</p>
+<p><code>RemotePouchDatabase</code> renews the session and repeats such a request, so this
+only surfaces while the login server cannot be reached - a transient state
+the user is told about there, which says nothing about the code that
+happened to be waiting for the data. Filtering it here spares every consumer
+of the database from having to recognize it (whether it logs the failure,
+wraps it or lets it go unhandled).</p>
+<p>The trade-off is deliberate: a consumer that mishandles a failed load is not
+reported while the failure is an expired session (only through other causes,
+e.g. connectivity). This also applies to errors that merely wrap it, like a
+<code>ConfigLoadError</code> - which tells the user and reloads the app itself. Other <code>401</code> reasons (e.g. an invalid token signature)
+are still reported, see <a href="../miscellaneous/functions.html#isExpiredSessionError">isExpiredSessionError</a>.</p>
+<p>The original error is inspected rather than the serialized event, as that
+loses the <code>status</code> and <code>reason</code> of a wrapped <code>DatabaseException</code>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>hint</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="isConnectivityException"></a>
                     <span class="name">
                         <span ><b>isConnectivityException</b></span>
@@ -17302,6 +17381,80 @@ Can be configured to validate different properties (id, label, etc.) with option
                             <div class="io-description">
                                 <p>An async validator function</p>
 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/utils/expired-session-error.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isExpiredSessionError"></a>
+                    <span class="name">
+                        <span ><b>isExpiredSessionError</b></span>
+                        <a href="#isExpiredSessionError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isExpiredSessionError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check whether a database error is the server rejecting an expired access token.</p>
+<p><code>RemotePouchDatabase</code> already retries such a request after renewing the
+session, so this only reaches a caller when the renewal failed - usually
+because the login server could not be reached. That is a transient state the
+user is informed about, not an application error. Remote monitoring filters
+it out centrally (see <code>processSentryEvent</code>), so callers can log and handle a
+failed load as usual; use this only to tell the user the actual cause.</p>
+<p>Deliberately narrow: other <code>401</code> reasons (e.g. an invalid token signature)
+indicate a misconfiguration and must keep being reported.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>

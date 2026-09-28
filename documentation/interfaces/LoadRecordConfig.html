@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:29</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:33</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -393,7 +393,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:37</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/common-components/entities-table/data-source/entities-table-data-source.ts:38</a></div>
                                 </td>
                             </tr>
 
@@ -425,6 +425,7 @@ import { debounceTime } from &quot;rxjs/operators&quot;;
 import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { BulkOperationStateService } from &quot;#src/app/core/entity/entity-actions/bulk-operation-state.service&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { isExpiredSessionError } from &quot;#src/app/utils/expired-session-error&quot;;
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -585,7 +586,9 @@ export abstract class EntitiesTableDataSource&lt;
           this.loadRecordConfig(),
         );
         if (isCurrentLoad()) {
-          this.showLoadErrorToast();
+          // replaces any session alert shown for the same failure (one snackbar
+          // at a time), so it has to name that cause itself
+          this.showLoadErrorToast(isExpiredSessionError(err));
         }
         return [];
       })
@@ -602,11 +605,17 @@ export abstract class EntitiesTableDataSource&lt;
    * Notify the user that the list could not be loaded and offer a manual retry.
    * The retry routes through {@link setRecords} so it reuses the normal
    * (debounced, &#x60;isLoading&#x60;-tracked) reload path.
+   *
+   * @param sessionExpired whether the server rejected the request because the
+   *   login session expired and could not be renewed, rather than a connection problem
    */
-  private showLoadErrorToast(): void {
+  private showLoadErrorToast(sessionExpired &#x3D; false): void {
     this.loadErrorSnackBarRef?.dismiss();
+    const message &#x3D; sessionExpired
+      ? $localize&#x60;:Table data loading failed because the login session expired:Could not load the list because your login session has expired and could not be renewed. Please try again later.&#x60;
+      : $localize&#x60;:Table data loading failed:Could not load the list. Please check your internet connection.&#x60;;
     this.loadErrorSnackBarRef &#x3D; this.snackBar.open(
-      $localize&#x60;:Table data loading failed:Could not load the list. Please check your internet connection.&#x60;,
+      message,
       $localize&#x60;:Retry loading table data:Retry&#x60;,
       { duration: 3600000 },
     );
