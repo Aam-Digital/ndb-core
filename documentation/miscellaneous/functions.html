@@ -866,6 +866,9 @@
                             <a href="#revGeneration" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>revGeneration</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#revisionNumber" title="src/app/core/database/pouchdb/remote-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>revisionNumber</b>&nbsp;&nbsp;&nbsp;(src/.../remote-pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#rewrappedCauseGroupedError" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rewrappedCauseGroupedError</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
@@ -19424,6 +19427,67 @@ that are randomized (in case there are many parallel requests to be spread out).
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="revisionNumber"></a>
+                    <span class="name">
+                        <span ><b>revisionNumber</b></span>
+                        <a href="#revisionNumber"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>revisionNumber(rev)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The generation number of a CouchDB revision (the <code>3</code> of <code>3-abc...</code>), which increases
+with every write to a document. NaN if it cannot be read, so callers fall back to
+emitting rather than suppressing a document they cannot place in order.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rev</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
 
                         </div>
                             <div class="io-description">

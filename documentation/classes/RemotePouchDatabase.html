@@ -272,6 +272,24 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#put" >put</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#putAll" >putAll</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#remove" >remove</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Protected</span>
                                     <span class="modifier"></span>
                                 <a href="#shouldSkipIndexUpdate" >shouldSkipIndexUpdate</a>
@@ -345,21 +363,7 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#put" >put</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#putAll" >putAll</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#query" >query</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                <a href="#remove" >remove</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -402,7 +406,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:67</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:97</a></div>
                             </td>
                         </tr>
 
@@ -513,7 +517,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -856,8 +860,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="348"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:348</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="378"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:378</a></div>
                         </td>
                     </tr>
 
@@ -906,7 +910,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:373</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:403</a></code>
 </div>
                         </td>
                     </tr>
@@ -1040,7 +1044,7 @@ bookmark support at all (see <a href="PouchDatabase.find">PouchDatabase.find</a>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:85</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:115</a></code>
 </div>
                         </td>
                     </tr>
@@ -1115,6 +1119,281 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="put"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>put</b></span>
+                        <a href="#put"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>put(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, forceOverwrite: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:478</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Unlike a synced database, which writes locally and hears about it on the local
+changes feed in the same tick, this database writes over HTTP and would only learn
+of its own write on the next poll - up to <a href="CHANGES_POLLING_INTERVAL">CHANGES_POLLING_INTERVAL</a> later.
+Announcing the stored document here closes that gap, so the app reacts to its own
+writes immediately in both session types.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>object</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>forceOverwrite</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="putAll"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>putAll</b></span>
+                        <a href="#putAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>putAll(objects: any[], forceOverwrite: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:484</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>objects</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>forceOverwrite</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="remove"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>remove</b></span>
+                        <a href="#remove"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>remove(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:505</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A deletion has the same delay as a write, so it is announced the same way.
+The emitted document is the tombstone the changes feed would deliver - id,
+revision and the deleted flag, without the data fields - which is what
+subscribers read to tell a removal apart from an update.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>object</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="shouldSkipIndexUpdate"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -1140,7 +1419,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:428</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:458</a></code>
 </div>
                         </td>
                     </tr>
@@ -1217,7 +1496,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:451</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:587</a></code>
 </div>
                         </td>
                     </tr>
@@ -1271,7 +1550,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:354</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:384</a></code>
 </div>
                         </td>
                     </tr>
@@ -1318,7 +1597,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:246</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:276</a></code>
 </div>
                         </td>
                     </tr>
@@ -2017,218 +2296,6 @@ false if the document did not exist locally (benign — desired state already ac
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="put"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>put</b></span>
-                        <a href="#put"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>put(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, forceOverwrite: unknown)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:201</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Save a document to the database.
-(see <a href="../classes/Database.html">Database</a>)</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>object</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    <p>The document to be saved</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>forceOverwrite</td>
-                                            <td>
-                                                        <code>unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>false</code>
-                                            </td>
-
-                                            <td>
-                                                    <p>(Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="putAll"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>putAll</b></span>
-                        <a href="#putAll"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>putAll(objects: any[], forceOverwrite: unknown)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:224</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Save an array of documents to the database
-         The save can partially fail and return a mix of success and error states in the array (e.g. <code>[{ ok: true, ... }, { error: true, ... }]</code>)</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>objects</td>
-                                            <td>
-                                                        <code>any[]</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    <p>the documents to be saved</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>forceOverwrite</td>
-                                            <td>
-                                                        <code>unknown</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>false</code>
-                                            </td>
-
-                                            <td>
-                                                    <p>whether conflicting versions should be overwritten</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                <p>array with the result for each object to be saved, if any item fails to be saved, this returns a rejected Promise.
-The save can partially fail and return a mix of success and error states in the array (e.g. <code>[{ ok: true, ... }, { error: true, ... }]</code>)</p>
-
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="query"></a>
                     <span class="name">
                         <span ><b>query</b></span>
@@ -2315,87 +2382,6 @@ Also see the documentation there: <a href="https://pouchdb.com/api.html#query_da
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="remove"></a>
-                    <span class="name">
-                        <span ><b>remove</b></span>
-                        <a href="#remove"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>remove(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:272</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Delete a document from the database
-(see <a href="../classes/Database.html">Database</a>)</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>object</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>The document to be deleted (usually this object must at least contain the _id and _rev)</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
@@ -2763,6 +2749,15 @@ function requestMethod(opts: RequestInit | undefined): string {
 }
 
 /**
+ * The generation number of a CouchDB revision (the &#x60;3&#x60; of &#x60;3-abc...&#x60;), which increases
+ * with every write to a document. NaN if it cannot be read, so callers fall back to
+ * emitting rather than suppressing a document they cannot place in order.
+ */
+function revisionNumber(rev: string | undefined): number {
+  return Number.parseInt(rev ?? &quot;&quot;, 10);
+}
+
+/**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
@@ -2790,6 +2785,27 @@ export class RemotePouchDatabase extends PouchDatabase {
    * @private
    */
   private readonly CHANGES_POLLING_INTERVAL &#x3D; 10000; // 10 seconds
+
+  /**
+   * Document id to the most recent revision this client announced for it through
+   * {@link announceOwnWrite}, used by {@link isAlreadyAnnounced} to decide what the
+   * changes feed can skip.
+   *
+   * This covers the poll echoing a write back, a conflict retry announcing the
+   * revision its caller then announces again, and a poll response that read the
+   * server before a local write and only arrives afterwards. The last one matters
+   * most - emitting a superseded revision after a newer one would leave subscribers
+   * on stale data until that document changes again.
+   */
+  private readonly announcedRevisions &#x3D; new Map&lt;string, string&gt;();
+
+  /**
+   * Upper bound for {@link announcedRevisions}, which holds one entry per document this
+   * client has written and so grows over a long session. Dropping it past this size keeps
+   * memory bounded; the only cost is that a duplicate may slip through, which is the
+   * behaviour without this map.
+   */
+  private readonly MAX_ANNOUNCED_REVISIONS &#x3D; 1000;
 
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS &#x3D; 60000;
@@ -3168,6 +3184,112 @@ export class RemotePouchDatabase extends PouchDatabase {
   }
 
   /**
+   * Unlike a synced database, which writes locally and hears about it on the local
+   * changes feed in the same tick, this database writes over HTTP and would only learn
+   * of its own write on the next poll - up to {@link CHANGES_POLLING_INTERVAL} later.
+   * Announcing the stored document here closes that gap, so the app reacts to its own
+   * writes immediately in both session types.
+   */
+  override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
+    const result &#x3D; await super.put(object, forceOverwrite);
+    this.announceOwnWrite(object, result);
+    return result;
+  }
+
+  override async putAll(objects: any[], forceOverwrite &#x3D; false): Promise&lt;any&gt; {
+    try {
+      const results &#x3D; await super.putAll(objects, forceOverwrite);
+      this.announceStoredDocs(objects, results);
+      return results;
+    } catch (results) {
+      // putAll rejects *with* its results array when any document failed; the ones
+      // that did store are still stored and must be announced like any other write.
+      if (Array.isArray(results)) {
+        this.announceStoredDocs(objects, results);
+      }
+      throw results;
+    }
+  }
+
+  /**
+   * A deletion has the same delay as a write, so it is announced the same way.
+   * The emitted document is the tombstone the changes feed would deliver - id,
+   * revision and the deleted flag, without the data fields - which is what
+   * subscribers read to tell a removal apart from an update.
+   */
+  override async remove(object: any): Promise&lt;any&gt; {
+    const result &#x3D; await super.remove(object);
+    this.announceOwnWrite({ _id: object?._id, _deleted: true }, result);
+    return result;
+  }
+
+  private announceStoredDocs(objects: any[], results: any[]) {
+    for (const result of results ?? []) {
+      const stored &#x3D; objects.find((obj) &#x3D;&gt; obj._id &#x3D;&#x3D;&#x3D; result?.id);
+      if (stored) {
+        this.announceOwnWrite(stored, result);
+      }
+    }
+  }
+
+  /**
+   * Whether subscribers already have this document at this revision or a newer one,
+   * because this client announced it. An unreadable revision is treated as new, so an
+   * unexpected format delays nothing - it only forgoes the deduplication.
+   */
+  private isAlreadyAnnounced(doc: { _id?: string; _rev?: string }): boolean {
+    const announced &#x3D; this.announcedRevisions.get(doc?._id);
+    if (announced &#x3D;&#x3D;&#x3D; undefined) {
+      return false;
+    }
+    if (announced &#x3D;&#x3D;&#x3D; doc?._rev) {
+      // the server echoing back the exact revision this client wrote
+      return true;
+    }
+
+    // A different revision of the same generation is a conflicting sibling, not an
+    // echo - two clients edited the same parent and the server picked a winner
+    // between them. Suppressing it would hide that winner from every subscriber,
+    // so only a strictly older generation counts as superseded.
+    const incoming &#x3D; revisionNumber(doc?._rev);
+    const mine &#x3D; revisionNumber(announced);
+    return !isNaN(incoming) &amp;&amp; !isNaN(mine) &amp;&amp; incoming &lt; mine;
+  }
+
+  /**
+   * Emit a document this client just stored, tagged with the revision the server
+   * assigned, so subscribers see the same shape the changes feed would deliver.
+   */
+  private announceOwnWrite(object: any, result: any) {
+    if (!result?.ok || !this.changesFeed) {
+      return;
+    }
+    if (typeof object?._id &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; object._id.startsWith(&quot;_design/&quot;)) {
+      // index definitions, not entities: no subscriber reacts to them, and the
+      // server&#x27;s _changes does not echo them, so tracking them would only fill
+      // announcedRevisions with entries that never match.
+      return;
+    }
+
+    const doc &#x3D; { ...object, _rev: result.rev };
+    if (this.isAlreadyAnnounced(doc)) {
+      // a conflict retry announced this same revision through the nested put()
+      return;
+    }
+
+    if (this.announcedRevisions.size &gt;&#x3D; this.MAX_ANNOUNCED_REVISIONS) {
+      this.announcedRevisions.clear();
+    }
+    this.announcedRevisions.set(doc._id, doc._rev);
+
+    if (this.ngZone) {
+      this.ngZone.run(() &#x3D;&gt; this.changesFeed.next(doc));
+    } else {
+      this.changesFeed.next(doc);
+    }
+  }
+
+  /**
    * Poll the _changes endpoint periodically to detect document changes.
    * Emits individual documents that have changed since the last poll.
    *
@@ -3199,6 +3321,11 @@ export class RemotePouchDatabase extends PouchDatabase {
               if (result?.results) {
                 result.results.forEach(
                   (change: PouchDB.Core.ChangesResponseChange&lt;{}&gt;) &#x3D;&gt; {
+                    if (this.isAlreadyAnnounced(change.doc)) {
+                      // this client&#x27;s own write, already emitted by announceOwnWrite,
+                      // or a response that read the server before that write
+                      return;
+                    }
                     if (this.ngZone) {
                       this.ngZone.run(() &#x3D;&gt; this.changesFeed.next(change.doc));
                     } else {
