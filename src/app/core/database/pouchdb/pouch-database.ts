@@ -132,7 +132,8 @@ export class PouchDatabase extends Database {
    * {@link RemotePouchDatabase} overrides this to re-issue reads that fail with
    * a transient network abort/timeout, which recovers e.g. a connection gone
    * stale after the tab was suspended. Only reads use this hook — writes must
-   * run exactly once and are never routed through it.
+   * run exactly once and are never routed through it, except for creating a
+   * query index, which changes nothing when repeated.
    */
   protected async withReadRetry<T>(operation: () => Promise<T>): Promise<T> {
     return operation();
