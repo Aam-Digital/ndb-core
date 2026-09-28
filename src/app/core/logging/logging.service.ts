@@ -565,10 +565,20 @@ function groupSentryEvent(
   const thrownError = values[values.length - 1];
   const thrownType = thrownError.type ?? "";
 
-  if (
-    CAUSE_GROUPED_ERROR_TYPES.includes(thrownType) ||
-    hint?.originalException instanceof LoggedError
-  ) {
+  if (CAUSE_GROUPED_ERROR_TYPES.includes(thrownType)) {
+    return groupByErrorChain(event, values, thrownError);
+  }
+
+  if (hint?.originalException instanceof LoggedError) {
+    const unreachableServer = loggedUnreachableServer(values);
+    if (unreachableServer) {
+      event.tags = {
+        ...event.tags,
+        // Sentry rejects tag values longer than 200 characters
+        logged_message: normalizeErrorValue(thrownError.value).slice(0, 200),
+      };
+      return groupByErrorChain(event, values, unreachableServer);
+    }
     return groupByErrorChain(event, values, thrownError);
   }
 
@@ -625,6 +635,39 @@ function rewrappedCauseGroupedError(
         CAUSE_GROUPED_ERROR_TYPES.includes(cause.type ?? "") &&
         thrownValue === fingerprintKey(cause.value),
     );
+}
+
+/**
+ * The failed request that a {@link LoggedError} directly wraps, if that is all
+ * it has to report.
+ *
+ * The message an error is logged with says where it happened ("Failed to load
+ * important notes"), which for most errors is what tells two problems apart.
+ * For a request that never reached the server it is not: the connection
+ * failed, and every component loading data at that moment logs it under a
+ * message of its own. Grouped by those, a single connectivity drop opens one
+ * issue per component - next to the issue the same failure already has where
+ * it is reported without a message. Grouping them by the wrapped error puts
+ * them into that one issue instead; the logged message is kept as a tag, and
+ * the route is still the `transaction` tag.
+ *
+ * Only an error of a recognized type (see {@link CAUSE_GROUPED_ERROR_TYPES})
+ * directly below the wrapper qualifies:
+ * - a named error in between (a `ConfigLoadError` caused by a failed fetch)
+ *   says more than the fact that a request failed, and keeps its own issue;
+ * - any other failed request has no issue of its own to go to, only the shared
+ *   network bucket - where a chunk that did not load during bootstrap, so that
+ *   the app never started, would disappear among requests of no consequence.
+ */
+function loggedUnreachableServer(
+  values: Sentry.Exception[],
+): Sentry.Exception | undefined {
+  const wrapped = values[values.length - 2];
+  return wrapped &&
+    CAUSE_GROUPED_ERROR_TYPES.includes(wrapped.type ?? "") &&
+    isConnectivityException(wrapped)
+    ? wrapped
+    : undefined;
 }
 
 /**

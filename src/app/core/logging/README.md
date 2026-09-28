@@ -93,6 +93,21 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    one. A wrapper with a message of its own (`Failed to load configuration from the database.`) says
    more about the failure than its cause does, and stays what the event is grouped by.
 
+   The same goes for a `LoggedError` directly wrapping a recognized error that is a connectivity
+   failure (`loggedUnreachableServer`): `Logging.error("Failed to load important notes", err)` where
+   `err` is a `DatabaseException: Failed to fetch`. The logged message only says _where_ the request
+   failed, and during a connection drop every component loading data logs one — one issue per
+   component, next to the issue the unwrapped `DatabaseException` already has. So the event is
+   grouped by the wrapped error and joins that issue, keeping the logged message as the
+   `logged_message` tag. Not covered: a named error in between (a `ConfigLoadError` caused by a
+   failed fetch keeps its own issue), and a failed request that is not of a recognized type, as that
+   would only have the shared network bucket (case 2) to go to — which is no place for a chunk that
+   did not load during bootstrap, leaving the app blank.
+
+   Where the event is grouped by an error further down the chain like this, the thrown error takes
+   on that error's type and reported message, as Sentry titles an event by its thrown error: the
+   issue would otherwise hold the same problem under two titles.
+
 2. **Network failures** — anything whose chain contains a connectivity error (see
    `isConnectivityErrorMessage`) is collected into the single `network-error` issue. The browser
    raises these at whatever point a request happened to be made, so by stack trace they are an
