@@ -8,6 +8,7 @@ import {
   resetSentryEventCounts,
   toReportedError,
 } from "./logging.service";
+import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 
 describe("LoggingService", () => {
   const testMessage = "FANCY_TEST_MESSAGE";
@@ -421,26 +422,51 @@ describe("LoggingService", () => {
         expect(selfWrapped.fingerprint).toEqual(unwrapped.fingerprint);
       });
 
-      it("should group a registry lookup by key, not by the call site's stack", () => {
-        const lookupEvent = (key: string) =>
-          ({
-            exception: {
-              values: [
-                {
-                  type: "RegistryLookupError",
-                  value: `Requested item is not registered in EntityRegistry. Key: ${key}`,
-                },
-              ],
-            },
-          }) as any;
+      it("should group registry lookups of all keys into one issue, not by the call site's stack", () => {
+        const lookupEvent = (key: string) => {
+          const error = new RegistryLookupError("EntityRegistry", key);
+          return processSentryEvent(
+            {
+              exception: {
+                values: [{ type: error.name, value: error.message }],
+              },
+            } as any,
+            { originalException: error },
+          );
+        };
 
-        const fromPipe = processSentryEvent(lookupEvent("Event"), {});
-        const fromImport = processSentryEvent(lookupEvent("Event"), {});
-        const otherKey = processSentryEvent(lookupEvent("Child"), {});
+        const child = lookupEvent("Child");
+        const school = lookupEvent("School");
 
-        expect(fromPipe.fingerprint).toEqual(fromImport.fingerprint);
-        // a different missing registration is a different problem to fix
-        expect(otherKey.fingerprint).not.toEqual(fromPipe.fingerprint);
+        // one config referring to several unknown types is one problem to fix
+        expect(school.fingerprint).toEqual(child.fingerprint);
+        expect(child.exception.values[0].value).toBe(
+          school.exception.values[0].value,
+        );
+        // ... while each report still names the key that was missing
+        expect(child.extra).toMatchObject({
+          registry: "EntityRegistry",
+          registryKey: "Child",
+        });
+        expect(school.extra.registryKey).toBe("School");
+      });
+
+      it("should keep the registry lookups of different registries apart", () => {
+        const lookupEvent = (registry: string) => {
+          const error = new RegistryLookupError(registry, "SomeKey");
+          return processSentryEvent(
+            {
+              exception: {
+                values: [{ type: error.name, value: error.message }],
+              },
+            } as any,
+            { originalException: error },
+          );
+        };
+
+        expect(lookupEvent("EntityRegistry").fingerprint).not.toEqual(
+          lookupEvent("ComponentRegistry").fingerprint,
+        );
       });
 
       it("should group an error logged with a message by that message, not by the stack", () => {
@@ -522,8 +548,7 @@ describe("LoggingService", () => {
       it("should group an error a framework re-threw like the unwrapped one", () => {
         const lookupFailure = {
           type: "RegistryLookupError",
-          value:
-            "Requested item is not registered in EntityRegistry. Key: Child",
+          value: "Requested item is not registered in EntityRegistry",
         };
 
         const thrownDirectly = processSentryEvent(
@@ -702,6 +727,34 @@ describe("LoggingService", () => {
           action: "create",
           entityId: "Config:CONFIG_ENTITY",
           entityType: "Config",
+        });
+      });
+
+      it("should name the missing registry key even when a framework re-threw the error", () => {
+        const lookupFailure = new RegistryLookupError(
+          "EntityRegistry",
+          "Child",
+        );
+        // Angular re-throws an error raised in a `resource()` loader as its own
+        const rethrown = new Error(`Error: ${lookupFailure.message}`, {
+          cause: lookupFailure,
+        });
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { type: lookupFailure.name, value: lookupFailure.message },
+                { type: "Error", value: rethrown.message },
+              ],
+            },
+          } as any,
+          { originalException: rethrown },
+        );
+
+        expect(event.extra).toMatchObject({
+          registry: "EntityRegistry",
+          registryKey: "Child",
         });
       });
     });
