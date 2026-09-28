@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
 import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { RemoteLoginNotAvailableError } from "../../session/auth/keycloak/remote-login-not-available.error";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { NgZone } from "@angular/core";
@@ -95,6 +96,9 @@ export class RemotePouchDatabase extends PouchDatabase {
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
   private lastConnectionAlertTime = 0;
+
+  /** Whether the user was already told that their session could not be renewed. */
+  private sessionRenewalAlertShown = false;
 
   constructor(
     dbName: string,
@@ -194,13 +198,11 @@ export class RemotePouchDatabase extends PouchDatabase {
       result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession
     ) {
-      try {
-        await this.authService.login();
-        this.authService.addAuthHeader(opts.headers);
-        result = await PouchDB.fetch(remoteUrl, opts);
-      } catch (err) {
-        Logging.debug("Failed retried fetch from DB after 401", err);
-      }
+      result = await this.retryWithRenewedSession(remoteUrl, opts, result);
+    }
+    if (result && result.status !== HttpStatusCode.Unauthorized) {
+      // the session is valid (again) - whichever request or tab renewed it
+      this.sessionRenewalAlertShown = false;
     }
 
     const method = requestMethod(opts);
@@ -335,6 +337,44 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
   }
 
+  /**
+   * Renew the session and repeat a request that the server rejected as unauthorized.
+   *
+   * @returns the repeated request's response; the original `unauthorized`
+   *   response if the session could not be renewed; or `undefined` if the
+   *   repeated request did not get a response at all (like a failed initial fetch)
+   */
+  private async retryWithRenewedSession(
+    remoteUrl: string,
+    opts: RequestInit,
+    unauthorized: Response,
+  ): Promise<Response | undefined> {
+    try {
+      await this.authService.login();
+    } catch (err) {
+      if (err instanceof RemoteLoginNotAvailableError) {
+        // transient - the user is told, and background sync/polling keeps retrying
+        Logging.debug(
+          "Could not renew session after 401 (login unavailable)",
+          err,
+        );
+        this.showSessionRenewalAlert();
+      } else {
+        Logging.warn("Could not renew session after 401", err);
+      }
+      return unauthorized;
+    }
+
+    this.authService.addAuthHeader(opts.headers);
+    try {
+      return await PouchDB.fetch(remoteUrl, opts);
+    } catch (err) {
+      Logging.debug("Failed retried fetch from DB after 401", err);
+      this.showConnectionIssueAlert();
+      return undefined;
+    }
+  }
+
   private showConnectionIssueAlert(): void {
     const now = Date.now();
     if (
@@ -346,6 +386,24 @@ export class RemotePouchDatabase extends PouchDatabase {
     this.lastConnectionAlertTime = now;
     this.alertService?.addWarning(
       $localize`We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.`,
+    );
+  }
+
+  /**
+   * Tell the user that the server rejects their requests because the online
+   * session could not be renewed, which otherwise just looks like data that
+   * silently fails to load or sync.
+   *
+   * Shown once until the server accepts a request again, rather than on every
+   * rejected request, as the background polling / sync keeps running into it.
+   */
+  private showSessionRenewalAlert(): void {
+    if (this.sessionRenewalAlertShown) {
+      return;
+    }
+    this.sessionRenewalAlertShown = true;
+    this.alertService?.addWarning(
+      $localize`:Alert when the login session could not be renewed:Your online login session could not be renewed because the login server cannot be reached right now. Until then, data cannot be loaded from or saved to the server. We keep retrying automatically.`,
     );
   }
 

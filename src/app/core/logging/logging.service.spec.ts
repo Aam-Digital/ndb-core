@@ -8,6 +8,7 @@ import {
   resetSentryEventCounts,
   toReportedError,
 } from "./logging.service";
+import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 
 /** How Sentry titles an event: by its last (thrown) exception. */
@@ -201,6 +202,59 @@ describe("LoggingService", () => {
       it("should still report other database failures", () => {
         expect(
           dbFailure("not_found", { originalException: { status: 404 } }),
+        ).not.toBeNull();
+      });
+    });
+
+    describe("expired sessions that could not be renewed", () => {
+      // the user is told by RemotePouchDatabase; the waiting consumer is not at fault
+      const unauthorized = (reason: string) =>
+        new DatabaseException({
+          status: 401,
+          name: "unauthorized",
+          error: "unauthorized",
+          reason,
+          message: reason,
+        });
+      const expired = () => unauthorized("exp not in future");
+
+      const report = (originalException: unknown) =>
+        processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "Error", value: "exp not in future" }],
+            },
+          } as any,
+          { originalException },
+        );
+
+      it("should drop the error when it is thrown directly (e.g. unhandled)", () => {
+        expect(report(expired())).toBeNull();
+      });
+
+      it("should drop an error logged with it as context", () => {
+        expect(
+          report(toReportedError("Could not load the list", [expired()])),
+        ).toBeNull();
+      });
+
+      it("should drop an error that wraps it as a cause (e.g. a failed resource)", () => {
+        const outer = new Error("exp not in future", {
+          cause: new Error("wrapper", { cause: expired() }),
+        });
+
+        expect(report(outer)).toBeNull();
+      });
+
+      it("should still report other reasons for a 401", () => {
+        expect(
+          report(unauthorized("Token signature is not valid")),
+        ).not.toBeNull();
+      });
+
+      it("should still report an unrelated error with an unrelated cause", () => {
+        expect(
+          report(new Error("outer", { cause: new Error("inner") })),
         ).not.toBeNull();
       });
     });
