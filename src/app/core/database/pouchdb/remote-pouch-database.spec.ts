@@ -712,6 +712,34 @@ describe("RemotePouchDatabase tests", () => {
 
       expect(requestBody.bookmark).toBeUndefined();
     });
+
+    it("retries creating the sort index after a transient network failure", async () => {
+      (database as any).TRANSIENT_ERROR_DELAY_MS = 0;
+      database.init("");
+      const pouchDB = (database as any).pouchDB;
+
+      let indexCalls = 0;
+      vi.spyOn(pouchDB, "createIndex").mockImplementation(async () => {
+        indexCalls++;
+        if (indexCalls < 2) {
+          throw new TypeError("Failed to fetch");
+        }
+        return { result: "exists", id: "_design/idx", name: "Test_name" };
+      });
+      vi.spyOn(pouchDB, "find").mockResolvedValue({
+        docs: [{ _id: "Test:1" }],
+      });
+
+      const res = await (database as RemotePouchDatabase).find(
+        "Test",
+        {},
+        undefined,
+        { prop: "name", dir: "asc" },
+      );
+
+      expect(indexCalls).toBe(2);
+      expect(res.docs).toEqual([{ _id: "Test:1" }]);
+    });
   });
 
   describe("shouldSkipIndexUpdate", () => {
