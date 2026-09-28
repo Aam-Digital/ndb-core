@@ -115,7 +115,7 @@ describe("InMemoryDataSource", () => {
       expect(snackBarDismiss).toHaveBeenCalled();
     });
 
-    it("names an expired session as the cause, without reporting it as an error", async () => {
+    it("names an expired session as the cause in the toast", async () => {
       vi.spyOn(entityMapper, "loadType").mockRejectedValue(
         new DatabaseException({
           status: 401,
@@ -125,7 +125,7 @@ describe("InMemoryDataSource", () => {
           message: "exp not in future",
         }),
       );
-      const errorLog = vi.spyOn(Logging, "error");
+      vi.spyOn(Logging, "error").mockImplementation(() => {});
 
       const ds = TestBed.runInInjectionContext(
         () => new InMemoryDataSource<Entity>(),
@@ -140,7 +140,6 @@ describe("InMemoryDataSource", () => {
         expect.anything(),
         expect.anything(),
       );
-      expect(errorLog).not.toHaveBeenCalled();
     });
   });
 

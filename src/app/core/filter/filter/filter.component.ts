@@ -21,7 +21,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
 import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
 import { Logging } from "../../logging/logging.service";
-import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -118,13 +117,9 @@ export class FilterComponent<T extends Entity = Entity> {
           params.onlyShowRelevantFilterOptions,
         );
       } catch (err) {
-        if (isExpiredSessionError(err)) {
-          Logging.debug("Could not generate filters (session expired)", err);
-        } else {
-          Logging.error("Could not generate filters", err, {
-            entityType: params.entityType.ENTITY_TYPE,
-          });
-        }
+        Logging.error("Could not generate filters", err, {
+          entityType: params.entityType.ENTITY_TYPE,
+        });
         return [];
       }
     },

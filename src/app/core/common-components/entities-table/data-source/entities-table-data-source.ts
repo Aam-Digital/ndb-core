@@ -167,19 +167,15 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        const sessionExpired = isExpiredSessionError(err);
-        if (sessionExpired) {
-          // not a fault of the app, and the toast below tells the user why
-          Logging.debug("Could not load data in datasource (session expired)");
-        } else {
-          Logging.error(
-            "Error loading data in datasource",
-            err,
-            this.loadRecordConfig(),
-          );
-        }
+        Logging.error(
+          "Error loading data in datasource",
+          err,
+          this.loadRecordConfig(),
+        );
         if (isCurrentLoad()) {
-          this.showLoadErrorToast(sessionExpired);
+          // replaces any session alert shown for the same failure (one snackbar
+          // at a time), so it has to name that cause itself
+          this.showLoadErrorToast(isExpiredSessionError(err));
         }
         return [];
       })

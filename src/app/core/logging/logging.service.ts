@@ -16,6 +16,7 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   isConnectivityErrorMessage,
 } from "#src/app/utils/connectivity-error";
+import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -326,7 +327,11 @@ export function processSentryEvent(
   event: Sentry.ErrorEvent,
   hint: Sentry.EventHint,
 ): Sentry.ErrorEvent | null {
-  if (isOfflineNetworkError(event) || isDocumentUpdateConflict(event, hint)) {
+  if (
+    isOfflineNetworkError(event) ||
+    isDocumentUpdateConflict(event, hint) ||
+    isCausedByExpiredSession(hint)
+  ) {
     return null;
   }
 
@@ -371,6 +376,40 @@ function isDocumentUpdateConflict(
 
 /** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
 const CONFLICT_MESSAGE = "document update conflict";
+
+/** How many `cause` levels {@link isCausedByExpiredSession} follows. */
+const MAX_CAUSE_DEPTH = 5;
+
+/**
+ * Whether the reported error is (or was caused by) the server rejecting an
+ * expired access token that could not be renewed.
+ *
+ * `RemotePouchDatabase` renews the session and repeats such a request, so this
+ * only surfaces while the login server cannot be reached - a transient state
+ * the user is told about there, which says nothing about the code that
+ * happened to be waiting for the data. Filtering it here spares every consumer
+ * of the database from having to recognize it (whether it logs the failure,
+ * wraps it or lets it go unhandled).
+ *
+ * The trade-off is deliberate: a consumer that mishandles a failed load is not
+ * reported while the failure is an expired session (only through other causes,
+ * e.g. connectivity). This also applies to errors that merely wrap it, like a
+ * `ConfigLoadError` - which tells the user and reloads the app itself. Other `401` reasons (e.g. an invalid token signature)
+ * are still reported, see {@link isExpiredSessionError}.
+ *
+ * The original error is inspected rather than the serialized event, as that
+ * loses the `status` and `reason` of a wrapped `DatabaseException`.
+ */
+function isCausedByExpiredSession(hint: Sentry.EventHint): boolean {
+  let error: unknown = hint?.originalException;
+  for (let depth = 0; error && depth <= MAX_CAUSE_DEPTH; depth++) {
+    if (isExpiredSessionError(error)) {
+      return true;
+    }
+    error = (error as { cause?: unknown }).cause;
+  }
+  return false;
+}
 
 /**
  * Whether the event is a network-layer fetch failure that occurred while the
