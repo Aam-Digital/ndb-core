@@ -548,6 +548,36 @@ describe("LoggingService", () => {
         );
       });
 
+      it("should report an error a framework re-threw under the title of the unwrapped one", () => {
+        const failedFetch = {
+          type: "DatabaseException",
+          value: "Failed to fetch from DB",
+        };
+        // Sentry titles an event by its last (thrown) exception
+        const title = (event: any) => {
+          const values = event.exception.values;
+          const thrown = values[values.length - 1];
+          return `${thrown.type}: ${thrown.value}`;
+        };
+
+        const thrownDirectly = processSentryEvent(
+          { exception: { values: [{ ...failedFetch }] } } as any,
+          {},
+        );
+        const fromResourceLoader = processSentryEvent(
+          chainedEvent(
+            { ...failedFetch },
+            { type: "Error", value: failedFetch.value },
+          ),
+          {},
+        );
+
+        expect(title(thrownDirectly)).toBe(
+          "DatabaseException: Failed to reach the server",
+        );
+        expect(title(fromResourceLoader)).toBe(title(thrownDirectly));
+      });
+
       it("should keep grouping a wrapper that describes the failed operation by itself", () => {
         const cause = {
           type: "DatabaseException",
