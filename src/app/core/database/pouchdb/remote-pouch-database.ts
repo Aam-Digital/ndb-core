@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
 import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { RemoteLoginNotAvailableError } from "../../session/auth/keycloak/remote-login-not-available.error";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { NgZone } from "@angular/core";
@@ -65,6 +66,9 @@ export class RemotePouchDatabase extends PouchDatabase {
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
   private lastConnectionAlertTime = 0;
+
+  /** Whether the user was already told that their session could not be renewed. */
+  private sessionRenewalAlertShown = false;
 
   constructor(
     dbName: string,
@@ -166,10 +170,14 @@ export class RemotePouchDatabase extends PouchDatabase {
     ) {
       try {
         await this.authService.login();
+        this.sessionRenewalAlertShown = false;
         this.authService.addAuthHeader(opts.headers);
         result = await PouchDB.fetch(remoteUrl, opts);
       } catch (err) {
         Logging.debug("Failed retried fetch from DB after 401", err);
+        if (err instanceof RemoteLoginNotAvailableError) {
+          this.showSessionRenewalAlert();
+        }
       }
     }
 
@@ -315,6 +323,24 @@ export class RemotePouchDatabase extends PouchDatabase {
     this.lastConnectionAlertTime = now;
     this.alertService?.addWarning(
       $localize`We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.`,
+    );
+  }
+
+  /**
+   * Tell the user that the server rejects their requests because the online
+   * session could not be renewed, which otherwise just looks like data that
+   * silently fails to load or sync.
+   *
+   * Shown once until a later renewal succeeds, rather than on every rejected
+   * request, as the background polling / sync keeps running into it.
+   */
+  private showSessionRenewalAlert(): void {
+    if (this.sessionRenewalAlertShown) {
+      return;
+    }
+    this.sessionRenewalAlertShown = true;
+    this.alertService?.addWarning(
+      $localize`:Alert when the login session could not be renewed:Your online login session could not be renewed because the login server cannot be reached right now. Until then, data cannot be loaded from or saved to the server. We keep retrying automatically.`,
     );
   }
 

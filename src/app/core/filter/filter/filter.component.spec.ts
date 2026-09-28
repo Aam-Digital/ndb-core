@@ -7,6 +7,9 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { StringFilter } from "../filters/stringFilter";
+import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
+import { Logging } from "../../logging/logging.service";
+import { DatabaseException } from "../../database/pouchdb/database-exception";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -327,5 +330,49 @@ describe("FilterComponent", () => {
     expect(emittedFilterObj).toEqual({
       $or: [optionFilter(t1.id), optionFilter(t2.id)],
     } as any);
+  });
+
+  describe("when filters cannot be generated", () => {
+    const expiredSession = new DatabaseException({
+      status: 401,
+      name: "unauthorized",
+      error: "unauthorized",
+      reason: "exp not in future",
+      message: "exp not in future",
+    });
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it("should show no filters instead of breaking, and not report an expired session as an error", async () => {
+      vi.spyOn(
+        TestBed.inject(FilterGeneratorService),
+        "generate",
+      ).mockRejectedValue(expiredSession);
+      const errorLog = vi.spyOn(Logging, "error");
+
+      await setComponentInputs({
+        entityType: Note,
+        filterConfig: [{ id: "category" }],
+      });
+
+      expect(component.filterSelections()).toEqual([]);
+      expect(errorLog).not.toHaveBeenCalled();
+    });
+
+    it("should report any other failure", async () => {
+      vi.spyOn(
+        TestBed.inject(FilterGeneratorService),
+        "generate",
+      ).mockRejectedValue(new Error("unexpected"));
+      const errorLog = vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+      await setComponentInputs({
+        entityType: Note,
+        filterConfig: [{ id: "category" }],
+      });
+
+      expect(component.filterSelections()).toEqual([]);
+      expect(errorLog).toHaveBeenCalled();
+    });
   });
 });

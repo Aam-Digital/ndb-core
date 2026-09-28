@@ -52,7 +52,6 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { AblePurePipe } from "@casl/angular";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -105,7 +104,6 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
     AsyncPipe,
     AblePurePipe,
     ViewActionsComponent,
-    EntityLoadPipe,
     EntityBulkActionsComponent,
   ],
 })

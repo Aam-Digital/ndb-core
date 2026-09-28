@@ -12,6 +12,7 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -166,13 +167,19 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        Logging.error(
-          "Error loading data in datasource",
-          err,
-          this.loadRecordConfig(),
-        );
+        const sessionExpired = isExpiredSessionError(err);
+        if (sessionExpired) {
+          // not a fault of the app, and the toast below tells the user why
+          Logging.debug("Could not load data in datasource (session expired)");
+        } else {
+          Logging.error(
+            "Error loading data in datasource",
+            err,
+            this.loadRecordConfig(),
+          );
+        }
         if (isCurrentLoad()) {
-          this.showLoadErrorToast();
+          this.showLoadErrorToast(sessionExpired);
         }
         return [];
       })
@@ -189,11 +196,17 @@ export abstract class EntitiesTableDataSource<
    * Notify the user that the list could not be loaded and offer a manual retry.
    * The retry routes through {@link setRecords} so it reuses the normal
    * (debounced, `isLoading`-tracked) reload path.
+   *
+   * @param sessionExpired whether the server rejected the request because the
+   *   login session expired and could not be renewed, rather than a connection problem
    */
-  private showLoadErrorToast(): void {
+  private showLoadErrorToast(sessionExpired = false): void {
     this.loadErrorSnackBarRef?.dismiss();
+    const message = sessionExpired
+      ? $localize`:Table data loading failed because the login session expired:Could not load the list because your login session could not be renewed. The login server cannot be reached right now, please try again later.`
+      : $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`;
     this.loadErrorSnackBarRef = this.snackBar.open(
-      $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`,
+      message,
       $localize`:Retry loading table data:Retry`,
       { duration: 3600000 },
     );

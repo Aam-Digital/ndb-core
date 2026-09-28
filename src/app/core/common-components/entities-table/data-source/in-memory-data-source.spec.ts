@@ -6,6 +6,8 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Subject } from "rxjs";
+import { Logging } from "#src/app/core/logging/logging.service";
+import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
 
 describe("InMemoryDataSource", () => {
   let dataSource: InMemoryDataSource<TestEntity>;
@@ -81,6 +83,8 @@ describe("InMemoryDataSource", () => {
       );
     });
 
+    afterEach(() => vi.restoreAllMocks());
+
     it("shows a toast with a retry action that reloads the records", async () => {
       const loadType = vi
         .spyOn(entityMapper, "loadType")
@@ -109,6 +113,34 @@ describe("InMemoryDataSource", () => {
 
       expect(loadType.mock.calls.length).toBeGreaterThan(callsBeforeRetry);
       expect(snackBarDismiss).toHaveBeenCalled();
+    });
+
+    it("names an expired session as the cause, without reporting it as an error", async () => {
+      vi.spyOn(entityMapper, "loadType").mockRejectedValue(
+        new DatabaseException({
+          status: 401,
+          name: "unauthorized",
+          error: "unauthorized",
+          reason: "exp not in future",
+          message: "exp not in future",
+        }),
+      );
+      const errorLog = vi.spyOn(Logging, "error");
+
+      const ds = TestBed.runInInjectionContext(
+        () => new InMemoryDataSource<Entity>(),
+      );
+      ds.loadRecordConfig.set({ entityCtr: TestEntity });
+      TestBed.tick();
+      await new Promise((resolve) => setTimeout(resolve));
+      TestBed.tick();
+
+      expect(snackBarOpen).toHaveBeenCalledWith(
+        expect.stringContaining("login session"),
+        expect.anything(),
+        expect.anything(),
+      );
+      expect(errorLog).not.toHaveBeenCalled();
     });
   });
 

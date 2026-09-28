@@ -22,9 +22,8 @@
     [showExpanded]="true"
   >
     @if (
-      ("update"
-        | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
-        | async) && !entityConstructor()?.isInternalEntity
+      ("update" | ablePure: "Config" | async) &&
+      !entityConstructor()?.isInternalEntity
     ) {
       <button
         mat-menu-item

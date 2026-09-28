@@ -6,6 +6,7 @@ import { RemotePouchDatabase } from "./remote-pouch-database";
 import { Logging } from "../../logging/logging.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { environment } from "environments/environment";
+import { RemoteLoginNotAvailableError } from "../../session/auth/keycloak/remote-login-not-available.error";
 
 describe("RemotePouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -324,6 +325,69 @@ describe("RemotePouchDatabase tests", () => {
     ).rejects.toThrow();
 
     expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
+  });
+
+  describe("session renewal alert", () => {
+    let mockAlertService: { addWarning: Mock };
+
+    beforeEach(() => {
+      mockAlertService = { addWarning: vi.fn() };
+      (database as any).alertService = mockAlertService;
+      database.init("");
+      (PouchDB.fetch as Mock).mockImplementation(
+        async () =>
+          new Response(
+            '{ "error": "unauthorized", "reason": "exp not in future" }',
+            { status: HttpStatusCode.Unauthorized },
+          ),
+      );
+    });
+
+    // let the outer afterEach destroy the database without being rejected, too
+    afterEach(() =>
+      (PouchDB.fetch as Mock).mockImplementation(
+        async () => new Response("{}", { status: HttpStatusCode.Ok }),
+      ),
+    );
+
+    const fetchDoc = () =>
+      (database as any).defaultFetch(READ_URL, { headers: {} });
+
+    it("should tell the user once if the login server cannot be reached to renew the session", async () => {
+      mockAuthService.login.mockRejectedValue(
+        new RemoteLoginNotAvailableError(new Error("Timeout has occurred")),
+      );
+
+      const result = await fetchDoc();
+      await fetchDoc();
+
+      expect(result.status).toBe(HttpStatusCode.Unauthorized);
+      expect(mockAlertService.addWarning).toHaveBeenCalledTimes(1);
+      expect(mockAlertService.addWarning).toHaveBeenCalledWith(
+        expect.stringContaining("could not be renewed"),
+      );
+    });
+
+    it("should tell the user again after the session was renewed in between", async () => {
+      mockAuthService.login
+        .mockRejectedValueOnce(new RemoteLoginNotAvailableError())
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new RemoteLoginNotAvailableError());
+
+      await fetchDoc();
+      await fetchDoc();
+      await fetchDoc();
+
+      expect(mockAlertService.addWarning).toHaveBeenCalledTimes(2);
+    });
+
+    it("should not show the alert if the re-login fails for another reason", async () => {
+      mockAuthService.login.mockRejectedValue(new Error("unexpected"));
+
+      await fetchDoc();
+
+      expect(mockAlertService.addWarning).not.toHaveBeenCalled();
+    });
   });
 
   it("should handle errors in periodic changes polling gracefully", async () => {
