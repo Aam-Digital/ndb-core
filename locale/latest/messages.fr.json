@@ -1760,5 +1760,7 @@
   "5614674169733644295": "You do not have permission to open this file.",
   "2561393307023371744": " The setup wizard could not be loaded. Please check your internet connection and reload the page. ",
   "8704370526414242834": "No setup wizard is configured for this system.",
-  "1798094148246010040": "Your account does not have permission to change the permissions of a role."
+  "1798094148246010040": "Your account does not have permission to change the permissions of a role.",
+  "2464553767922270355": "Could not load the list because your login session has expired and could not be renewed. Please try again later.",
+  "7972800205085845062": "Your online login session could not be renewed because the login server cannot be reached right now. Until then, data cannot be loaded from or saved to the server. We keep retrying automatically."
 }

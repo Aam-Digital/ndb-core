@@ -1760,5 +1760,7 @@
   "5614674169733644295": "Sie haben keine Berechtigung, diese Datei zu öffnen.",
   "2561393307023371744": "Der Einrichtungsassistent konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und laden Sie die Seite neu. ",
   "8704370526414242834": "Für dieses System ist kein Einrichtungsassistent konfiguriert.",
-  "1798094148246010040": "Ihr Konto hat keine Berechtigung, die Berechtigungen einer Rolle zu ändern."
+  "1798094148246010040": "Ihr Konto hat keine Berechtigung, die Berechtigungen einer Rolle zu ändern.",
+  "2464553767922270355": "Could not load the list because your login session has expired and could not be renewed. Please try again later.",
+  "7972800205085845062": "Your online login session could not be renewed because the login server cannot be reached right now. Until then, data cannot be loaded from or saved to the server. We keep retrying automatically."
 }
