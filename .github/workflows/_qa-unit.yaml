@@ -27,7 +27,7 @@ jobs:
           cache: npm
 
       - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
-      - run: npm install --ci
+      - run: npm ci
       - run: npx eslint --max-warnings=0
       - run: npx tsc -p .
       - run: npx tsc -p e2e

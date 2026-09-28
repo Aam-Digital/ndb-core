@@ -75,6 +75,7 @@ export class AdminNoteDetailsComponent {
     );
 
     return {
+      ...this.config(),
       topForm: topGroup ? (topGroup.fields as string[]) : [],
       middleForm: middleGroup ? (middleGroup.fields as string[]) : [],
       bottomForm: bottomGroup ? (bottomGroup.fields as string[]) : [],

@@ -68,4 +68,27 @@ describe("AdminNoteDetailsComponent", () => {
       bottomForm: ["children"],
     });
   });
+
+  it("should preserve unknown config fields like entityType when emitting a config change", () => {
+    fixture.componentRef.setInput("config", { entityType: "Note" });
+
+    const emittedConfig = vi.fn();
+    component.configChange.subscribe(emittedConfig);
+
+    const mockFormConfig: FormConfig = {
+      fieldGroups: [
+        { fields: ["date"], header: "Top Form" } as FieldGroup,
+        { fields: ["subject"], header: "Middle Form" } as FieldGroup,
+        { fields: ["children"], header: "Bottom Form" } as FieldGroup,
+      ],
+    };
+    component.onNoteDetailsConfigChange(mockFormConfig);
+
+    expect(emittedConfig).toHaveBeenCalledWith({
+      entityType: "Note",
+      topForm: ["date"],
+      middleForm: ["subject"],
+      bottomForm: ["children"],
+    });
+  });
 });
