@@ -27,7 +27,10 @@ import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatyp
 import { DateFilter } from "../filters/dateFilter";
 import { StringFilter } from "../filters/stringFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
-import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
+import {
+  buildEnumValueFilter,
+  ConfigurableEnumFilter,
+} from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { todoDueStatusFilter } from "../../../features/todos/add-default-todo-views";
@@ -100,7 +103,7 @@ export class FilterGeneratorService {
             key: `invalid:${invalidId}`,
             label: $localize`:filter option:[Invalid: ${invalidId}]`,
             isInvalid: true,
-            filter: { [filterConfig.id + ".id"]: invalidId } as DataFilter<T>,
+            filter: buildEnumValueFilter<T>(filterConfig.id, invalidId),
           }));
 
         const enumFilter = new ConfigurableEnumFilter(

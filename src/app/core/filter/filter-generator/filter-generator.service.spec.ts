@@ -616,6 +616,73 @@ describe("FilterGeneratorService", () => {
     expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
   });
 
+  it("should build configurable-enum filters that match single and array values, independent of isArray (#4406)", async () => {
+    // A plain equality selector (e.g. `{ tags: "A" }`) does not match an array
+    // field in CouchDB's Mango `_find` (only client-side, ucast treats it as
+    // "array contains"), so online-only mode needs `$elemMatch`. `isArray` can be
+    // toggled in the admin UI while existing records keep their previous shape,
+    // so both variants are always matched - like EntityFilter does.
+    @DatabaseEntity("ArrayEnumFilterTestEntity")
+    class ArrayEnumFilterTestEntity extends Entity {}
+    ArrayEnumFilterTestEntity.schema.set("tags", {
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      label: "Tags",
+      isArray: true,
+    });
+    ArrayEnumFilterTestEntity.schema.set("category", {
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      label: "Category",
+    });
+
+    vi.spyOn(
+      TestBed.inject(FilterGeneratorService)["enumService"],
+      "getEnumValues",
+    ).mockReturnValue([{ id: "A", label: "A" }]);
+
+    const expectedFilter = (field: string, id: string) => ({
+      $or: [
+        { [field + ".id"]: id },
+        { [field + ".id"]: { $elemMatch: { $eq: id } } },
+      ],
+    });
+
+    for (const field of ["tags", "category"]) {
+      const asSingleValue = new ArrayEnumFilterTestEntity();
+      asSingleValue[field] = { id: "A", label: "A" };
+      const asArray = new ArrayEnumFilterTestEntity();
+      asArray[field] = [
+        { id: "A", label: "A" },
+        { id: "B", label: "B" },
+      ];
+      const otherValue = new ArrayEnumFilterTestEntity();
+      otherValue[field] = { id: "B", label: "B" };
+      const invalidInArray = new ArrayEnumFilterTestEntity();
+      invalidInArray[field] = [{ id: "INVALID", label: "INVALID" }];
+      const data = [asSingleValue, asArray, otherValue, invalidInArray];
+
+      const enumFilter = (
+        await service.generate([{ id: field }], ArrayEnumFilterTestEntity, data)
+      )[0] as ConfigurableEnumFilter<Entity>;
+
+      const option = enumFilter.options.find((opt) => opt.key === "A");
+      expect(option.filter).toEqual(expectedFilter(field, "A"));
+      // matches values stored as single value as well as inside an array
+      expect(
+        data.filter(filterService.getFilterPredicate(option.filter)),
+      ).toEqual([asSingleValue, asArray]);
+
+      const invalidOption = enumFilter.options.find(
+        (opt) => opt.key === "invalid:INVALID",
+      );
+      expect(invalidOption.filter).toEqual(expectedFilter(field, "INVALID"));
+      expect(
+        data.filter(filterService.getFilterPredicate(invalidOption.filter)),
+      ).toEqual([invalidInArray]);
+    }
+  });
+
   function filter<T extends Entity>(
     data: T[],
     option: FilterSelectionOption<T>,

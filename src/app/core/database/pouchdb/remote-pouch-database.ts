@@ -240,7 +240,8 @@ export class RemotePouchDatabase extends PouchDatabase {
    * after the fetch has returned — outside the wrapper's reach. Re-issuing the
    * whole read (fresh fetch and body) recovers both cases transparently.
    * Only reads route through this hook; writes must run exactly once
-   * (see {@link fetchWithTimeout}).
+   * (see {@link fetchWithTimeout}). The one exception is creating a query
+   * index, which changes nothing when repeated.
    */
   protected override async withReadRetry<T>(
     operation: () => Promise<T>,
@@ -392,8 +393,10 @@ export class RemotePouchDatabase extends PouchDatabase {
     const pouchDB = await this.getPouchDBOnceReady();
     if (sort?.prop) {
       // TODO delete indexes at one point? e.g. when column is removed
-      const indexRes = await pouchDB
-        .createIndex({
+      // Unlike other writes this is safe to retry like a read: creating an index
+      // that already exists changes nothing (CouchDB answers "exists").
+      const indexRes = await this.withReadRetry(() =>
+        pouchDB.createIndex({
           index: {
             name: prefix + "_" + sort.prop,
             partial_filter_selector: {
@@ -401,10 +404,10 @@ export class RemotePouchDatabase extends PouchDatabase {
             },
             fields: [sort.prop],
           },
-        })
-        .catch((err) => {
-          throw new DatabaseException(err);
-        });
+        }),
+      ).catch((err) => {
+        throw new DatabaseException(err);
+      });
       // deleted because already included in partial_filter_selector
       delete findOptions.selector._id;
       findOptions.sort = [{ [sort.prop]: sort.dir }];

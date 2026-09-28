@@ -37,7 +37,7 @@ jobs:
           cache: npm
 
       - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
-      - run: npm install --ci
+      - run: npm ci
 
       - name: Cache playwright
         id: cache-playwright
