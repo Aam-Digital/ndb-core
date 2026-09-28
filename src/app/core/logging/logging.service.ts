@@ -16,6 +16,10 @@ import {
   CONNECTIVITY_ERROR_STATUS,
   isConnectivityErrorMessage,
 } from "#src/app/utils/connectivity-error";
+import {
+  RegistryDuplicateError,
+  RegistryLookupError,
+} from "#src/app/core/config/registry/dynamic-registry";
 
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
@@ -824,6 +828,31 @@ function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
 const FALLBACK_EXCEPTION_TYPE = "Error";
 
 /**
+ * Which registration a registry error is about, if there is one in the chain.
+ *
+ * The key is not part of the error message, so that all keys of one registry
+ * share one issue (see {@link RegistryLookupError}) - this is what still names
+ * it in each report. The cause chain is searched as well, because Angular
+ * re-throws an error raised in a `resource()` loader as an error of its own
+ * (see {@link rewrappedCauseGroupedError}), which does not carry the key.
+ */
+function registryErrorContext(err: unknown): Record<string, string> {
+  const seen = new Set<unknown>();
+  let e = err;
+  while (e && typeof e === "object" && !seen.has(e)) {
+    if (
+      e instanceof RegistryLookupError ||
+      e instanceof RegistryDuplicateError
+    ) {
+      return { registry: e.registryName, registryKey: e.key };
+    }
+    seen.add(e);
+    e = (e as { cause?: unknown }).cause;
+  }
+  return {};
+}
+
+/**
  * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
  */
@@ -859,6 +888,8 @@ function enrichSentryEvent(
         extras.status = status;
       }
     }
+
+    Object.assign(extras, registryErrorContext(err));
 
     if (Object.keys(extras).length > 0) {
       event.extra = { ...event.extra, ...extras };
