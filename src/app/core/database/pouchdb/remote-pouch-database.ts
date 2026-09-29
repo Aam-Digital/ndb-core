@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
 import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { RemoteLoginNotAvailableError } from "../../session/auth/keycloak/remote-login-not-available.error";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { NgZone } from "@angular/core";
@@ -31,6 +32,15 @@ const EXPECTED_4XX_STATUSES: number[] = [
 /** The HTTP method of a fetch request, defaulting the way `fetch` itself does. */
 function requestMethod(opts: RequestInit | undefined): string {
   return (opts?.method ?? "GET").toUpperCase();
+}
+
+/**
+ * The generation number of a CouchDB revision (the `3` of `3-abc...`), which increases
+ * with every write to a document. NaN if it cannot be read, so callers fall back to
+ * emitting rather than suppressing a document they cannot place in order.
+ */
+function revisionNumber(rev: string | undefined): number {
+  return Number.parseInt(rev ?? "", 10);
 }
 
 /**
@@ -62,9 +72,33 @@ export class RemotePouchDatabase extends PouchDatabase {
    */
   private readonly CHANGES_POLLING_INTERVAL = 10000; // 10 seconds
 
+  /**
+   * Document id to the most recent revision this client announced for it through
+   * {@link announceOwnWrite}, used by {@link isAlreadyAnnounced} to decide what the
+   * changes feed can skip.
+   *
+   * This covers the poll echoing a write back, a conflict retry announcing the
+   * revision its caller then announces again, and a poll response that read the
+   * server before a local write and only arrives afterwards. The last one matters
+   * most - emitting a superseded revision after a newer one would leave subscribers
+   * on stale data until that document changes again.
+   */
+  private readonly announcedRevisions = new Map<string, string>();
+
+  /**
+   * Upper bound for {@link announcedRevisions}, which holds one entry per document this
+   * client has written and so grows over a long session. Dropping it past this size keeps
+   * memory bounded; the only cost is that a duplicate may slip through, which is the
+   * behaviour without this map.
+   */
+  private readonly MAX_ANNOUNCED_REVISIONS = 1000;
+
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
   private lastConnectionAlertTime = 0;
+
+  /** Whether the user was already told that their session could not be renewed. */
+  private sessionRenewalAlertShown = false;
 
   constructor(
     dbName: string,
@@ -164,13 +198,11 @@ export class RemotePouchDatabase extends PouchDatabase {
       result?.status === HttpStatusCode.Unauthorized &&
       !this.unauthenticatedSession
     ) {
-      try {
-        await this.authService.login();
-        this.authService.addAuthHeader(opts.headers);
-        result = await PouchDB.fetch(remoteUrl, opts);
-      } catch (err) {
-        Logging.debug("Failed retried fetch from DB after 401", err);
-      }
+      result = await this.retryWithRenewedSession(remoteUrl, opts, result);
+    }
+    if (result && result.status !== HttpStatusCode.Unauthorized) {
+      // the session is valid (again) - whichever request or tab renewed it
+      this.sessionRenewalAlertShown = false;
     }
 
     const method = requestMethod(opts);
@@ -305,6 +337,44 @@ export class RemotePouchDatabase extends PouchDatabase {
     }
   }
 
+  /**
+   * Renew the session and repeat a request that the server rejected as unauthorized.
+   *
+   * @returns the repeated request's response; the original `unauthorized`
+   *   response if the session could not be renewed; or `undefined` if the
+   *   repeated request did not get a response at all (like a failed initial fetch)
+   */
+  private async retryWithRenewedSession(
+    remoteUrl: string,
+    opts: RequestInit,
+    unauthorized: Response,
+  ): Promise<Response | undefined> {
+    try {
+      await this.authService.login();
+    } catch (err) {
+      if (err instanceof RemoteLoginNotAvailableError) {
+        // transient - the user is told, and background sync/polling keeps retrying
+        Logging.debug(
+          "Could not renew session after 401 (login unavailable)",
+          err,
+        );
+        this.showSessionRenewalAlert();
+      } else {
+        Logging.warn("Could not renew session after 401", err);
+      }
+      return unauthorized;
+    }
+
+    this.authService.addAuthHeader(opts.headers);
+    try {
+      return await PouchDB.fetch(remoteUrl, opts);
+    } catch (err) {
+      Logging.debug("Failed retried fetch from DB after 401", err);
+      this.showConnectionIssueAlert();
+      return undefined;
+    }
+  }
+
   private showConnectionIssueAlert(): void {
     const now = Date.now();
     if (
@@ -316,6 +386,24 @@ export class RemotePouchDatabase extends PouchDatabase {
     this.lastConnectionAlertTime = now;
     this.alertService?.addWarning(
       $localize`We are observing connection issues while syncing your data. Sync continues and retries automatically but may take longer than usual.`,
+    );
+  }
+
+  /**
+   * Tell the user that the server rejects their requests because the online
+   * session could not be renewed, which otherwise just looks like data that
+   * silently fails to load or sync.
+   *
+   * Shown once until the server accepts a request again, rather than on every
+   * rejected request, as the background polling / sync keeps running into it.
+   */
+  private showSessionRenewalAlert(): void {
+    if (this.sessionRenewalAlertShown) {
+      return;
+    }
+    this.sessionRenewalAlertShown = true;
+    this.alertService?.addWarning(
+      $localize`:Alert when the login session could not be renewed:Your online login session could not be renewed because the login server cannot be reached right now. Until then, data cannot be loaded from or saved to the server. We keep retrying automatically.`,
     );
   }
 
@@ -439,6 +527,112 @@ export class RemotePouchDatabase extends PouchDatabase {
   }
 
   /**
+   * Unlike a synced database, which writes locally and hears about it on the local
+   * changes feed in the same tick, this database writes over HTTP and would only learn
+   * of its own write on the next poll - up to {@link CHANGES_POLLING_INTERVAL} later.
+   * Announcing the stored document here closes that gap, so the app reacts to its own
+   * writes immediately in both session types.
+   */
+  override async put(object: any, forceOverwrite = false): Promise<any> {
+    const result = await super.put(object, forceOverwrite);
+    this.announceOwnWrite(object, result);
+    return result;
+  }
+
+  override async putAll(objects: any[], forceOverwrite = false): Promise<any> {
+    try {
+      const results = await super.putAll(objects, forceOverwrite);
+      this.announceStoredDocs(objects, results);
+      return results;
+    } catch (results) {
+      // putAll rejects *with* its results array when any document failed; the ones
+      // that did store are still stored and must be announced like any other write.
+      if (Array.isArray(results)) {
+        this.announceStoredDocs(objects, results);
+      }
+      throw results;
+    }
+  }
+
+  /**
+   * A deletion has the same delay as a write, so it is announced the same way.
+   * The emitted document is the tombstone the changes feed would deliver - id,
+   * revision and the deleted flag, without the data fields - which is what
+   * subscribers read to tell a removal apart from an update.
+   */
+  override async remove(object: any): Promise<any> {
+    const result = await super.remove(object);
+    this.announceOwnWrite({ _id: object?._id, _deleted: true }, result);
+    return result;
+  }
+
+  private announceStoredDocs(objects: any[], results: any[]) {
+    for (const result of results ?? []) {
+      const stored = objects.find((obj) => obj._id === result?.id);
+      if (stored) {
+        this.announceOwnWrite(stored, result);
+      }
+    }
+  }
+
+  /**
+   * Whether subscribers already have this document at this revision or a newer one,
+   * because this client announced it. An unreadable revision is treated as new, so an
+   * unexpected format delays nothing - it only forgoes the deduplication.
+   */
+  private isAlreadyAnnounced(doc: { _id?: string; _rev?: string }): boolean {
+    const announced = this.announcedRevisions.get(doc?._id);
+    if (announced === undefined) {
+      return false;
+    }
+    if (announced === doc?._rev) {
+      // the server echoing back the exact revision this client wrote
+      return true;
+    }
+
+    // A different revision of the same generation is a conflicting sibling, not an
+    // echo - two clients edited the same parent and the server picked a winner
+    // between them. Suppressing it would hide that winner from every subscriber,
+    // so only a strictly older generation counts as superseded.
+    const incoming = revisionNumber(doc?._rev);
+    const mine = revisionNumber(announced);
+    return !isNaN(incoming) && !isNaN(mine) && incoming < mine;
+  }
+
+  /**
+   * Emit a document this client just stored, tagged with the revision the server
+   * assigned, so subscribers see the same shape the changes feed would deliver.
+   */
+  private announceOwnWrite(object: any, result: any) {
+    if (!result?.ok || !this.changesFeed) {
+      return;
+    }
+    if (typeof object?._id === "string" && object._id.startsWith("_design/")) {
+      // index definitions, not entities: no subscriber reacts to them, and the
+      // server's _changes does not echo them, so tracking them would only fill
+      // announcedRevisions with entries that never match.
+      return;
+    }
+
+    const doc = { ...object, _rev: result.rev };
+    if (this.isAlreadyAnnounced(doc)) {
+      // a conflict retry announced this same revision through the nested put()
+      return;
+    }
+
+    if (this.announcedRevisions.size >= this.MAX_ANNOUNCED_REVISIONS) {
+      this.announcedRevisions.clear();
+    }
+    this.announcedRevisions.set(doc._id, doc._rev);
+
+    if (this.ngZone) {
+      this.ngZone.run(() => this.changesFeed.next(doc));
+    } else {
+      this.changesFeed.next(doc);
+    }
+  }
+
+  /**
    * Poll the _changes endpoint periodically to detect document changes.
    * Emits individual documents that have changed since the last poll.
    *
@@ -470,6 +664,11 @@ export class RemotePouchDatabase extends PouchDatabase {
               if (result?.results) {
                 result.results.forEach(
                   (change: PouchDB.Core.ChangesResponseChange<{}>) => {
+                    if (this.isAlreadyAnnounced(change.doc)) {
+                      // this client's own write, already emitted by announceOwnWrite,
+                      // or a response that read the server before that write
+                      return;
+                    }
                     if (this.ngZone) {
                       this.ngZone.run(() => this.changesFeed.next(change.doc));
                     } else {

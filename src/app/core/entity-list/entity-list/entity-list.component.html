@@ -293,10 +293,7 @@
     </button>
   }
 
-  @if (
-    ("update" | able: ("CONFIG_ENTITY" | entityLoad: "Config" | async)) &&
-    !entityConstructor()?.isInternalEntity
-  ) {
+  @if (("update" | able: "Config") && !entityConstructor()?.isInternalEntity) {
     <button
       mat-menu-item
       [routerLink]="['/admin/entity', entityConstructor()?.ENTITY_TYPE]"

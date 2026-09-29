@@ -26,7 +26,7 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
-import { AsyncPipe, NgStyle, NgTemplateOutlet } from "@angular/common";
+import { NgStyle, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -52,7 +52,6 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { AblePipe } from "../../permissions/permission-pipe/able.pipe";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -102,10 +101,8 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
-    AsyncPipe,
     AblePipe,
     ViewActionsComponent,
-    EntityLoadPipe,
     EntityBulkActionsComponent,
   ],
 })
