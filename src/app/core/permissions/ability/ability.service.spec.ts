@@ -368,7 +368,9 @@ describe("AbilityService", () => {
     }
   });
 
-  it("should apply rules that are restricted to individual fields", async () => {
+  // guards the `fieldMatcher` on EntityAbility: without it CASL refuses to build
+  // any rule carrying `fields`, so an instance already using one fails on startup
+  it("should not fail on rules that restrict fields", async () => {
     vi.useFakeTimers();
     try {
       service.initializeRules();
@@ -390,7 +392,7 @@ describe("AbilityService", () => {
     }
   });
 
-  it("should ignore rule conditions when checking create, but still honour field restrictions", async () => {
+  it("should ignore rule conditions when checking create, but not the fields a rule names", async () => {
     vi.useFakeTimers();
     try {
       service.initializeRules();
