@@ -328,14 +328,29 @@ export class NotificationService {
   /**
    * Show a system notification through the service worker
    * (the `Notification` constructor is not supported on mobile browsers).
-   * Clicks are handled in the firebase-messaging-sw.
+   *
+   * The payload is attached the same way Firebase does for notifications it shows itself,
+   * so that Firebase's click handler in the service worker also handles clicks on these (focus or open the app).
    */
   private async showNotification(payload: firebase.messaging.MessagePayload) {
+    if (!payload.notification) {
+      // data-only message, not meant to be displayed (Firebase also doesn't show these while in background)
+      return;
+    }
+
     const registration = await this.messagingServiceWorker.register();
-    await registration.showNotification(payload.notification?.title, {
-      body: payload.notification?.body,
+    await registration.showNotification(payload.notification.title, {
+      body: payload.notification.body,
       icon: "/assets/icons/favicon.png",
-      data: { appUrl: payload.fcmOptions?.link ?? window.location.origin },
+      data: {
+        FCM_MSG: {
+          ...payload,
+          fcmOptions: {
+            ...payload.fcmOptions,
+            link: payload.fcmOptions?.link ?? window.location.origin,
+          },
+        },
+      },
     });
   }
 

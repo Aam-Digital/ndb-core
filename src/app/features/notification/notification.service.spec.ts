@@ -99,7 +99,8 @@ describe("NotificationService", () => {
         "Update from Aam Digital",
         expect.objectContaining({
           body: "Task assigned",
-          data: { appUrl: "https://app.example.com" },
+          // recognized by Firebase's click handler in the service worker
+          data: { FCM_MSG: expect.objectContaining(pushMessage) },
         }),
       ),
     );
@@ -107,6 +108,17 @@ describe("NotificationService", () => {
       expect.stringContaining("/device/"),
       expect.anything(),
     );
+  });
+
+  it("does not show data-only push messages", async () => {
+    login();
+    mockFireMessaging.messages.next({ data: { type: "sync" } } as any);
+    mockFireMessaging.messages.next(pushMessage);
+
+    await vi.waitFor(() =>
+      expect(mockRegistration.showNotification).toHaveBeenCalled(),
+    );
+    expect(mockRegistration.showNotification).toHaveBeenCalledTimes(1);
   });
 
   it("does not listen for push messages without the notification permission", () => {

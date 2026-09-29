@@ -1,6 +1,7 @@
 // Service worker receiving push messages from Firebase Cloud Messaging.
 // If no app window is visible, Firebase shows the notification itself (and opens the app when it is clicked).
-// Otherwise, Firebase passes the message on to the app window instead (see NotificationService.listenForMessages).
+// Otherwise, Firebase passes the message on to the app window instead (see NotificationService.listenForMessages),
+// which shows it in a format that Firebase's click handler here also processes.
 // see https://firebase.google.com/docs/cloud-messaging/js/receive
 
 importScripts(
@@ -37,28 +38,5 @@ if (firebaseConfig.apiKey) {
         "Could not load firebase-config in service worker. Background Notifications not available.",
         error,
       );
-    });
-}
-
-// Clicks on notifications that the app itself shows while it is in the foreground (see NotificationService).
-// Notifications shown by Firebase carry their own data and are handled by Firebase's click listener.
-self.addEventListener("notificationclick", function (event) {
-  const appUrl = event.notification.data?.appUrl;
-  if (!appUrl) {
-    return;
-  }
-
-  event.notification.close();
-  event.waitUntil(focusOrOpenApp(appUrl));
-});
-
-function focusOrOpenApp(appUrl) {
-  return self.clients
-    .matchAll({ type: "window", includeUncontrolled: true })
-    .then(function (windows) {
-      const appWindow = windows.find(function (client) {
-        return new URL(client.url).origin === self.location.origin;
-      });
-      return appWindow ? appWindow.focus() : self.clients.openWindow(appUrl);
     });
 }
