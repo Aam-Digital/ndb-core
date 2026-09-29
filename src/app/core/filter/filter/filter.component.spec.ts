@@ -7,6 +7,8 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { StringFilter } from "../filters/stringFilter";
+import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
+import { Logging } from "../../logging/logging.service";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -327,5 +329,22 @@ describe("FilterComponent", () => {
     expect(emittedFilterObj).toEqual({
       $or: [optionFilter(t1.id), optionFilter(t2.id)],
     } as any);
+  });
+
+  it("should show no filters instead of breaking when they cannot be generated", async () => {
+    vi.spyOn(
+      TestBed.inject(FilterGeneratorService),
+      "generate",
+    ).mockRejectedValue(new Error("Failed to fetch from DB"));
+    const errorLog = vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+    await setComponentInputs({
+      entityType: Note,
+      filterConfig: [{ id: "category" }],
+    });
+
+    expect(component.filterSelections()).toEqual([]);
+    expect(errorLog).toHaveBeenCalled();
+    errorLog.mockRestore();
   });
 });

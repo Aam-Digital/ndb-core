@@ -18,7 +18,6 @@ import { UntilDestroy } from "@ngneat/until-destroy";
 import { Angulartics2OnModule } from "angulartics2";
 import { RouteTarget } from "../../../route-target";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
@@ -60,7 +59,6 @@ import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
     RouterLink,
     CommonModule,
     ViewActionsComponent,
-    EntityLoadPipe,
   ],
 })
 export class EntityDetailsComponent extends AbstractEntityDetailsComponent {
