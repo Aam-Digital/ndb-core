@@ -797,6 +797,9 @@
                             <a href="#processSentryEvent" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>processSentryEvent</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#provideFirebaseMessagingServiceWorker" title="src/app/features/notification/firebase-messaging-service-worker.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>provideFirebaseMessagingServiceWorker</b>&nbsp;&nbsp;&nbsp;(src/.../firebase-messaging-service-worker.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#provideTestingConfigService" title="src/app/core/config/testing-config-service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>provideTestingConfigService</b>&nbsp;&nbsp;&nbsp;(src/.../testing-config-service.ts)</span></a>
                         </li>
                         <li>
@@ -984,6 +987,9 @@
                         </li>
                         <li>
                             <a href="#waitForChangeTo" title="src/app/core/session/session-states/session-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>waitForChangeTo</b>&nbsp;&nbsp;&nbsp;(src/.../session-utils.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#waitUntilActive" title="src/app/features/notification/firebase-messaging-service-worker.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>waitUntilActive</b>&nbsp;&nbsp;&nbsp;(src/.../firebase-messaging-service-worker.ts)</span></a>
                         </li>
                         <li>
                             <a href="#whenCanInstallDirectly" title="src/bootstrap-pwa-install.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>whenCanInstallDirectly</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-pwa-install.ts)</span></a>
@@ -19369,6 +19375,99 @@ message</p>
                                                 <td>destroyRef</td>
                                             <td>
                                                             <code><a href="https://angular.dev/api/core/DestroyRef" target="_blank" >DestroyRef</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/notification/firebase-messaging-service-worker.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="provideFirebaseMessagingServiceWorker"></a>
+                    <span class="name">
+                        <span ><b>provideFirebaseMessagingServiceWorker</b></span>
+                        <a href="#provideFirebaseMessagingServiceWorker"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>provideFirebaseMessagingServiceWorker()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Let AngularFire use our registration of the service worker instead of the Firebase default
+(which would not pass the Firebase config to it).</p>
+<p>The registration is only done once AngularFire awaits it (i.e. when requesting a device token)
+and repeated on every request, so a failed attempt (e.g. while offline) can succeed later.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://angular.dev/api/core/Provider" target="_blank" >Provider</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="waitUntilActive"></a>
+                    <span class="name">
+                        <span ><b>waitUntilActive</b></span>
+                        <a href="#waitUntilActive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>waitUntilActive(registration: ServiceWorkerRegistration)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>registration</td>
+                                            <td>
+                                                        <code>ServiceWorkerRegistration</code>
                                             </td>
 
                                             <td>

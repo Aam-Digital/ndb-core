@@ -225,7 +225,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/notification/notification.service.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/features/notification/notification.service.ts:23</a></div>
                                 </td>
                             </tr>
 
@@ -241,7 +241,7 @@ import { Logging } from &quot;app/core/logging/logging.service&quot;;
 import { HttpClient } from &quot;@angular/common/http&quot;;
 import { KeycloakAuthService } from &quot;app/core/session/auth/keycloak/keycloak-auth.service&quot;;
 import { AngularFireMessaging } from &quot;@angular/fire/compat/messaging&quot;;
-import { firstValueFrom, mergeMap, Subscription } from &quot;rxjs&quot;;
+import { filter, firstValueFrom, mergeMap, Subscription, take } from &quot;rxjs&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { AlertService } from &quot;../../core/alerts/alert.service&quot;;
 import { catchError, map } from &quot;rxjs/operators&quot;;
@@ -251,6 +251,8 @@ import { SessionSubject } from &quot;../../core/session/auth/session-info&quot;;
 import { SyncedPouchDatabase } from &quot;../../core/database/pouchdb/synced-pouch-database&quot;;
 import { NotificationEvent } from &quot;./model/notification-event&quot;;
 import { DatabaseResolverService } from &quot;../../core/database/database-resolver.service&quot;;
+import { FirebaseMessagingServiceWorker } from &quot;./firebase-messaging-service-worker&quot;;
+import type firebase from &quot;firebase/compat/app&quot;;
 
 /**
  * Status of a backend feature, as reported by the &#x60;/actuator/features&#x60; endpoint.
@@ -284,8 +286,12 @@ export class NotificationService {
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly sessionInfo &#x3D; inject(SessionSubject);
   private readonly databaseResolver &#x3D; inject(DatabaseResolverService);
+  private readonly messagingServiceWorker &#x3D; inject(
+    FirebaseMessagingServiceWorker,
+  );
 
   private tokenSubscription: Subscription | undefined &#x3D; undefined;
+  private messagesSubscription: Subscription | undefined &#x3D; undefined;
 
   private readonly featureFlagsResource &#x3D; resource({
     loader: async () &#x3D;&gt; {
@@ -316,14 +322,28 @@ export class NotificationService {
     environment.API_PROXY_PREFIX + &quot;/v1/notification&quot;;
 
   constructor() {
-    // init listening to push messages once the session (with userId) is ready
-    this.sessionInfo.subscribe((sessionInfo) &#x3D;&gt; this.init());
+    // init listening to push messages once the user is logged in
+    this.sessionInfo
+      .pipe(filter(Boolean), take(1))
+      .subscribe(() &#x3D;&gt; this.init());
   }
 
-  async init() {
-    if (await this.isDeviceRegistered()) {
-      this.listenForMessages();
+  private init() {
+    if (!this.hasNotificationPermissionGranted()) {
+      // push notifications cannot have been enabled on this device
+      return;
     }
+
+    // keep the service worker up to date (current Firebase config and script version),
+    // as the browser checks for updates of this service worker only rarely
+    this.messagingServiceWorker
+      .register()
+      .then((registration) &#x3D;&gt; registration.update().catch(() &#x3D;&gt; undefined)) // fails while offline
+      .catch((err) &#x3D;&gt;
+        Logging.warn(&quot;Could not register push service worker&quot;, err),
+      );
+    // not waiting for the backend to confirm the device registration, which would fail while offline
+    this.listenForMessages();
   }
 
   async loadNotificationConfig(userId: string): Promise&lt;NotificationConfig&gt; {
@@ -510,12 +530,16 @@ export class NotificationService {
    * Listens for incoming Firebase Cloud Messages (FCM) in real time.
    * Displays a browser notification when a message is received.
    *
-   * This listener creates system notifications while the app is running
-   * (If app is not running, the firebase-messaging-sw is listening)
+   * This listener creates system notifications while the app is visible
+   * (otherwise the firebase-messaging-sw shows them).
    */
   listenForMessages(): void {
+    if (this.messagesSubscription &amp;&amp; !this.messagesSubscription.closed) {
+      return;
+    }
+
     Logging.debug(&quot;Starting to listen for Push Messages&quot;);
-    this.firebaseMessaging.messages.subscribe({
+    this.messagesSubscription &#x3D; this.firebaseMessaging.messages.subscribe({
       next: (payload) &#x3D;&gt; {
         Logging.debug(&quot;Received Push Message&quot;, payload);
 
@@ -529,22 +553,9 @@ export class NotificationService {
           );
         }
 
-        let notification &#x3D; new Notification(payload.notification.title, {
-          body: payload.notification.body,
-          icon: &quot;/assets/icons/favicon.png&quot;,
-          data: {
-            url: window.location.protocol + &quot;//&quot; + window.location.hostname,
-            // &quot;/foo-bar/123&quot;, // todo: deep link here
-          },
-        });
-
-        notification.onclick &#x3D; (event) &#x3D;&gt; {
-          let url &#x3D; event.target[&quot;data&quot;]?.[&quot;url&quot;];
-          event.preventDefault();
-          if (url) {
-            window.open(url, &quot;_self&quot;);
-          }
-        };
+        this.showNotification(payload).catch((err) &#x3D;&gt;
+          Logging.warn(&quot;Could not show push notification&quot;, err),
+        );
       },
       error: (err) &#x3D;&gt; {
         Logging.error(&quot;Error while listening for messages.&quot;, err);
@@ -552,17 +563,47 @@ export class NotificationService {
     });
   }
 
+  /**
+   * Show a system notification through the service worker
+   * (the &#x60;Notification&#x60; constructor is not supported on mobile browsers).
+   *
+   * The payload is attached the same way Firebase does for notifications it shows itself,
+   * so that Firebase&#x27;s click handler in the service worker also handles clicks on these (focus or open the app).
+   */
+  private async showNotification(payload: firebase.messaging.MessagePayload) {
+    if (!payload.notification) {
+      // data-only message, not meant to be displayed (Firebase also doesn&#x27;t show these while in background)
+      return;
+    }
+
+    const registration &#x3D; await this.messagingServiceWorker.register();
+    await registration.showNotification(payload.notification.title, {
+      body: payload.notification.body,
+      icon: &quot;/assets/icons/favicon.png&quot;,
+      data: {
+        FCM_MSG: {
+          ...payload,
+          fcmOptions: {
+            ...payload.fcmOptions,
+            link: payload.fcmOptions?.link ?? window.location.origin,
+          },
+        },
+      },
+    });
+  }
+
   readonly isPushNotificationSupported &#x3D; signal(&quot;Notification&quot; in window);
 
   /**
-   * user given the notification permission to browser or not
-   * @returns boolean
+   * Whether the user has given this app the browser permission to show notifications.
+   * (Not a signal, because the user can change the permission at any time outside the app.)
    */
-  readonly hasNotificationPermissionGranted &#x3D; computed(
-    () &#x3D;&gt;
+  hasNotificationPermissionGranted(): boolean {
+    return (
       this.isPushNotificationSupported() &amp;&amp;
-      Notification.permission &#x3D;&#x3D;&#x3D; &quot;granted&quot;,
-  );
+      Notification.permission &#x3D;&#x3D;&#x3D; &quot;granted&quot;
+    );
+  }
 }
 </code></pre>
     </div>
