@@ -94,4 +94,72 @@ describe("EntityAbility", () => {
       ).toBe(false);
     });
   });
+  describe("invalid conditions", () => {
+    let entity: TestEntity;
+
+    beforeEach(() => {
+      entity = TestEntity.create({ name: "matching name", rating: 10 });
+    });
+
+    function allowReadWhere(conditions: Record<string, any>) {
+      ability.update([
+        { subject: TestEntity.ENTITY_TYPE, action: "read", conditions },
+      ]);
+    }
+
+    it("should deny rather than throw for an empty logical array", () => {
+      allowReadWhere({ $or: [] });
+
+      expect(() => ability.can("read", entity)).not.toThrow();
+      expect(ability.can("read", entity)).toBe(false);
+    });
+
+    it("should deny rather than throw for a nested empty logical array", () => {
+      allowReadWhere({ $or: [{ $and: [] }] });
+
+      expect(() => ability.can("read", entity)).not.toThrow();
+      expect(ability.can("read", entity)).toBe(false);
+    });
+
+    it("should deny rather than throw when a logical operator is not an array", () => {
+      allowReadWhere({ $or: "not an array" as any });
+
+      expect(() => ability.can("read", entity)).not.toThrow();
+      expect(ability.can("read", entity)).toBe(false);
+    });
+
+    it("should still apply a valid rule when another rule for the same subject is invalid", () => {
+      ability.update([
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "read",
+          conditions: { name: "matching name" },
+        },
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "read",
+          conditions: { $or: [] },
+        },
+      ]);
+
+      expect(() => ability.can("read", entity)).not.toThrow();
+      expect(ability.can("read", entity)).toBe(true);
+    });
+
+    it("should not widen access when an inverted rule has invalid conditions", () => {
+      ability.update([
+        { subject: TestEntity.ENTITY_TYPE, action: "read" },
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "read",
+          inverted: true,
+          conditions: { $or: [] },
+        },
+      ]);
+
+      expect(() => ability.can("read", entity)).not.toThrow();
+      // the restriction cannot be evaluated, so it must not silently disappear
+      expect(ability.can("read", entity)).toBe(false);
+    });
+  });
 });

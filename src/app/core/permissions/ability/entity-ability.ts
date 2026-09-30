@@ -6,12 +6,14 @@ import {
   createMongoAbility,
   fieldPatternMatcher,
   MongoQuery,
+  RawRuleFrom,
   subject,
   Subject,
 } from "@casl/ability";
 import { $and, $nor, $not, $or, and, nor, not, or } from "@ucast/mongo2js";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
+import { Logging } from "../../logging/logging.service";
 
 /** The action and subject types this ability checks permissions for. */
 type EntityAbilityTuple = [EntityActionPermission, Subject];
@@ -26,6 +28,44 @@ const conditionsMatcher = buildMongoQueryMatcher(
   { $or, $and, $nor, $not },
   { or, and, nor, not },
 );
+
+/**
+ * Drop rules whose conditions the matcher cannot compile, e.g. `{ $or: [] }`,
+ * which the raw JSON editor or a direct database edit can introduce. Such a
+ * rule throws on every permission check for its subject - and because CASL
+ * evaluates rules in order, one broken rule also takes down the valid rules
+ * next to it.
+ *
+ * Validating by compiling with the very matcher that later evaluates the rule
+ * keeps the two from drifting apart as the operator set changes.
+ *
+ * A granting rule is removed, which preserves the deny-by-default outcome such
+ * a config already had while the logical operators were unregistered. An
+ * inverted rule is kept without its conditions instead, since removing it
+ * would lift a restriction.
+ */
+function withEvaluableConditions(
+  rule: RawRuleFrom<EntityAbilityTuple, MongoQuery>,
+): RawRuleFrom<EntityAbilityTuple, MongoQuery>[] {
+  if (!rule.conditions) {
+    return [rule];
+  }
+
+  try {
+    conditionsMatcher(rule.conditions);
+    return [rule];
+  } catch (err) {
+    Logging.warn("Ignoring permission rule with unusable conditions", {
+      subject: rule.subject,
+      action: rule.action,
+      inverted: !!rule.inverted,
+      error: err?.message,
+    });
+
+    const { conditions, ...unconditional } = rule;
+    return rule.inverted ? [unconditional] : [];
+  }
+}
 
 /**
  * An extension of the Ability class which can check permissions on Entities.
@@ -55,6 +95,14 @@ export class EntityAbility extends Ability<EntityAbilityTuple, MongoQuery> {
       conditionsMatcher,
       fieldMatcher: fieldPatternMatcher,
     });
+  }
+
+  /**
+   * Keep rules with unusable conditions from reaching the matcher,
+   * see {@link withEvaluableConditions}.
+   */
+  override update(rules: RawRuleFrom<EntityAbilityTuple, MongoQuery>[]): this {
+    return super.update((rules ?? []).flatMap(withEvaluableConditions));
   }
 
   override can(
