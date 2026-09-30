@@ -1,8 +1,19 @@
 import { Injectable, inject } from "@angular/core";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
-import { Ability, subject } from "@casl/ability";
+import {
+  Ability,
+  createMongoAbility,
+  fieldPatternMatcher,
+  MongoQuery,
+  mongoQueryMatcher,
+  subject,
+  Subject,
+} from "@casl/ability";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
+
+/** The action and subject types this ability checks permissions for. */
+type EntityAbilityTuple = [EntityActionPermission, Subject];
 
 /**
  * An extension of the Ability class which can check permissions on Entities.
@@ -19,16 +30,19 @@ import { Entity } from "../../entity/model/entity";
  * Entities are transformed to the database format and permissions are evaluated based on the configuration found in the database.
  */
 @Injectable()
-export class EntityAbility extends Ability<
-  [EntityActionPermission, string | any]
-> {
+export class EntityAbility extends Ability<EntityAbilityTuple, MongoQuery> {
   private entitySchemaService = inject(EntitySchemaService);
 
   /** Whether the ability rules have been initialized by AbilityService at least once. */
   initialized = false;
 
   constructor() {
-    super([]);
+    // `Ability` itself carries no matchers, so rule conditions and field
+    // restrictions are silently inert unless both are passed in explicitly
+    super([], {
+      conditionsMatcher: mongoQueryMatcher,
+      fieldMatcher: fieldPatternMatcher,
+    });
   }
 
   override can(
@@ -43,7 +57,8 @@ export class EntityAbility extends Ability<
         delete simplifiedRule.conditions;
         return simplifiedRule;
       });
-      const abilityWithoutConditions = new Ability(rules);
+      const abilityWithoutConditions =
+        createMongoAbility<EntityAbilityTuple>(rules);
       return abilityWithoutConditions.can(
         action,
         this.getSubject(entity),
