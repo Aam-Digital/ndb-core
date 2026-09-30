@@ -167,9 +167,7 @@ Inject this class in your component to check for permissions.</p>
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                            <code><a href="../interfaces/EntityAction.html" target="_self" >Ability&lt;
-  [EntityActionPermission, string | any]
-&gt;</a></code>
+                            <code><a href="../injectables/EntityAbility.html" target="_self" >Ability&lt;EntityAbilityTuple, MongoQuery&gt;</a></code>
             </p>
 
 
@@ -194,9 +192,7 @@ Inject this class in your component to check for permissions.</p>
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                            <code><a href="../interfaces/EntityAction.html" target="_self" >Ability&lt;
-  [EntityActionPermission, string | any]
-&gt;</a></code>
+                                            <code><a href="../injectables/EntityAbility.html" target="_self" >Ability&lt;EntityAbilityTuple, MongoQuery&gt;</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -266,7 +262,7 @@ Inject this class in your component to check for permissions.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:37</a></div>
                             </td>
                         </tr>
 
@@ -301,8 +297,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:48</a></div>
                         </td>
                     </tr>
 
@@ -406,8 +402,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="56"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:56</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:71</a></div>
                         </td>
                     </tr>
 
@@ -508,7 +504,7 @@ Inject this class in your component to check for permissions.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:28</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:37</a></div>
                         </td>
                     </tr>
 
@@ -529,9 +525,20 @@ Inject this class in your component to check for permissions.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 import { EntityActionPermission, EntitySubject } from &quot;../permission-types&quot;;
-import { Ability, subject } from &quot;@casl/ability&quot;;
+import {
+  Ability,
+  createMongoAbility,
+  fieldPatternMatcher,
+  MongoQuery,
+  mongoQueryMatcher,
+  subject,
+  Subject,
+} from &quot;@casl/ability&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
+
+/** The action and subject types this ability checks permissions for. */
+type EntityAbilityTuple &#x3D; [EntityActionPermission, Subject];
 
 /**
  * An extension of the Ability class which can check permissions on Entities.
@@ -548,16 +555,19 @@ import { Entity } from &quot;../../entity/model/entity&quot;;
  * Entities are transformed to the database format and permissions are evaluated based on the configuration found in the database.
  */
 @Injectable()
-export class EntityAbility extends Ability&lt;
-  [EntityActionPermission, string | any]
-&gt; {
+export class EntityAbility extends Ability&lt;EntityAbilityTuple, MongoQuery&gt; {
   private entitySchemaService &#x3D; inject(EntitySchemaService);
 
   /** Whether the ability rules have been initialized by AbilityService at least once. */
   initialized &#x3D; false;
 
   constructor() {
-    super([]);
+    // &#x60;Ability&#x60; itself carries no matchers, so rule conditions and field
+    // restrictions are silently inert unless both are passed in explicitly
+    super([], {
+      conditionsMatcher: mongoQueryMatcher,
+      fieldMatcher: fieldPatternMatcher,
+    });
   }
 
   override can(
@@ -572,7 +582,8 @@ export class EntityAbility extends Ability&lt;
         delete simplifiedRule.conditions;
         return simplifiedRule;
       });
-      const abilityWithoutConditions &#x3D; new Ability(rules);
+      const abilityWithoutConditions &#x3D;
+        createMongoAbility&lt;EntityAbilityTuple&gt;(rules);
       return abilityWithoutConditions.can(
         action,
         this.getSubject(entity),

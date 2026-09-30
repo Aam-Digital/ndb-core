@@ -211,7 +211,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/permissions/permission-types.ts:138</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/core/permissions/permission-types.ts:140</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -258,7 +258,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/permissions/permission-types.ts:138</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/core/permissions/permission-types.ts:140</a></div>
                                 </td>
                             </tr>
 
@@ -302,7 +302,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/permissions/permission-types.ts:137</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="139" class="link-to-prism">src/app/core/permissions/permission-types.ts:139</a></div>
                                 </td>
                             </tr>
 
@@ -313,7 +313,7 @@ The rules defined in &#39;_public&#39; are used if a user is not logged in.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Ability, RawRuleOf } from &quot;@casl/ability&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { MongoAbility, RawRuleOf } from &quot;@casl/ability&quot;;
 import { Entity, EntityConstructor } from &quot;../entity/model/entity&quot;;
 
 /**
@@ -347,7 +347,9 @@ export type EntitySubject &#x3D; EntityConstructor | Entity | string;
  * The format that the JSON defined rules need to have.
  * In the JSON object the Entities can be specified by using their ENTITY_TYPE string representation.
  */
-export type DatabaseRule &#x3D; RawRuleOf&lt;Ability&lt;[EntityActionPermission, string]&gt;&gt;;
+export type DatabaseRule &#x3D; RawRuleOf&lt;
+  MongoAbility&lt;[EntityActionPermission, string]&gt;
+&gt;;
 
 /**
  * Section keys in {@link DatabaseRules} that carry special semantics instead of

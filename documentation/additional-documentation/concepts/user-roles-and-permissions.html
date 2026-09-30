@@ -151,6 +151,7 @@
 <li><code>permission-types.ts</code> — type definitions (<code>EntityActionPermission</code>, <code>DatabaseRule</code>, <code>DatabaseRules</code>)</li>
 <li><code>ability/entity-ability.ts</code> — extends CASL <code>Ability</code>, converts <code>Entity</code> instances to CASL subjects</li>
 <li><code>ability/ability.service.ts</code> — loads <code>Config:Permissions</code> and builds the <code>EntityAbility</code></li>
+<li><code>permission-pipe/able.pipe.ts</code> — <code>able</code> template pipe, re-evaluated whenever the rules change</li>
 <li><code>../entity/entity-mapper/entity-mapper.service.ts</code> — calls <code>assertPermission()</code> before <code>save()</code> / <code>remove()</code> (write enforcement)</li>
 <li><code>feature-permission/feature-permission.service.ts</code> — admin-facing editing of per-role access to a single &quot;feature&quot; entity type</li>
 </ul>
@@ -329,6 +330,11 @@ export class MyService {
   Edit
 &lt;/button&gt;</code></pre></div><p>The <code>DisableEntityOperationDirective</code> automatically disables buttons based on the user&#39;s permissions.
 Pass the entity and the operation (<code>create</code>, <code>read</code>, <code>update</code>, <code>delete</code>, <code>manage</code>).</p>
+<p>To hide an element instead of disabling it, use the <code>able</code> pipe:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">&#64;if (&quot;update&quot; | able: myEntity) {
+  &lt;button&gt;Edit&lt;/button&gt;
+}</code></pre></div><p>Both re-evaluate whenever the rules change, so the UI follows a login, a role
+change or an edit of the permissions config without a reload.</p>
 <h2>Testing</h2>
 <ul>
 <li>Frontend: <code>src/app/core/permissions/ability/ability.service.spec.ts</code>, <code>entity-ability.spec.ts</code>, <code>feature-permission/feature-permission.service.spec.ts</code></li>

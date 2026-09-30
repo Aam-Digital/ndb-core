@@ -226,7 +226,7 @@ The component itself uses signal inputs and therefore does not implement this pl
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="139" class="link-to-prism">src/app/core/dashboard/dashboard/dashboard.component.ts:139</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/dashboard/dashboard/dashboard.component.ts:137</a></div>
                                 </td>
                             </tr>
 
@@ -255,8 +255,7 @@ import { MatMenuModule } from &quot;@angular/material/menu&quot;;
 import { MatIconButton } from &quot;@angular/material/button&quot;;
 import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { ActivatedRoute, RouterLink } from &quot;@angular/router&quot;;
-import { AblePurePipe } from &quot;@casl/angular&quot;;
-import { AsyncPipe } from &quot;@angular/common&quot;;
+import { AblePipe } from &quot;../../permissions/permission-pipe/able.pipe&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 
 @RouteTarget(&quot;Dashboard&quot;)
@@ -271,8 +270,7 @@ import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
     MatIconButton,
     FaIconComponent,
     RouterLink,
-    AblePurePipe,
-    AsyncPipe,
+    AblePipe,
     MatTooltipModule,
   ],
 })

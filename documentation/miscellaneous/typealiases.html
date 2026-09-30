@@ -200,6 +200,9 @@
                             <a href="#DynamicValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>DynamicValidator</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#EntityAbilityTuple" title="src/app/core/permissions/ability/entity-ability.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>EntityAbilityTuple</b>&nbsp;&nbsp;&nbsp;(src/.../entity-ability.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#EntityActionPermission" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>EntityActionPermission</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
@@ -737,7 +740,7 @@ In the JSON object the Entities can be specified by using their ENTITY_TYPE stri
             </tr>
             <tr>
                 <td class="col-md-4">
-                    <code>    <code>RawRuleOf&lt;Ability&lt;unknown&gt;&gt;</code>
+                    <code>    <code>RawRuleOf&lt;MongoAbility&lt;unknown&gt;&gt;</code>
 </code>
                 </td>
             </tr>
@@ -961,6 +964,31 @@ to display a custom error message when validation fails:</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>unknown</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/permissions/ability/entity-ability.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntityAbilityTuple"></a>
+                    <span class="name "><b>EntityAbilityTuple</b><a href="#EntityAbilityTuple"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The action and subject types this ability checks permissions for.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../interfaces/EntityAction.html" target="_self" >[EntityActionPermission, Subject]</a></code>
 </code>
                 </td>
             </tr>

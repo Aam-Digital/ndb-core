@@ -387,7 +387,7 @@ denied save.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { ValidatorFn } from &quot;@angular/forms&quot;;
-import { Ability, subject } from &quot;@casl/ability&quot;;
+import { createMongoAbility, MongoAbility, subject } from &quot;@casl/ability&quot;;
 import { Entity } from &quot;../../../entity/model/entity&quot;;
 import { EntitySchemaField } from &quot;../../../entity/schema/entity-schema-field&quot;;
 import { EntitySchemaService } from &quot;../../../entity/schema/entity-schema.service&quot;;
@@ -494,7 +494,7 @@ export class PermissionConditionValidatorsService {
 interface FieldDecision {
   fragment: any;
   inverted: boolean;
-  matcher: Ability;
+  matcher: MongoAbility;
 }
 
 /**
@@ -519,7 +519,7 @@ interface FieldDecision {
  *   (database-format) condition value, e.g. resolving enum ids to labels
  */
 export function buildPermissionConditionValidator(
-  rules: RuleWithConditions[],
+  rules: readonly RuleWithConditions[],
   fieldId: string,
   toDbFormat: (value: any) &#x3D;&gt; any &#x3D; (value) &#x3D;&gt; value,
   formatValue?: (value: any) &#x3D;&gt; string,
@@ -618,7 +618,7 @@ function createFieldDecision(
   return {
     fragment,
     inverted: !!rule.inverted,
-    matcher: new Ability([
+    matcher: createMongoAbility([
       {
         action: MATCH_ACTION,
         subject: MATCH_SUBJECT,
