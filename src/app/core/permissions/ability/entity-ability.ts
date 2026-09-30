@@ -5,6 +5,7 @@ import {
   buildMongoQueryMatcher,
   createMongoAbility,
   fieldPatternMatcher,
+  ConditionsMatcher,
   MongoQuery,
   RawRuleFrom,
   subject,
@@ -23,11 +24,13 @@ type EntityAbilityTuple = [EntityActionPermission, Subject];
  * ...). Without the logical operators a rule like `{ $or: [...] }` is parsed as
  * a field literally named "$or" and therefore matches no document at all, so
  * permissions built with them would silently grant nothing.
+ *
+ * Exported so that anything else deciding whether a rule's conditions are met
+ * (e.g. the per-field form validators) reaches the same verdict as the ability
+ * enforcing them.
  */
-const conditionsMatcher = buildMongoQueryMatcher(
-  { $or, $and, $nor, $not },
-  { or, and, nor, not },
-);
+export const permissionConditionsMatcher: ConditionsMatcher<MongoQuery> =
+  buildMongoQueryMatcher({ $or, $and, $nor, $not }, { or, and, nor, not });
 
 /**
  * Drop rules whose conditions the matcher cannot compile, e.g. `{ $or: [] }`,
@@ -52,7 +55,7 @@ function withEvaluableConditions(
   }
 
   try {
-    conditionsMatcher(rule.conditions);
+    permissionConditionsMatcher(rule.conditions);
     return [rule];
   } catch (err) {
     Logging.warn("Ignoring permission rule with unusable conditions", {
@@ -92,7 +95,7 @@ export class EntityAbility extends Ability<EntityAbilityTuple, MongoQuery> {
     // `Ability` itself carries no matchers, so rule conditions and field
     // restrictions are silently inert unless both are passed in explicitly
     super([], {
-      conditionsMatcher,
+      conditionsMatcher: permissionConditionsMatcher,
       fieldMatcher: fieldPatternMatcher,
     });
   }

@@ -146,4 +146,15 @@ describe("buildPermissionConditionValidator", () => {
       "Bengali",
     );
   });
+  it("should accept a value permitted by a $not condition", () => {
+    // the ability evaluates logical operators, so the per-field validator has to
+    // agree with it - otherwise the form rejects a value the save would allow
+    const validator = buildPermissionConditionValidator(
+      [{ conditions: { language: { $not: { $eq: "English" } } } }],
+      "language",
+    );
+
+    expect(validator(new FormControl("Bengali"))).toBeNull();
+    expect(validator(new FormControl("English"))).not.toBeNull();
+  });
 });

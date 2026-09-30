@@ -162,4 +162,34 @@ describe("EntityAbility", () => {
       expect(ability.can("read", entity)).toBe(false);
     });
   });
+  describe("create checks against logical conditions", () => {
+    const entity = TestEntity.create({ name: "other name" });
+
+    beforeEach(() => {
+      ability.update([
+        {
+          subject: TestEntity.ENTITY_TYPE,
+          action: "create",
+          conditions: { $or: [{ name: "required name" }, { other: "x" }] },
+        },
+      ]);
+    });
+
+    it("should ignore logical conditions when checking create", () => {
+      // a new entity cannot fulfil the conditions yet
+      expect(ability.can("create", entity)).toBe(true);
+    });
+
+    it("should evaluate logical conditions when they are explicitly enforced", () => {
+      expect(ability.can("create", entity, undefined, true)).toBe(false);
+      expect(
+        ability.can(
+          "create",
+          TestEntity.create({ name: "required name" }),
+          undefined,
+          true,
+        ),
+      ).toBe(true);
+    });
+  });
 });
