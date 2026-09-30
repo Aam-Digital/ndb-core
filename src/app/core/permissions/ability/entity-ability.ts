@@ -2,18 +2,30 @@ import { Injectable, inject } from "@angular/core";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
 import {
   Ability,
+  buildMongoQueryMatcher,
   createMongoAbility,
   fieldPatternMatcher,
   MongoQuery,
-  mongoQueryMatcher,
   subject,
   Subject,
 } from "@casl/ability";
+import { $and, $nor, $not, $or, and, nor, not, or } from "@ucast/mongo2js";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
 
 /** The action and subject types this ability checks permissions for. */
 type EntityAbilityTuple = [EntityActionPermission, Subject];
+
+/**
+ * CASL's default matcher registers only field operators ($eq, $in, $elemMatch,
+ * ...). Without the logical operators a rule like `{ $or: [...] }` is parsed as
+ * a field literally named "$or" and therefore matches no document at all, so
+ * permissions built with them would silently grant nothing.
+ */
+const conditionsMatcher = buildMongoQueryMatcher(
+  { $or, $and, $nor, $not },
+  { or, and, nor, not },
+);
 
 /**
  * An extension of the Ability class which can check permissions on Entities.
@@ -40,7 +52,7 @@ export class EntityAbility extends Ability<EntityAbilityTuple, MongoQuery> {
     // `Ability` itself carries no matchers, so rule conditions and field
     // restrictions are silently inert unless both are passed in explicitly
     super([], {
-      conditionsMatcher: mongoQueryMatcher,
+      conditionsMatcher,
       fieldMatcher: fieldPatternMatcher,
     });
   }
