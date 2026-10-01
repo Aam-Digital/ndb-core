@@ -31,11 +31,11 @@ describe("DynamicRegistry", () => {
     // subclasses have to set registryName explicitly: `this.constructor.name` is
     // minified in production, which makes remote error reports unusable
     expect(() => entityRegistry.get("NoSuchEntityType")).toThrowError(
-      "Requested item is not registered in EntityRegistry. Key: NoSuchEntityType",
+      "Requested item is not registered in EntityRegistry",
     );
   });
 
-  it("should throw a RegistryLookupError carrying registry and key", () => {
+  it("should throw a RegistryLookupError carrying the key as context only, not in its message", () => {
     let thrown: unknown;
     try {
       entityRegistry.get("NoSuchEntityType");
@@ -48,6 +48,8 @@ describe("DynamicRegistry", () => {
       registryName: "EntityRegistry",
       key: "NoSuchEntityType",
     });
+    // remote monitoring groups by message: all missing keys are one issue
+    expect((thrown as Error).message).not.toContain("NoSuchEntityType");
   });
 
   it("should report the error type as RegistryLookupError to remote monitoring", () => {
@@ -80,7 +82,11 @@ describe("DynamicRegistry", () => {
     // survive minification the same way RegistryLookupError's does
     expect((thrown as Error).name).toBe("RegistryDuplicateError");
     expect((thrown as Error).message).toBe(
-      'ElementRegistry: Duplicate definition, "key" is already registered',
+      "ElementRegistry: Duplicate definition of an already registered key",
     );
+    expect(thrown).toMatchObject({
+      registryName: "ElementRegistry",
+      key: "key",
+    });
   });
 });

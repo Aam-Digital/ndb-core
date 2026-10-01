@@ -100,6 +100,7 @@ import { BulkEditModule } from "./features/bulk-edit/bulk-edit.module";
 import { ChangeHistoryModule } from "./features/change-history/change-history.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotificationService } from "./features/notification/notification.service";
+import { provideFirebaseMessagingServiceWorker } from "./features/notification/firebase-messaging-service-worker";
 import { AngularFireModule } from "@angular/fire/compat";
 import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
 import { UserAdminService } from "./core/user/user-admin-service/user-admin.service";
@@ -203,6 +204,7 @@ import { DeDuplicationModule } from "./features/de-duplication/de-duplication-mo
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     NotificationService,
+    provideFirebaseMessagingServiceWorker(),
     ...defaultValueStrategyProviders,
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
@@ -215,5 +217,11 @@ export class AppModule {
     const icons = inject(FaIconLibrary);
 
     icons.addIconPacks(fas, far);
+
+    // Listen for push messages from app start, not only once the notification settings are opened.
+    // Without the permission, push notifications cannot have been enabled on this device.
+    if ("Notification" in window && Notification.permission === "granted") {
+      inject(NotificationService);
+    }
   }
 }

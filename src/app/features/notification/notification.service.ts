@@ -3,7 +3,7 @@ import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { AngularFireMessaging } from "@angular/fire/compat/messaging";
-import { firstValueFrom, mergeMap, Subscription } from "rxjs";
+import { filter, firstValueFrom, mergeMap, Subscription, take } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
 import { catchError, map } from "rxjs/operators";
@@ -13,6 +13,8 @@ import { SessionSubject } from "../../core/session/auth/session-info";
 import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
 import { NotificationEvent } from "./model/notification-event";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { FirebaseMessagingServiceWorker } from "./firebase-messaging-service-worker";
+import type firebase from "firebase/compat/app";
 
 /**
  * Status of a backend feature, as reported by the `/actuator/features` endpoint.
@@ -46,8 +48,12 @@ export class NotificationService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
   private readonly databaseResolver = inject(DatabaseResolverService);
+  private readonly messagingServiceWorker = inject(
+    FirebaseMessagingServiceWorker,
+  );
 
   private tokenSubscription: Subscription | undefined = undefined;
+  private messagesSubscription: Subscription | undefined = undefined;
 
   private readonly featureFlagsResource = resource({
     loader: async () => {
@@ -78,14 +84,28 @@ export class NotificationService {
     environment.API_PROXY_PREFIX + "/v1/notification";
 
   constructor() {
-    // init listening to push messages once the session (with userId) is ready
-    this.sessionInfo.subscribe((sessionInfo) => this.init());
+    // init listening to push messages once the user is logged in
+    this.sessionInfo
+      .pipe(filter(Boolean), take(1))
+      .subscribe(() => this.init());
   }
 
-  async init() {
-    if (await this.isDeviceRegistered()) {
-      this.listenForMessages();
+  private init() {
+    if (!this.hasNotificationPermissionGranted()) {
+      // push notifications cannot have been enabled on this device
+      return;
     }
+
+    // keep the service worker up to date (current Firebase config and script version),
+    // as the browser checks for updates of this service worker only rarely
+    this.messagingServiceWorker
+      .register()
+      .then((registration) => registration.update().catch(() => undefined)) // fails while offline
+      .catch((err) =>
+        Logging.warn("Could not register push service worker", err),
+      );
+    // not waiting for the backend to confirm the device registration, which would fail while offline
+    this.listenForMessages();
   }
 
   async loadNotificationConfig(userId: string): Promise<NotificationConfig> {
@@ -272,12 +292,16 @@ export class NotificationService {
    * Listens for incoming Firebase Cloud Messages (FCM) in real time.
    * Displays a browser notification when a message is received.
    *
-   * This listener creates system notifications while the app is running
-   * (If app is not running, the firebase-messaging-sw is listening)
+   * This listener creates system notifications while the app is visible
+   * (otherwise the firebase-messaging-sw shows them).
    */
   listenForMessages(): void {
+    if (this.messagesSubscription && !this.messagesSubscription.closed) {
+      return;
+    }
+
     Logging.debug("Starting to listen for Push Messages");
-    this.firebaseMessaging.messages.subscribe({
+    this.messagesSubscription = this.firebaseMessaging.messages.subscribe({
       next: (payload) => {
         Logging.debug("Received Push Message", payload);
 
@@ -291,22 +315,9 @@ export class NotificationService {
           );
         }
 
-        let notification = new Notification(payload.notification.title, {
-          body: payload.notification.body,
-          icon: "/assets/icons/favicon.png",
-          data: {
-            url: window.location.protocol + "//" + window.location.hostname,
-            // "/foo-bar/123", // todo: deep link here
-          },
-        });
-
-        notification.onclick = (event) => {
-          let url = event.target["data"]?.["url"];
-          event.preventDefault();
-          if (url) {
-            window.open(url, "_self");
-          }
-        };
+        this.showNotification(payload).catch((err) =>
+          Logging.warn("Could not show push notification", err),
+        );
       },
       error: (err) => {
         Logging.error("Error while listening for messages.", err);
@@ -314,15 +325,45 @@ export class NotificationService {
     });
   }
 
+  /**
+   * Show a system notification through the service worker
+   * (the `Notification` constructor is not supported on mobile browsers).
+   *
+   * The payload is attached the same way Firebase does for notifications it shows itself,
+   * so that Firebase's click handler in the service worker also handles clicks on these (focus or open the app).
+   */
+  private async showNotification(payload: firebase.messaging.MessagePayload) {
+    if (!payload.notification) {
+      // data-only message, not meant to be displayed (Firebase also doesn't show these while in background)
+      return;
+    }
+
+    const registration = await this.messagingServiceWorker.register();
+    await registration.showNotification(payload.notification.title, {
+      body: payload.notification.body,
+      icon: "/assets/icons/favicon.png",
+      data: {
+        FCM_MSG: {
+          ...payload,
+          fcmOptions: {
+            ...payload.fcmOptions,
+            link: payload.fcmOptions?.link ?? window.location.origin,
+          },
+        },
+      },
+    });
+  }
+
   readonly isPushNotificationSupported = signal("Notification" in window);
 
   /**
-   * user given the notification permission to browser or not
-   * @returns boolean
+   * Whether the user has given this app the browser permission to show notifications.
+   * (Not a signal, because the user can change the permission at any time outside the app.)
    */
-  readonly hasNotificationPermissionGranted = computed(
-    () =>
+  hasNotificationPermissionGranted(): boolean {
+    return (
       this.isPushNotificationSupported() &&
-      Notification.permission === "granted",
-  );
+      Notification.permission === "granted"
+    );
+  }
 }
