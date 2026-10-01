@@ -49,9 +49,15 @@ describe("DatabaseResolverService", () => {
         }
         return new MemoryPouchDatabase(dbName, syncStateSubject);
       },
-      // mirrors the real factory, which initializes the handle it returns
+      // a real remote handle, as the service distinguishes one by its type -
+      // standing a local database in for it would hide that. Initialized as
+      // the real factory does, since nothing else in the session does it
       createRemoteDatabase: (dbName: string) => {
-        const db = new MemoryPouchDatabase(dbName, syncStateSubject);
+        const db = new RemotePouchDatabase(
+          dbName,
+          null as any,
+          syncStateSubject,
+        );
         db.init(dbName);
         return db;
       },

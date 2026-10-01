@@ -42,9 +42,6 @@ export class DatabaseResolverService {
 
   private databases: Map<string, Database> = new Map();
 
-  /** names of the registered databases that exist on the server only */
-  private readonly remoteOnlyDbNames = new Set<string>();
-
   /** Resolved DB config for the current session (set during initDatabasesForSession). */
   private dbConfig: DbConfig;
 
@@ -61,7 +58,6 @@ export class DatabaseResolverService {
   private registerDatabase(dbName: string) {
     if (isRemoteOnlyDatabase(dbName)) {
       this.databases.set(dbName, this.createRemoteOnlyDatabase(dbName));
-      this.remoteOnlyDbNames.add(dbName);
       return;
     }
 
@@ -99,8 +95,8 @@ export class DatabaseResolverService {
   }
 
   async resetDatabases() {
-    for (const [dbName, db] of this.databases.entries()) {
-      if (this.remoteOnlyDbNames.has(dbName)) {
+    for (const db of this.databases.values()) {
+      if (db instanceof RemotePouchDatabase) {
         // server-owned data, of which the client holds no copy to reset
         continue;
       }
@@ -110,9 +106,12 @@ export class DatabaseResolverService {
 
   async destroyDatabases() {
     clearLastSyncMarkers();
-    for (const [dbName, db] of this.databases.entries()) {
-      if (this.remoteOnlyDbNames.has(dbName)) {
-        // for a remote handle this would delete the database on the server
+    for (const db of this.databases.values()) {
+      if (db instanceof RemotePouchDatabase) {
+        // destroying a remote handle deletes the database on the server, which
+        // is never what a caller clearing local data means. Asked of the object
+        // rather than of a list of names, so a database that is remote for any
+        // other reason is covered too
         continue;
       }
       await db.destroy();
