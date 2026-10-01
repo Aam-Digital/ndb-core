@@ -1,11 +1,11 @@
-import { FindableMemoryPouchDatabase } from "./findable-memory-pouch-database";
+import { MemoryPouchDatabase } from "./memory-pouch-database";
 import { SyncStateSubject } from "../../session/session-type";
 
-describe("FindableMemoryPouchDatabase", () => {
-  let db: FindableMemoryPouchDatabase;
+describe("MemoryPouchDatabase.find", () => {
+  let db: MemoryPouchDatabase;
 
   beforeEach(async () => {
-    db = new FindableMemoryPouchDatabase("find-test", new SyncStateSubject());
+    db = new MemoryPouchDatabase("find-test", new SyncStateSubject());
     db.init("find-test");
 
     await db.putAll([

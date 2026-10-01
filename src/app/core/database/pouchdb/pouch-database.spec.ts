@@ -430,9 +430,14 @@ describe("PouchDatabase tests", () => {
     await expect(database.isEmpty()).resolves.toEqual(false);
   });
 
-  it("find() is not supported on the local/base implementation (only RemotePouchDatabase supports bookmark-based pagination)", async () => {
-    await expect(database.find("Test", {})).rejects.toThrow(
-      "only supported by RemotePouchDatabase",
+  it("does not offer itself for bookmark-based pagination, although it can run a find", async () => {
+    // the local engine has no cursor, so the bookmark is only a position -
+    // enough for a caller that passes it back unread, not the contract
+    // production code picks a paginated data source on
+    expect(database.supportsFind()).toBe(false);
+
+    await expect(database.find("Test", {})).resolves.toEqual(
+      expect.objectContaining({ docs: [] }),
     );
   });
 
