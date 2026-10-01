@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { Component } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
@@ -26,6 +26,5 @@ import { RecordIdDisplayComponent } from "../../../core/common-components/record
       <span>-</span>
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisplayAuditRecordComponent extends ViewDirective<string> {}

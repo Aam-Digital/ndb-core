@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  resource,
-  signal,
-} from "@angular/core";
+import { Component, computed, inject, resource, signal } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -85,7 +78,6 @@ export const CHANGE_HISTORY_DATE_RANGES: DateRangeFilterConfigOption[] = [
  */
 @Component({
   selector: "app-change-history-list",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
     MatInputModule,

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from "@angular/core";
+import { Component, computed, input } from "@angular/core";
 import { MatChipsModule } from "@angular/material/chips";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -48,7 +43,6 @@ import { AuditRecord } from "../model/audit-record";
       >
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChangeHistoryChangedFieldsComponent extends ViewDirective<
   string[]

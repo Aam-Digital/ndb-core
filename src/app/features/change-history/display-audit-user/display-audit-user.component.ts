@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from "@angular/core";
+import { Component, computed } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
@@ -34,7 +34,6 @@ export function ensureValidEntityId(author: string): string | undefined {
       <span>{{ author() || "-" }}</span>
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisplayAuditUserComponent extends ViewDirective<AuditUser> {
   readonly author = computed(

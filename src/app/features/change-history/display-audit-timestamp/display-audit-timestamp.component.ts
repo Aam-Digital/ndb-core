@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { Component } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -35,6 +35,5 @@ import { NotificationTimePipe } from "../../notification/notification-time.pipe"
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisplayAuditTimestampComponent extends ViewDirective<Date> {}
