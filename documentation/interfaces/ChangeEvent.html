@@ -178,11 +178,6 @@ document.</p>
                 <td class="col-md-9">
                     <ul class="index-list">
                         <li>
-                                <a href="#action" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">action</span>
-                                </a>
-                        </li>
-                        <li>
                                 <a href="#at" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">at</span>
                                 </a>
@@ -208,6 +203,11 @@ document.</p>
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">note</span>
                                 </a>
                         </li>
+                        <li>
+                                <a href="#operation" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">operation</span>
+                                </a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -219,45 +219,6 @@ document.</p>
 
     <section data-compodoc="block-properties">
         <h3 id="inputs">Properties</h3>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
-                                <a name="action"></a>
-                                <span class="name "><b>action</b>
-                                    <a href="#action">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>action:         <code><a href="../miscellaneous/typealiases.html#ChangeAction" target="_self" >ChangeAction</a></code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ChangeAction" target="_self" >ChangeAction</a></code>
-
-                                </td>
-                            </tr>
-
-
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/features/change-history/change-history.types.ts:46</a></div>
-                                </td>
-                            </tr>
-
-                </tbody>
-            </table>
             <table class="table table-sm table-bordered">
                 <tbody>
                         <tr>
@@ -291,7 +252,7 @@ document.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/change-history/change-history.types.ts:43</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/features/change-history/change-history.types.ts:74</a></div>
                                 </td>
                             </tr>
 
@@ -336,7 +297,7 @@ document.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/features/change-history/change-history.types.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/features/change-history/change-history.types.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -381,13 +342,13 @@ document.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/features/change-history/change-history.types.ts:48</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/change-history/change-history.types.ts:79</a></div>
                                 </td>
                             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-description"><p>changed fields; empty for <code>deleted</code>, all-additions for <code>created</code>/<code>baseline</code></p>
+                            <div class="io-description"><p>changed fields; empty for <code>delete</code>, all-additions for <code>create</code>/<code>baseline</code></p>
 </div>
                         </td>
                     </tr>
@@ -426,7 +387,7 @@ document.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/features/change-history/change-history.types.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/features/change-history/change-history.types.ts:72</a></div>
                                 </td>
                             </tr>
 
@@ -476,7 +437,7 @@ document.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/features/change-history/change-history.types.ts:50</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/change-history/change-history.types.ts:81</a></div>
                                 </td>
                             </tr>
 
@@ -488,22 +449,92 @@ document.</p>
                     </tr>
                 </tbody>
             </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="operation"></a>
+                                <span class="name "><b>operation</b>
+                                    <a href="#operation">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>operation:         <code><a href="../miscellaneous/typealiases.html#ChangeOperation" target="_self" >ChangeOperation</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#ChangeOperation" target="_self" >ChangeOperation</a></code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/features/change-history/change-history.types.ts:77</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
     </section>
 </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export type ChangeAction &#x3D; &quot;baseline&quot; | &quot;created&quot; | &quot;updated&quot; | &quot;deleted&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export const CHANGE_OPERATIONS &#x3D; [
+  &quot;baseline&quot;,
+  &quot;create&quot;,
+  &quot;update&quot;,
+  &quot;delete&quot;,
+] as const;
+
+export type ChangeOperation &#x3D; (typeof CHANGE_OPERATIONS)[number];
 
 /**
- * Maps the backend audit &#x60;operation&#x60; to the displayed {@link ChangeAction}.
+ * The backend &#x60;operation&#x60; of a baseline record: the full-snapshot anchor written
+ * alongside the first audited change of a pre-existing record, so that record&#x27;s
+ * history has a starting state to replay from.
+ *
+ * It is not a change anyone made, which is why the change *log* excludes it (see
+ * &#x60;buildChangeHistoryQuery&#x60;) while the per-record history still builds on it.
  */
-export const OPERATION_TO_ACTION: Record&lt;string, ChangeAction&gt; &#x3D; {
-  create: &quot;created&quot;,
-  update: &quot;updated&quot;,
-  delete: &quot;deleted&quot;,
-  baseline: &quot;baseline&quot;,
+export const BASELINE_OPERATION &#x3D; &quot;baseline&quot;;
+
+/**
+ * The past-tense wording for each operation, shared by the badge and the
+ * filter&#x27;s options so the two cannot drift apart.
+ */
+export const OPERATION_LABELS: Record&lt;ChangeOperation, string&gt; &#x3D; {
+  baseline: $localize&#x60;:Change action badge:Initial snapshot&#x60;,
+  create: $localize&#x60;:Change action badge:Created&#x60;,
+  update: $localize&#x60;:Change action badge:Updated&#x60;,
+  delete: $localize&#x60;:Change action badge:Deleted&#x60;,
 };
+
+/**
+ * The operations a user can filter the change log by, in the order the filter
+ * offers them.
+ *
+ * &#x60;baseline&#x60; is deliberately absent: the log never lists snapshots, so offering
+ * it would only ever return nothing (see &#x60;buildChangeHistoryQuery&#x60;).
+ */
+export const FILTERABLE_OPERATIONS: ChangeOperation[] &#x3D; [
+  &quot;create&quot;,
+  &quot;update&quot;,
+  &quot;delete&quot;,
+];
 
 /**
  * A single field&#x27;s before/after, in raw database format (enum ids, ISO date
@@ -529,8 +560,8 @@ export interface ChangeEvent {
   at: Date;
   /** authenticated author (user-entity id or name) recorded by the backend */
   by: string;
-  action: ChangeAction;
-  /** changed fields; empty for &#x60;deleted&#x60;, all-additions for &#x60;created&#x60;/&#x60;baseline&#x60; */
+  operation: ChangeOperation;
+  /** changed fields; empty for &#x60;delete&#x60;, all-additions for &#x60;create&#x60;/&#x60;baseline&#x60; */
   changes: FieldChange[];
   /** optional contextual note (e.g. the baseline explanation) */
   note?: string;

@@ -185,6 +185,9 @@ A How-To Guide on how to implement your own types is available:</p>
                                             <code><a href="../classes/ActivityAttendance.html" target="_self" >ActivityAttendance</a></code>
                                 </li>
                                 <li>
+                                            <code><a href="../classes/AuditRecord.html" target="_self" >AuditRecord</a></code>
+                                </li>
+                                <li>
                                             <code><a href="../classes/Config.html" target="_self" >Config</a></code>
                                 </li>
                                 <li>
@@ -293,6 +296,12 @@ A How-To Guide on how to implement your own types is available:</p>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                 <a href="#DATABASE" >DATABASE</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#DATABASE_REMOTE_ONLY" >DATABASE_REMOTE_ONLY</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -471,7 +480,7 @@ A How-To Guide on how to implement your own types is available:</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="287" class="link-to-prism">src/app/core/entity/model/entity.ts:287</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="298" class="link-to-prism">src/app/core/entity/model/entity.ts:298</a></div>
                             </td>
                         </tr>
 
@@ -548,7 +557,7 @@ created.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/core/entity/model/entity.ts:93</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/core/entity/model/entity.ts:104</a></div>
                         </td>
                     </tr>
 
@@ -590,7 +599,7 @@ created.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="248" class="link-to-prism">src/app/core/entity/model/entity.ts:248</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="259" class="link-to-prism">src/app/core/entity/model/entity.ts:259</a></div>
                         </td>
                     </tr>
 
@@ -632,7 +641,7 @@ created.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="269" class="link-to-prism">src/app/core/entity/model/entity.ts:269</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="280" class="link-to-prism">src/app/core/entity/model/entity.ts:280</a></div>
                         </td>
                     </tr>
 
@@ -665,7 +674,7 @@ created.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="160" class="link-to-prism">src/app/core/entity/model/entity.ts:160</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="171" class="link-to-prism">src/app/core/entity/model/entity.ts:171</a></div>
                         </td>
                     </tr>
 
@@ -712,7 +721,7 @@ created.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="254" class="link-to-prism">src/app/core/entity/model/entity.ts:254</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="265" class="link-to-prism">src/app/core/entity/model/entity.ts:265</a></div>
                         </td>
                     </tr>
 
@@ -761,6 +770,50 @@ created.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="DATABASE_REMOTE_ONLY"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>DATABASE_REMOTE_ONLY</b></span>
+                        <a href="#DATABASE_REMOTE_ONLY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>false</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/core/entity/model/entity.ts:90</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether <a href="DATABASE">DATABASE</a> exists on the server only and must never be
+replicated to the device.</p>
+<p>Such a database is opened as a remote handle, is not watched for changes,
+and is left untouched when local databases are reset or destroyed.
+Use it for data that grows without bound or that the client must not keep
+a copy of.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="enableUserAccounts"></a>
                     <span class="name">
                             <span class="modifier">Static</span>
@@ -778,7 +831,7 @@ created.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/entity/model/entity.ts:124</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/entity/model/entity.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -857,7 +910,7 @@ The type needs to be used as routing path in lower case. The routing path can be
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="233" class="link-to-prism">src/app/core/entity/model/entity.ts:233</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="244" class="link-to-prism">src/app/core/entity/model/entity.ts:244</a></div>
                         </td>
                     </tr>
 
@@ -892,7 +945,7 @@ and offer a function to anonymize records.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/core/entity/model/entity.ts:151</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="162" class="link-to-prism">src/app/core/entity/model/entity.ts:162</a></div>
                         </td>
                     </tr>
 
@@ -934,7 +987,7 @@ and offer a function to anonymize records.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="263" class="link-to-prism">src/app/core/entity/model/entity.ts:263</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="274" class="link-to-prism">src/app/core/entity/model/entity.ts:274</a></div>
                         </td>
                     </tr>
 
@@ -962,7 +1015,7 @@ and offer a function to anonymize records.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/core/entity/model/entity.ts:118</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/entity/model/entity.ts:129</a></div>
                         </td>
                     </tr>
 
@@ -997,7 +1050,7 @@ and not visible to the user for customization.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/core/entity/model/entity.ts:111</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="122" class="link-to-prism">src/app/core/entity/model/entity.ts:122</a></div>
                         </td>
                     </tr>
 
@@ -1030,7 +1083,7 @@ and not visible to the user for customization.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/entity/model/entity.ts:87</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/core/entity/model/entity.ts:98</a></div>
                         </td>
                     </tr>
 
@@ -1066,7 +1119,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/entity/model/entity.ts:106</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="117" class="link-to-prism">src/app/core/entity/model/entity.ts:117</a></div>
                         </td>
                     </tr>
 
@@ -1104,7 +1157,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/entity/model/entity.ts:101</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/entity/model/entity.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -1148,7 +1201,7 @@ This can be overwritten in subclasses or through the config.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="260" class="link-to-prism">src/app/core/entity/model/entity.ts:260</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="271" class="link-to-prism">src/app/core/entity/model/entity.ts:271</a></div>
                         </td>
                     </tr>
 
@@ -1182,8 +1235,8 @@ This can be overwritten in subclasses or through the config.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="478"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:478</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="489"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:489</a></div>
                         </td>
                     </tr>
 
@@ -1223,8 +1276,8 @@ This can be overwritten in subclasses or through the config.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="448"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:448</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="459"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:459</a></div>
                         </td>
                     </tr>
 
@@ -1307,8 +1360,8 @@ to avoid shared mutable state between original and copy.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="218"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:218</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="229"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:229</a></div>
                         </td>
                     </tr>
 
@@ -1399,8 +1452,8 @@ to avoid shared mutable state between original and copy.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="197"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:197</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="208"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:208</a></div>
                         </td>
                     </tr>
 
@@ -1475,8 +1528,8 @@ to avoid shared mutable state between original and copy.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="183"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:183</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:194</a></div>
                         </td>
                     </tr>
 
@@ -1551,8 +1604,8 @@ to avoid shared mutable state between original and copy.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="372"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:372</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="383"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:383</a></div>
                         </td>
                     </tr>
 
@@ -1593,8 +1646,8 @@ Override this method as needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="379"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:379</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="390"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:390</a></div>
                         </td>
                     </tr>
 
@@ -1662,8 +1715,8 @@ Override this method as needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="302"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:302</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="313"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:313</a></div>
                         </td>
                     </tr>
 
@@ -1703,8 +1756,8 @@ Override this method as needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="321"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:321</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -1779,8 +1832,8 @@ Override this method as needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="309"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:309</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="320"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:320</a></div>
                         </td>
                     </tr>
 
@@ -1820,8 +1873,8 @@ Override this method as needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="332"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:332</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="343"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:343</a></div>
                         </td>
                     </tr>
 
@@ -1866,8 +1919,8 @@ Override this method as needed.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="435"
-                                    class="link-to-prism">src/app/core/entity/model/entity.ts:435</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="446"
+                                    class="link-to-prism">src/app/core/entity/model/entity.ts:446</a></div>
                         </td>
                     </tr>
 
@@ -1913,7 +1966,7 @@ and highlighted in generic components of the UI.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/entity/model/entity.ts:129</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/core/entity/model/entity.ts:140</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1935,7 +1988,7 @@ and highlighted in generic components of the UI.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/core/entity/model/entity.ts:133</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/core/entity/model/entity.ts:144</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1991,7 +2044,7 @@ and highlighted in generic components of the UI.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="165" class="link-to-prism">src/app/core/entity/model/entity.ts:165</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="176" class="link-to-prism">src/app/core/entity/model/entity.ts:176</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2013,7 +2066,7 @@ and highlighted in generic components of the UI.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="173" class="link-to-prism">src/app/core/entity/model/entity.ts:173</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="184" class="link-to-prism">src/app/core/entity/model/entity.ts:184</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2069,7 +2122,7 @@ and highlighted in generic components of the UI.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="272" class="link-to-prism">src/app/core/entity/model/entity.ts:272</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="283" class="link-to-prism">src/app/core/entity/model/entity.ts:283</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -2153,6 +2206,17 @@ export class Entity {
    * The database where these entities are stored.
    */
   static DATABASE &#x3D; &quot;app&quot;;
+
+  /**
+   * Whether {@link DATABASE} exists on the server only and must never be
+   * replicated to the device.
+   *
+   * Such a database is opened as a remote handle, is not watched for changes,
+   * and is left untouched when local databases are reset or destroyed.
+   * Use it for data that grows without bound or that the client must not keep
+   * a copy of.
+   */
+  static readonly DATABASE_REMOTE_ONLY: boolean &#x3D; false;
 
   /**
    * EntitySchema defining property transformations from/to the database.

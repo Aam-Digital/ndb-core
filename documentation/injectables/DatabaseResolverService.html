@@ -298,8 +298,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="78"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:78</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -335,8 +335,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="63"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:63</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:88</a></div>
                         </td>
                     </tr>
 
@@ -406,8 +406,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="255"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:255</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="294"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:294</a></div>
                         </td>
                     </tr>
 
@@ -445,8 +445,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="151"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:151</a></div>
                         </td>
                     </tr>
 
@@ -518,8 +518,8 @@ i.e. configuring the access for that account after login
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="231"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:231</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="270"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:270</a></div>
                         </td>
                     </tr>
 
@@ -589,8 +589,8 @@ to avoid flooding to console with errors.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="91"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:91</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="127"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:127</a></div>
                         </td>
                     </tr>
 
@@ -633,8 +633,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -672,8 +672,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="138"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:138</a></div>
                         </td>
                     </tr>
 
@@ -682,6 +682,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Clear sync checkpoint documents in all synced databases,
 forcing a full re-check on the next sync without deleting any data.</p>
+<p>Remote-only databases need no exclusion here: they are never a
+SyncedPouchDatabase, so they have no checkpoints to clear.</p>
 </div>
 
                         <div class="io-description">
@@ -715,7 +717,7 @@ forcing a full re-check on the next sync without deleting any data.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/database/database-resolver.service.ts:51</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/database/database-resolver.service.ts:52</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -754,6 +756,7 @@ import {
 } from &quot;./indexeddb-migration.service&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { SessionType } from &quot;../session/session-type&quot;;
+import { isRemoteOnlyDatabase } from &quot;./remote-only-databases&quot;;
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
 import { LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
@@ -795,9 +798,33 @@ export class DatabaseResolverService {
   private _changesFeed: Subject&lt;any&gt; &#x3D; new Subject();
 
   private registerDatabase(dbName: string) {
+    if (isRemoteOnlyDatabase(dbName)) {
+      this.databases.set(dbName, this.createRemoteOnlyDatabase(dbName));
+      return;
+    }
+
     const newDb &#x3D; this.databaseFactory.createDatabase(dbName);
     this.databases.set(dbName, newDb);
     newDb.changes().subscribe((change) &#x3D;&gt; this._changesFeed.next(change));
+  }
+
+  /**
+   * Create a database that lives on the server only.
+   *
+   * It has to initialize itself here: unlike the app and notifications
+   * databases, nothing else in the session lifecycle will call &#x60;init()&#x60; for it,
+   * and reads on an uninitialized database wait forever rather than fail.
+   *
+   * It is also deliberately left out of the global changes feed. Subscribing
+   * would poll the server continuously for documents no list in the app is
+   * watching, and feed them to consumers that reload on every update.
+   */
+  private createRemoteOnlyDatabase(dbName: string): Database {
+    // always a remote handle, whatever the session type: the data exists only
+    // on the server, so a local database could not answer for it. Without a
+    // server the requests fail fast rather than hanging, and the feature that
+    // owns such a database is gated on the server reporting it as available.
+    return this.databaseFactory.createRemoteDatabase(dbName);
   }
 
   getDatabase(dbName: string &#x3D; Entity.DATABASE): Database {
@@ -811,6 +838,10 @@ export class DatabaseResolverService {
 
   async resetDatabases() {
     for (const db of this.databases.values()) {
+      if (db instanceof RemotePouchDatabase) {
+        // server-owned data, of which the client holds no copy to reset
+        continue;
+      }
       await db.reset();
     }
   }
@@ -818,6 +849,13 @@ export class DatabaseResolverService {
   async destroyDatabases() {
     clearLastSyncMarkers();
     for (const db of this.databases.values()) {
+      if (db instanceof RemotePouchDatabase) {
+        // destroying a remote handle deletes the database on the server, which
+        // is never what a caller clearing local data means. Asked of the object
+        // rather than of a list of names, so a database that is remote for any
+        // other reason is covered too
+        continue;
+      }
       await db.destroy();
     }
   }
@@ -835,6 +873,9 @@ export class DatabaseResolverService {
   /**
    * Clear sync checkpoint documents in all synced databases,
    * forcing a full re-check on the next sync without deleting any data.
+   *
+   * Remote-only databases need no exclusion here: they are never a
+   * SyncedPouchDatabase, so they have no checkpoints to clear.
    */
   async resetSync() {
     for (const db of this.databases.values()) {

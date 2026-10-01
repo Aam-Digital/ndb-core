@@ -894,7 +894,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ChangeHistoryActionBadgeComponent.html" data-type="entity-link" >ChangeHistoryActionBadgeComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ChangeHistoryChangedFieldsComponent.html" data-type="entity-link" >ChangeHistoryChangedFieldsComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/ChangeHistoryDialogComponent.html" data-type="entity-link" >ChangeHistoryDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/ChangeHistoryListComponent.html" data-type="entity-link" >ChangeHistoryListComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/ChangelogComponent.html" data-type="entity-link" >ChangelogComponent</a>
@@ -994,6 +1000,15 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/DisplayAttendanceComponent.html" data-type="entity-link" >DisplayAttendanceComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/DisplayAuditRecordComponent.html" data-type="entity-link" >DisplayAuditRecordComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/DisplayAuditTimestampComponent.html" data-type="entity-link" >DisplayAuditTimestampComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/DisplayAuditUserComponent.html" data-type="entity-link" >DisplayAuditUserComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/DisplayCalculatedValueComponent.html" data-type="entity-link" >DisplayCalculatedValueComponent</a>
@@ -1446,6 +1461,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/RecordDiffComponent.html" data-type="entity-link" >RecordDiffComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/RecordIdDisplayComponent.html" data-type="entity-link" >RecordIdDisplayComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/RelatedEntitiesComponent.html" data-type="entity-link" >RelatedEntitiesComponent</a>
                             </li>
                             <li class="link">
@@ -1632,6 +1650,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/AttendanceItem.html" data-type="entity-link" >AttendanceItem</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/AuditRecord.html" data-type="entity-link" >AuditRecord</a>
                             </li>
                             <li class="link">
                                 <a href="classes/BooleanFilter.html" data-type="entity-link" >BooleanFilter&lt;T extends Entity&gt;</a>
@@ -1930,6 +1951,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="injectables/AttendanceService.html" data-type="entity-link" >AttendanceService</a>
+                                </li>
+                                <li class="link">
+                                    <a href="injectables/AuditReferenceLoaderService.html" data-type="entity-link" >AuditReferenceLoaderService</a>
                                 </li>
                                 <li class="link">
                                     <a href="injectables/AutomatedFieldUpdateConfigService.html" data-type="entity-link" >AutomatedFieldUpdateConfigService</a>
@@ -2307,9 +2331,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ActionGroup.html" data-type="entity-link" >ActionGroup</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/ActionMeta.html" data-type="entity-link" >ActionMeta</a>
-                            </li>
-                            <li class="link">
                                 <a href="interfaces/ActivityEntity.html" data-type="entity-link" >ActivityEntity</a>
                             </li>
                             <li class="link">
@@ -2377,6 +2398,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/AuditFeatureStatus.html" data-type="entity-link" >AuditFeatureStatus</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/AuditUser.html" data-type="entity-link" >AuditUser</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/AutomatedFieldMappingDialogData.html" data-type="entity-link" >AutomatedFieldMappingDialogData</a>
@@ -2584,6 +2608,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityNotificationContext.html" data-type="entity-link" >EntityNotificationContext</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EntityPage.html" data-type="entity-link" >EntityPage&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntityPropertyMap.html" data-type="entity-link" >EntityPropertyMap</a>
@@ -2829,6 +2856,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/NotesDashboardSettingsConfig.html" data-type="entity-link" >NotesDashboardSettingsConfig</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/OperationMeta.html" data-type="entity-link" >OperationMeta</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/Panel.html" data-type="entity-link" >Panel</a>
                             </li>
                             <li class="link">
@@ -3001,6 +3031,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ViewDistanceConfig.html" data-type="entity-link" >ViewDistanceConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ViewResponse.html" data-type="entity-link" >ViewResponse</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/WidgetOption.html" data-type="entity-link" >WidgetOption</a>

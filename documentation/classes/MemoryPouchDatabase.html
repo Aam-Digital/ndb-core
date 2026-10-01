@@ -254,6 +254,12 @@ not persisting any data after the page is closed.</p>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#find" >find</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#init" >init</a>
                             </li>
                             <li>
@@ -269,11 +275,6 @@ not persisting any data after the page is closed.</p>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#destroy" >destroy</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#find" >find</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -769,6 +770,141 @@ This change can come from the current user or remotely from the (live) synchroni
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="find"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>find</b></span>
+                        <a href="#find"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank">object</a>, page?: { limit?: number; bookmark?: string }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:48</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query a page through PouchDB&#39;s local Mango engine.</p>
+<p><a href="supportsFind">supportsFind</a> stays false on purpose: the local engine has no
+bookmark cursor, so the opaque bookmark here is the positional offset of
+the next unseen document. That is enough for a caller which only passes it
+back unread, but it is not the cursor the remote contract promises, and
+production code choosing a data source should keep treating this database
+as one that cannot page.</p>
+<p>It is also stricter than CouchDB in one way worth knowing: it sorts only
+from an index that also covers every filtered field, so sorting on one
+field while filtering on another is rejected here although a real CouchDB
+serves it. A caller needing both has to filter on the field it sorts by.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;&quot;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit?: number; bookmark?: string }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;{ docs: any[]; bookmark?: string }&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="init"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -1027,126 +1163,6 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                             <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
 
                         </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="find"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>find</b></span>
-                        <a href="#find"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>find(_prefix?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, _query?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, _page?: { limit?: number; bookmark?: string }, _sort?: { prop?: string; dir?: "asc" | "desc" })</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/Database.html" target="_self" >Database</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:429</a></code>
-</div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Bookmark-based pagination (see <a href="Database.find">Database.find</a>) relies on CouchDB&#39;s
-real Mango <code>bookmark</code> cursor, which only exists when talking directly to
-a remote CouchDB / the replication-backend over HTTP. PouchDB&#39;s local
-Mango query engine has no bookmark support at all - it always reports
-&quot;nil&quot; (see pouchdb-find/lib/index.js) - so there is no correct local
-implementation to fall back to.
-Local pagination could be implemented using <code>skip</code> and <code>limit</code>. But is
-currently not needed.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>_prefix</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>_query</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>_page</td>
-                                            <td>
-                                                        <code>{ limit?: number; bookmark?: string }</code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>_sort</td>
-                                            <td>
-                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;{ docs: any[]; bookmark?: string }&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
                 </td>
             </tr>
         </tbody>
@@ -2604,6 +2620,61 @@ export class MemoryPouchDatabase extends PouchDatabase {
     this.pouchDB &#x3D; new PouchDB(dbName ?? this.dbName, { adapter: &quot;memory&quot; });
     this.databaseInitialized.complete();
     this.globalSyncState.next(SyncState.COMPLETED);
+  }
+
+  /**
+   * Query a page through PouchDB&#x27;s local Mango engine.
+   *
+   * {@link supportsFind} stays false on purpose: the local engine has no
+   * bookmark cursor, so the opaque bookmark here is the positional offset of
+   * the next unseen document. That is enough for a caller which only passes it
+   * back unread, but it is not the cursor the remote contract promises, and
+   * production code choosing a data source should keep treating this database
+   * as one that cannot page.
+   *
+   * It is also stricter than CouchDB in one way worth knowing: it sorts only
+   * from an index that also covers every filtered field, so sorting on one
+   * field while filtering on another is rejected here although a real CouchDB
+   * serves it. A caller needing both has to filter on the field it sorts by.
+   */
+  override async find(
+    prefix &#x3D; &quot;&quot;,
+    query &#x3D; {},
+    page?: { limit?: number; bookmark?: string },
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;{ docs: any[]; bookmark?: string }&gt; {
+    const skip &#x3D; page?.bookmark ? Number(page.bookmark) : 0;
+    const findOptions: PouchDB.Find.FindRequest&lt;any&gt; &amp; { skip?: number } &#x3D; {
+      selector: {
+        ...query,
+        _id: { $lt: &#x60;${prefix}:￰&#x60;, $gte: &#x60;${prefix}:&#x60; },
+      },
+      skip,
+    };
+    if (Number.isInteger(page?.limit)) {
+      findOptions.limit &#x3D; page.limit;
+    }
+
+    const pouchDB &#x3D; await this.getPouchDBOnceReady();
+    if (sort?.prop) {
+      // mirrors RemotePouchDatabase: the sort field needs an index, and the
+      // type range moves into that index&#x27;s partial selector
+      const indexRes &#x3D; await pouchDB.createIndex({
+        index: {
+          name: prefix + &quot;_&quot; + sort.prop,
+          partial_filter_selector: {
+            _id: findOptions.selector._id,
+          },
+          fields: [sort.prop],
+        },
+      });
+      delete findOptions.selector._id;
+      findOptions.sort &#x3D; [{ [sort.prop]: sort.dir }];
+      findOptions.use_index &#x3D; indexRes[&quot;id&quot;];
+    }
+
+    const res &#x3D; await pouchDB.find(findOptions);
+    return { docs: res.docs, bookmark: String(skip + res.docs.length) };
   }
 }
 </code></pre>

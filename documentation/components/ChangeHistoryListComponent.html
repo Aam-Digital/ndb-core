@@ -1,0 +1,1767 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  ChangeHistoryListComponent</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/change-history/change-history-list/change-history-list.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" class="nav-link"
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Admin screen listing every recorded change across the whole system, newest
+first: when, which record, what kind of change, by whom and which fields.</p>
+<p>Complements the per-record change-history dialog, which is unreachable for a
+deleted record because its details view is gone.</p>
+
+    </p>
+
+
+
+    <p class="comment">
+        <h3>Example</h3>
+    </p>
+    <div class="io-description">
+    </div>
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+            <tr>
+                <td class="col-md-3">changeDetection</td>
+                <td class="col-md-9"><code>ChangeDetectionStrategy.OnPush</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-change-history-list</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                        <div>    <code>MatFormFieldModule</code>
+</div>
+                        <div>    <code>MatInputModule</code>
+</div>
+                        <div>    <code>MatButtonModule</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>        <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FeatureDisabledInfoComponent.html" target="_self" >FeatureDisabledInfoComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FilterComponent.html" target="_self" >FilterComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./change-history-list.component.scss</code></td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./change-history-list.component.html</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">styleUrl</td>
+                <td class="col-md-9"><code>./change-history-list.component.scss</code></td>
+            </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+        <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>MatFormFieldModule</code>
+                                </li>
+                                <li>
+                                        <code>MatInputModule</code>
+                                </li>
+                                <li>
+                                        <code>MatButtonModule</code>
+                                </li>
+                                <li>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FeatureDisabledInfoComponent.html" target="_self" >FeatureDisabledInfoComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FilterComponent.html" target="_self" >FilterComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+</div>
+
+    <div class="tab-pane fade " id="api">    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#auditEnabled" >auditEnabled</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#auditRecordType" >auditRecordType</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#columns" >columns</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#dataSource" >dataSource</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#filter" >filter</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#filterConfig" >filterConfig</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#hasPermission" >hasPermission</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#relatedEntityFilter" >relatedEntityFilter</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#selectedFilter" >selectedFilter</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#sortBy" >sortBy</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#canOpenHistory" >canOpenHistory</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#onFilterChange" >onFilterChange</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#openHistory" >openHistory</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#setRelatedEntityFilter" >setRelatedEntityFilter</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="260" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:260</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="canOpenHistory"></a>
+                    <span class="name">
+                        <span ><b>canOpenHistory</b></span>
+                        <a href="#canOpenHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>canOpenHistory(record: <a href="../classes/AuditRecord.html" target="_self">AuditRecord</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="322"
+                                    class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:322</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether this row can be opened as a record history, which takes only the
+changed record&#39;s id: the history is queried by id, and the dialog&#39;s other
+content (the record block, the created/updated metadata) is optional.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>record</td>
+                                            <td>
+                                                            <code><a href="../classes/AuditRecord.html" target="_self" >AuditRecord</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onFilterChange"></a>
+                    <span class="name">
+                        <span ><b>onFilterChange</b></span>
+                        <a href="#onFilterChange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onFilterChange(filter: <a href="../miscellaneous/typealiases.html#DataFilter" target="_self">DataFilter&lt;AuditRecord&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="269"
+                                    class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:269</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Adopt what the shared filter bar built from the user&#39;s selection.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;AuditRecord&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="openHistory"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>openHistory</b></span>
+                        <a href="#openHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>openHistory(record: <a href="../classes/AuditRecord.html" target="_self">AuditRecord</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="331"
+                                    class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:331</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Open the same per-record change-history dialog the record&#39;s details view
+offers, showing this record&#39;s full history rather than the single change of
+the clicked row.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>record</td>
+                                            <td>
+                                                            <code><a href="../classes/AuditRecord.html" target="_self" >AuditRecord</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setRelatedEntityFilter"></a>
+                    <span class="name">
+                        <span ><b>setRelatedEntityFilter</b></span>
+                        <a href="#setRelatedEntityFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setRelatedEntityFilter(relatedEntityId: string | undefined)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="282"
+                                    class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:282</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><b>Example :</b><div><pre class="line-numbers"><code class="language-none">   app (`User:1`); anything blank clears the filter
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>relatedEntityId</td>
+                                            <td>
+                                                        <code>string | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>a record id as displayed and copied elsewhere in the
+app (<code>User:1</code>); anything blank clears the filter</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="auditEnabled"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>auditEnabled</b></span>
+                        <a href="#auditEnabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.service.isAuditEnabled</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:103</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>backend feature flag (undefined while loading, then true/false)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="auditRecordType"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>auditRecordType</b></span>
+                        <a href="#auditRecordType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>AuditRecord</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="107" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:107</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="columns"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>columns</b></span>
+                        <a href="#columns"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+    {
+      id: &quot;timestamp&quot;,
+      label: $localize&#x60;:Change log column:When&#x60;,
+      viewComponent: &quot;DisplayAuditTimestamp&quot;,
+    },
+    {
+      id: &quot;recordType&quot;,
+      label: $localize&#x60;:Change log column:Record type&#x60;,
+      viewComponent: &quot;DisplayEntityType&quot;,
+    },
+    {
+      id: &quot;record&quot;,
+      label: $localize&#x60;:Change log column:Record&#x60;,
+      viewComponent: &quot;DisplayAuditRecord&quot;,
+    },
+    {
+      id: &quot;operation&quot;,
+      label: $localize&#x60;:Change log column:Action&#x60;,
+      viewComponent: &quot;ChangeHistoryActionBadge&quot;,
+    },
+    {
+      id: &quot;user&quot;,
+      label: $localize&#x60;:Change log column:Changed by&#x60;,
+      viewComponent: &quot;DisplayAuditUser&quot;,
+    },
+    {
+      id: &quot;changedFields&quot;,
+      label: $localize&#x60;:Change log column:Changed fields&#x60;,
+      viewComponent: &quot;ChangeHistoryChangedFields&quot;,
+    },
+  ]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="127" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:127</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dataSource"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>dataSource</b></span>
+                        <a href="#dataSource"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new PaginatedDataSource&lt;AuditRecord&gt;()</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:118</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Built here rather than resolved by the table, because resolveDataSource
+decides on the session type while this type&#39;s database is remote in every
+session. The table takes a data source as an input, so nothing else is
+needed to bypass it.</p>
+<p>It also answers the related-record filter, which needs a different query
+than the rest of the filter bar.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filter"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>filter</b></span>
+                        <a href="#filter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt;
+    combineFilterConditions&lt;AuditRecord&gt;(
+      AUDIT_BASE_FILTER,
+      this.selectedFilter(),
+    ),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="193" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:193</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>what the table queries: the user&#39;s selection under <a href="../miscellaneous/variables.html#AUDIT_BASE_FILTER">AUDIT_BASE_FILTER</a></p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filterConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>filterConfig</b></span>
+                        <a href="#filterConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed&lt;FilterConfig[]&gt;(() &#x3D;&gt;
+    this.relatedEntityFilter()
+      ? [this.dateFilterConfig]
+      : this.allFilterConfigs(),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="186" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:186</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasPermission"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>hasPermission</b></span>
+                        <a href="#hasPermission"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.service.hasHistoryPermission()</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:105</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>whether the user may read the audit data</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="relatedEntityFilter"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>relatedEntityFilter</b></span>
+                        <a href="#relatedEntityFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;string | undefined&gt;(undefined)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="170" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:170</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="selectedFilter"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>selectedFilter</b></span>
+                        <a href="#selectedFilter"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;DataFilter&lt;AuditRecord&gt;&gt;({})</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="168" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:168</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The selection the shared filter bar produces.</p>
+<p>Bound back into it, not only read out of it: the bar compares each new
+selection against this before emitting, so leaving it unset would suppress
+the emission that clears the last filter - the list would go on querying a
+selection no longer shown.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortBy"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>sortBy</b></span>
+                        <a href="#sortBy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{ active: &quot;timestamp&quot;, direction: &quot;desc&quot; as const }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/features/change-history/change-history-list/change-history-list.component.ts:125</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Newest first. Pinned explicitly because the default would order by <code>_id</code>,
+which groups an audit database by record rather than by time - plausible
+looking, and wrong.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, computed, inject, resource, signal } from &quot;@angular/core&quot;;
+import { MatDialog } from &quot;@angular/material/dialog&quot;;
+import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
+import { MatInputModule } from &quot;@angular/material/input&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { ViewTitleComponent } from &quot;../../../core/common-components/view-title/view-title.component&quot;;
+import { FeatureDisabledInfoComponent } from &quot;../../../core/common-components/feature-disabled-info/feature-disabled-info.component&quot;;
+import { EntitiesTableComponent } from &quot;../../../core/common-components/entities-table/entities-table.component&quot;;
+import { PaginatedDataSource } from &quot;../../../core/common-components/entities-table/data-source/paginated-data-source&quot;;
+import { LoaderMethod } from &quot;../../../core/entity/entity-special-loader/entity-special-loader.service&quot;;
+import { FilterComponent } from &quot;../../../core/filter/filter/filter.component&quot;;
+import {
+  combineFilterConditions,
+  DataFilter,
+} from &quot;../../../core/filter/filters/filters&quot;;
+import {
+  DateRangeFilterConfig,
+  DateRangeFilterConfigOption,
+  FilterConfig,
+  PrebuiltFilterConfig,
+} from &quot;../../../core/entity-list/EntityListConfig&quot;;
+import { EntityRegistry } from &quot;../../../core/entity/database-entity.decorator&quot;;
+import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;../../../core/entity/model/entity&quot;;
+import { Logging } from &quot;../../../core/logging/logging.service&quot;;
+import { ChangeHistoryService } from &quot;../change-history.service&quot;;
+import { FaDynamicIconComponent } from &quot;../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
+import { ChangeHistoryDialogComponent } from &quot;../change-history-dialog/change-history-dialog.component&quot;;
+import { AuditRecord } from &quot;../model/audit-record&quot;;
+import { TableStateUrlService } from &quot;../../../core/common-components/entities-table/table-state-url.service&quot;;
+import {
+  authorFilterOptions,
+  AUDIT_BASE_FILTER,
+  entityTypeFilterOptions,
+  operationFilterOptions,
+} from &quot;../audit-filter&quot;;
+
+/**
+ * Presets offered by the date-range filter, alongside the two date inputs the
+ * shared filter also provides. Same shape and periods as the reports screen, so
+ * &quot;last month&quot; means the same thing in both places.
+ */
+export const CHANGE_HISTORY_DATE_RANGES: DateRangeFilterConfigOption[] &#x3D; [
+  {
+    startOffsets: [{ amount: 0, unit: &quot;weeks&quot; }],
+    endOffsets: [{ amount: 0, unit: &quot;weeks&quot; }],
+    label: $localize&#x60;:Change log date filter:Current week&#x60;,
+  },
+  {
+    startOffsets: [{ amount: 0, unit: &quot;months&quot; }],
+    endOffsets: [{ amount: 0, unit: &quot;months&quot; }],
+    label: $localize&#x60;:Change log date filter:Current month&#x60;,
+  },
+  {
+    startOffsets: [{ amount: -1, unit: &quot;months&quot; }],
+    endOffsets: [{ amount: -1, unit: &quot;months&quot; }],
+    label: $localize&#x60;:Change log date filter:Last month&#x60;,
+  },
+  {
+    startOffsets: [{ amount: 0, unit: &quot;quarter&quot; }],
+    endOffsets: [{ amount: 0, unit: &quot;quarter&quot; }],
+    label: $localize&#x60;:Change log date filter:Current quarter&#x60;,
+  },
+  {
+    startOffsets: [{ amount: 0, unit: &quot;years&quot; }],
+    endOffsets: [{ amount: 0, unit: &quot;years&quot; }],
+    label: $localize&#x60;:Change log date filter:Current year&#x60;,
+  },
+];
+
+/**
+ * Admin screen listing every recorded change across the whole system, newest
+ * first: when, which record, what kind of change, by whom and which fields.
+ *
+ * Complements the per-record change-history dialog, which is unreachable for a
+ * deleted record because its details view is gone.
+ */
+@Component({
+  selector: &quot;app-change-history-list&quot;,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTooltipModule,
+    ViewTitleComponent,
+    FeatureDisabledInfoComponent,
+    EntitiesTableComponent,
+    FilterComponent,
+    FaDynamicIconComponent,
+  ],
+  templateUrl: &quot;./change-history-list.component.html&quot;,
+  styleUrl: &quot;./change-history-list.component.scss&quot;,
+})
+export class ChangeHistoryListComponent {
+  private readonly service &#x3D; inject(ChangeHistoryService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly tableStateUrl &#x3D; inject(TableStateUrlService);
+  private readonly dialog &#x3D; inject(MatDialog);
+
+  /** backend feature flag (undefined while loading, then true/false) */
+  readonly auditEnabled &#x3D; this.service.isAuditEnabled;
+  /** whether the user may read the audit data */
+  readonly hasPermission &#x3D; this.service.hasHistoryPermission();
+
+  readonly auditRecordType &#x3D; AuditRecord;
+
+  /**
+   * Built here rather than resolved by the table, because resolveDataSource
+   * decides on the session type while this type&#x27;s database is remote in every
+   * session. The table takes a data source as an input, so nothing else is
+   * needed to bypass it.
+   *
+   * It also answers the related-record filter, which needs a different query
+   * than the rest of the filter bar.
+   */
+  readonly dataSource &#x3D; new PaginatedDataSource&lt;AuditRecord&gt;();
+
+  /**
+   * Newest first. Pinned explicitly because the default would order by &#x60;_id&#x60;,
+   * which groups an audit database by record rather than by time - plausible
+   * looking, and wrong.
+   */
+  readonly sortBy &#x3D; { active: &quot;timestamp&quot;, direction: &quot;desc&quot; as const };
+
+  readonly columns &#x3D; [
+    {
+      id: &quot;timestamp&quot;,
+      label: $localize&#x60;:Change log column:When&#x60;,
+      viewComponent: &quot;DisplayAuditTimestamp&quot;,
+    },
+    {
+      id: &quot;recordType&quot;,
+      label: $localize&#x60;:Change log column:Record type&#x60;,
+      viewComponent: &quot;DisplayEntityType&quot;,
+    },
+    {
+      id: &quot;record&quot;,
+      label: $localize&#x60;:Change log column:Record&#x60;,
+      viewComponent: &quot;DisplayAuditRecord&quot;,
+    },
+    {
+      id: &quot;operation&quot;,
+      label: $localize&#x60;:Change log column:Action&#x60;,
+      viewComponent: &quot;ChangeHistoryActionBadge&quot;,
+    },
+    {
+      id: &quot;user&quot;,
+      label: $localize&#x60;:Change log column:Changed by&#x60;,
+      viewComponent: &quot;DisplayAuditUser&quot;,
+    },
+    {
+      id: &quot;changedFields&quot;,
+      label: $localize&#x60;:Change log column:Changed fields&#x60;,
+      viewComponent: &quot;ChangeHistoryChangedFields&quot;,
+    },
+  ];
+
+  /**
+   * The selection the shared filter bar produces.
+   *
+   * Bound back into it, not only read out of it: the bar compares each new
+   * selection against this before emitting, so leaving it unset would suppress
+   * the emission that clears the last filter - the list would go on querying a
+   * selection no longer shown.
+   */
+  readonly selectedFilter &#x3D; signal&lt;DataFilter&lt;AuditRecord&gt;&gt;({});
+
+  readonly relatedEntityFilter &#x3D; signal&lt;string | undefined&gt;(undefined);
+
+  /**
+   * The related-record filter is served by a view keyed on the referenced id,
+   * so only the date range can narrow it further: record type, operation and
+   * author would need a different key order. They are therefore not offered
+   * while it is set, rather than offered and silently ignored.
+   */
+  /** every dimension the ordinary query can be narrowed by */
+  private readonly allFilterConfigs &#x3D; computed&lt;FilterConfig[]&gt;(() &#x3D;&gt; [
+    this.entityTypeFilterConfig,
+    this.operationFilterConfig,
+    this.authorFilterConfig(),
+    this.dateFilterConfig,
+  ]);
+
+  readonly filterConfig &#x3D; computed&lt;FilterConfig[]&gt;(() &#x3D;&gt;
+    this.relatedEntityFilter()
+      ? [this.dateFilterConfig]
+      : this.allFilterConfigs(),
+  );
+
+  /** what the table queries: the user&#x27;s selection under {@link AUDIT_BASE_FILTER} */
+  readonly filter &#x3D; computed(() &#x3D;&gt;
+    combineFilterConditions&lt;AuditRecord&gt;(
+      AUDIT_BASE_FILTER,
+      this.selectedFilter(),
+    ),
+  );
+
+  private readonly entityTypeFilterConfig: PrebuiltFilterConfig&lt;AuditRecord&gt; &#x3D; {
+    id: &quot;entityType&quot;,
+    type: &quot;prebuilt&quot;,
+    label: $localize&#x60;:Change log filter label:Record type&#x60;,
+    singleSelectOnly: true,
+    options: entityTypeFilterOptions(
+      this.entityRegistry
+        .getEntityTypes(true)
+        .map(({ key, value }) &#x3D;&gt; ({ key, label: value.label }))
+        .sort((a, b) &#x3D;&gt; a.label.localeCompare(b.label)),
+    ),
+  };
+
+  private readonly operationFilterConfig: PrebuiltFilterConfig&lt;AuditRecord&gt; &#x3D; {
+    id: &quot;operation&quot;,
+    type: &quot;prebuilt&quot;,
+    label: $localize&#x60;:Change log filter label:Action&#x60;,
+    singleSelectOnly: true,
+    options: operationFilterOptions(),
+  };
+
+  private readonly authorFilterConfig &#x3D; computed&lt;
+    PrebuiltFilterConfig&lt;AuditRecord&gt;
+  &gt;(() &#x3D;&gt; ({
+    id: &quot;changedBy&quot;,
+    type: &quot;prebuilt&quot;,
+    label: $localize&#x60;:Change log filter label:Changed by&#x60;,
+    singleSelectOnly: true,
+    options: authorFilterOptions(this.authors()),
+  }));
+
+  /**
+   * The shared date-range filter, the same control (and presets shape) the
+   * reports screen uses, rather than a change-history-specific dropdown.
+   */
+  private readonly dateFilterConfig: DateRangeFilterConfig &#x3D; {
+    id: &quot;timestamp&quot;,
+    label: $localize&#x60;:Change log filter label:Date range&#x60;,
+    options: CHANGE_HISTORY_DATE_RANGES,
+  };
+
+  /** Whether the audit data can be queried at all. */
+  private readonly canQuery &#x3D; computed(
+    () &#x3D;&gt; this.auditEnabled() &#x3D;&#x3D;&#x3D; true &amp;&amp; this.hasPermission,
+  );
+
+  private readonly authorsResource &#x3D; resource({
+    params: () &#x3D;&gt; (this.canQuery() ? {} : undefined),
+    // an unavailable author list only costs the filter its options, so it must
+    // not fail the screen
+    loader: async () &#x3D;&gt; {
+      try {
+        return await this.service.getChangeAuthors();
+      } catch (err) {
+        Logging.debug(&quot;could not load the change log&#x27;s author options&quot;, err);
+        return [];
+      }
+    },
+  });
+
+  private readonly authors &#x3D; computed(() &#x3D;&gt; this.authorsResource.value() ?? []);
+
+  constructor() {
+    // the flag fetch is lazy, so nothing loads until a change-history UI asks
+    this.service.loadAuditFeatureFlag();
+    this.applyRelatedRecord();
+  }
+
+  /** Adopt what the shared filter bar built from the user&#x27;s selection. */
+  onFilterChange(filter: DataFilter&lt;AuditRecord&gt;) {
+    this.selectedFilter.set(filter);
+    // the related-record view is keyed on the date range too, so a changed
+    // range has to re-query it
+    if (this.relatedEntityFilter()) {
+      this.applyRelatedRecord();
+    }
+  }
+
+  /**
+   * @param relatedEntityId a record id as displayed and copied elsewhere in the
+   *        app (&#x60;User:1&#x60;); anything blank clears the filter
+   */
+  setRelatedEntityFilter(relatedEntityId: string | undefined) {
+    this.relatedEntityFilter.set(relatedEntityId?.trim() || undefined);
+    if (this.relatedEntityFilter()) {
+      // the filters this mode no longer offers have to go from the URL too:
+      // the shared filter bar restores any parameter naming a field of the
+      // entity, so a left-over one would come back as an unconfigured filter -
+      // matching by substring rather than exactly, labelled by its field name,
+      // and narrowing a query the related-record view does not apply it to
+      const stillOffered &#x3D; new Set(this.filterConfig().map((c) &#x3D;&gt; c.id));
+      this.tableStateUrl.clearFilterParams(
+        this.allFilterConfigs()
+          .map((c) &#x3D;&gt; c.id)
+          .filter((id) &#x3D;&gt; !stillOffered.has(id)),
+      );
+    }
+    this.applyRelatedRecord();
+  }
+
+  /**
+   * Point the list at the query the current filters need: the ordinary audit
+   * records, or - when a related record is named - the loader that serves the
+   * view keyed on it. Changing the config resets the paging, since everything
+   * loaded so far answered the previous query.
+   */
+  private applyRelatedRecord() {
+    const recordId &#x3D; this.relatedEntityFilter();
+    this.dataSource.loadRecordConfig.set({
+      entityCtr: AuditRecord,
+      loaderMethod: recordId
+        ? LoaderMethod.AuditRecordsRelatedToEntity
+        : undefined,
+      forEntity: recordId ? this.standInFor(recordId) : undefined,
+    });
+  }
+
+  /**
+   * Whether this row can be opened as a record history, which takes only the
+   * changed record&#x27;s id: the history is queried by id, and the dialog&#x27;s other
+   * content (the record block, the created/updated metadata) is optional.
+   */
+  canOpenHistory(record: AuditRecord): boolean {
+    return !!record.record;
+  }
+
+  /**
+   * Open the same per-record change-history dialog the record&#x27;s details view
+   * offers, showing this record&#x27;s full history rather than the single change of
+   * the clicked row.
+   */
+  async openHistory(record: AuditRecord) {
+    if (!this.canOpenHistory(record)) {
+      return;
+    }
+
+    ChangeHistoryDialogComponent.open(
+      this.dialog,
+      await this.loadRecord(record),
+      // the row&#x27;s own audit record, so the dialog opens on the change that was
+      // clicked rather than a collapsed list to search through again
+      record.getId(),
+    );
+  }
+
+  /**
+   * The record of a change-log row, as an entity for the history dialog.
+   *
+   * A deleted record - which the log deliberately still lists - can no longer be
+   * loaded, so an empty instance carrying just its id stands in: the dialog needs
+   * the id to query the history and the type for the field labels, and it hides
+   * the created/last-updated metadata that such a stand-in has none of.
+   */
+  /**
+   * A placeholder for a record that can no longer be loaded, carrying its id so
+   * the history can still be queried by it.
+   *
+   * Uses the registered constructor where there is one, so the dialog still
+   * shows the right type. Where there is not, the stand-in carries the record&#x27;s
+   * type anyway: the plain Entity would prefix the id a second time
+   * (&quot;Entity:Child:1&quot;) and query a history that does not exist. An unregistered
+   * type is otherwise fine here - only the id is needed to load the history,
+   * and the dialog&#x27;s remaining content is optional.
+   */
+  private standInFor(recordId: string): Entity {
+    const recordType &#x3D; Entity.extractTypeFromId(recordId);
+    const ctor &#x3D; this.entityRegistry.has(recordType)
+      ? this.entityRegistry.get(recordType)
+      : class extends Entity {
+          static override readonly ENTITY_TYPE &#x3D; recordType;
+        };
+    return new ctor(recordId);
+  }
+
+  private async loadRecord(record: AuditRecord): Promise&lt;Entity&gt; {
+    try {
+      return await this.entityMapper.load(record.recordType, record.record);
+    } catch (err) {
+      Logging.debug(
+        &quot;change log: record not available, showing its history only&quot;,
+        record.record,
+        err,
+      );
+      return this.standInFor(record.record);
+    }
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;app-view-title i18n&#x3D;&quot;Change log title&quot;&gt;Change Log&lt;/app-view-title&gt;
+
+&lt;p i18n&#x3D;&quot;Change log intro&quot; class&#x3D;&quot;margin-bottom-regular&quot;&gt;
+  All changes recorded across every record of your system, newest first. Only
+  changes already synced to the server are listed. Click a row to see the full
+  history of that record.
+&lt;/p&gt;
+
+&lt;!-- feature-flag state: nothing when enabled, a disabled notice when off, a
+     loading indicator while the flag is still being fetched --&gt;
+&lt;app-feature-disabled-info
+  [featureEnabled]&#x3D;&quot;auditEnabled()&quot;
+  featureName&#x3D;&quot;Change Log&quot;
+  i18n-featureName&#x3D;&quot;Change log feature name&quot;
+&gt;&lt;/app-feature-disabled-info&gt;
+
+@if (auditEnabled() &#x3D;&#x3D;&#x3D; true) {
+  @if (!hasPermission) {
+    &lt;div class&#x3D;&quot;flex-column align-center gap-regular text-secondary&quot;&gt;
+      &lt;app-fa-dynamic-icon icon&#x3D;&quot;clock-rotate-left&quot;&gt;&lt;/app-fa-dynamic-icon&gt;
+      &lt;p i18n&#x3D;&quot;Change log no access&quot;&gt;
+        You don&#x27;t have permission to view the change log. Please contact your
+        administrator.
+      &lt;/p&gt;
+    &lt;/div&gt;
+  } @else {
+    &lt;div class&#x3D;&quot;flex-row flex-wrap gap-regular align-baseline&quot;&gt;
+      &lt;app-filter
+        class&#x3D;&quot;flex-row gap-regular flex-wrap&quot;
+        [filterConfig]&#x3D;&quot;filterConfig()&quot;
+        [entityType]&#x3D;&quot;auditRecordType&quot;
+        [useUrlQueryParams]&#x3D;&quot;true&quot;
+        [filterObj]&#x3D;&quot;selectedFilter()&quot;
+        (filterObjChange)&#x3D;&quot;onFilterChange($event)&quot;
+      &gt;&lt;/app-filter&gt;
+
+      &lt;!-- not one of the filters above: it selects a different query rather
+           than narrowing this one, and takes a record id instead of an option --&gt;
+      &lt;mat-form-field class&#x3D;&quot;related-record-filter&quot;&gt;
+        &lt;mat-label i18n&#x3D;&quot;Change log filter label&quot;&gt;Related record&lt;/mat-label&gt;
+        &lt;input
+          matInput
+          #relatedRecordInput
+          type&#x3D;&quot;text&quot;
+          placeholder&#x3D;&quot;e.g. User:1&quot;
+          i18n-placeholder&#x3D;&quot;Change log filter placeholder&quot;
+          [value]&#x3D;&quot;relatedEntityFilter() ?? &#x27;&#x27;&quot;
+          (change)&#x3D;&quot;setRelatedEntityFilter(relatedRecordInput.value)&quot;
+        /&gt;
+        @if (relatedEntityFilter()) {
+          &lt;button
+            matSuffix
+            mat-icon-button
+            type&#x3D;&quot;button&quot;
+            matTooltip&#x3D;&quot;Clear related record filter&quot;
+            i18n-matTooltip
+            aria-label&#x3D;&quot;Clear related record filter&quot;
+            i18n-aria-label
+            (click)&#x3D;&quot;
+              relatedRecordInput.value &#x3D; &#x27;&#x27;; setRelatedEntityFilter(undefined)
+            &quot;
+          &gt;
+            &lt;app-fa-dynamic-icon icon&#x3D;&quot;times&quot;&gt;&lt;/app-fa-dynamic-icon&gt;
+          &lt;/button&gt;
+        }
+      &lt;/mat-form-field&gt;
+    &lt;/div&gt;
+
+    &lt;!-- a row opens the record&#x27;s full history, the same dialog its details view
+         offers - the log shows only the one change of that row --&gt;
+    &lt;app-entities-table
+      [recordsDataSource]&#x3D;&quot;dataSource&quot;
+      [entityType]&#x3D;&quot;auditRecordType&quot;
+      [customColumns]&#x3D;&quot;columns&quot;
+      [filter]&#x3D;&quot;filter()&quot;
+      [sortBy]&#x3D;&quot;sortBy&quot;
+      [showInactiveToggle]&#x3D;&quot;false&quot;
+      [showInactive]&#x3D;&quot;true&quot;
+      [editable]&#x3D;&quot;false&quot;
+      clickMode&#x3D;&quot;none&quot;
+      (entityClick)&#x3D;&quot;openHistory($event)&quot;
+    &gt;&lt;/app-entities-table&gt;
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./change-history-list.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">/* record ids can be long (a type prefix plus a uuid), so give the input more
+   room than the selects next to it get by default */
+.related-record-filter {
+  min-width: 260px;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
+  justify-content: flex-start;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><app-view-title i18n="Change log title">Change Log</app-view-title><p i18n="Change log intro" class="margin-bottom-regular">  All changes recorded across every record of your system, newest first. Only  changes already synced to the server are listed. Click a row to see the full  history of that record.</p><!-- feature-flag state: nothing when enabled, a disabled notice when off, a     loading indicator while the flag is still being fetched --><app-feature-disabled-info  [featureEnabled]="auditEnabled()"  featureName="Change Log"  i18n-featureName="Change log feature name"></app-feature-disabled-info>@if (auditEnabled() === true) {  @if (!hasPermission) {    <div class="flex-column align-center gap-regular text-secondary">      <app-fa-dynamic-icon icon="clock-rotate-left"></app-fa-dynamic-icon>      <p i18n="Change log no access">        You don\'t have permission to view the change log. Please contact your        administrator.      </p>    </div>  } @else {    <div class="flex-row flex-wrap gap-regular align-baseline">      <app-filter        class="flex-row gap-regular flex-wrap"        [filterConfig]="filterConfig()"        [entityType]="auditRecordType"        [useUrlQueryParams]="true"        [filterObj]="selectedFilter()"        (filterObjChange)="onFilterChange($event)"      ></app-filter>      <!-- not one of the filters above: it selects a different query rather           than narrowing this one, and takes a record id instead of an option -->      <mat-form-field class="related-record-filter">        <mat-label i18n="Change log filter label">Related record</mat-label>        <input          matInput          #relatedRecordInput          type="text"          placeholder="e.g. User:1"          i18n-placeholder="Change log filter placeholder"          [value]="relatedEntityFilter() ?? \'\'"          (change)="setRelatedEntityFilter(relatedRecordInput.value)"        />        @if (relatedEntityFilter()) {          <button            matSuffix            mat-icon-button            type="button"            matTooltip="Clear related record filter"            i18n-matTooltip            aria-label="Clear related record filter"            i18n-aria-label            (click)="              relatedRecordInput.value = \'\'; setRelatedEntityFilter(undefined)            "          >            <app-fa-dynamic-icon icon="times"></app-fa-dynamic-icon>          </button>        }      </mat-form-field>    </div>    <!-- a row opens the record\'s full history, the same dialog its details view         offers - the log shows only the one change of that row -->    <app-entities-table      [recordsDataSource]="dataSource"      [entityType]="auditRecordType"      [customColumns]="columns"      [filter]="filter()"      [sortBy]="sortBy"      [showInactiveToggle]="false"      [showInactive]="true"      [editable]="false"      clickMode="none"      (entityClick)="openHistory($event)"    ></app-entities-table>  }}</div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryChangedFieldsComponent', 'selector': 'app-change-history-changed-fields'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangeHistoryListComponent', 'selector': 'app-change-history-list'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionEditorDialogComponent', 'selector': 'app-condition-editor-dialog'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayAuditRecordComponent', 'selector': 'app-display-audit-record'},{'name': 'DisplayAuditTimestampComponent', 'selector': 'app-display-audit-timestamp'},{'name': 'DisplayAuditUserComponent', 'selector': 'app-display-audit-user'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FeaturePermissionDialogComponent', 'selector': 'app-feature-permission-dialog'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionCheckboxComponent', 'selector': 'app-permission-checkbox'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RecordIdDisplayComponent', 'selector': 'app-record-id-display'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'UserProfileSetupComponent', 'selector': 'app-user-profile-setup'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'KeepPanelOpenOnSelectDirective', 'selector': 'input[appKeepPanelOpenOnSelect]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'ChangeHistoryListComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'ChangeHistoryListComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

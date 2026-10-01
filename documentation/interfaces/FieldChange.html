@@ -237,7 +237,7 @@ RecordDiffComponent).</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/features/change-history/change-history.types.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="59" class="link-to-prism">src/app/features/change-history/change-history.types.ts:59</a></div>
                                 </td>
                             </tr>
 
@@ -276,7 +276,7 @@ RecordDiffComponent).</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/features/change-history/change-history.types.ts:30</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/features/change-history/change-history.types.ts:61</a></div>
                                 </td>
                             </tr>
 
@@ -321,7 +321,7 @@ RecordDiffComponent).</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/features/change-history/change-history.types.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/features/change-history/change-history.types.ts:63</a></div>
                                 </td>
                             </tr>
 
@@ -338,17 +338,48 @@ RecordDiffComponent).</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export type ChangeAction &#x3D; &quot;baseline&quot; | &quot;created&quot; | &quot;updated&quot; | &quot;deleted&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export const CHANGE_OPERATIONS &#x3D; [
+  &quot;baseline&quot;,
+  &quot;create&quot;,
+  &quot;update&quot;,
+  &quot;delete&quot;,
+] as const;
+
+export type ChangeOperation &#x3D; (typeof CHANGE_OPERATIONS)[number];
 
 /**
- * Maps the backend audit &#x60;operation&#x60; to the displayed {@link ChangeAction}.
+ * The backend &#x60;operation&#x60; of a baseline record: the full-snapshot anchor written
+ * alongside the first audited change of a pre-existing record, so that record&#x27;s
+ * history has a starting state to replay from.
+ *
+ * It is not a change anyone made, which is why the change *log* excludes it (see
+ * &#x60;buildChangeHistoryQuery&#x60;) while the per-record history still builds on it.
  */
-export const OPERATION_TO_ACTION: Record&lt;string, ChangeAction&gt; &#x3D; {
-  create: &quot;created&quot;,
-  update: &quot;updated&quot;,
-  delete: &quot;deleted&quot;,
-  baseline: &quot;baseline&quot;,
+export const BASELINE_OPERATION &#x3D; &quot;baseline&quot;;
+
+/**
+ * The past-tense wording for each operation, shared by the badge and the
+ * filter&#x27;s options so the two cannot drift apart.
+ */
+export const OPERATION_LABELS: Record&lt;ChangeOperation, string&gt; &#x3D; {
+  baseline: $localize&#x60;:Change action badge:Initial snapshot&#x60;,
+  create: $localize&#x60;:Change action badge:Created&#x60;,
+  update: $localize&#x60;:Change action badge:Updated&#x60;,
+  delete: $localize&#x60;:Change action badge:Deleted&#x60;,
 };
+
+/**
+ * The operations a user can filter the change log by, in the order the filter
+ * offers them.
+ *
+ * &#x60;baseline&#x60; is deliberately absent: the log never lists snapshots, so offering
+ * it would only ever return nothing (see &#x60;buildChangeHistoryQuery&#x60;).
+ */
+export const FILTERABLE_OPERATIONS: ChangeOperation[] &#x3D; [
+  &quot;create&quot;,
+  &quot;update&quot;,
+  &quot;delete&quot;,
+];
 
 /**
  * A single field&#x27;s before/after, in raw database format (enum ids, ISO date
@@ -374,8 +405,8 @@ export interface ChangeEvent {
   at: Date;
   /** authenticated author (user-entity id or name) recorded by the backend */
   by: string;
-  action: ChangeAction;
-  /** changed fields; empty for &#x60;deleted&#x60;, all-additions for &#x60;created&#x60;/&#x60;baseline&#x60; */
+  operation: ChangeOperation;
+  /** changed fields; empty for &#x60;delete&#x60;, all-additions for &#x60;create&#x60;/&#x60;baseline&#x60; */
   changes: FieldChange[];
   /** optional contextual note (e.g. the baseline explanation) */
   note?: string;

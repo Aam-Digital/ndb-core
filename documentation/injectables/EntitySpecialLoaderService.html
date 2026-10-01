@@ -198,6 +198,10 @@
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#loadDataFor" >loadDataFor</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#loadPageFor" >loadPageFor</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -238,8 +242,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:38</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -325,8 +329,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="30"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:30</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:47</a></div>
                         </td>
                     </tr>
 
@@ -400,8 +404,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="67"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:67</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -493,6 +497,121 @@ Each loader decides for itself whether and how it needs this.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadPageFor"></a>
+                    <span class="name">
+                        <span ><b>loadPageFor</b></span>
+                        <a href="#loadPageFor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadPageFor&lt;E&gt;(loaderMethod: <a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self">LoaderMethod</a>, forEntity: <a href="../classes/Entity.html" target="_self">Entity</a>, filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;E&gt;</a>, page: { limit: number; bookmark?: string })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:85</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load one page of the records this loader serves for the given entity.</p>
+<p>Only for loaders <a href="../miscellaneous/functions.html#supportsPagination">supportsPagination</a> reports: the rest have no notion
+of a page and return everything through <a href="loadDataFor">loadDataFor</a>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>loaderMethod</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#LoaderMethod" target="_self" >LoaderMethod</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>forEntity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;E&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit: number; bookmark?: string }</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/EntityPage.html" target="_self" >Promise&lt;EntityPage&lt;E&gt;&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
 
@@ -502,18 +621,34 @@ Each loader decides for itself whether and how it needs this.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { Entity } from &quot;../model/entity&quot;;
+import { DataFilter } from &quot;../../filter/filters/filters&quot;;
+import { EntityPage } from &quot;../entity-mapper/entity-mapper.service&quot;;
 import { ChildrenService } from &quot;../../../child-dev-project/children/children.service&quot;;
 import { HistoricalDataService } from &quot;./historical-data/historical-data.service&quot;;
 import { UpdatedEntity } from &quot;../model/entity-update&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { TodoService } from &quot;#src/app/features/todos/todo.service&quot;;
+import { AuditReferenceLoaderService } from &quot;#src/app/features/change-history/audit-reference-loader.service&quot;;
 
 export enum LoaderMethod {
   ChildrenService &#x3D; &quot;ChildrenService&quot;,
+  /** audit records that involve one given record, served by a CouchDB view */
+  AuditRecordsRelatedToEntity &#x3D; &quot;AuditRecordsRelatedToEntity&quot;,
   HistoricalDataService &#x3D; &quot;HistoricalDataService&quot;,
   ChildrenServiceQueryRelations &#x3D; &quot;ChildrenServiceQueryRelations&quot;,
   NotesRelatedToEntity &#x3D; &quot;NotesRelatedToEntity&quot;,
   TodosRelatedToEntity &#x3D; &quot;TodosRelatedToEntity&quot;,
+}
+
+/**
+ * Whether this loader can serve one page at a time.
+ *
+ * The others load everything they have in a single call, so a list using them
+ * has to page in memory. A plain function so the data-source resolver can ask
+ * without injecting the service.
+ */
+export function supportsPagination(loaderMethod?: LoaderMethod): boolean {
+  return loaderMethod &#x3D;&#x3D;&#x3D; LoaderMethod.AuditRecordsRelatedToEntity;
 }
 
 /**
@@ -528,6 +663,7 @@ export class EntitySpecialLoaderService {
   private readonly childrenService &#x3D; inject(ChildrenService);
   private readonly historicalDataService &#x3D; inject(HistoricalDataService);
   private readonly todoService &#x3D; inject(TodoService);
+  private readonly auditReferenceLoader &#x3D; inject(AuditReferenceLoaderService);
 
   loadData&lt;E extends Entity &#x3D; Entity&gt;(
     loaderMethod: LoaderMethod,
@@ -562,6 +698,28 @@ export class EntitySpecialLoaderService {
   }
 
   /**
+   * Load one page of the records this loader serves for the given entity.
+   *
+   * Only for loaders {@link supportsPagination} reports: the rest have no notion
+   * of a page and return everything through {@link loadDataFor}.
+   */
+  loadPageFor&lt;E extends Entity &#x3D; Entity&gt;(
+    loaderMethod: LoaderMethod,
+    forEntity: Entity,
+    filter: DataFilter&lt;E&gt;,
+    page: { limit: number; bookmark?: string },
+  ): Promise&lt;EntityPage&lt;E&gt;&gt; {
+    if (supportsPagination(loaderMethod)) {
+      return this.auditReferenceLoader.loadPageFor(
+        forEntity,
+        filter,
+        page,
+      ) as unknown as Promise&lt;EntityPage&lt;E&gt;&gt;;
+    }
+    throw new Error(&#x60;${loaderMethod} does not serve pages&#x60;);
+  }
+
+  /**
    * @param property the property of the loaded entity type that links to the given entity,
    *        or several candidates if it cannot be determined unambiguously.
    *        Each loader decides for itself whether and how it needs this.
@@ -589,6 +747,12 @@ export class EntitySpecialLoaderService {
           entity,
           property,
         ) as unknown as Promise&lt;E[]&gt;;
+      default:
+        // returning nothing here reaches the caller as a missing promise, which
+        // fails far from the cause. A loader that only serves pages (see
+        // &#x60;loadPageFor&#x60;) ends up here when a list is configured for it without
+        // the data source that can page
+        throw new Error(&#x60;${loaderMethod} cannot load all records at once&#x60;);
     }
   }
 }

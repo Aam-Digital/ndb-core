@@ -123,7 +123,7 @@
   <li class="breadcrumb-item">Interfaces</li>
   <li class="breadcrumb-item"
   >
-  ActionMeta</li>
+  OperationMeta</li>
 </ol>
 
 <div class="io-file io-file-path" data-compodoc="entity-file-path">
@@ -159,7 +159,7 @@
                 <h3>Description</h3>
             </p>
             <p class="comment">
-                <p>Display metadata for one <a href="../miscellaneous/typealiases.html#ChangeAction">ChangeAction</a> badge.</p>
+                <p>Display metadata for one <a href="../miscellaneous/typealiases.html#ChangeOperation">ChangeOperation</a> badge.</p>
 
             </p>
 
@@ -246,7 +246,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:17</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:23</a></div>
                                 </td>
                             </tr>
 
@@ -291,7 +291,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:19</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -336,7 +336,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:20</a></div>
                                 </td>
                             </tr>
 
@@ -381,7 +381,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:15</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -425,7 +425,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/features/change-history/change-history-action-badge/change-history-action-badge.component.ts:27</a></div>
                                 </td>
                             </tr>
 
@@ -450,10 +450,16 @@
 } from &quot;@angular/core&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { FaDynamicIconComponent } from &quot;../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
-import { BASELINE_NOTE, ChangeAction } from &quot;../change-history.types&quot;;
+import {
+  BASELINE_NOTE,
+  ChangeOperation,
+  OPERATION_LABELS,
+} from &quot;../change-history.types&quot;;
+import { ViewDirective } from &quot;../../../core/entity/default-datatype/view.directive&quot;;
+import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 
-/** Display metadata for one {@link ChangeAction} badge. */
-interface ActionMeta {
+/** Display metadata for one {@link ChangeOperation} badge. */
+interface OperationMeta {
   /** FontAwesome (solid) icon name, resolved via app-fa-dynamic-icon */
   icon: string;
   label: string;
@@ -466,33 +472,36 @@ interface ActionMeta {
 }
 
 /**
- * Display metadata per action. Orange is reserved for app chrome, so even
- * &#x60;imported&#x60; uses an orange-tint background with deep-orange text — never the
- * brand primary fill.
+ * Display metadata per operation. The labels are past tense while the keys are
+ * the backend&#x27;s own operation names, so the wording stays a label rather than a
+ * second vocabulary the rest of the feature has to map back and forth.
+ *
+ * Orange is reserved for app chrome, so even &#x60;imported&#x60; would use an
+ * orange-tint background with deep-orange text — never the brand primary fill.
  */
-const ACTION_META: Record&lt;ChangeAction, ActionMeta&gt; &#x3D; {
+const OPERATION_META: Record&lt;ChangeOperation, OperationMeta&gt; &#x3D; {
   baseline: {
     icon: &quot;clock-rotate-left&quot;,
-    label: $localize&#x60;:Change action badge:Initial snapshot&#x60;,
+    label: OPERATION_LABELS.baseline,
     background: &quot;#ECEFF1&quot;,
     color: &quot;#4a525c&quot;,
     tooltip: BASELINE_NOTE,
   },
-  created: {
+  create: {
     icon: &quot;circle-plus&quot;,
-    label: $localize&#x60;:Change action badge:Created&#x60;,
+    label: OPERATION_LABELS.create,
     background: &quot;#E6F4EA&quot;,
     color: &quot;#1E6C33&quot;,
   },
-  updated: {
+  update: {
     icon: &quot;pen-to-square&quot;,
-    label: $localize&#x60;:Change action badge:Updated&#x60;,
+    label: OPERATION_LABELS.update,
     background: &quot;#CCEFFF&quot;,
     color: &quot;#1565C0&quot;,
   },
-  deleted: {
+  delete: {
     icon: &quot;trash&quot;,
-    label: $localize&#x60;:Change action badge:Deleted&#x60;,
+    label: OPERATION_LABELS.delete,
     background: &quot;#FBE2DE&quot;,
     color: &quot;#B23A2C&quot;,
   },
@@ -502,6 +511,7 @@ const ACTION_META: Record&lt;ChangeAction, ActionMeta&gt; &#x3D; {
  * A small colored pill showing the icon + label of a change action
  * (Created / Updated / Deleted / Baseline / ...).
  */
+@DynamicComponent(&quot;ChangeHistoryActionBadge&quot;)
 @Component({
   selector: &quot;app-change-history-action-badge&quot;,
   standalone: true,
@@ -531,11 +541,17 @@ const ACTION_META: Record&lt;ChangeAction, ActionMeta&gt; &#x3D; {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangeHistoryActionBadgeComponent {
-  readonly action &#x3D; input.required&lt;ChangeAction&gt;();
-  /** display metadata, falling back to &#x60;updated&#x60; for any unknown action */
+export class ChangeHistoryActionBadgeComponent extends ViewDirective&lt;ChangeOperation&gt; {
+  /**
+   * The operation to display, for the callers that have one to hand.
+   * As a table column it comes through &#x60;value&#x60; instead.
+   */
+  readonly operation &#x3D; input&lt;ChangeOperation&gt;();
+
+  /** display metadata, falling back to &#x60;update&#x60; for any unknown operation */
   readonly meta &#x3D; computed(
-    () &#x3D;&gt; ACTION_META[this.action()] ?? ACTION_META.updated,
+    () &#x3D;&gt;
+      OPERATION_META[this.operation() ?? this.value()] ?? OPERATION_META.update,
   );
 }
 </code></pre>
@@ -575,7 +591,7 @@ export class ChangeHistoryActionBadgeComponent {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
-            var COMPODOC_CURRENT_PAGE_URL = 'ActionMeta.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'OperationMeta.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

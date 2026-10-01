@@ -154,11 +154,10 @@
             <p class="comment">
                 <p>Reads an entity&#39;s change history from the audit database recorded by the
 replication-backend (issue #4026).</p>
-<p>The audit database <code>&lt;db&gt;-audit</code> is opened as a read-only remote database and
-queried on demand per entity (it grows unboundedly, so it is never synced
-locally). Records are keyed <code>AuditRecord:&lt;entityId&gt;:&lt;ts&gt;:&lt;rev&gt;</code>, so a single
-<code>_id</code> prefix range query returns one entity&#39;s full history with no extra
-index.</p>
+<p>The audit database is registered as a remote-only database of the AuditRecord
+entity type, so it is never synced locally - it grows unboundedly. Records are
+keyed <code>AuditRecord:&lt;entityId&gt;:&lt;ts&gt;:&lt;rev&gt;</code>, so a single <code>_id</code> prefix range
+query returns one entity&#39;s full history with no extra index.</p>
 
             </p>
 
@@ -210,16 +209,16 @@ index.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Static</span>
-                                <a href="#auditDbName" >auditDbName</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#canSeeHistoryEntry" >canSeeHistoryEntry</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#canViewHistory" >canViewHistory</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChangeAuthors" >getChangeAuthors</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -256,47 +255,6 @@ index.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="auditDbName"></a>
-                    <span class="name">
-                            <span class="modifier">Static</span>
-                        <span ><b>auditDbName</b></span>
-                        <a href="#auditDbName"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>auditDbName()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:38</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>the derived audit db name, e.g. <code>app-audit</code></p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="canSeeHistoryEntry"></a>
                     <span class="name">
                         <span ><b>canSeeHistoryEntry</b></span>
@@ -313,8 +271,8 @@ index.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="120"
-                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:120</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -386,8 +344,8 @@ exists (the dialog itself shows a message if they lack access).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="134"
-                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:134</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="154"
+                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:154</a></div>
                         </td>
                     </tr>
 
@@ -439,6 +397,52 @@ exists (the dialog itself shows a message if they lack access).</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getChangeAuthors"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChangeAuthors</b></span>
+                        <a href="#getChangeAuthors"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChangeAuthors()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:112</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The authors to offer in the change log&#39;s &quot;changed by&quot; filter.</p>
+<p>Taken from the records a login account can belong to, not from the audit
+documents: the audit database has no index of its authors, so reading them
+from there means scanning it and still only seeing whoever happens to be
+recent. The account-bearing records are a small, complete set, and they
+carry the names to show instead of the bare ids the audit documents hold.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getHistory"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -457,8 +461,8 @@ exists (the dialog itself shows a message if they lack access).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="107"
-                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:107</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="95"
+                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:95</a></div>
                         </td>
                     </tr>
 
@@ -528,8 +532,8 @@ not-enabled state).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="129"
-                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:129</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="149"
+                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:149</a></div>
                         </td>
                     </tr>
 
@@ -569,8 +573,8 @@ data is denied.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/features/change-history/change-history.service.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -625,7 +629,7 @@ data is denied.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/features/change-history/change-history.service.ts:84</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/features/change-history/change-history.service.ts:83</a></div>
                         </td>
                     </tr>
 
@@ -651,15 +655,15 @@ import { HttpClient } from &quot;@angular/common/http&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { Logging } from &quot;../../core/logging/logging.service&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
-import { DatabaseFactoryService } from &quot;../../core/database/database-factory.service&quot;;
-import { Database } from &quot;../../core/database/database&quot;;
+import { DatabaseResolverService } from &quot;../../core/database/database-resolver.service&quot;;
+import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { AuditRecord } from &quot;./model/audit-record&quot;;
 import { EntityAbility } from &quot;../../core/permissions/ability/entity-ability&quot;;
 import { Entity } from &quot;../../core/entity/model/entity&quot;;
 import { ChangeEvent } from &quot;./change-history.types&quot;;
 import { buildChangeEvents, RawAuditDoc } from &quot;./change-history-normalize&quot;;
-
-/** CASL subject the audit records are keyed under (see replication-backend #4026). */
-export const AUDIT_RECORD_SUBJECT &#x3D; &quot;AuditRecord&quot;;
+import { KeycloakAuthService } from &quot;../../core/session/auth/keycloak/keycloak-auth.service&quot;;
+import { EntityRegistry } from &quot;../../core/entity/database-entity.decorator&quot;;
 
 /** Response of the replication-backend central &#x60;GET /_features&#x60; endpoint. */
 interface AuditFeatureStatus {
@@ -670,22 +674,21 @@ interface AuditFeatureStatus {
  * Reads an entity&#x27;s change history from the audit database recorded by the
  * replication-backend (issue #4026).
  *
- * The audit database &#x60;&lt;db&gt;-audit&#x60; is opened as a read-only remote database and
- * queried on demand per entity (it grows unboundedly, so it is never synced
- * locally). Records are keyed &#x60;AuditRecord:&lt;entityId&gt;:&lt;ts&gt;:&lt;rev&gt;&#x60;, so a single
- * &#x60;_id&#x60; prefix range query returns one entity&#x27;s full history with no extra
- * index.
+ * The audit database is registered as a remote-only database of the AuditRecord
+ * entity type, so it is never synced locally - it grows unboundedly. Records are
+ * keyed &#x60;AuditRecord:&lt;entityId&gt;:&lt;ts&gt;:&lt;rev&gt;&#x60;, so a single &#x60;_id&#x60; prefix range
+ * query returns one entity&#x27;s full history with no extra index.
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class ChangeHistoryService {
-  private readonly dbFactory &#x3D; inject(DatabaseFactoryService);
+  private readonly dbResolver &#x3D; inject(DatabaseResolverService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly ability &#x3D; inject(EntityAbility, { optional: true });
   private readonly httpClient &#x3D; inject(HttpClient);
-
-  /** the derived audit db name, e.g. &#x60;app-audit&#x60; */
-  static auditDbName(): string {
-    return &#x60;${Entity.DATABASE}-audit&#x60;;
-  }
+  private readonly authService &#x3D; inject(KeycloakAuthService, {
+    optional: true,
+  });
 
   /**
    * Lazy trigger for the feature-flag fetch. Kept off until
@@ -736,17 +739,6 @@ export class ChangeHistoryService {
     return this.featureFlags.value()?.audit?.enabled ?? false;
   });
 
-  private auditDb?: Database;
-
-  private getAuditDb(): Database {
-    if (!this.auditDb) {
-      this.auditDb &#x3D; this.dbFactory.createRemoteDatabase(
-        ChangeHistoryService.auditDbName(),
-      );
-    }
-    return this.auditDb;
-  }
-
   /**
    * Fetch the normalized, newest-first change history for one entity.
    * Rejects if the audit database is unavailable (caller renders the
@@ -754,8 +746,40 @@ export class ChangeHistoryService {
    */
   async getHistory(entity: Entity): Promise&lt;ChangeEvent[]&gt; {
     const prefix &#x3D; &#x60;AuditRecord:${entity.getId()}:&#x60;;
-    const docs &#x3D; await this.getAuditDb().getAll(prefix);
+    const docs &#x3D; await this.dbResolver
+      .getDatabase(AuditRecord.DATABASE)
+      .getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
+  }
+
+  /**
+   * The authors to offer in the change log&#x27;s &quot;changed by&quot; filter.
+   *
+   * Taken from the records a login account can belong to, not from the audit
+   * documents: the audit database has no index of its authors, so reading them
+   * from there means scanning it and still only seeing whoever happens to be
+   * recent. The account-bearing records are a small, complete set, and they
+   * carry the names to show instead of the bare ids the audit documents hold.
+   */
+  async getChangeAuthors(): Promise&lt;Entity[]&gt; {
+    const accountTypes &#x3D; this.entityRegistry
+      .getEntityTypes()
+      .filter(({ value }) &#x3D;&gt; value.enableUserAccounts)
+      .map(({ value }) &#x3D;&gt; value);
+
+    const loaded &#x3D; await Promise.all(
+      accountTypes.map((type) &#x3D;&gt;
+        this.entityMapper.loadType(type).catch((err) &#x3D;&gt; {
+          // one unreadable type must not cost the filter its other options
+          Logging.debug(&quot;could not load change log author options&quot;, type, err);
+          return [] as Entity[];
+        }),
+      ),
+    );
+
+    return loaded
+      .flat()
+      .sort((a, b) &#x3D;&gt; a.toString().localeCompare(b.toString()));
   }
 
   /**
@@ -775,7 +799,7 @@ export class ChangeHistoryService {
    * data is denied.
    */
   hasHistoryPermission(): boolean {
-    return !!this.ability &amp;&amp; this.ability.can(&quot;read&quot;, AUDIT_RECORD_SUBJECT);
+    return !!this.ability &amp;&amp; this.ability.can(&quot;read&quot;, AuditRecord.ENTITY_TYPE);
   }
 
   /** Both: the entity qualifies and the user may read its audit data. */

@@ -254,15 +254,15 @@ import { HttpClient } from &quot;@angular/common/http&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { Logging } from &quot;../../core/logging/logging.service&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
-import { DatabaseFactoryService } from &quot;../../core/database/database-factory.service&quot;;
-import { Database } from &quot;../../core/database/database&quot;;
+import { DatabaseResolverService } from &quot;../../core/database/database-resolver.service&quot;;
+import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { AuditRecord } from &quot;./model/audit-record&quot;;
 import { EntityAbility } from &quot;../../core/permissions/ability/entity-ability&quot;;
 import { Entity } from &quot;../../core/entity/model/entity&quot;;
 import { ChangeEvent } from &quot;./change-history.types&quot;;
 import { buildChangeEvents, RawAuditDoc } from &quot;./change-history-normalize&quot;;
-
-/** CASL subject the audit records are keyed under (see replication-backend #4026). */
-export const AUDIT_RECORD_SUBJECT &#x3D; &quot;AuditRecord&quot;;
+import { KeycloakAuthService } from &quot;../../core/session/auth/keycloak/keycloak-auth.service&quot;;
+import { EntityRegistry } from &quot;../../core/entity/database-entity.decorator&quot;;
 
 /** Response of the replication-backend central &#x60;GET /_features&#x60; endpoint. */
 interface AuditFeatureStatus {
@@ -273,22 +273,21 @@ interface AuditFeatureStatus {
  * Reads an entity&#x27;s change history from the audit database recorded by the
  * replication-backend (issue #4026).
  *
- * The audit database &#x60;&lt;db&gt;-audit&#x60; is opened as a read-only remote database and
- * queried on demand per entity (it grows unboundedly, so it is never synced
- * locally). Records are keyed &#x60;AuditRecord:&lt;entityId&gt;:&lt;ts&gt;:&lt;rev&gt;&#x60;, so a single
- * &#x60;_id&#x60; prefix range query returns one entity&#x27;s full history with no extra
- * index.
+ * The audit database is registered as a remote-only database of the AuditRecord
+ * entity type, so it is never synced locally - it grows unboundedly. Records are
+ * keyed &#x60;AuditRecord:&lt;entityId&gt;:&lt;ts&gt;:&lt;rev&gt;&#x60;, so a single &#x60;_id&#x60; prefix range
+ * query returns one entity&#x27;s full history with no extra index.
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class ChangeHistoryService {
-  private readonly dbFactory &#x3D; inject(DatabaseFactoryService);
+  private readonly dbResolver &#x3D; inject(DatabaseResolverService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly ability &#x3D; inject(EntityAbility, { optional: true });
   private readonly httpClient &#x3D; inject(HttpClient);
-
-  /** the derived audit db name, e.g. &#x60;app-audit&#x60; */
-  static auditDbName(): string {
-    return &#x60;${Entity.DATABASE}-audit&#x60;;
-  }
+  private readonly authService &#x3D; inject(KeycloakAuthService, {
+    optional: true,
+  });
 
   /**
    * Lazy trigger for the feature-flag fetch. Kept off until
@@ -339,17 +338,6 @@ export class ChangeHistoryService {
     return this.featureFlags.value()?.audit?.enabled ?? false;
   });
 
-  private auditDb?: Database;
-
-  private getAuditDb(): Database {
-    if (!this.auditDb) {
-      this.auditDb &#x3D; this.dbFactory.createRemoteDatabase(
-        ChangeHistoryService.auditDbName(),
-      );
-    }
-    return this.auditDb;
-  }
-
   /**
    * Fetch the normalized, newest-first change history for one entity.
    * Rejects if the audit database is unavailable (caller renders the
@@ -357,8 +345,40 @@ export class ChangeHistoryService {
    */
   async getHistory(entity: Entity): Promise&lt;ChangeEvent[]&gt; {
     const prefix &#x3D; &#x60;AuditRecord:${entity.getId()}:&#x60;;
-    const docs &#x3D; await this.getAuditDb().getAll(prefix);
+    const docs &#x3D; await this.dbResolver
+      .getDatabase(AuditRecord.DATABASE)
+      .getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
+  }
+
+  /**
+   * The authors to offer in the change log&#x27;s &quot;changed by&quot; filter.
+   *
+   * Taken from the records a login account can belong to, not from the audit
+   * documents: the audit database has no index of its authors, so reading them
+   * from there means scanning it and still only seeing whoever happens to be
+   * recent. The account-bearing records are a small, complete set, and they
+   * carry the names to show instead of the bare ids the audit documents hold.
+   */
+  async getChangeAuthors(): Promise&lt;Entity[]&gt; {
+    const accountTypes &#x3D; this.entityRegistry
+      .getEntityTypes()
+      .filter(({ value }) &#x3D;&gt; value.enableUserAccounts)
+      .map(({ value }) &#x3D;&gt; value);
+
+    const loaded &#x3D; await Promise.all(
+      accountTypes.map((type) &#x3D;&gt;
+        this.entityMapper.loadType(type).catch((err) &#x3D;&gt; {
+          // one unreadable type must not cost the filter its other options
+          Logging.debug(&quot;could not load change log author options&quot;, type, err);
+          return [] as Entity[];
+        }),
+      ),
+    );
+
+    return loaded
+      .flat()
+      .sort((a, b) &#x3D;&gt; a.toString().localeCompare(b.toString()));
   }
 
   /**
@@ -378,7 +398,7 @@ export class ChangeHistoryService {
    * data is denied.
    */
   hasHistoryPermission(): boolean {
-    return !!this.ability &amp;&amp; this.ability.can(&quot;read&quot;, AUDIT_RECORD_SUBJECT);
+    return !!this.ability &amp;&amp; this.ability.can(&quot;read&quot;, AuditRecord.ENTITY_TYPE);
   }
 
   /** Both: the entity qualifies and the user may read its audit data. */

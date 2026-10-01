@@ -259,6 +259,12 @@
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchPage" >fetchPage</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#getAllData" >getAllData</a>
@@ -276,6 +282,11 @@
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#processEntityUpdate" >processEntityUpdate</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                <a href="#resetPaginationCache" >resetPaginationCache</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -331,7 +342,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:83</a></div>
                             </td>
                         </tr>
 
@@ -369,7 +380,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:65</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -800,6 +811,105 @@ filtered, sorted and reduced to the current page.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="fetchPage"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchPage</b></span>
+                        <a href="#fetchPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchPage(filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, page: { limit: number; bookmark?: string }, sort: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="154"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:154</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Fetch one page, continuing from <code>page.bookmark</code> when one is given.</p>
+<p>The seam for data that is paged some other way than by a Mango query: the
+bookmark is opaque to this class, so an override is free to put its own
+cursor in it as long as a short page still means the end of the data.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit: number; bookmark?: string }</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/EntityPage.html" target="_self" >Promise&lt;EntityPage&lt;T&gt;&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getAllData"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -825,7 +935,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:138</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:173</a></code>
 </div>
                         </td>
                     </tr>
@@ -906,7 +1016,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:103</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:113</a></code>
 </div>
                         </td>
                     </tr>
@@ -953,7 +1063,7 @@ filtered, sorted and reduced to the current page.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:164</a></code>
+                                <div class="io-line">        <code><a href="../classes/EntitiesTableDataSource.html#source" target="_self" >EntitiesTableDataSource:199</a></code>
 </div>
                         </td>
                     </tr>
@@ -964,6 +1074,50 @@ filtered, sorted and reduced to the current page.</p>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resetPaginationCache"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>resetPaginationCache</b></span>
+                        <a href="#resetPaginationCache"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resetPaginationCache()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:101</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Discard all loaded records/cursor state and move back to the first page.
+Necessary whenever the query itself changes (filter, sort, page size) or
+the underlying data may have changed (entity update) - in all these
+cases the existing bookmark chain is no longer valid.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
                 </td>
@@ -1098,7 +1252,7 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:38</a></div>
                                 </td>
                             </tr>
 
@@ -1109,7 +1263,7 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:31</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1165,7 +1319,7 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:56</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:66</a></div>
                                 </td>
                             </tr>
 
@@ -1176,7 +1330,7 @@ indicator until the load finishes.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:48</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:58</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -1225,10 +1379,15 @@ indicator until the load finishes.</p>
 import { MatSort } from &quot;@angular/material/sort&quot;;
 import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 import { MatPaginator } from &quot;@angular/material/paginator&quot;;
-import { effect, signal } from &quot;@angular/core&quot;;
+import { effect, inject, signal } from &quot;@angular/core&quot;;
 import { EntityFilter } from &quot;#src/app/core/filter/filters/entityFilter&quot;;
 import { EntitiesTableDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/entities-table-data-source&quot;;
 import { merge } from &quot;rxjs&quot;;
+import {
+  EntitySpecialLoaderService,
+  supportsPagination,
+} from &quot;#src/app/core/entity/entity-special-loader/entity-special-loader.service&quot;;
+import { EntityPage } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 
 /**
  * Number of documents fetched per request when loading the complete dataset
@@ -1236,9 +1395,14 @@ import { merge } from &quot;rxjs&quot;;
  */
 export const FULL_LOAD_PAGE_SIZE &#x3D; 500;
 
+/** datatypes whose value is stored as the referenced id alone */
+const STORED_BY_ID_DATATYPES &#x3D; [&quot;configurable-enum&quot;, &quot;entity&quot;];
+
 export class PaginatedDataSource&lt;
   T extends Entity,
 &gt; extends EntitiesTableDataSource&lt;T&gt; {
+  private readonly specialLoader &#x3D; inject(EntitySpecialLoaderService);
+
   private sortRef: MatSort;
   private sortState: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; } &#x3D; {};
   override set sort(sort: MatSort) {
@@ -1311,7 +1475,7 @@ export class PaginatedDataSource&lt;
    * the underlying data may have changed (entity update) - in all these
    * cases the existing bookmark chain is no longer valid.
    */
-  private resetPaginationCache() {
+  protected resetPaginationCache() {
     this.filteredRecords.set([]);
     this.bookmark &#x3D; undefined;
     this.reachedEnd &#x3D; false;
@@ -1336,8 +1500,7 @@ export class PaginatedDataSource&lt;
     if (loadedLength &lt; requiredLength &amp;&amp; !this.reachedEnd) {
       const deficit &#x3D; requiredLength - loadedLength;
       const generation &#x3D; this.loadGeneration;
-      const res &#x3D; await this.entityMapper.findType(
-        this.loadRecordConfig().entityCtr,
+      const res &#x3D; await this.fetchPage(
         this.effectiveFilter,
         { limit: deficit, bookmark: this.bookmark },
         this.sortState,
@@ -1356,6 +1519,32 @@ export class PaginatedDataSource&lt;
     const totalLoaded &#x3D; this.filteredRecords().length;
     this.hasUnknownTotalCount.set(totalLoaded &gt; start + this.page.size);
     // &#x60;this.allRecords&#x60; stays empty;
+  }
+
+  /**
+   * Fetch one page, continuing from &#x60;page.bookmark&#x60; when one is given.
+   *
+   * The seam for data that is paged some other way than by a Mango query: the
+   * bookmark is opaque to this class, so an override is free to put its own
+   * cursor in it as long as a short page still means the end of the data.
+   */
+  protected async fetchPage(
+    filter: DataFilter&lt;T&gt;,
+    page: { limit: number; bookmark?: string },
+    sort: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;EntityPage&lt;T&gt;&gt; {
+    const config &#x3D; this.loadRecordConfig();
+    if (supportsPagination(config.loaderMethod)) {
+      // a loader that serves pages of its own: the pagination state stays here,
+      // only the fetching moves
+      return this.specialLoader.loadPageFor&lt;T&gt;(
+        config.loaderMethod,
+        config.forEntity,
+        filter,
+        page,
+      );
+    }
+    return this.entityMapper.findType(config.entityCtr, filter, page, sort);
   }
 
   override async getAllData(filtered &#x3D; false): Promise&lt;T[]&gt; {
@@ -1393,8 +1582,18 @@ export class PaginatedDataSource&lt;
     // Mango queries need &#x60;$options: &quot;i&quot;&#x60; while CouchDB only supports &#x60;$regex: &quot;(?i)...&quot;&#x60;
     filter &#x3D; convertToCouchRegex(filter);
     const filterString &#x3D; JSON.stringify(filter);
-    // replace e.g. &quot;gender.id&quot; with &quot;gender&quot; as configurable enums are only stored with id value
-    const updatedString &#x3D; filterString.replace(/(&quot;\w+)\.id(?&#x3D;&quot;:)/g, &quot;$1&quot;);
+    const schema &#x3D; this.loadRecordConfig()?.entityCtr?.schema;
+    // replace e.g. &quot;gender.id&quot; with &quot;gender&quot;: enum and entity references are
+    // stored as the plain id. Only for fields that are actually stored that
+    // way, though - on any other field &quot;.id&quot; is a real path into an object
+    // value, and rewriting it silently matches nothing.
+    const updatedString &#x3D; filterString.replace(
+      /&quot;(\w+)\.id(?&#x3D;&quot;:)/g,
+      (match, field) &#x3D;&gt;
+        STORED_BY_ID_DATATYPES.includes(schema?.get(field)?.dataType)
+          ? &#x60;&quot;${field}&#x60;
+          : match,
+    );
     return JSON.parse(updatedString);
   }
 }

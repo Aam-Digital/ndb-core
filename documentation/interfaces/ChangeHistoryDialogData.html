@@ -174,6 +174,12 @@
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entity</span>
                                 </a>
                         </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#expandEventId" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">expandEventId</span>
+                                </a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -218,10 +224,61 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/features/change-history/change-history-dialog/change-history-dialog.component.ts:33</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/features/change-history/change-history-dialog/change-history-dialog.component.ts:34</a></div>
                                 </td>
                             </tr>
 
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="expandEventId"></a>
+                                <span class="name "><b>expandEventId</b>
+                                    <a href="#expandEventId">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>expandEventId:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/features/change-history/change-history-dialog/change-history-dialog.component.ts:39</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>the audit record to open right away, so arriving from a change-history row
+lands on that row&#39;s entry instead of a collapsed list to search through</p>
+</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
     </section>
@@ -257,11 +314,17 @@ import { Entity, EntityConstructor } from &quot;../../../core/entity/model/entit
 import { ChangeHistoryService } from &quot;../change-history.service&quot;;
 import { ChangeEvent } from &quot;../change-history.types&quot;;
 import { ChangeHistoryActionBadgeComponent } from &quot;../change-history-action-badge/change-history-action-badge.component&quot;;
+import { RecordIdDisplayComponent } from &quot;../../../core/common-components/record-id-display/record-id-display.component&quot;;
 import { RecordDiffComponent } from &quot;../record-diff/record-diff.component&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 
 export interface ChangeHistoryDialogData {
   entity: Entity;
+  /**
+   * the audit record to open right away, so arriving from a change-history row
+   * lands on that row&#x27;s entry instead of a collapsed list to search through
+   */
+  expandEventId?: string;
 }
 
 /**
@@ -287,6 +350,7 @@ export interface ChangeHistoryDialogData {
     CustomDatePipe,
     NotificationTimePipe,
     ChangeHistoryActionBadgeComponent,
+    RecordIdDisplayComponent,
     RecordDiffComponent,
   ],
   templateUrl: &quot;./change-history-dialog.component.html&quot;,
@@ -298,9 +362,10 @@ export class ChangeHistoryDialogComponent {
   static open(
     dialog: MatDialog,
     entity: Entity,
+    expandEventId?: string,
   ): MatDialogRef&lt;ChangeHistoryDialogComponent&gt; {
     return dialog.open(ChangeHistoryDialogComponent, {
-      data: { entity } satisfies ChangeHistoryDialogData,
+      data: { entity, expandEventId } satisfies ChangeHistoryDialogData,
       // near-fullscreen for the wide diff table; maxWidth must be raised too,
       // else Material&#x27;s default maxWidth (80vw) caps the 98vw width
       width: &quot;98vw&quot;,
@@ -313,6 +378,8 @@ export class ChangeHistoryDialogComponent {
 
   readonly entity: Entity &#x3D; this.data.entity;
   readonly entityType: EntityConstructor &#x3D; this.entity.getConstructor();
+  /** see {@link ChangeHistoryDialogData.expandEventId} */
+  readonly expandEventId: string | undefined &#x3D; this.data.expandEventId;
 
   /**
    * The entity&#x27;s own created / last-updated metadata. Pure entity state, so it
