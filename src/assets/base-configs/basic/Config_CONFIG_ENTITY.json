@@ -38,6 +38,7 @@
           {
             "component": "EntityCountDashboard",
             "config": {
+              "entityType": "Child",
               "groupBy": [
                 "gender"
               ]

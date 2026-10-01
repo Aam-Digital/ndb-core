@@ -469,6 +469,22 @@ const migrateEditDescriptionOnly: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
+const migrateChildrenCountDashboardEntityType: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (configPart?.component !== "ChildrenCountDashboard") {
+    return configPart;
+  }
+
+  if (!configPart.config) {
+    configPart.config = {};
+  }
+  configPart.config.entityType ??= "Child";
+
+  return configPart;
+};
+
 const migrateEditAttendanceComponent: ConfigMigration = (key, configPart) => {
   if (configPart?.editComponent !== "EditAttendance") {
     return configPart;
@@ -771,6 +787,7 @@ export const configMigrations: ConfigMigration[] = [
   migrateInheritedFieldConfig,
   migrateUserEntityAndPanels,
   migrateComponentEntityTypeDefaults,
+  migrateChildrenCountDashboardEntityType,
   removeOutdatedTodoViews,
   migrateChildSchoolOverviewComponent,
   migrateEditDescriptionOnly,

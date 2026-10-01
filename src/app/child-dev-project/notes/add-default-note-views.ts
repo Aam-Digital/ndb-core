@@ -31,6 +31,6 @@ export function getDefaultNoteDetailsConfig(): NoteDetailsConfig {
     entityType: "Note",
     topForm: ["date", "warningLevel", "category", "authors", "attachment"],
     middleForm: ["subject", "text"],
-    bottomForm: ["children", "schools"],
+    bottomForm: ["relatedEntities"],
   };
 }

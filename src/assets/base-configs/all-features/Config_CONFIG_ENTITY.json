@@ -129,7 +129,10 @@
             }
           },
           {
-            "component": "EntityCountDashboard"
+            "component": "EntityCountDashboard",
+            "config": {
+              "entityType": "Child"
+            }
           },
           {
             "component": "ImportantNotesDashboard",
