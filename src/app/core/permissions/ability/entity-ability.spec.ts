@@ -15,6 +15,13 @@ describe("EntityAbility", () => {
     ability = TestBed.inject(EntityAbility);
   });
 
+  /** grant "read" on TestEntity, restricted by the given conditions */
+  function allowReadWhere(conditions: Record<string, any>) {
+    ability.update([
+      { subject: TestEntity.ENTITY_TYPE, action: "read", conditions },
+    ]);
+  }
+
   describe("logical operators in rule conditions", () => {
     let entity: TestEntity;
 
@@ -25,12 +32,6 @@ describe("EntityAbility", () => {
         rating: 10,
       });
     });
-
-    function allowReadWhere(conditions: Record<string, any>) {
-      ability.update([
-        { subject: TestEntity.ENTITY_TYPE, action: "read", conditions },
-      ]);
-    }
 
     it("should allow access if one branch of a $or condition matches", () => {
       allowReadWhere({
@@ -100,12 +101,6 @@ describe("EntityAbility", () => {
     beforeEach(() => {
       entity = TestEntity.create({ name: "matching name", rating: 10 });
     });
-
-    function allowReadWhere(conditions: Record<string, any>) {
-      ability.update([
-        { subject: TestEntity.ENTITY_TYPE, action: "read", conditions },
-      ]);
-    }
 
     it("should deny rather than throw for an empty logical array", () => {
       allowReadWhere({ $or: [] });
