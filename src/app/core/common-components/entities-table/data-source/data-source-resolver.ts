@@ -8,7 +8,12 @@ import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import {
+  LoaderMethod,
+  // aliased: this file has its own `supportsPagination`, which asks whether the
+  // database can page at all rather than whether this loader serves pages
+  supportsPagination as loaderSupportsPagination,
+} from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 
@@ -51,8 +56,9 @@ function getDataSource(
     return availableDataSources[dataSource];
   }
 
-  if (loaderMethod) {
-    // special loaders are not supported by the paginated data source
+  if (loaderMethod && !loaderSupportsPagination(loaderMethod)) {
+    // a loader with no notion of a page loads everything it has, so the list
+    // pages it in memory
     return InMemoryDataSource;
   }
 
