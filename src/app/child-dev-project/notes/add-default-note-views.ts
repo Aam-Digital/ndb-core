@@ -14,20 +14,24 @@ export const addDefaultNoteDetailsConfig: ConfigMigration = (
     return configPart;
   }
 
-  if (!configPart?.["data"]["view:note/:id"]) {
-    configPart["data"]["view:note/:id"] = {
+  const data = configPart["data"];
+  if (!data["view:note/:id"]) {
+    const { bottomForm: _ignored, ...defaultsWithoutBottomForm } =
+      getDefaultNoteDetailsConfig();
+    data["view:note/:id"] = {
       component: "NoteDetails",
-      config: getDefaultNoteDetailsConfig(),
+      config: defaultsWithoutBottomForm,
     };
-
-    // keep the dedicated children/schools fields if this deployment actually uses them
-    if (hasChildOrSchoolEntity(configPart["data"])) {
-      configPart["data"]["view:note/:id"].config.bottomForm = [
-        "children",
-        "schools",
-      ];
-    }
   }
+
+  // Existing configs may rely on the historical default for bottomForm.
+  const noteDetailsConfig = (data["view:note/:id"].config ??= {});
+  if (!noteDetailsConfig.bottomForm) {
+    noteDetailsConfig.bottomForm = hasChildOrSchoolEntity(data)
+      ? ["children", "schools"]
+      : ["relatedEntities"];
+  }
+
   return configPart;
 };
 
