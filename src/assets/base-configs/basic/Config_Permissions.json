@@ -44,10 +44,6 @@
       {
         "subject": "all",
         "action": "manage"
-      },
-      {
-        "subject": "AuditRecord",
-        "action": "read"
       }
     ]
   }
