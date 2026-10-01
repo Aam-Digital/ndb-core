@@ -248,7 +248,7 @@
     </button>
   }
 
-  @if ("read" | ablePure: auditRecordType | async) {
+  @if ("read" | able: auditRecordType) {
     <button
       mat-menu-item
       [routerLink]="['/change-history']"
