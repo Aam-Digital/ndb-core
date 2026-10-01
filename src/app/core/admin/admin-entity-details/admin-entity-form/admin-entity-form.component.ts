@@ -31,6 +31,10 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { lastValueFrom } from "rxjs";
+import {
+  ConditionEditorDialogComponent,
+  ConditionEditorDialogData,
+} from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -162,6 +166,9 @@ export class AdminEntityFormComponent {
 
   /** `cdkDropListData` marking the toolbar as the drop target for fields removed from the form */
   readonly availableFieldsTarget: FieldDropTarget = "available";
+
+  readonly displayConditionTooltip = $localize`Only show this field group in forms if the record currently matches a condition, based on the values of other fields.`;
+  readonly displayConditionConfiguredTooltip = $localize`Condition configured: this field group is only shown while the record matches it.`;
 
   searchFilter = new FormControl("");
 
@@ -563,6 +570,30 @@ export class AdminEntityFormComponent {
   updateGroupHeader(i: number, header: string) {
     this.fieldGroups.update((groups) =>
       groups.map((g, idx) => (idx === i ? { ...g, header } : g)),
+    );
+  }
+
+  async openGroupDisplayConditionDialog(i: number) {
+    const dialogRef = this.matDialog.open(ConditionEditorDialogComponent, {
+      data: {
+        entityConstructor: this.entityType(),
+        conditions: this.fieldGroups()[i].displayCondition,
+        explanation: $localize`This field group is shown only while the record matches...`,
+      } satisfies ConditionEditorDialogData,
+      width: "600px",
+    });
+
+    const result = await lastValueFrom(dialogRef.afterClosed());
+    // `undefined` means the dialog was cancelled, leave the condition unchanged
+    if (result === undefined) return;
+
+    this.fieldGroups.update((groups) =>
+      groups.map((g, idx) => {
+        if (idx !== i) return g;
+        const updated: FieldGroup = { ...g, displayCondition: result };
+        if (!result) delete updated.displayCondition;
+        return updated;
+      }),
     );
   }
 

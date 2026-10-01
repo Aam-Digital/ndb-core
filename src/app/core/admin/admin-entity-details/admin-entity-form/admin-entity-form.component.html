@@ -24,7 +24,23 @@
               [title]="group.header"
               (titleChange)="updateGroupHeader(i, $event)"
               (remove)="removeGroup(i)"
-            ></app-admin-section-header>
+            >
+              <button
+                mat-icon-button
+                type="button"
+                [color]="group.displayCondition ? 'accent' : undefined"
+                (click)="openGroupDisplayConditionDialog(i)"
+                i18n-aria-label
+                aria-label="Display Condition"
+                [matTooltip]="
+                  group.displayCondition
+                    ? displayConditionConfiguredTooltip
+                    : displayConditionTooltip
+                "
+              >
+                <fa-icon icon="filter"></fa-icon>
+              </button>
+            </app-admin-section-header>
           </div>
         }
         <div
