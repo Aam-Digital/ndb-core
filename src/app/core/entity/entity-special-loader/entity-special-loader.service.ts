@@ -88,7 +88,7 @@ export class EntitySpecialLoaderService {
     filter: DataFilter<E>,
     page: { limit: number; bookmark?: string },
   ): Promise<EntityPage<E>> {
-    if (loaderMethod === LoaderMethod.AuditRecordsRelatedToEntity) {
+    if (supportsPagination(loaderMethod)) {
       return this.auditReferenceLoader.loadPageFor(
         forEntity,
         filter,

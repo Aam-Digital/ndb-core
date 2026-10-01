@@ -6,7 +6,6 @@ import { environment } from "../../../environments/environment";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { AuditRecord } from "./model/audit-record";
-import { Database } from "../../core/database/database";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeEvent } from "./change-history.types";
@@ -88,10 +87,6 @@ export class ChangeHistoryService {
     return this.featureFlags.value()?.audit?.enabled ?? false;
   });
 
-  private getAuditDb(): Database {
-    return this.dbResolver.getDatabase(AuditRecord.DATABASE);
-  }
-
   /**
    * Fetch the normalized, newest-first change history for one entity.
    * Rejects if the audit database is unavailable (caller renders the
@@ -99,7 +94,9 @@ export class ChangeHistoryService {
    */
   async getHistory(entity: Entity): Promise<ChangeEvent[]> {
     const prefix = `AuditRecord:${entity.getId()}:`;
-    const docs = await this.getAuditDb().getAll(prefix);
+    const docs = await this.dbResolver
+      .getDatabase(AuditRecord.DATABASE)
+      .getAll(prefix);
     return buildChangeEvents(docs as RawAuditDoc[]);
   }
 

@@ -13,9 +13,6 @@ import {
   untracked,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { combineLatest, map, Observable, startWith } from "rxjs";
-import { SessionSubject } from "../../session/auth/session-info";
-import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 import { AuditRecord } from "../../../features/change-history/model/audit-record";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -127,35 +124,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly ability = inject(EntityAbility);
   private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly injector = inject(Injector);
-  private readonly sessionSubject = inject(SessionSubject);
 
-  /** Emits whenever the current user's permission rules are (re)loaded. */
-  private readonly abilityUpdated = new Observable<void>((subscriber) => {
-    const unsubscribe = this.ability.on("updated", () => subscriber.next());
-    return () => unsubscribe();
-  });
-
-  /**
-   * The change log lives behind the admin route, so only offer the link to
-   * someone the route will actually let in - which takes both of its gates.
-   *
-   * Recomputed on a rule update as well as on a new session: the rules load
-   * asynchronously, so a session that arrives first would otherwise leave this
-   * evaluated against no rules at all, and never re-evaluated.
-   */
-  readonly canViewChangeHistory = toSignal(
-    combineLatest([
-      this.sessionSubject,
-      this.abilityUpdated.pipe(startWith(undefined)),
-    ]).pipe(
-      map(
-        ([session]) =>
-          (session?.roles?.includes(ADMIN_APP_ROLE) ?? false) &&
-          this.ability.can("read", AuditRecord.ENTITY_TYPE),
-      ),
-    ),
-    { initialValue: false },
-  );
+  /** the audit data the change log reads, as the permission subject to ask about */
+  protected readonly auditRecordType = AuditRecord.ENTITY_TYPE;
 
   public publicFormConfigs: PublicFormConfig[] = [];
 
