@@ -19,9 +19,21 @@ export const addDefaultNoteDetailsConfig: ConfigMigration = (
       component: "NoteDetails",
       config: getDefaultNoteDetailsConfig(),
     };
+
+    // keep the dedicated children/schools fields if this deployment actually uses them
+    if (hasChildOrSchoolEntity(configPart["data"])) {
+      configPart["data"]["view:note/:id"].config.bottomForm = [
+        "children",
+        "schools",
+      ];
+    }
   }
   return configPart;
 };
+
+export function hasChildOrSchoolEntity(configData: Record<string, unknown>) {
+  return !!configData?.["entity:Child"] || !!configData?.["entity:School"];
+}
 
 /**
  * Default configuration for Note Details.
