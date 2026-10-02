@@ -10,6 +10,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { of } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { ConditionEditorDialogComponent } from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -387,6 +388,54 @@ describe("AdminEntityFormComponent", () => {
 
     expect(component.config().fieldGroups[0].fields).not.toContain(field);
   });
+
+  it.each([
+    {
+      initial: undefined,
+      dialogResult: { name: "x" },
+      expected: { name: "x" },
+    },
+    { initial: { name: "x" }, dialogResult: null, expected: undefined },
+    {
+      initial: { name: "x" },
+      dialogResult: undefined,
+      expected: { name: "x" },
+    },
+  ])(
+    "should apply the condition dialog's result as the field group's displayCondition (dialog result: $dialogResult)",
+    async ({ initial, dialogResult, expected }) => {
+      fixture.componentRef.setInput("config", {
+        fieldGroups: [
+          {
+            header: "Group 1",
+            fields: ["name"],
+            ...(initial && { displayCondition: initial }),
+          },
+        ],
+      });
+      fixture.detectChanges();
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(dialogResult) });
+
+      const conditionButton: HTMLButtonElement =
+        fixture.nativeElement.querySelector(
+          'app-admin-section-header button[aria-label="Display Condition"]',
+        );
+      conditionButton.click();
+      await fixture.whenStable();
+
+      expect(mockDialog.open).toHaveBeenCalledWith(
+        ConditionEditorDialogComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({ conditions: initial }),
+        }),
+      );
+      expect(component.fieldGroups()[0]).toEqual({
+        header: "Group 1",
+        fields: ["name"],
+        ...(expected && { displayCondition: expected }),
+      });
+    },
+  );
 
   it("should update the global schema when updateEntitySchema is true", async () => {
     vi.useFakeTimers();

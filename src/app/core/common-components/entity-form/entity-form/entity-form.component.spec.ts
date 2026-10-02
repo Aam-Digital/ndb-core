@@ -9,6 +9,7 @@ import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge"
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { MockDestroyRef } from "../../../../utils/mock-destroy-ref";
+import { FieldGroup } from "../../../entity-details/form/field-group";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<TestEntity>;
@@ -220,6 +221,77 @@ describe("EntityFormComponent", () => {
     component.form().formGroup.enable();
     expect(component.form().formGroup.get("other").disabled).toBe(false);
   });
+
+  async function setupFormWithGroups(entity: TestEntity, groups: FieldGroup[]) {
+    const form = await TestBed.inject(EntityFormService).createEntityForm(
+      groups.flatMap((g) => g.fields),
+      entity,
+      new MockDestroyRef(),
+    );
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("fieldGroups", groups);
+    fixture.componentRef.setInput("form", form);
+    fixture.detectChanges();
+  }
+
+  it("should hide and disable the whole group (including fields without a form control) while the group's displayCondition is not met", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant";
+    const conditionalGroup: FieldGroup = {
+      header: "Details",
+      fields: [
+        { id: "other" },
+        { id: "textBlock", viewComponent: "DisplayDescriptionOnly" },
+      ],
+      displayCondition: { name: "shown" },
+    };
+
+    await setupFormWithGroups(entity, [
+      { fields: [{ id: "name" }] },
+      conditionalGroup,
+    ]);
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+
+    component.form().formGroup.get("name").setValue("shown");
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+      conditionalGroup,
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+  });
+
+  it.each([
+    { name: "shown", other: "yes", expectedVisible: true },
+    { name: "shown", other: "no", expectedVisible: false },
+    { name: "hidden", other: "yes", expectedVisible: false },
+  ])(
+    "should show a field only if both its own and its group's displayCondition are met (name: $name, other: $other)",
+    async ({ name, other, expectedVisible }) => {
+      const entity = new TestEntity();
+      Object.assign(entity, { name, other });
+
+      await setupFormWithGroups(entity, [
+        { fields: [{ id: "name" }, { id: "other" }] },
+        {
+          fields: [{ id: "rating", displayCondition: { other: "yes" } }],
+          displayCondition: { name: "shown" },
+        },
+      ]);
+
+      const visibleFieldIds = component
+        .filteredFieldGroups()
+        .flatMap((g) => g.fields.map((f) => (f as { id: string }).id));
+      expect(visibleFieldIds.includes("rating")).toBe(expectedVisible);
+      expect(component.form().formGroup.get("rating").disabled).toBe(
+        !expectedVisible,
+      );
+    },
+  );
 
   it("should not remove fields when creating new and conditions are not met yet", async () => {
     fixture.componentRef.setInput("fieldGroups", [
