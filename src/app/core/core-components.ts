@@ -304,4 +304,18 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.EditJsonComponent,
       ),
   ],
+  [
+    "EditSchemaEmbedArray",
+    () =>
+      import("./basic-datatypes/schema-embed/edit-schema-embed-array/edit-schema-embed-array.component").then(
+        (c) => c.EditSchemaEmbedArrayComponent,
+      ),
+  ],
+  [
+    "DisplaySchemaEmbedArray",
+    () =>
+      import("./basic-datatypes/schema-embed/display-schema-embed-array/display-schema-embed-array.component").then(
+        (c) => c.DisplaySchemaEmbedArrayComponent,
+      ),
+  ],
 ];
