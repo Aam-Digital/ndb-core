@@ -56,20 +56,69 @@ const TOKEN_MIN_VALIDITY_SECONDS = 30;
  * report names neither which status it was nor which endpoint refused, and the
  * error cannot be told apart from any other by reading it.
  *
+ * The status alone does not say why Keycloak refused (e.g. a 400 from the token
+ * endpoint can be an expired, reused or mismatched code), so the response body
+ * is read as well: the OAuth `error` / `error_description` if it is JSON, or a
+ * short excerpt otherwise (e.g. an HTML error page from a proxy in front).
+ *
  * Passed as log context rather than interpolated into the message, so that all
  * occurrences stay one issue in remote monitoring (see `core/logging/README.md`)
- * while the status is one click away in the event's data.
+ * while the details are one click away in the event's data.
  */
-function keycloakFailureContext(err: any): Record<string, unknown> {
-  const status = err?.response?.status;
+async function keycloakFailureContext(
+  err: any,
+): Promise<Record<string, unknown>> {
+  const response = err?.response;
+  const status = response?.status;
   if (typeof status !== "number") {
     // the library also rejects for reasons that never reached the server
     return { responseStatus: "none" };
   }
   return {
     responseStatus: status,
-    responseStatusText: err.response.statusText,
+    responseStatusText: response.statusText,
+    ...(await readResponseBody(response)),
   };
+}
+
+/** Upper bound for reading an error response body, so logging never stalls a login. */
+const RESPONSE_BODY_READ_TIMEOUT_MS = 2_000;
+
+/** Length of the excerpt kept from a response body that is not OAuth error JSON. */
+const RESPONSE_BODY_EXCERPT_LENGTH = 300;
+
+/**
+ * Best-effort read of a failed response's body for diagnostics.
+ * Never throws: a body that cannot be read only means less detail in the report.
+ */
+async function readResponseBody(
+  response: Response,
+): Promise<Record<string, unknown>> {
+  let text: string;
+  try {
+    // keycloak-js rejects before reading the body, so it is normally unread;
+    // clone anyway so this never consumes it for anyone else
+    text = await firstValueFrom(
+      defer(() => response.clone().text()).pipe(
+        timeout({ each: RESPONSE_BODY_READ_TIMEOUT_MS }),
+      ),
+    );
+  } catch {
+    return { responseBody: "unreadable" };
+  }
+
+  try {
+    const body = JSON.parse(text);
+    if (typeof body?.error === "string") {
+      return {
+        responseError: body.error,
+        responseErrorDescription: body.error_description,
+      };
+    }
+  } catch {
+    // not JSON - fall through to the excerpt
+  }
+  return { responseBody: text.slice(0, RESPONSE_BODY_EXCERPT_LENGTH) };
 }
 
 /**
@@ -123,7 +172,7 @@ export class KeycloakAuthService {
         Logging.debug(
           "Keycloak updateToken failed (offline/unavailable)",
           err,
-          keycloakFailureContext(err),
+          await keycloakFailureContext(err),
         );
         throw new RemoteLoginNotAvailableError(err);
       }
@@ -206,11 +255,15 @@ export class KeycloakAuthService {
         Logging.debug(
           "Keycloak init failed (offline/unavailable)",
           err,
-          keycloakFailureContext(err),
+          await keycloakFailureContext(err),
         );
         err = new RemoteLoginNotAvailableError(err);
       } else {
-        Logging.error("Keycloak init failed", err, keycloakFailureContext(err));
+        Logging.error(
+          "Keycloak init failed",
+          err,
+          await keycloakFailureContext(err),
+        );
       }
 
       this.initKeycloak.cache.clear();
