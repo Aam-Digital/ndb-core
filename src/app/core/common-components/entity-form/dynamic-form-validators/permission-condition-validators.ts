@@ -6,7 +6,10 @@ import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import {
+  EntityAbility,
+  permissionConditionsMatcher,
+} from "../../../permissions/ability/entity-ability";
 
 /**
  * Minimal structural type of the CASL rules (see `Ability.rulesFor`)
@@ -231,13 +234,18 @@ function createFieldDecision(
   return {
     fragment,
     inverted: !!rule.inverted,
-    matcher: createMongoAbility([
-      {
-        action: MATCH_ACTION,
-        subject: MATCH_SUBJECT,
-        conditions: { [fieldId]: fragment },
-      },
-    ]),
+    // the same matcher the ability uses, so a condition the ability accepts is
+    // never reported as a field error here (and vice versa)
+    matcher: createMongoAbility(
+      [
+        {
+          action: MATCH_ACTION,
+          subject: MATCH_SUBJECT,
+          conditions: { [fieldId]: fragment },
+        },
+      ],
+      { conditionsMatcher: permissionConditionsMatcher },
+    ),
   };
 }
 
