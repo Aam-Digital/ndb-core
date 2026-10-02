@@ -436,13 +436,13 @@ export class PouchDatabase extends Database {
    * Query a page of one entity type's documents with a Mango selector,
    * optionally sorted (see {@link Database.find}).
    *
-   * Only available on databases that implement {@link findPage} - they differ
-   * only in how they fetch one page of results. Bookmark-based pagination
-   * relies on CouchDB's real Mango `bookmark` cursor, which only exists when
-   * talking directly to a remote CouchDB / the replication-backend over HTTP.
-   * PouchDB's local Mango query engine has no bookmark support at all - it
-   * always reports "nil" (see pouchdb-find/lib/index.js) - so a synced local
-   * database does not support this.
+   * Only available on databases that implement {@link findPage}, which differ
+   * only in how they fetch one page of results: RemotePouchDatabase uses
+   * CouchDB's real Mango `bookmark` cursor, MemoryPouchDatabase (for tests)
+   * the offset of the next document. A synced local database does not
+   * support this: PouchDB's local Mango query engine has no bookmark support
+   * at all - it always reports "nil" (see pouchdb-find/lib/index.js) - and
+   * paging by offset is currently not needed there.
    *
    * When sorted, documents without a value for the sort property are included
    * as well: last for "asc", first for "desc" (see {@link sortedQueries}).
@@ -455,7 +455,7 @@ export class PouchDatabase extends Database {
   ): Promise<FindPage> {
     if (!this.findPage) {
       throw new Error(
-        "find() is only supported by RemotePouchDatabase (bookmark-based pagination requires a real remote CouchDB connection)",
+        "find() is not supported by this database, as it cannot page through query results",
       );
     }
 

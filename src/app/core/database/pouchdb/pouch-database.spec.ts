@@ -452,7 +452,7 @@ describe("PouchDatabase tests", () => {
 
     await expect(
       localDatabase.find("Test", {}, undefined, { prop: "name", dir: "asc" }),
-    ).rejects.toThrow(/only supported by RemotePouchDatabase/);
+    ).rejects.toThrow(/not supported by this database/);
     expect(createIndex).not.toHaveBeenCalled();
 
     await localDatabase.destroy();
