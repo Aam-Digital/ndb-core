@@ -2778,6 +2778,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ImportTransformationResult.html" data-type="entity-link" >ImportTransformationResult</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/IndexedQuery.html" data-type="entity-link" >IndexedQuery</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/InheritanceOption.html" data-type="entity-link" >InheritanceOption</a>
                             </li>
                             <li class="link">

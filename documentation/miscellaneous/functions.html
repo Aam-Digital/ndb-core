@@ -152,6 +152,9 @@
                             <a href="#addTooltip" title="src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>addTooltip</b>&nbsp;&nbsp;&nbsp;(src/.../link-external-profile-dialog.component.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#allOfSelectors" title="src/app/core/database/pouchdb/find-queries.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>allOfSelectors</b>&nbsp;&nbsp;&nbsp;(src/.../find-queries.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#applyConfigMigrations" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>applyConfigMigrations</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
@@ -692,6 +695,9 @@
                             <a href="#loggedUnreachableServer" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>loggedUnreachableServer</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#markAsSecondQuery" title="src/app/core/database/pouchdb/pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>markAsSecondQuery</b>&nbsp;&nbsp;&nbsp;(src/.../pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#matches" title="src/app/utils/test-utils/array-test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>matches</b>&nbsp;&nbsp;&nbsp;(src/.../array-test-utils.ts)</span></a>
                         </li>
                         <li>
@@ -938,6 +944,9 @@
                             <a href="#sortByAttribute" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>sortByAttribute</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#sortedQueries" title="src/app/core/database/pouchdb/find-queries.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>sortedQueries</b>&nbsp;&nbsp;&nbsp;(src/.../find-queries.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#sortExportOnlyLast" title="src/app/core/import/additional-actions/import-additional/import-additional-actions.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>sortExportOnlyLast</b>&nbsp;&nbsp;&nbsp;(src/.../import-additional-actions.component.ts)</span></a>
                         </li>
                         <li>
@@ -993,6 +1002,9 @@
                         </li>
                         <li>
                             <a href="#TranslatableMatPaginator" title="src/app/core/language/TranslatableMatPaginator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>TranslatableMatPaginator</b>&nbsp;&nbsp;&nbsp;(src/.../TranslatableMatPaginator.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#typeSelector" title="src/app/core/database/pouchdb/find-queries.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>typeSelector</b>&nbsp;&nbsp;&nbsp;(src/.../find-queries.ts)</span></a>
                         </li>
                         <li>
                             <a href="#unexpectedResponseMessage" title="src/app/core/logging/http-response-logging.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>unexpectedResponseMessage</b>&nbsp;&nbsp;&nbsp;(src/.../http-response-logging.ts)</span></a>
@@ -2888,6 +2900,240 @@ The use case is, when multiple services extend the same class and one of these s
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../interfaces/ExternalProfile.html" target="_self" >ExternalProfile &amp; { _tooltip?: string }</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/find-queries.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allOfSelectors"></a>
+                    <span class="name">
+                        <span ><b>allOfSelectors</b></span>
+                        <a href="#allOfSelectors"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>allOfSelectors(...selectors: undefined)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Combine Mango selectors so that a document has to match all of them,
+leaving out empty ones (and the <code>$and</code> itself if only one is left).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>selectors</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>PouchDB.Find.Selector</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sortedQueries"></a>
+                    <span class="name">
+                        <span ><b>sortedQueries</b></span>
+                        <a href="#sortedQueries"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>sortedQueries(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query, sort)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The two queries that together return an entity type&#39;s documents sorted by a
+property, in the order in which to page through them.</p>
+<p>A Mango index only contains the documents that have every indexed field
+(and cannot be told to treat a missing one like <code>null</code>), so a query sorted
+through an index on the property skips all documents without a value for it.
+These are queried separately, through a partial index containing only them.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the entity type, i.e. the prefix of its documents&#39; ids</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the Mango selector to filter by</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the property and direction to sort by</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="typeSelector"></a>
+                    <span class="name">
+                        <span ><b>typeSelector</b></span>
+                        <a href="#typeSelector"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>typeSelector(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Selector matching all documents of one entity type.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the entity type, i.e. the prefix of its documents&#39; ids</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>PouchDB.Find.Selector</code>
 
                         </div>
                             <div class="io-description">
@@ -18595,6 +18841,70 @@ separate issue per batch.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/pouch-database.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markAsSecondQuery"></a>
+                    <span class="name">
+                        <span ><b>markAsSecondQuery</b></span>
+                        <a href="#markAsSecondQuery"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>markAsSecondQuery(res: <a href="../miscellaneous/typealiases.html#FindPage" target="_self">FindPage</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>res</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#FindPage" target="_self" >FindPage</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#FindPage" target="_self" >FindPage</a></code>
 
                         </div>
                             <div class="io-description">

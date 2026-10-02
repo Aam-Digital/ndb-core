@@ -327,6 +327,12 @@ provides functionality to sync with a remote CouchDB.</p>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#findPage" >findPage</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#get" >get</a>
                             </li>
@@ -752,7 +758,7 @@ is set generously rather than close to a normal sync&#39;s duration.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:65</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:81</a></code>
 </div>
                         </td>
                     </tr>
@@ -794,7 +800,7 @@ Default: &quot;indexeddb&quot; (the newer adapter). Use &quot;idb&quot; for the 
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:76</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:92</a></code>
 </div>
                         </td>
                     </tr>
@@ -839,7 +845,7 @@ EntityMapperService -&gt; DatabaseResolver -&gt; DatabaseFactoryService.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:53</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:69</a></code>
 </div>
                         </td>
                     </tr>
@@ -885,7 +891,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:55</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:71</a></code>
 </div>
                         </td>
                     </tr>
@@ -925,7 +931,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:58</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:74</a></code>
 </div>
                         </td>
                     </tr>
@@ -970,7 +976,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:46</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:62</a></code>
 </div>
                         </td>
                     </tr>
@@ -1010,7 +1016,7 @@ This change can come from the current user or remotely from the (live) synchroni
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:40</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:56</a></code>
 </div>
                         </td>
                     </tr>
@@ -1575,7 +1581,7 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:180</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:196</a></code>
 </div>
                         </td>
                     </tr>
@@ -1659,7 +1665,7 @@ because that will make your code tightly coupled with PouchDB rather than any ot
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:347</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:363</a></code>
 </div>
                         </td>
                     </tr>
@@ -1711,7 +1717,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:399</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:415</a></code>
 </div>
                         </td>
                     </tr>
@@ -1745,7 +1751,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>find(_prefix?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, _query?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, _page?: { limit?: number; bookmark?: string }, _sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                    <code>find(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, query: PouchDB.Find.Selector, page?: { limit?: number; bookmark?: string }, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
                 </td>
             </tr>
 
@@ -1758,7 +1764,7 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:429</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:450</a></code>
 </div>
                         </td>
                     </tr>
@@ -1766,14 +1772,143 @@ Use rxjs operators to filter for specific prefixes etc. if needed.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Bookmark-based pagination (see <a href="Database.find">Database.find</a>) relies on CouchDB&#39;s
-real Mango <code>bookmark</code> cursor, which only exists when talking directly to
-a remote CouchDB / the replication-backend over HTTP. PouchDB&#39;s local
-Mango query engine has no bookmark support at all - it always reports
-&quot;nil&quot; (see pouchdb-find/lib/index.js) - so there is no correct local
-implementation to fall back to.
-Local pagination could be implemented using <code>skip</code> and <code>limit</code>. But is
-currently not needed.</p>
+                        <div class="io-description"><p>Query a page of one entity type&#39;s documents with a Mango selector,
+optionally sorted (see <a href="Database.find">Database.find</a>).</p>
+<p>Only available on databases that implement <a href="findPage">findPage</a>, which differ
+only in how they fetch one page of results: RemotePouchDatabase uses
+CouchDB&#39;s real Mango <code>bookmark</code> cursor, MemoryPouchDatabase (for tests)
+the offset of the next document. A synced local database does not
+support this: PouchDB&#39;s local Mango query engine has no bookmark support
+at all - it always reports &quot;nil&quot; (see pouchdb-find/lib/index.js) - and
+paging by offset is currently not needed there.</p>
+<p>When sorted, documents without a value for the sort property are included
+as well: last for &quot;asc&quot;, first for &quot;desc&quot; (see <a href="../miscellaneous/functions.html#sortedQueries">sortedQueries</a>).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;&quot;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>query</td>
+                                            <td>
+                                                        <code>PouchDB.Find.Selector</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>page</td>
+                                            <td>
+                                                        <code>{ limit?: number; bookmark?: string }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#FindPage" target="_self" >Promise&lt;FindPage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findPage"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>findPage</b></span>
+                        <a href="#findPage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findPage(findOptions: PouchDB.Find.FindRequest<any>, page?: { limit?: number; bookmark?: string })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/PouchDatabase.html" target="_self" >PouchDatabase</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:483</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Run a single Mango query for one page of results.
+Implemented only by the databases that support <a href="find">find</a>.</p>
 </div>
 
                             <div class="io-description">
@@ -1789,45 +1924,21 @@ currently not needed.</p>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>_prefix</td>
+                                                <td>findOptions</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                                        <code>PouchDB.Find.FindRequest&lt;any&gt;</code>
                                             </td>
 
                                             <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>_query</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
+                                                    No
                                             </td>
 
 
                                         </tr>
                                         <tr>
-                                                <td>_page</td>
+                                                <td>page</td>
                                             <td>
                                                         <code>{ limit?: number; bookmark?: string }</code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>_sort</td>
-                                            <td>
-                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
                                             </td>
 
                                             <td>
@@ -1840,7 +1951,7 @@ currently not needed.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;{ docs: any[]; bookmark?: string }&gt;</code>
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#FindPage" target="_self" >Promise&lt;FindPage&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -1878,7 +1989,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:149</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:165</a></code>
 </div>
                         </td>
                     </tr>
@@ -1999,7 +2110,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:123</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:139</a></code>
 </div>
                         </td>
                     </tr>
@@ -2046,7 +2157,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:113</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:129</a></code>
 </div>
                         </td>
                     </tr>
@@ -2089,7 +2200,7 @@ currently not needed.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:336</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -2137,7 +2248,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:109</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:125</a></code>
 </div>
                         </td>
                     </tr>
@@ -2182,7 +2293,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:614</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:718</a></code>
 </div>
                         </td>
                     </tr>
@@ -2231,7 +2342,7 @@ Returns true if there are no documents in the database</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:296</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:312</a></code>
 </div>
                         </td>
                     </tr>
@@ -2323,7 +2434,7 @@ false if the document did not exist locally (benign — desired state already ac
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:224</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:240</a></code>
 </div>
                         </td>
                     </tr>
@@ -2428,7 +2539,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:272</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:288</a></code>
 </div>
                         </td>
                     </tr>
@@ -2511,7 +2622,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:411</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:427</a></code>
 </div>
                         </td>
                     </tr>
@@ -2556,7 +2667,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:472</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:576</a></code>
 </div>
                         </td>
                     </tr>
@@ -2640,7 +2751,7 @@ The save can partially fail and return a mix of success and error states in the 
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:518</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:622</a></code>
 </div>
                         </td>
                     </tr>
@@ -2720,7 +2831,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:357</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:373</a></code>
 </div>
                         </td>
                     </tr>
@@ -2766,7 +2877,7 @@ overwriting indexes created by a newer app version on a shared server.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:138</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:154</a></code>
 </div>
                         </td>
                     </tr>
