@@ -784,10 +784,6 @@
       },
       "_id": "view:attendance/recurring-activity/:id"
     },
-    "view:report": {
-      "component": "Reporting",
-      "_id": "view:report"
-    },
     "entity:Child": {
       "label": "Schüler:in",
       "labelPlural": "Schüler:innen",

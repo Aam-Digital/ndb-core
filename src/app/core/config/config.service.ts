@@ -3,6 +3,8 @@ import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
+import { addDefaultReportingView } from "../../features/reporting/add-default-reporting-view";
+import { addDefaultMatchingView } from "../../features/matching-entities/add-default-matching-view";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
@@ -170,6 +172,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
     const defaultConfigs: ConfigMigration[] = [
       addDefaultNoteDetailsConfig,
       addDefaultTodoViews,
+      addDefaultReportingView,
+      addDefaultMatchingView,
     ];
 
     const withDefaults = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
