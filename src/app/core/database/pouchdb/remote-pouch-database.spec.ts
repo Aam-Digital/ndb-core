@@ -719,16 +719,20 @@ describe("RemotePouchDatabase tests", () => {
       const pouchDB = (database as any).pouchDB;
 
       let indexCalls = 0;
-      vi.spyOn(pouchDB, "createIndex").mockImplementation(async () => {
-        indexCalls++;
-        if (indexCalls < 2) {
-          throw new TypeError("Failed to fetch");
-        }
-        return { result: "exists", id: "_design/idx", name: "Test_name" };
-      });
-      vi.spyOn(pouchDB, "find").mockResolvedValue({
-        docs: [{ _id: "Test:1" }],
-      });
+      const createIndexSpy = vi
+        .spyOn(pouchDB, "createIndex")
+        .mockImplementation(async (opts: any) => {
+          indexCalls++;
+          if (indexCalls < 2) {
+            throw new TypeError("Failed to fetch");
+          }
+          return { result: "exists", id: "_design/idx", name: opts.index.name };
+        });
+      const findSpy = vi
+        .spyOn(pouchDB, "find")
+        .mockImplementation(async (opts: any) => ({
+          docs: opts.sort ? [{ _id: "Test:1" }] : [],
+        }));
 
       const res = await (database as RemotePouchDatabase).find(
         "Test",
@@ -737,8 +741,84 @@ describe("RemotePouchDatabase tests", () => {
         { prop: "name", dir: "asc" },
       );
 
-      expect(indexCalls).toBe(2);
+      const sortIndexCalls = createIndexSpy.mock.calls.filter(
+        ([opts]: any) => opts.index.name === "Test_name",
+      );
+      expect(sortIndexCalls).toHaveLength(2);
       expect(res.docs).toEqual([{ _id: "Test:1" }]);
+      // an empty filter is left out instead of sending `$and: [{}, ...]`
+      expect((findSpy.mock.calls[0][0] as any).selector).toEqual({
+        name: { $exists: true },
+      });
+    });
+
+    it("queries the docs without the sort property through their own partial index, as the sort index skips them", async () => {
+      database.init("");
+      const pouchDB = (database as any).pouchDB;
+      const createIndexSpy = vi
+        .spyOn(pouchDB, "createIndex")
+        .mockImplementation(async (opts: any) => ({
+          result: "exists",
+          id: "_design/" + opts.index.name,
+          name: opts.index.name,
+        }));
+      const findSpy = vi
+        .spyOn(pouchDB, "find")
+        .mockImplementation(async (opts: any) =>
+          opts.sort
+            ? { docs: [{ _id: "Test:1", name: "A" }], bookmark: "sorted-bm" }
+            : { docs: [{ _id: "Test:2" }], bookmark: "missing-bm" },
+        );
+      const sort = { prop: "name", dir: "asc" as const };
+
+      const first = await (database as RemotePouchDatabase).find(
+        "Test",
+        { kind: "x" },
+        { limit: 5 },
+        sort,
+      );
+
+      expect(first.docs).toEqual([
+        { _id: "Test:1", name: "A" },
+        { _id: "Test:2" },
+      ]);
+      expect(createIndexSpy).toHaveBeenCalledWith({
+        index: {
+          name: "Test_name_missing",
+          partial_filter_selector: {
+            _id: { $lt: "Test:￰", $gte: "Test:" },
+            name: { $exists: false },
+          },
+          fields: ["_id"],
+        },
+      });
+      const missingQuery = findSpy.mock.calls[1][0] as any;
+      expect(missingQuery).toEqual({
+        selector: {
+          $and: [
+            { kind: "x", _id: { $lt: "Test:￰", $gte: "Test:" } },
+            { name: { $exists: false } },
+          ],
+        },
+        use_index: "_design/Test_name_missing",
+        limit: 4,
+      });
+
+      // the next page continues with the docs without the sort property only
+      findSpy.mockClear();
+      await (database as RemotePouchDatabase).find(
+        "Test",
+        { kind: "x" },
+        { limit: 5, bookmark: first.bookmark },
+        sort,
+      );
+      expect(findSpy).toHaveBeenCalledTimes(1);
+      expect(findSpy.mock.calls[0][0]).toEqual(
+        expect.objectContaining({
+          bookmark: "missing-bm",
+          use_index: "_design/Test_name_missing",
+        }),
+      );
     });
   });
 

@@ -4,6 +4,7 @@ import memory from "pouchdb-adapter-memory";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { NgZone } from "@angular/core";
+import { findSorted, RunFind, typeSelector } from "./find-sorted";
 
 /**
  * An alternative implementation of PouchDatabase that uses the in-memory adapter
@@ -40,10 +41,7 @@ export class MemoryPouchDatabase extends PouchDatabase {
    * production code choosing a data source should keep treating this database
    * as one that cannot page.
    *
-   * It is also stricter than CouchDB in one way worth knowing: it sorts only
-   * from an index that also covers every filtered field, so sorting on one
-   * field while filtering on another is rejected here although a real CouchDB
-   * serves it. A caller needing both has to filter on the field it sorts by.
+   * Sorting works the same as in RemotePouchDatabase (see {@link findSorted}).
    */
   override async find(
     prefix = "",
@@ -51,37 +49,35 @@ export class MemoryPouchDatabase extends PouchDatabase {
     page?: { limit?: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
   ): Promise<{ docs: any[]; bookmark?: string }> {
-    const skip = page?.bookmark ? Number(page.bookmark) : 0;
-    const findOptions: PouchDB.Find.FindRequest<any> & { skip?: number } = {
-      selector: {
-        ...query,
-        _id: { $lt: `${prefix}:￰`, $gte: `${prefix}:` },
-      },
-      skip,
-    };
-    if (Number.isInteger(page?.limit)) {
-      findOptions.limit = page.limit;
-    }
-
     const pouchDB = await this.getPouchDBOnceReady();
-    if (sort?.prop) {
-      // mirrors RemotePouchDatabase: the sort field needs an index, and the
-      // type range moves into that index's partial selector
-      const indexRes = await pouchDB.createIndex({
-        index: {
-          name: prefix + "_" + sort.prop,
-          partial_filter_selector: {
-            _id: findOptions.selector._id,
-          },
-          fields: [sort.prop],
-        },
-      });
-      delete findOptions.selector._id;
-      findOptions.sort = [{ [sort.prop]: sort.dir }];
-      findOptions.use_index = indexRes["id"];
+    const runFind: RunFind = async (
+      findOptions: PouchDB.Find.FindRequest<any> & { skip?: number },
+      limit,
+      bookmark,
+    ) => {
+      const skip = bookmark ? Number(bookmark) : 0;
+      findOptions.skip = skip;
+      if (Number.isInteger(limit)) {
+        findOptions.limit = limit;
+      }
+      const res = await pouchDB.find(findOptions);
+      return { docs: res.docs, bookmark: String(skip + res.docs.length) };
+    };
+
+    if (!sort?.prop) {
+      return runFind(
+        { selector: { ...query, ...typeSelector(prefix) } },
+        page?.limit,
+        page?.bookmark,
+      );
     }
 
-    const res = await pouchDB.find(findOptions);
-    return { docs: res.docs, bookmark: String(skip + res.docs.length) };
+    return findSorted(
+      { createIndex: (index) => pouchDB.createIndex(index), runFind },
+      prefix,
+      query,
+      { prop: sort.prop, dir: sort.dir },
+      page,
+    );
   }
 }
