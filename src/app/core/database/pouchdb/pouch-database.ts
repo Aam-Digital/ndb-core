@@ -14,10 +14,26 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { NotificationEvent } from "#src/app/features/notification/model/notification-event";
 // type-only, so the database layer gains no runtime dependency on analytics
 import type { AnalyticsService } from "../../analytics/analytics.service";
+import {
+  FindPage,
+  IndexedQuery,
+  sortedQueries,
+  typeSelector,
+} from "./find-queries";
 
 // Register the newer "indexeddb" adapter alongside the default "idb" adapter
 PouchDB.plugin(indexeddbAdapter);
 PouchDB.plugin(pouchdbFind);
+
+/** Marks a bookmark of the second query (see {@link PouchDatabase.find}). */
+const SECOND_QUERY_BOOKMARK = "q2:";
+
+function markAsSecondQuery(res: FindPage): FindPage {
+  return {
+    docs: res.docs,
+    bookmark: SECOND_QUERY_BOOKMARK + (res.bookmark ?? ""),
+  };
+}
 
 /**
  * What happened to a document whose update was rejected as a conflict
@@ -417,24 +433,112 @@ export class PouchDatabase extends Database {
   }
 
   /**
-   * Bookmark-based pagination (see {@link Database.find}) relies on CouchDB's
-   * real Mango `bookmark` cursor, which only exists when talking directly to
-   * a remote CouchDB / the replication-backend over HTTP. PouchDB's local
-   * Mango query engine has no bookmark support at all - it always reports
-   * "nil" (see pouchdb-find/lib/index.js) - so there is no correct local
-   * implementation to fall back to.
-   * Local pagination could be implemented using `skip` and `limit`. But is
-   * currently not needed.
+   * Query a page of one entity type's documents with a Mango selector,
+   * optionally sorted (see {@link Database.find}).
+   *
+   * Only available on databases that implement {@link findPage} - they differ
+   * only in how they fetch one page of results. Bookmark-based pagination
+   * relies on CouchDB's real Mango `bookmark` cursor, which only exists when
+   * talking directly to a remote CouchDB / the replication-backend over HTTP.
+   * PouchDB's local Mango query engine has no bookmark support at all - it
+   * always reports "nil" (see pouchdb-find/lib/index.js) - so a synced local
+   * database does not support this.
+   *
+   * When sorted, documents without a value for the sort property are included
+   * as well: last for "asc", first for "desc" (see {@link sortedQueries}).
    */
   async find(
-    _prefix?: string,
-    _query?: any,
-    _page?: { limit?: number; bookmark?: string },
-    _sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<{ docs: any[]; bookmark?: string }> {
-    throw new Error(
-      "find() is only supported by RemotePouchDatabase (bookmark-based pagination requires a real remote CouchDB connection)",
-    );
+    prefix = "",
+    query: PouchDB.Find.Selector = {},
+    page?: { limit?: number; bookmark?: string },
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<FindPage> {
+    if (!this.findPage) {
+      throw new Error(
+        "find() is only supported by RemotePouchDatabase (bookmark-based pagination requires a real remote CouchDB connection)",
+      );
+    }
+
+    if (!sort?.prop) {
+      // without a sort, CouchDB's built-in `_id` index serves the type range,
+      // which (unlike an index on the sort property) skips no docs - so neither
+      // an index of our own nor a second query is needed
+      return this.findPage(
+        { selector: { ...query, ...typeSelector(prefix) } },
+        page,
+      );
+    }
+
+    const [first, second] = sortedQueries(prefix, query, {
+      prop: sort.prop,
+      dir: sort.dir,
+    });
+    return this.findInSequence(first, second, page);
+  }
+
+  /**
+   * Run a single Mango query for one page of results.
+   * Implemented only by the databases that support {@link find}.
+   */
+  protected findPage?(
+    findOptions: PouchDB.Find.FindRequest<any>,
+    page?: { limit?: number; bookmark?: string },
+  ): Promise<FindPage>;
+
+  /**
+   * Page through two queries one after the other, as if they were a single one.
+   *
+   * The bookmark stays opaque to callers: a bookmark of the second query is
+   * marked with a prefix, so that the next page continues there.
+   */
+  private async findInSequence(
+    first: IndexedQuery,
+    second: IndexedQuery,
+    page?: { limit?: number; bookmark?: string },
+  ): Promise<FindPage> {
+    const bookmark = page?.bookmark ?? "";
+    if (bookmark.startsWith(SECOND_QUERY_BOOKMARK)) {
+      const secondPage = await this.findIndexed(second, {
+        limit: page.limit,
+        bookmark: bookmark.slice(SECOND_QUERY_BOOKMARK.length),
+      });
+      return markAsSecondQuery(secondPage);
+    }
+
+    const firstPage = await this.findIndexed(first, page);
+    if (page?.limit !== undefined && firstPage.docs.length >= page.limit) {
+      // the first query may have more: continue there on the next page
+      return firstPage;
+    }
+
+    // the first query is exhausted: fill up the page from the second one
+    const secondPage = await this.findIndexed(second, {
+      limit:
+        page?.limit === undefined
+          ? undefined
+          : page.limit - firstPage.docs.length,
+    });
+    return markAsSecondQuery({
+      docs: [...firstPage.docs, ...secondPage.docs],
+      bookmark: secondPage.bookmark,
+    });
+  }
+
+  /** Create a query's index (unless it exists already) and run the query through it. */
+  private async findIndexed(
+    { index, findOptions }: IndexedQuery,
+    page?: { limit?: number; bookmark?: string },
+  ): Promise<FindPage> {
+    const pouchDB = await this.getPouchDBOnceReady();
+    // Unlike other writes this is safe to retry like a read: creating an index
+    // that already exists changes nothing (CouchDB answers "exists").
+    const created = await this.withReadRetry(() =>
+      pouchDB.createIndex({ index }),
+    ).catch((err) => {
+      throw new DatabaseException(err);
+    });
+    // the installed @types/pouchdb-find does not declare `id`
+    return this.findPage({ ...findOptions, use_index: created["id"] }, page);
   }
 
   /**

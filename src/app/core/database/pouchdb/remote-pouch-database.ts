@@ -13,7 +13,7 @@ import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
-import { CreateIndex, findSorted, RunFind, typeSelector } from "./find-sorted";
+import { FindPage } from "./find-queries";
 import {
   describeResponse,
   unexpectedResponseMessage,
@@ -447,7 +447,8 @@ export class RemotePouchDatabase extends PouchDatabase {
   /**
    * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
    * to query the remote CouchDB (via the replication-backend) using the Mango
-   * Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}.
+   * Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * (see {@link PouchDatabase.find}).
    *
    * Pagination uses CouchDB's real `bookmark` cursor: pass the `bookmark`
    * returned by a previous call to continue right after those results. This
@@ -455,66 +456,33 @@ export class RemotePouchDatabase extends PouchDatabase {
    * (unlike `skip`) it also works correctly when the server applies
    * permission filtering to the query (see
    * {@link https://github.com/Aam-Digital/replication-backend/pull/330}).
-   *
-   * Only implemented here: PouchDB's local Mango query engine has no
-   * bookmark support at all (see {@link PouchDatabase.find}).
-   *
-   * When sorted, documents without a value for the sort property are included
-   * as well: last for "asc", first for "desc" (see {@link findSorted}).
    */
-  override async find(
-    prefix = "",
-    query = {},
+  protected override async findPage(
+    findOptions: PouchDB.Find.FindRequest<any>,
     page?: { limit?: number; bookmark?: string },
-    sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<{ docs: any[]; bookmark?: string }> {
-    const pouchDB = await this.getPouchDBOnceReady();
+  ): Promise<FindPage> {
     // the installed @types/pouchdb-find does not declare `bookmark`, although
     // both CouchDB and pouchdb-find's own request/response objects support it
-    const runFind: RunFind = (
-      findOptions: PouchDB.Find.FindRequest<any> & { bookmark?: string },
-      limit,
-      bookmark,
-    ) => {
-      if (Number.isInteger(limit)) {
-        findOptions.limit = limit;
-      }
-      if (bookmark) {
-        findOptions.bookmark = bookmark;
-      }
-      return this.withReadRetry(
-        () =>
-          pouchDB.find(findOptions) as Promise<
-            PouchDB.Find.FindResponse<any> & { bookmark?: string }
-          >,
-      )
-        .then((res) => ({ docs: res.docs, bookmark: res.bookmark }))
-        .catch((err) => {
-          throw new DatabaseException(err);
-        });
+    const request: PouchDB.Find.FindRequest<any> & { bookmark?: string } = {
+      ...findOptions,
     };
-
-    if (!sort?.prop) {
-      return runFind(
-        { selector: { ...query, ...typeSelector(prefix) } },
-        page?.limit,
-        page?.bookmark,
-      );
+    if (Number.isInteger(page?.limit)) {
+      request.limit = page.limit;
+    }
+    if (page?.bookmark) {
+      request.bookmark = page.bookmark;
     }
 
-    // Unlike other writes this is safe to retry like a read: creating an index
-    // that already exists changes nothing (CouchDB answers "exists").
-    const createIndex: CreateIndex = (index) =>
-      this.withReadRetry(() => pouchDB.createIndex(index)).catch((err) => {
-        throw new DatabaseException(err);
-      });
-    return findSorted(
-      { createIndex, runFind },
-      prefix,
-      query,
-      { prop: sort.prop, dir: sort.dir },
-      page,
-    );
+    const pouchDB = await this.getPouchDBOnceReady();
+    const res = await this.withReadRetry(
+      () =>
+        pouchDB.find(request) as Promise<
+          PouchDB.Find.FindResponse<any> & { bookmark?: string }
+        >,
+    ).catch((err) => {
+      throw new DatabaseException(err);
+    });
+    return { docs: res.docs, bookmark: res.bookmark };
   }
 
   protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {

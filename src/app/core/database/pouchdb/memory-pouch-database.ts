@@ -4,7 +4,7 @@ import memory from "pouchdb-adapter-memory";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { SyncState } from "app/core/session/session-states/sync-state.enum";
 import { NgZone } from "@angular/core";
-import { findSorted, RunFind, typeSelector } from "./find-sorted";
+import { FindPage } from "./find-queries";
 
 /**
  * An alternative implementation of PouchDatabase that uses the in-memory adapter
@@ -32,7 +32,7 @@ export class MemoryPouchDatabase extends PouchDatabase {
   }
 
   /**
-   * Query a page through PouchDB's local Mango engine.
+   * Query a page through PouchDB's local Mango engine (see {@link PouchDatabase.find}).
    *
    * {@link supportsFind} stays false on purpose: the local engine has no
    * bookmark cursor, so the opaque bookmark here is the positional offset of
@@ -40,44 +40,19 @@ export class MemoryPouchDatabase extends PouchDatabase {
    * back unread, but it is not the cursor the remote contract promises, and
    * production code choosing a data source should keep treating this database
    * as one that cannot page.
-   *
-   * Sorting works the same as in RemotePouchDatabase (see {@link findSorted}).
    */
-  override async find(
-    prefix = "",
-    query = {},
+  protected override async findPage(
+    findOptions: PouchDB.Find.FindRequest<any>,
     page?: { limit?: number; bookmark?: string },
-    sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<{ docs: any[]; bookmark?: string }> {
-    const pouchDB = await this.getPouchDBOnceReady();
-    const runFind: RunFind = async (
-      findOptions: PouchDB.Find.FindRequest<any> & { skip?: number },
-      limit,
-      bookmark,
-    ) => {
-      const skip = bookmark ? Number(bookmark) : 0;
-      findOptions.skip = skip;
-      if (Number.isInteger(limit)) {
-        findOptions.limit = limit;
-      }
-      const res = await pouchDB.find(findOptions);
-      return { docs: res.docs, bookmark: String(skip + res.docs.length) };
-    };
-
-    if (!sort?.prop) {
-      return runFind(
-        { selector: { ...query, ...typeSelector(prefix) } },
-        page?.limit,
-        page?.bookmark,
-      );
+  ): Promise<FindPage> {
+    const skip = page?.bookmark ? Number(page.bookmark) : 0;
+    const request: PouchDB.Find.FindRequest<any> = { ...findOptions, skip };
+    if (Number.isInteger(page?.limit)) {
+      request.limit = page.limit;
     }
 
-    return findSorted(
-      { createIndex: (index) => pouchDB.createIndex(index), runFind },
-      prefix,
-      query,
-      { prop: sort.prop, dir: sort.dir },
-      page,
-    );
+    const pouchDB = await this.getPouchDBOnceReady();
+    const res = await pouchDB.find(request);
+    return { docs: res.docs, bookmark: String(skip + res.docs.length) };
   }
 }
