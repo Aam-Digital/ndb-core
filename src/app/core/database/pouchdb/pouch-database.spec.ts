@@ -441,6 +441,23 @@ describe("PouchDatabase tests", () => {
     );
   });
 
+  it("rejects a find before creating any index, if it cannot page through query results", async () => {
+    // a plain PouchDatabase, like the synced local one, has no way to page
+    const localDatabase = new PouchDatabase(
+      "unit-test-local-db",
+      syncStateSubject,
+    );
+    localDatabase.init("unit-test-local-db", { adapter: "memory" });
+    const createIndex = vi.spyOn(localDatabase.getPouchDB(), "createIndex");
+
+    await expect(
+      localDatabase.find("Test", {}, undefined, { prop: "name", dir: "asc" }),
+    ).rejects.toThrow(/not supported by this database/);
+    expect(createIndex).not.toHaveBeenCalled();
+
+    await localDatabase.destroy();
+  });
+
   describe("purge", () => {
     it("should purge doc and emit changes deletion event", async () => {
       await database.put({ _id: "Child:2", name: "test" });

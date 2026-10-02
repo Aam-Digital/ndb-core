@@ -14,6 +14,11 @@ interface StubSelector {
   operation?: string | { $ne?: string };
   entityId?: { $gte?: string };
   /**
+   * The sorted list queries the records without a value for its sort field
+   * separately, through `$exists: false` - which none of these docs match.
+   */
+  timestamp?: { $exists?: boolean };
+  /**
    * The author is matched on either recorded field: the backend writes
    * `user.name` only when the access token carried one.
    */
@@ -120,6 +125,9 @@ async function stubAuditBackend(page: Parameters<typeof loadApp>[0]) {
     const selector = flattenSelector(query.selector ?? {});
 
     const matched = AUDIT_DOCS.filter((doc) => {
+      if (selector.timestamp?.$exists === false) {
+        return false;
+      }
       const operation = selector.operation;
       if (typeof operation === "string") {
         if (doc.operation !== operation) {
