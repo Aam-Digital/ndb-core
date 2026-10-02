@@ -33,6 +33,7 @@ describe("LocalPermissionEnforcerService", () => {
     purge: Mock;
   };
   let isIndexedDbAdapterSpy: Mock;
+  let hasCompletedSyncSpy: Mock;
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
@@ -66,6 +67,10 @@ describe("LocalPermissionEnforcerService", () => {
     dbResolver.isIndexedDbAdapterSupported = () => true;
     isIndexedDbAdapterSpy = vi
       .spyOn(dbResolver, "isIndexedDbAdapterSupported")
+      .mockReturnValue(true);
+    dbResolver.hasCompletedSync = () => true;
+    hasCompletedSyncSpy = vi
+      .spyOn(dbResolver, "hasCompletedSync")
       .mockReturnValue(true);
 
     TestBed.inject(AbilityService).initializeRules();
@@ -389,6 +394,24 @@ describe("LocalPermissionEnforcerService", () => {
             category: "Migration",
           },
         );
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should only reset sync instead of destroying a local db that never completed a sync", async () => {
+      vi.useFakeTimers();
+      try {
+        hasCompletedSyncSpy.mockReturnValue(false);
+        entityMapper.save(new TestEntity());
+        await vi.advanceTimersByTimeAsync(0);
+
+        updateRulesAndTriggerEnforcer(userRules);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(destroySpy).not.toHaveBeenCalled();
+        expect(mockLocation.reload).not.toHaveBeenCalled();
+        expect(resetSyncSpy).toHaveBeenCalled();
       } finally {
         vi.useRealTimers();
       }
