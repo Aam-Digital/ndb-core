@@ -59,11 +59,9 @@ export function sortedQueries(
       fields: ["_id"],
     },
     findOptions: {
-      // the type range also makes the `_id` index usable for this query
-      selector: allOfSelectors(
-        { ...query, ...typeSelector(prefix) },
-        hasNoValue,
-      ),
+      // the type range also makes the `_id` index usable for this query.
+      // Separate from the query, to keep any condition of its own on `_id`
+      selector: allOfSelectors(query, typeSelector(prefix), hasNoValue),
     },
   };
 

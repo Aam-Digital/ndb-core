@@ -796,7 +796,8 @@ describe("RemotePouchDatabase tests", () => {
       expect(missingQuery).toEqual({
         selector: {
           $and: [
-            { kind: "x", _id: { $lt: "Test:￰", $gte: "Test:" } },
+            { kind: "x" },
+            { _id: { $lt: "Test:￰", $gte: "Test:" } },
             { name: { $exists: false } },
           ],
         },

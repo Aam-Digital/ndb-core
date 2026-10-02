@@ -150,6 +150,17 @@ describe("MemoryPouchDatabase.find", () => {
       ]);
     });
 
+    it("should apply a filter on the id to them as well", async () => {
+      const res = await db.find(
+        "TestType",
+        { _id: { $in: ["TestType:2", "TestType:4"] } },
+        undefined,
+        { prop: "timestamp", dir: "asc" },
+      );
+
+      expect(res.docs.map((d) => d._id)).toEqual(["TestType:2", "TestType:4"]);
+    });
+
     it("should not include them when the filter requires a value for the sort field", async () => {
       const res = await db.find(
         "TestType",
