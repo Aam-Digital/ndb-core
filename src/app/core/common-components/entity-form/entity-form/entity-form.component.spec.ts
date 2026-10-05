@@ -265,6 +265,26 @@ describe("EntityFormComponent", () => {
     expect(component.form().formGroup.get("other").disabled).toBe(false);
   });
 
+  it("should update the form's validity when a required field is hidden or shown by a displayCondition", async () => {
+    const entity = new TestEntity();
+    entity.name = "shown";
+    await setupFormWithGroups(entity, [
+      { fields: [{ id: "name" }] },
+      {
+        fields: [{ id: "other", validators: { required: true } }],
+        displayCondition: { name: "shown" },
+      },
+    ]);
+    const formGroup = component.form().formGroup;
+    expect(formGroup.valid).toBe(false);
+
+    formGroup.get("name").setValue("hidden");
+    expect(formGroup.valid).toBe(true);
+
+    formGroup.get("name").setValue("shown");
+    expect(formGroup.valid).toBe(false);
+  });
+
   it.each([
     { name: "shown", other: "yes", expectedVisible: true },
     { name: "shown", other: "no", expectedVisible: false },

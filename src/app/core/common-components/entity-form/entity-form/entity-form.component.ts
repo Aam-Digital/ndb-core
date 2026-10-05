@@ -228,11 +228,13 @@ export class EntityFormComponent<T extends Entity = Entity> {
       }
     }
 
+    let controlStateChanged = false;
     for (const fieldId of hiddenFieldIds) {
       const control = form.formGroup.get(fieldId);
       if (control?.enabled) {
         this.conditionDisabledFieldIds.add(fieldId);
         control.disable({ onlySelf: true, emitEvent: false });
+        controlStateChanged = true;
       }
     }
 
@@ -248,7 +250,13 @@ export class EntityFormComponent<T extends Entity = Entity> {
           .get(fieldId)
           ?.enable({ onlySelf: true, emitEvent: false });
         this.conditionDisabledFieldIds.delete(fieldId);
+        controlStateChanged = true;
       }
+    }
+
+    if (controlStateChanged) {
+      // `onlySelf` leaves the form's own validity stale (e.g. still invalid because of a now hidden required field)
+      form.formGroup.updateValueAndValidity({ emitEvent: false });
     }
 
     this.conditionHiddenFieldIds.set(hiddenFieldIds);
