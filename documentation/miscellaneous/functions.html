@@ -839,6 +839,9 @@
                             <a href="#readFileAsArrayBuffer" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>readFileAsArrayBuffer</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#readResponseBody" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>readResponseBody</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#rebuildTree" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rebuildTree</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
@@ -18549,9 +18552,13 @@ including keycloak-specific transient failures.</p>
 as <code>NetworkError.response</code> rather than lifting the status out of it - so the
 report names neither which status it was nor which endpoint refused, and the
 error cannot be told apart from any other by reading it.</p>
+<p>The status alone does not say why Keycloak refused (e.g. a 400 from the token
+endpoint can be an expired, reused or mismatched code), so the response body
+is read as well: the OAuth <code>error</code> / <code>error_description</code> if it is JSON, or a
+short excerpt otherwise (e.g. an HTML error page from a proxy in front).</p>
 <p>Passed as log context rather than interpolated into the message, so that all
 occurrences stay one issue in remote monitoring (see <code>core/logging/README.md</code>)
-while the status is one click away in the event&#39;s data.</p>
+while the details are one click away in the event&#39;s data.</p>
 </div>
 
                             <div class="io-description">
@@ -18582,7 +18589,71 @@ while the status is one click away in the event&#39;s data.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
+                            <b>Returns : </b>    <code>Promise&lt;Record&lt;string, unknown&gt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="readResponseBody"></a>
+                    <span class="name">
+                        <span ><b>readResponseBody</b></span>
+                        <a href="#readResponseBody"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>readResponseBody(response: Response)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Best-effort read of a failed response&#39;s body for diagnostics.
+Never throws: a body that cannot be read only means less detail in the report.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>response</td>
+                                            <td>
+                                                        <code>Response</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Record&lt;string, unknown&gt;&gt;</code>
 
                         </div>
                             <div class="io-description">
