@@ -18,9 +18,20 @@ export function splitNegation(fragment: any): {
   return { negated: false, positive: fragment };
 }
 
-/** Wrap a positive fragment so it matches everything except itself. */
+/**
+ * Wrap a positive fragment so it matches everything except itself.
+ *
+ * `$not` only accepts a regular expression or an object of field operators, so
+ * a plain value has to be expressed as `$eq` first. Handing it the bare value
+ * produces a condition the matcher rejects - and a rejected condition makes the
+ * whole rule unusable, which silently grants nothing.
+ */
 export function negate(positive: any): any {
-  return { $not: positive };
+  const operand =
+    positive !== null && typeof positive === "object"
+      ? positive
+      : { $eq: positive };
+  return { $not: operand };
 }
 
 /**

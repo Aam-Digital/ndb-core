@@ -1,4 +1,5 @@
 import { negate, splitNegation, withSameNegation } from "./condition-negation";
+import { permissionConditionsMatcher } from "../../permissions/ability/entity-ability";
 
 describe("condition negation helpers", () => {
   it("should unwrap a negated fragment", () => {
@@ -41,8 +42,41 @@ describe("condition negation helpers", () => {
     });
   });
 
+  describe("fragments the matcher can actually evaluate", () => {
+    // the editor's output has to compile with the same matcher that later
+    // evaluates it - a fragment it rejects is dropped as an unusable rule,
+    // which silently grants nothing
+    const compiles = (conditions: any) => {
+      try {
+        permissionConditionsMatcher(conditions);
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
+    it.each([
+      ["a string", "Ann"],
+      ["a number", 10],
+      ["a boolean", true],
+      ["null", null],
+      ["an $in fragment", { $in: ["C1"] }],
+      ["an $elemMatch fragment", { $elemMatch: { $in: ["a"] } }],
+    ])("should negate %s into an evaluable condition", (_label, value) => {
+      expect(compiles({ field: negate(value) })).toBe(true);
+    });
+
+    it("should keep a negated scalar meaning the same as the positive one", () => {
+      expect(
+        compiles({ field: withSameNegation({ $not: { $eq: "x" } }, "Ann") }),
+      ).toBe(true);
+    });
+  });
+
   it("should carry a previous fragment's negation onto a new value", () => {
-    expect(withSameNegation({ $not: "Ann" }, "Bob")).toEqual({ $not: "Bob" });
+    expect(withSameNegation({ $not: { $eq: "Ann" } }, "Bob")).toEqual({
+      $not: { $eq: "Bob" },
+    });
   });
 
   it("should leave a new value positive when the previous was not negated", () => {

@@ -225,18 +225,18 @@ describe("ConditionsEditorComponent", () => {
       component.setNegated(0, true);
 
       expect(component.conditionsArray()[0]).toEqual({
-        name: { $not: "Ann" },
+        name: { $not: { $eq: "Ann" } },
       });
       expect(component.isNegated(0)).toBe(true);
     });
 
     it("should unwrap the fragment when set back to positive", () => {
-      component.conditions = { $or: [{ name: { $not: "Ann" } }] };
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
       component.ngOnInit();
 
       component.setNegated(0, false);
 
-      expect(component.conditionsArray()[0]).toEqual({ name: "Ann" });
+      expect(component.conditionsArray()[0]).toEqual({ name: { $eq: "Ann" } });
       expect(component.isNegated(0)).toBe(false);
     });
 
@@ -244,13 +244,13 @@ describe("ConditionsEditorComponent", () => {
       mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
       mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("Bob");
 
-      component.conditions = { $or: [{ name: { $not: "Ann" } }] };
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
       component.ngOnInit();
 
       component.conditionFormControls.get("0").setValue("Bob");
 
       expect(component.conditionsArray()[0]).toEqual({
-        name: { $not: "Bob" },
+        name: { $not: { $eq: "Bob" } },
       });
     });
 
@@ -287,7 +287,7 @@ describe("ConditionsEditorComponent", () => {
     });
 
     it("should reset the negation when the row's field changes", () => {
-      component.conditions = { $or: [{ name: { $not: "Ann" } }] };
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
       component.ngOnInit();
 
       component.onConditionFieldChange(0, "genderSingle");
@@ -301,14 +301,14 @@ describe("ConditionsEditorComponent", () => {
       mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
       mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("Bob");
 
-      component.conditions = { $or: [{ name: { $not: "Ann" } }] };
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
       component.ngOnInit();
 
       component.conditionFormControls.get("0").setValue("Bob");
 
       // the UI cannot show the negation here, but it must not silently drop it
       expect(component.conditionsArray()[0]).toEqual({
-        name: { $not: "Bob" },
+        name: { $not: { $eq: "Bob" } },
       });
     });
   });
