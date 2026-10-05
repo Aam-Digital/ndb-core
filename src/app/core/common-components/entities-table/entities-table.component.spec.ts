@@ -386,6 +386,15 @@ describe("EntitiesTableComponent", () => {
     expect(component.effectiveFilter()).toEqual(NOT_ARCHIVED_FILTER);
   });
 
+  it("should hide the archived toggle for a type that cannot be archived", () => {
+    fixture.componentRef.setInput("showInactiveToggle", false);
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector(".filter-inactive-toggle"),
+    ).toBeNull();
+  });
+
   it("should overwrite entity schema fields with customColumn config", async () => {
     fixture.componentRef.setInput("entityType", TestEntity);
     const customField = {

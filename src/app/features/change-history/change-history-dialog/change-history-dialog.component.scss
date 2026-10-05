@@ -121,3 +121,11 @@ $history-open-bg: #f1f6fb;
     margin-right: 0;
   }
 }
+
+/* sits between the dialog title and its content, both of which Material pads by
+   24px; without matching that, the record name hangs off to the left of
+   everything below it. Not one of the global padding classes, as those are
+   em-based and would drift from Material's fixed value */
+.record-subtitle {
+  padding: 0 24px;
+}

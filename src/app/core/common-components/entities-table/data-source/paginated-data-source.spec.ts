@@ -7,7 +7,6 @@ import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -88,12 +87,25 @@ describe("PaginatedDataSource", () => {
     });
 
     it("should strip the '.id' suffix of entity/enum reference keys (stored by id only)", () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+
       expect(processFilter({ "category.id": "SCHOOL" })).toEqual({
         category: "SCHOOL",
       });
     });
 
+    it("should keep '.id' where it is a real path into an object value", () => {
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+
+      // `other` is a plain field, so its value is an object of its own and
+      // rewriting this would silently match nothing
+      expect(processFilter({ "other.id": "x" })).toEqual({ "other.id": "x" });
+    });
+
     it("should strip the '.id' suffix also within nested $or / $elemMatch conditions of enum filters", () => {
+      // the rewrite consults the field's datatype, so the type has to be known
+      dataSource.loadRecordConfig.set({ entityCtr: TestEntity });
+
       expect(
         processFilter({
           $or: [

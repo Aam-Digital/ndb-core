@@ -12,8 +12,9 @@ import {
   output,
   untracked,
 } from "@angular/core";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { AuditRecord } from "../../../features/change-history/model/audit-record";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
   FilterConfig,
@@ -120,6 +121,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly ability = inject(EntityAbility);
   private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly injector = inject(Injector);
+
+  /** the audit data the change log reads, as the permission subject to ask about */
+  protected readonly auditRecordType = AuditRecord.ENTITY_TYPE;
 
   public publicFormConfigs: PublicFormConfig[] = [];
 
