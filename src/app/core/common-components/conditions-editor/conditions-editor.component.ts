@@ -25,7 +25,7 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { applyNegation, splitNegation } from "./condition-negation";
+import { negate, splitNegation, withSameNegation } from "./condition-negation";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -109,7 +109,7 @@ export class ConditionsEditorComponent implements OnInit {
     if (!fieldKey) return;
 
     const { positive } = splitNegation(condition[fieldKey]);
-    condition[fieldKey] = applyNegation(positive, negated);
+    condition[fieldKey] = negated ? negate(positive) : positive;
 
     this.conditionsSignal.set({ ...this.conditions });
     this.conditionsChange.emit(this.conditions);
@@ -269,9 +269,7 @@ export class ConditionsEditorComponent implements OnInit {
     fieldConfig: EntitySchemaField,
     conditionFieldConfig: EntitySchemaField,
   ): void {
-    // the fragment is rebuilt from the value, so a negation has to be carried
-    // over explicitly or it would be dropped on every edit
-    const { negated } = splitNegation(condition[fieldKey]);
+    const previous = condition[fieldKey];
 
     const dbValue = this.entitySchemaService.valueToDatabaseFormat(
       value,
@@ -294,7 +292,7 @@ export class ConditionsEditorComponent implements OnInit {
       positive = dbValue;
     }
 
-    condition[fieldKey] = applyNegation(positive, negated);
+    condition[fieldKey] = withSameNegation(previous, positive);
 
     this.conditionsChange.emit(this.conditions);
   }

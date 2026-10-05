@@ -277,15 +277,30 @@ export function describeConditionFragment(
     return $localize`:a negated permission condition value:not ${describeConditionFragment(positive, formatValue)}`;
   }
 
+  return (
+    describeSingleOperator(fragment, formatValue) ?? JSON.stringify(fragment)
+  );
+}
+
+/**
+ * Human-readable display of a fragment holding exactly one operator we have
+ * wording for, or `undefined` if it is not such a fragment.
+ */
+function describeSingleOperator(
+  fragment: object,
+  formatValue: (value: any) => string,
+): string | undefined {
   const operators = Object.entries(fragment);
-  if (operators.length === 1) {
-    const [operator, value] = operators[0];
-    if (operator === "$eq") {
-      return describeConditionFragment(value, formatValue);
-    }
-    if (operator === "$in" && Array.isArray(value)) {
-      return value.map(formatValue).join(", ");
-    }
+  if (operators.length !== 1) {
+    return undefined;
   }
-  return JSON.stringify(fragment);
+
+  const [operator, value] = operators[0];
+  if (operator === "$eq") {
+    return describeConditionFragment(value, formatValue);
+  }
+  if (operator === "$in" && Array.isArray(value)) {
+    return value.map(formatValue).join(", ");
+  }
+  return undefined;
 }

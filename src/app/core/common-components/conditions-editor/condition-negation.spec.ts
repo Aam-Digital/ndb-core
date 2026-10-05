@@ -1,4 +1,4 @@
-import { applyNegation, splitNegation } from "./condition-negation";
+import { negate, splitNegation, withSameNegation } from "./condition-negation";
 
 describe("condition negation helpers", () => {
   it("should unwrap a negated fragment", () => {
@@ -31,8 +31,8 @@ describe("condition negation helpers", () => {
     });
   });
 
-  it("should round-trip a fragment through applyNegation", () => {
-    const stored = applyNegation({ $in: ["C1"] }, true);
+  it("should round-trip a fragment through negate", () => {
+    const stored = negate({ $in: ["C1"] });
 
     expect(stored).toEqual({ $not: { $in: ["C1"] } });
     expect(splitNegation(stored)).toEqual({
@@ -41,7 +41,11 @@ describe("condition negation helpers", () => {
     });
   });
 
-  it("should not wrap when not negated", () => {
-    expect(applyNegation({ $in: ["C1"] }, false)).toEqual({ $in: ["C1"] });
+  it("should carry a previous fragment's negation onto a new value", () => {
+    expect(withSameNegation({ $not: "Ann" }, "Bob")).toEqual({ $not: "Bob" });
+  });
+
+  it("should leave a new value positive when the previous was not negated", () => {
+    expect(withSameNegation("Ann", "Bob")).toBe("Bob");
   });
 });

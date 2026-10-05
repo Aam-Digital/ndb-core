@@ -18,7 +18,19 @@ export function splitNegation(fragment: any): {
   return { negated: false, positive: fragment };
 }
 
-/** Re-apply a negation flag to a freshly built positive fragment. */
-export function applyNegation(positive: any, negated: boolean): any {
-  return negated ? { $not: positive } : positive;
+/** Wrap a positive fragment so it matches everything except itself. */
+export function negate(positive: any): any {
+  return { $not: positive };
+}
+
+/**
+ * Build the replacement for `previous` from a freshly built positive fragment,
+ * keeping whatever negation `previous` carried.
+ *
+ * The editor rebuilds a row's fragment from its value on every edit, so without
+ * this the negation of an existing condition would be dropped as soon as its
+ * value changed.
+ */
+export function withSameNegation(previous: any, positive: any): any {
+  return splitNegation(previous).negated ? negate(positive) : positive;
 }
