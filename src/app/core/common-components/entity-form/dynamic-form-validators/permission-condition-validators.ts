@@ -10,6 +10,7 @@ import {
   EntityAbility,
   permissionConditionsMatcher,
 } from "../../../permissions/ability/entity-ability";
+import { splitNegation } from "../../conditions-editor/condition-negation";
 
 /**
  * Minimal structural type of the CASL rules (see `Ability.rulesFor`)
@@ -269,6 +270,11 @@ export function describeConditionFragment(
   }
   if (Array.isArray(fragment)) {
     return fragment.map(formatValue).join(", ");
+  }
+
+  const { negated, positive } = splitNegation(fragment);
+  if (negated) {
+    return $localize`:a negated permission condition value:not ${describeConditionFragment(positive, formatValue)}`;
   }
 
   const operators = Object.entries(fragment);

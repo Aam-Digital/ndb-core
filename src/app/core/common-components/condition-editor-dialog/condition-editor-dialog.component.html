@@ -43,6 +43,7 @@
     [entityConstructor]="data.entityConstructor"
     [hint]="combinatorHint()"
     [showInternalIdField]="!!data.showInternalIdField"
+    [allowNegation]="data.allowNegation !== false"
     (conditionsChange)="onConditionsChange($event)"
   ></app-conditions-editor>
 </mat-dialog-content>

@@ -30,6 +30,12 @@ export interface ConditionEditorDialogData {
 
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
   showInternalIdField?: boolean;
+
+  /**
+   * offer the "is / is not" control on each condition row (default: true).
+   * Set false where the evaluator cannot handle `$not`.
+   */
+  allowNegation?: boolean;
 }
 
 /**

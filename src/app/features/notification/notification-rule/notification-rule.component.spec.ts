@@ -11,6 +11,8 @@ import {
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import type { Mock } from "vitest";
+import { By } from "@angular/platform-browser";
+import { ConditionsEditorComponent } from "app/core/common-components/conditions-editor/conditions-editor.component";
 
 type HttpClientMock = {
   get: Mock;
@@ -104,5 +106,16 @@ describe("NotificationRuleComponent", () => {
         enabled: true,
       } as NotificationRule),
     );
+  });
+  it("should not offer negation, which the backend rule engine cannot evaluate", () => {
+    fixture.componentRef.setInput("value", mockValue);
+    fixture.detectChanges();
+
+    const editor = fixture.debugElement.query(
+      By.directive(ConditionsEditorComponent),
+    )?.componentInstance as ConditionsEditorComponent;
+
+    expect(editor).toBeTruthy();
+    expect(editor.allowNegation()).toBe(false);
   });
 });

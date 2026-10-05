@@ -8,6 +8,8 @@ import {
   ConditionEditorDialogData,
 } from "./condition-editor-dialog.component";
 import { mockMatDialogRef } from "#src/app/utils/test-utils/dialog-mocks";
+import { By } from "@angular/platform-browser";
+import { ConditionsEditorComponent } from "../conditions-editor/conditions-editor.component";
 
 describe("ConditionEditorDialogComponent", () => {
   const mockDialogRef = mockMatDialogRef();
@@ -160,5 +162,32 @@ describe("ConditionEditorDialogComponent", () => {
     const component = createComponent({ conditions: { center: "x" } });
     component.cancel();
     expect(mockDialogRef.close).toHaveBeenCalledWith(undefined);
+  });
+  describe("negation pass-through", () => {
+    function editorOf(data: Partial<ConditionEditorDialogData> = {}) {
+      TestBed.configureTestingModule({
+        imports: [ConditionEditorDialogComponent],
+        providers: [
+          { provide: MatDialogRef, useValue: mockDialogRef },
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: { ...defaultData, ...data },
+          },
+        ],
+      });
+      const fixture = TestBed.createComponent(ConditionEditorDialogComponent);
+      TestBed.inject(FaIconLibrary).addIconPacks(fas);
+      fixture.detectChanges();
+      return fixture.debugElement.query(By.directive(ConditionsEditorComponent))
+        .componentInstance as ConditionsEditorComponent;
+    }
+
+    it("should offer negation by default", () => {
+      expect(editorOf().allowNegation()).toBe(true);
+    });
+
+    it("should hide negation when the caller opts out", () => {
+      expect(editorOf({ allowNegation: false }).allowNegation()).toBe(false);
+    });
   });
 });

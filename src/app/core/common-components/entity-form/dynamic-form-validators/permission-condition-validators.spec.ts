@@ -157,4 +157,14 @@ describe("buildPermissionConditionValidator", () => {
     expect(validator(new FormControl("Bengali"))).toBeNull();
     expect(validator(new FormControl("English"))).not.toBeNull();
   });
+  it("should describe a negated condition as 'not <value>'", () => {
+    const toLabel = (v: any) => (v === "M" ? "Male" : String(v));
+
+    expect(describeConditionFragment({ $not: { $eq: "M" } }, toLabel)).toBe(
+      "not Male",
+    );
+    expect(describeConditionFragment({ $not: { $in: ["M"] } }, toLabel)).toBe(
+      "not Male",
+    );
+  });
 });
