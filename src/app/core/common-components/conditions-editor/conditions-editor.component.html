@@ -16,6 +16,20 @@
           ></app-entity-field-select>
         </mat-form-field>
 
+        @if (allowNegation()) {
+          <mat-form-field class="operator-select">
+            <mat-label i18n>Condition</mat-label>
+            <mat-select
+              [value]="isNegated(conditionId)"
+              (valueChange)="setNegated(conditionId, $event)"
+              [disabled]="disabled"
+            >
+              <mat-option [value]="false" i18n>is</mat-option>
+              <mat-option [value]="true" i18n>is not</mat-option>
+            </mat-select>
+          </mat-form-field>
+        }
+
         @if (
           conditionFormFieldConfigs.get(conditionId + "");
           as formFieldConfig

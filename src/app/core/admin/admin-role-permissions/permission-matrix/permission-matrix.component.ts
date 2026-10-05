@@ -494,7 +494,7 @@ export class PermissionMatrixComponent {
 
     this.dialog
       .open(ConditionEditorDialogComponent, {
-        width: "600px",
+        width: "780px",
         data: {
           entityConstructor,
           conditions,
