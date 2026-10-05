@@ -96,11 +96,8 @@
       "matchManagers": [
         "github-actions"
       ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
       "groupName": "github-actions",
+      "draftPR": false,
       "automerge": false
     },
     {
