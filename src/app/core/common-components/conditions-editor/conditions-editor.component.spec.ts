@@ -296,21 +296,5 @@ describe("ConditionsEditorComponent", () => {
       expect(component.isNegated(0)).toBe(false);
       expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
     });
-
-    it("should preserve an existing negation even where the control is hidden", () => {
-      fixture.componentRef.setInput("allowNegation", false);
-      mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
-      mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("Bob");
-
-      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
-      component.ngOnInit();
-
-      component.conditionFormControls.get("0").setValue("Bob");
-
-      // the UI cannot show the negation here, but it must not silently drop it
-      expect(component.conditionsArray()[0]).toEqual({
-        name: { $not: { $eq: "Bob" } },
-      });
-    });
   });
 });

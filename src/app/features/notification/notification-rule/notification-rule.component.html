@@ -71,7 +71,6 @@
         <app-conditions-editor
           [disabled]="!value()?.entityType"
           [conditions]="form.get('conditions')?.value"
-          [allowNegation]="false"
           [entityConstructor]="entityConstructor()"
           (conditionsChange)="onConditionsChange($event)"
         ></app-conditions-editor>

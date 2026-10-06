@@ -59,13 +59,6 @@ export class ConditionsEditorComponent implements OnInit {
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
   readonly showInternalIdField = input(false);
 
-  /**
-   * Offer the "is / is not" control on each row.
-   * Disabled where the evaluator cannot handle `$not` (e.g. notification rules,
-   * which are evaluated by the backend).
-   */
-  readonly allowNegation = input(true);
-
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
