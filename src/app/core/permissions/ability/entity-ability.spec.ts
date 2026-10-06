@@ -95,6 +95,7 @@ describe("EntityAbility", () => {
       ).toBe(false);
     });
   });
+
   describe("invalid conditions", () => {
     let entity: TestEntity;
 
