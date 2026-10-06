@@ -217,6 +217,7 @@ describe("ConditionsEditorComponent", () => {
       }),
     );
   });
+
   describe("negation", () => {
     it("should wrap a row's fragment in $not when set to negated", () => {
       component.conditions = { $or: [{ name: "Ann" }] };
