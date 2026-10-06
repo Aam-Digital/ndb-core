@@ -6,6 +6,7 @@ import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import type { Mock } from "vitest";
+import { Logging } from "../../../logging/logging.service";
 
 type HttpClientMock = {
   get: Mock;
@@ -349,6 +350,65 @@ describe("KeycloakAuthService", () => {
       vi.useRealTimers();
     }
   });
+
+  it.each([
+    [
+      "the OAuth error of a JSON body",
+      new Response(
+        JSON.stringify({
+          error: "invalid_grant",
+          error_description: "Code not valid",
+        }),
+        { status: 400 },
+      ),
+      {
+        responseStatus: 400,
+        responseError: "invalid_grant",
+        responseErrorDescription: "Code not valid",
+      },
+    ],
+    [
+      "a bounded excerpt of a body that is not OAuth error JSON",
+      new Response("<html>" + "x".repeat(1_000) + "</html>", { status: 400 }),
+      {
+        responseStatus: 400,
+        responseBody: ("<html>" + "x".repeat(1_000)).slice(0, 300),
+      },
+    ],
+    [
+      "that the body could not be read",
+      Object.assign(new Response("already read", { status: 400 }), {
+        clone: () => {
+          throw new TypeError("Response body is already used");
+        },
+      }),
+      { responseStatus: 400, responseBody: "unreadable" },
+    ],
+  ])(
+    "reports %s when keycloak rejects init",
+    async (_, response, expectedContext) => {
+      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+      // the shape keycloak-js throws: the unread Response on `response`
+      const rejected = Object.assign(
+        new Error("Server responded with an invalid status."),
+        { response },
+      );
+      mockKeycloak.init.mockRejectedValue(rejected);
+
+      try {
+        await expect(service.checkSession()).rejects.toBe(rejected);
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          "Keycloak init failed",
+          rejected,
+          expect.objectContaining(expectedContext),
+        );
+      } finally {
+        // `Logging` is shared by every spec file in the (non-isolated) worker
+        errorSpy.mockRestore();
+      }
+    },
+  );
 
   it("should NOT retry login on a 4xx error", async () => {
     const authError = { status: 401 } as any;

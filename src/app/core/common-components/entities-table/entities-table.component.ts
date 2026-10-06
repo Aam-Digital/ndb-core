@@ -106,6 +106,14 @@ export class EntitiesTableComponent<T extends Entity>
   newRecordFactory = input<() => T>();
   editable = input<boolean>(true);
   selectable = input<boolean>(false);
+  /**
+   * Whether to offer the "include archived records" toggle.
+   *
+   * Turn this off for types that have no `inactive` flag, where the toggle
+   * would offer a filter that can never match. Such a list should also set
+   * `showInactive` so no archived condition is added to its queries.
+   */
+  showInactiveToggle = input<boolean>(true);
 
   // --- Outputs & Models ---
   entityClick = output<T>();

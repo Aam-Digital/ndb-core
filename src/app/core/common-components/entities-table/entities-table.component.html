@@ -113,13 +113,15 @@
   <!--
   SHOW ARCHIVED TOGGLE
   -->
-  <div class="table-footer filter-inactive-toggle">
-    <mat-slide-toggle
-      [checked]="showInactive()"
-      (change)="showInactive.set($event.checked)"
-      i18n="slider|also show entries that are archived"
-    >
-      Include archived records
-    </mat-slide-toggle>
-  </div>
+  @if (showInactiveToggle()) {
+    <div class="table-footer filter-inactive-toggle">
+      <mat-slide-toggle
+        [checked]="showInactive()"
+        (change)="showInactive.set($event.checked)"
+        i18n="slider|also show entries that are archived"
+      >
+        Include archived records
+      </mat-slide-toggle>
+    </div>
+  }
 </div>
