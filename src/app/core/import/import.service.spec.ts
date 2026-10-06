@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ImportService } from "./import.service";
+import { ImportService, PartialImportError } from "./import.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
@@ -72,6 +72,111 @@ describe("ImportService", () => {
         config: testImportSettings,
       } as Partial<ImportMetadata>),
     );
+  });
+
+  describe("saving in batches", () => {
+    const batchImportSettings: ImportSettings = {
+      entityType: "Entity",
+      columnMapping: undefined,
+    };
+
+    /** Three entities to import, with the batch size set so they need two writes. */
+    function setupTwoBatches(): Entity[] {
+      (service as any).SAVE_BATCH_SIZE = 2;
+      return [new Entity("1"), new Entity("2"), new Entity("3")];
+    }
+
+    it("should split the records across several writes", async () => {
+      const testEntities = setupTwoBatches();
+      vi.spyOn(entityMapper, "saveAll");
+
+      await service.executeImport(testEntities, batchImportSettings);
+
+      expect(
+        (entityMapper.saveAll as any).mock.calls.map(([batch]) =>
+          batch.map((e: Entity) => e.getId()),
+        ),
+      ).toEqual([["Entity:1", "Entity:2"], ["Entity:3"]]);
+    });
+
+    it("should record the records saved before a failing batch in the import history", async () => {
+      const testEntities = setupTwoBatches();
+      vi.spyOn(entityMapper, "saveAll").mockImplementation(
+        async (batch: Entity[]) => {
+          if (batch.some((e) => e.getId() === "Entity:3")) {
+            throw new Error("write rejected");
+          }
+          return [];
+        },
+      );
+      vi.spyOn(entityMapper, "save");
+
+      const error = await service
+        .executeImport(testEntities, batchImportSettings)
+        .catch((e) => e);
+
+      expect(error).toBeInstanceOf(PartialImportError);
+      expect(error.importedCount).toBe(2);
+      expect(error.totalCount).toBe(3);
+      // the partial import is recorded, so it can be reviewed and undone
+      expect(entityMapper.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          createdEntities: ["Entity:1", "Entity:2"],
+        } as Partial<ImportMetadata>),
+      );
+    });
+
+    it("should keep the records a batch stored although single records of it failed", async () => {
+      (service as any).SAVE_BATCH_SIZE = 2;
+      const testEntities = [
+        new Entity("1"),
+        new Entity("2"),
+        new Entity("3"),
+        new Entity("4"),
+      ];
+      // saveAll rejects *with* its results when only single documents failed
+      const mixedResults = [
+        { ok: true, id: "Entity:3", rev: "1-new" },
+        Object.assign(new Error("Document update conflict"), { status: 409 }),
+      ];
+      vi.spyOn(entityMapper, "saveAll").mockImplementation(
+        async (batch: Entity[]) => {
+          if (batch.some((e) => e.getId() === "Entity:3")) {
+            throw mixedResults;
+          }
+          return [];
+        },
+      );
+      vi.spyOn(entityMapper, "save");
+
+      const error = await service
+        .executeImport(testEntities, batchImportSettings)
+        .catch((e) => e);
+
+      expect(entityMapper.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          createdEntities: ["Entity:1", "Entity:2", "Entity:3"],
+        } as Partial<ImportMetadata>),
+      );
+      // the results stay reachable, so the conflict can still be told apart
+      // from any other failure
+      expect(error.cause).toBe(mixedResults);
+    });
+
+    it("should report an ordinary failure when the very first batch fails", async () => {
+      const testEntities = setupTwoBatches();
+      const writeError = new Error("write rejected");
+      vi.spyOn(entityMapper, "saveAll").mockRejectedValue(writeError);
+      vi.spyOn(entityMapper, "save");
+
+      const error = await service
+        .executeImport(testEntities, batchImportSettings)
+        .catch((e) => e);
+
+      expect(error).toBe(writeError);
+      // nothing was written, so there is nothing to record or undo
+      expect(entityMapper.save).not.toHaveBeenCalled();
+    });
   });
 
   it("should transform raw data to mapped entities", async () => {

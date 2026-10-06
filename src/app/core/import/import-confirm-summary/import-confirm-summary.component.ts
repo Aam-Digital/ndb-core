@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   signal,
 } from "@angular/core";
-import { ImportService } from "../import.service";
+import { ImportService, PartialImportError } from "../import.service";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -94,8 +94,14 @@ export class ImportConfirmSummaryComponent {
       this.showImportSuccessToast(completedImport);
       this.dialogRef.close({ completedImport });
     } catch (error) {
-      if (this.isPutAllConflictError(error)) {
+      // a partial import carries the failure that stopped it, and that failure
+      // decides the message: a conflict has its own, more specific advice, which
+      // must not be swallowed just because earlier batches had been written
+      const failure = error instanceof PartialImportError ? error.cause : error;
+      if (this.isPutAllConflictError(failure)) {
         this.showImportPutAllConflictWarning();
+      } else if (error instanceof PartialImportError) {
+        this.showPartialImportWarning(error);
       } else {
         // Handle all other errors
         Logging.warn("Import failed with error", error);
@@ -145,6 +151,19 @@ export class ImportConfirmSummaryComponent {
     this.confirmationService.getConfirmation(
       $localize`Conflicts overwriting updated data`,
       $localize`Some records changed from synchronisation while preparing the import. We are refreshing the data for you. Please review and run import again.`,
+      OkButton,
+    );
+  }
+
+  /**
+   * Unlike a completely failed import, a partial one must not be retried as a whole:
+   * the records that were saved would be imported a second time. So the user is told
+   * how many are already there and where to undo them.
+   */
+  private showPartialImportWarning(error: PartialImportError) {
+    this.confirmationService.getConfirmation(
+      $localize`Import only partially completed`,
+      $localize`Only ${error.importedCount} of ${error.totalCount} records could be imported before an error occurred. The imported records have been saved and are listed in the import history, where you can undo them. Please check there before importing this file again, to avoid creating duplicates.`,
       OkButton,
     );
   }

@@ -913,6 +913,107 @@ describe("RemotePouchDatabase tests", () => {
     });
   });
 
+  describe("splitting large bulk writes across requests", () => {
+    /**
+     * Mocks the database's writes and shrinks the request budgets, so that the tests
+     * can trigger a split with a handful of small documents instead of megabytes.
+     */
+    function setupBulkWrites(): { pouchDB: any; bulkDocs: Mock } {
+      database.init("");
+      const pouchDB = (database as any).pouchDB;
+      (database as any).MAX_BULK_REQUEST_BYTES = 2000;
+      (database as any).MAX_BULK_REQUEST_DOCS = 4;
+      const bulkDocs = vi
+        .spyOn(pouchDB, "bulkDocs")
+        .mockImplementation(async (docs: any) =>
+          (docs as any[]).map((doc) => ({
+            ok: true,
+            id: doc._id,
+            rev: "1-new",
+          })),
+        );
+      return { pouchDB, bulkDocs: bulkDocs as unknown as Mock };
+    }
+
+    /** `count` documents of roughly `bytes` each. */
+    function documents(count: number, bytes: number) {
+      return Array.from({ length: count }, (_, i) => ({
+        _id: `Entity:${i}`,
+        text: "x".repeat(bytes),
+      }));
+    }
+
+    /** The number of documents each request carried. */
+    function requestSizes(bulkDocs: Mock): number[] {
+      return bulkDocs.mock.calls.map(([sent]) => sent.length);
+    }
+
+    it.each([
+      ["one request for documents that fit into it", 3, 300, [3]],
+      ["several requests when the documents exceed the budget", 5, 600, [3, 2]],
+      ["several requests when there are too many documents", 6, 300, [4, 2]],
+      ["a request of its own for an oversized document", 2, 5000, [1, 1]],
+    ])(
+      "should send %s",
+      async (_invariant, count, bytes, expectedRequestSizes) => {
+        const { bulkDocs } = setupBulkWrites();
+        const docs = documents(count as number, bytes as number);
+
+        const results = await database.putAll(docs);
+
+        expect(requestSizes(bulkDocs)).toEqual(expectedRequestSizes);
+        // split or not, every document is sent exactly once and the caller gets its
+        // results in the order it passed the documents in
+        expect(
+          bulkDocs.mock.calls.flatMap(([sent]) =>
+            sent.map((doc: any) => doc._id),
+          ),
+        ).toEqual(docs.map((doc) => doc._id));
+        expect(results.map((r) => r.id)).toEqual(docs.map((doc) => doc._id));
+      },
+    );
+
+    it("should stop sending further requests once a whole request failed", async () => {
+      const { bulkDocs } = setupBulkWrites();
+      const rejected = Object.assign(new Error("request entity too large"), {
+        status: HttpStatusCode.PayloadTooLarge,
+      });
+      bulkDocs
+        .mockImplementationOnce(async (docs: any) =>
+          (docs as any[]).map((doc) => ({ ok: true, id: doc._id })),
+        )
+        .mockRejectedValueOnce(rejected);
+
+      // three requests worth of documents, of which the second one fails
+      await expect(database.putAll(documents(10, 300))).rejects.toBe(rejected);
+
+      expect(bulkDocs).toHaveBeenCalledTimes(2);
+    });
+
+    it("should still write the remaining requests when single documents failed", async () => {
+      const { pouchDB, bulkDocs } = setupBulkWrites();
+      // the conflicting document cannot be resolved, so it ends up as an error entry
+      vi.spyOn(pouchDB, "get").mockRejectedValue({
+        status: HttpStatusCode.Conflict,
+      });
+      bulkDocs.mockImplementationOnce(async (docs: any) =>
+        (docs as any[]).map((doc, i) => ({
+          ok: i > 0,
+          id: doc._id,
+          status: i === 0 ? HttpStatusCode.Conflict : undefined,
+        })),
+      );
+
+      const results = await database
+        .putAll(documents(10, 300))
+        .catch((rejectedWith) => rejectedWith);
+
+      expect(bulkDocs).toHaveBeenCalledTimes(3);
+      expect(results).toHaveLength(10);
+      expect(results[0]).toBeInstanceOf(Error);
+    });
+  });
+
   describe("emitting the app's own writes", () => {
     /**
      * Mocks the database's writes and its changes poll, and collects everything the
