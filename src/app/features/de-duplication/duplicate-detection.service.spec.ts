@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import { firstValueFrom, Subject, Subscription } from "rxjs";
 import {
   mockEntityMapperProvider,
   MockEntityMapperService,
@@ -6,7 +7,12 @@ import {
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
-import { DuplicateDetectionService } from "./duplicate-detection.service";
+import {
+  DuplicateDetectionService,
+  DuplicatePair,
+} from "./duplicate-detection.service";
+import { Entity } from "../../core/entity/model/entity";
+import { UpdatedEntity } from "../../core/entity/model/entity-update";
 
 describe("DuplicateDetectionService", () => {
   let service: DuplicateDetectionService;
@@ -25,127 +31,231 @@ describe("DuplicateDetectionService", () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  it("should return a pair for two entities matching on a single field (case-insensitive)", async () => {
-    const a = TestEntity.create({ name: "Alice" });
-    const b = TestEntity.create({ name: "alice" });
-    entityMapper.addAll([a, b]);
+  /** the first result of a one-off analysis, as the previous `findDuplicates` returned */
+  function findDuplicates(fields: string[]): Promise<DuplicatePair[]> {
+    return firstValueFrom(service.watchDuplicates(TestEntity, fields));
+  }
 
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+  describe("matching", () => {
+    it.each([
+      ["identical values", "Alice", "Alice", true],
+      ["values differing only in case", "Alice", "alice", true],
+      ["values differing only in surrounding space", " Alice ", "Alice", true],
+      [
+        "values differing only by Unicode whitespace",
+        "Alice Smith",
+        "Alice Smith",
+        true,
+      ],
+      ["different values", "Alice", "Bob", false],
+      ["empty values", "", "", false],
+      ["missing values", undefined, undefined, false],
+    ])("pairs records with %s: %s", async (_name, valueA, valueB, expected) => {
+      entityMapper.addAll([
+        TestEntity.create({ name: valueA }),
+        TestEntity.create({ name: valueB }),
+      ]);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].record).toBe(a);
-    expect(result[0].possibleDuplicate).toBe(b);
+      expect(await findDuplicates(["name"])).toHaveLength(expected ? 1 : 0);
+    });
+
+    it("pairs records only when all selected fields match", async () => {
+      const a = TestEntity.create({ name: "Alice", other: "X" });
+      const b = TestEntity.create({ name: "alice", other: "X" });
+      const c = TestEntity.create({ name: "alice", other: "Y" });
+      entityMapper.addAll([a, b, c]);
+
+      const result = await findDuplicates(["name", "other"]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].record).toBe(a);
+      expect(result[0].possibleDuplicate).toBe(b);
+    });
+
+    it("does not pair records whose values only combine to the same key", async () => {
+      // a key joining the field values on a separator would make these collide
+      entityMapper.addAll([
+        TestEntity.create({ name: "a|b", other: "c" }),
+        TestEntity.create({ name: "a", other: "b|c" }),
+      ]);
+
+      expect(await findDuplicates(["name", "other"])).toHaveLength(0);
+    });
+
+    it("pairs every further member of a group with the first record", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "alice" });
+      const c = TestEntity.create({ name: "ALICE" });
+      entityMapper.addAll([a, b, c]);
+
+      const result = await findDuplicates(["name"]);
+
+      expect(result).toEqual([
+        { record: a, possibleDuplicate: b },
+        { record: a, possibleDuplicate: c },
+      ]);
+    });
+
+    it("returns no pairs without entities or without selected fields", async () => {
+      expect(await findDuplicates(["name"])).toHaveLength(0);
+
+      entityMapper.addAll([
+        TestEntity.create({ name: "Alice" }),
+        TestEntity.create({ name: "Alice" }),
+      ]);
+      expect(await findDuplicates([])).toHaveLength(0);
+    });
+
+    it("does not pair records by an object-valued field without an id", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "Alice" });
+      a["metadata"] = { key: "A" };
+      b["metadata"] = { key: "B" };
+      entityMapper.addAll([a, b]);
+
+      expect(await findDuplicates(["metadata"])).toHaveLength(0);
+    });
+
+    it("pairs records by the id of a configurable-enum value", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "Bob" });
+      a["center"] = { id: "barabazar", label: "Barabazar" };
+      b["center"] = { id: "barabazar", label: "Bara Bazar" };
+      entityMapper.addAll([a, b]);
+
+      const result = await findDuplicates(["center"]);
+
+      expect(result).toEqual([{ record: a, possibleDuplicate: b }]);
+    });
   });
 
-  it("should return a pair when names differ only by Unicode whitespace (non-breaking space)", async () => {
-    const a = TestEntity.create({ name: "Alice\u00A0Smith" });
-    const b = TestEntity.create({ name: "Alice Smith" });
-    entityMapper.addAll([a, b]);
+  describe("keeping the analysis up to date", () => {
+    let emitted: DuplicatePair[][];
+    let subscription: Subscription;
 
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+    /** the pairs of the most recent emission */
+    const latest = () => emitted[emitted.length - 1];
 
-    expect(result).toHaveLength(1);
-  });
+    function watch(fields = ["name"]) {
+      emitted = [];
+      subscription = service
+        .watchDuplicates(TestEntity, fields)
+        .subscribe((pairs) => emitted.push(pairs));
+    }
 
-  it("should return a pair only when ALL selected fields match", async () => {
-    const a = TestEntity.create({ name: "Alice", other: "X" });
-    const b = TestEntity.create({ name: "alice", other: "X" });
-    const c = TestEntity.create({ name: "alice", other: "Y" });
-    entityMapper.addAll([a, b, c]);
+    afterEach(() => subscription?.unsubscribe());
 
-    const result = await service.findDuplicates(TestEntity, ["name", "other"]);
+    /**
+     * A removal reaches subscribers as a tombstone, carrying only the id.
+     * Deliberately not `entityMapper.remove`, which publishes the full entity and would
+     * let an implementation pass that recomputes the match key on removal.
+     */
+    async function removeFromDatabase(entity: Entity) {
+      const tombstone = new TestEntity(entity.getId(true));
+      (
+        entityMapper.receiveUpdates(TestEntity) as Subject<
+          UpdatedEntity<TestEntity>
+        >
+      ).next({ type: "remove", entity: tombstone });
+      await Promise.resolve();
+    }
 
-    expect(result).toHaveLength(1);
-    expect(result[0].record).toBe(a);
-    expect(result[0].possibleDuplicate).toBe(b);
-  });
+    it("adds a pair when a matching record appears", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      entityMapper.addAll([a]);
+      watch();
+      await Promise.resolve();
 
-  it("should not return a pair when field values differ", async () => {
-    const a = TestEntity.create({ name: "Alice" });
-    const b = TestEntity.create({ name: "Bob" });
-    entityMapper.addAll([a, b]);
+      const b = TestEntity.create({ name: "alice" });
+      await entityMapper.save(b);
 
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+      expect(latest()).toEqual([{ record: a, possibleDuplicate: b }]);
+    });
 
-    expect(result).toHaveLength(0);
-  });
+    it("drops a pair when a record's value no longer matches", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "alice" });
+      entityMapper.addAll([a, b]);
+      watch();
+      await Promise.resolve();
+      expect(latest()).toHaveLength(1);
 
-  it("should not return a pair when a field value is empty on either entity", async () => {
-    const a = TestEntity.create({ name: "" });
-    const b = TestEntity.create({ name: "" });
-    entityMapper.addAll([a, b]);
+      b.name = "Bob";
+      await entityMapper.save(b);
 
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+      expect(latest()).toHaveLength(0);
+    });
 
-    expect(result).toHaveLength(0);
-  });
+    it("pairs the updated instance of a record, not the one loaded initially", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "alice" });
+      entityMapper.addAll([a, b]);
+      watch();
+      await Promise.resolve();
 
-  it("should not return a pair when a field value is null or undefined", async () => {
-    const a = TestEntity.create({});
-    const b = TestEntity.create({});
-    entityMapper.addAll([a, b]);
+      // same value, so the record stays in its group - but a merge started from the
+      // list would save this instance, and a stale _rev would make that fail
+      const updated = a.copy();
+      updated["_rev"] = "2-updated";
+      await entityMapper.save(updated);
 
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+      expect(latest()[0].record).toBe(updated);
+    });
 
-    expect(result).toHaveLength(0);
-  });
+    it("drops a pair when a record is removed", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "alice" });
+      entityMapper.addAll([a, b]);
+      watch();
+      await Promise.resolve();
+      expect(latest()).toHaveLength(1);
 
-  it("should return only 1 pair for 3 mutually matching entities (no duplicate rows)", async () => {
-    const a = TestEntity.create({ name: "Alice" });
-    const b = TestEntity.create({ name: "alice" });
-    const c = TestEntity.create({ name: "ALICE" });
-    entityMapper.addAll([a, b, c]);
+      await removeFromDatabase(b);
 
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+      expect(latest()).toHaveLength(0);
+    });
 
-    expect(result).toHaveLength(1);
-  });
+    it("re-pairs the remaining records when the paired-against record is removed", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "alice" });
+      const c = TestEntity.create({ name: "ALICE" });
+      entityMapper.addAll([a, b, c]);
+      watch();
+      await Promise.resolve();
 
-  it("should return empty array when there are no entities", async () => {
-    const result = await service.findDuplicates(TestEntity, ["name"]);
+      await removeFromDatabase(a);
 
-    expect(result).toHaveLength(0);
-  });
+      expect(latest()).toEqual([{ record: b, possibleDuplicate: c }]);
+    });
 
-  it("should return empty array when no fields are selected", async () => {
-    const a = TestEntity.create({ name: "Alice" });
-    const b = TestEntity.create({ name: "Alice" });
-    entityMapper.addAll([a, b]);
+    it("does not lose a change arriving while the initial load is still running", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      const b = TestEntity.create({ name: "alice" });
+      let finishLoad: (entities: TestEntity[]) => void;
+      vi.spyOn(entityMapper, "loadType").mockReturnValue(
+        new Promise((resolve) => (finishLoad = resolve)),
+      );
+      watch();
 
-    const result = await service.findDuplicates(TestEntity, []);
+      await entityMapper.save(b);
+      finishLoad([a]);
+      await Promise.resolve();
+      await Promise.resolve();
 
-    expect(result).toHaveLength(0);
-  });
+      expect(latest()).toEqual([{ record: a, possibleDuplicate: b }]);
+    });
 
-  it("should not treat object-valued fields as duplicates", async () => {
-    const a = TestEntity.create({ name: "Alice" });
-    const b = TestEntity.create({ name: "Alice" });
-    (a as unknown as Record<string, unknown>)["metadata"] = { key: "A" };
-    (b as unknown as Record<string, unknown>)["metadata"] = { key: "B" };
-    entityMapper.addAll([a, b]);
+    it("stops updating once unsubscribed", async () => {
+      const a = TestEntity.create({ name: "Alice" });
+      entityMapper.addAll([a]);
+      watch();
+      await Promise.resolve();
+      const emissionsWhileSubscribed = emitted.length;
 
-    const result = await service.findDuplicates(TestEntity, ["metadata"]);
+      subscription.unsubscribe();
+      await entityMapper.save(TestEntity.create({ name: "alice" }));
 
-    expect(result).toHaveLength(0);
-  });
-
-  it("should match configurable-enum-like objects by id", async () => {
-    const a = TestEntity.create({ name: "Alice" });
-    const b = TestEntity.create({ name: "Bob" });
-    (a as unknown as Record<string, unknown>)["center"] = {
-      id: "barabazar",
-      label: "Barabazar",
-    };
-    (b as unknown as Record<string, unknown>)["center"] = {
-      id: "barabazar",
-      label: "Bara Bazar",
-    };
-    entityMapper.addAll([a, b]);
-
-    const result = await service.findDuplicates(TestEntity, ["center"]);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].record).toBe(a);
-    expect(result[0].possibleDuplicate).toBe(b);
+      expect(emitted).toHaveLength(emissionsWhileSubscribed);
+    });
   });
 });
