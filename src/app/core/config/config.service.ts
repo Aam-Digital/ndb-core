@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
-import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { addDefaultNoteViews } from "../../child-dev-project/notes/add-default-note-views";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
@@ -168,7 +168,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
     // migrateShortcutDashboardLinks/migrateNavigationMenuEntityLinks) sees these
     // default-added view configs too.
     const defaultConfigs: ConfigMigration[] = [
-      addDefaultNoteDetailsConfig,
+      addDefaultNoteViews,
       addDefaultTodoViews,
     ];
 

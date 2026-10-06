@@ -175,6 +175,7 @@ export class Note extends Entity {
    * This property saves ids including their entity type prefix.
    */
   @DatabaseField({
+    label: $localize`:label for the related Entities:Related Records`,
     dataType: "entity",
     isArray: true,
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")

@@ -469,11 +469,14 @@ const migrateEditDescriptionOnly: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
-const migrateChildrenCountDashboardEntityType: ConfigMigration = (
+const migrateEntityCountDashboardEntityType: ConfigMigration = (
   key,
   configPart,
 ) => {
-  if (configPart?.component !== "ChildrenCountDashboard") {
+  if (
+    configPart?.component !== "ChildrenCountDashboard" &&
+    configPart?.component !== "EntityCountDashboard"
+  ) {
     return configPart;
   }
 
@@ -787,7 +790,7 @@ export const configMigrations: ConfigMigration[] = [
   migrateInheritedFieldConfig,
   migrateUserEntityAndPanels,
   migrateComponentEntityTypeDefaults,
-  migrateChildrenCountDashboardEntityType,
+  migrateEntityCountDashboardEntityType,
   removeOutdatedTodoViews,
   migrateChildSchoolOverviewComponent,
   migrateEditDescriptionOnly,
@@ -808,7 +811,7 @@ export const configMigrations: ConfigMigration[] = [
  * Apply all config migrations to a plain JSON document.
  * Returns the migrated document as a plain object (no Angular entity re-hydration).
  * Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs
- * (addDefaultNoteDetailsConfig, addDefaultTodoViews) before calling this, so the
+ * (addDefaultNoteViews, addDefaultTodoViews) before calling this, so the
  * migrations above can see those default-added view configs too.
  */
 export function applyConfigMigrations<E>(doc: E): E {
