@@ -40,6 +40,13 @@ export interface ImportDialogData {
 export interface ImportDialogResult {
   completedImport?: ImportMetadata;
   errorOccured?: boolean;
+  /**
+   * Whether records were written although the import failed as a whole.
+   *
+   * The usual reaction to an error is to refresh the data and let the user run the
+   * import again - which for these would import the saved records a second time.
+   */
+  partiallyCompleted?: boolean;
 }
 
 /**
@@ -118,7 +125,11 @@ export class ImportConfirmSummaryComponent {
         Logging.warn("Import failed with error", describeSaveFailure(error));
         this.showImportErrorMessage(error);
       }
-      this.dialogRef.close({ errorOccured: true });
+      this.dialogRef.close({
+        errorOccured: true,
+        partiallyCompleted: !!partialImport,
+        completedImport: partialImport?.completedImport,
+      });
     } finally {
       this.importInProgress.set(false);
       this.dialogRef.disableClose = false;

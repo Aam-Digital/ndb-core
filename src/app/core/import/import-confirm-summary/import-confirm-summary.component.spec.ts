@@ -95,12 +95,14 @@ describe("ImportConfirmSummaryComponent", () => {
         () => conflictRejection,
         "Conflicts overwriting updated data",
         "run import again",
+        false,
       ],
       [
         "any other failure",
         () => new Error("Network error"),
         "Import failed",
         "Please try again",
+        false,
       ],
       [
         "a write that stopped after saving part of the records",
@@ -114,6 +116,7 @@ describe("ImportConfirmSummaryComponent", () => {
           ),
         "Import only partially completed",
         "import history",
+        true,
       ],
       [
         // the conflict advice alone would say to run the import again, which is
@@ -129,6 +132,7 @@ describe("ImportConfirmSummaryComponent", () => {
           ),
         "Import only partially completed",
         "synchronisation",
+        true,
       ],
       [
         "all records written but their additional linking failed",
@@ -142,6 +146,7 @@ describe("ImportConfirmSummaryComponent", () => {
           ),
         "Import completed with errors",
         "import history",
+        true,
       ],
       [
         "saved records that could not be recorded in the import history",
@@ -155,10 +160,17 @@ describe("ImportConfirmSummaryComponent", () => {
           ),
         "Import only partially completed",
         "could not be recorded in the import history",
+        true,
       ],
     ])(
       "should explain %s",
-      async (_case, rejectWith, expectedTitle, expectedDetail) => {
+      async (
+        _case,
+        rejectWith,
+        expectedTitle,
+        expectedDetail,
+        partiallyCompleted,
+      ) => {
         mockImportService.executeImport.mockRejectedValue(rejectWith());
 
         await component.executeImport();
@@ -168,9 +180,11 @@ describe("ImportConfirmSummaryComponent", () => {
           expect.stringContaining(expectedDetail),
           expect.anything(),
         );
-        expect(mockDialogRef.close).toHaveBeenCalledWith({
-          errorOccured: true,
-        });
+        // records that are already written must not be offered for a plain retry,
+        // so the review step is told them apart from a failure that wrote nothing
+        expect(mockDialogRef.close).toHaveBeenCalledWith(
+          expect.objectContaining({ errorOccured: true, partiallyCompleted }),
+        );
         expect(component.importInProgress()).toBe(false);
         expect(mockDialogRef.disableClose).toBe(false);
       },
