@@ -60,6 +60,7 @@ import {
 } from "./matching-entities-config";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { FeatureDisabledInfoComponent } from "#src/app/core/common-components/feature-disabled-info/feature-disabled-info.component";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -106,6 +107,7 @@ export interface MatchingSide extends MatchingSideConfig {
     RouterLink,
     AblePipe,
     EntityTypePipe,
+    FeatureDisabledInfoComponent,
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
@@ -193,9 +195,23 @@ export class MatchingEntitiesComponent implements OnInit {
    */
   readonly comparisonColumns = signal<[ColumnConfig, ColumnConfig][]>([]);
 
+  readonly isConfigured = computed(() => {
+    const entityInputType = this.entity()?.getType();
+    return [this.resolvedLeftSide(), this.resolvedRightSide()].every((side) => {
+      const entityType = side.entityType ?? entityInputType;
+      return !!entityType && this.entityRegistry.has(entityType);
+    });
+  });
+
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
+    if (!this.isConfigured()) {
+      // leave `sideDetails` unset, so that the template shows the info about the
+      // missing config instead of sides without an entity type
+      return;
+    }
+
     this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
 
     // Both sides are started before the first `await` so that their data sources
