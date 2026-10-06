@@ -9,6 +9,7 @@ import { ImportAdditionalService } from "./additional-actions/import-additional.
 import { ImportExistingService } from "./update-existing/import-existing.service";
 import { ImportProcessingContext } from "./import-processing-context";
 import { Logging } from "../logging/logging.service";
+import { PartialBulkWriteError } from "../database/database";
 
 /**
  * Details about a single cell transformation error during import.
@@ -34,30 +35,35 @@ export interface ImportTransformationResult {
 }
 
 /**
- * The records of a batch that were stored although the save as a whole was rejected.
+ * The records that were stored although the save as a whole was rejected.
  *
- * `saveAll` rejects *with* its results when single documents failed, so the outcome of
- * every record is known; it rejects with anything else when the write did not happen
- * at all, in which case none of them were stored.
+ * A rejected save reports what became of the records (see `Database.putAll`): the
+ * results array when individual records failed, a {@link PartialBulkWriteError} when
+ * the write stopped partway. Any other rejection means nothing was stored.
  */
-function storedRecordsOf(batch: Entity[], error: unknown): Entity[] {
-  if (!Array.isArray(error)) {
+function storedRecordsOf(records: Entity[], error: unknown): Entity[] {
+  let results: any[];
+  if (Array.isArray(error)) {
+    results = error;
+  } else if (error instanceof PartialBulkWriteError) {
+    results = error.storedResults;
+  } else {
     return [];
   }
 
   const storedIds = new Set(
-    error.filter((result) => result?.ok).map((result) => result.id),
+    results.filter((result) => result?.ok).map((result) => result.id),
   );
-  return batch.filter((entity) => storedIds.has(entity.getId()));
+  return records.filter((entity) => storedIds.has(entity.getId()));
 }
 
 /**
  * Thrown when an import failed after part of its records had already been saved.
  *
  * A failed import used to mean that nothing was written, so retrying the file was
- * always safe. Since records are saved in batches (see {@link ImportService}) that no
- * longer holds, and the user has to be told what did get imported - otherwise they
- * re-run the whole file and duplicate it.
+ * always safe. Since a large import is written in several requests that no longer
+ * holds, and the user has to be told what did get imported - otherwise they re-run
+ * the whole file and duplicate it.
  */
 export class PartialImportError extends Error {
   constructor(
@@ -86,80 +92,40 @@ export class ImportService {
   private readonly importAdditionalService = inject(ImportAdditionalService);
   private readonly importExistingService = inject(ImportExistingService);
 
-  /**
-   * How many records are written to the database in one go.
-   *
-   * This is not what keeps a single request within the server's size limit: the
-   * database layer splits a write further by the size of the documents (see
-   * `RemotePouchDatabase`), which a count cannot do because a record's size depends on
-   * the imported columns. What a batch bounds is how much of an import is lost when a
-   * write fails partway - everything up to the last completed batch is saved, and
-   * recorded in the import history so it can be reviewed and undone.
-   *
-   * It is kept well below the database layer's own limits, so that a batch is
-   * normally written as a single request: only then is "the last completed batch"
-   * exactly what reached the server. Records of the *failing* batch can still have
-   * been written if the database layer had to split that one too, which takes
-   * records averaging tens of kilobytes - rare enough to accept, and bounded by
-   * this batch size.
-   */
-  private readonly SAVE_BATCH_SIZE = 100;
-
   async executeImport(
     entitiesToImport: Entity[],
     settings: ImportSettings,
   ): Promise<ImportMetadata> {
-    const savedEntities = await this.saveInBatches(entitiesToImport, settings);
-    await this.importAdditionalService.executeImport(savedEntities, settings);
-    return this.saveImportHistory(savedEntities, settings);
-  }
-
-  /**
-   * Save the entities batch by batch (see {@link SAVE_BATCH_SIZE}).
-   *
-   * If a batch fails, the records saved so far are recorded in the import history
-   * before the failure is passed on: a partial import that no history entry mentions
-   * could neither be recognised nor undone, leaving the user to find the imported
-   * records one by one.
-   */
-  private async saveInBatches(
-    entitiesToImport: Entity[],
-    settings: ImportSettings,
-  ): Promise<Entity[]> {
-    const savedEntities: Entity[] = [];
-
-    for (let i = 0; i < entitiesToImport.length; i += this.SAVE_BATCH_SIZE) {
-      const batch = entitiesToImport.slice(i, i + this.SAVE_BATCH_SIZE);
-      try {
-        await this.entityMapper.saveAll(batch);
-      } catch (error) {
-        // a batch can fail for single records only (e.g. an unresolved conflict)
-        // while storing the rest, so the history must not lose those either
-        savedEntities.push(...storedRecordsOf(batch, error));
-        throw await this.handleFailedBatch(
-          error,
-          savedEntities,
-          entitiesToImport,
-          settings,
-        );
-      }
-      savedEntities.push(...batch);
+    try {
+      await this.entityMapper.saveAll(entitiesToImport);
+    } catch (error) {
+      throw await this.handleFailedSave(error, entitiesToImport, settings);
     }
 
-    return savedEntities;
+    await this.importAdditionalService.executeImport(
+      entitiesToImport,
+      settings,
+    );
+    return this.saveImportHistory(entitiesToImport, settings);
   }
 
   /**
-   * Record what was imported before the failure and return the error to throw for it.
+   * Record the records that were stored before the save failed and return the error
+   * to report for it.
+   *
+   * The database writes a large import in several requests, so a failure can leave
+   * part of the records stored. A partial import that no history entry mentions could
+   * neither be recognised nor undone, leaving the user to find those records one by
+   * one - so it is recorded here before the failure is passed on.
    */
-  private async handleFailedBatch(
+  private async handleFailedSave(
     error: unknown,
-    savedEntities: Entity[],
     entitiesToImport: Entity[],
     settings: ImportSettings,
   ): Promise<unknown> {
+    const savedEntities = storedRecordsOf(entitiesToImport, error);
     if (savedEntities.length === 0) {
-      // nothing was written, so this is an ordinary failed import
+      // nothing was stored, so this is an ordinary failed import
       return error;
     }
 

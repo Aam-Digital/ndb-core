@@ -1,4 +1,5 @@
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { PartialBulkWriteError } from "../database";
 import { environment } from "../../../../environments/environment";
 import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
@@ -586,16 +587,18 @@ export class RemotePouchDatabase extends PouchDatabase {
       } catch (requestResults) {
         if (!Array.isArray(requestResults)) {
           // the request as a whole failed (offline, rejected, ...), so neither it nor
-          // any later one wrote anything. Those would run into the same failure, so
-          // the error is passed on here - the documents of the earlier requests are
-          // written and stay written, which callers have to expect either way since
-          // a rejected putAll can always have stored part of its documents.
+          // any later one wrote anything - those would run into the same failure.
+          // The documents of the earlier requests are stored and stay stored, so the
+          // failure is reported together with their results: only then can the caller
+          // tell what is in the database (see PartialBulkWriteError).
           Logging.debug("putAll: bulk write failed partway", {
             db: this.dbName,
             documentsStored: results.length,
             documentsNotStored: objects.length - results.length,
           });
-          throw requestResults;
+          throw results.length > 0
+            ? new PartialBulkWriteError(results, requestResults)
+            : requestResults;
         }
         // a rejection *with* a results array reports per-document failures (e.g. an
         // unresolved conflict), which concern only their own request - so the

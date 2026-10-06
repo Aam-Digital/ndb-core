@@ -1,5 +1,6 @@
 import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { PartialBulkWriteError } from "../database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
@@ -985,9 +986,30 @@ describe("RemotePouchDatabase tests", () => {
         .mockRejectedValueOnce(rejected);
 
       // three requests worth of documents, of which the second one fails
-      await expect(database.putAll(documents(10, 300))).rejects.toBe(rejected);
+      const error = await database
+        .putAll(documents(10, 300))
+        .catch((rejectedWith) => rejectedWith);
 
       expect(bulkDocs).toHaveBeenCalledTimes(2);
+      // the documents of the first request are stored, and the caller is told which,
+      // so it can tell this apart from a write that did nothing
+      expect(error).toBeInstanceOf(PartialBulkWriteError);
+      expect(error.storedResults.map((r) => r.id)).toEqual([
+        "Entity:0",
+        "Entity:1",
+        "Entity:2",
+        "Entity:3",
+      ]);
+      expect(error.cause).toBe(rejected);
+    });
+
+    it("should report a failure of the very first request unchanged", async () => {
+      const { bulkDocs } = setupBulkWrites();
+      const rejected = new Error("offline");
+      bulkDocs.mockRejectedValue(rejected);
+
+      // nothing was stored, so there is nothing to report beyond the failure itself
+      await expect(database.putAll(documents(10, 300))).rejects.toBe(rejected);
     });
 
     it("should still write the remaining requests when single documents failed", async () => {
