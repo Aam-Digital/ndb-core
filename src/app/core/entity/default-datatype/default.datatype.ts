@@ -21,6 +21,8 @@ import { asArray } from "../../../utils/asArray";
 import { splitArrayValue } from "../../import/split-array-value";
 import type { ColumnMapping } from "../../import/column-mapping";
 import type { ImportProcessingContext } from "../../import/import-processing-context";
+// type-only: filters.ts pulls in ListFilterComponent, which must not be loaded here
+import type { DataFilter } from "../../filter/filters/filters";
 
 /**
  * A single column mapped to a target field during import, with the raw cell
@@ -56,6 +58,22 @@ export interface ExportColumnMapping<EntityType = any> {
     value: EntityType,
     schemaField: EntitySchemaField,
   ) => Promise<any> | any;
+}
+
+/**
+ * The Mango conditions matching the given document path against a reference id,
+ * covering both shapes it may have been stored in: the id itself or an array containing it.
+ *
+ * This is the same pair of conditions {@link EntityFilter} builds for list filters.
+ */
+export function referenceIdConditions(
+  path: string,
+  referencedId: string,
+): DataFilter<any>[] {
+  return [
+    { [path]: referencedId },
+    { [path]: { $elemMatch: { $eq: referencedId } } },
+  ];
 }
 
 /**
@@ -359,6 +377,32 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * raw value cannot be sorted meaningfully.
    */
   sortValue(_fieldValue: EntityType): number | string | undefined {
+    return undefined;
+  }
+
+  /**
+   * Mango conditions matching documents whose `fieldId` references the given entity id,
+   * used to query related entities instead of loading a whole entity type (see
+   * {@link EntityRelationsService.loadAllLinkingToEntity}).
+   *
+   * The conditions are matched against the *database* format, so only the datatype that
+   * writes that format can build them - which is why this lives here rather than in the
+   * calling service. Return every shape the value may have been stored in rather than
+   * branching on `schemaField.isArray`: existing documents may have been written while the
+   * field had the other setting (see {@link FilterService} and {@link EntityFilter}).
+   *
+   * The caller treats these as candidates only and still post-filters in memory, so
+   * matching too much is harmless - matching too little silently loses references.
+   *
+   * @returns the conditions to OR together, or `undefined` if this datatype's stored format
+   *          cannot be expressed as a query, which makes the caller load the whole type.
+   *          Never return an empty array: `{$or: []}` matches nothing.
+   */
+  getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter<any>[] | undefined {
     return undefined;
   }
 
