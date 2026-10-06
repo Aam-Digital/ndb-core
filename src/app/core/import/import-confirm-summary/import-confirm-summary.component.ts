@@ -4,7 +4,11 @@ import {
   ChangeDetectionStrategy,
   signal,
 } from "@angular/core";
-import { ImportService, PartialImportError } from "../import.service";
+import {
+  describeSaveFailure,
+  ImportService,
+  PartialImportError,
+} from "../import.service";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -94,17 +98,24 @@ export class ImportConfirmSummaryComponent {
       this.showImportSuccessToast(completedImport);
       this.dialogRef.close({ completedImport });
     } catch (error) {
-      // a partial import carries the failure that stopped it, and that failure
-      // decides the message: a conflict has its own, more specific advice, which
-      // must not be swallowed just because earlier batches had been written
-      const failure = error instanceof PartialImportError ? error.cause : error;
-      if (this.isPutAllConflictError(failure)) {
+      // a partial import carries the failure that stopped it. That failure explains
+      // *why* the import stopped - but it must not replace the partial-import
+      // message, because "please run the import again" is wrong once records have
+      // been written. So the conflict advice is folded into that message instead.
+      const partialImport =
+        error instanceof PartialImportError ? error : undefined;
+      const failure = partialImport ? partialImport.cause : error;
+
+      if (partialImport) {
+        this.showPartialImportWarning(
+          partialImport,
+          this.isPutAllConflictError(failure),
+        );
+      } else if (this.isPutAllConflictError(failure)) {
         this.showImportPutAllConflictWarning();
-      } else if (error instanceof PartialImportError) {
-        this.showPartialImportWarning(error);
       } else {
         // Handle all other errors
-        Logging.warn("Import failed with error", error);
+        Logging.warn("Import failed with error", describeSaveFailure(error));
         this.showImportErrorMessage(error);
       }
       this.dialogRef.close({ errorOccured: true });
@@ -158,12 +169,32 @@ export class ImportConfirmSummaryComponent {
   /**
    * Unlike a completely failed import, a partial one must not be retried as a whole:
    * the records that were saved would be imported a second time. So the user is told
-   * how many are already there and where to undo them.
+   * what is already there and how to get rid of it.
    */
-  private showPartialImportWarning(error: PartialImportError) {
+  private showPartialImportWarning(
+    error: PartialImportError,
+    conflictsOccurred: boolean,
+  ) {
+    const whatHappened =
+      error.stage === "links"
+        ? $localize`All ${error.totalCount} records were imported, but linking them to the other records you selected failed.`
+        : $localize`Only ${error.importedCount} of ${error.totalCount} records could be imported before an error occurred.`;
+
+    const why = conflictsOccurred
+      ? $localize`Some records had been changed through synchronisation while the import was being prepared, so they could not be overwritten.`
+      : undefined;
+
+    // without a history entry the saved records cannot be undone from the import
+    // history, so pointing the user there would send them looking for nothing
+    const whatToDo = error.completedImport
+      ? $localize`The saved records are listed in the import history, where you can undo them. Please undo them there before importing this file again, to avoid creating duplicates.`
+      : $localize`The saved records could not be recorded in the import history, so they cannot be undone there. Please review the existing data before importing this file again, to avoid creating duplicates.`;
+
     this.confirmationService.getConfirmation(
-      $localize`Import only partially completed`,
-      $localize`Only ${error.importedCount} of ${error.totalCount} records could be imported before an error occurred. The imported records have been saved and are listed in the import history, where you can undo them. Please check there before importing this file again, to avoid creating duplicates.`,
+      error.stage === "links"
+        ? $localize`Import completed with errors`
+        : $localize`Import only partially completed`,
+      [whatHappened, why, whatToDo].filter(Boolean).join(" "),
       OkButton,
     );
   }
@@ -171,7 +202,7 @@ export class ImportConfirmSummaryComponent {
   private showImportErrorMessage(error) {
     this.confirmationService.getConfirmation(
       $localize`Import failed`,
-      $localize`Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [${JSON.stringify(error)}]`,
+      $localize`Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [${JSON.stringify(describeSaveFailure(error))}]`,
       OkButton,
     );
   }

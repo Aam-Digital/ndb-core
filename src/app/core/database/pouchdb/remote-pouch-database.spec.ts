@@ -1001,6 +1001,11 @@ describe("RemotePouchDatabase tests", () => {
         "Entity:3",
       ]);
       expect(error.cause).toBe(rejected);
+      // ... but a serialized copy of the error must not carry the document ids
+      // along into a user-facing message or remote monitoring (see #4174)
+      expect(JSON.parse(JSON.stringify(error))).not.toHaveProperty(
+        "storedResults",
+      );
     });
 
     it("should report a failure of the very first request unchanged", async () => {

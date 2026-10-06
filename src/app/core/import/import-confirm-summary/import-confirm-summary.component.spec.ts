@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ImportService } from "../import.service";
+import { ImportService, PartialImportError } from "../import.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ImportMetadata } from "../import-metadata";
 import { of } from "rxjs";
@@ -84,31 +84,96 @@ describe("ImportConfirmSummaryComponent", () => {
     }
   });
 
-  it("should close dialog with error flag for putAll conflict errors", async () => {
-    const putAllConflictError = [{ status: 409, name: "conflict" }];
-    mockImportService.executeImport.mockRejectedValue(putAllConflictError);
+  describe("reporting a failed import", () => {
+    const conflictRejection = [{ status: 409, name: "conflict" }];
+    const historyEntry = () =>
+      ImportMetadata.create({ createdEntities: ["1"], config: null });
 
-    await component.executeImport();
+    it.each([
+      [
+        "a conflict that stopped the import before anything was written",
+        () => conflictRejection,
+        "Conflicts overwriting updated data",
+        "run import again",
+      ],
+      [
+        "any other failure",
+        () => new Error("Network error"),
+        "Import failed",
+        "Please try again",
+      ],
+      [
+        "a write that stopped after saving part of the records",
+        () =>
+          new PartialImportError(
+            "records",
+            1,
+            2,
+            historyEntry(),
+            new Error("request too large"),
+          ),
+        "Import only partially completed",
+        "import history",
+      ],
+      [
+        // the conflict advice alone would say to run the import again, which is
+        // wrong once records have been written
+        "a conflict that stopped the import after part of it was written",
+        () =>
+          new PartialImportError(
+            "records",
+            1,
+            2,
+            historyEntry(),
+            conflictRejection,
+          ),
+        "Import only partially completed",
+        "synchronisation",
+      ],
+      [
+        "all records written but their additional linking failed",
+        () =>
+          new PartialImportError(
+            "links",
+            2,
+            2,
+            historyEntry(),
+            new Error("offline"),
+          ),
+        "Import completed with errors",
+        "import history",
+      ],
+      [
+        "saved records that could not be recorded in the import history",
+        () =>
+          new PartialImportError(
+            "records",
+            1,
+            2,
+            undefined,
+            new Error("request too large"),
+          ),
+        "Import only partially completed",
+        "could not be recorded in the import history",
+      ],
+    ])(
+      "should explain %s",
+      async (_case, rejectWith, expectedTitle, expectedDetail) => {
+        mockImportService.executeImport.mockRejectedValue(rejectWith());
 
-    expect(component.importInProgress()).toBe(false);
-    expect(mockDialogRef.disableClose).toBe(false);
-    expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
-    expect(mockDialogRef.close).toHaveBeenCalledWith({
-      errorOccured: true,
-    });
-  });
+        await component.executeImport();
 
-  it("should handle general errors with confirmation dialog and close dialog", async () => {
-    const generalError = new Error("Network error");
-    mockImportService.executeImport.mockRejectedValue(generalError);
-
-    await component.executeImport();
-
-    expect(component.importInProgress()).toBe(false);
-    expect(mockDialogRef.disableClose).toBe(false);
-    expect(mockConfirmationService.getConfirmation).toHaveBeenCalled();
-    expect(mockDialogRef.close).toHaveBeenCalledWith({
-      errorOccured: true,
-    });
+        expect(mockConfirmationService.getConfirmation).toHaveBeenCalledWith(
+          expectedTitle,
+          expect.stringContaining(expectedDetail),
+          expect.anything(),
+        );
+        expect(mockDialogRef.close).toHaveBeenCalledWith({
+          errorOccured: true,
+        });
+        expect(component.importInProgress()).toBe(false);
+        expect(mockDialogRef.disableClose).toBe(false);
+      },
+    );
   });
 });

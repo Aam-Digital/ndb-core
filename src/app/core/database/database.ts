@@ -27,12 +27,20 @@ import { Observable } from "rxjs";
  * that is the difference between "retry the file" and "part of it is already there".
  */
 export class PartialBulkWriteError extends Error {
-  constructor(
-    /** the results of the documents that were stored before the write stopped */
-    readonly storedResults: any[],
-    cause: unknown,
-  ) {
+  /** the results of the documents that were stored before the write stopped */
+  readonly storedResults: any[];
+
+  constructor(storedResults: any[], cause: unknown) {
     super("Bulk write stopped after storing part of its documents", { cause });
+
+    // one entry per stored document, so this must not be picked up when the error
+    // is serialized - neither into a message shown to the user nor into remote
+    // monitoring, where document ids have no place (see #4174). A non-enumerable
+    // property stays available to code but is skipped by JSON.stringify & co.
+    Object.defineProperty(this, "storedResults", {
+      value: storedResults,
+      enumerable: false,
+    });
   }
 }
 
