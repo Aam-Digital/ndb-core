@@ -3,14 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ContentChildren,
+  contentChildren,
   effect,
   inject,
   input,
   model,
   OnInit,
   output,
-  QueryList,
   untracked,
   ViewChild,
 } from "@angular/core";
@@ -173,7 +172,11 @@ export class EntitiesTableComponent<T extends Entity>
         .map((column) => column.id);
     }
 
-    const knownIds = new Set(this._allColumns().map((c) => c.id));
+    const knownIds = new Set([
+      ...this._allColumns().map((c) => c.id),
+      // columns defined by the parent through a projected matColumnDef (e.g. the import status column)
+      ...this.projectedColumns().map((c) => c.name),
+    ]);
     const columns: string[] = [];
     for (const col of colsToDisplay) {
       if (typeof col === "string" && col.startsWith("__")) {
@@ -225,7 +228,7 @@ export class EntitiesTableComponent<T extends Entity>
   });
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
-  @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
+  readonly projectedColumns = contentChildren(MatColumnDef);
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.sortStore.attachSort(sort);
@@ -269,7 +272,7 @@ export class EntitiesTableComponent<T extends Entity>
   }
 
   ngAfterContentInit() {
-    this.projectedColumns.forEach((columnDef) =>
+    this.projectedColumns().forEach((columnDef) =>
       this.table.addColumnDef(columnDef),
     );
   }
