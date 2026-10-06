@@ -62,6 +62,10 @@ describe("condition negation helpers", () => {
       ["null", null],
       ["an $in fragment", { $in: ["C1"] }],
       ["an $elemMatch fragment", { $elemMatch: { $in: ["a"] } }],
+      // an array is typeof "object" but $not rejects it just like a scalar;
+      // the editor produces one when the last value of a multi-select is removed
+      ["an empty array", []],
+      ["a bare array", ["C1"]],
     ])("should negate %s into an evaluable condition", (_label, value) => {
       expect(compiles({ field: negate(value) })).toBe(true);
     });

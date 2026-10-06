@@ -22,16 +22,19 @@ export function splitNegation(fragment: any): {
  * Wrap a positive fragment so it matches everything except itself.
  *
  * `$not` only accepts a regular expression or an object of field operators, so
- * a plain value has to be expressed as `$eq` first. Handing it the bare value
- * produces a condition the matcher rejects - and a rejected condition makes the
- * whole rule unusable, which silently grants nothing.
+ * anything else has to be expressed as `$eq` first. That includes an array,
+ * which the editor produces when the last value of a multi-select is removed.
+ * Handing `$not` such a value produces a condition the matcher rejects - and a
+ * rejected condition makes the whole rule unusable, which silently grants
+ * nothing.
  */
 export function negate(positive: any): any {
-  const operand =
-    positive !== null && typeof positive === "object"
-      ? positive
-      : { $eq: positive };
-  return { $not: operand };
+  const isOperatorObject =
+    positive !== null &&
+    typeof positive === "object" &&
+    !Array.isArray(positive);
+
+  return { $not: isOperatorObject ? positive : { $eq: positive } };
 }
 
 /**
