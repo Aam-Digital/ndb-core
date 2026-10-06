@@ -9,6 +9,24 @@ import { SyncStateSubject } from "app/core/session/session-type";
 import { environment } from "environments/environment";
 import { RemoteLoginNotAvailableError } from "../../session/auth/keycloak/remote-login-not-available.error";
 
+/** A `_bulk_docs` response that stored every document of the request. */
+async function allDocumentsStored(docs: any) {
+  return (docs as any[]).map((doc) => ({
+    ok: true,
+    id: doc._id,
+    rev: "1-new",
+  }));
+}
+
+/** A `_bulk_docs` response whose first document was rejected as a conflict. */
+async function firstDocumentConflicted(docs: any) {
+  return (docs as any[]).map((doc, i) => ({
+    ok: i > 0,
+    id: doc._id,
+    status: i === 0 ? HttpStatusCode.Conflict : undefined,
+  }));
+}
+
 describe("RemotePouchDatabase tests", () => {
   let database: PouchDatabase;
 
@@ -926,13 +944,7 @@ describe("RemotePouchDatabase tests", () => {
       (database as any).MAX_BULK_REQUEST_DOCS = 4;
       const bulkDocs = vi
         .spyOn(pouchDB, "bulkDocs")
-        .mockImplementation(async (docs: any) =>
-          (docs as any[]).map((doc) => ({
-            ok: true,
-            id: doc._id,
-            rev: "1-new",
-          })),
-        );
+        .mockImplementation(allDocumentsStored);
       return { pouchDB, bulkDocs: bulkDocs as unknown as Mock };
     }
 
@@ -965,11 +977,10 @@ describe("RemotePouchDatabase tests", () => {
         expect(requestSizes(bulkDocs)).toEqual(expectedRequestSizes);
         // split or not, every document is sent exactly once and the caller gets its
         // results in the order it passed the documents in
-        expect(
-          bulkDocs.mock.calls.flatMap(([sent]) =>
-            sent.map((doc: any) => doc._id),
-          ),
-        ).toEqual(docs.map((doc) => doc._id));
+        const sentDocs = bulkDocs.mock.calls.flatMap(([sent]) => sent as any[]);
+        expect(sentDocs.map((doc: any) => doc._id)).toEqual(
+          docs.map((doc) => doc._id),
+        );
         expect(results.map((r) => r.id)).toEqual(docs.map((doc) => doc._id));
       },
     );
@@ -980,9 +991,7 @@ describe("RemotePouchDatabase tests", () => {
         status: HttpStatusCode.PayloadTooLarge,
       });
       bulkDocs
-        .mockImplementationOnce(async (docs: any) =>
-          (docs as any[]).map((doc) => ({ ok: true, id: doc._id })),
-        )
+        .mockImplementationOnce(allDocumentsStored)
         .mockRejectedValueOnce(rejected);
 
       // three requests worth of documents, of which the second one fails
@@ -1023,13 +1032,7 @@ describe("RemotePouchDatabase tests", () => {
       vi.spyOn(pouchDB, "get").mockRejectedValue({
         status: HttpStatusCode.Conflict,
       });
-      bulkDocs.mockImplementationOnce(async (docs: any) =>
-        (docs as any[]).map((doc, i) => ({
-          ok: i > 0,
-          id: doc._id,
-          status: i === 0 ? HttpStatusCode.Conflict : undefined,
-        })),
-      );
+      bulkDocs.mockImplementationOnce(firstDocumentConflicted);
 
       const results = await database
         .putAll(documents(10, 300))
