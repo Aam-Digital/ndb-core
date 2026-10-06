@@ -147,7 +147,7 @@ describe("buildPermissionConditionValidator", () => {
     );
   });
 
-  it("should accept a value permitted by a $not condition", () => {
+  it("should accept a value permitted by a $not condition and reject the excluded one", () => {
     // the ability evaluates logical operators, so the per-field validator has to
     // agree with it - otherwise the form rejects a value the save would allow
     const validator = buildPermissionConditionValidator(
@@ -155,7 +155,11 @@ describe("buildPermissionConditionValidator", () => {
       "language",
     );
 
+    // a validator reports "no error" as null, so this is the value being accepted
     expect(validator(new FormControl("Bengali"))).toBeNull();
-    expect(validator(new FormControl("English"))).not.toBeNull();
+
+    // the excluded value is rejected, with the restriction named in the message
+    const rejected = validator(new FormControl("English"));
+    expect(rejected.permissionCondition.errorMessage).toContain("English");
   });
 });
