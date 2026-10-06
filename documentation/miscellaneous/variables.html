@@ -362,6 +362,9 @@
                             <a href="#dynamicComponents" title="src/app/features/de-duplication/de-duplication-module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dynamicComponents</b>&nbsp;&nbsp;&nbsp;(src/.../de-duplication-module.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#dynamicComponents" title="src/app/features/public-form/public-form.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dynamicComponents</b>&nbsp;&nbsp;&nbsp;(src/.../public-form.module.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#dynamicComponents" title="src/app/features/skill/skill.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dynamicComponents</b>&nbsp;&nbsp;&nbsp;(src/.../skill.module.ts)</span></a>
                         </li>
                         <li>
@@ -369,9 +372,6 @@
                         </li>
                         <li>
                             <a href="#dynamicComponents" title="src/app/features/todos/todos.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dynamicComponents</b>&nbsp;&nbsp;&nbsp;(src/.../todos.module.ts)</span></a>
-                        </li>
-                        <li>
-                            <a href="#dynamicComponents" title="src/app/features/public-form/public-form.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dynamicComponents</b>&nbsp;&nbsp;&nbsp;(src/.../public-form.module.ts)</span></a>
                         </li>
                         <li>
                             <a href="#EMPTY" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum.types.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>EMPTY</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum.types.ts)</span></a>
@@ -863,10 +863,10 @@
                             <a href="#viewConfigs" title="src/app/features/email-client/email-client.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>viewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../email-client.module.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#viewConfigs" title="src/app/features/template-export/template-export.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>viewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../template-export.module.ts)</span></a>
+                            <a href="#viewConfigs" title="src/app/features/public-form/public-form.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>viewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../public-form.module.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#viewConfigs" title="src/app/features/public-form/public-form.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>viewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../public-form.module.ts)</span></a>
+                            <a href="#viewConfigs" title="src/app/features/template-export/template-export.module.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>viewConfigs</b>&nbsp;&nbsp;&nbsp;(src/.../template-export.module.ts)</span></a>
                         </li>
                         <li>
                             <a href="#VOLATILE_VALUE_PATTERNS" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>VOLATILE_VALUE_PATTERNS</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
@@ -6742,6 +6742,209 @@ A dynamic component can be referenced from the config with the name defined on t
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/public-form/public-form.module.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dynamicComponents"></a>
+                    <span class="name">
+                        <span ><b>dynamicComponents</b></span>
+                        <a href="#dynamicComponents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  [
+    &quot;EditPublicFormColumns&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/edit-public-form-columns/edit-public-form-columns.component&quot;).then(
+        (c) &#x3D;&gt; c.EditPublicFormColumnsComponent,
+      ),
+  ],
+  [
+    &quot;EditPrefilledValuesComponent&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/edit-prefilled-values/edit-prefilled-values.component&quot;).then(
+        (c) &#x3D;&gt; c.EditPrefilledValuesComponent,
+      ),
+  ],
+  [
+    &quot;EditPublicformRoute&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/edit-publicform-route/edit-publicform-route.component&quot;).then(
+        (c) &#x3D;&gt; c.EditPublicformRouteComponent,
+      ),
+  ],
+  [
+    &quot;EditPublicFormRelatedEntitiesComponent&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component&quot;).then(
+        (c) &#x3D;&gt; c.EditPublicFormRelatedEntitiesComponent,
+      ),
+  ],
+  [
+    &quot;PublicFormPermissionWarning&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/public-form-permission-warning/public-form-permission-warning.component&quot;).then(
+        (c) &#x3D;&gt; c.PublicFormPermissionWarningComponent,
+      ),
+  ],
+  [
+    &quot;PublicFormFormatWarning&quot;,
+    () &#x3D;&gt;
+      import(&quot;app/features/public-form/public-form-format-warning/public-form-format-warning.component&quot;).then(
+        (c) &#x3D;&gt; c.PublicFormFormatWarningComponent,
+      ),
+  ],
+]</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="viewConfigs"></a>
+                    <span class="name">
+                        <span ><b>viewConfigs</b></span>
+                        <a href="#viewConfigs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ViewConfig.html" target="_self" >ViewConfig[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  // List View
+  {
+    _id: &quot;view:&quot; + PublicFormConfig.route,
+    component: &quot;EntityList&quot;,
+    config: {
+      entityType: PublicFormConfig.ENTITY_TYPE,
+      columns: [&quot;title&quot;, &quot;description&quot;, &quot;entity&quot;],
+      filters: [{ id: &quot;entity&quot; }],
+    } as EntityListConfig,
+  },
+
+  // Details View
+  {
+    _id: &quot;view:&quot; + PublicFormConfig.route + &quot;/:id&quot;,
+    component: &quot;EntityDetails&quot;,
+    config: {
+      entityType: PublicFormConfig.ENTITY_TYPE,
+      panels: [
+        {
+          title: $localize&#x60;:PublicFormConfig admin form panel:General Setting&#x60;,
+          components: [
+            {
+              component: &quot;Form&quot;,
+              config: {
+                fieldGroups: [
+                  {
+                    fields: [
+                      {
+                        id: &quot;public_form_format_warning&quot;,
+                        viewComponent: &quot;PublicFormFormatWarning&quot;,
+                      },
+                      &quot;route&quot;,
+                      &quot;title&quot;,
+                      &quot;description&quot;,
+                    ],
+                  },
+                  {
+                    fields: [
+                      {
+                        id: &quot;permissions_remark&quot;,
+                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
+                        label: $localize&#x60;:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **&quot;public&quot;** users to create new records of this type.&lt;br&gt;
+                        If you are seeing problems submitting the form, please contact your **technical support team**.&#x60;,
+                      },
+                      &quot;entity&quot;,
+                      {
+                        id: &quot;public_form_permission_warning&quot;,
+                        viewComponent: &quot;PublicFormPermissionWarning&quot;,
+                      },
+                      &quot;logo&quot;,
+                      &quot;showSubmitAnotherButton&quot;,
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: $localize&#x60;:PublicFormConfig admin form panel:Configure Fields&#x60;,
+          components: [
+            {
+              component: &quot;Form&quot;,
+              config: {
+                fieldGroups: [
+                  {
+                    fields: [&quot;columns&quot;],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: $localize&#x60;:PublicFormConfig admin form panel:Configure Pre-filled Values&#x60;,
+          components: [
+            {
+              component: &quot;Form&quot;,
+              config: {
+                fieldGroups: [
+                  {
+                    fields: [
+                      {
+                        id: &quot;prefilled_description&quot;,
+                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
+                        label: $localize&#x60;:PublicFormConfig admin form:You can configure some fields to be always be set to a certain value when this form is submitted. For example, make a &quot;status&quot; field always be set to &quot;new&quot; so that you can easily filter the new records submitted by external users; or make a &quot;signed up on&quot; date field to always show the current date. If you add the same field(s) in the &quot;Configure Fields&quot; section to show to the user, this pre-filled value can be changed by the person filling the form.&#x60;,
+                      },
+                      &quot;prefilled&quot;,
+                      {
+                        id: &quot;linked_entities_description&quot;,
+                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
+                        label: $localize&#x60;:PublicFormConfig admin form:**Collect replies of this form linked to individual records**&lt;br&gt; &lt;br&gt;You can use forms with a special &quot;magic link&quot; to collect responses from participants that are already registered in your system. By sending out an individual link to each person, the form response(s) from that person can be linked into their profile. For example, you can collect feedback or an evaluation survey and relate each submission to the specific participant or organisation that gave it.&lt;br&gt;The system supports linking to multiple entity types. For example, you can encode IDs of a person and activity in the magic link to collect feedback for that specific context. To set this up, select multiple fields below. Currently, such multi-ID URLs need to be generated outside of this system, however.&#x60;,
+                      },
+                      &quot;linkedEntities&quot;,
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    } as EntityDetailsConfig,
+  },
+]</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/features/skill/skill.module.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -6982,209 +7185,6 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         (c) &#x3D;&gt; c.TodosDashboardSettingsComponent,
       ),
   ],
-]</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/features/public-form/public-form.module.ts</h3>
-    <section data-compodoc="block-properties">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="dynamicComponents"></a>
-                    <span class="name">
-                        <span ><b>dynamicComponents</b></span>
-                        <a href="#dynamicComponents"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>unknown[]</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[
-  [
-    &quot;EditPublicFormColumns&quot;,
-    () &#x3D;&gt;
-      import(&quot;app/features/public-form/edit-public-form-columns/edit-public-form-columns.component&quot;).then(
-        (c) &#x3D;&gt; c.EditPublicFormColumnsComponent,
-      ),
-  ],
-  [
-    &quot;EditPrefilledValuesComponent&quot;,
-    () &#x3D;&gt;
-      import(&quot;app/features/public-form/edit-prefilled-values/edit-prefilled-values.component&quot;).then(
-        (c) &#x3D;&gt; c.EditPrefilledValuesComponent,
-      ),
-  ],
-  [
-    &quot;EditPublicformRoute&quot;,
-    () &#x3D;&gt;
-      import(&quot;app/features/public-form/edit-publicform-route/edit-publicform-route.component&quot;).then(
-        (c) &#x3D;&gt; c.EditPublicformRouteComponent,
-      ),
-  ],
-  [
-    &quot;EditPublicFormRelatedEntitiesComponent&quot;,
-    () &#x3D;&gt;
-      import(&quot;app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component&quot;).then(
-        (c) &#x3D;&gt; c.EditPublicFormRelatedEntitiesComponent,
-      ),
-  ],
-  [
-    &quot;PublicFormPermissionWarning&quot;,
-    () &#x3D;&gt;
-      import(&quot;app/features/public-form/public-form-permission-warning/public-form-permission-warning.component&quot;).then(
-        (c) &#x3D;&gt; c.PublicFormPermissionWarningComponent,
-      ),
-  ],
-  [
-    &quot;PublicFormFormatWarning&quot;,
-    () &#x3D;&gt;
-      import(&quot;app/features/public-form/public-form-format-warning/public-form-format-warning.component&quot;).then(
-        (c) &#x3D;&gt; c.PublicFormFormatWarningComponent,
-      ),
-  ],
-]</code>
-                    </td>
-                </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="viewConfigs"></a>
-                    <span class="name">
-                        <span ><b>viewConfigs</b></span>
-                        <a href="#viewConfigs"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/ViewConfig.html" target="_self" >ViewConfig[]</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[
-  // List View
-  {
-    _id: &quot;view:&quot; + PublicFormConfig.route,
-    component: &quot;EntityList&quot;,
-    config: {
-      entityType: PublicFormConfig.ENTITY_TYPE,
-      columns: [&quot;title&quot;, &quot;description&quot;, &quot;entity&quot;],
-      filters: [{ id: &quot;entity&quot; }],
-    } as EntityListConfig,
-  },
-
-  // Details View
-  {
-    _id: &quot;view:&quot; + PublicFormConfig.route + &quot;/:id&quot;,
-    component: &quot;EntityDetails&quot;,
-    config: {
-      entityType: PublicFormConfig.ENTITY_TYPE,
-      panels: [
-        {
-          title: $localize&#x60;:PublicFormConfig admin form panel:General Setting&#x60;,
-          components: [
-            {
-              component: &quot;Form&quot;,
-              config: {
-                fieldGroups: [
-                  {
-                    fields: [
-                      {
-                        id: &quot;public_form_format_warning&quot;,
-                        viewComponent: &quot;PublicFormFormatWarning&quot;,
-                      },
-                      &quot;route&quot;,
-                      &quot;title&quot;,
-                      &quot;description&quot;,
-                    ],
-                  },
-                  {
-                    fields: [
-                      {
-                        id: &quot;permissions_remark&quot;,
-                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
-                        label: $localize&#x60;:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **&quot;public&quot;** users to create new records of this type.&lt;br&gt;
-                        If you are seeing problems submitting the form, please contact your **technical support team**.&#x60;,
-                      },
-                      &quot;entity&quot;,
-                      {
-                        id: &quot;public_form_permission_warning&quot;,
-                        viewComponent: &quot;PublicFormPermissionWarning&quot;,
-                      },
-                      &quot;logo&quot;,
-                      &quot;showSubmitAnotherButton&quot;,
-                    ],
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        {
-          title: $localize&#x60;:PublicFormConfig admin form panel:Configure Fields&#x60;,
-          components: [
-            {
-              component: &quot;Form&quot;,
-              config: {
-                fieldGroups: [
-                  {
-                    fields: [&quot;columns&quot;],
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        {
-          title: $localize&#x60;:PublicFormConfig admin form panel:Configure Pre-filled Values&#x60;,
-          components: [
-            {
-              component: &quot;Form&quot;,
-              config: {
-                fieldGroups: [
-                  {
-                    fields: [
-                      {
-                        id: &quot;prefilled_description&quot;,
-                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
-                        label: $localize&#x60;:PublicFormConfig admin form:You can configure some fields to be always be set to a certain value when this form is submitted. For example, make a &quot;status&quot; field always be set to &quot;new&quot; so that you can easily filter the new records submitted by external users; or make a &quot;signed up on&quot; date field to always show the current date. If you add the same field(s) in the &quot;Configure Fields&quot; section to show to the user, this pre-filled value can be changed by the person filling the form.&#x60;,
-                      },
-                      &quot;prefilled&quot;,
-                      {
-                        id: &quot;linked_entities_description&quot;,
-                        viewComponent: &quot;DisplayDescriptionOnly&quot;,
-                        label: $localize&#x60;:PublicFormConfig admin form:**Collect replies of this form linked to individual records**&lt;br&gt; &lt;br&gt;You can use forms with a special &quot;magic link&quot; to collect responses from participants that are already registered in your system. By sending out an individual link to each person, the form response(s) from that person can be linked into their profile. For example, you can collect feedback or an evaluation survey and relate each submission to the specific participant or organisation that gave it.&lt;br&gt;The system supports linking to multiple entity types. For example, you can encode IDs of a person and activity in the magic link to collect feedback for that specific context. To set this up, select multiple fields below. Currently, such multi-ID URLs need to be generated outside of this system, however.&#x60;,
-                      },
-                      &quot;linkedEntities&quot;,
-                    ],
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      ],
-    } as EntityDetailsConfig,
-  },
 ]</code>
                     </td>
                 </tr>
