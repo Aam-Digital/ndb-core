@@ -13,6 +13,7 @@ import { exhaustMap, takeUntil } from "rxjs/operators";
 import { AlertService } from "../../alerts/alert.service";
 import { isVersionNewer } from "./version-comparison.utils";
 import { isConnectivityError } from "#src/app/utils/connectivity-error";
+import { FindPage } from "./find-queries";
 import {
   describeResponse,
   unexpectedResponseMessage,
@@ -446,7 +447,8 @@ export class RemotePouchDatabase extends PouchDatabase {
   /**
    * Uses the PouchDB-find plugin {@link https://github.com/apache/pouchdb/tree/master/packages/node_modules/pouchdb-find}
    * to query the remote CouchDB (via the replication-backend) using the Mango
-   * Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}.
+   * Query Language {@link https://pouchdb.com/guides/mango-queries.html#query-language}
+   * (see {@link PouchDatabase.find}).
    *
    * Pagination uses CouchDB's real `bookmark` cursor: pass the `bookmark`
    * returned by a previous call to continue right after those results. This
@@ -454,63 +456,33 @@ export class RemotePouchDatabase extends PouchDatabase {
    * (unlike `skip`) it also works correctly when the server applies
    * permission filtering to the query (see
    * {@link https://github.com/Aam-Digital/replication-backend/pull/330}).
-   *
-   * Only implemented here: PouchDB's local Mango query engine has no
-   * bookmark support at all (see {@link PouchDatabase.find}).
    */
-  override async find(
-    prefix = "",
-    query = {},
+  protected override async findPage(
+    findOptions: PouchDB.Find.FindRequest<any>,
     page?: { limit?: number; bookmark?: string },
-    sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<{ docs: any[]; bookmark?: string }> {
+  ): Promise<FindPage> {
     // the installed @types/pouchdb-find does not declare `bookmark`, although
     // both CouchDB and pouchdb-find's own request/response objects support it
-    const findOptions: PouchDB.Find.FindRequest<any> & { bookmark?: string } = {
-      selector: {
-        ...query,
-        _id: { $lt: `${prefix}:￰`, $gte: `${prefix}:` },
-      },
+    const request: PouchDB.Find.FindRequest<any> & { bookmark?: string } = {
+      ...findOptions,
     };
     if (Number.isInteger(page?.limit)) {
-      findOptions.limit = page.limit;
+      request.limit = page.limit;
     }
     if (page?.bookmark) {
-      findOptions.bookmark = page.bookmark;
+      request.bookmark = page.bookmark;
     }
+
     const pouchDB = await this.getPouchDBOnceReady();
-    if (sort?.prop) {
-      // TODO delete indexes at one point? e.g. when column is removed
-      // Unlike other writes this is safe to retry like a read: creating an index
-      // that already exists changes nothing (CouchDB answers "exists").
-      const indexRes = await this.withReadRetry(() =>
-        pouchDB.createIndex({
-          index: {
-            name: prefix + "_" + sort.prop,
-            partial_filter_selector: {
-              _id: findOptions.selector._id,
-            },
-            fields: [sort.prop],
-          },
-        }),
-      ).catch((err) => {
-        throw new DatabaseException(err);
-      });
-      // deleted because already included in partial_filter_selector
-      delete findOptions.selector._id;
-      findOptions.sort = [{ [sort.prop]: sort.dir }];
-      findOptions.use_index = indexRes["id"];
-    }
-    return this.withReadRetry(
+    const res = await this.withReadRetry(
       () =>
-        pouchDB.find(findOptions) as Promise<
+        pouchDB.find(request) as Promise<
           PouchDB.Find.FindResponse<any> & { bookmark?: string }
         >,
-    )
-      .then((res) => ({ docs: res.docs, bookmark: res.bookmark }))
-      .catch((err) => {
-        throw new DatabaseException(err);
-      });
+    ).catch((err) => {
+      throw new DatabaseException(err);
+    });
+    return { docs: res.docs, bookmark: res.bookmark };
   }
 
   protected override shouldSkipIndexUpdate(existingDesignDoc: any): boolean {

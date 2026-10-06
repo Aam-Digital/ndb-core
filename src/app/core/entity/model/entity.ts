@@ -79,6 +79,17 @@ export class Entity {
   static DATABASE = "app";
 
   /**
+   * Whether {@link DATABASE} exists on the server only and must never be
+   * replicated to the device.
+   *
+   * Such a database is opened as a remote handle, is not watched for changes,
+   * and is left untouched when local databases are reset or destroyed.
+   * Use it for data that grows without bound or that the client must not keep
+   * a copy of.
+   */
+  static readonly DATABASE_REMOTE_ONLY: boolean = false;
+
+  /**
    * EntitySchema defining property transformations from/to the database.
    * This is auto-generated from the property annotations `@DatabaseField()`.
    *
