@@ -20,6 +20,8 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "../../logging/logging.service";
+import { Component } from "@angular/core";
+import { MatTableModule } from "@angular/material/table";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -475,6 +477,43 @@ describe("EntitiesTableComponent", () => {
 
     expect(component._columnsToDisplay()).toEqual(["name", "other"]);
     expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should display a column that the parent component defines through a projected matColumnDef", () => {
+    @Component({
+      template: `
+        <app-entities-table
+          [entityType]="entityType"
+          [columnsToDisplay]="['_customStatus', 'name']"
+          [recordsDataSource]="dataSource"
+          [editable]="false"
+        >
+          <ng-container matColumnDef="_customStatus">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">custom status cell</td>
+          </ng-container>
+        </app-entities-table>
+      `,
+      imports: [EntitiesTableComponent, MatTableModule],
+    })
+    class HostComponent {
+      entityType = TestEntity;
+      dataSource = TestBed.inject(InMemoryDataSource);
+    }
+
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    errorSpy.mockClear();
+    const hostFixture = TestBed.createComponent(HostComponent);
+    hostFixture.componentInstance.dataSource.allRecords.set([new TestEntity()]);
+    hostFixture.detectChanges();
+
+    expect(errorSpy).not.toHaveBeenCalledWith(
+      "Could not display an unknown table column",
+      expect.anything(),
+    );
+    const table: HTMLElement = hostFixture.nativeElement;
+    expect(table.textContent).toContain("custom status cell");
+    expect(table.querySelector(".mat-column-_customStatus")).not.toBeNull();
   });
 
   it("should set noSorting if dataType cannot be sorted properly", () => {
