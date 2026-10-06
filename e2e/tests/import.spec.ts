@@ -1,6 +1,7 @@
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type.js";
+import { UpdateMetadata } from "#src/app/core/entity/model/update-metadata.js";
 
 test("Import children with entity reference, date and enum column mappings", async ({
   page,
@@ -285,6 +286,8 @@ test("Import updates an existing record matched by a field and creates the other
   existingChild["name"] = "Alice Miller";
   existingChild["projectNumber"] = "101";
   existingChild["phone"] = "555-0000";
+  // like real records, the existing one has a creation date (new import rows don't)
+  existingChild.created = new UpdateMetadata("demo", new Date("2024-06-01"));
 
   await loadApp(page, [...users, existingChild]);
 
@@ -335,13 +338,12 @@ test("Import updates an existing record matched by a field and creates the other
   await expect(
     page.getByRole("columnheader", { name: "Import Status" }),
   ).toBeVisible();
+  // rows updating existing records are listed first (row 0 is the header row)
   const reviewRows = page.getByRole("row");
-  await expect(
-    reviewRows.filter({ hasText: "555-0101" }).getByText("Updating"),
-  ).toBeVisible();
-  await expect(
-    reviewRows.filter({ hasText: "555-0102" }).getByText("Creating"),
-  ).toBeVisible();
+  await expect(reviewRows.nth(1)).toContainText("555-0101");
+  await expect(reviewRows.nth(1).getByText("Updating")).toBeVisible();
+  await expect(reviewRows.nth(2)).toContainText("555-0102");
+  await expect(reviewRows.nth(2).getByText("Creating")).toBeVisible();
 
   await argosScreenshot(page, "import-review-update-existing");
 
