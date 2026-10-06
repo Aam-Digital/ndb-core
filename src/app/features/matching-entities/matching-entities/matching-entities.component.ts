@@ -198,7 +198,7 @@ export class MatchingEntitiesComponent implements OnInit {
   readonly isConfigured = computed(() => {
     const entityInputType = this.entity()?.getType();
     return [this.resolvedLeftSide(), this.resolvedRightSide()].every((side) => {
-      const entityType = side.entityType ?? entityInputType;
+      const entityType = side.entityType || entityInputType;
       return !!entityType && this.entityRegistry.has(entityType);
     });
   });
