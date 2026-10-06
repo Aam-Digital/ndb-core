@@ -237,7 +237,7 @@ condition fragment matches the field&#39;s value, the rule decides the outcome
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:108</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:111</a></div>
                                 </td>
                             </tr>
 
@@ -276,7 +276,7 @@ condition fragment matches the field&#39;s value, the rule decides the outcome
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:109</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:112</a></div>
                                 </td>
                             </tr>
 
@@ -315,7 +315,7 @@ condition fragment matches the field&#39;s value, the rule decides the outcome
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:110</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:113</a></div>
                                 </td>
                             </tr>
 
@@ -334,7 +334,10 @@ import { EntitySchemaField } from &quot;../../../entity/schema/entity-schema-fie
 import { EntitySchemaService } from &quot;../../../entity/schema/entity-schema.service&quot;;
 import { ConfigurableEnumService } from &quot;../../../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
 import { ConfigurableEnumDatatype } from &quot;../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype&quot;;
-import { EntityAbility } from &quot;../../../permissions/ability/entity-ability&quot;;
+import {
+  EntityAbility,
+  permissionConditionsMatcher,
+} from &quot;../../../permissions/ability/entity-ability&quot;;
 
 /**
  * Minimal structural type of the CASL rules (see &#x60;Ability.rulesFor&#x60;)
@@ -559,13 +562,18 @@ function createFieldDecision(
   return {
     fragment,
     inverted: !!rule.inverted,
-    matcher: createMongoAbility([
-      {
-        action: MATCH_ACTION,
-        subject: MATCH_SUBJECT,
-        conditions: { [fieldId]: fragment },
-      },
-    ]),
+    // the same matcher the ability uses, so a condition the ability accepts is
+    // never reported as a field error here (and vice versa)
+    matcher: createMongoAbility(
+      [
+        {
+          action: MATCH_ACTION,
+          subject: MATCH_SUBJECT,
+          conditions: { [fieldId]: fragment },
+        },
+      ],
+      { conditionsMatcher: permissionConditionsMatcher },
+    ),
   };
 }
 

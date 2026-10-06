@@ -1034,6 +1034,9 @@
                             <a href="#whenCanInstallDirectly" title="src/bootstrap-pwa-install.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>whenCanInstallDirectly</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-pwa-install.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#withEvaluableConditions" title="src/app/core/permissions/ability/entity-ability.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>withEvaluableConditions</b>&nbsp;&nbsp;&nbsp;(src/.../entity-ability.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#wrapWithProxyZone" title="src/app/utils/test-utils/vitest-proxy-zone-compat.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>wrapWithProxyZone</b>&nbsp;&nbsp;&nbsp;(src/.../vitest-proxy-zone-compat.ts)</span></a>
                         </li>
                     </ul>
@@ -21734,6 +21737,82 @@ otherwise continues to emit values from the source observable</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>MonoTypeOperatorFunction&lt;State&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/permissions/ability/entity-ability.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="withEvaluableConditions"></a>
+                    <span class="name">
+                        <span ><b>withEvaluableConditions</b></span>
+                        <a href="#withEvaluableConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>withEvaluableConditions(rule: RawRuleFrom)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Drop rules whose conditions the matcher cannot compile, e.g. <code>{ $or: [] }</code>,
+which the raw JSON editor or a direct database edit can introduce. Such a
+rule throws on every permission check for its subject - and because CASL
+evaluates rules in order, one broken rule also takes down the valid rules
+next to it.</p>
+<p>Validating by compiling with the very matcher that later evaluates the rule
+keeps the two from drifting apart as the operator set changes.</p>
+<p>A granting rule is removed, which preserves the deny-by-default outcome such
+a config already had while the logical operators were unregistered. An
+inverted rule is kept without its conditions instead, since removing it
+would lift a restriction.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rule</td>
+                                            <td>
+                                                        <code>RawRuleFrom</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>RawRuleFrom[]</code>
 
                         </div>
                             <div class="io-description">

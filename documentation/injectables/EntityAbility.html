@@ -239,6 +239,11 @@ Inject this class in your component to check for permissions.</p>
                                     <span class="modifier"></span>
                                 <a href="#cannot" >cannot</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#update" >update</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -262,7 +267,7 @@ Inject this class in your component to check for permissions.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:92</a></div>
                             </td>
                         </tr>
 
@@ -297,8 +302,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:111</a></div>
                         </td>
                     </tr>
 
@@ -402,8 +407,8 @@ Inject this class in your component to check for permissions.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -473,6 +478,78 @@ Inject this class in your component to check for permissions.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="update"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>update</b></span>
+                        <a href="#update"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>update(rules: <a href="../injectables/EntityAbility.html" target="_self">RawRuleFrom&lt;EntityAbilityTuple, MongoQuery&gt;[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:107</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Keep rules with unusable conditions from reaching the matcher,
+see <a href="../miscellaneous/functions.html#withEvaluableConditions">withEvaluableConditions</a>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>rules</td>
+                                            <td>
+                                                            <code><a href="../injectables/EntityAbility.html" target="_self" >RawRuleFrom&lt;EntityAbilityTuple, MongoQuery&gt;[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
             <section data-compodoc="block-properties">
@@ -504,7 +581,7 @@ Inject this class in your component to check for permissions.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/permissions/ability/entity-ability.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -527,18 +604,73 @@ Inject this class in your component to check for permissions.</p>
 import { EntityActionPermission, EntitySubject } from &quot;../permission-types&quot;;
 import {
   Ability,
+  buildMongoQueryMatcher,
   createMongoAbility,
   fieldPatternMatcher,
+  ConditionsMatcher,
   MongoQuery,
-  mongoQueryMatcher,
+  RawRuleFrom,
   subject,
   Subject,
 } from &quot;@casl/ability&quot;;
+import { $and, $nor, $not, $or, and, nor, not, or } from &quot;@ucast/mongo2js&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
 
 /** The action and subject types this ability checks permissions for. */
 type EntityAbilityTuple &#x3D; [EntityActionPermission, Subject];
+
+/**
+ * CASL&#x27;s default matcher registers only field operators ($eq, $in, $elemMatch,
+ * ...). Without the logical operators a rule like &#x60;{ $or: [...] }&#x60; is parsed as
+ * a field literally named &quot;$or&quot; and therefore matches no document at all, so
+ * permissions built with them would silently grant nothing.
+ *
+ * Exported so that anything else deciding whether a rule&#x27;s conditions are met
+ * (e.g. the per-field form validators) reaches the same verdict as the ability
+ * enforcing them.
+ */
+export const permissionConditionsMatcher: ConditionsMatcher&lt;MongoQuery&gt; &#x3D;
+  buildMongoQueryMatcher({ $or, $and, $nor, $not }, { or, and, nor, not });
+
+/**
+ * Drop rules whose conditions the matcher cannot compile, e.g. &#x60;{ $or: [] }&#x60;,
+ * which the raw JSON editor or a direct database edit can introduce. Such a
+ * rule throws on every permission check for its subject - and because CASL
+ * evaluates rules in order, one broken rule also takes down the valid rules
+ * next to it.
+ *
+ * Validating by compiling with the very matcher that later evaluates the rule
+ * keeps the two from drifting apart as the operator set changes.
+ *
+ * A granting rule is removed, which preserves the deny-by-default outcome such
+ * a config already had while the logical operators were unregistered. An
+ * inverted rule is kept without its conditions instead, since removing it
+ * would lift a restriction.
+ */
+function withEvaluableConditions(
+  rule: RawRuleFrom&lt;EntityAbilityTuple, MongoQuery&gt;,
+): RawRuleFrom&lt;EntityAbilityTuple, MongoQuery&gt;[] {
+  if (!rule.conditions) {
+    return [rule];
+  }
+
+  try {
+    permissionConditionsMatcher(rule.conditions);
+    return [rule];
+  } catch (err) {
+    Logging.warn(&quot;Ignoring permission rule with unusable conditions&quot;, {
+      subject: rule.subject,
+      action: rule.action,
+      inverted: !!rule.inverted,
+      error: err?.message,
+    });
+
+    const { conditions, ...unconditional } &#x3D; rule;
+    return rule.inverted ? [unconditional] : [];
+  }
+}
 
 /**
  * An extension of the Ability class which can check permissions on Entities.
@@ -565,9 +697,17 @@ export class EntityAbility extends Ability&lt;EntityAbilityTuple, MongoQuery&gt;
     // &#x60;Ability&#x60; itself carries no matchers, so rule conditions and field
     // restrictions are silently inert unless both are passed in explicitly
     super([], {
-      conditionsMatcher: mongoQueryMatcher,
+      conditionsMatcher: permissionConditionsMatcher,
       fieldMatcher: fieldPatternMatcher,
     });
+  }
+
+  /**
+   * Keep rules with unusable conditions from reaching the matcher,
+   * see {@link withEvaluableConditions}.
+   */
+  override update(rules: RawRuleFrom&lt;EntityAbilityTuple, MongoQuery&gt;[]): this {
+    return super.update((rules ?? []).flatMap(withEvaluableConditions));
   }
 
   override can(
