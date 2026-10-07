@@ -1,5 +1,6 @@
 import type { Mock } from "vitest";
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import { PartialBulkWriteError } from "../database";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
@@ -7,6 +8,33 @@ import { Logging } from "../../logging/logging.service";
 import { SyncStateSubject } from "app/core/session/session-type";
 import { environment } from "environments/environment";
 import { RemoteLoginNotAvailableError } from "../../session/auth/keycloak/remote-login-not-available.error";
+
+/** A `_bulk_docs` response that stored every document of the request. */
+async function allDocumentsStored(docs: any) {
+  return (docs as any[]).map((doc) => ({
+    ok: true,
+    id: doc._id,
+    rev: "1-new",
+  }));
+}
+
+/** A `_bulk_docs` response that rejected every document of the request as a conflict. */
+async function allDocumentsConflicted(docs: any) {
+  return (docs as any[]).map((doc) => ({
+    ok: false,
+    id: doc._id,
+    status: HttpStatusCode.Conflict,
+  }));
+}
+
+/** A `_bulk_docs` response whose first document was rejected as a conflict. */
+async function firstDocumentConflicted(docs: any) {
+  return (docs as any[]).map((doc, i) => ({
+    ok: i > 0,
+    id: doc._id,
+    status: i === 0 ? HttpStatusCode.Conflict : undefined,
+  }));
+}
 
 describe("RemotePouchDatabase tests", () => {
   let database: PouchDatabase;
@@ -910,6 +938,137 @@ describe("RemotePouchDatabase tests", () => {
       } finally {
         environment.appVersion = appVersionBefore;
       }
+    });
+  });
+
+  describe("splitting large bulk writes across requests", () => {
+    /**
+     * Mocks the database's writes and shrinks the request budgets, so that the tests
+     * can trigger a split with a handful of small documents instead of megabytes.
+     */
+    function setupBulkWrites(): { pouchDB: any; bulkDocs: Mock } {
+      database.init("");
+      const pouchDB = (database as any).pouchDB;
+      (database as any).bulkWriteLimits = { maxBytes: 2000, maxDocuments: 4 };
+      const bulkDocs = vi
+        .spyOn(pouchDB, "bulkDocs")
+        .mockImplementation(allDocumentsStored);
+      return { pouchDB, bulkDocs: bulkDocs as unknown as Mock };
+    }
+
+    /** `count` documents of roughly `bytes` each. */
+    function documents(count: number, bytes: number) {
+      return Array.from({ length: count }, (_, i) => ({
+        _id: `Entity:${i}`,
+        text: "x".repeat(bytes),
+      }));
+    }
+
+    /** The number of documents each request carried. */
+    function requestSizes(bulkDocs: Mock): number[] {
+      return bulkDocs.mock.calls.map(([sent]) => sent.length);
+    }
+
+    it.each([
+      ["one request for documents that fit into it", 3, 300, [3]],
+      ["several requests when the documents exceed the budget", 5, 600, [3, 2]],
+      ["several requests when there are too many documents", 6, 300, [4, 2]],
+      ["a request of its own for an oversized document", 2, 5000, [1, 1]],
+    ])(
+      "should send %s",
+      async (_invariant, count, bytes, expectedRequestSizes) => {
+        const { bulkDocs } = setupBulkWrites();
+        const docs = documents(count as number, bytes as number);
+
+        const results = await database.putAll(docs);
+
+        expect(requestSizes(bulkDocs)).toEqual(expectedRequestSizes);
+        // split or not, every document is sent exactly once and the caller gets its
+        // results in the order it passed the documents in
+        const sentDocs = bulkDocs.mock.calls.flatMap(([sent]) => sent as any[]);
+        expect(sentDocs.map((doc: any) => doc._id)).toEqual(
+          docs.map((doc) => doc._id),
+        );
+        expect(results.map((r) => r.id)).toEqual(docs.map((doc) => doc._id));
+      },
+    );
+
+    it("should stop sending further requests once a whole request failed", async () => {
+      const { bulkDocs } = setupBulkWrites();
+      const rejected = Object.assign(new Error("request entity too large"), {
+        status: HttpStatusCode.PayloadTooLarge,
+      });
+      bulkDocs
+        .mockImplementationOnce(allDocumentsStored)
+        .mockRejectedValueOnce(rejected);
+
+      // three requests worth of documents, of which the second one fails
+      const error = await database
+        .putAll(documents(10, 300))
+        .catch((rejectedWith) => rejectedWith);
+
+      expect(bulkDocs).toHaveBeenCalledTimes(2);
+      // the documents of the first request are stored, and the caller is told which,
+      // so it can tell this apart from a write that did nothing
+      expect(error).toBeInstanceOf(PartialBulkWriteError);
+      expect(error.storedResults.map((r) => r.id)).toEqual([
+        "Entity:0",
+        "Entity:1",
+        "Entity:2",
+        "Entity:3",
+      ]);
+      expect(error.cause).toBe(rejected);
+      // ... but a serialized copy of the error must not carry the document ids
+      // along into a user-facing message or remote monitoring (see #4174)
+      expect(JSON.parse(JSON.stringify(error))).not.toHaveProperty(
+        "storedResults",
+      );
+    });
+
+    it.each([
+      ["the very first request failed", []],
+      [
+        "every document of the earlier requests failed on its own",
+        [allDocumentsConflicted],
+      ],
+    ])(
+      "should reject with the failure itself when nothing was stored because %s",
+      async (_invariant, precedingResponses) => {
+        const { pouchDB, bulkDocs } = setupBulkWrites();
+        // the conflicting documents cannot be resolved, so they stay rejected
+        vi.spyOn(pouchDB, "get").mockRejectedValue({
+          status: HttpStatusCode.Conflict,
+        });
+        for (const response of precedingResponses) {
+          bulkDocs.mockImplementationOnce(response);
+        }
+        const rejected = new Error("offline");
+        bulkDocs.mockRejectedValue(rejected);
+
+        // no document is in the database, so there is nothing to report beyond the
+        // failure - a PartialBulkWriteError would claim a partial write that never
+        // happened
+        await expect(database.putAll(documents(10, 300))).rejects.toBe(
+          rejected,
+        );
+      },
+    );
+
+    it("should still write the remaining requests when single documents failed", async () => {
+      const { pouchDB, bulkDocs } = setupBulkWrites();
+      // the conflicting document cannot be resolved, so it ends up as an error entry
+      vi.spyOn(pouchDB, "get").mockRejectedValue({
+        status: HttpStatusCode.Conflict,
+      });
+      bulkDocs.mockImplementationOnce(firstDocumentConflicted);
+
+      const results = await database
+        .putAll(documents(10, 300))
+        .catch((rejectedWith) => rejectedWith);
+
+      expect(bulkDocs).toHaveBeenCalledTimes(3);
+      expect(results).toHaveLength(10);
+      expect(results[0]).toBeInstanceOf(Error);
     });
   });
 

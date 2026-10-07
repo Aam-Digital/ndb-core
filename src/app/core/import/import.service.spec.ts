@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ImportService } from "./import.service";
+import { ImportService, PartialImportError } from "./import.service";
+import { PartialBulkWriteError } from "../database/database";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
@@ -16,6 +17,7 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../demo-data/create-entity-of-type";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { Logging } from "../logging/logging.service";
+import { ImportAdditionalService } from "./additional-actions/import-additional.service";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -72,6 +74,119 @@ describe("ImportService", () => {
         config: testImportSettings,
       } as Partial<ImportMetadata>),
     );
+  });
+
+  describe("reporting a save that stored only part of the records", () => {
+    const partialImportSettings: ImportSettings = {
+      entityType: "Entity",
+      columnMapping: undefined,
+    };
+    const testEntities = () => [new Entity("1"), new Entity("2")];
+
+    /** The result of a stored record, as the database reports it. */
+    const stored = (id: string) => ({ ok: true, id, rev: "1-new" });
+
+    it.each([
+      [
+        "the write stopped partway",
+        (results: any[]) =>
+          new PartialBulkWriteError(results, new Error("413")),
+      ],
+      [
+        "individual records failed",
+        (results: any[]) => [
+          ...results,
+          Object.assign(new Error("Document update conflict"), { status: 409 }),
+        ],
+      ],
+    ])(
+      "should record the stored records in the import history when %s",
+      async (_invariant, rejectWith) => {
+        const entities = testEntities();
+        const rejection = rejectWith([stored("Entity:1")]);
+        vi.spyOn(entityMapper, "saveAll").mockRejectedValue(rejection);
+        vi.spyOn(entityMapper, "save");
+
+        const error = await service
+          .executeImport(entities, partialImportSettings)
+          .catch((e) => e);
+
+        expect(error).toBeInstanceOf(PartialImportError);
+        expect(error.stage).toBe("records");
+        expect(error.importedCount).toBe(1);
+        expect(error.totalCount).toBe(2);
+        // the partial import is recorded, so it can be reviewed and undone
+        expect(entityMapper.save).toHaveBeenCalledWith(
+          expect.objectContaining({
+            createdEntities: ["Entity:1"],
+          } as Partial<ImportMetadata>),
+        );
+        // the original failure stays reachable, so a conflict can still be told
+        // apart from any other reason the import failed
+        expect(error.cause).toBe(rejection);
+      },
+    );
+
+    it("should report an ordinary failure when nothing was stored", async () => {
+      const writeError = new Error("write rejected");
+      vi.spyOn(entityMapper, "saveAll").mockRejectedValue(writeError);
+      vi.spyOn(entityMapper, "save");
+
+      const error = await service
+        .executeImport(testEntities(), partialImportSettings)
+        .catch((e) => e);
+
+      expect(error).toBe(writeError);
+      // nothing was written, so there is nothing to record or undo
+      expect(entityMapper.save).not.toHaveBeenCalled();
+    });
+
+    it("should record all records in the import history when only the additional linking failed", async () => {
+      const entities = testEntities();
+      const linkingError = new Error("linking failed");
+      vi.spyOn(entityMapper, "saveAll").mockResolvedValue([]);
+      vi.spyOn(entityMapper, "save");
+      vi.spyOn(
+        TestBed.inject(ImportAdditionalService),
+        "executeImport",
+      ).mockRejectedValue(linkingError);
+
+      const error = await service
+        .executeImport(entities, partialImportSettings)
+        .catch((e) => e);
+
+      // the records are all stored at this point, so re-running the file would
+      // duplicate them - the user has to be told and given a way to undo
+      expect(error).toBeInstanceOf(PartialImportError);
+      expect(error.stage).toBe("links");
+      expect(error.importedCount).toBe(2);
+      expect(error.totalCount).toBe(2);
+      expect(entityMapper.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          createdEntities: ["Entity:1", "Entity:2"],
+        } as Partial<ImportMetadata>),
+      );
+      expect(error.completedImport).toBeInstanceOf(ImportMetadata);
+      expect(error.cause).toBe(linkingError);
+    });
+
+    it("should report a partial import without a history entry when the history could not be saved", async () => {
+      vi.spyOn(entityMapper, "saveAll").mockRejectedValue(
+        new PartialBulkWriteError([stored("Entity:1")], new Error("413")),
+      );
+      vi.spyOn(entityMapper, "save").mockRejectedValue(
+        new Error("history rejected"),
+      );
+
+      const error = await service
+        .executeImport(testEntities(), partialImportSettings)
+        .catch((e) => e);
+
+      // the records are still stored, so this must not be reported as a plain
+      // failure - but there is no history entry to point the user to
+      expect(error).toBeInstanceOf(PartialImportError);
+      expect(error.completedImport).toBeUndefined();
+    });
   });
 
   it("should transform raw data to mapped entities", async () => {
