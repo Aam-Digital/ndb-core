@@ -693,7 +693,7 @@ describe("InheritedValueService", () => {
     vi.useFakeTimers();
     try {
       const parentEntity = new Entity("Parent:1");
-      parentEntity["status"] = { id: "active", label: "Active" };
+      parentEntity["status"] = "active";
       mockEntityMapperService.load.mockReturnValue(
         Promise.resolve(parentEntity),
       );
@@ -732,7 +732,7 @@ describe("InheritedValueService", () => {
     vi.useFakeTimers();
     try {
       const parentEntity = new Entity("Parent:1");
-      parentEntity["status"] = { id: "active", label: "Active" };
+      parentEntity["status"] = "active";
       mockEntityMapperService.load.mockReturnValue(
         Promise.resolve(parentEntity),
       );

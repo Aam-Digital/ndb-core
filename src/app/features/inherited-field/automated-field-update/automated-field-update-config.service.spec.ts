@@ -71,6 +71,12 @@ class School extends Entity {
     additional: "school-category-enum",
   })
   category: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "school-category-enum",
+    isArray: true,
+  })
+  categories: ConfigurableEnumValue[];
 }
 
 @DatabaseEntity("Mentee")
@@ -362,6 +368,37 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     expect(updatedChild1.category).toBe("secondary-student");
     expect(updatedChild2.category).toBe("secondary-student");
+  });
+
+  it("should map each value of a multi-select enum source and remove duplicates", () => {
+    const school = new School();
+    school.categories = [TEST_SCHOOL_ENUM[0], TEST_SCHOOL_ENUM[1]];
+    const rule = {
+      sourceReferenceField: "school",
+      sourceValueField: "categories",
+      valueMapping: { primary: "primary-student", secondary: "student" },
+    };
+
+    expect(service.calculateNewValue(school, rule)).toEqual([
+      "primary-student",
+      "student",
+    ]);
+
+    rule.valueMapping.primary = "student";
+    expect(service.calculateNewValue(school, rule)).toEqual(["student"]);
+  });
+
+  it("should fall back to the database format of an unmapped enum source value", () => {
+    const school = new School();
+    school.category = TEST_SCHOOL_ENUM[1];
+
+    const result = service.calculateNewValue(school, {
+      sourceReferenceField: "school",
+      sourceValueField: "category",
+      valueMapping: { primary: "primary-student", secondary: null },
+    });
+
+    expect(result).toBe("secondary");
   });
 
   it("should transform ConfigurableEnum value to database format (ID string)", () => {
