@@ -1832,6 +1832,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/PaginatedDataSource.html" data-type="entity-link" >PaginatedDataSource&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="classes/PartialBulkWriteError.html" data-type="entity-link" >PartialBulkWriteError</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/PartialImportError.html" data-type="entity-link" >PartialImportError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/PouchDatabase.html" data-type="entity-link" >PouchDatabase</a>
                             </li>
                             <li class="link">
@@ -2437,6 +2443,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/BulkEditAction.html" data-type="entity-link" >BulkEditAction</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/BulkWriteLimits.html" data-type="entity-link" >BulkWriteLimits</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/CalculateReportOptions.html" data-type="entity-link" >CalculateReportOptions</a>

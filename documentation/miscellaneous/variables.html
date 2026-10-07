@@ -311,6 +311,9 @@
                             <a href="#DB_MIGRATED_PREFIX" title="src/app/core/database/indexeddb-migration.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>DB_MIGRATED_PREFIX</b>&nbsp;&nbsp;&nbsp;(src/.../indexeddb-migration.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#DEFAULT_BULK_WRITE_LIMITS" title="src/app/core/database/pouchdb/bulk-write-batches.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>DEFAULT_BULK_WRITE_LIMITS</b>&nbsp;&nbsp;&nbsp;(src/.../bulk-write-batches.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#DEFAULT_LANGUAGE" title="src/app/core/language/language-statics.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>DEFAULT_LANGUAGE</b>&nbsp;&nbsp;&nbsp;(src/.../language-statics.ts)</span></a>
                         </li>
                         <li>
@@ -858,6 +861,9 @@
                         </li>
                         <li>
                             <a href="#USAGE_ANALYTICS_CONFIG_ID" title="src/app/core/analytics/usage-analytics-config.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>USAGE_ANALYTICS_CONFIG_ID</b>&nbsp;&nbsp;&nbsp;(src/.../usage-analytics-config.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#UTF8_ENCODER" title="src/app/core/database/pouchdb/bulk-write-batches.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>UTF8_ENCODER</b>&nbsp;&nbsp;&nbsp;(src/.../bulk-write-batches.ts)</span></a>
                         </li>
                         <li>
                             <a href="#VIEW_NAME" title="src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>VIEW_NAME</b>&nbsp;&nbsp;&nbsp;(src/.../important-notes-index.service.ts)</span></a>
@@ -6060,6 +6066,70 @@ dateInput uses a getter so it always reflects the current global date format fro
                     </td>
                 </tr>
 
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/bulk-write-batches.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DEFAULT_BULK_WRITE_LIMITS"></a>
+                    <span class="name">
+                        <span ><b>DEFAULT_BULK_WRITE_LIMITS</b></span>
+                        <a href="#DEFAULT_BULK_WRITE_LIMITS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/BulkWriteLimits.html" target="_self" >BulkWriteLimits</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  maxBytes: 4 * 1024 * 1024,
+  maxDocuments: 500,
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="UTF8_ENCODER"></a>
+                    <span class="name">
+                        <span ><b>UTF8_ENCODER</b></span>
+                        <a href="#UTF8_ENCODER"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new TextEncoder()</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Shared encoder for <a href="../miscellaneous/functions.html#jsonByteLength">jsonByteLength</a> (creating one per document is wasteful).</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>

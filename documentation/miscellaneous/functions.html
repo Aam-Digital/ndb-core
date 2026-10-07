@@ -314,6 +314,9 @@
                             <a href="#describeResponse" title="src/app/core/logging/http-response-logging.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeResponse</b>&nbsp;&nbsp;&nbsp;(src/.../http-response-logging.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#describeSaveFailure" title="src/app/core/import/import.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeSaveFailure</b>&nbsp;&nbsp;&nbsp;(src/.../import.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#describeSingleOperator" title="src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>describeSingleOperator</b>&nbsp;&nbsp;&nbsp;(src/.../permission-condition-validators.ts)</span></a>
                         </li>
                         <li>
@@ -689,6 +692,9 @@
                             <a href="#itemReferencesId" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>itemReferencesId</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#jsonByteLength" title="src/app/core/database/pouchdb/bulk-write-batches.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>jsonByteLength</b>&nbsp;&nbsp;&nbsp;(src/.../bulk-write-batches.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#keycloakFailureContext" title="src/app/core/session/auth/keycloak/keycloak-auth.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>keycloakFailureContext</b>&nbsp;&nbsp;&nbsp;(src/.../keycloak-auth.service.ts)</span></a>
                         </li>
                         <li>
@@ -962,10 +968,16 @@
                             <a href="#splitArrayValue" title="src/app/core/import/split-array-value.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>splitArrayValue</b>&nbsp;&nbsp;&nbsp;(src/.../split-array-value.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#splitIntoRequests" title="src/app/core/database/pouchdb/bulk-write-batches.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>splitIntoRequests</b>&nbsp;&nbsp;&nbsp;(src/.../bulk-write-batches.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#splitNegation" title="src/app/core/common-components/conditions-editor/condition-negation.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>splitNegation</b>&nbsp;&nbsp;&nbsp;(src/.../condition-negation.ts)</span></a>
                         </li>
                         <li>
                             <a href="#statsToEntityWithRecentNoteInfo" title="src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>statsToEntityWithRecentNoteInfo</b>&nbsp;&nbsp;&nbsp;(src/.../notes-dashboard.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#storedRecordsOf" title="src/app/core/import/import.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>storedRecordsOf</b>&nbsp;&nbsp;&nbsp;(src/.../import.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#subtreeLength" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>subtreeLength</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
@@ -1050,6 +1062,9 @@
                         </li>
                         <li>
                             <a href="#wrapWithProxyZone" title="src/app/utils/test-utils/vitest-proxy-zone-compat.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>wrapWithProxyZone</b>&nbsp;&nbsp;&nbsp;(src/.../vitest-proxy-zone-compat.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#writeInBatchedRequests" title="src/app/core/database/pouchdb/bulk-write-batches.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>writeInBatchedRequests</b>&nbsp;&nbsp;&nbsp;(src/.../bulk-write-batches.ts)</span></a>
                         </li>
                     </ul>
                 </td>
@@ -11141,6 +11156,142 @@ described on <a href="../miscellaneous/variables.html#UNEXPECTED_STATUS_NAMES">U
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/import/import.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="describeSaveFailure"></a>
+                    <span class="name">
+                        <span ><b>describeSaveFailure</b></span>
+                        <a href="#describeSaveFailure"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>describeSaveFailure(error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A short description of why a save failed, safe to pass on to a log or a message.</p>
+<p>A rejected save reports what happened to each individual document (see
+<code>Database.putAll</code>), i.e. potentially thousands of document ids - which have no place
+in remote monitoring (see #4174) or in a message shown to the user.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>error</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="storedRecordsOf"></a>
+                    <span class="name">
+                        <span ><b>storedRecordsOf</b></span>
+                        <a href="#storedRecordsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>storedRecordsOf(records, error)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The records that were stored although the save as a whole was rejected.</p>
+<p>A rejected save reports what became of the records (see <code>Database.putAll</code>): the
+results array when individual records failed, a <a href="../classes/PartialBulkWriteError.html">PartialBulkWriteError</a> when
+the write stopped partway. Any other rejection means nothing was stored.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>records</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>error</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -18930,6 +19081,274 @@ so they have to be rejected before they are stored or used.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>ValidationErrors | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/database/pouchdb/bulk-write-batches.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="jsonByteLength"></a>
+                    <span class="name">
+                        <span ><b>jsonByteLength</b></span>
+                        <a href="#jsonByteLength"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>jsonByteLength(object: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The size a document adds to a request body: UTF-8 bytes, not characters.</p>
+<p>The server limits a request by its bytes, and a single character of a name written
+in a non-latin script takes several of them - so measuring the string length would
+under-count exactly the data most likely to be imported in bulk.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>object</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="splitIntoRequests"></a>
+                    <span class="name">
+                        <span ><b>splitIntoRequests</b></span>
+                        <a href="#splitIntoRequests"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>splitIntoRequests(objects, limits: <a href="../interfaces/BulkWriteLimits.html" target="_self">BulkWriteLimits</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Group the documents into batches that each stay within one request&#39;s budget.</p>
+<p>A single document larger than the budget gets a request of its own: it cannot be
+split, and the limits it is measured against are not the only ones it may pass, so
+it is left to the server to accept or reject it.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>objects</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>limits</td>
+                                            <td>
+                                                            <code><a href="../interfaces/BulkWriteLimits.html" target="_self" >BulkWriteLimits</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>[][]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="writeInBatchedRequests"></a>
+                    <span class="name">
+                        <span ><b>writeInBatchedRequests</b></span>
+                        <a href="#writeInBatchedRequests"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>writeInBatchedRequests(objects, writeRequest, limits: <a href="../interfaces/BulkWriteLimits.html" target="_self">BulkWriteLimits</a>, dbName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Write the given documents through <code>writeRequest</code>, split across several requests
+where they do not fit into one (see <a href="../interfaces/BulkWriteLimits.html">BulkWriteLimits</a>).</p>
+<p>The requests are sent one after the other: the chunks of one call belong to a
+single user action, so sending them in parallel would only have them compete for
+connections while the server holds all of their bodies in memory at once.</p>
+<p>The result reports what became of the documents the way <code>Database.putAll</code> does:
+the results in the order the documents were passed in, a rejection <em>with</em> those
+results when individual documents failed, and a <a href="../classes/PartialBulkWriteError.html">PartialBulkWriteError</a> when
+a request failed as a whole after an earlier one had stored documents.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>objects</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the documents to write</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>writeRequest</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>sends one request, following the <code>Database.putAll</code> contract</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>limits</td>
+                                            <td>
+                                                            <code><a href="../interfaces/BulkWriteLimits.html" target="_self" >BulkWriteLimits</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the budgets one request has to stay within</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>dbName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the database being written to, for the log context</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
 
                         </div>
                             <div class="io-description">

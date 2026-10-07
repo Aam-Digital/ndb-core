@@ -260,6 +260,9 @@
                             <a href="#GrantedBy" title="src/app/core/admin/admin-role-permissions/permission-matrix/permission-matrix.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>GrantedBy</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.component.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#ImportFailureStage" title="src/app/core/import/import.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ImportFailureStage</b>&nbsp;&nbsp;&nbsp;(src/.../import.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#IsDesktop" title="src/app/utils/media/screen-size-observer.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>IsDesktop</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</span></a>
                         </li>
                         <li>
@@ -1417,6 +1420,33 @@ or the shared &quot;_default&quot; role that applies to every logged-in user.</p
             <tr>
                 <td class="col-md-4">
                     <code>    <code>&quot;manage&quot; | &quot;wildcard&quot; | &quot;default&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/import/import.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ImportFailureStage"></a>
+                    <span class="name "><b>ImportFailureStage</b><a href="#ImportFailureStage"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The step of an import that failed although records had already been saved.</p>
+<p>&quot;records&quot;: the write of the imported records itself stopped partway.
+&quot;links&quot;: all records were written and one of the additional link actions failed.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;records&quot; | &quot;links&quot;</code>
 </code>
                 </td>
             </tr>

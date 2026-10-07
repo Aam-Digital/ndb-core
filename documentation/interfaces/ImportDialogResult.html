@@ -188,6 +188,12 @@
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">errorOccured</span>
                                 </a>
                         </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#partiallyCompleted" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">partiallyCompleted</span>
+                                </a>
+                        </li>
                     </ul>
                 </td>
             </tr>
@@ -237,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts:37</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts:41</a></div>
                                 </td>
                             </tr>
 
@@ -281,10 +287,62 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts:38</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts:42</a></div>
                                 </td>
                             </tr>
 
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="partiallyCompleted"></a>
+                                <span class="name "><b>partiallyCompleted</b>
+                                    <a href="#partiallyCompleted">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>partiallyCompleted:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/import/import-confirm-summary/import-confirm-summary.component.ts:49</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether records were written although the import failed as a whole.</p>
+<p>The usual reaction to an error is to refresh the data and let the user run the
+import again - which for these would import the saved records a second time.</p>
+</div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
     </section>
@@ -298,7 +356,11 @@
   ChangeDetectionStrategy,
   signal,
 } from &quot;@angular/core&quot;;
-import { ImportService } from &quot;../import.service&quot;;
+import {
+  describeSaveFailure,
+  ImportService,
+  PartialImportError,
+} from &quot;../import.service&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -330,6 +392,13 @@ export interface ImportDialogData {
 export interface ImportDialogResult {
   completedImport?: ImportMetadata;
   errorOccured?: boolean;
+  /**
+   * Whether records were written although the import failed as a whole.
+   *
+   * The usual reaction to an error is to refresh the data and let the user run the
+   * import again - which for these would import the saved records a second time.
+   */
+  partiallyCompleted?: boolean;
 }
 
 /**
@@ -388,14 +457,31 @@ export class ImportConfirmSummaryComponent {
       this.showImportSuccessToast(completedImport);
       this.dialogRef.close({ completedImport });
     } catch (error) {
-      if (this.isPutAllConflictError(error)) {
+      // a partial import carries the failure that stopped it. That failure explains
+      // *why* the import stopped - but it must not replace the partial-import
+      // message, because &quot;please run the import again&quot; is wrong once records have
+      // been written. So the conflict advice is folded into that message instead.
+      const partialImport &#x3D;
+        error instanceof PartialImportError ? error : undefined;
+      const failure &#x3D; partialImport ? partialImport.cause : error;
+
+      if (partialImport) {
+        this.showPartialImportWarning(
+          partialImport,
+          this.isPutAllConflictError(failure),
+        );
+      } else if (this.isPutAllConflictError(failure)) {
         this.showImportPutAllConflictWarning();
       } else {
         // Handle all other errors
-        Logging.warn(&quot;Import failed with error&quot;, error);
+        Logging.warn(&quot;Import failed with error&quot;, describeSaveFailure(error));
         this.showImportErrorMessage(error);
       }
-      this.dialogRef.close({ errorOccured: true });
+      this.dialogRef.close({
+        errorOccured: true,
+        partiallyCompleted: !!partialImport,
+        completedImport: partialImport?.completedImport,
+      });
     } finally {
       this.importInProgress.set(false);
       this.dialogRef.disableClose &#x3D; false;
@@ -443,10 +529,43 @@ export class ImportConfirmSummaryComponent {
     );
   }
 
+  /**
+   * Unlike a completely failed import, a partial one must not be retried as a whole:
+   * the records that were saved would be imported a second time. So the user is told
+   * what is already there and how to get rid of it.
+   */
+  private showPartialImportWarning(
+    error: PartialImportError,
+    conflictsOccurred: boolean,
+  ) {
+    const whatHappened &#x3D;
+      error.stage &#x3D;&#x3D;&#x3D; &quot;links&quot;
+        ? $localize&#x60;All ${error.totalCount} records were imported, but linking them to the other records you selected failed.&#x60;
+        : $localize&#x60;Only ${error.importedCount} of ${error.totalCount} records could be imported before an error occurred.&#x60;;
+
+    const why &#x3D; conflictsOccurred
+      ? $localize&#x60;Some records had been changed through synchronisation while the import was being prepared, so they could not be overwritten.&#x60;
+      : undefined;
+
+    // without a history entry the saved records cannot be undone from the import
+    // history, so pointing the user there would send them looking for nothing
+    const whatToDo &#x3D; error.completedImport
+      ? $localize&#x60;The saved records are listed in the import history, where you can undo them. Please undo them there before importing this file again, to avoid creating duplicates.&#x60;
+      : $localize&#x60;The saved records could not be recorded in the import history, so they cannot be undone there. Please review the existing data before importing this file again, to avoid creating duplicates.&#x60;;
+
+    this.confirmationService.getConfirmation(
+      error.stage &#x3D;&#x3D;&#x3D; &quot;links&quot;
+        ? $localize&#x60;Import completed with errors&#x60;
+        : $localize&#x60;Import only partially completed&#x60;,
+      [whatHappened, why, whatToDo].filter(Boolean).join(&quot; &quot;),
+      OkButton,
+    );
+  }
+
   private showImportErrorMessage(error) {
     this.confirmationService.getConfirmation(
       $localize&#x60;Import failed&#x60;,
-      $localize&#x60;Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [${JSON.stringify(error)}]&#x60;,
+      $localize&#x60;Sorry, some error occurred during import. Please try again. If the problem persists, contact support. [${JSON.stringify(describeSaveFailure(error))}]&#x60;,
       OkButton,
     );
   }

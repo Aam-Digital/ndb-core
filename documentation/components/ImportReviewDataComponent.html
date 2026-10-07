@@ -1194,6 +1194,15 @@ export class ImportReviewDataComponent implements OnChanges {
         .afterClosed(),
     );
 
+    if (confirmationResult?.partiallyCompleted) {
+      // part of the file is in the database already, so refreshing the data and
+      // letting the user press &quot;Import&quot; again would import those records a second
+      // time. The dialog has told them what was saved and where to undo it, so the
+      // prepared import is discarded instead of being offered for a retry.
+      this.importComplete.emit(confirmationResult.completedImport);
+      return;
+    }
+
     if (confirmationResult?.errorOccured) {
       // Problem during import - maybe underlying data changed. Refresh and let user retry
       await this.parseRawData();

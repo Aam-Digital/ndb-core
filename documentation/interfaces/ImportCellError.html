@@ -240,7 +240,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/core/import/import.service.ts:18</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/import/import.service.ts:19</a></div>
                                 </td>
                             </tr>
 
@@ -285,7 +285,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/import/import.service.ts:24</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/import/import.service.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -330,7 +330,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/import/import.service.ts:20</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/import/import.service.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -375,7 +375,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/import/import.service.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/import/import.service.ts:23</a></div>
                                 </td>
                             </tr>
 
@@ -403,6 +403,7 @@ import { ImportAdditionalService } from &quot;./additional-actions/import-additi
 import { ImportExistingService } from &quot;./update-existing/import-existing.service&quot;;
 import { ImportProcessingContext } from &quot;./import-processing-context&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
+import { PartialBulkWriteError } from &quot;../database/database&quot;;
 
 /**
  * Details about a single cell transformation error during import.
@@ -428,6 +429,86 @@ export interface ImportTransformationResult {
 }
 
 /**
+ * The records that were stored although the save as a whole was rejected.
+ *
+ * A rejected save reports what became of the records (see &#x60;Database.putAll&#x60;): the
+ * results array when individual records failed, a {@link PartialBulkWriteError} when
+ * the write stopped partway. Any other rejection means nothing was stored.
+ */
+function storedRecordsOf(records: Entity[], error: unknown): Entity[] {
+  let results: any[];
+  if (Array.isArray(error)) {
+    results &#x3D; error;
+  } else if (error instanceof PartialBulkWriteError) {
+    results &#x3D; error.storedResults;
+  } else {
+    return [];
+  }
+
+  const storedIds &#x3D; new Set(
+    results.filter((result) &#x3D;&gt; result?.ok).map((result) &#x3D;&gt; result.id),
+  );
+  return records.filter((entity) &#x3D;&gt; storedIds.has(entity.getId()));
+}
+
+/**
+ * A short description of why a save failed, safe to pass on to a log or a message.
+ *
+ * A rejected save reports what happened to each individual document (see
+ * &#x60;Database.putAll&#x60;), i.e. potentially thousands of document ids - which have no place
+ * in remote monitoring (see #4174) or in a message shown to the user.
+ */
+export function describeSaveFailure(error: unknown): unknown {
+  if (error instanceof PartialBulkWriteError) {
+    return describeSaveFailure(error.cause);
+  }
+
+  if (Array.isArray(error)) {
+    const failed &#x3D; error.filter((result) &#x3D;&gt; !result?.ok);
+    return {
+      failedDocuments: failed.length,
+      statuses: [
+        ...new Set(failed.map((result) &#x3D;&gt; result?.status ?? result?.name)),
+      ],
+    };
+  }
+
+  return error;
+}
+
+/**
+ * The step of an import that failed although records had already been saved.
+ *
+ * &quot;records&quot;: the write of the imported records itself stopped partway.
+ * &quot;links&quot;: all records were written and one of the additional link actions failed.
+ */
+export type ImportFailureStage &#x3D; &quot;records&quot; | &quot;links&quot;;
+
+/**
+ * Thrown when an import failed after part of its records had already been saved.
+ *
+ * A failed import used to mean that nothing was written, so retrying the file was
+ * always safe. Since a large import is written in several requests that no longer
+ * holds, and the user has to be told what did get imported - otherwise they re-run
+ * the whole file and duplicate it.
+ */
+export class PartialImportError extends Error {
+  constructor(
+    /** which step of the import failed (the saved records differ accordingly) */
+    readonly stage: ImportFailureStage,
+    /** number of records that were saved before the import failed */
+    readonly importedCount: number,
+    /** number of records the import was started with */
+    readonly totalCount: number,
+    /** the history entry recorded for the saved records, to review and undo them */
+    readonly completedImport: ImportMetadata | undefined,
+    cause: unknown,
+  ) {
+    super(&quot;Import failed after part of the records had been saved&quot;, { cause });
+  }
+}
+
+/**
  * Supporting import of data from spreadsheets.
  */
 @Injectable({
@@ -444,12 +525,89 @@ export class ImportService {
     entitiesToImport: Entity[],
     settings: ImportSettings,
   ): Promise&lt;ImportMetadata&gt; {
-    await this.entityMapper.saveAll(entitiesToImport);
-    await this.importAdditionalService.executeImport(
-      entitiesToImport,
-      settings,
-    );
+    try {
+      await this.entityMapper.saveAll(entitiesToImport);
+    } catch (error) {
+      throw await this.reportPartialImport(
+        &quot;records&quot;,
+        storedRecordsOf(entitiesToImport, error),
+        entitiesToImport,
+        settings,
+        error,
+      );
+    }
+
+    try {
+      await this.importAdditionalService.executeImport(
+        entitiesToImport,
+        settings,
+      );
+    } catch (error) {
+      // the records themselves are all stored by now, whatever the additional
+      // actions failed at - so this is a partial import, not a failed one, and must
+      // be recorded as such instead of letting the user re-run the whole file.
+      // The error itself concerns the relationship records, so unlike above the
+      // saved records cannot be read off it.
+      throw await this.reportPartialImport(
+        &quot;links&quot;,
+        entitiesToImport,
+        entitiesToImport,
+        settings,
+        error,
+      );
+    }
+
     return this.saveImportHistory(entitiesToImport, settings);
+  }
+
+  /**
+   * Record the records that were stored before the save failed and return the error
+   * to report for it.
+   *
+   * The database writes a large import in several requests, so a failure can leave
+   * part of the records stored - and anything failing after that write leaves all of
+   * them stored. A partial import that no history entry mentions could neither be
+   * recognised nor undone, leaving the user to find those records one by one - so it
+   * is recorded here before the failure is passed on.
+   */
+  private async reportPartialImport(
+    stage: ImportFailureStage,
+    savedEntities: Entity[],
+    entitiesToImport: Entity[],
+    settings: ImportSettings,
+    error: unknown,
+  ): Promise&lt;unknown&gt; {
+    if (savedEntities.length &#x3D;&#x3D;&#x3D; 0) {
+      // nothing was stored, so this is an ordinary failed import
+      return error;
+    }
+
+    Logging.warn(&quot;Import failed after part of the records had been saved&quot;, {
+      stage,
+      importedCount: savedEntities.length,
+      totalCount: entitiesToImport.length,
+      entityType: settings.entityType,
+      reason: describeSaveFailure(error),
+    });
+
+    let completedImport: ImportMetadata;
+    try {
+      completedImport &#x3D; await this.saveImportHistory(savedEntities, settings);
+    } catch (historyError) {
+      Logging.warn(
+        &quot;Import history could not be saved for a partial import&quot;,
+        { entityType: settings.entityType },
+        historyError,
+      );
+    }
+
+    return new PartialImportError(
+      stage,
+      savedEntities.length,
+      entitiesToImport.length,
+      completedImport,
+      error,
+    );
   }
 
   private async saveImportHistory(
