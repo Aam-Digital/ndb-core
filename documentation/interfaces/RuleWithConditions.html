@@ -238,7 +238,7 @@ that condition validators are derived from.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:19</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:20</a></div>
                                 </td>
                             </tr>
 
@@ -282,7 +282,7 @@ that condition validators are derived from.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:20</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/permission-condition-validators.ts:21</a></div>
                                 </td>
                             </tr>
 
@@ -305,6 +305,7 @@ import {
   EntityAbility,
   permissionConditionsMatcher,
 } from &quot;../../../permissions/ability/entity-ability&quot;;
+import { splitNegation } from &quot;../../conditions-editor/condition-negation&quot;;
 
 /**
  * Minimal structural type of the CASL rules (see &#x60;Ability.rulesFor&#x60;)
@@ -566,17 +567,37 @@ export function describeConditionFragment(
     return fragment.map(formatValue).join(&quot;, &quot;);
   }
 
-  const operators &#x3D; Object.entries(fragment);
-  if (operators.length &#x3D;&#x3D;&#x3D; 1) {
-    const [operator, value] &#x3D; operators[0];
-    if (operator &#x3D;&#x3D;&#x3D; &quot;$eq&quot;) {
-      return describeConditionFragment(value, formatValue);
-    }
-    if (operator &#x3D;&#x3D;&#x3D; &quot;$in&quot; &amp;&amp; Array.isArray(value)) {
-      return value.map(formatValue).join(&quot;, &quot;);
-    }
+  const { negated, positive } &#x3D; splitNegation(fragment);
+  if (negated) {
+    return $localize&#x60;:a negated permission condition value:not ${describeConditionFragment(positive, formatValue)}&#x60;;
   }
-  return JSON.stringify(fragment);
+
+  return (
+    describeSingleOperator(fragment, formatValue) ?? JSON.stringify(fragment)
+  );
+}
+
+/**
+ * Human-readable display of a fragment holding exactly one operator we have
+ * wording for, or &#x60;undefined&#x60; if it is not such a fragment.
+ */
+function describeSingleOperator(
+  fragment: object,
+  formatValue: (value: any) &#x3D;&gt; string,
+): string | undefined {
+  const operators &#x3D; Object.entries(fragment);
+  if (operators.length !&#x3D;&#x3D; 1) {
+    return undefined;
+  }
+
+  const [operator, value] &#x3D; operators[0];
+  if (operator &#x3D;&#x3D;&#x3D; &quot;$eq&quot;) {
+    return describeConditionFragment(value, formatValue);
+  }
+  if (operator &#x3D;&#x3D;&#x3D; &quot;$in&quot; &amp;&amp; Array.isArray(value)) {
+    return value.map(formatValue).join(&quot;, &quot;);
+  }
+  return undefined;
 }
 </code></pre>
     </div>
