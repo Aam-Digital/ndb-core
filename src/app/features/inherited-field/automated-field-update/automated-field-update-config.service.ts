@@ -11,6 +11,8 @@ import { lastValueFrom } from "rxjs";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { isEqual } from "lodash-es";
+import { addMissingValues } from "../add-missing-values";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -245,24 +247,36 @@ export class AutomatedFieldUpdateConfigService {
     const relatedReferenceFieldEntityType = rule.sourceReferenceEntity
       ? sourceEntityType
       : targetEntityType;
+    const fieldConfig = targetEntityType.schema.get(targetFieldId);
+    const combineWithCurrentValue =
+      rule.aggregation === "add" && fieldConfig?.isArray
+        ? addMissingValues
+        : (_currentValue: any, newValue: any) => newValue;
 
     for (const targetEntity of targetEntities) {
-      const newValue = this.calculateNewValue(sourceEntity, rule);
+      // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
+      const currentValue = this.transformSourceValueToDatabaseFormat(
+        targetEntity[targetFieldId],
+        targetEntity,
+        targetFieldId,
+        this.entitySchemaService,
+      );
+      const newValue = combineWithCurrentValue(
+        currentValue,
+        this.calculateNewValue(sourceEntity, rule),
+      );
+      if (isEqual(currentValue, newValue)) continue;
 
-      if (targetEntity[targetFieldId] !== newValue) {
-        const fieldConfig = targetEntityType.schema.get(targetFieldId);
-
-        affectedEntities.push({
-          id: targetEntity.getId(),
-          newValue: newValue,
-          targetFieldId,
-          targetEntityType,
-          selectedField: { ...fieldConfig, id: targetFieldId },
-          affectedEntity: targetEntity,
-          relatedReferenceField: rule.sourceReferenceField,
-          relatedReferenceFieldEntityType,
-        });
-      }
+      affectedEntities.push({
+        id: targetEntity.getId(),
+        newValue: newValue,
+        targetFieldId,
+        targetEntityType,
+        selectedField: { ...fieldConfig, id: targetFieldId },
+        affectedEntity: targetEntity,
+        relatedReferenceField: rule.sourceReferenceField,
+        relatedReferenceFieldEntityType,
+      });
     }
 
     return affectedEntities;

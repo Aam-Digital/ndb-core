@@ -34,4 +34,12 @@ export interface DefaultValueConfigInheritedField {
    * If not defined, the value is copied unchanged.
    */
   valueMapping?: { [key: string]: string };
+
+  /**
+   * How the new value is applied to this field:
+   * - "replace" (default): overwrite the existing value
+   * - "add": for fields allowing multiple values (isArray) only,
+   *   add new values to the existing ones (skipping duplicates) and never remove any
+   */
+  aggregation?: "replace" | "add";
 }
