@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
-  linkedSignal,
   OnInit,
   signal,
 } from "@angular/core";
@@ -12,12 +12,12 @@ import { catchError, map, of, startWith, switchMap } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatTableModule } from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { ActivatedRoute } from "@angular/router";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { ListPaginatorComponent } from "#src/app/core/common-components/entities-table/list-paginator/list-paginator.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -50,8 +50,8 @@ import { BulkMergeService } from "../bulk-merge-service";
     MatFormFieldModule,
     MatButtonModule,
     MatTableModule,
-    MatPaginatorModule,
     MatProgressBarModule,
+    ListPaginatorComponent,
   ],
 })
 export class ReviewDuplicatesComponent implements OnInit {
@@ -115,23 +115,17 @@ export class ReviewDuplicatesComponent implements OnInit {
   readonly isLoading = computed(() => this.state().status === "loading");
   readonly searched = computed(() => this.state().status === "ready");
 
-  pageSize = signal(5);
-  /** clamped to the last page, as the list shrinks whenever a duplicate is resolved */
-  pageIndex = linkedSignal<{ pairs: number; pageSize: number }, number>({
-    source: () => ({ pairs: this.pairs().length, pageSize: this.pageSize() }),
-    computation: ({ pairs, pageSize }, previous) =>
-      Math.min(
-        previous?.value ?? 0,
-        Math.max(Math.ceil(pairs / pageSize) - 1, 0),
-      ),
-  });
+  /**
+   * Paging is left to the table's data source and {@link ListPaginatorComponent},
+   * which also clamps to the last page as the list shrinks whenever a duplicate is resolved.
+   */
+  readonly dataSource = new MatTableDataSource<DuplicatePair>();
 
   readonly displayedColumns = ["record", "possibleDuplicate", "actions"];
 
-  paginatedPairs = computed(() => {
-    const start = this.pageIndex() * this.pageSize();
-    return this.pairs().slice(start, start + this.pageSize());
-  });
+  constructor() {
+    effect(() => (this.dataSource.data = this.pairs()));
+  }
 
   /** fields whose values could never match, see {@link isMatchableField} */
   readonly hideUnmatchableField = (field: EntitySchemaField) =>
@@ -155,6 +149,9 @@ export class ReviewDuplicatesComponent implements OnInit {
       return;
     }
 
+    // A new search is a new list, so it starts at the first page: the data source
+    // only ever clamps the page index downwards, never resets it.
+    this.dataSource.paginator?.firstPage();
     this.request.set({ ctor: this.entityRegistry.get(type), fields });
   }
 
@@ -177,10 +174,5 @@ export class ReviewDuplicatesComponent implements OnInit {
       pair.record,
       pair.possibleDuplicate,
     ]);
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageSize.set(event.pageSize);
-    this.pageIndex.set(event.pageIndex);
   }
 }
