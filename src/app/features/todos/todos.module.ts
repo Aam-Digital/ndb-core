@@ -4,6 +4,8 @@ import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
 import { DashboardWidgetRegistryService } from "../../core/dashboard/dashboard-widget-registry.service";
+import { DefaultConfigMigrationRegistryService } from "../../core/config/default-config-migration-registry.service";
+import { addDefaultTodoViews } from "./add-default-todo-views";
 
 @NgModule({
   providers: [
@@ -26,6 +28,8 @@ export class TodosModule {
     const components = inject(ComponentRegistry);
 
     components.addAll(dynamicComponents);
+
+    inject(DefaultConfigMigrationRegistryService).register(addDefaultTodoViews);
   }
 }
 
