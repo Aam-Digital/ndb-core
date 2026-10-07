@@ -29,6 +29,13 @@
             [form]="entity.form"
             [hideInheritButton]="true"
           ></app-entity-field-edit>
+          @if (entity.addToExisting) {
+            <div class="hint-text" i18n>
+              Values are only added, never removed automatically. To remove
+              values no longer used by any linked record, edit them here or use
+              the link button next to the field in the record's details.
+            </div>
+          }
         </td>
       </tr>
     }

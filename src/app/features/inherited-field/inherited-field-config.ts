@@ -1,3 +1,5 @@
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+
 /**
  * Special default value config inherit a field from a related entity (source)
  * and keep it updated on this (target) entity.
@@ -42,4 +44,21 @@ export interface DefaultValueConfigInheritedField {
    *   add new values to the existing ones (skipping duplicates) and never remove any
    */
   aggregation?: "replace" | "add";
+}
+
+/**
+ * Whether the field collects the values of all related records that link to this record
+ * (e.g. a school's field collecting the cities of all its children),
+ * adding to the existing values instead of replacing them.
+ */
+export function isCollectingFromLinkedRecords(
+  field: EntitySchemaField | undefined,
+): boolean {
+  const config: DefaultValueConfigInheritedField = field?.defaultValue?.config;
+  return (
+    field?.defaultValue?.mode === "inherited-field" &&
+    !!field.isArray &&
+    !!config?.sourceReferenceEntity &&
+    config.aggregation === "add"
+  );
 }

@@ -516,6 +516,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(mockDialog.open).toHaveBeenCalledTimes(1);
         const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
         expect(suggestion.newValue).toEqual(expectedSuggestion);
+        expect(suggestion.addToExisting).toBe(true);
       },
     );
 
@@ -579,6 +580,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(mockDialog.open).toHaveBeenCalledTimes(1);
         const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
         expect(suggestion.newValue).toEqual(expected);
+        expect(suggestion.addToExisting).toBe(false);
       },
     );
 
