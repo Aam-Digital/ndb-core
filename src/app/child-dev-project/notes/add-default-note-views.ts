@@ -29,16 +29,19 @@ export const addDefaultNoteViews: ConfigMigration = (key, configPart) => {
   // Existing configs may rely on the historical default for bottomForm.
   const noteDetailsConfig = (configData["view:note/:id"].config ??= {});
   if (!noteDetailsConfig.bottomForm) {
-    noteDetailsConfig.bottomForm = hasChildOrSchoolEntity(configData)
-      ? ["children", "schools"]
-      : ["relatedEntities"];
+    noteDetailsConfig.bottomForm = legacyNoteFields(configData);
   }
 
   return configPart;
 };
 
-export function hasChildOrSchoolEntity(configData: Record<string, unknown>) {
-  return !!configData?.["entity:Child"] || !!configData?.["entity:School"];
+export function legacyNoteFields(configData: Record<string, unknown>) {
+  const fields = [
+    configData?.["entity:Child"] ? "children" : undefined,
+    configData?.["entity:School"] ? "schools" : undefined,
+  ].filter((field) => !!field);
+
+  return fields.length > 0 ? fields : ["relatedEntities"];
 }
 
 export const defaultNoteListView = {

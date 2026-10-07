@@ -79,7 +79,7 @@
                 "subject",
                 "category",
                 "authors",
-                "children"
+                "relatedEntities"
               ]
             },
             {
@@ -87,7 +87,7 @@
               "columns": [
                 "date",
                 "subject",
-                "children"
+                "relatedEntities"
               ]
             }
           ]
