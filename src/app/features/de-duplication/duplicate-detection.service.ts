@@ -204,9 +204,14 @@ class DuplicateIndex {
    * Pairing each member with each other one would be quadratic in the group's size,
    * which a field with few distinct values (a category, a centre) turns into a list of
    * millions. Anchoring keeps it at one row per additional member while still surfacing
-   * all of them - and since a merge started from this list always keeps the first record
-   * and removes the second, merging never moves the anchor and so never reshuffles the
-   * rows the user is working through.
+   * all of them - and a merge started from this list normally keeps the first record and
+   * removes the second, so the anchor stays put and the rows the user is working through
+   * do not reshuffle.
+   *
+   * The anchor can move, though: when only the second record has a linked user account,
+   * the merge keeps that one instead (see `BulkMergeRecordsComponent`), so the group is
+   * re-anchored on whichever member comes first afterwards. The remaining rows stay
+   * correct, they are only re-ordered.
    */
   private rebuildPairs(key: string) {
     const ids = [...(this.idsByKey.get(key) ?? [])];
