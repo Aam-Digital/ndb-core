@@ -89,11 +89,6 @@
         ]
       }
     },
-    "view:report": {
-      "component": "Reporting",
-      "config": {},
-      "_id": "view:report"
-    },
     "entity:Participant": {
       "toStringAttributes": [
         "firstName",

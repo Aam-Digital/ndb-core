@@ -1,13 +1,11 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
-import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
-import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
 import { Config } from "./config";
-import { ConfigMigration } from "./config-migration";
+import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
 
 /**
@@ -28,6 +26,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
   private currentConfig: Config;
+
+  private readonly defaultConfigMigrations = inject(
+    DefaultConfigMigrationRegistryService,
+  );
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
@@ -167,10 +169,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
     // run first so the config-migrations.ts pipeline (which includes
     // migrateShortcutDashboardLinks/migrateNavigationMenuEntityLinks) sees these
     // default-added view configs too.
-    const defaultConfigs: ConfigMigration[] = [
-      addDefaultNoteDetailsConfig,
-      addDefaultTodoViews,
-    ];
+    const defaultConfigs = this.defaultConfigMigrations.getAll();
 
     const withDefaults = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
       let docPart = rawValue;
