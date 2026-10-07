@@ -259,8 +259,10 @@ export class EntityMapperService {
               return results;
             },
             (error) => {
-              // a rejection still reports the documents that were stored
-              // (see Database.putAll)
+              // putAll rejects as soon as any document failed, but the others
+              // are already stored (see Database.putAll). Without their new
+              // revisions, the next save of those entities would conflict
+              // with their own earlier write.
               if (Array.isArray(error)) {
                 applyStoredRevisions(entitiesInDatabase, error);
               } else if (error instanceof PartialBulkWriteError) {
