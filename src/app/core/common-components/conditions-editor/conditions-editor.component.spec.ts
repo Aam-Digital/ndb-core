@@ -217,4 +217,94 @@ describe("ConditionsEditorComponent", () => {
       }),
     );
   });
+
+  describe("negation", () => {
+    it("should wrap a row's fragment in $not when set to negated", () => {
+      component.conditions = { $or: [{ name: "Ann" }] };
+      component.ngOnInit();
+
+      component.setNegated(0, true);
+
+      expect(component.conditionsArray()[0]).toEqual({
+        name: { $not: { $eq: "Ann" } },
+      });
+      expect(component.isNegated(0)).toBe(true);
+    });
+
+    it("should unwrap the fragment when set back to positive", () => {
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
+      component.ngOnInit();
+
+      component.setNegated(0, false);
+
+      expect(component.conditionsArray()[0]).toEqual({ name: { $eq: "Ann" } });
+      expect(component.isNegated(0)).toBe(false);
+    });
+
+    it("should keep the negation when the value changes", () => {
+      mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+      mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("Bob");
+
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
+      component.ngOnInit();
+
+      component.conditionFormControls.get("0").setValue("Bob");
+
+      expect(component.conditionsArray()[0]).toEqual({
+        name: { $not: { $eq: "Bob" } },
+      });
+    });
+
+    it("should keep the negation around an array field's $elemMatch", () => {
+      mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+      mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue(["X"]);
+
+      component.conditions = {
+        $or: [{ gender: { $not: { $elemMatch: { $in: ["Y"] } } } }],
+      };
+      component.ngOnInit();
+
+      component.conditionFormControls.get("0").setValue(["X"]);
+
+      expect(component.conditionsArray()[0]).toEqual({
+        gender: { $not: { $elemMatch: { $in: ["X"] } } },
+      });
+    });
+
+    it("should edit the value inside a negated fragment, not the wrapper", () => {
+      mockEntitySchemaService.valueToEntityFormat.mockImplementation(
+        (val) => val ?? [],
+      );
+
+      component.conditions = {
+        $or: [{ gender: { $not: { $elemMatch: { $in: ["X"] } } } }],
+      };
+      component.ngOnInit();
+
+      expect(mockEntitySchemaService.valueToEntityFormat).toHaveBeenCalledWith(
+        ["X"],
+        expect.objectContaining({ isArray: true }),
+      );
+    });
+
+    it("should show the plain value inside a negated fragment, not the $eq wrapper", () => {
+      // negate() expresses a plain value as $eq, which the value control cannot render
+      mockEntitySchemaService.valueToEntityFormat.mockImplementation((v) => v);
+
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
+      component.ngOnInit();
+
+      expect(component.conditionFormControls.get("0").value).toBe("Ann");
+    });
+
+    it("should reset the negation when the row's field changes", () => {
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
+      component.ngOnInit();
+
+      component.onConditionFieldChange(0, "genderSingle");
+
+      expect(component.isNegated(0)).toBe(false);
+      expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
+    });
+  });
 });
