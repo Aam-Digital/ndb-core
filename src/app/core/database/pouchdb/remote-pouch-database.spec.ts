@@ -949,8 +949,7 @@ describe("RemotePouchDatabase tests", () => {
     function setupBulkWrites(): { pouchDB: any; bulkDocs: Mock } {
       database.init("");
       const pouchDB = (database as any).pouchDB;
-      (database as any).MAX_BULK_REQUEST_BYTES = 2000;
-      (database as any).MAX_BULK_REQUEST_DOCS = 4;
+      (database as any).bulkWriteLimits = { maxBytes: 2000, maxDocuments: 4 };
       const bulkDocs = vi
         .spyOn(pouchDB, "bulkDocs")
         .mockImplementation(allDocumentsStored);
@@ -1049,7 +1048,9 @@ describe("RemotePouchDatabase tests", () => {
         // no document is in the database, so there is nothing to report beyond the
         // failure - a PartialBulkWriteError would claim a partial write that never
         // happened
-        await expect(database.putAll(documents(10, 300))).rejects.toBe(rejected);
+        await expect(database.putAll(documents(10, 300))).rejects.toBe(
+          rejected,
+        );
       },
     );
 

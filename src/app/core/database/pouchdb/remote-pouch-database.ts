@@ -1,5 +1,9 @@
 import { DatabaseException, PouchDatabase } from "./pouch-database";
-import { PartialBulkWriteError } from "../database";
+import {
+  BulkWriteLimits,
+  DEFAULT_BULK_WRITE_LIMITS,
+  writeInBatchedRequests,
+} from "./bulk-write-batches";
 import { environment } from "../../../../environments/environment";
 import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
@@ -43,27 +47,6 @@ function requestMethod(opts: RequestInit | undefined): string {
  */
 function revisionNumber(rev: string | undefined): number {
   return Number.parseInt(rev ?? "", 10);
-}
-
-/** Shared encoder for {@link jsonByteLength} (creating one per document is wasteful). */
-const UTF8_ENCODER = new TextEncoder();
-
-/**
- * The size a document adds to a request body: UTF-8 bytes, not characters.
- *
- * The server limits a request by its bytes, and a single character of a name written
- * in a non-latin script takes several of them - so measuring the string length would
- * under-count exactly the data most likely to be imported in bulk.
- */
-function jsonByteLength(object: any): number {
-  try {
-    return UTF8_ENCODER.encode(JSON.stringify(object)).length;
-  } catch {
-    // a document that cannot be serialized here cannot be sent either, so it will
-    // fail in the request itself; counting it as empty keeps the split from throwing
-    // in its place
-    return 0;
-  }
 }
 
 /**
@@ -116,23 +99,8 @@ export class RemotePouchDatabase extends PouchDatabase {
    */
   private readonly MAX_ANNOUNCED_REVISIONS = 1000;
 
-  /**
-   * Maximum size (in bytes) of the documents sent in one `_bulk_docs` request.
-   *
-   * A synced database writes locally and lets replication push in batches of its own,
-   * but this database sends whatever a caller passes in a single HTTP request. A bulk
-   * write of several thousand records therefore produces a body that the server rejects
-   * as a whole with 413 - before a single document is written.
-   */
-  private readonly MAX_BULK_REQUEST_BYTES = 4 * 1024 * 1024;
-
-  /**
-   * Maximum number of documents sent in one `_bulk_docs` request, so that a write of
-   * very many small documents is split as well: the server writes every document of a
-   * request before it responds, and an unbounded batch of cheap writes runs into
-   * timeouts rather than into the size limit.
-   */
-  private readonly MAX_BULK_REQUEST_DOCS = 500;
+  /** The budgets one `_bulk_docs` request of a bulk write has to stay within. */
+  private readonly bulkWriteLimits: BulkWriteLimits = DEFAULT_BULK_WRITE_LIMITS;
 
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
@@ -553,60 +521,15 @@ export class RemotePouchDatabase extends PouchDatabase {
 
   /**
    * Write the given documents, split across several requests where they do not fit
-   * into one (see {@link MAX_BULK_REQUEST_BYTES}).
-   *
-   * The requests are sent one after the other: the chunks of one call belong to a
-   * single user action, so sending them in parallel would only have them compete for
-   * connections while the server holds all of their bodies in memory at once.
+   * into one (see {@link writeInBatchedRequests}).
    */
   override async putAll(objects: any[], forceOverwrite = false): Promise<any> {
-    const requests = this.splitIntoRequests(objects);
-    if (requests.length <= 1) {
-      return this.putAllInOneRequest(objects, forceOverwrite);
-    }
-
-    Logging.debug("putAll: splitting bulk write across several requests", {
-      db: this.dbName,
-      documents: objects.length,
-      requests: requests.length,
-    });
-
-    const results: any[] = [];
-    let anyDocumentFailed = false;
-
-    for (const request of requests) {
-      try {
-        results.push(
-          ...(await this.putAllInOneRequest(request, forceOverwrite)),
-        );
-      } catch (requestResults) {
-        if (!Array.isArray(requestResults)) {
-          // the request as a whole failed (offline, rejected, ...), so neither it nor
-          // any later one wrote anything - those would run into the same failure.
-          const stored = results.filter((result) => result?.ok);
-          Logging.debug("putAll: bulk write failed partway", {
-            db: this.dbName,
-            documentsStored: stored.length,
-            documentsNotStored: objects.length - stored.length,
-          });
-          // The documents an earlier request did store stay stored, so the failure is
-          // reported together with its results: only then can the caller tell what is
-          // in the database (see PartialBulkWriteError). Where the earlier requests
-          // stored nothing either - every one of their documents failed on its own -
-          // there is nothing to report beyond the failure itself.
-          throw stored.length > 0
-            ? new PartialBulkWriteError(results, requestResults)
-            : requestResults;
-        }
-        // a rejection *with* a results array reports per-document failures (e.g. an
-        // unresolved conflict), which concern only their own request - so the
-        // remaining documents are still written
-        results.push(...requestResults);
-        anyDocumentFailed = true;
-      }
-    }
-
-    return anyDocumentFailed ? Promise.reject(results) : results;
+    return writeInBatchedRequests(
+      objects,
+      (documents) => this.putAllInOneRequest(documents, forceOverwrite),
+      this.bulkWriteLimits,
+      this.dbName,
+    );
   }
 
   private async putAllInOneRequest(
@@ -625,38 +548,6 @@ export class RemotePouchDatabase extends PouchDatabase {
       }
       throw results;
     }
-  }
-
-  /**
-   * Group the documents into batches that each stay within one request's budget.
-   *
-   * A single document larger than the budget gets a request of its own: it cannot be
-   * split, and the limits it is measured against are not the only ones it may pass, so
-   * it is left to the server to accept or reject it.
-   */
-  private splitIntoRequests(objects: any[]): any[][] {
-    const requests: any[][] = [];
-    let current: any[] = [];
-    let currentBytes = 0;
-
-    for (const object of objects) {
-      const bytes = jsonByteLength(object);
-      const exceedsBudget =
-        currentBytes + bytes > this.MAX_BULK_REQUEST_BYTES ||
-        current.length >= this.MAX_BULK_REQUEST_DOCS;
-      if (current.length > 0 && exceedsBudget) {
-        requests.push(current);
-        current = [];
-        currentBytes = 0;
-      }
-      current.push(object);
-      currentBytes += bytes;
-    }
-
-    if (current.length > 0) {
-      requests.push(current);
-    }
-    return requests;
   }
 
   /**
