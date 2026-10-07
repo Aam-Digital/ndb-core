@@ -287,6 +287,16 @@ describe("ConditionsEditorComponent", () => {
       );
     });
 
+    it("should show the plain value inside a negated fragment, not the $eq wrapper", () => {
+      // negate() expresses a plain value as $eq, which the value control cannot render
+      mockEntitySchemaService.valueToEntityFormat.mockImplementation((v) => v);
+
+      component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
+      component.ngOnInit();
+
+      expect(component.conditionFormControls.get("0").value).toBe("Ann");
+    });
+
     it("should reset the negation when the row's field changes", () => {
       component.conditions = { $or: [{ name: { $not: { $eq: "Ann" } } }] };
       component.ngOnInit();

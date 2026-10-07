@@ -245,6 +245,9 @@ export class ConditionsEditorComponent implements OnInit {
     } else if (!fieldConfig.isArray && positive?.$in) {
       // For non-array dropdown fields, extract value from $in
       value = positive.$in;
+    } else if (positive?.$eq !== undefined) {
+      // a negated plain value is stored as $eq, which the value control cannot render
+      value = positive.$eq;
     } else {
       value = positive;
     }
