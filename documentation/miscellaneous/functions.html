@@ -3196,9 +3196,9 @@ These are queried separately, through a partial index containing only them.</p>
                 <td class="col-md-4">
                         <div class="io-description"><p>Apply all config migrations to a plain JSON document.
 Returns the migrated document as a plain object (no Angular entity re-hydration).
-Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs
-(addDefaultNoteDetailsConfig, addDefaultTodoViews) before calling this, so the
-migrations above can see those default-added view configs too.</p>
+Used by the admin CLI; ConfigService wraps this and also applies the defaults that
+feature modules register in the DefaultConfigMigrationRegistryService before calling
+this, so the migrations above can see those default-added view configs too.</p>
 </div>
 
                             <div class="io-description">
@@ -20448,7 +20448,7 @@ message</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>preloadDynamicComponents(registry: <a href="../classes/ComponentRegistry.html" target="_self">ComponentRegistry</a>, destroyRef: <a href="https://angular.dev/api/core/DestroyRef" target="_blank">DestroyRef</a>)</code>
+<code>preloadDynamicComponents(registry: <a href="../classess/ComponentRegistry.html" target="_self">ComponentRegistry</a>, destroyRef: <a href="https://angular.dev/api/core/DestroyRef" target="_blank">DestroyRef</a>)</code>
                 </td>
             </tr>
 
@@ -20473,7 +20473,7 @@ message</p>
                                         <tr>
                                                 <td>registry</td>
                                             <td>
-                                                            <code><a href="../classes/ComponentRegistry.html" target="_self" >ComponentRegistry</a></code>
+                                                            <code><a href="../classess/ComponentRegistry.html" target="_self" >ComponentRegistry</a></code>
                                             </td>
 
                                             <td>

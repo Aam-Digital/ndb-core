@@ -303,7 +303,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:68</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:69</a></div>
                                 </td>
                             </tr>
 
@@ -359,7 +359,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:80</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:81</a></div>
                                 </td>
                             </tr>
 
@@ -398,7 +398,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:71</a></div>
                                 </td>
                             </tr>
 
@@ -437,7 +437,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:66</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:67</a></div>
                                 </td>
                             </tr>
 
@@ -482,7 +482,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:78</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:79</a></div>
                                 </td>
                             </tr>
 
@@ -527,7 +527,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:73</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:74</a></div>
                                 </td>
                             </tr>
 
@@ -572,7 +572,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -616,7 +616,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:69</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:70</a></div>
                                 </td>
                             </tr>
 
@@ -839,6 +839,7 @@ import {
 } from &quot;./matching-entities-config&quot;;
 import { InMemoryDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/in-memory-data-source&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { FeatureDisabledInfoComponent } from &quot;#src/app/core/common-components/feature-disabled-info/feature-disabled-info.component&quot;;
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -885,6 +886,7 @@ export interface MatchingSide extends MatchingSideConfig {
     RouterLink,
     AblePipe,
     EntityTypePipe,
+    FeatureDisabledInfoComponent,
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
@@ -972,9 +974,23 @@ export class MatchingEntitiesComponent implements OnInit {
    */
   readonly comparisonColumns &#x3D; signal&lt;[ColumnConfig, ColumnConfig][]&gt;([]);
 
+  readonly isConfigured &#x3D; computed(() &#x3D;&gt; {
+    const entityInputType &#x3D; this.entity()?.getType();
+    return [this.resolvedLeftSide(), this.resolvedRightSide()].every((side) &#x3D;&gt; {
+      const entityType &#x3D; side.entityType || entityInputType;
+      return !!entityType &amp;&amp; this.entityRegistry.has(entityType);
+    });
+  });
+
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
+    if (!this.isConfigured()) {
+      // leave &#x60;sideDetails&#x60; unset, so that the template shows the info about the
+      // missing config instead of sides without an entity type
+      return;
+    }
+
     this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
 
     // Both sides are started before the first &#x60;await&#x60; so that their data sources

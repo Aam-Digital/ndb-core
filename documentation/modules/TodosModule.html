@@ -178,6 +178,8 @@ import { AsyncComponent, ComponentRegistry } from &quot;../../dynamic-components
 import { DefaultDatatype } from &quot;../../core/entity/default-datatype/default.datatype&quot;;
 import { TimeIntervalDatatype } from &quot;./recurring-interval/time-interval.datatype&quot;;
 import { DashboardWidgetRegistryService } from &quot;../../core/dashboard/dashboard-widget-registry.service&quot;;
+import { DefaultConfigMigrationRegistryService } from &quot;../../core/config/default-config-migration-registry.service&quot;;
+import { addDefaultTodoViews } from &quot;./add-default-todo-views&quot;;
 
 @NgModule({
   providers: [
@@ -200,6 +202,8 @@ export class TodosModule {
     const components &#x3D; inject(ComponentRegistry);
 
     components.addAll(dynamicComponents);
+
+    inject(DefaultConfigMigrationRegistryService).register(addDefaultTodoViews);
   }
 }
 

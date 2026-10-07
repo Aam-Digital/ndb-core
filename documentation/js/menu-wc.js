@@ -2007,6 +2007,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/DataTransformationService.html" data-type="entity-link" >DataTransformationService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/DefaultConfigMigrationRegistryService.html" data-type="entity-link" >DefaultConfigMigrationRegistryService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/DefaultValueService.html" data-type="entity-link" >DefaultValueService</a>
                                 </li>
                                 <li class="link">

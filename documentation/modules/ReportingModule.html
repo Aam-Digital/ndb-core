@@ -182,6 +182,8 @@ import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.s
 import { ViewConfig } from &quot;#src/app/core/config/dynamic-routing/view-config.interface&quot;;
 import { EntityListConfig } from &quot;#src/app/core/entity-list/EntityListConfig&quot;;
 import { EntityDetailsConfig } from &quot;#src/app/core/entity-details/EntityDetailsConfig&quot;;
+import { DefaultConfigMigrationRegistryService } from &quot;#src/app/core/config/default-config-migration-registry.service&quot;;
+import { addDefaultReportingView } from &quot;./add-default-reporting-view&quot;;
 
 @NgModule({})
 export class ReportingModule {
@@ -193,6 +195,10 @@ export class ReportingModule {
     const adminOverviewService &#x3D; inject(AdminOverviewService);
 
     components.addAll(reportingComponents);
+
+    inject(DefaultConfigMigrationRegistryService).register(
+      addDefaultReportingView,
+    );
     routerService.addRoutes(reportAdminViewConfigs);
 
     adminOverviewService.addTemplateItems({

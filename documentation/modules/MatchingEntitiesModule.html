@@ -175,6 +175,8 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NgModule, inject } from &quot;@angular/core&quot;;
 import { ComponentRegistry } from &quot;../../dynamic-components&quot;;
 import { matchingEntitiesComponents } from &quot;./matching-entities-components&quot;;
+import { DefaultConfigMigrationRegistryService } from &quot;#src/app/core/config/default-config-migration-registry.service&quot;;
+import { addDefaultMatchingView } from &quot;./add-default-matching-view&quot;;
 
 @NgModule({})
 export class MatchingEntitiesModule {
@@ -182,6 +184,10 @@ export class MatchingEntitiesModule {
     const components &#x3D; inject(ComponentRegistry);
 
     components.addAll(matchingEntitiesComponents);
+
+    inject(DefaultConfigMigrationRegistryService).register(
+      addDefaultMatchingView,
+    );
   }
 }
 </code></pre>
