@@ -296,22 +296,22 @@ export class AutomatedFieldUpdateConfigService {
       return undefined;
     }
 
-    const sourceValue = sourceEntity[rule.sourceValueField];
-    let newValue = sourceValue;
-
-    if (rule.valueMapping && sourceValue) {
-      const mappingKey = sourceValue.id;
-      newValue = rule.valueMapping[mappingKey] || sourceValue;
-
-      return newValue;
-    }
-
-    return this.transformSourceValueToDatabaseFormat(
-      newValue,
+    const sourceValue = this.transformSourceValueToDatabaseFormat(
+      sourceEntity[rule.sourceValueField],
       sourceEntity,
       rule.sourceValueField,
       this.entitySchemaService,
     );
+
+    if (!rule.valueMapping || !sourceValue) {
+      return sourceValue;
+    }
+
+    const mapValue = (value: string) => rule.valueMapping[value] ?? value;
+    // flatMap: mapped values are arrays if the target field is multi-select
+    return Array.isArray(sourceValue)
+      ? [...new Set(sourceValue.flatMap(mapValue))]
+      : mapValue(sourceValue);
   }
 
   /**
