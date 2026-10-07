@@ -1791,5 +1791,13 @@
   "2838129566011107043": "Condition",
   "3676095562960762035": "is",
   "3971949003366430322": "is not",
-  "747835004864017034": "not {$PH}"
+  "747835004864017034": "not {$PH}",
+  "1383365546483928780": "Matching",
+  "3487877384033521095": "All {$PH} records were imported, but linking them to the other records you selected failed.",
+  "1229808740814525298": "Only {$PH} of {$PH_1} records could be imported before an error occurred.",
+  "35476847331696507": "Some records had been changed through synchronisation while the import was being prepared, so they could not be overwritten.",
+  "8886553422355876621": "The saved records are listed in the import history, where you can undo them. Please undo them there before importing this file again, to avoid creating duplicates.",
+  "4508316916016535173": "The saved records could not be recorded in the import history, so they cannot be undone there. Please review the existing data before importing this file again, to avoid creating duplicates.",
+  "2827542420902861147": "Import completed with errors",
+  "7708217896459321232": "Import only partially completed"
 }
