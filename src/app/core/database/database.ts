@@ -27,7 +27,11 @@ import { Observable } from "rxjs";
  * that is the difference between "retry the file" and "part of it is already there".
  */
 export class PartialBulkWriteError extends Error {
-  /** the results of the documents that were stored before the write stopped */
+  /**
+   * The results of the requests that completed before the write stopped, in the order
+   * their documents were passed in. At least one document was stored, but individual
+   * ones may have failed - so a caller reads the entries marked `ok`.
+   */
   readonly storedResults: any[];
 
   constructor(storedResults: any[], cause: unknown) {

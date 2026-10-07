@@ -583,15 +583,18 @@ export class RemotePouchDatabase extends PouchDatabase {
         if (!Array.isArray(requestResults)) {
           // the request as a whole failed (offline, rejected, ...), so neither it nor
           // any later one wrote anything - those would run into the same failure.
-          // The documents of the earlier requests are stored and stay stored, so the
-          // failure is reported together with their results: only then can the caller
-          // tell what is in the database (see PartialBulkWriteError).
+          const stored = results.filter((result) => result?.ok);
           Logging.debug("putAll: bulk write failed partway", {
             db: this.dbName,
-            documentsStored: results.length,
-            documentsNotStored: objects.length - results.length,
+            documentsStored: stored.length,
+            documentsNotStored: objects.length - stored.length,
           });
-          throw results.length > 0
+          // The documents an earlier request did store stay stored, so the failure is
+          // reported together with its results: only then can the caller tell what is
+          // in the database (see PartialBulkWriteError). Where the earlier requests
+          // stored nothing either - every one of their documents failed on its own -
+          // there is nothing to report beyond the failure itself.
+          throw stored.length > 0
             ? new PartialBulkWriteError(results, requestResults)
             : requestResults;
         }

@@ -18,6 +18,15 @@ async function allDocumentsStored(docs: any) {
   }));
 }
 
+/** A `_bulk_docs` response that rejected every document of the request as a conflict. */
+async function allDocumentsConflicted(docs: any) {
+  return (docs as any[]).map((doc) => ({
+    ok: false,
+    id: doc._id,
+    status: HttpStatusCode.Conflict,
+  }));
+}
+
 /** A `_bulk_docs` response whose first document was rejected as a conflict. */
 async function firstDocumentConflicted(docs: any) {
   return (docs as any[]).map((doc, i) => ({
@@ -1017,14 +1026,32 @@ describe("RemotePouchDatabase tests", () => {
       );
     });
 
-    it("should report a failure of the very first request unchanged", async () => {
-      const { bulkDocs } = setupBulkWrites();
-      const rejected = new Error("offline");
-      bulkDocs.mockRejectedValue(rejected);
+    it.each([
+      ["the very first request failed", []],
+      [
+        "every document of the earlier requests failed on its own",
+        [allDocumentsConflicted],
+      ],
+    ])(
+      "should reject with the failure itself when nothing was stored because %s",
+      async (_invariant, precedingResponses) => {
+        const { pouchDB, bulkDocs } = setupBulkWrites();
+        // the conflicting documents cannot be resolved, so they stay rejected
+        vi.spyOn(pouchDB, "get").mockRejectedValue({
+          status: HttpStatusCode.Conflict,
+        });
+        for (const response of precedingResponses) {
+          bulkDocs.mockImplementationOnce(response);
+        }
+        const rejected = new Error("offline");
+        bulkDocs.mockRejectedValue(rejected);
 
-      // nothing was stored, so there is nothing to report beyond the failure itself
-      await expect(database.putAll(documents(10, 300))).rejects.toBe(rejected);
-    });
+        // no document is in the database, so there is nothing to report beyond the
+        // failure - a PartialBulkWriteError would claim a partial write that never
+        // happened
+        await expect(database.putAll(documents(10, 300))).rejects.toBe(rejected);
+      },
+    );
 
     it("should still write the remaining requests when single documents failed", async () => {
       const { pouchDB, bulkDocs } = setupBulkWrites();
