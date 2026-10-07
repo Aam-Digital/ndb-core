@@ -413,6 +413,33 @@ describe("SyncedPouchDatabase", () => {
     expect(syncSpy).toHaveBeenCalled();
   });
 
+  it("reports the docs the server denied during one sync in a single warning", async () => {
+    const { mockLocalDb } = mockPouchDatabaseService();
+    const handler = mockSyncHandler();
+    handler.on.mockImplementation((event: string, listener) => {
+      if (event === "denied") {
+        for (const id of ["Note:1", "Note:2", "Child:3"]) {
+          listener({ direction: "push", doc: { id, name: "forbidden" } });
+        }
+      }
+      return handler;
+    });
+    mockLocalDb.sync.mockReturnValue(handler);
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    warnSpy.mockClear();
+
+    await service.sync();
+
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+      expect.stringContaining("denied"),
+      expect.objectContaining({
+        denied: 3,
+        errors: ["forbidden"],
+        entityTypes: ["Note", "Child"],
+      }),
+    );
+  });
+
   describe("purgeDocsWithLostPermissions", () => {
     let purgeSpy: Mock;
     let warnSpy: Mock;
