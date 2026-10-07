@@ -122,12 +122,7 @@ export class RemotePouchDatabase extends PouchDatabase {
    * A synced database writes locally and lets replication push in batches of its own,
    * but this database sends whatever a caller passes in a single HTTP request. A bulk
    * write of several thousand records therefore produces a body that the server rejects
-   * as a whole with 413 - before a single document is written
-   * (see AAM-DIGITAL-7BK / REPLICATION-BACKEND-CE).
-   *
-   * The budget stays well below the smallest limit on the way to CouchDB, because it
-   * only accounts for the documents themselves: the request's own overhead, and the
-   * base64 inflation of any attachment PouchDB sends inline, come on top of it.
+   * as a whole with 413 - before a single document is written.
    */
   private readonly MAX_BULK_REQUEST_BYTES = 4 * 1024 * 1024;
 
