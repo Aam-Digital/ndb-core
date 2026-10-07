@@ -1284,10 +1284,6 @@
       },
       "_id": "view:attendance/recurring-activity/:id"
     },
-    "view:report": {
-      "component": "Reporting",
-      "_id": "view:report"
-    },
     "view:help": {
       "component": "MarkdownPage",
       "config": {
@@ -1775,9 +1771,6 @@
           "label": "Contact"
         }
       }
-    },
-    "view:matching": {
-      "component": "MatchingEntities"
     },
     "appConfig:matching-entities": {
       "columns": [

@@ -810,9 +810,9 @@ export const configMigrations: ConfigMigration[] = [
 /**
  * Apply all config migrations to a plain JSON document.
  * Returns the migrated document as a plain object (no Angular entity re-hydration).
- * Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs
- * (addDefaultNoteViews, addDefaultTodoViews) before calling this, so the
- * migrations above can see those default-added view configs too.
+ * Used by the admin CLI; ConfigService wraps this and also applies the defaults that
+ * feature modules register in the DefaultConfigMigrationRegistryService before calling
+ * this, so the migrations above can see those default-added view configs too.
  */
 export function applyConfigMigrations<E>(doc: E): E {
   return JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
