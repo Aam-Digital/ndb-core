@@ -158,6 +158,18 @@ describe("NotesDashboardComponent", () => {
       expect(component.subtitle()).toBe("");
     });
 
+    it("should not load anything if the configured entity type does not exist", () => {
+      mockNotesService.getDaysSinceLastNoteOfEachEntity.mockClear();
+
+      fixture.componentRef.setInput("entityType", "RemovedType");
+      fixture.detectChanges();
+
+      expect(
+        mockNotesService.getDaysSinceLastNoteOfEachEntity,
+      ).not.toHaveBeenCalled();
+      expect(component.subtitle()).toBe("");
+    });
+
     it("should load notes related to the configured entity", () => {
       mockNotesService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
         new Map(),

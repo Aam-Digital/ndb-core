@@ -116,7 +116,7 @@ describe("DataTransformationService", () => {
     const exportConfig: ExportColumnConfig[] = [
       { label: "note", query: ".subject" },
       {
-        query: ".children",
+        query: ".relatedEntities",
         subQueries: [{ label: "participant", query: "." }],
       },
     ];
@@ -317,7 +317,7 @@ describe("DataTransformationService", () => {
     const query = [
       { query: "name" },
       {
-        query: ":getRelated(Note, children)[* date > ?]",
+        query: ":getRelated(Note, relatedEntities)[* date > ?]",
         subQueries: [{ query: "subject" }],
       },
     ];
@@ -337,7 +337,8 @@ describe("DataTransformationService", () => {
       .subtract(1, "day")
       .toDate();
     const endDate2 = moment().subtract(1, "day").toDate();
-    query[1].query = ":getRelated(Note, children)[* date > ? & date <= ?]";
+    query[1].query =
+      ":getRelated(Note, relatedEntities)[* date > ? & date <= ?]";
     result = await service.transformData([child], query, startDate2, endDate2);
 
     expect(result).toEqual([
@@ -424,12 +425,13 @@ describe("DataTransformationService", () => {
 
   async function createNoteInDB(
     subject: string,
-    children: Entity[] = [],
+    relatedEntities: Entity[] = [],
   ): Promise<Note> {
-    const note = new Note();
-    note.subject = subject;
-    note.date = new Date();
-    note["children"] = children.map((child) => child.getId());
+    const note = Note.create(
+      new Date(),
+      subject,
+      relatedEntities.map((entity) => entity.getId()),
+    );
 
     await entityMapper.save(note);
     return note;

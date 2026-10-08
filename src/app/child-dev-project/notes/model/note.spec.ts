@@ -111,6 +111,7 @@ describe("Note", () => {
   it("should derive link fields and the property for an entity type from the schema", () => {
     Note.schema.set("linkedTestType", {
       dataType: "entity",
+      isArray: true,
       additional: "TestType",
     });
     try {
@@ -121,6 +122,31 @@ describe("Note", () => {
       expect(Note.getPropertyFor("User")).toBe("authors");
       expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
     } finally {
+      Note.schema.delete("linkedTestType");
+    }
+  });
+
+  it("should store multiple entities of a type in a field specific to that type rather than a single-value field or relatedEntities", () => {
+    const relatedEntities = Note.schema.get("relatedEntities");
+    Note.schema.set("relatedEntities", {
+      ...relatedEntities,
+      additional: ["TestType", "Other"],
+    });
+    Note.schema.set("mainTestType", {
+      dataType: "entity",
+      additional: "TestType",
+    });
+    Note.schema.set("linkedTestType", {
+      dataType: "entity",
+      isArray: true,
+      additional: "TestType",
+    });
+    try {
+      expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
+      expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
+    } finally {
+      Note.schema.set("relatedEntities", relatedEntities);
+      Note.schema.delete("mainTestType");
       Note.schema.delete("linkedTestType");
     }
   });

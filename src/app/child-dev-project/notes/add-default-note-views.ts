@@ -13,7 +13,14 @@ export const addDefaultNoteViews: ConfigMigration = (key, configPart) => {
 
   const configData = configPart["data"];
 
-  configData["view:note"] ??= JSON.parse(JSON.stringify(defaultNoteListView));
+  // a system with a custom route for notes has its list view (if any) configured there
+  const route = String(configData["entity:Note"]?.route ?? "note").replace(
+    /^\//,
+    "",
+  );
+  if (route === "note") {
+    configData["view:note"] ??= JSON.parse(JSON.stringify(defaultNoteListView));
+  }
   configData["view:note/:id"] ??= {
     component: "NoteDetails",
     config: getDefaultNoteDetailsConfig(),

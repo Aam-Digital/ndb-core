@@ -55,9 +55,13 @@ export class NotesDashboardComponent {
 
   /** Entity for which the recent notes should be counted. */
   entityType = input<string>();
-  readonly entityDefinition = computed<EntityConstructor | undefined>(() =>
-    this.entityType() ? this.entities.get(this.entityType()) : undefined,
-  );
+  /** `undefined` when unconfigured or the configured type isn't registered, rather than throwing. */
+  readonly entityDefinition = computed<EntityConstructor | undefined>(() => {
+    const type = this.entityType();
+    return type && this.entities.has(type)
+      ? this.entities.get(type)
+      : undefined;
+  });
   /**
    * number of days since last note that entities should be considered having a "recent" note.
    */

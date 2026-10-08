@@ -9,6 +9,7 @@ import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { expectArrayWithExactContents } from "../../utils/test-utils/array-test-utils";
+import { EntityConfigReadyService } from "../../core/entity/entity-config-ready.service";
 
 describe("NotesService", () => {
   let service: NotesService;
@@ -129,18 +130,23 @@ describe("NotesService", () => {
       additional: "School",
     });
     try {
-      // wait for the initial index creation, then update it with the extended schema
+      // wait for the initial index creation, then signal the extended schema (as applying the config does)
       await service.getNotesRelatedTo("School:none");
-      await service["createNotesRelatedIndex"]();
+      TestBed.inject(EntityConfigReadyService).markSetupCompleted();
       const s1 = createEntityOfType("School", "s1");
-      const note = new Note("n1");
-      note["linkedSchool"] = s1.getId();
+      const linkedOnce = new Note("n1");
+      linkedOnce["linkedSchool"] = s1.getId();
       // linked through multiple fields, but should be returned only once
-      note.relatedEntities = [s1.getId()];
-      await entityMapper.save(note);
+      const linkedTwice = new Note("n2");
+      linkedTwice["linkedSchool"] = s1.getId();
+      linkedTwice.relatedEntities = [s1.getId()];
+      await entityMapper.saveAll([linkedOnce, linkedTwice]);
 
       const res = await service.getNotesRelatedTo(s1.getId());
-      expect(res.map((n) => n.getId())).toEqual([note.getId()]);
+      expectArrayWithExactContents(
+        res.map((n) => n.getId()),
+        [linkedOnce.getId(), linkedTwice.getId()],
+      );
     } finally {
       Note.schema.delete("linkedSchool");
     }
