@@ -2,7 +2,7 @@
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Record type with notes</mat-label>
     <app-entity-type-select
-      required
+      [required]="true"
       [ngModel]="entityType()"
       (ngModelChange)="onEntityTypeChange($event)"
     ></app-entity-type-select>
