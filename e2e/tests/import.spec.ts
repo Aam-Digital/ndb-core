@@ -197,10 +197,10 @@ test("Import a multi-value entity reference from a single comma-separated column
   await page.getByRole("navigation").getByText("Import").click();
   await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
 
-  // "Groups" holds comma-separated school names; "GroupIds" a second condition
-  // mapped to the same field (multi-column matching) holding the internal ids
+  // "Related Records" holds comma-separated school names; "RecordIds" a second
+  // condition mapped to the same field (multi-column matching) holding the internal ids
   const csvContent = [
-    "Subject,Groups,GroupIds",
+    "Subject,Related Records,RecordIds",
     'Joint school meeting,"Springfield Elementary, Shelbyville Academy","School:school-1, School:school-2"',
   ].join("\n");
 
@@ -214,31 +214,37 @@ test("Import a multi-value entity reference from a single comma-separated column
   await expect(page.getByText("1 rows detected")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
 
-  // Step 2: import as Note (its "Groups" field is a multi-value entity reference)
+  // Step 2: import as Note (its "Related Records" field is a multi-value entity
+  // reference, linking Child and School records)
   await expect(page.getByText("Select the import target type")).toBeVisible();
   await page.getByRole("textbox", { name: "Import as" }).fill("Note");
   await page.getByRole("option", { name: "Note", exact: true }).click();
   await page.getByRole("button", { name: "Continue" }).click();
 
-  // Step 3: "Subject" and "Groups" auto-map by label; match the groups by school
-  // name, and map a second "GroupIds" column onto the same field matched by id
+  // Step 3: "Subject" and "Related Records" auto-map by label; match the records
+  // by name, and map a second "RecordIds" column onto the same field matched by id
   // (multi-column matching)
   await expect(
     page.getByText("Define which columns / fields will be imported"),
   ).toBeVisible();
 
-  const groupsRow = page
+  const relatedRow = page
     .locator("app-edit-import-column-mapping")
-    .filter({ hasText: /^Groups/ });
-  await groupsRow.locator("mat-select").click();
-  await page.getByRole("option", { name: "Name", exact: true }).click();
+    .filter({ hasText: /^Related Records/ });
+  await relatedRow.locator("mat-select").click();
+  // a property shared by the linkable types is offered once, hinting at both types
+  await page.getByRole("option", { name: /^Name\s+Child, School$/ }).click();
 
-  const groupIdsRow = page
+  const recordIdsRow = page
     .locator("app-edit-import-column-mapping")
-    .filter({ hasText: "GroupIds" });
-  await groupIdsRow.getByRole("textbox", { name: "GroupIds" }).fill("Groups");
-  await page.getByRole("option", { name: "Groups", exact: true }).click();
-  await groupIdsRow.locator("mat-select").click();
+    .filter({ hasText: "RecordIds" });
+  await recordIdsRow
+    .getByRole("textbox", { name: "RecordIds" })
+    .fill("Related Records");
+  await page
+    .getByRole("option", { name: "Related Records", exact: true })
+    .click();
+  await recordIdsRow.locator("mat-select").click();
   await page.getByRole("option", { name: /internal unique/i }).click();
 
   // multi-column matching indicator is shown on the mapping step
