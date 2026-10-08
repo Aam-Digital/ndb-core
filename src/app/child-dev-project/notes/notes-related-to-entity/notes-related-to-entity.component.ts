@@ -83,7 +83,8 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       (this.entity() as ChildSchoolRelation).childId,
     )) {
       if (childId) {
-        (newNote["children"] ??= []).push(childId);
+        newNote["children"] ??= [];
+        newNote["children"].push(childId);
       }
     }
 
@@ -91,7 +92,8 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       (this.entity() as ChildSchoolRelation).schoolId,
     )) {
       if (schooldId) {
-        (newNote["schools"] ??= []).push(schooldId);
+        newNote["schools"] ??= [];
+        newNote["schools"].push(schooldId);
       }
     }
   }

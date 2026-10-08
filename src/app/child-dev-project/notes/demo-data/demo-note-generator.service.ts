@@ -127,7 +127,8 @@ export function generateNote(params: {
 
   // `children` is no longer a declared class field; accessed dynamically
   // so demo data generation for systems with the legacy field keeps working.
-  (note["children"] ??= []).push(params.child.getId());
+  note["children"] = [];
+  note["children"].push(params.child.getId());
   note.authors = [params.author.getId()];
 
   let date = params.date;
