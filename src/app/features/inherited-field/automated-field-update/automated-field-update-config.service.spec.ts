@@ -155,6 +155,22 @@ class AggregatingAction extends Entity {
   inheritedTags: ConfigurableEnumValue[];
 }
 
+@DatabaseEntity("CommonValueGroup")
+class CommonValueGroup extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "School", isArray: true })
+  members: string[];
+  @DatabaseField({
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "members",
+        sourceValueField: "category",
+      },
+    },
+  })
+  category: string;
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -189,6 +205,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
     entityRegistry.set("AggregatingAction", AggregatingAction);
+    entityRegistry.set("CommonValueGroup", CommonValueGroup);
 
     TestBed.configureTestingModule({
       providers: [
@@ -605,6 +622,64 @@ describe("AutomatedFieldUpdateConfigService", () => {
         );
 
         expect(mockDialog.open).not.toHaveBeenCalled();
+      },
+    );
+  });
+  describe("group linking several schools", () => {
+    async function saveSchoolCategory(
+      otherSchoolCategories: string[],
+      newCategory: string,
+      groupCategory: string | undefined,
+    ) {
+      const school = new School();
+      const otherSchools = otherSchoolCategories.map((id) => {
+        const other = new School();
+        other.category = TEST_SCHOOL_ENUM.find((e) => e.id === id);
+        return other;
+      });
+      const group = new CommonValueGroup();
+      group.members = [school, ...otherSchools].map((s) => s.getId());
+      group.category = groupCategory;
+      entityMapper.addAll([school, ...otherSchools, group]);
+
+      const schoolBefore = school.copy();
+      school.category = TEST_SCHOOL_ENUM.find((e) => e.id === newCategory);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(school, schoolBefore);
+    }
+
+    it.each([
+      [["primary"], "primary", undefined, "primary"],
+      [["primary", "primary"], "primary", "secondary", "primary"],
+      [[undefined], "primary", undefined, "primary"],
+    ])(
+      "other schools %j + saved school changed to %s (group has %s) suggests %s",
+      async (others, newCategory, groupCategory, expected) => {
+        await saveSchoolCategory(others, newCategory, groupCategory);
+
+        expect(mockDialog.open).toHaveBeenCalledTimes(1);
+        const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+          (e) => e.targetEntityType === CommonValueGroup,
+        );
+        expect(suggestion.newValue).toBe(expected);
+      },
+    );
+
+    it.each([
+      [["secondary"], "primary", undefined],
+      [["primary"], "primary", "primary"],
+    ])(
+      "other schools %j + saved school changed to %s (group has %s) does not update the group",
+      async (others, newCategory, groupCategory) => {
+        await saveSchoolCategory(others, newCategory, groupCategory);
+
+        const updatedEntities = mockDialog.open.mock.calls.flatMap(
+          (call) => call[1].data.entities,
+        );
+        expect(
+          updatedEntities.some((e) => e.targetEntityType === CommonValueGroup),
+        ).toBe(false);
       },
     );
   });

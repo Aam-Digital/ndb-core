@@ -240,39 +240,50 @@ describe("InheritedValueService", () => {
     }
   });
 
-  it("should not set value on FormControl, if source is multi value array", async () => {
-    vi.useFakeTimers();
-    try {
-      // given
-      let form = getDefaultInheritedForm({
-        field: {
-          isArray: true,
-          defaultValue: {
-            mode: "inherited-field",
-            config: {
-              sourceValueField: "foo",
-              sourceReferenceField: "reference-1",
+  it.each([
+    [["Delhi", "Delhi"], "Delhi"],
+    [["Delhi", "Mumbai"], undefined],
+    [["Delhi", undefined, "Delhi"], "Delhi"],
+    [[undefined, undefined], undefined],
+    [["Delhi", "missing"], undefined],
+  ])(
+    "should inherit only the common value of several linked parents with values %j: %s",
+    async (parentValues, expected) => {
+      vi.useFakeTimers();
+      try {
+        const form = getDefaultInheritedForm({
+          field: {
+            defaultValue: {
+              mode: "inherited-field",
+              config: {
+                sourceValueField: "foo",
+                sourceReferenceField: "reference-1",
+              },
             },
           },
-        },
-      });
+        });
+        const parents = new Map(
+          parentValues.map((value, i) => {
+            const parent = new Entity(`Entity:${i}`);
+            parent["foo"] = value;
+            return [parent.getId(), value === "missing" ? undefined : parent];
+          }),
+        );
+        mockEntityMapperService.load.mockImplementation((_type, id) =>
+          Promise.resolve(parents.get(id)),
+        );
 
-      let entity0 = new Entity();
-      entity0["foo"] = ["bar", "doo"];
-      mockEntityMapperService.load.mockReturnValue(Promise.resolve(entity0));
+        defaultValueService.handleEntityForm(form, form.entity);
+        await vi.advanceTimersByTimeAsync(0);
+        form.formGroup.get("reference-1").setValue([...parents.keys()]);
+        await vi.advanceTimersByTimeAsync(10); // fetching reference is always async
 
-      // when
-      defaultValueService.handleEntityForm(form, form.entity);
-      await vi.advanceTimersByTimeAsync(0);
-      form.formGroup.get("reference-1").setValue(["Entity:0", "Entity:1"]);
-      await vi.advanceTimersByTimeAsync(10); // fetching reference is always async
-
-      // then
-      expect(form.formGroup.get("field").value).toEqual(undefined);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
+        expect(form.formGroup.get("field").value).toEqual(expected);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
 
   it("should reset FormControl, if parent (array) field got cleared", async () => {
     vi.useFakeTimers();
@@ -778,6 +789,51 @@ describe("InheritedValueService", () => {
       vi.useRealTimers();
     }
   });
+
+  it.each([
+    ["Delhi", ["Delhi", "Delhi"], { isInSync: true }],
+    ["Mumbai", ["Delhi", "Delhi"], { isInSync: false }],
+    ["Delhi", ["Delhi", "Mumbai"], { isEmpty: true }],
+  ])(
+    "should compare field value %j with the common value of several linked parents %j",
+    async (currentValue, parentValues, expected) => {
+      vi.useFakeTimers();
+      try {
+        const form = getDefaultInheritedForm({
+          field: {
+            defaultValue: {
+              mode: "inherited-field",
+              config: {
+                sourceValueField: "foo",
+                sourceReferenceField: "reference-1",
+              },
+            },
+          },
+        });
+        form.entity._rev = "1-existing";
+        form.entity["reference-1"] = parentValues.map((_, i) => `Entity:${i}`);
+        form.formGroup.get("field").setValue(currentValue);
+        mockEntityMapperService.load.mockImplementation((_type, id) => {
+          const parent = new Entity(id);
+          parent["foo"] = parentValues[Number(id.split(":")[1])];
+          return Promise.resolve(parent);
+        });
+
+        defaultValueService.handleEntityForm(form, form.entity);
+        await vi.advanceTimersByTimeAsync(0);
+
+        const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+        expect(hint).toMatchObject(expected);
+        if ("isInSync" in expected && !expected.isInSync) {
+          hint.syncFromParentField();
+          expect(form.formGroup.get("field").value).toBe("Delhi");
+        }
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
 
   describe("field collecting the values of all linked records", () => {
     async function initCollectingForm(
