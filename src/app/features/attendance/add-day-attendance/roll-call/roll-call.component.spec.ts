@@ -53,7 +53,7 @@ describe("RollCallComponent", () => {
   function addParticipant(note: Note, participant: Entity | string) {
     const id =
       typeof participant === "string" ? participant : participant.getId();
-    note.children.push(id);
+    (note["children"] ??= []).push(id);
     note.childrenAttendance.push(new AttendanceItem(undefined, "", id));
   }
 

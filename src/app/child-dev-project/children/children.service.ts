@@ -171,7 +171,8 @@ export class ChildrenService {
     for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      for (const entityId of note[noteProperty]) {
+      // notes in range may not have this property at all (e.g. a relatedEntities-only note)
+      for (const entityId of note[noteProperty] ?? []) {
         const daysSinceNote = moment().diff(note.date, "days");
         const previousValue = results.get(entityId);
         if (previousValue > daysSinceNote) {
@@ -208,7 +209,7 @@ export class ChildrenService {
         note_child_by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
-            if (!Array.isArray(doc.children) || !doc.date) return;
+            if (!doc.date) return;
             if (doc.date.length === 10) {
               emit(doc.date);
             } else {

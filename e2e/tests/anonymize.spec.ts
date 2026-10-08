@@ -101,7 +101,8 @@ test("Anonymize cascades to a record's own notes but never to a linked user prof
   });
   sharedNote.subject = SUBJECT_SHARED_LINK;
   // qlty-ignore: radarlint-js:typescript:S1874 - the demo config still links notes to children through this deprecated field
-  sharedNote.children.push(otherChild.getId());
+  const legacySharedNote = sharedNote as unknown as { children: string[] };
+  (legacySharedNote.children ??= []).push(otherChild.getId());
 
   await loadApp(page, [
     ...users,

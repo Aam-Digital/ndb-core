@@ -115,11 +115,11 @@ describe("ChildrenService", () => {
     const s2 = schools[1];
     const n1 = new Note();
     n1.date = moment().subtract(10, "days").toDate();
-    n1.schools.push(s1.getId());
-    n1.schools.push(s2.getId());
+    (n1["schools"] ??= []).push(s1.getId());
+    (n1["schools"] ??= []).push(s2.getId());
     const n2 = new Note();
     n2.date = moment().subtract(2, "days").toDate();
-    n2.schools.push(s1.getId());
+    (n2["schools"] ??= []).push(s1.getId());
     await entityMapper.saveAll([n1, n2]);
 
     const recentNotesMap =
@@ -237,13 +237,13 @@ describe("ChildrenService", () => {
     const s1 = createEntityOfType("School", "s1");
     const s2 = createEntityOfType("School", "s2");
     const n1 = new Note("n1");
-    n1.children.push(c1.getId());
-    n1.children.push(c2.getId());
-    n1.schools.push(s1.getId());
+    (n1["children"] ??= []).push(c1.getId());
+    (n1["children"] ??= []).push(c2.getId());
+    (n1["schools"] ??= []).push(s1.getId());
     const n2 = new Note("n2");
-    n2.children.push(c1.getId());
+    (n2["children"] ??= []).push(c1.getId());
     const n3 = new Note("n3");
-    n3.schools.push(s2.getId());
+    (n3["schools"] ??= []).push(s2.getId());
     await entityMapper.saveAll([n1, n2, n3]);
 
     let res = await service.getNotesRelatedTo(c1.getId());
@@ -260,9 +260,9 @@ describe("ChildrenService", () => {
     const c1 = createEntityOfType("Child", "c1");
     const s1 = createEntityOfType("School", "s1");
     const n1 = new Note("n1");
-    n1.children.push(c1.getId());
+    (n1["children"] ??= []).push(c1.getId());
     n1.relatedEntities.push(c1.getId());
-    n1.schools.push(s1.getId());
+    (n1["schools"] ??= []).push(s1.getId());
     await entityMapper.saveAll([n1]);
 
     let res = await service.getNotesRelatedTo(c1.getId());

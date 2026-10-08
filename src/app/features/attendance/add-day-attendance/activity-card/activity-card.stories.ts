@@ -22,7 +22,7 @@ const demoChildren = [generateChild(), generateChild(), generateChild()];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
 demoChildren.forEach((c) => {
-  simpleEvent.children.push(c.getId());
+  simpleEvent["children"].push(c.getId());
   simpleEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -37,7 +37,7 @@ longEvent.category = {
   isMeeting: true,
 };
 demoChildren.forEach((c) => {
-  longEvent.children.push(c.getId());
+  longEvent["children"].push(c.getId());
   longEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );
@@ -46,7 +46,7 @@ demoChildren.forEach((c) => {
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
 activityEvent.relatesTo = createEntityOfType("RecurringActivity").getId();
 demoChildren.forEach((c) => {
-  activityEvent.children.push(c.getId());
+  activityEvent["children"].push(c.getId());
   activityEvent.childrenAttendance.push(
     new AttendanceItem(undefined, "", c.getId()),
   );

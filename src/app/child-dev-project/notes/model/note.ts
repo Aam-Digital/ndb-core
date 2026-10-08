@@ -53,7 +53,9 @@ export class Note extends Entity {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
-    instance.children = [...children];
+    // `children` is no longer a declared class field; set it dynamically
+    // so demo data and stories that still exercise the legacy participants field keep working.
+    instance["children"] = [...children];
     return instance;
   }
 
@@ -75,23 +77,6 @@ export class Note extends Entity {
         return "relatedEntities";
     }
   }
-
-  // TODO: remove these special properties (children, schools) and use relatedEntities instead once the attendance system is generalized (#1364)
-  /**
-   * IDs of Child entities linked with this note
-   *
-   * @deprecated Default structure will only use a combined `relatedEntities` field
-   */
-  @DatabaseField({
-    label: $localize`:Label for the participants field of a note:Participants`,
-    dataType: "entity",
-    isArray: true,
-    additional: "Child",
-    entityReferenceRole: "composite",
-    editComponent: "EditLegacyAttendance",
-    anonymize: "retain",
-  })
-  children: string[] = [];
 
   /**
    * optional additional information about attendance at this event for each of the linked children
@@ -183,21 +168,6 @@ export class Note extends Entity {
     anonymize: "retain",
   })
   relatedEntities: string[] = [];
-
-  /**
-   * related school ids (e.g. to infer participants for event roll calls)
-   *
-   * @deprecated Default structure will only use a combined `relatedEntities` field
-   */
-  @DatabaseField({
-    label: $localize`:label for the linked schools:Groups`,
-    dataType: "entity",
-    isArray: true,
-    additional: "School",
-    entityReferenceRole: "composite",
-    anonymize: "retain",
-  })
-  schools: string[] = [];
 
   @DatabaseField({
     label: $localize`:Status of a note:Status`,

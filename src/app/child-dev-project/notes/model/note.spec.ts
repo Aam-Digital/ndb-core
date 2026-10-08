@@ -28,7 +28,7 @@ import {
 
 function createTestModel(): Note {
   const n1 = new Note("2");
-  n1.children = ["1", "4", "7"];
+  n1["children"] = ["1", "4", "7"];
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
@@ -113,7 +113,7 @@ describe("Note", () => {
   it("should return the correct childIds", function () {
     // sort since we don't care about the order
     const n3 = createTestModel();
-    expect(n3.children.sort()).toEqual(["1", "4", "7"].sort());
+    expect(n3["children"].sort()).toEqual(["1", "4", "7"].sort());
   });
 
   it("should return colors", function () {
@@ -140,12 +140,13 @@ describe("Note", () => {
 
   it("performs a deep copy of itself", () => {
     const note = new Note("n1");
-    note.children = ["4", "5", "6"];
+    // `children` is no longer a declared class field
+    note["children"] = ["4", "5", "6"];
     note.authors = ["A"];
     const otherNote = note.copy();
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
-    otherNote.children = otherNote.children.filter((c) => c !== "5");
-    expect(otherNote.children).toHaveLength(note.children.length - 1);
+    otherNote["children"] = otherNote["children"].filter((c) => c !== "5");
+    expect(otherNote["children"]).toHaveLength(note["children"].length - 1);
   });
 });

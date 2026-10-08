@@ -84,7 +84,7 @@ describe("NotesRelatedToEntityComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     let note = component.createNewRecordFactory()();
-    expect(note.children).toEqual([entity.getId()]);
+    expect(note["children"]).toEqual([entity.getId()]);
     expect(note.relatedEntities).not.toContain(entity.getId());
 
     entity = createEntityOfType("School");
@@ -93,7 +93,7 @@ describe("NotesRelatedToEntityComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
-    expect(note.schools).toEqual([entity.getId()]);
+    expect(note["schools"]).toEqual([entity.getId()]);
     expect(note.relatedEntities).not.toContain(entity.getId());
 
     entity = createEntityOfType("User");
@@ -114,8 +114,8 @@ describe("NotesRelatedToEntityComponent", () => {
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId()]);
-    expect(note.children).toEqual([`Child:someChild`]);
-    expect(note.schools).toEqual([`School:someSchool`]);
+    expect(note["children"]).toEqual([`Child:someChild`]);
+    expect(note["schools"]).toEqual([`School:someSchool`]);
   });
 
   it("should handle ChildSchoolRelation links also if they are arrays", async () => {
@@ -130,8 +130,8 @@ describe("NotesRelatedToEntityComponent", () => {
     const newNote = component.createNewRecordFactory()();
 
     expect(newNote.relatedEntities).toContain(relation.getId());
-    expect(newNote.children).toEqual(relation.childId);
-    expect(newNote.schools).toEqual(relation.schoolId);
+    expect(newNote["children"]).toEqual(relation.childId);
+    expect(newNote["schools"]).toEqual(relation.schoolId);
   });
 
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {

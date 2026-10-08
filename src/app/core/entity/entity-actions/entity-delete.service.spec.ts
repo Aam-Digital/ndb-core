@@ -15,6 +15,7 @@ import {
 } from "./cascading-entity-action.spec";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { LEGACY_CHILD_FIELD } from "../../../child-dev-project/notes/add-default-note-views";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { BehaviorSubject, of, throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -408,14 +409,21 @@ describe("EntityDeleteService", () => {
     const schemaField = Note.schema.get("relatedEntities");
     const originalSchemaAdditional = schemaField.additional;
     schemaField.additional = [TestEntity.ENTITY_TYPE];
-    const schemaField2 = Note.schema.get("children");
-    const originalSchema2Additional = schemaField2.additional;
-    schemaField2.additional = TestEntity.ENTITY_TYPE;
+
+    const hadChildrenSchema = Note.schema.has("children");
+    const originalChildrenSchema = Note.schema.get("children");
+    Note.schema.set("children", {
+      ...LEGACY_CHILD_FIELD,
+      additional: TestEntity.ENTITY_TYPE,
+    });
 
     const primary = new TestEntity();
     const note = new Note();
     note.subject = "test";
-    note.children = [primary.getId(), TestEntity.ENTITY_TYPE + ":some-other"];
+    note["children"] = [
+      primary.getId(),
+      TestEntity.ENTITY_TYPE + ":some-other",
+    ];
     note.relatedEntities = [primary.getId()];
     const originalNote = note.copy();
     await entityMapper.save(primary);
@@ -426,7 +434,7 @@ describe("EntityDeleteService", () => {
     const actualNote = entityMapper.get(Note.ENTITY_TYPE, note.getId()) as Note;
 
     expect(actualNote.relatedEntities).toEqual([]);
-    expect(actualNote.children).toEqual([
+    expect(actualNote["children"]).toEqual([
       TestEntity.ENTITY_TYPE + ":some-other",
     ]);
 
@@ -438,7 +446,11 @@ describe("EntityDeleteService", () => {
 
     // restore original schema
     schemaField.additional = originalSchemaAdditional;
-    schemaField2.additional = originalSchema2Additional;
+    if (hadChildrenSchema) {
+      Note.schema.set("children", originalChildrenSchema);
+    } else {
+      Note.schema.delete("children");
+    }
   });
 
   it("should remove deleted IDs from 'attendance' field", async () => {

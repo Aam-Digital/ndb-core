@@ -55,8 +55,8 @@ export const Primary = {
 
 const eventNote = Note.create(new Date(), "Coaching today");
 eventNote.category = { id: "COACHING", label: "Coaching", isMeeting: true };
-eventNote.children.push(demoChildren[0].getId());
-eventNote.children.push(demoChildren[1].getId());
+eventNote["children"].push(demoChildren[0].getId());
+eventNote["children"].push(demoChildren[1].getId());
 
 export const EventWithAttendance = {
   render: Template,

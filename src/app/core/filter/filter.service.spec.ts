@@ -99,12 +99,14 @@ describe("FilterService", () => {
     const child = new TestEntity();
 
     // multi-select reference
-    const [childrenOption] = new EntityFilter<Note>("children", "Children", [
-      child,
-    ]).options;
+    const [relatedOption] = new EntityFilter<Note>(
+      "relatedEntities",
+      "Related Records",
+      [child],
+    ).options;
     const note = new Note();
-    service.alignEntityWithFilter(note, childrenOption.filter);
-    expect(note.children).toEqual([child.getId()]);
+    service.alignEntityWithFilter(note, relatedOption.filter);
+    expect(note.relatedEntities).toEqual([child.getId()]);
 
     // single-select reference
     const [childIdOption] = new EntityFilter<ChildSchoolRelation>(
@@ -132,14 +134,15 @@ describe("FilterService", () => {
 
   it("should support patching with array values", () => {
     const child = new TestEntity();
+    // uses `relatedEntities` rather than the removed legacy `children` field
     const filter = {
-      children: { $elemMatch: { $eq: child.getId() } },
+      relatedEntities: { $elemMatch: { $eq: child.getId() } },
     } as DataFilter<Note>;
     const note = new Note();
 
     service.alignEntityWithFilter(note, filter);
 
-    expect(note.children).toEqual([child.getId()]);
+    expect(note.relatedEntities).toEqual([child.getId()]);
   });
 
   it("should not set properties without a schema", () => {
