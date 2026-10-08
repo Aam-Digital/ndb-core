@@ -5,7 +5,7 @@ import { loadCredentials } from "../lib/load-credentials.js";
 import { printConnectivity } from "../lib/org-output.js";
 import { OrgRunner, type OrgOutcome } from "../lib/org-runner.js";
 import { askYesNo, createPromptSession } from "../lib/prompt.js";
-import { withTimeout } from "../lib/timeout.js";
+import { PausableTimeout } from "../lib/timeout.js";
 import { ConsoleLogger } from "../migration/console-logger.js";
 import {
   failedMigrationResult,
@@ -76,24 +76,56 @@ export function registerMigrateCommand(program: Command): void {
         return process.exit(1);
       }
 
+      // One session for every question across all orgs — reopening a readline
+      // interface per question discards whatever stdin already buffered,
+      // dropping answers typed or piped ahead of their prompt.
+      const prompt = createPromptSession();
+
+      /**
+       * Answer a migration's question for one org, asking only once:
+       * the apply run reuses the answer given during the preview.
+       */
+      const answerQuestion = async (
+        question: string,
+        answers: Map<string, boolean>,
+      ): Promise<boolean> => {
+        let answer = answers.get(question);
+        if (answer !== undefined) return answer;
+
+        if (opts.yes) {
+          console.log(`    ? ${question} → yes (--yes)`);
+          answer = true;
+        } else if (opts.dryRun) {
+          console.log(`    ? ${question} → assuming yes (--dry-run)`);
+          answer = true;
+        } else {
+          answer = await askYesNo(prompt, `    ? ${question} [y/N]`);
+        }
+        answers.set(question, answer);
+        return answer;
+      };
+
       const runOnOrg = async (
         couchdb: Couchdb,
         org: SystemCredentials,
         dryRun: boolean,
+        answers: Map<string, boolean>,
       ): Promise<MigrationOutcome> => {
+        // waiting for an answer does not count towards the timeout
+        const timeout = new PausableTimeout(
+          timeoutSeconds * 1000,
+          `Migration timed out after ${timeoutSeconds}s`,
+        );
         const ctx = new TrackedMigrationContext(
           couchdb,
           org,
           dryRun,
           logger,
           args,
+          (question) => timeout.pause(() => answerQuestion(question, answers)),
         );
         try {
-          const result = await withTimeout(
-            migration.run(ctx),
-            timeoutSeconds * 1000,
-            `Migration timed out after ${timeoutSeconds}s`,
-          );
+          const result = await timeout.run(migration.run(ctx));
           return { result, writeStats: ctx.getWriteStats() };
         } catch (e: unknown) {
           const msg = e instanceof Error ? e.message : String(e);
@@ -109,16 +141,13 @@ export function registerMigrateCommand(program: Command): void {
       printBanner("MIGRATE", migration);
       const outcomes: OrgOutcome<MigrationOutcome>[] = [];
       let skippedCount = 0;
-      // One session for every org's confirmation — reopening a readline
-      // interface per question discards whatever stdin already buffered,
-      // dropping answers typed or piped ahead of their prompt.
-      const prompt = createPromptSession();
       try {
         for (const org of reachable) {
           const couchdb = new Couchdb(org.url, org.password, org.username);
           console.log();
 
-          const preview = await runOnOrg(couchdb, org, true);
+          const answers = new Map<string, boolean>();
+          const preview = await runOnOrg(couchdb, org, true, answers);
           printOutcome({ org, result: preview }, false, !!opts.verbose);
 
           if (opts.dryRun || !preview.result.changed) {
@@ -141,7 +170,7 @@ export function registerMigrateCommand(program: Command): void {
             }
           }
 
-          const applied = await runOnOrg(couchdb, org, false);
+          const applied = await runOnOrg(couchdb, org, false, answers);
           printOutcome({ org, result: applied }, true, !!opts.verbose);
           outcomes.push({ org, result: applied });
         }

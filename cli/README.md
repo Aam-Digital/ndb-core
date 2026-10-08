@@ -67,13 +67,13 @@ Place a `credentials.json` in the `cli/` folder of your ndb-core checkout (it is
 
 Org fields:
 
-| Field      | Required | Description                                        |
-| ---------- | -------- | -------------------------------------------------- |
-| `name`     | yes      | Short org name, e.g. `c-myorg`                     |
-| `password` | yes      | CouchDB admin password                             |
-| `url`      | no       | Override host (default: `<name>.<DOMAIN env var>`) |
-| `username` | no       | CouchDB admin username (default: `admin`)          |
-| `category` | no       | Used with `--category` to filter org subsets       |
+| Field      | Required | Description                                                       |
+| ---------- | -------- | ----------------------------------------------------------------- |
+| `name`     | yes      | Short org name, e.g. `c-myorg`                                    |
+| `password` | yes      | CouchDB admin password                                            |
+| `url`      | no       | Override host (default: `<name>.<DOMAIN env var>`)                |
+| `username` | no       | CouchDB admin username (default: `admin`)                         |
+| `category` | no       | Used with `--category`/`--exclude-category` to filter org subsets |
 
 If `url` is omitted, the CLI builds it as `<name>.<DOMAIN>` where `DOMAIN` is read from the environment.
 

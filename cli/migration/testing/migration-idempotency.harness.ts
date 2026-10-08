@@ -68,12 +68,13 @@ export function buildStubCouchdb(store: DocStore): Couchdb {
       store[key(path, db)] = JSON.parse(JSON.stringify(data));
     }),
 
+    // does not evaluate the selector: returns all docs of the db
+    // (unwrapped from `{ docs }`, like Couchdb.find)
     find: vi.fn(async (_query: unknown, db?: string) => {
       const base = `${db ?? "app"}/`;
-      const all = Object.entries(store)
+      return Object.entries(store)
         .filter(([k]) => k.startsWith(base))
         .map(([, v]) => v);
-      return { docs: all };
     }),
   } as unknown as Couchdb;
 }
@@ -97,6 +98,7 @@ export function buildTestContext(
   store: DocStore,
   dryRun = false,
   args: string[] = [],
+  confirm: (question: string) => Promise<boolean> = async () => true,
 ): MigrationContext & { store: DocStore } {
   const stubCouchdb = buildStubCouchdb(store);
   const writes = { intended: 0, succeeded: 0, failed: 0 };
@@ -117,6 +119,7 @@ export function buildTestContext(
     args,
     log: silentLogger,
     validateJson,
+    confirm,
     async put(path, data, db?, _headers?) {
       validateJson(data);
       writes.intended++;
