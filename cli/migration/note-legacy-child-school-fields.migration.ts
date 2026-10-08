@@ -10,6 +10,7 @@ import { CONFIG_DOC_PATH } from "./migrations.js";
 import { asArray } from "../../src/app/utils/asArray.js";
 import {
   countDocsWithFieldData,
+  type FieldReference,
   findConfigFieldReferences,
   findDocsReferencingField,
   findSqlReportsMentioning,
@@ -205,18 +206,42 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         reasons,
       );
 
+    // every lookup below spans Note and the types extending it: an extending type inherited these
+    // fields from the Note schema, so its views reference them and its config may define them
+    const configReferencesOf = (field: string) =>
+      referencedConfigKeys(
+        noteBasedTypes.flatMap((entityType) =>
+          findConfigFieldReferences(migratedData, entityType, field),
+        ),
+      );
+    const formReferencesOf = (field: string) => [
+      ...new Set(
+        noteBasedTypes.flatMap((entityType) =>
+          findDocsReferencingField(publicForms, entityType, field),
+        ),
+      ),
+    ];
+    /** remove the field and its list references from every Note-based type, all or nothing */
+    const removeFromConfig = (field: string) => {
+      let data = config.data;
+      const remaining: FieldReference[] = [];
+      for (const entityType of noteBasedTypes) {
+        const removal = removeFieldFromConfig({ data }, entityType, field);
+        if (removal.data) {
+          data = removal.data;
+        } else {
+          remaining.push(...removal.remaining);
+        }
+      }
+      return remaining.length === 0 ? { data, remaining } : { remaining };
+    };
+
     for (const legacy of LEGACY_NOTE_FIELDS) {
       const field = legacy.field;
       const configured = config.data["entity:Note"]?.attributes?.[field];
       const typeExists = !!migratedData[`entity:${legacy.entityType}`];
-      const configReferences = referencedConfigKeys(
-        findConfigFieldReferences(migratedData, "Note", field),
-      );
-      const formReferences = findDocsReferencingField(
-        publicForms,
-        "Note",
-        field,
-      );
+      const configReferences = configReferencesOf(field);
+      const formReferences = formReferencesOf(field);
       const references = [...configReferences, ...formReferences];
 
       if (hasNoteData(field)) {
@@ -290,7 +315,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         }
       }
       if (!keepReason) {
-        const removal = removeFieldFromConfig(config, "Note", field);
+        const removal = removeFromConfig(field);
         if (removal.data) {
           ctx.log.info(
             `Removing unused entity:Note.${field} (0 ${countedTypes} docs have data in it)` +
@@ -329,8 +354,10 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
     // `childrenAttendance` was never shown in a view and has no label: it was edited through the
     // `EditLegacyAttendance` component of `children` and read by the roll-call UI of Note-based event types.
     // So it is restored whenever something still needs it, without asking the operator.
-    const configuredAttendance =
-      config.data["entity:Note"]?.attributes?.[ATTENDANCE_FIELD];
+    const configuredAttendance = noteBasedTypes
+      .map((entityType) => config.data[`entity:${entityType}`])
+      .find((entityConfig) => entityConfig?.attributes?.[ATTENDANCE_FIELD])
+      ?.attributes?.[ATTENDANCE_FIELD];
     if (
       configuredAttendance &&
       !isLegacyAttendanceDefinition(configuredAttendance)
@@ -361,14 +388,8 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
           `${[...new Set(rollCallTypes)].join(", ")} records attendance through it (${ATTENDANCE_CONFIG_KEY})`,
         );
       }
-      const attendanceConfigReferences = referencedConfigKeys(
-        findConfigFieldReferences(migratedData, "Note", ATTENDANCE_FIELD),
-      );
-      const attendanceFormReferences = findDocsReferencingField(
-        publicForms,
-        "Note",
-        ATTENDANCE_FIELD,
-      );
+      const attendanceConfigReferences = configReferencesOf(ATTENDANCE_FIELD);
+      const attendanceFormReferences = formReferencesOf(ATTENDANCE_FIELD);
       const attendanceReferences = [
         ...attendanceConfigReferences,
         ...attendanceFormReferences,
@@ -400,7 +421,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         }
       } else if (configuredAttendance || attendanceReferences.length > 0) {
         // no data and nothing using it: it should not leave a trace
-        const removal = removeFieldFromConfig(config, "Note", ATTENDANCE_FIELD);
+        const removal = removeFromConfig(ATTENDANCE_FIELD);
         if (removal.data) {
           ctx.log.info(
             `Removing unused entity:Note.${ATTENDANCE_FIELD} (0 ${countedTypes} docs have data in it)` +

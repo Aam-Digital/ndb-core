@@ -814,6 +814,47 @@ describe("noteLegacyChildSchoolFields migration", () => {
       expect(configData(store)["entity:EventNote"].extends).toBe("Note");
     });
 
+    it("removes it from the config of extending types, too", async () => {
+      const store = seed({
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:Note": { attributes: { childrenAttendance: ATTENDANCE_FIELD } },
+        "entity:EventNote": {
+          extends: "Note",
+          attributes: { childrenAttendance: ATTENDANCE_FIELD },
+        },
+      });
+
+      await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+      expect(
+        configData(store)["entity:EventNote"].attributes.childrenAttendance,
+      ).toBeUndefined();
+    });
+
+    it("restores it if a view of an extending type references it", async () => {
+      const store = seed({
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:EventNote": { extends: "Note" },
+        "view:event-note/:id": {
+          component: "EntityDetails",
+          config: {
+            entityType: "EventNote",
+            panels: [
+              { components: [{ config: { cols: ["childrenAttendance"] } }] },
+            ],
+          },
+        },
+      });
+
+      await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+      expect(
+        configData(store)["entity:Note"]?.attributes?.childrenAttendance,
+      ).toEqual(ATTENDANCE_FIELD);
+    });
+
     it("restores it for an event type recording attendance through it", async () => {
       const store = seed({
         ...childAndSchoolTypes,
