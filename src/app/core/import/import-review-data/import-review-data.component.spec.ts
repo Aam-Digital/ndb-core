@@ -7,6 +7,7 @@ import { ImportService } from "../import.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { ImportMetadata } from "../import-metadata";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -93,6 +94,41 @@ describe("ImportReviewDataComponent", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("should refresh the data for a retry when the import wrote nothing", async () => {
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    mockDialog.open.mockReturnValue({
+      afterClosed: () => of({ errorOccured: true }),
+    } as any);
+    vi.spyOn(component.importComplete, "emit");
+    mockImportService.transformRawDataToEntities.mockClear();
+
+    await component.startImport();
+
+    expect(mockImportService.transformRawDataToEntities).toHaveBeenCalled();
+    expect(component.importComplete.emit).not.toHaveBeenCalled();
+  });
+
+  it("should discard the prepared import when part of it was already written", async () => {
+    const completedImport = ImportMetadata.create({
+      createdEntities: ["1"],
+      config: null,
+    });
+    component.columnMapping = [{ column: "x", propertyName: "name" }];
+    mockDialog.open.mockReturnValue({
+      afterClosed: () =>
+        of({ errorOccured: true, partiallyCompleted: true, completedImport }),
+    } as any);
+    vi.spyOn(component.importComplete, "emit");
+    mockImportService.transformRawDataToEntities.mockClear();
+
+    await component.startImport();
+
+    // re-parsing would leave the user one click away from importing the records
+    // that are already saved a second time
+    expect(mockImportService.transformRawDataToEntities).not.toHaveBeenCalled();
+    expect(component.importComplete.emit).toHaveBeenCalledWith(completedImport);
   });
 
   it("should handle errors from transformRawDataToEntities gracefully", async () => {

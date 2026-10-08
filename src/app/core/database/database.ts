@@ -18,6 +18,37 @@
 import { Observable } from "rxjs";
 
 /**
+ * Thrown when a bulk write stopped partway, after part of its documents were stored.
+ *
+ * An implementation may have to split a write across several requests (see
+ * `RemotePouchDatabase`), and one of them failing leaves the earlier ones stored.
+ * Rejecting with the plain error would hide that from the caller, which then cannot
+ * tell a write that did nothing from one that did half of its work - for an import
+ * that is the difference between "retry the file" and "part of it is already there".
+ */
+export class PartialBulkWriteError extends Error {
+  /**
+   * The results of the requests that completed before the write stopped, in the order
+   * their documents were passed in. At least one document was stored, but individual
+   * ones may have failed - so a caller reads the entries marked `ok`.
+   */
+  readonly storedResults: any[];
+
+  constructor(storedResults: any[], cause: unknown) {
+    super("Bulk write stopped after storing part of its documents", { cause });
+
+    // one entry per stored document, so this must not be picked up when the error
+    // is serialized - neither into a message shown to the user nor into remote
+    // monitoring, where document ids have no place (see #4174). A non-enumerable
+    // property stays available to code but is skipped by JSON.stringify & co.
+    Object.defineProperty(this, "storedResults", {
+      value: storedResults,
+      enumerable: false,
+    });
+  }
+}
+
+/**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
  *
@@ -70,6 +101,11 @@ export abstract class Database {
    * @param objects The documents to be saved
    * @param forceUpdate (Optional) Whether conflicts should be ignored and existing conflicting documents forcefully overwritten.
    * @returns array holding success responses or errors depending on the success of the operation
+   *
+   * A rejection reports what happened to the documents, so that a caller can tell
+   * which of them are stored: it rejects *with* the results array when individual
+   * documents failed, and with a {@link PartialBulkWriteError} when the write stopped
+   * partway after storing some. Any other rejection means nothing was stored.
    */
   abstract putAll(objects: any[], forceUpdate?: boolean): Promise<any[]>;
 

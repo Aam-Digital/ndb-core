@@ -33,7 +33,9 @@ export function registerCheckCommand(program: Command): void {
       // Only offer to edit the credentials file when there's someone to ask —
       // a non-interactive run (CI, a script) must keep reporting failures the
       // same way every time, not silently prune orgs on one bad connection.
-      if (failing.length > 0 && process.stdin.isTTY) {
+      // `CI` is checked in addition to stdin being a TTY: some CI runners
+      // still allocate one, and must not get stuck on this prompt.
+      if (failing.length > 0 && process.stdin.isTTY && !process.env.CI) {
         await offerToRemoveFailing(failing, opts.credentials);
       }
 
@@ -105,7 +107,7 @@ async function removeOrgsFromCredentials(
 
   const { kept, removedCount } = removeMatchingOrgs(
     file,
-    new Set(toRemove.map((org) => org.url)),
+    new Set(toRemove.map((org) => orgKey(org.name, org.url))),
     domain,
   );
 
@@ -133,11 +135,11 @@ async function removeOrgsFromCredentials(
  */
 export function removeMatchingOrgs(
   file: RawCredentialsFile,
-  removeUrls: Set<string>,
+  removeKeys: Set<string>,
   domain: string,
 ): { kept: RawOrgCredential[]; removedCount: number } {
   const kept = file.orgs.filter(
-    (raw) => !removeUrls.has(resolvedUrl(raw, domain) ?? ""),
+    (raw) => !removeKeys.has(orgKey(raw.name, resolvedUrl(raw, domain) ?? "")),
   );
   return { kept, removedCount: file.orgs.length - kept.length };
 }
@@ -151,4 +153,14 @@ function resolvedUrl(
   if (explicit) return explicit;
   const name = raw.name?.trim();
   return name && domain ? `${name}.${domain}` : undefined;
+}
+
+/**
+ * Identifies a raw org entry by name *and* resolved url, not url alone — two
+ * entries can legitimately share a url (`readCredentialsFile` only warns on
+ * duplicates, it does not reject them), and keying on url alone would delete
+ * every entry sharing it, including ones the operator never selected.
+ */
+function orgKey(name: string | undefined, url: string): string {
+  return `${name?.trim() ?? ""}|${url}`;
 }

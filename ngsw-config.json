@@ -36,7 +36,7 @@
         "/assets/icons/*"
       ],
       "cacheConfig": {
-        "maxSize": 1,
+        "maxSize": 40,
         "maxAge": "30d",
         "strategy": "performance"
       }
