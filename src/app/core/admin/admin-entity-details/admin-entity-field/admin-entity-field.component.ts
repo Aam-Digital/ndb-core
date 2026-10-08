@@ -33,6 +33,7 @@ import {
   MatSlideToggleChange,
 } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
@@ -106,6 +107,7 @@ export interface AdminEntityFieldData {
     ReactiveFormsModule,
     FontAwesomeModule,
     MatTooltipModule,
+    AdminDisplayConditionButtonComponent,
     BasicAutocompleteComponent,
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,

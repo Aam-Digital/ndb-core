@@ -47,6 +47,7 @@ import { EntityFieldLabelComponent } from "../../../entity/entity-field-label/en
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityService } from "../../admin-entity.service";
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
+import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 import {
   AdminEntityFieldComponent,
@@ -89,6 +90,7 @@ type FieldDragDropEvent = CdkDragDrop<
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
+    AdminDisplayConditionButtonComponent,
   ],
 })
 export class AdminEntityFormComponent {
@@ -166,9 +168,6 @@ export class AdminEntityFormComponent {
 
   /** `cdkDropListData` marking the toolbar as the drop target for fields removed from the form */
   readonly availableFieldsTarget: FieldDropTarget = "available";
-
-  readonly displayConditionTooltip = $localize`Only show this field group in forms if the record currently matches a condition, based on the values of other fields.`;
-  readonly displayConditionConfiguredTooltip = $localize`Condition configured: this field group is only shown while the record matches it.`;
 
   searchFilter = new FormControl("");
 

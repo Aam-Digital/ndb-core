@@ -437,6 +437,31 @@ describe("AdminEntityFormComponent", () => {
     },
   );
 
+  it("should highlight a group's display condition button in the accent color only while a condition is configured", async () => {
+    fixture.componentRef.setInput("config", {
+      fieldGroups: [
+        { header: "Plain", fields: ["name"] },
+        {
+          header: "Conditional",
+          fields: ["other"],
+          displayCondition: { name: "x" },
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll(
+        'app-admin-section-header button[aria-label="Display Condition"]',
+      ),
+    );
+
+    expect(buttons.map((b) => b.classList.contains("mat-accent"))).toEqual([
+      false,
+      true,
+    ]);
+  });
+
   it("should apply the condition dialog's result to the group it was opened for, even if the groups were reordered meanwhile", async () => {
     const dialogResult = new Subject<unknown>();
     mockDialog.open.mockReturnValue({ afterClosed: () => dialogResult });
