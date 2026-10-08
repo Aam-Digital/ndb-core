@@ -36,13 +36,21 @@ export class EmailClientService {
    * Build a mailto link from an entity's email fields and open the local mail client.
    *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
+   *
+   * @param entities the entity/entities whose email field(s) to use as recipient(s)
+   * @param fieldId the schema field id to read the recipient from. If not given, the first field with an `EmailDatatype` in the entity's schema is used.
    */
-  async executeMailto(entities: Entity | Entity[]): Promise<boolean> {
+  async executeMailto(
+    entities: Entity | Entity[],
+    fieldId?: string,
+  ): Promise<boolean> {
     const isBulk = Array.isArray(entities);
     const entityList = isBulk ? entities : [entities];
 
-    const { recipients, excludedEntities } =
-      this.getEmailsForEntities(entityList);
+    const { recipients, excludedEntities } = this.getEmailsForEntities(
+      entityList,
+      fieldId,
+    );
 
     if (!recipients.length) {
       await this.confirmationDialog.getConfirmation(
@@ -154,13 +162,15 @@ export class EmailClientService {
     return note;
   }
 
-  private getEmailsForEntities(entities: Entity[]): {
+  private getEmailsForEntities(
+    entities: Entity[],
+    fieldId?: string,
+  ): {
     recipients: string[];
     excludedEntities: Entity[];
   } {
-    const emailFieldId = this.findFirstEmailFieldId(
-      entities?.[0].getConstructor(),
-    );
+    const emailFieldId =
+      fieldId ?? this.findFirstEmailFieldId(entities?.[0].getConstructor());
     if (!emailFieldId) return { recipients: [], excludedEntities: entities };
 
     const recipients = new Set<string>();

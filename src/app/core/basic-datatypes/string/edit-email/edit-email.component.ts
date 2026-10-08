@@ -74,7 +74,7 @@ export class EditEmailComponent
       ? Object.assign(entity.copy(), { [fieldId]: this.valueSignal() })
       : entity;
 
-    this.emailClientService.executeMailto(entityWithCurrentValue);
+    this.emailClientService.executeMailto(entityWithCurrentValue, fieldId);
   }
 }
 

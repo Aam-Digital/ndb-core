@@ -29,6 +29,6 @@ export class DisplayEmailComponent extends ViewDirective<string> {
     }
 
     event.preventDefault();
-    this.emailClientService.executeMailto(entity);
+    this.emailClientService.executeMailto(entity, this.id());
   }
 }
