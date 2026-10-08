@@ -28,7 +28,7 @@ import {
 
 function createTestModel(): Note {
   const n1 = new Note("2");
-  n1["children"] = ["1", "4", "7"];
+  n1.relatedEntities = ["1", "4", "7"];
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
@@ -96,9 +96,7 @@ describe("Note", () => {
     {
       _id: "Note:some-id",
 
-      children: ["1", "2", "5"],
       childrenAttendance: [],
-      schools: [],
       relatedEntities: [],
       date: "2023-05-01",
       subject: "Note Subject",
@@ -110,10 +108,21 @@ describe("Note", () => {
     true,
   );
 
-  it("should return the correct childIds", function () {
-    // sort since we don't care about the order
-    const n3 = createTestModel();
-    expect(n3["children"].sort()).toEqual(["1", "4", "7"].sort());
+  it("should derive link fields and the property for an entity type from the schema", () => {
+    Note.schema.set("linkedTestType", {
+      dataType: "entity",
+      additional: "TestType",
+    });
+    try {
+      expect(Note.getLinkFields()).toContain("linkedTestType");
+      expect(Note.getLinkFields()).toContain("relatedEntities");
+      expect(Note.getLinkFields()).not.toContain("authors");
+      expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
+      expect(Note.getPropertyFor("User")).toBe("authors");
+      expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
+    } finally {
+      Note.schema.delete("linkedTestType");
+    }
   });
 
   it("should return colors", function () {
@@ -140,13 +149,16 @@ describe("Note", () => {
 
   it("performs a deep copy of itself", () => {
     const note = new Note("n1");
-    // `children` is no longer a declared class field
-    note["children"] = ["4", "5", "6"];
+    note.relatedEntities = ["4", "5", "6"];
     note.authors = ["A"];
     const otherNote = note.copy();
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
-    otherNote["children"] = otherNote["children"].filter((c) => c !== "5");
-    expect(otherNote["children"]).toHaveLength(note["children"].length - 1);
+    otherNote.relatedEntities = otherNote.relatedEntities.filter(
+      (c) => c !== "5",
+    );
+    expect(otherNote.relatedEntities).toHaveLength(
+      note.relatedEntities.length - 1,
+    );
   });
 });

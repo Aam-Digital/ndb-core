@@ -28,6 +28,7 @@ import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { asArray } from "../../../utils/asArray";
 
 /**
  * Notes are a special in-built entity type to record free-form information related to other records.
@@ -48,34 +49,43 @@ export class Note extends Entity {
   static create(
     date: Date,
     subject: string = "",
-    children: string[] = [],
+    relatedEntities: string[] = [],
   ): Note {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
-    // `children` is no longer a declared class field; set it dynamically
-    // so demo data and stories that still exercise the legacy participants field keep working.
-    instance["children"] = [...children];
+    instance.relatedEntities = [...relatedEntities];
     return instance;
   }
 
   /**
-   * Returns the name of the Note property where entities of the given entity type are stored
-   * @param entityType
+   * All Note properties that link this note to other records,
+   * i.e. every "entity" field in the (config-extended) schema except `authors`.
    *
-   * @deprecated special logic for Note will be removed. Default structure will only use a combined `relatedEntities` field
+   * This covers the generic `relatedEntities` as well as any custom or legacy entity fields of a system.
+   * (`authors` is indexed and queried separately.)
    */
-  static getPropertyFor(entityType: string) {
-    switch (entityType) {
-      case "Child":
-        return "children";
-      case "School":
-        return "schools";
-      case "User":
-        return "authors";
-      default:
-        return "relatedEntities";
-    }
+  static getLinkFields(): string[] {
+    return [...Note.schema.entries()]
+      .filter(
+        ([key, field]) => field.dataType === "entity" && key !== "authors",
+      )
+      .map(([key]) => key)
+      .sort();
+  }
+
+  /**
+   * Returns the name of the Note property where entities of the given entity type are stored:
+   * the first "entity" field configured for that type, otherwise `relatedEntities`.
+   * @param entityType
+   */
+  static getPropertyFor(entityType: string): string {
+    const matchingField = [...Note.schema.entries()].find(
+      ([, field]) =>
+        field.dataType === "entity" &&
+        asArray(field.additional).includes(entityType),
+    );
+    return matchingField?.[0] ?? "relatedEntities";
   }
 
   /**

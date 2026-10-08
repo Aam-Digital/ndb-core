@@ -84,8 +84,7 @@ describe("NotesRelatedToEntityComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     let note = component.createNewRecordFactory()();
-    expect(note["children"]).toEqual([entity.getId()]);
-    expect(note.relatedEntities).not.toContain(entity.getId());
+    expect(note.relatedEntities).toContain(entity.getId());
 
     entity = createEntityOfType("School");
     fixture.componentRef.setInput("entity", entity);
@@ -93,8 +92,7 @@ describe("NotesRelatedToEntityComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
-    expect(note["schools"]).toEqual([entity.getId()]);
-    expect(note.relatedEntities).not.toContain(entity.getId());
+    expect(note.relatedEntities).toContain(entity.getId());
 
     entity = createEntityOfType("User");
     fixture.componentRef.setInput("entity", entity);

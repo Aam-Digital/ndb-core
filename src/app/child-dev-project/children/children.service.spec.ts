@@ -113,15 +113,13 @@ describe("ChildrenService", () => {
     const schools = await entityMapper.loadType("School");
     const s1 = schools[0];
     const s2 = schools[1];
-    const n1 = new Note();
-    n1.date = moment().subtract(10, "days").toDate();
-    n1["schools"] = [];
-    n1["schools"].push(s1.getId());
-    n1["schools"].push(s2.getId());
-    const n2 = new Note();
-    n2.date = moment().subtract(2, "days").toDate();
-    n2["schools"] = [];
-    n2["schools"].push(s1.getId());
+    const n1 = Note.create(moment().subtract(10, "days").toDate(), "", [
+      s1.getId(),
+      s2.getId(),
+    ]);
+    const n2 = Note.create(moment().subtract(2, "days").toDate(), "", [
+      s1.getId(),
+    ]);
     await entityMapper.saveAll([n1, n2]);
 
     const recentNotesMap =
@@ -239,17 +237,11 @@ describe("ChildrenService", () => {
     const s1 = createEntityOfType("School", "s1");
     const s2 = createEntityOfType("School", "s2");
     const n1 = new Note("n1");
-    n1["children"] = [];
-    n1["children"].push(c1.getId());
-    n1["children"].push(c2.getId());
-    n1["schools"] = [];
-    n1["schools"].push(s1.getId());
+    n1.relatedEntities = [c1.getId(), c2.getId(), s1.getId()];
     const n2 = new Note("n2");
-    n2["children"] = [];
-    n2["children"].push(c1.getId());
+    n2.relatedEntities = [c1.getId()];
     const n3 = new Note("n3");
-    n3["schools"] = [];
-    n3["schools"].push(s2.getId());
+    n3.relatedEntities = [s2.getId()];
     await entityMapper.saveAll([n1, n2, n3]);
 
     let res = await service.getNotesRelatedTo(c1.getId());
@@ -262,22 +254,37 @@ describe("ChildrenService", () => {
     expect(res).toEqual([n3]);
   });
 
-  it("should include related notes through children and schools links (legacy)", async () => {
-    const c1 = createEntityOfType("Child", "c1");
-    const s1 = createEntityOfType("School", "s1");
-    const n1 = new Note("n1");
-    n1["children"] = [];
-    n1["children"].push(c1.getId());
-    n1.relatedEntities.push(c1.getId());
-    n1["schools"] = [];
-    n1["schools"].push(s1.getId());
-    await entityMapper.saveAll([n1]);
+  it("should return notes related through any entity field of Note", async () => {
+    Note.schema.set("linkedSchool", {
+      dataType: "entity",
+      additional: "School",
+    });
+    try {
+      // wait for the initial index creation, then update it with the extended schema
+      await service.getNotesRelatedTo("School:none");
+      await service["createNotesRelatedIndex"]();
+      const s1 = createEntityOfType("School", "s1");
+      const note = new Note("n1");
+      note["linkedSchool"] = s1.getId();
+      // linked through multiple fields, but should be returned only once
+      note.relatedEntities = [s1.getId()];
+      await entityMapper.save(note);
 
-    let res = await service.getNotesRelatedTo(c1.getId());
-    expect(res).toEqual([n1]);
+      const res = await service.getNotesRelatedTo(s1.getId());
+      expect(res.map((n) => n.getId())).toEqual([note.getId()]);
+    } finally {
+      Note.schema.delete("linkedSchool");
+    }
+  });
 
-    res = await service.getNotesRelatedTo(s1.getId());
-    expect(res).toEqual([n1]);
+  it("should return notes related to a user through authors", async () => {
+    const user = createEntityOfType("User", "u1");
+    const note = new Note("n1");
+    note.authors = [user.getId()];
+    await entityMapper.save(note);
+
+    const res = await service.getNotesRelatedTo(user.getId());
+    expect(res).toEqual([note]);
   });
 
   it("should return the correct notes in a timespan", async () => {

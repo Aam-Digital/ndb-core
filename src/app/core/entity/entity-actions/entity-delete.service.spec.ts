@@ -408,7 +408,10 @@ describe("EntityDeleteService", () => {
   it("should remove multiple ref ids from related note", async () => {
     const schemaField = Note.schema.get("relatedEntities");
     const originalSchemaAdditional = schemaField.additional;
+    const originalSchemaRole = schemaField.entityReferenceRole;
     schemaField.additional = [TestEntity.ENTITY_TYPE];
+    // only referencing (not owning) the deleted record, so the note is kept
+    schemaField.entityReferenceRole = "aggregate";
 
     const hadChildrenSchema = Note.schema.has("children");
     const originalChildrenSchema = Note.schema.get("children");
@@ -446,6 +449,7 @@ describe("EntityDeleteService", () => {
 
     // restore original schema
     schemaField.additional = originalSchemaAdditional;
+    schemaField.entityReferenceRole = originalSchemaRole;
     if (hadChildrenSchema) {
       Note.schema.set("children", originalChildrenSchema);
     } else {

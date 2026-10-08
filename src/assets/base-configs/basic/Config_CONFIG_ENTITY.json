@@ -109,6 +109,21 @@
         ]
       }
     },
+    "entity:Note": {
+      "attributes": {
+        "relatedEntities": {
+          "label": "Related Records",
+          "dataType": "entity",
+          "additional": [
+            "Child",
+            "School"
+          ],
+          "isArray": true,
+          "entityReferenceRole": "composite",
+          "anonymize": "retain"
+        }
+      }
+    },
     "entity:User": {
       "label": "User",
       "labelPlural": "Users",

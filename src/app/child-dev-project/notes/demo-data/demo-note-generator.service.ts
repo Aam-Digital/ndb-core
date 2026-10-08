@@ -125,10 +125,7 @@ export function generateNote(params: {
   const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
   Object.assign(note, selectedStory);
 
-  // `children` is no longer a declared class field; accessed dynamically
-  // so demo data generation for systems with the legacy field keeps working.
-  note["children"] = [];
-  note["children"].push(params.child.getId());
+  note.relatedEntities = [params.child.getId()];
   note.authors = [params.author.getId()];
 
   let date = params.date;
@@ -155,7 +152,7 @@ function generateGroupNote(params: { children: Entity[]; author: Entity }) {
   const selectedStory = faker.helpers.arrayElement(noteGroupStories);
   Object.assign(note, selectedStory);
 
-  note["children"] = params.children.map((c) => c.getId());
+  note.relatedEntities = params.children.map((c) => c.getId());
   params.children.forEach((child) => {
     const item = new AttendanceItem();
     item.participant = child.getId();
