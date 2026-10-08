@@ -12,7 +12,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import { NotesService } from "../../../child-dev-project/notes/notes.service";
 import { TestEventEntity } from "../../../utils/test-utils/TestEventEntity";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
@@ -292,8 +292,8 @@ describe("DataTransformationService", () => {
     todayNote.date = new Date();
     await entityMapper.save(todayNote);
 
-    const childrenService = TestBed.inject(ChildrenService);
-    const getNotesInTimespan = vi.spyOn(childrenService, "getNotesInTimespan");
+    const notesService = TestBed.inject(NotesService);
+    const getNotesInTimespan = vi.spyOn(notesService, "getNotesInTimespan");
 
     getNotesInTimespan.mockResolvedValue([yesterdayNote, todayNote]);
     const startDate = moment().subtract(5, "days").toDate();

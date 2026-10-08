@@ -149,6 +149,7 @@
           {
             "component": "NotesDashboard",
             "config": {
+              "entityType": "Child",
               "sinceDays": 28,
               "fromBeginningOfWeek": false,
               "mode": "with-recent-notes"
@@ -157,6 +158,7 @@
           {
             "component": "NotesDashboard",
             "config": {
+              "entityType": "Child",
               "sinceDays": 28,
               "fromBeginningOfWeek": false,
               "mode": "without-recent-notes"

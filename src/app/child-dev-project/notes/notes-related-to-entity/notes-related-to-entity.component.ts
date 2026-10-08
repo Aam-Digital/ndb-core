@@ -9,7 +9,6 @@ import { Note } from "../model/note";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { asArray } from "app/utils/asArray";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
@@ -18,6 +17,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { LoaderMethod } from "../../../core/entity/entity-special-loader/entity-special-loader.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { linkLegacyNoteFields } from "../deprecated/legacy-note-link-fields";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -34,7 +34,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
 
   override entityCtr = computed(() => Note);
 
-  /** Load related notes via the ChildrenService (see EntitySpecialLoaderService). */
+  /** Load related notes via the NotesService (see EntitySpecialLoaderService). */
   override loaderMethod = input<LoaderMethod>(
     LoaderMethod.NotesRelatedToEntity,
   );
@@ -60,9 +60,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       if (!entity) {
         return newNote;
       }
-      if (entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
-        this.specialLinkingForChildSchoolRelation(newNote);
-      }
+      linkLegacyNoteFields(newNote, entity);
 
       for (const e of [
         entity.getId(),
@@ -75,27 +73,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
 
       return newNote;
     };
-  }
-
-  private specialLinkingForChildSchoolRelation(newNote: Note) {
-    //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
-    for (const childId of asArray(
-      (this.entity() as ChildSchoolRelation).childId,
-    )) {
-      if (childId) {
-        newNote["children"] ??= [];
-        newNote["children"].push(childId);
-      }
-    }
-
-    for (const schooldId of asArray(
-      (this.entity() as ChildSchoolRelation).schoolId,
-    )) {
-      if (schooldId) {
-        newNote["schools"] ??= [];
-        newNote["schools"].push(schooldId);
-      }
-    }
   }
 
   /**

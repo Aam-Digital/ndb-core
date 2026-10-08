@@ -65,6 +65,32 @@ describe("applyConfigMigrations", () => {
     });
   });
 
+  describe("migrateNotesDashboardEntity", () => {
+    it("sets the previously implicit Child entity", () => {
+      const old = {
+        "view:": { component: "NotesDashboard", config: { sinceDays: 28 } },
+      };
+      expect(applyConfigMigrations(old)).toEqual({
+        "view:": {
+          component: "NotesDashboard",
+          config: { sinceDays: 28, entityType: "Child" },
+        },
+      });
+    });
+
+    it("keeps an explicitly configured entity type, including the legacy `entity` key", () => {
+      for (const config of [{ entityType: "School" }, { entity: "School" }]) {
+        const old = { "view:": { component: "NotesDashboard", config } };
+        expect(applyConfigMigrations(old)).toEqual({
+          "view:": {
+            component: "NotesDashboard",
+            config: { entityType: "School" },
+          },
+        });
+      }
+    });
+  });
+
   describe("migrateEntityArrayDatatype", () => {
     it("migrates entity-array dataType", () => {
       const old = { attributes: { field: { dataType: "entity-array" } } };

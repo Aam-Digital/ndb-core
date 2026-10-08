@@ -10,9 +10,9 @@ import { DatabaseResolverService } from "#src/app/core/database/database-resolve
 import { AttendanceItem } from "../model/attendance-item";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import {
-  LEGACY_CHILD_FIELD,
-  LEGACY_SCHOOL_FIELD,
-} from "#src/app/child-dev-project/notes/add-default-note-views";
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "#src/app/child-dev-project/notes/deprecated/legacy-note-link-fields.testing";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { GroupParticipantResolverService } from "./group-participant-resolver";
 import { ConfigService } from "#src/app/core/config/config.service";
@@ -83,8 +83,8 @@ describe("GroupParticipantResolverService (deprecated)", () => {
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("retrieves saved events with linked-school data via getEventsOnDate", async () => {
-    Note.schema.set("children", LEGACY_CHILD_FIELD);
-    Note.schema.set("schools", LEGACY_SCHOOL_FIELD);
+    // legacy fields that are only defined in the config of systems still using them
+    addLegacyNoteFieldsToSchema();
 
     try {
       const linkedSchoolId = "test_school";
@@ -110,8 +110,7 @@ describe("GroupParticipantResolverService (deprecated)", () => {
       expect(note["children"]).toEqual(expect.arrayContaining(["1", "2"]));
       expect(note["schools"]).toEqual([linkedSchoolId]);
     } finally {
-      Note.schema.delete("children");
-      Note.schema.delete("schools");
+      removeLegacyNoteFieldsFromSchema();
     }
   });
 

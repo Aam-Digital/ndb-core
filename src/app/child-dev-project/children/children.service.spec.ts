@@ -2,8 +2,6 @@ import { ChildrenService } from "./children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { TestBed } from "@angular/core/testing";
-import moment from "moment";
-import { Note } from "../notes/model/note";
 import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
@@ -14,7 +12,6 @@ import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { expectArrayWithExactContents } from "../../utils/test-utils/array-test-utils";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -71,63 +68,6 @@ describe("ChildrenService", () => {
   });
 
   // TODO: test getAttendances
-
-  it("calculates days since last note for children", async () => {
-    const allChildren = await entityMapper.loadType("Child");
-
-    const c0 = allChildren[0].getId();
-    await entityMapper.save(
-      Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0]),
-    );
-    await entityMapper.save(
-      Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0]),
-    );
-
-    const c1 = allChildren[1].getId();
-    // no notes
-
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity();
-
-    expect(recentNotesMap).toHaveLength(allChildren.length);
-    expect(recentNotesMap.get(c0)).toBe(5);
-    expect(recentNotesMap.get(c1)).toBe(Infinity);
-  });
-
-  it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
-    const allChildren = await entityMapper.loadType("Child");
-
-    const c0 = allChildren[0].getId();
-    await entityMapper.save(
-      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0]),
-    );
-
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
-      "Child",
-      49,
-    );
-
-    expect(recentNotesMap.get(c0)).toBe(Infinity);
-  });
-
-  it("should calculate days since last note for other entity types", async () => {
-    const schools = await entityMapper.loadType("School");
-    const s1 = schools[0];
-    const s2 = schools[1];
-    const n1 = Note.create(moment().subtract(10, "days").toDate(), "", [
-      s1.getId(),
-      s2.getId(),
-    ]);
-    const n2 = Note.create(moment().subtract(2, "days").toDate(), "", [
-      s1.getId(),
-    ]);
-    await entityMapper.saveAll([n1, n2]);
-
-    const recentNotesMap =
-      await service.getDaysSinceLastNoteOfEachEntity("School");
-
-    expect(recentNotesMap.get(s1.getId())).toBe(2);
-    expect(recentNotesMap.get(s2.getId())).toBe(10);
-  });
 
   it("should load a single child and add school info", async () => {
     // no active relation
@@ -229,77 +169,6 @@ describe("ChildrenService", () => {
       new Date("2016-10-01"),
     );
     expect(relations).toHaveLength(2);
-  });
-
-  it("should return related notes", async () => {
-    const c1 = createEntityOfType("Child", "c1");
-    const c2 = createEntityOfType("Child", "c2");
-    const s1 = createEntityOfType("School", "s1");
-    const s2 = createEntityOfType("School", "s2");
-    const n1 = new Note("n1");
-    n1.relatedEntities = [c1.getId(), c2.getId(), s1.getId()];
-    const n2 = new Note("n2");
-    n2.relatedEntities = [c1.getId()];
-    const n3 = new Note("n3");
-    n3.relatedEntities = [s2.getId()];
-    await entityMapper.saveAll([n1, n2, n3]);
-
-    let res = await service.getNotesRelatedTo(c1.getId());
-    expect(res).toEqual([n1, n2]);
-
-    res = await service.getNotesRelatedTo(s1.getId());
-    expect(res).toEqual([n1]);
-
-    res = await service.getNotesRelatedTo(s2.getId());
-    expect(res).toEqual([n3]);
-  });
-
-  it("should return notes related through any entity field of Note", async () => {
-    Note.schema.set("linkedSchool", {
-      dataType: "entity",
-      additional: "School",
-    });
-    try {
-      // wait for the initial index creation, then update it with the extended schema
-      await service.getNotesRelatedTo("School:none");
-      await service["createNotesRelatedIndex"]();
-      const s1 = createEntityOfType("School", "s1");
-      const note = new Note("n1");
-      note["linkedSchool"] = s1.getId();
-      // linked through multiple fields, but should be returned only once
-      note.relatedEntities = [s1.getId()];
-      await entityMapper.save(note);
-
-      const res = await service.getNotesRelatedTo(s1.getId());
-      expect(res.map((n) => n.getId())).toEqual([note.getId()]);
-    } finally {
-      Note.schema.delete("linkedSchool");
-    }
-  });
-
-  it("should return notes related to a user through authors", async () => {
-    const user = createEntityOfType("User", "u1");
-    const note = new Note("n1");
-    note.authors = [user.getId()];
-    await entityMapper.save(note);
-
-    const res = await service.getNotesRelatedTo(user.getId());
-    expect(res).toEqual([note]);
-  });
-
-  it("should return the correct notes in a timespan", async () => {
-    const n1 = Note.create(moment("2023-01-01").toDate());
-    const n2 = Note.create(moment("2023-01-02").toDate());
-    const n3 = Note.create(moment("2023-01-03").toDate());
-    const n4 = Note.create(moment("2023-01-03").toDate());
-    const n5 = Note.create(moment("2023-01-04").toDate());
-    await entityMapper.saveAll([n1, n2, n3, n4, n5]);
-
-    const res = await service.getNotesInTimespan(
-      moment("2023-01-02"),
-      moment("2023-01-03"),
-    );
-    expectArrayWithExactContents(res, [n2, n3, n4]);
   });
 });
 

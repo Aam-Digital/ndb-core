@@ -15,7 +15,6 @@ import {
 } from "./cascading-entity-action.spec";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { LEGACY_CHILD_FIELD } from "../../../child-dev-project/notes/add-default-note-views";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { BehaviorSubject, of, throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -405,28 +404,24 @@ describe("EntityDeleteService", () => {
     );
   });
 
-  it("should remove multiple ref ids from related note", async () => {
-    const schemaField = Note.schema.get("relatedEntities");
-    const originalSchemaAdditional = schemaField.additional;
-    const originalSchemaRole = schemaField.entityReferenceRole;
-    schemaField.additional = [TestEntity.ENTITY_TYPE];
+  it("should remove ref ids from all referencing fields of a related note", async () => {
+    const relatedEntitiesField = Note.schema.get("relatedEntities");
+    const originalRelatedEntities = { ...relatedEntitiesField };
+    relatedEntitiesField.additional = [TestEntity.ENTITY_TYPE];
     // only referencing (not owning) the deleted record, so the note is kept
-    schemaField.entityReferenceRole = "aggregate";
+    relatedEntitiesField.entityReferenceRole = "aggregate";
 
-    const hadChildrenSchema = Note.schema.has("children");
-    const originalChildrenSchema = Note.schema.get("children");
-    Note.schema.set("children", {
-      ...LEGACY_CHILD_FIELD,
-      additional: TestEntity.ENTITY_TYPE,
-    });
+    // a second field of the same note referencing the deleted record
+    const authorsField = Note.schema.get("authors");
+    const originalAuthors = { ...authorsField };
+    authorsField.additional = TestEntity.ENTITY_TYPE;
+    // still references another record, so the note is kept despite being "composite"
+    authorsField.entityReferenceRole = "composite";
 
     const primary = new TestEntity();
     const note = new Note();
     note.subject = "test";
-    note["children"] = [
-      primary.getId(),
-      TestEntity.ENTITY_TYPE + ":some-other",
-    ];
+    note.authors = [primary.getId(), TestEntity.ENTITY_TYPE + ":some-other"];
     note.relatedEntities = [primary.getId()];
     const originalNote = note.copy();
     await entityMapper.save(primary);
@@ -437,7 +432,7 @@ describe("EntityDeleteService", () => {
     const actualNote = entityMapper.get(Note.ENTITY_TYPE, note.getId()) as Note;
 
     expect(actualNote.relatedEntities).toEqual([]);
-    expect(actualNote["children"]).toEqual([
+    expect(actualNote.authors).toEqual([
       TestEntity.ENTITY_TYPE + ":some-other",
     ]);
 
@@ -448,13 +443,8 @@ describe("EntityDeleteService", () => {
     ]);
 
     // restore original schema
-    schemaField.additional = originalSchemaAdditional;
-    schemaField.entityReferenceRole = originalSchemaRole;
-    if (hadChildrenSchema) {
-      Note.schema.set("children", originalChildrenSchema);
-    } else {
-      Note.schema.delete("children");
-    }
+    Note.schema.set("relatedEntities", originalRelatedEntities);
+    Note.schema.set("authors", originalAuthors);
   });
 
   it("should remove deleted IDs from 'attendance' field", async () => {

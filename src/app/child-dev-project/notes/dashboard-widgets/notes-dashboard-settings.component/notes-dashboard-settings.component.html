@@ -1,5 +1,14 @@
 <div style="padding: 16px">
   <mat-form-field appearance="fill" class="full-width">
+    <mat-label i18n>Record type with notes</mat-label>
+    <app-entity-type-select
+      required
+      [ngModel]="entityType()"
+      (ngModelChange)="onEntityTypeChange($event)"
+    ></app-entity-type-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Days since last note</mat-label>
     <input
       matInput

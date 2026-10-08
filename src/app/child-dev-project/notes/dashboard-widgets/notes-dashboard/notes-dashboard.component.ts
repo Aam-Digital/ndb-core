@@ -8,7 +8,7 @@ import {
   signal,
   untracked,
 } from "@angular/core";
-import { ChildrenService } from "../../../children/children.service";
+import { NotesService } from "../../notes.service";
 import moment from "moment";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -20,7 +20,7 @@ import { Note } from "../../model/note";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 interface NotesDashboardConfig {
-  entity?: string;
+  entityType?: string;
   sinceDays?: number;
   fromBeginningOfWeek?: boolean;
   mode?: "with-recent-notes" | "without-recent-notes";
@@ -46,17 +46,17 @@ interface NotesDashboardConfig {
   ],
 })
 export class NotesDashboardComponent {
-  private childrenService = inject(ChildrenService);
+  private notesService = inject(NotesService);
   private entities = inject(EntityRegistry);
 
   static getRequiredEntities(config: NotesDashboardConfig) {
-    return config?.entity || Note.ENTITY_TYPE;
+    return config?.entityType || Note.ENTITY_TYPE;
   }
 
   /** Entity for which the recent notes should be counted. */
-  entity = input("Child");
-  readonly entityDefinition = computed<EntityConstructor>(() =>
-    this.entities.get(this.entity()),
+  entityType = input<string>();
+  readonly entityDefinition = computed<EntityConstructor | undefined>(() =>
+    this.entityType() ? this.entities.get(this.entityType()) : undefined,
   );
   /**
    * number of days since last note that entities should be considered having a "recent" note.
@@ -75,6 +75,9 @@ export class NotesDashboardComponent {
 
   subtitle = computed(() => {
     const entity = this.entityDefinition();
+    if (!entity) {
+      return "";
+    }
     switch (this.mode()) {
       case "with-recent-notes":
         return $localize`:Subtitle|Subtitle informing the user that these are the records with recent reports:${entity.labelPlural} with recent report`;
@@ -106,7 +109,7 @@ export class NotesDashboardComponent {
 
   private async loadConcernedEntities(isCurrent: () => boolean) {
     const mode = this.mode();
-    if (!mode) {
+    if (!mode || !this.entityDefinition()) {
       this.entries.set([]);
       return;
     }
@@ -126,7 +129,7 @@ export class NotesDashboardComponent {
         : (stat: [string, number]) => stat[1] >= dayRangeBoundary;
 
     const recentNotesMap =
-      await this.childrenService.getDaysSinceLastNoteOfEachEntity(
+      await this.notesService.getDaysSinceLastNoteOfEachEntity(
         this.entityDefinition().ENTITY_TYPE,
         queryRange,
       );
