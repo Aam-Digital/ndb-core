@@ -55,6 +55,9 @@ export interface AffectedEntity {
 
   /** Whether the new value only adds to the existing values (never removing any) */
   addToExisting?: boolean;
+
+  /** Whether the entities linked to the affected entity have no value in common, so the current value is kept */
+  hasNoCommonValue?: boolean;
 }
 
 /**

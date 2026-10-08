@@ -790,10 +790,17 @@ describe("InheritedValueService", () => {
     }
   });
 
-  it.each([
+  it.each<
+    [
+      string,
+      string[],
+      { isInSync?: boolean; isEmpty?: boolean; hasNoCommonValue?: boolean },
+    ]
+  >([
     ["Delhi", ["Delhi", "Delhi"], { isInSync: true }],
     ["Mumbai", ["Delhi", "Delhi"], { isInSync: false }],
-    ["Delhi", ["Delhi", "Mumbai"], { isEmpty: true }],
+    ["Delhi", ["Delhi", "Mumbai"], { isEmpty: true, hasNoCommonValue: true }],
+    ["Delhi", [], { isEmpty: true, hasNoCommonValue: false }],
   ])(
     "should compare field value %j with the common value of several linked parents %j",
     async (currentValue, parentValues, expected) => {
@@ -825,7 +832,8 @@ describe("InheritedValueService", () => {
         const hint = defaultValueService.getDefaultValueUiHint(form, "field");
 
         expect(hint).toMatchObject(expected);
-        if ("isInSync" in expected && !expected.isInSync) {
+        expect(hint.hasNoCommonValue).toBe(expected.hasNoCommonValue);
+        if (expected.isInSync === false) {
           hint.syncFromParentField();
           expect(form.formGroup.get("field").value).toBe("Delhi");
         }

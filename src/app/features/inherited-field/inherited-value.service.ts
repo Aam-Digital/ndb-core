@@ -240,15 +240,14 @@ export class InheritedValueService extends DefaultValueStrategy {
     }
 
     const parentRefIds = this.getParentRefIds(form, defaultConfig);
-    if (
-      parentRefIds.length === 0 ||
-      (parentRefIds.length > 1 &&
-        form.inheritedParentValues.get(field.id) === undefined)
-    ) {
-      // nothing to inherit, e.g. no or only differing values in the linked parents
+    const hasNoCommonValue =
+      parentRefIds.length > 1 &&
+      form.inheritedParentValues.get(field.id) === undefined;
+    if (parentRefIds.length === 0 || hasNoCommonValue) {
       return {
         inheritedFromField: defaultConfig.sourceReferenceField,
         isEmpty: true,
+        hasNoCommonValue,
       };
     }
 

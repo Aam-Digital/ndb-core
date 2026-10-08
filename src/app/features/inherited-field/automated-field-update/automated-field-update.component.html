@@ -29,6 +29,12 @@
             [form]="entity.form"
             [hideInheritButton]="true"
           ></app-entity-field-edit>
+          @if (entity.hasNoCommonValue) {
+            <div class="hint-text" i18n>
+              The linked records have no value in common, so no new value is
+              suggested. The current value is kept unless you change it here.
+            </div>
+          }
           @if (entity.addToExisting) {
             <div class="hint-text" i18n>
               Values are only added, never removed automatically. To remove

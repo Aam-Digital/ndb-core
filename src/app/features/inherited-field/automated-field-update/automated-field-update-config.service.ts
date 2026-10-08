@@ -17,7 +17,7 @@ import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.s
 import { isEqual } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import { addMissingValues } from "../add-missing-values";
-import { getCommonValue } from "../get-common-value";
+import { getCommonValue, isEmptyValue } from "../get-common-value";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -26,6 +26,14 @@ interface AffectedRule {
   rule: DefaultValueConfigInheritedField;
   entityType: EntityConstructor;
   fieldId: string;
+}
+
+/**
+ * The new value of a target entity, which is its current value if the linked entities have no value in common.
+ */
+interface NewValue {
+  value: any;
+  hasNoCommonValue: boolean;
 }
 
 /**
@@ -179,13 +187,21 @@ export class AutomatedFieldUpdateConfigService {
       entityType,
       asArray(referencedEntityIds),
     );
-    const newValue = this.calculateNewValue(sourceEntity, rule);
+    const newValue: NewValue = {
+      value: this.calculateNewValue(sourceEntity, rule),
+      hasNoCommonValue: false,
+    };
 
     return this.processTargetEntities(
       targetEntities,
       affectedRule,
       sourceEntity,
-      new Map(targetEntities.map((entity) => [entity.getId(), newValue])),
+      new Map(
+        targetEntities.map((entity): [string, NewValue] => [
+          entity.getId(),
+          newValue,
+        ]),
+      ),
     );
   }
 
@@ -205,9 +221,9 @@ export class AutomatedFieldUpdateConfigService {
       asArray(entity[rule.sourceReferenceField]).includes(sourceEntity.getId()),
     );
 
-    const newValues = new Map<string, any>(
+    const newValues = new Map<string, NewValue>(
       await Promise.all(
-        targetEntities.map(async (entity): Promise<[string, any]> => [
+        targetEntities.map(async (entity): Promise<[string, NewValue]> => [
           entity.getId(),
           await this.loadNewValue(entity, affectedRule, sourceEntity),
         ]),
@@ -225,19 +241,22 @@ export class AutomatedFieldUpdateConfigService {
   /**
    * Get the new value for a target entity linking to the (already updated) source entity.
    * If the target links to several entities, it only inherits a value shared by all of them.
-   * @return the new value, or the target's current value if the linked entities have
-   *         different values or some cannot be loaded (i.e. there is nothing to update)
+   * Without a shared value (different values or some linked entities cannot be loaded),
+   * the target's current value is returned.
    */
   private async loadNewValue(
     targetEntity: Entity,
     { rule, fieldId }: AffectedRule,
     sourceEntity: Entity,
-  ): Promise<any> {
+  ): Promise<NewValue> {
     const otherIds = asArray(targetEntity[rule.sourceReferenceField]).filter(
       (id) => id !== sourceEntity.getId(),
     );
     if (otherIds.length === 0) {
-      return this.calculateNewValue(sourceEntity, rule);
+      return {
+        value: this.calculateNewValue(sourceEntity, rule),
+        hasNoCommonValue: false,
+      };
     }
 
     const otherEntities = await this.loadEntitiesByIds(
@@ -249,15 +268,17 @@ export class AutomatedFieldUpdateConfigService {
         ? this.calculateCommonValue([sourceEntity, ...otherEntities], rule)
         : undefined;
 
-    return (
-      sharedValue ??
-      this.transformSourceValueToDatabaseFormat(
-        targetEntity[fieldId],
-        targetEntity,
-        fieldId,
-        this.entitySchemaService,
-      )
-    );
+    return {
+      value:
+        sharedValue ??
+        this.transformSourceValueToDatabaseFormat(
+          targetEntity[fieldId],
+          targetEntity,
+          fieldId,
+          this.entitySchemaService,
+        ),
+      hasNoCommonValue: sharedValue === undefined,
+    };
   }
 
   /**
@@ -271,7 +292,7 @@ export class AutomatedFieldUpdateConfigService {
       fieldId: targetFieldId,
     }: AffectedRule,
     sourceEntity: Entity,
-    newValues: Map<string, any>,
+    newValues: Map<string, NewValue>,
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
@@ -292,11 +313,11 @@ export class AutomatedFieldUpdateConfigService {
         targetFieldId,
         this.entitySchemaService,
       );
-      const newValue = combineWithCurrentValue(
-        currentValue,
-        newValues.get(targetEntity.getId()),
-      );
-      if (isEqual(currentValue, newValue)) continue;
+      const { value, hasNoCommonValue } = newValues.get(targetEntity.getId());
+      const newValue = combineWithCurrentValue(currentValue, value);
+      // an existing value is kept, but the user is informed that there is nothing to suggest
+      const showNoCommonValue = hasNoCommonValue && !isEmptyValue(currentValue);
+      if (isEqual(currentValue, newValue) && !showNoCommonValue) continue;
 
       affectedEntities.push({
         id: targetEntity.getId(),
@@ -308,6 +329,7 @@ export class AutomatedFieldUpdateConfigService {
         relatedReferenceField: rule.sourceReferenceField,
         relatedReferenceFieldEntityType,
         addToExisting,
+        hasNoCommonValue: showNoCommonValue,
       });
     }
 

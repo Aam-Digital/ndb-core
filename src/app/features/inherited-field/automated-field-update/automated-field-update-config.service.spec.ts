@@ -665,8 +665,20 @@ describe("AutomatedFieldUpdateConfigService", () => {
           (e) => e.targetEntityType === CommonValueGroup,
         );
         expect(suggestion.newValue).toBe(expected);
+        expect(suggestion.hasNoCommonValue).toBe(false);
       },
     );
+
+    it("keeps the current value of the group and notes that the schools have no category in common", async () => {
+      await saveSchoolCategory(["secondary"], "primary", "secondary");
+
+      expect(mockDialog.open).toHaveBeenCalledTimes(1);
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+      expect(suggestion.newValue).toBe("secondary");
+      expect(suggestion.hasNoCommonValue).toBe(true);
+    });
 
     it.each([
       [["secondary"], "primary", undefined],
