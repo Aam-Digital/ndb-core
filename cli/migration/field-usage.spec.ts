@@ -4,6 +4,8 @@ import {
   findConfigFieldReferences,
   findDocsReferencingField,
   findFieldReferences,
+  findPermissionRolesMentioning,
+  findQueryReportsMentioning,
   findSqlReportsMentioning,
   referencedConfigKeys,
   removeFieldFromConfig,
@@ -184,6 +186,78 @@ describe("field-usage", () => {
       expect(findSqlReportsMentioning(reports, "assignedTo")).toEqual([
         "ReportConfig:a",
       ]);
+    });
+  });
+
+  describe("findQueryReportsMentioning", () => {
+    it("finds non-SQL reports whose queries mention the field as a whole word", () => {
+      const reports = [
+        {
+          _id: "ReportConfig:a",
+          mode: "reporting",
+          reportDefinition: [
+            {
+              query: "Todo:toArray",
+              aggregations: [{ query: "[*assignedTo=User:1]" }],
+            },
+          ],
+        },
+        {
+          _id: "ReportConfig:b",
+          reportDefinition: [
+            { query: ".subject", subQueries: [{ query: ".assignedTo" }] },
+          ],
+        },
+        {
+          _id: "ReportConfig:c",
+          mode: "sql",
+          reportDefinition: [{ query: "SELECT assignedTo FROM Todo" }],
+        },
+        {
+          _id: "ReportConfig:d",
+          reportDefinition: [{ label: "assignedTo", query: ".assignedToAll" }],
+        },
+      ];
+
+      expect(findQueryReportsMentioning(reports, "assignedTo")).toEqual([
+        "ReportConfig:a",
+        "ReportConfig:b",
+      ]);
+    });
+  });
+
+  describe("findPermissionRolesMentioning", () => {
+    it("finds the roles with rules for the entity types whose conditions or fields mention the field", () => {
+      const permissions = {
+        _id: "Config:Permissions",
+        data: {
+          _default: [{ subject: "Todo", action: "read" }],
+          user_app: [
+            {
+              subject: ["Todo", "Note"],
+              action: "read",
+              conditions: { assignedTo: "${user.entityId}" },
+            },
+          ],
+          admin_app: [
+            { subject: "all", action: "update", fields: ["assignedTo"] },
+          ],
+          other: [
+            {
+              subject: "Child",
+              action: "read",
+              conditions: { assignedTo: "x" },
+            },
+          ],
+        },
+      };
+
+      expect(
+        findPermissionRolesMentioning(permissions, ["Todo"], "assignedTo"),
+      ).toEqual(["user_app", "admin_app"]);
+      expect(
+        findPermissionRolesMentioning(undefined, ["Todo"], "assignedTo"),
+      ).toEqual([]);
     });
   });
 

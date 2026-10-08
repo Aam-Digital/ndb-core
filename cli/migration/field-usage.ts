@@ -1,5 +1,6 @@
 import { applyConfigMigrations } from "../../src/app/core/config/config-migrations.js";
 import type { MigrationContext } from "./migration-definition.js";
+import { asArray } from "../../src/app/utils/asArray.js";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -174,6 +175,69 @@ export function findSqlReportsMentioning(
         word.test(JSON.stringify(report.reportDefinition ?? report)),
     )
     .map((report) => report._id);
+}
+
+/**
+ * The non-SQL ReportConfigs ("reporting" / "exporting" mode) whose queries mention the field name (as a whole word),
+ * e.g. `.children` or `:getRelated(Note, children)`.
+ * Unlike SQL reports, these do not break without the field in the schema, they silently miss its values instead.
+ * Only the `query` strings are searched, as labels often use the field name as a word, too.
+ * @returns ids of the mentioning reports
+ */
+export function findQueryReportsMentioning(
+  reports: any[],
+  field: string,
+): string[] {
+  const word = new RegExp(`\\b${field}\\b`);
+  return reports
+    .filter(
+      (report) =>
+        report?.mode !== "sql" &&
+        collectQueries(report).some((query) => word.test(query)),
+    )
+    .map((report) => report._id);
+}
+
+function collectQueries(node: unknown): string[] {
+  if (Array.isArray(node)) {
+    return node.flatMap(collectQueries);
+  }
+  if (!node || typeof node !== "object") {
+    return [];
+  }
+  return Object.entries(node).flatMap(([key, value]) =>
+    key === "query" && typeof value === "string"
+      ? [value]
+      : collectQueries(value),
+  );
+}
+
+/**
+ * The roles of a `Config:Permissions` doc that have rules for one of the entity types
+ * whose `conditions` or `fields` mention the field name (as a whole word).
+ * Without the field in the schema, such a rule silently matches different records.
+ * @param permissions the `Config:Permissions` doc (if any)
+ * @returns the role names (keys of the rules in the doc's `data`)
+ */
+export function findPermissionRolesMentioning(
+  permissions: any,
+  entityTypes: string[],
+  field: string,
+): string[] {
+  const word = new RegExp(`\\b${field}\\b`);
+  const appliesToEntityTypes = (subject: string | string[]) =>
+    asArray(subject).some(
+      (type) => type === "all" || entityTypes.includes(type),
+    );
+  return Object.entries<any>(permissions?.data ?? {})
+    .filter(([, rules]) =>
+      asArray(rules).some(
+        (rule: any) =>
+          appliesToEntityTypes(rule?.subject) &&
+          word.test(JSON.stringify([rule.conditions, rule.fields])),
+      ),
+    )
+    .map(([role]) => role);
 }
 
 /**

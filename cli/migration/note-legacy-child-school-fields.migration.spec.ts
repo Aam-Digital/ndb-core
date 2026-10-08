@@ -223,7 +223,8 @@ describe("noteLegacyChildSchoolFields migration", () => {
     );
   });
 
-  it("leaves an already configured relatedEntities field untouched", async () => {
+  it("adds the Child / School types to an already configured relatedEntities field", async () => {
+    // as in the previous all-features base config
     const relatedEntities = { dataType: "entity", isArray: true };
     const store = seed({
       ...childAndSchoolTypes,
@@ -234,16 +235,38 @@ describe("noteLegacyChildSchoolFields migration", () => {
       buildTestContext(store),
     );
 
-    expect(result.status).toBe("no-change");
+    expect(result.status).toBe("ok");
     expect(configData(store)["entity:Note"].attributes).toEqual({
-      relatedEntities,
+      relatedEntities: { ...relatedEntities, additional: ["Child", "School"] },
     });
-    // the new default bottomForm cannot link anything here
-    expect(result.warnings).toEqual([
-      expect.stringContaining(
-        "shows relatedEntities, but it has no entity types to link",
-      ),
+    expect(result.verdicts).toEqual([
+      {
+        kind: "add",
+        text: "add Child, School to the types relatedEntities links",
+      },
     ]);
+    expect(result.warnings).toBeUndefined();
+  });
+
+  it("keeps the other types an already configured relatedEntities field links", async () => {
+    const store = seed({
+      ...childAndSchoolTypes,
+      "entity:Note": {
+        attributes: {
+          relatedEntities: {
+            dataType: "entity",
+            isArray: true,
+            additional: "RecurringActivity",
+          },
+        },
+      },
+    });
+
+    await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+    expect(
+      configData(store)["entity:Note"].attributes.relatedEntities.additional,
+    ).toEqual(["RecurringActivity", "Child", "School"]);
   });
 
   it("does not restore fields only shown by the default bottomForm of a missing view if never filled", async () => {
@@ -251,7 +274,10 @@ describe("noteLegacyChildSchoolFields migration", () => {
       ...childAndSchoolTypes,
       "entity:Note": {
         attributes: {
-          relatedEntities: { dataType: "entity", additional: ["Child"] },
+          relatedEntities: {
+            dataType: "entity",
+            additional: ["Child", "School"],
+          },
         },
       },
     });
@@ -462,6 +488,68 @@ describe("noteLegacyChildSchoolFields migration", () => {
     expect(result.warnings).toEqual([
       expect.stringContaining("mentioned in SQL ReportConfig:sql"),
     ]);
+  });
+
+  it("removes an unused field that other reports or permission rules use, with a warning to review them", async () => {
+    const store = seed(
+      {
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:Note": { attributes: { schools: SCHOOL_FIELD } },
+      },
+      {
+        "app/ReportConfig:export": {
+          _id: "ReportConfig:export",
+          mode: "exporting",
+          reportDefinition: [{ query: ":getRelated(Note, schools)" }],
+        },
+        "app/Config:Permissions": {
+          _id: "Config:Permissions",
+          data: {
+            user_app: [
+              {
+                subject: "Note",
+                action: "read",
+                conditions: { schools: "School:1" },
+              },
+            ],
+          },
+        },
+      },
+    );
+
+    const result = await noteLegacyChildSchoolFields.run(
+      buildTestContext(store),
+    );
+
+    expect(configData(store)["entity:Note"].attributes.schools).toBeUndefined();
+    expect(result.warnings).toEqual([
+      expect.stringContaining(
+        "Note.schools holds no data and is removed, but ReportConfig:export, Config:Permissions (rules of user_app) still use it",
+      ),
+    ]);
+  });
+
+  it("names the reports using a field holding data when asking to restore it", async () => {
+    const store = seed(
+      { ...childAndSchoolTypes, ...explicitNoteDetails },
+      {
+        "app/Note:1": { _id: "Note:1", schools: ["School:1"] },
+        "app/ReportConfig:export": {
+          _id: "ReportConfig:export",
+          reportDefinition: [{ query: ":getRelated(Note, schools)" }],
+        },
+      },
+    );
+    const confirm = vi.fn(async () => true);
+
+    await noteLegacyChildSchoolFields.run(
+      buildTestContext(store, false, [], confirm),
+    );
+
+    expect(confirm).toHaveBeenCalledWith(
+      expect.stringContaining("(and ReportConfig:export use it)"),
+    );
   });
 
   it("leaves a custom field that shares the name of a legacy field untouched", async () => {
@@ -706,6 +794,54 @@ describe("noteLegacyChildSchoolFields migration", () => {
     ]);
   });
 
+  it("writes a field configured for Note into extending types missing it", async () => {
+    // EventNote coming first, it does not pick up the field configured for Note
+    const customizedChildField = { ...CHILD_FIELD, label: "Kids" };
+    const store = seed(
+      {
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:EventNote": { extends: "Note" },
+        "entity:Note": { attributes: { children: customizedChildField } },
+      },
+      { "app/EventNote:1": { _id: "EventNote:1", children: ["Child:1"] } },
+    );
+
+    const result = await noteLegacyChildSchoolFields.run(
+      buildTestContext(store),
+    );
+
+    expect(result.status).toBe("ok");
+    expect(configData(store)["entity:EventNote"].attributes).toEqual({
+      children: customizedChildField,
+    });
+  });
+
+  it("keeps the own definition of an extending type when restoring a field", async () => {
+    const eventChildren = {
+      dataType: "entity",
+      isArray: true,
+      additional: ["Child", "Participant"],
+    };
+    const store = seed(
+      {
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:EventNote": {
+          extends: "Note",
+          attributes: { children: eventChildren },
+        },
+      },
+      { "app/Note:1": { _id: "Note:1", children: ["Child:1"] } },
+    );
+
+    await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+    const data = configData(store);
+    expect(data["entity:Note"].attributes.children).toEqual(CHILD_FIELD);
+    expect(data["entity:EventNote"].attributes.children).toEqual(eventChildren);
+  });
+
   it("uses the labels of the system's default language", async () => {
     const store = seed(childAndSchoolTypes, {
       "app/SiteSettings:global": {
@@ -812,6 +948,34 @@ describe("noteLegacyChildSchoolFields migration", () => {
         childrenAttendance: ATTENDANCE_FIELD,
       });
       expect(configData(store)["entity:EventNote"].extends).toBe("Note");
+    });
+
+    it("restores it for Note docs if only an extending type configures it", async () => {
+      const store = seed(
+        {
+          ...childAndSchoolTypes,
+          ...explicitNoteDetails,
+          "entity:EventNote": {
+            extends: "Note",
+            attributes: { childrenAttendance: ATTENDANCE_FIELD },
+          },
+        },
+        {
+          "app/Note:1": {
+            _id: "Note:1",
+            childrenAttendance: [{ participant: "Child:1" }],
+          },
+        },
+      );
+
+      const result = await noteLegacyChildSchoolFields.run(
+        buildTestContext(store),
+      );
+
+      expect(result.status).toBe("ok");
+      expect(
+        configData(store)["entity:Note"].attributes.childrenAttendance,
+      ).toEqual(ATTENDANCE_FIELD);
     });
 
     it("removes it from the config of extending types, too", async () => {
@@ -1135,6 +1299,44 @@ describe("noteLegacyChildSchoolFields migration", () => {
         },
       }),
     );
+
+    expect(result.firstRunResult.changed).toBe(true);
+    expect(result.secondRunResult.status).toBe("no-change");
+    expect(result.stateAfterSecondRun).toEqual(result.stateAfterFirstRun);
+  });
+
+  it.each([
+    [
+      "an extending type",
+      seed(
+        {
+          ...childAndSchoolTypes,
+          ...explicitNoteDetails,
+          "entity:EventNote": { extends: "Note" },
+          "entity:Note": { attributes: { children: CHILD_FIELD } },
+        },
+        {
+          "app/EventNote:1": {
+            _id: "EventNote:1",
+            children: ["Child:1"],
+            childrenAttendance: [{ participant: "Child:1" }],
+          },
+        },
+      ),
+    ],
+    [
+      "a configured relatedEntities",
+      seed({
+        ...childAndSchoolTypes,
+        "entity:Note": {
+          attributes: {
+            relatedEntities: { dataType: "entity", additional: "X" },
+          },
+        },
+      }),
+    ],
+  ])("is idempotent with %s", async (_, docs) => {
+    const result = await runIdempotencyCheck(noteLegacyChildSchoolFields, docs);
 
     expect(result.firstRunResult.changed).toBe(true);
     expect(result.secondRunResult.status).toBe("no-change");

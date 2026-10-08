@@ -13,6 +13,8 @@ import {
   type FieldReference,
   findConfigFieldReferences,
   findDocsReferencingField,
+  findPermissionRolesMentioning,
+  findQueryReportsMentioning,
   findSqlReportsMentioning,
   referencedConfigKeys,
   removeFieldFromConfig,
@@ -28,6 +30,7 @@ import {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 const SITE_SETTINGS_PATH = "/app/SiteSettings:global";
+const PERMISSIONS_PATH = "/app/Config:Permissions";
 const NOTE_DETAILS_VIEW = "view:note/:id";
 /** `AttendanceService.CONFIG_KEY`: the roll-call event types of the attendance feature */
 const ATTENDANCE_CONFIG_KEY = "appConfig:attendance";
@@ -82,8 +85,9 @@ function relatedEntitiesDefinition(
  *   for the legacy fields holding data, as the default now only shows `relatedEntities`.
  *
  * A system without any legacy field left in `entity:Note` (e.g. as none holds data) links notes through `relatedEntities`
- * instead, so that field is configured to link its Child / School records (unless it already configures that field
- * or another Note field links that type), as the code definition does not allow linking any entity type.
+ * instead. As the code definition of that field does not allow linking any entity type, its Child / School types
+ * are added to the configured `additional` types (or the field is configured for them, like in the base configs),
+ * unless another Note field links that type already.
  *
  * `childrenAttendance` is handled separately, as it was never shown in a view and has no label:
  * it was edited through the `EditLegacyAttendance` component of `children` and read by the roll-call UI.
@@ -94,6 +98,8 @@ function relatedEntitiesDefinition(
  *
  * Data is counted across `Note` and the entity types extending it (e.g. the legacy roll-call type `EventNote`),
  * which inherit these fields from the Note schema.
+ * A field in use is written into the config of each of these types that does not define it yet:
+ * an extending type only picks up a field *configured* for Note if `entity:Note` comes first in the config doc.
  *
  * For a field without any data, its legacy definition is removed from `entity:Note`,
  * together with references in lists of the config (columns, filters, form fields, ...).
@@ -102,6 +108,8 @@ function relatedEntitiesDefinition(
  * It is kept instead (or restored, so that references don't break), with a warning,
  * if a reference cannot be removed automatically, a PublicFormConfig uses it,
  * or a SQL report mentions it (its column in the SQL schema is derived from the config).
+ * Other reports and permission rules mentioning a removed field don't keep it, as nothing matched them through it
+ * without data, but they are named in a warning to clean them up.
  *
  * Run this on all systems before deploying the app version that drops the fields from code.
  * Until that deployment, a removed field falls back to its code definition (and may still be shown by default),
@@ -142,6 +150,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       .map((formField: any) => formField?.id ?? formField);
     const publicForms = (await ctx.couchdb.getAll("PublicFormConfig")) as any[];
     const reports = (await ctx.couchdb.getAll("ReportConfig")) as any[];
+    const permissions = await getOptionalDoc(ctx, PERMISSIONS_PATH);
     const warnings: string[] = [];
     const language = await getDefaultLanguage(ctx, warnings);
 
@@ -177,19 +186,31 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
 
     /** each change to the config, as a conclusion for the operator */
     const verdicts: MigrationVerdict[] = [];
+    /**
+     * Write the field's definition into the config of every Note-based type that does not define it yet,
+     * keeping a type's own (maybe customized) definition.
+     * Not only into entity:Note: an extending type picks up a *configured* parent field
+     * only if entity:Note happens to come first in the config doc
+     * (it always inherited the field while Note declared it in code).
+     */
     const restoreField = (
       field: string,
       definition: any,
       reasons: string[],
     ) => {
-      ctx.log.info(`Restoring entity:Note.${field}: ${reasons.join("; ")}`);
-      // written into every Note-based type, not only entity:Note: an extending type picks up a
-      // *configured* parent field only if entity:Note happens to come first in the config doc
-      // (it always inherited the field while Note declared it in code)
-      for (const entityType of noteBasedTypes) {
-        if (entityType !== "Note" && !config.data[`entity:${entityType}`]) {
-          continue;
-        }
+      const missingIn = noteBasedTypes.filter(
+        (entityType) =>
+          (entityType === "Note" || config.data[`entity:${entityType}`]) &&
+          !config.data[`entity:${entityType}`]?.attributes?.[field],
+      );
+      if (missingIn.length === 0) {
+        ctx.log.info(`${field} already in config of ${countedTypes}`);
+        return;
+      }
+      ctx.log.info(
+        `Restoring ${field} in ${missingIn.map((entityType) => `entity:${entityType}`).join(", ")}: ${reasons.join("; ")}`,
+      );
+      for (const entityType of missingIn) {
         const target = (config.data[`entity:${entityType}`] ??= {});
         target.attributes ??= {};
         target.attributes[field] = structuredClone(definition);
@@ -235,6 +256,31 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       }
       return remaining.length === 0 ? { data, remaining } : { remaining };
     };
+    /**
+     * Non-SQL reports and permission rules using the field: they don't break without it (unlike SQL reports),
+     * but silently stop matching anything through it, so they are named for a manual check.
+     */
+    const queryUsesOf = (field: string) => {
+      const roles = findPermissionRolesMentioning(
+        permissions,
+        noteBasedTypes,
+        field,
+      );
+      return [
+        ...findQueryReportsMentioning(reports, field),
+        ...(roles.length > 0
+          ? [`Config:Permissions (rules of ${roles.join(", ")})`]
+          : []),
+      ];
+    };
+    const warnAboutQueryUses = (field: string) => {
+      const uses = queryUsesOf(field);
+      if (uses.length > 0) {
+        warnings.push(
+          `Note.${field} holds no data and is removed, but ${uses.join(", ")} still use it - review and update them manually`,
+        );
+      }
+    };
 
     for (const legacy of LEGACY_NOTE_FIELDS) {
       const field = legacy.field;
@@ -245,13 +291,14 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       const references = [...configReferences, ...formReferences];
 
       if (hasNoteData(field)) {
-        if (configured) {
-          ctx.log.info(`entity:Note.${field} already in config`);
-          continue;
-        }
         const reasons = [
           `${formatCount(field)} ${countedTypes} docs have data in it`,
         ];
+        if (configured) {
+          // only needed by extending types that miss entity:Note's definition
+          restoreField(field, configured, reasons);
+          continue;
+        }
         if (!typeExists) {
           warnings.push(
             `Note.${field} is used (${reasons.join("; ")}) but entity:${legacy.entityType} does not exist, not restored - review manually`,
@@ -262,16 +309,21 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
           reasons.push(`referenced in ${references.join(", ")}`);
         } else if (usesDefaultBottomForm) {
           reasons.push(`shown by the default ${NOTE_DETAILS_VIEW} bottomForm`);
-        } else if (
+        } else {
           // no view shows the field anymore, only the data is left
-          !(await ctx.confirm(
-            `Note.${field} is not shown in any view, but ${formatCount(field)} ${countedTypes} docs have data in it. Restore the field to keep these notes linked to their ${legacy.entityType} records?`,
-          ))
-        ) {
-          warnings.push(
-            `Note.${field} not restored (declined), although ${formatCount(field)} ${countedTypes} docs have data in it`,
-          );
-          continue;
+          const queryUses = queryUsesOf(field);
+          const usedBy =
+            queryUses.length > 0 ? ` (and ${queryUses.join(", ")} use it)` : "";
+          if (
+            !(await ctx.confirm(
+              `Note.${field} is not shown in any view, but ${formatCount(field)} ${countedTypes} docs have data in it${usedBy}. Restore the field to keep these notes linked to their ${legacy.entityType} records?`,
+            ))
+          ) {
+            warnings.push(
+              `Note.${field} not restored (declined), although ${formatCount(field)} ${countedTypes} docs have data in it${usedBy}`,
+            );
+            continue;
+          }
         }
         restore(legacy, reasons);
         continue;
@@ -285,6 +337,8 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         continue;
       }
       if (!configured && references.length === 0) {
+        // the field only came from code, which drops it
+        warnAboutQueryUses(field);
         continue;
       }
       if (configuredFormFields.includes(field)) {
@@ -330,6 +384,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
               ? `remove unused legacy ${field} field`
               : `remove references to unused legacy ${field} field`,
           });
+          warnAboutQueryUses(field);
           continue;
         }
         keepReason = `the references in ${referencedConfigKeys(removal.remaining).join(", ")} cannot be removed automatically`;
@@ -354,13 +409,16 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
     // `childrenAttendance` was never shown in a view and has no label: it was edited through the
     // `EditLegacyAttendance` component of `children` and read by the roll-call UI of Note-based event types.
     // So it is restored whenever something still needs it, without asking the operator.
-    const configuredAttendance = noteBasedTypes
-      .map((entityType) => config.data[`entity:${entityType}`])
-      .find((entityConfig) => entityConfig?.attributes?.[ATTENDANCE_FIELD])
-      ?.attributes?.[ATTENDANCE_FIELD];
+    const configuredAttendances = noteBasedTypes
+      .map(
+        (entityType) =>
+          config.data[`entity:${entityType}`]?.attributes?.[ATTENDANCE_FIELD],
+      )
+      .filter((definition) => !!definition);
     if (
-      configuredAttendance &&
-      !isLegacyAttendanceDefinition(configuredAttendance)
+      configuredAttendances.some(
+        (definition) => !isLegacyAttendanceDefinition(definition),
+      )
     ) {
       ctx.log.info(
         `entity:Note.${ATTENDANCE_FIELD} is a custom field (not the legacy attendance format), left untouched`,
@@ -410,16 +468,16 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       }
 
       if (attendanceReasons.length > 0) {
-        if (configuredAttendance) {
-          ctx.log.info(`entity:Note.${ATTENDANCE_FIELD} already in config`);
-        } else {
-          restoreField(
-            ATTENDANCE_FIELD,
+        restoreField(
+          ATTENDANCE_FIELD,
+          config.data["entity:Note"]?.attributes?.[ATTENDANCE_FIELD] ??
             LEGACY_NOTE_ATTENDANCE_FIELD.definition,
-            attendanceReasons,
-          );
-        }
-      } else if (configuredAttendance || attendanceReferences.length > 0) {
+          attendanceReasons,
+        );
+      } else if (
+        configuredAttendances.length > 0 ||
+        attendanceReferences.length > 0
+      ) {
         // no data and nothing using it: it should not leave a trace
         const removal = removeFromConfig(ATTENDANCE_FIELD);
         if (removal.data) {
@@ -432,15 +490,20 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
           config.data = removal.data;
           verdicts.push({
             kind: "remove",
-            text: configuredAttendance
-              ? `remove unused legacy ${ATTENDANCE_FIELD} field`
-              : `remove references to unused legacy ${ATTENDANCE_FIELD} field`,
+            text:
+              configuredAttendances.length > 0
+                ? `remove unused legacy ${ATTENDANCE_FIELD} field`
+                : `remove references to unused legacy ${ATTENDANCE_FIELD} field`,
           });
+          warnAboutQueryUses(ATTENDANCE_FIELD);
         } else {
           warnings.push(
             `entity:Note.${ATTENDANCE_FIELD} holds no data but is kept: the references in ${referencedConfigKeys(removal.remaining).join(", ")} cannot be removed automatically - review manually`,
           );
         }
+      } else {
+        // the field only came from code, which drops it
+        warnAboutQueryUses(ATTENDANCE_FIELD);
       }
     }
 
@@ -471,27 +534,44 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
     const keepsLegacyFields = LEGACY_NOTE_FIELDS.some((legacy) =>
       isLegacyDefinition(noteAttributes[legacy.field], legacy),
     );
-    if (!keepsLegacyFields && !noteAttributes.relatedEntities) {
-      const linkedTypes = LEGACY_NOTE_FIELDS.map((l) => l.entityType).filter(
-        (type) =>
-          migratedData[`entity:${type}`] &&
-          !linkedByOtherField(noteAttributes, type),
+    const configuredRelatedEntities = noteAttributes.relatedEntities;
+    const relatedTypes: string[] = configuredRelatedEntities
+      ? asArray(configuredRelatedEntities.additional ?? [])
+      : [];
+    const switchedTypes = keepsLegacyFields
+      ? []
+      : LEGACY_NOTE_FIELDS.map((l) => l.entityType).filter(
+          (type) =>
+            migratedData[`entity:${type}`] &&
+            !relatedTypes.includes(type) &&
+            !linkedByOtherField(noteAttributes, type),
+        );
+    if (switchedTypes.length > 0 && configuredRelatedEntities) {
+      ctx.log.info(
+        `Notes switch to relatedEntities, adding ${switchedTypes.join(", ")} to the types it links`,
       );
-      if (linkedTypes.length > 0) {
-        ctx.log.info(
-          `Notes switch to relatedEntities, configuring it to link ${linkedTypes.join(", ")}`,
-        );
-        const noteConfig = (config.data["entity:Note"] ??= {});
-        noteConfig.attributes ??= {};
-        noteConfig.attributes.relatedEntities = relatedEntitiesDefinition(
-          language,
-          linkedTypes,
-        );
-        verdicts.push({
-          kind: "add",
-          text: `configure relatedEntities to link ${linkedTypes.join(", ")}`,
-        });
-      }
+      configuredRelatedEntities.additional = [
+        ...relatedTypes,
+        ...switchedTypes,
+      ];
+      verdicts.push({
+        kind: "add",
+        text: `add ${switchedTypes.join(", ")} to the types relatedEntities links`,
+      });
+    } else if (switchedTypes.length > 0) {
+      ctx.log.info(
+        `Notes switch to relatedEntities, configuring it to link ${switchedTypes.join(", ")}`,
+      );
+      const noteConfig = (config.data["entity:Note"] ??= {});
+      noteConfig.attributes ??= {};
+      noteConfig.attributes.relatedEntities = relatedEntitiesDefinition(
+        language,
+        switchedTypes,
+      );
+      verdicts.push({
+        kind: "add",
+        text: `configure relatedEntities to link ${switchedTypes.join(", ")}`,
+      });
     }
 
     const detailsConfig = config.data[NOTE_DETAILS_VIEW]?.config ?? {};
@@ -609,16 +689,7 @@ async function getDefaultLanguage(
   ctx: MigrationContext,
   warnings: string[],
 ): Promise<LabelLanguage> {
-  let siteSettings: any;
-  try {
-    siteSettings = await ctx.couchdb.get(SITE_SETTINGS_PATH);
-  } catch (error: unknown) {
-    if ((error as { status?: number }).status === 404) {
-      return "en";
-    }
-    throw error;
-  }
-
+  const siteSettings = await getOptionalDoc(ctx, SITE_SETTINGS_PATH);
   const value = siteSettings?.defaultLanguage;
   const locale: string | undefined =
     typeof value === "string" ? value : value?.id;
@@ -633,4 +704,19 @@ async function getDefaultLanguage(
     return "en";
   }
   return language as LabelLanguage;
+}
+
+/** The doc at the given path, or `undefined` if it does not exist */
+async function getOptionalDoc(
+  ctx: MigrationContext,
+  path: string,
+): Promise<any> {
+  try {
+    return await ctx.couchdb.get(path);
+  } catch (error: unknown) {
+    if ((error as { status?: number }).status === 404) {
+      return undefined;
+    }
+    throw error;
+  }
 }
