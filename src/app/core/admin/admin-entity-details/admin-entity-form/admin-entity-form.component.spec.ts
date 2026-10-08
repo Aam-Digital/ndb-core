@@ -7,7 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { By } from "@angular/platform-browser";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { ConditionEditorDialogComponent } from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
@@ -436,6 +436,33 @@ describe("AdminEntityFormComponent", () => {
       });
     },
   );
+
+  it("should apply the condition dialog's result to the group it was opened for, even if the groups were reordered meanwhile", async () => {
+    const dialogResult = new Subject<unknown>();
+    mockDialog.open.mockReturnValue({ afterClosed: () => dialogResult });
+
+    fixture.nativeElement
+      .querySelector(
+        'app-admin-section-header button[aria-label="Display Condition"]',
+      )
+      .click();
+    component.dropFieldGroups({
+      previousIndex: 0,
+      currentIndex: 1,
+    } as CdkDragDrop<unknown>);
+    dialogResult.next({ name: "x" });
+    dialogResult.complete();
+    await fixture.whenStable();
+
+    expect(component.fieldGroups()).toEqual([
+      { fields: ["category"] },
+      {
+        header: "Group 1",
+        fields: ["name", "other"],
+        displayCondition: { name: "x" },
+      },
+    ]);
+  });
 
   it("should update the global schema when updateEntitySchema is true", async () => {
     vi.useFakeTimers();

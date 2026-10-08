@@ -573,11 +573,11 @@ export class AdminEntityFormComponent {
     );
   }
 
-  async openGroupDisplayConditionDialog(i: number) {
+  async openGroupDisplayConditionDialog(group: FieldGroup) {
     const dialogRef = this.matDialog.open(ConditionEditorDialogComponent, {
       data: {
         entityConstructor: this.entityType(),
-        conditions: this.fieldGroups()[i].displayCondition,
+        conditions: group.displayCondition,
         explanation: $localize`This field group is shown only while the record matches...`,
       } satisfies ConditionEditorDialogData,
       width: "600px",
@@ -588,8 +588,8 @@ export class AdminEntityFormComponent {
     if (result === undefined) return;
 
     this.fieldGroups.update((groups) =>
-      groups.map((g, idx) => {
-        if (idx !== i) return g;
+      groups.map((g) => {
+        if (g !== group) return g;
         const updated: FieldGroup = { ...g, displayCondition: result };
         if (!result) delete updated.displayCondition;
         return updated;
