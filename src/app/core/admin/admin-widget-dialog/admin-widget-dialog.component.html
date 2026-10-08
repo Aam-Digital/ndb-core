@@ -30,7 +30,7 @@
     mat-raised-button
     color="accent"
     (click)="onSave()"
-    [disabled]="widgetConfigForm.invalid"
+    [disabled]="widgetConfigInvalid()"
     cdkFocusInitial
     i18n
   >
