@@ -103,13 +103,16 @@ export class EditLegacyAttendanceComponent
   }
 
   /**
-   * Name of the Note field holding the attendance details.
+   * Name of the entity field holding the attendance details.
    *
    * `Note` no longer declares `childrenAttendance` in code, so this is read from the
-   * (config-extended) schema of systems that still have a legacy attendance field.
+   * (config-extended) schema of systems that still have a legacy attendance field -
+   * of the edited entity's own type, which may be one extending Note (e.g. EventNote).
    */
   private get attendanceField(): string | undefined {
-    return AttendanceDatatype.detectFieldInEntity(Note);
+    return AttendanceDatatype.detectFieldInEntity(
+      this.entity()?.getConstructor() ?? Note,
+    );
   }
 
   /** the attendance list of the form, or undefined if this system has no attendance field anymore */

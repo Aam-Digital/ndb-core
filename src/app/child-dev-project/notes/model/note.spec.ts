@@ -142,6 +142,7 @@ describe("Note", () => {
       color: "#FFFFFF",
       isMeeting: true,
     };
+    const URGENT = getWarningLevelColor(WarningLevel.URGENT);
     const ABSENT: AttendanceStatusType = {
       id: "ABSENT",
       shortName: "A",
@@ -155,61 +156,47 @@ describe("Note", () => {
       countAs: AttendanceLogicalStatus.PRESENT,
     };
 
+    /** make the system's attendance field available, as it is only defined in config */
+    function setUpAttendanceField(field: "attendance" | "childrenAttendance") {
+      if (field === "attendance") {
+        Note.schema.set("attendance", {
+          dataType: "attendance",
+          isArray: true,
+        });
+      } else {
+        addLegacyNoteFieldsToSchema();
+      }
+    }
+
     afterEach(() => {
       removeLegacyNoteFieldsFromSchema();
       Note.schema.delete("attendance");
     });
 
-    function noteMarking(field: string, status: AttendanceStatusType): Note {
+    it.each([
+      // the field is resolved from the schema, so both the modern and the legacy datatype work
+      ["attendance", ABSENT, "Child:1", true, URGENT],
+      ["childrenAttendance", ABSENT, "Child:1", true, URGENT],
+      ["attendance", PRESENT, "Child:1", true, MEETING.color],
+      // not a participant of this event
+      ["attendance", ABSENT, "Child:2", true, MEETING.color],
+      // attendance is only relevant for a meeting
+      ["attendance", ABSENT, "Child:1", false, MEETING.color],
+    ] as const)(
+      "%s: marking %o for Child:1 colors a lookup of %s (isMeeting %s) as %s",
+      (field, status, lookupId, isMeeting, expected) => {
+        setUpAttendanceField(field);
+        const note = new Note("n1");
+        note.category = { ...MEETING, isMeeting };
+        note[field] = [new AttendanceItem(status, "", "Child:1")];
+
+        expect(note.getColorForId(lookupId)).toBe(expected);
+      },
+    );
+
+    it("uses the normal color if the system has no attendance field at all", () => {
       const note = new Note("n1");
       note.category = MEETING;
-      note[field] = [new AttendanceItem(status, "", "Child:1")];
-      return note;
-    }
-
-    it("highlights an absent participant of the modern attendance field", () => {
-      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
-
-      expect(noteMarking("attendance", ABSENT).getColorForId("Child:1")).toBe(
-        getWarningLevelColor(WarningLevel.URGENT),
-      );
-    });
-
-    it("highlights an absent participant of the legacy attendance field", () => {
-      addLegacyNoteFieldsToSchema();
-
-      expect(
-        noteMarking("childrenAttendance", ABSENT).getColorForId("Child:1"),
-      ).toBe(getWarningLevelColor(WarningLevel.URGENT));
-    });
-
-    it("uses the normal color for a present participant", () => {
-      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
-
-      expect(noteMarking("attendance", PRESENT).getColorForId("Child:1")).toBe(
-        MEETING.color,
-      );
-    });
-
-    it("uses the normal color for someone who is not a participant", () => {
-      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
-
-      expect(noteMarking("attendance", ABSENT).getColorForId("Child:2")).toBe(
-        MEETING.color,
-      );
-    });
-
-    it("uses the normal color if the system has no attendance field", () => {
-      const note = new Note("n1");
-      note.category = MEETING;
-
-      expect(note.getColorForId("Child:1")).toBe(MEETING.color);
-    });
-
-    it("uses the normal color if the category is not a meeting", () => {
-      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
-      const note = noteMarking("attendance", ABSENT);
-      note.category = { ...MEETING, isMeeting: false };
 
       expect(note.getColorForId("Child:1")).toBe(MEETING.color);
     });

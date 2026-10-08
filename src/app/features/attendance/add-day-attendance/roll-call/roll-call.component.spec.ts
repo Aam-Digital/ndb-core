@@ -251,14 +251,12 @@ describe("RollCallComponent", () => {
     component.markAttendance(ABSENT);
 
     expect(
-      note.attendance.find(
-        (a) => a.participant === participant1.getId(),
-      ).status,
+      note.attendance.find((a) => a.participant === participant1.getId())
+        .status,
     ).toEqual(PRESENT);
     expect(
-      note.attendance.find(
-        (a) => a.participant === participant2.getId(),
-      ).status,
+      note.attendance.find((a) => a.participant === participant2.getId())
+        .status,
     ).toEqual(ABSENT);
   });
 
@@ -405,12 +403,10 @@ describe("RollCallComponent", () => {
     for (const child of [participant1, participant2, participant3]) {
       addParticipant(note, child);
     }
-    note.attendance.find(
-      (a) => a.participant === participant1.getId(),
-    ).status = PRESENT;
-    note.attendance.find(
-      (a) => a.participant === participant3.getId(),
-    ).status = ABSENT;
+    note.attendance.find((a) => a.participant === participant1.getId()).status =
+      PRESENT;
+    note.attendance.find((a) => a.participant === participant3.getId()).status =
+      ABSENT;
     fixture.componentRef.setInput(
       "eventEntity",
       new EventWithAttendance(

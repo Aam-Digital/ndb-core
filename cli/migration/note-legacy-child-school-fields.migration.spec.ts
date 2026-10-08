@@ -788,6 +788,32 @@ describe("noteLegacyChildSchoolFields migration", () => {
       ).toEqual(ATTENDANCE_FIELD);
     });
 
+    it("writes a restored field into the config of entity types extending Note", async () => {
+      // an extending type only picks up a configured parent field if entity:Note comes first
+      const store = seed(
+        {
+          ...childAndSchoolTypes,
+          ...explicitNoteDetails,
+          "entity:EventNote": { extends: "Note" },
+        },
+        {
+          "app/EventNote:1": {
+            _id: "EventNote:1",
+            children: ["Child:1"],
+            childrenAttendance: [{ participant: "Child:1" }],
+          },
+        },
+      );
+
+      await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+      expect(configData(store)["entity:EventNote"].attributes).toEqual({
+        children: CHILD_FIELD,
+        childrenAttendance: ATTENDANCE_FIELD,
+      });
+      expect(configData(store)["entity:EventNote"].extends).toBe("Note");
+    });
+
     it("restores it for an event type recording attendance through it", async () => {
       const store = seed({
         ...childAndSchoolTypes,
@@ -1061,7 +1087,11 @@ describe("noteLegacyChildSchoolFields migration", () => {
     const result = await runIdempotencyCheck(
       noteLegacyChildSchoolFields,
       seed(childAndSchoolTypes, {
-        "app/Note:1": { _id: "Note:1", children: ["Child:1"] },
+        "app/Note:1": {
+          _id: "Note:1",
+          children: ["Child:1"],
+          childrenAttendance: [["Child:1", { status: "PRESENT" }]],
+        },
       }),
     );
 

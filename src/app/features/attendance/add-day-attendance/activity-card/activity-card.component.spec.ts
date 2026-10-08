@@ -46,7 +46,10 @@ describe("ActivityCardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityCardComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput("event", wrap(TestEventEntity.create(new Date())));
+    fixture.componentRef.setInput(
+      "event",
+      wrap(TestEventEntity.create(new Date())),
+    );
     fixture.detectChanges();
   });
 

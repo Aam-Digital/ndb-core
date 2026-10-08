@@ -165,11 +165,13 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       noteBasedTypes,
       checkedFields,
     );
+    /** the doc types the counts cover, e.g. "Note" or "Note / EventNote" */
+    const countedTypes = noteBasedTypes.join(" / ");
     const formatCount = (field: string) =>
       `${noteData.counts.get(field)}${noteData.complete ? "" : "+"}`;
     const hasNoteData = (field: string) => noteData.counts.get(field)! > 0;
     ctx.log.info(
-      `${noteBasedTypes.join(" / ")} docs with data: ${checkedFields.map((field) => `${field} ${formatCount(field)}`).join(", ")}`,
+      `${countedTypes} docs with data: ${checkedFields.map((field) => `${field} ${formatCount(field)}`).join(", ")}`,
     );
 
     /** each change to the config, as a conclusion for the operator */
@@ -180,9 +182,17 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       reasons: string[],
     ) => {
       ctx.log.info(`Restoring entity:Note.${field}: ${reasons.join("; ")}`);
-      const noteConfig = (config.data["entity:Note"] ??= {});
-      noteConfig.attributes ??= {};
-      noteConfig.attributes[field] = structuredClone(definition);
+      // written into every Note-based type, not only entity:Note: an extending type picks up a
+      // *configured* parent field only if entity:Note happens to come first in the config doc
+      // (it always inherited the field while Note declared it in code)
+      for (const entityType of noteBasedTypes) {
+        if (entityType !== "Note" && !config.data[`entity:${entityType}`]) {
+          continue;
+        }
+        const target = (config.data[`entity:${entityType}`] ??= {});
+        target.attributes ??= {};
+        target.attributes[field] = structuredClone(definition);
+      }
       verdicts.push({
         kind: "add",
         text: `add config for legacy ${field} field`,
@@ -214,7 +224,9 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
           ctx.log.info(`entity:Note.${field} already in config`);
           continue;
         }
-        const reasons = [`${formatCount(field)} Note docs have data in it`];
+        const reasons = [
+          `${formatCount(field)} ${countedTypes} docs have data in it`,
+        ];
         if (!typeExists) {
           warnings.push(
             `Note.${field} is used (${reasons.join("; ")}) but entity:${legacy.entityType} does not exist, not restored - review manually`,
@@ -228,11 +240,11 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         } else if (
           // no view shows the field anymore, only the data is left
           !(await ctx.confirm(
-            `Note.${field} is not shown in any view, but ${formatCount(field)} Note docs have data in it. Restore the field to keep these notes linked to their ${legacy.entityType} records?`,
+            `Note.${field} is not shown in any view, but ${formatCount(field)} ${countedTypes} docs have data in it. Restore the field to keep these notes linked to their ${legacy.entityType} records?`,
           ))
         ) {
           warnings.push(
-            `Note.${field} not restored (declined), although ${formatCount(field)} Note docs have data in it`,
+            `Note.${field} not restored (declined), although ${formatCount(field)} ${countedTypes} docs have data in it`,
           );
           continue;
         }
@@ -281,7 +293,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         const removal = removeFieldFromConfig(config, "Note", field);
         if (removal.data) {
           ctx.log.info(
-            `Removing unused entity:Note.${field} (0 Note docs have data in it)` +
+            `Removing unused entity:Note.${field} (0 ${countedTypes} docs have data in it)` +
               (configReferences.length > 0
                 ? ` and its references in ${configReferences.join(", ")}`
                 : ""),
@@ -330,7 +342,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       const attendanceReasons: string[] = [];
       if (hasNoteData(ATTENDANCE_FIELD)) {
         attendanceReasons.push(
-          `${formatCount(ATTENDANCE_FIELD)} ${noteBasedTypes.join(" / ")} docs have data in it`,
+          `${formatCount(ATTENDANCE_FIELD)} ${countedTypes} docs have data in it`,
         );
       }
       // the roll-call UI resolves the attendance field from the schema of its event type
@@ -391,7 +403,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         const removal = removeFieldFromConfig(config, "Note", ATTENDANCE_FIELD);
         if (removal.data) {
           ctx.log.info(
-            `Removing unused entity:Note.${ATTENDANCE_FIELD} (0 docs have data in it)` +
+            `Removing unused entity:Note.${ATTENDANCE_FIELD} (0 ${countedTypes} docs have data in it)` +
               (attendanceConfigReferences.length > 0
                 ? ` and its references in ${attendanceConfigReferences.join(", ")}`
                 : ""),

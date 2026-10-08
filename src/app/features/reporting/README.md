@@ -206,10 +206,8 @@ A field with `dataType: "entity"` and `isArray: true` stores a JSON array of ids
 ```sql
 SELECT n.subject AS note, c.name AS participant
 FROM Note n, json_each(n.relatedEntities) p
-JOIN Child c ON c._id = REPLACE(p.value, 'Child:', '')
+JOIN Child c ON c._id = p.value
 ```
-
-(`relatedEntities` stores ids including their entity type prefix, unlike a field restricted to one type.)
 
 ##### Attendance status of individual participants
 

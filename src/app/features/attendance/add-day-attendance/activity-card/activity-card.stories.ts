@@ -41,8 +41,7 @@ const simpleEvent = TestEventEntity.create({
 
 const longEvent = TestEventEntity.create({
   date: new Date(),
-  title:
-    "a guardians meeting with all families who are in the neighbourhood",
+  title: "a guardians meeting with all families who are in the neighbourhood",
 });
 
 const activityEvent = TestEventEntity.create({

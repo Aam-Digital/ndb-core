@@ -118,9 +118,7 @@ describe("EditLegacyAttendanceComponent", () => {
       children: ownChildrenForm,
     });
 
-    const freshFixture = TestBed.createComponent(
-      EditLegacyAttendanceComponent,
-    );
+    const freshFixture = TestBed.createComponent(EditLegacyAttendanceComponent);
     freshFixture.componentInstance.ngControl = {
       control: ownChildrenForm,
     } as any;
