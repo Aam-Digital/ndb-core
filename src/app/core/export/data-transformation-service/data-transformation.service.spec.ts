@@ -12,7 +12,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import { NotesService } from "../../../child-dev-project/notes/notes.service";
 import { TestEventEntity } from "../../../utils/test-utils/TestEventEntity";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
@@ -116,7 +116,7 @@ describe("DataTransformationService", () => {
     const exportConfig: ExportColumnConfig[] = [
       { label: "note", query: ".subject" },
       {
-        query: ".children",
+        query: ".relatedEntities",
         subQueries: [{ label: "participant", query: "." }],
       },
     ];
@@ -292,8 +292,8 @@ describe("DataTransformationService", () => {
     todayNote.date = new Date();
     await entityMapper.save(todayNote);
 
-    const childrenService = TestBed.inject(ChildrenService);
-    const getNotesInTimespan = vi.spyOn(childrenService, "getNotesInTimespan");
+    const notesService = TestBed.inject(NotesService);
+    const getNotesInTimespan = vi.spyOn(notesService, "getNotesInTimespan");
 
     getNotesInTimespan.mockResolvedValue([yesterdayNote, todayNote]);
     const startDate = moment().subtract(5, "days").toDate();
@@ -317,7 +317,7 @@ describe("DataTransformationService", () => {
     const query = [
       { query: "name" },
       {
-        query: ":getRelated(Note, children)[* date > ?]",
+        query: ":getRelated(Note, relatedEntities)[* date > ?]",
         subQueries: [{ query: "subject" }],
       },
     ];
@@ -337,7 +337,8 @@ describe("DataTransformationService", () => {
       .subtract(1, "day")
       .toDate();
     const endDate2 = moment().subtract(1, "day").toDate();
-    query[1].query = ":getRelated(Note, children)[* date > ? & date <= ?]";
+    query[1].query =
+      ":getRelated(Note, relatedEntities)[* date > ? & date <= ?]";
     result = await service.transformData([child], query, startDate2, endDate2);
 
     expect(result).toEqual([
@@ -424,22 +425,14 @@ describe("DataTransformationService", () => {
 
   async function createNoteInDB(
     subject: string,
-    children: Entity[] = [],
-    attendanceStatus: string[] = [],
+    relatedEntities: Entity[] = [],
   ): Promise<Note> {
-    const note = new Note();
-    note.subject = subject;
-    note.date = new Date();
-    note.children = children.map((child) => child.getId());
+    const note = Note.create(
+      new Date(),
+      subject,
+      relatedEntities.map((entity) => entity.getId()),
+    );
 
-    for (let i = 0; i < attendanceStatus.length; i++) {
-      const attendance = new AttendanceItem();
-      attendance.participant = note.children[i];
-      attendance.status = defaultAttendanceStatusTypes.find(
-        (s) => s.id === attendanceStatus[i],
-      );
-      note.childrenAttendance.push(attendance);
-    }
     await entityMapper.save(note);
     return note;
   }

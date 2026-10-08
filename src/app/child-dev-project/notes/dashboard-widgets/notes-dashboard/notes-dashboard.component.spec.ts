@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { ChildrenService } from "../../../children/children.service";
+import { NotesService } from "../../notes.service";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
@@ -8,12 +8,12 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { Entity } from "../../../../core/entity/model/entity";
 import type { Mock } from "vitest";
 
-type ChildrenServiceMock = Pick<
-  ChildrenService,
+type NotesServiceMock = Pick<
+  NotesService,
   "getDaysSinceLastNoteOfEachEntity"
 > & {
   getDaysSinceLastNoteOfEachEntity: Mock<
-    ChildrenService["getDaysSinceLastNoteOfEachEntity"]
+    NotesService["getDaysSinceLastNoteOfEachEntity"]
   >;
 };
 
@@ -25,21 +25,21 @@ describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
   let fixture: ComponentFixture<NotesDashboardComponent>;
 
-  let mockChildrenService: ChildrenServiceMock;
+  let mockNotesService: NotesServiceMock;
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = {
+    mockNotesService = {
       getDaysSinceLastNoteOfEachEntity: vi
         .fn()
-        .mockName("mockChildrenService.getDaysSinceLastNoteOfEachEntity"),
+        .mockName("mockNotesService.getDaysSinceLastNoteOfEachEntity"),
     };
-    mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+    mockNotesService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
       new Map(),
     );
 
     TestBed.configureTestingModule({
       imports: [NotesDashboardComponent, MockedTestingModule.withState()],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+      providers: [{ provide: NotesService, useValue: mockNotesService }],
     }).compileComponents();
 
     TestBed.inject(EntityRegistry).set("Child", Child);
@@ -49,6 +49,7 @@ describe("NotesDashboardComponent", () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(NotesDashboardComponent);
       component = fixture.componentInstance;
+      fixture.componentRef.setInput("entityType", "Child");
       fixture.componentRef.setInput("mode", "with-recent-notes");
       fixture.detectChanges();
     });
@@ -56,7 +57,7 @@ describe("NotesDashboardComponent", () => {
     it("should only count children with recent note", async () => {
       vi.useFakeTimers();
       try {
-        mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+        mockNotesService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
           new Map([
             ["1", 2],
             ["2", 29],
@@ -82,6 +83,7 @@ describe("NotesDashboardComponent", () => {
     beforeEach(() => {
       fixture = TestBed.createComponent(NotesDashboardComponent);
       component = fixture.componentInstance;
+      fixture.componentRef.setInput("entityType", "Child");
       fixture.componentRef.setInput("mode", "without-recent-notes");
       fixture.detectChanges();
     });
@@ -89,7 +91,7 @@ describe("NotesDashboardComponent", () => {
     it("should add only children without recent note", async () => {
       vi.useFakeTimers();
       try {
-        mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+        mockNotesService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
           new Map([
             ["1", 2],
             ["2", 29],
@@ -121,7 +123,7 @@ describe("NotesDashboardComponent", () => {
       vi.useFakeTimers();
       try {
         const childId1 = "1";
-        mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+        mockNotesService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
           new Map([[childId1, Number.POSITIVE_INFINITY]]),
         );
 
@@ -143,18 +145,43 @@ describe("NotesDashboardComponent", () => {
       }
     });
 
+    it("should not load anything if no entity is configured", () => {
+      fixture = TestBed.createComponent(NotesDashboardComponent);
+      component = fixture.componentInstance;
+      fixture.componentRef.setInput("mode", "with-recent-notes");
+      mockNotesService.getDaysSinceLastNoteOfEachEntity.mockClear();
+      fixture.detectChanges();
+
+      expect(
+        mockNotesService.getDaysSinceLastNoteOfEachEntity,
+      ).not.toHaveBeenCalled();
+      expect(component.subtitle()).toBe("");
+    });
+
+    it("should not load anything if the configured entity type does not exist", () => {
+      mockNotesService.getDaysSinceLastNoteOfEachEntity.mockClear();
+
+      fixture.componentRef.setInput("entityType", "RemovedType");
+      fixture.detectChanges();
+
+      expect(
+        mockNotesService.getDaysSinceLastNoteOfEachEntity,
+      ).not.toHaveBeenCalled();
+      expect(component.subtitle()).toBe("");
+    });
+
     it("should load notes related to the configured entity", () => {
-      mockChildrenService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
+      mockNotesService.getDaysSinceLastNoteOfEachEntity.mockResolvedValue(
         new Map(),
       );
       const entity = TestEntity.ENTITY_TYPE;
 
-      fixture.componentRef.setInput("entity", entity);
+      fixture.componentRef.setInput("entityType", entity);
       fixture.componentRef.setInput("mode", "with-recent-notes");
       fixture.detectChanges();
 
       expect(
-        mockChildrenService.getDaysSinceLastNoteOfEachEntity,
+        mockNotesService.getDaysSinceLastNoteOfEachEntity,
       ).toHaveBeenCalledWith(entity, expect.anything());
     });
   });

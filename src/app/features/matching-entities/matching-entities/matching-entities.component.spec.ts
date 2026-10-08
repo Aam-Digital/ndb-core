@@ -263,8 +263,8 @@ describe("MatchingEntitiesComponent", () => {
     setInputs(testConfig);
     fixture.componentRef.setInput("onMatch", {
       newEntityType: Note.ENTITY_TYPE,
-      newEntityMatchPropertyRight: "children",
-      newEntityMatchPropertyLeft: "schools",
+      newEntityMatchPropertyRight: "relatedEntities",
+      newEntityMatchPropertyLeft: "authors",
     });
     await stabilizeCurrentFixture();
     const testedSide = component.sideDetails()![1];
@@ -319,8 +319,8 @@ describe("MatchingEntitiesComponent", () => {
     setInputs(testConfig);
     fixture.componentRef.setInput("onMatch", {
       newEntityType: Note.ENTITY_TYPE,
-      newEntityMatchPropertyRight: "children",
-      newEntityMatchPropertyLeft: "schools",
+      newEntityMatchPropertyRight: "relatedEntities",
+      newEntityMatchPropertyLeft: "authors",
     });
     fixture.componentRef.setInput("entity", testEntity);
     fixture.componentRef.setInput("columns", [["_id", "name"]]);
@@ -335,8 +335,8 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        schools: [testEntity.getId()],
-        children: [child1.getId(), child2.getId()],
+        authors: [testEntity.getId()],
+        relatedEntities: [child1.getId(), child2.getId()],
         name:
           "Note " +
           testEntity.toString() +
@@ -676,8 +676,8 @@ describe("MatchingEntitiesComponent", () => {
 
       fixture.componentRef.setInput("onMatch", {
         newEntityType: Note.ENTITY_TYPE,
-        newEntityMatchPropertyLeft: "children",
-        newEntityMatchPropertyRight: "schools",
+        newEntityMatchPropertyLeft: "relatedEntities",
+        newEntityMatchPropertyRight: "authors",
       });
       component.ngOnInit();
       await vi.advanceTimersByTimeAsync(0);

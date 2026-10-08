@@ -24,10 +24,12 @@ import {
 } from "./interaction-type.interface";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { asArray } from "../../../utils/asArray";
 
 /**
  * Notes are a special in-built entity type to record free-form information related to other records.
@@ -35,7 +37,11 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
  * Previously, `Note` has also functioned to record an event with an attendance list of participants.
  * That functionality is getting generalized and decoupled from this specific entity.
  * Add a "attendance" type field to any entity type instead.
- * Attendance-related fields and methods here are currently kept (deprecated) for backwards compatibility until all existing data is migrated.
+ *
+ * `Note` therefore no longer declares the legacy `children`, `schools` and `childrenAttendance` fields.
+ * Systems that still hold data in them have the definitions written into their own `entity:Note` config
+ * by the `oneoff-20261008-note-legacy-child-school-fields` CLI migration
+ * (see `deprecated/legacy-note-fields.ts`).
  */
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -48,67 +54,47 @@ export class Note extends Entity {
   static create(
     date: Date,
     subject: string = "",
-    children: string[] = [],
+    relatedEntities: string[] = [],
   ): Note {
     const instance = new Note();
     instance.date = date;
     instance.subject = subject;
-    instance.children = [...children];
+    instance.relatedEntities = [...relatedEntities];
     return instance;
   }
 
   /**
-   * Returns the name of the Note property where entities of the given entity type are stored
-   * @param entityType
+   * All Note properties that link this note to other records,
+   * i.e. every "entity" field in the (config-extended) schema except `authors`.
    *
-   * @deprecated special logic for Note will be removed. Default structure will only use a combined `relatedEntities` field
+   * This covers the generic `relatedEntities` as well as any custom or legacy entity fields of a system.
+   * (`authors` is indexed and queried separately.)
    */
-  static getPropertyFor(entityType: string) {
-    switch (entityType) {
-      case "Child":
-        return "children";
-      case "School":
-        return "schools";
-      case "User":
-        return "authors";
-      default:
-        return "relatedEntities";
-    }
+  static getLinkFields(): string[] {
+    return [...Note.schema.entries()]
+      .filter(
+        ([key, field]) => field.dataType === "entity" && key !== "authors",
+      )
+      .map(([key]) => key)
+      .sort();
   }
 
-  // TODO: remove these special properties (children, schools) and use relatedEntities instead once the attendance system is generalized (#1364)
   /**
-   * IDs of Child entities linked with this note
-   *
-   * @deprecated Default structure will only use a combined `relatedEntities` field
+   * Returns the name of the Note property where (multiple) entities of the given entity type are stored:
+   * the first "entity" array field specifically configured for that type (e.g. a legacy `children` field),
+   * otherwise `relatedEntities`.
+   * @param entityType
    */
-  @DatabaseField({
-    label: $localize`:Label for the participants field of a note:Participants`,
-    dataType: "entity",
-    isArray: true,
-    additional: "Child",
-    entityReferenceRole: "composite",
-    editComponent: "EditLegacyAttendance",
-    anonymize: "retain",
-  })
-  children: string[] = [];
-
-  /**
-   * optional additional information about attendance at this event for each of the linked children
-   *
-   * @deprecated Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an `attendance` type field.
-   */
-  @DatabaseField({
-    anonymize: "retain",
-    dataType: "event-attendance-map",
-    additional: {
-      participant: {
-        dataType: "entity",
-        additional: ["Child"],
-      },
-    },
-  })
-  childrenAttendance: AttendanceItem[] = [];
+  static getPropertyFor(entityType: string): string {
+    const matchingField = [...Note.schema.entries()].find(
+      ([key, field]) =>
+        key !== "relatedEntities" &&
+        field.dataType === "entity" &&
+        field.isArray &&
+        asArray(field.additional).includes(entityType),
+    );
+    return matchingField?.[0] ?? "relatedEntities";
+  }
 
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
@@ -175,6 +161,7 @@ export class Note extends Entity {
    * This property saves ids including their entity type prefix.
    */
   @DatabaseField({
+    label: $localize`:label for the related Entities:Related Records`,
     dataType: "entity",
     isArray: true,
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
@@ -182,21 +169,6 @@ export class Note extends Entity {
     anonymize: "retain",
   })
   relatedEntities: string[] = [];
-
-  /**
-   * related school ids (e.g. to infer participants for event roll calls)
-   *
-   * @deprecated Default structure will only use a combined `relatedEntities` field
-   */
-  @DatabaseField({
-    label: $localize`:label for the linked schools:Groups`,
-    dataType: "entity",
-    isArray: true,
-    additional: "School",
-    entityReferenceRole: "composite",
-    anonymize: "retain",
-  })
-  schools: string[] = [];
 
   @DatabaseField({
     label: $localize`:Status of a note:Status`,
@@ -226,17 +198,26 @@ export class Note extends Entity {
   /**
    * Special color override to reflect the attendance status for a specific participant.
    *
-   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   * Looks at whichever attendance field the (config-extended) schema has,
+   * i.e. the modern `attendance` datatype as well as the legacy `event-attendance-map`.
    */
-  public getColorForId(childId: string): string {
-    if (
-      this.category?.isMeeting &&
-      this.childrenAttendance.find((item) => item.participant === childId)
-        ?.status.countAs === AttendanceLogicalStatus.ABSENT
-    ) {
-      // child is absent, highlight the entry
+  public getColorForId(participantId: string): string {
+    if (this.category?.isMeeting && this.isMarkedAbsent(participantId)) {
+      // participant is absent, highlight the entry
       return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
+  }
+
+  private isMarkedAbsent(participantId: string): boolean {
+    return AttendanceDatatype.detectAllFieldsInEntity(
+      this.getConstructor(),
+    ).some(({ fieldId }) =>
+      (this[fieldId] as AttendanceItem[] | undefined)?.some(
+        (item) =>
+          item?.participant === participantId &&
+          item?.status?.countAs === AttendanceLogicalStatus.ABSENT,
+      ),
+    );
   }
 }

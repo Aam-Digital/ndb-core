@@ -38,6 +38,7 @@
           {
             "component": "EntityCountDashboard",
             "config": {
+              "entityType": "Child",
               "groupBy": [
                 "gender"
               ]
@@ -78,7 +79,7 @@
                 "subject",
                 "category",
                 "authors",
-                "children"
+                "relatedEntities"
               ]
             },
             {
@@ -86,7 +87,7 @@
               "columns": [
                 "date",
                 "subject",
-                "children"
+                "relatedEntities"
               ]
             }
           ]
@@ -106,6 +107,21 @@
             "id": "authors"
           }
         ]
+      }
+    },
+    "entity:Note": {
+      "attributes": {
+        "relatedEntities": {
+          "label": "Related Records",
+          "dataType": "entity",
+          "additional": [
+            "Child",
+            "School"
+          ],
+          "isArray": true,
+          "entityReferenceRole": "composite",
+          "anonymize": "retain"
+        }
       }
     },
     "entity:User": {

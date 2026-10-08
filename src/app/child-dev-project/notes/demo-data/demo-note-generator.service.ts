@@ -6,11 +6,7 @@ import { faker } from "../../../core/demo-data/faker";
 import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
-import { absenceRemarks } from "./remarks";
-import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
-import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
-import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { warningLevels, WarningLevel } from "../../warning-level";
 import { Entity } from "../../../core/entity/model/entity";
 
@@ -125,7 +121,7 @@ export function generateNote(params: {
   const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
   Object.assign(note, selectedStory);
 
-  note.children.push(params.child.getId());
+  note.relatedEntities = [params.child.getId()];
   note.authors = [params.author.getId()];
 
   let date = params.date;
@@ -152,23 +148,9 @@ function generateGroupNote(params: { children: Entity[]; author: Entity }) {
   const selectedStory = faker.helpers.arrayElement(noteGroupStories);
   Object.assign(note, selectedStory);
 
-  note.children = params.children.map((c) => c.getId());
-  params.children.forEach((child) => {
-    const item = new AttendanceItem();
-    item.participant = child.getId();
-    // get an approximate presence of 85%
-    if (faker.number.int(100) <= 15) {
-      item.status = defaultAttendanceStatusTypes.find(
-        (t) => t.countAs === AttendanceLogicalStatus.ABSENT,
-      );
-      item.remarks = faker.helpers.arrayElement(absenceRemarks);
-    } else {
-      item.status = defaultAttendanceStatusTypes.find(
-        (t) => t.countAs === AttendanceLogicalStatus.PRESENT,
-      );
-    }
-    note.childrenAttendance.push(item);
-  });
+  // attendance is no longer recorded on Note (see the `attendance` datatype
+  // used by the demo Event / ClassSession entities instead)
+  note.relatedEntities = params.children.map((c) => c.getId());
 
   note.authors = [params.author.getId()];
 

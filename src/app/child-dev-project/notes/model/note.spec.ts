@@ -17,18 +17,25 @@ import { DateOnlyDatatype } from "../../../core/basic-datatypes/date-only/date-o
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { ConfigurableEnumDatatype } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
-// qlty-ignore: radarlint-js:typescript:S1874 - Note still declares childrenAttendance with this deprecated datatype
-import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../../core/entity/entity-actions/entity-actions.service";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../../core/entity/database-entity.decorator";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import {
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
+} from "../../../features/attendance/model/attendance-status";
+import {
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "../deprecated/legacy-note-link-fields.testing";
 
 function createTestModel(): Note {
   const n1 = new Note("2");
-  n1.children = ["1", "4", "7"];
+  n1.relatedEntities = ["1", "4", "7"];
   n1.date = new Date();
   n1.subject = "Note Subject";
   n1.text = "Note text";
@@ -70,12 +77,6 @@ describe("Note", () => {
           useClass: ConfigurableEnumDatatype,
           multi: true,
         },
-        {
-          provide: DefaultDatatype,
-          // qlty-ignore: radarlint-js:typescript:S1874 - Note still declares its childrenAttendance with this deprecated datatype
-          useClass: EventAttendanceMapDatatype,
-          multi: true,
-        },
         // these datatypes only use the services below to resolve referenced records,
         // which the pure schema transformations under test never do
         {
@@ -96,9 +97,6 @@ describe("Note", () => {
     {
       _id: "Note:some-id",
 
-      children: ["1", "2", "5"],
-      childrenAttendance: [],
-      schools: [],
       relatedEntities: [],
       date: "2023-05-01",
       subject: "Note Subject",
@@ -110,10 +108,47 @@ describe("Note", () => {
     true,
   );
 
-  it("should return the correct childIds", function () {
-    // sort since we don't care about the order
-    const n3 = createTestModel();
-    expect(n3.children.sort()).toEqual(["1", "4", "7"].sort());
+  it("should derive link fields and the property for an entity type from the schema", () => {
+    Note.schema.set("linkedTestType", {
+      dataType: "entity",
+      isArray: true,
+      additional: "TestType",
+    });
+    try {
+      expect(Note.getLinkFields()).toContain("linkedTestType");
+      expect(Note.getLinkFields()).toContain("relatedEntities");
+      expect(Note.getLinkFields()).not.toContain("authors");
+      expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
+      expect(Note.getPropertyFor("User")).toBe("authors");
+      expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
+    } finally {
+      Note.schema.delete("linkedTestType");
+    }
+  });
+
+  it("should store multiple entities of a type in a field specific to that type rather than a single-value field or relatedEntities", () => {
+    const relatedEntities = Note.schema.get("relatedEntities");
+    Note.schema.set("relatedEntities", {
+      ...relatedEntities,
+      additional: ["TestType", "Other"],
+    });
+    Note.schema.set("mainTestType", {
+      dataType: "entity",
+      additional: "TestType",
+    });
+    Note.schema.set("linkedTestType", {
+      dataType: "entity",
+      isArray: true,
+      additional: "TestType",
+    });
+    try {
+      expect(Note.getPropertyFor("TestType")).toBe("linkedTestType");
+      expect(Note.getPropertyFor("Other")).toBe("relatedEntities");
+    } finally {
+      Note.schema.set("relatedEntities", relatedEntities);
+      Note.schema.delete("mainTestType");
+      Note.schema.delete("linkedTestType");
+    }
   });
 
   it("should return colors", function () {
@@ -124,6 +159,73 @@ describe("Note", () => {
 
     note.warningLevel = warningLevels.find((level) => level.id === "URGENT");
     expect(note.getColor()).toBe(getWarningLevelColor(WarningLevel.URGENT));
+  });
+
+  describe("getColorForId", () => {
+    const MEETING: InteractionType = {
+      id: "M",
+      label: "Meeting",
+      color: "#FFFFFF",
+      isMeeting: true,
+    };
+    const URGENT = getWarningLevelColor(WarningLevel.URGENT);
+    const ABSENT: AttendanceStatusType = {
+      id: "ABSENT",
+      shortName: "A",
+      label: "Absent",
+      countAs: AttendanceLogicalStatus.ABSENT,
+    };
+    const PRESENT: AttendanceStatusType = {
+      id: "PRESENT",
+      shortName: "P",
+      label: "Present",
+      countAs: AttendanceLogicalStatus.PRESENT,
+    };
+
+    /** make the system's attendance field available, as it is only defined in config */
+    function setUpAttendanceField(field: "attendance" | "childrenAttendance") {
+      if (field === "attendance") {
+        Note.schema.set("attendance", {
+          dataType: "attendance",
+          isArray: true,
+        });
+      } else {
+        addLegacyNoteFieldsToSchema();
+      }
+    }
+
+    afterEach(() => {
+      removeLegacyNoteFieldsFromSchema();
+      Note.schema.delete("attendance");
+    });
+
+    it.each([
+      // the field is resolved from the schema, so both the modern and the legacy datatype work
+      ["attendance", ABSENT, "Child:1", true, URGENT],
+      ["childrenAttendance", ABSENT, "Child:1", true, URGENT],
+      ["attendance", PRESENT, "Child:1", true, MEETING.color],
+      // not a participant of this event
+      ["attendance", ABSENT, "Child:2", true, MEETING.color],
+      // attendance is only relevant for a meeting
+      ["attendance", ABSENT, "Child:1", false, MEETING.color],
+    ] as const)(
+      "%s: marking %o for Child:1 colors a lookup of %s (isMeeting %s) as %s",
+      (field, status, lookupId, isMeeting, expected) => {
+        setUpAttendanceField(field);
+        const note = new Note("n1");
+        note.category = { ...MEETING, isMeeting };
+        note[field] = [new AttendanceItem(status, "", "Child:1")];
+
+        expect(note.getColorForId(lookupId)).toBe(expected);
+      },
+    );
+
+    it("uses the normal color if the system has no attendance field at all", () => {
+      const note = new Note("n1");
+      note.category = MEETING;
+
+      expect(note.getColorForId("Child:1")).toBe(MEETING.color);
+    });
   });
 
   it("transforms interactionType from config", function () {
@@ -140,12 +242,16 @@ describe("Note", () => {
 
   it("performs a deep copy of itself", () => {
     const note = new Note("n1");
-    note.children = ["4", "5", "6"];
+    note.relatedEntities = ["4", "5", "6"];
     note.authors = ["A"];
     const otherNote = note.copy();
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
-    otherNote.children = otherNote.children.filter((c) => c !== "5");
-    expect(otherNote.children).toHaveLength(note.children.length - 1);
+    otherNote.relatedEntities = otherNote.relatedEntities.filter(
+      (c) => c !== "5",
+    );
+    expect(otherNote.relatedEntities).toHaveLength(
+      note.relatedEntities.length - 1,
+    );
   });
 });

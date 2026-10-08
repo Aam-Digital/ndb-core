@@ -17,6 +17,9 @@ export class TrackedMigrationContext implements MigrationContext {
     readonly dryRun: boolean,
     readonly log: MigrationLogger,
     readonly args: string[] = [],
+    /** defaults to declining, for non-interactive use */
+    readonly confirm: (question: string) => Promise<boolean> = async () =>
+      false,
   ) {}
 
   validateJson(value: unknown): void {

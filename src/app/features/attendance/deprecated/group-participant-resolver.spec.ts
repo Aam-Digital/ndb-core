@@ -9,6 +9,10 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { AttendanceItem } from "../model/attendance-item";
 import { Note } from "#src/app/child-dev-project/notes/model/note";
+import {
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "#src/app/child-dev-project/notes/deprecated/legacy-note-link-fields.testing";
 import { defaultInteractionTypes } from "#src/app/core/config/default-config/default-interaction-types";
 import { GroupParticipantResolverService } from "./group-participant-resolver";
 import { ConfigService } from "#src/app/core/config/config.service";
@@ -79,28 +83,35 @@ describe("GroupParticipantResolverService (deprecated)", () => {
   afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("retrieves saved events with linked-school data via getEventsOnDate", async () => {
-    const linkedSchoolId = "test_school";
-    await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
-    const date = new Date();
+    // legacy fields that are only defined in the config of systems still using them
+    addLegacyNoteFieldsToSchema();
 
-    const testNoteWithSchool = Note.create(date);
-    testNoteWithSchool.children = ["1", "2"];
-    testNoteWithSchool.childrenAttendance = [
-      new AttendanceItem(undefined, "", "1"),
-      new AttendanceItem(undefined, "", "2"),
-    ];
-    testNoteWithSchool.schools = [linkedSchoolId];
-    testNoteWithSchool.category = meetingInteractionCategory;
-    await entityMapper.save(testNoteWithSchool);
+    try {
+      const linkedSchoolId = "test_school";
+      await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
+      const date = new Date();
 
-    const actualEvents = await service.getEventsOnDate(date, date);
-    expect(actualEvents).toHaveLength(1);
-    expect(actualEvents[0].getId()).toBe(testNoteWithSchool.getId());
+      const testNoteWithSchool = Note.create(date);
+      testNoteWithSchool["children"] = ["1", "2"];
+      testNoteWithSchool["childrenAttendance"] = [
+        new AttendanceItem(undefined, "", "1"),
+        new AttendanceItem(undefined, "", "2"),
+      ];
+      testNoteWithSchool["schools"] = [linkedSchoolId];
+      testNoteWithSchool.category = meetingInteractionCategory;
+      await entityMapper.save(testNoteWithSchool);
 
-    const note = actualEvents[0] as Note;
-    expect(note.childrenAttendance).toHaveLength(2);
-    expect(note.children).toEqual(expect.arrayContaining(["1", "2"]));
-    expect(note.schools).toEqual([linkedSchoolId]);
+      const actualEvents = await service.getEventsOnDate(date, date);
+      expect(actualEvents).toHaveLength(1);
+      expect(actualEvents[0].getId()).toBe(testNoteWithSchool.getId());
+
+      const note = actualEvents[0] as Note;
+      expect(note["childrenAttendance"]).toHaveLength(2);
+      expect(note["children"]).toEqual(expect.arrayContaining(["1", "2"]));
+      expect(note["schools"]).toEqual([linkedSchoolId]);
+    } finally {
+      removeLegacyNoteFieldsFromSchema();
+    }
   });
 
   it("filterExcludedParticipants filters excluded participants from a list", () => {

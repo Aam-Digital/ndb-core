@@ -2,25 +2,47 @@ import { ConfigMigration } from "../../core/config/config-migration";
 import { NoteDetailsConfig } from "./note-details/note-details-config.interface";
 
 /**
- * Add default view:note/:id NoteDetails config
- * to avoid breaking note details with a default config from AdminModule
+ * Add default Note view configs (list and details)
+ * to avoid breaking note views with a default config from AdminModule
  */
-export const addDefaultNoteDetailsConfig: ConfigMigration = (
-  key,
-  configPart,
-) => {
+export const addDefaultNoteViews: ConfigMigration = (key, configPart) => {
   if (configPart?.["_id"] !== "Config:CONFIG_ENTITY" || !configPart?.["data"]) {
     // add only at top-level of config
     return configPart;
   }
 
-  if (!configPart?.["data"]["view:note/:id"]) {
-    configPart["data"]["view:note/:id"] = {
-      component: "NoteDetails",
-      config: getDefaultNoteDetailsConfig(),
-    };
+  const configData = configPart["data"];
+
+  // a system with a custom route for notes has its list view (if any) configured there
+  const route = String(configData["entity:Note"]?.route ?? "note").replace(
+    /^\//,
+    "",
+  );
+  if (route === "note") {
+    configData["view:note"] ??= JSON.parse(JSON.stringify(defaultNoteListView));
   }
+  configData["view:note/:id"] ??= {
+    component: "NoteDetails",
+    config: getDefaultNoteDetailsConfig(),
+  };
+
   return configPart;
+};
+
+export const defaultNoteListView = {
+  component: "EntityList",
+  config: {
+    entityType: "Note",
+    title: $localize`:title of the note list view:Notes & Reports`,
+    clickMode: "popup-details",
+    columns: ["date", "subject", "category", "authors", "relatedEntities"],
+    filters: [
+      { id: "warningLevel" },
+      { id: "date", default: 1 },
+      { id: "category" },
+      { id: "authors" },
+    ],
+  },
 };
 
 /**
@@ -31,6 +53,6 @@ export function getDefaultNoteDetailsConfig(): NoteDetailsConfig {
     entityType: "Note",
     topForm: ["date", "warningLevel", "category", "authors", "attachment"],
     middleForm: ["subject", "text"],
-    bottomForm: ["children", "schools"],
+    bottomForm: ["relatedEntities"],
   };
 }

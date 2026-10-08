@@ -469,6 +469,39 @@ const migrateEditDescriptionOnly: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
+const migrateEntityCountDashboardEntityType: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    configPart?.component !== "ChildrenCountDashboard" &&
+    configPart?.component !== "EntityCountDashboard"
+  ) {
+    return configPart;
+  }
+
+  if (!configPart.config) {
+    configPart.config = {};
+  }
+  configPart.config.entityType ??= "Child";
+
+  return configPart;
+};
+
+/**
+ * NotesDashboard used to implicitly default to "Child" if no entity type was configured.
+ */
+const migrateNotesDashboardEntity: ConfigMigration = (key, configPart) => {
+  if (configPart?.component !== "NotesDashboard") {
+    return configPart;
+  }
+
+  configPart.config ??= {};
+  configPart.config.entityType ??= "Child";
+
+  return configPart;
+};
+
 const migrateEditAttendanceComponent: ConfigMigration = (key, configPart) => {
   if (configPart?.editComponent !== "EditAttendance") {
     return configPart;
@@ -771,6 +804,8 @@ export const configMigrations: ConfigMigration[] = [
   migrateInheritedFieldConfig,
   migrateUserEntityAndPanels,
   migrateComponentEntityTypeDefaults,
+  migrateEntityCountDashboardEntityType,
+  migrateNotesDashboardEntity,
   removeOutdatedTodoViews,
   migrateChildSchoolOverviewComponent,
   migrateEditDescriptionOnly,

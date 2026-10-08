@@ -88,14 +88,20 @@ export class EntityCountDashboardComponent {
   private rawEntities = signal<Entity[]>([]);
   currentGroupIndex = signal(0);
 
-  entityType = input("Child");
+  entityType = input<string>();
   groupBy = input<string[]>(["center", "gender"]);
   subtitle = input<string>();
   explanation = input<string>(
     $localize`:dashboard widget explanation:Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.`,
   );
 
-  entityDefinition = computed(() => this.entities.get(this.entityType()));
+  /** `undefined` when unconfigured or the configured type isn't registered, rather than throwing. */
+  entityDefinition = computed(() => {
+    const type = this.entityType();
+    return type && this.entities.has(type)
+      ? this.entities.get(type)
+      : undefined;
+  });
   totalEntities = computed(
     () => this.rawEntities().filter((entity) => !entity.inactive).length,
   );
@@ -103,6 +109,9 @@ export class EntityCountDashboardComponent {
   entityGroupCounts = computed<Record<string, GroupCountRow[]>>(() => {
     const result: Record<string, GroupCountRow[]> = {};
     const entityDefinition = this.entityDefinition();
+    if (!entityDefinition) {
+      return result;
+    }
     const activeEntities = this.rawEntities().filter(
       (entity) => !entity.inactive,
     );
@@ -131,10 +140,15 @@ export class EntityCountDashboardComponent {
     effect((onCleanup) => {
       const entityType = this.entityType();
       const entityDefinition = this.entityDefinition();
-      let isCurrent = true;
 
       this.rawEntities.set([]);
       this.currentGroupIndex.set(0);
+
+      if (!entityType || !entityDefinition) {
+        return;
+      }
+
+      let isCurrent = true;
 
       untracked(async () => {
         const entities = await this.entityMapper.loadType(entityDefinition);
@@ -179,7 +193,7 @@ export class EntityCountDashboardComponent {
   }
 
   static getRequiredEntities(config: EntityCountDashboardConfig) {
-    return config?.entityType || "Child";
+    return config?.entityType;
   }
 
   private calculateGroupCounts(
@@ -300,14 +314,15 @@ export class EntityCountDashboardComponent {
 
   goToEntityList(filterId: string) {
     const field = this.currentGroupField();
-    if (!field) {
+    const entityDefinition = this.entityDefinition();
+    if (!field || !entityDefinition) {
       return;
     }
 
     const params = {};
     params[field] = encodeURIComponent(filterId);
 
-    this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
+    this.router.navigate([getEntityRuntimeRoute(entityDefinition)], {
       queryParams: params,
     });
   }

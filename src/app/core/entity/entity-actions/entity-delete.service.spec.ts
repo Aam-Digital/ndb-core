@@ -404,18 +404,24 @@ describe("EntityDeleteService", () => {
     );
   });
 
-  it("should remove multiple ref ids from related note", async () => {
-    const schemaField = Note.schema.get("relatedEntities");
-    const originalSchemaAdditional = schemaField.additional;
-    schemaField.additional = [TestEntity.ENTITY_TYPE];
-    const schemaField2 = Note.schema.get("children");
-    const originalSchema2Additional = schemaField2.additional;
-    schemaField2.additional = TestEntity.ENTITY_TYPE;
+  it("should remove ref ids from all referencing fields of a related note", async () => {
+    const relatedEntitiesField = Note.schema.get("relatedEntities");
+    const originalRelatedEntities = { ...relatedEntitiesField };
+    relatedEntitiesField.additional = [TestEntity.ENTITY_TYPE];
+    // only referencing (not owning) the deleted record, so the note is kept
+    relatedEntitiesField.entityReferenceRole = "aggregate";
+
+    // a second field of the same note referencing the deleted record
+    const authorsField = Note.schema.get("authors");
+    const originalAuthors = { ...authorsField };
+    authorsField.additional = TestEntity.ENTITY_TYPE;
+    // still references another record, so the note is kept despite being "composite"
+    authorsField.entityReferenceRole = "composite";
 
     const primary = new TestEntity();
     const note = new Note();
     note.subject = "test";
-    note.children = [primary.getId(), TestEntity.ENTITY_TYPE + ":some-other"];
+    note.authors = [primary.getId(), TestEntity.ENTITY_TYPE + ":some-other"];
     note.relatedEntities = [primary.getId()];
     const originalNote = note.copy();
     await entityMapper.save(primary);
@@ -426,7 +432,7 @@ describe("EntityDeleteService", () => {
     const actualNote = entityMapper.get(Note.ENTITY_TYPE, note.getId()) as Note;
 
     expect(actualNote.relatedEntities).toEqual([]);
-    expect(actualNote.children).toEqual([
+    expect(actualNote.authors).toEqual([
       TestEntity.ENTITY_TYPE + ":some-other",
     ]);
 
@@ -437,8 +443,8 @@ describe("EntityDeleteService", () => {
     ]);
 
     // restore original schema
-    schemaField.additional = originalSchemaAdditional;
-    schemaField2.additional = originalSchema2Additional;
+    Note.schema.set("relatedEntities", originalRelatedEntities);
+    Note.schema.set("authors", originalAuthors);
   });
 
   it("should remove deleted IDs from 'attendance' field", async () => {
