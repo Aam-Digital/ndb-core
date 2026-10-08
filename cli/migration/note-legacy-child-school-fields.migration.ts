@@ -294,6 +294,12 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
         const reasons = [
           `${formatCount(field)} ${countedTypes} docs have data in it`,
         ];
+        if (configured && !isLegacyDefinition(configured, legacy)) {
+          ctx.log.info(
+            `entity:Note.${field} is a custom field (not a link to ${legacy.entityType}), left untouched`,
+          );
+          continue;
+        }
         if (configured) {
           // only needed by extending types that miss entity:Note's definition
           restoreField(field, configured, reasons);

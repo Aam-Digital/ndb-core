@@ -817,6 +817,25 @@ describe("noteLegacyChildSchoolFields migration", () => {
     });
   });
 
+  it("does not write a custom field of Note sharing a legacy name into extending types", async () => {
+    const customField = { dataType: "number", label: "Number of children" };
+    const store = seed(
+      {
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:EventNote": { extends: "Note" },
+        "entity:Note": { attributes: { children: customField } },
+      },
+      { "app/EventNote:1": { _id: "EventNote:1", children: 3 } },
+    );
+
+    await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+    expect(
+      configData(store)["entity:EventNote"].attributes?.children,
+    ).toBeUndefined();
+  });
+
   it("keeps the own definition of an extending type when restoring a field", async () => {
     const eventChildren = {
       dataType: "entity",
