@@ -418,7 +418,7 @@ describe("AdminEntityFormComponent", () => {
 
       const conditionButton: HTMLButtonElement =
         fixture.nativeElement.querySelector(
-          'app-admin-section-header button[aria-label="Display Condition"]',
+          'app-admin-section-header button[aria-label$="Display Condition"]',
         );
       conditionButton.click();
       await fixture.whenStable();
@@ -452,7 +452,7 @@ describe("AdminEntityFormComponent", () => {
 
     const buttons: HTMLButtonElement[] = Array.from(
       fixture.nativeElement.querySelectorAll(
-        'app-admin-section-header button[aria-label="Display Condition"]',
+        'app-admin-section-header button[aria-label$="Display Condition"]',
       ),
     );
 
@@ -468,7 +468,7 @@ describe("AdminEntityFormComponent", () => {
 
     fixture.nativeElement
       .querySelector(
-        'app-admin-section-header button[aria-label="Display Condition"]',
+        'app-admin-section-header button[aria-label$="Display Condition"]',
       )
       .click();
     component.dropFieldGroups({

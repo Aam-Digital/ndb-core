@@ -27,8 +27,9 @@
             >
               <app-admin-display-condition-button
                 target="fieldGroup"
-                [configured]="!!group.displayCondition"
-                (click)="openGroupDisplayConditionDialog(group)"
+                [entityType]="entityType()"
+                [condition]="group.displayCondition"
+                (conditionChange)="updateGroupDisplayCondition(group, $event)"
               ></app-admin-display-condition-button>
             </app-admin-section-header>
           </div>

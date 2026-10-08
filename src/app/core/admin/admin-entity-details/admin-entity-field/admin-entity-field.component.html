@@ -263,8 +263,11 @@
               class="margin-top-regular"
               target="field"
               [showLabel]="true"
-              [configured]="!!schemaFieldsForm.get('displayCondition').value"
-              (click)="openDisplayConditionDialog()"
+              [entityType]="data.entityType"
+              [condition]="schemaFieldsForm.get('displayCondition').value"
+              (conditionChange)="
+                schemaFieldsForm.get('displayCondition').setValue($event)
+              "
             ></app-admin-display-condition-button>
           </div>
         </div>

@@ -31,10 +31,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { lastValueFrom } from "rxjs";
-import {
-  ConditionEditorDialogComponent,
-  ConditionEditorDialogData,
-} from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
+import { DataFilter } from "../../../filter/filters/filters";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -572,25 +569,15 @@ export class AdminEntityFormComponent {
     );
   }
 
-  async openGroupDisplayConditionDialog(group: FieldGroup) {
-    const dialogRef = this.matDialog.open(ConditionEditorDialogComponent, {
-      data: {
-        entityConstructor: this.entityType(),
-        conditions: group.displayCondition,
-        explanation: $localize`This field group is shown only while the record matches...`,
-      } satisfies ConditionEditorDialogData,
-      width: "600px",
-    });
-
-    const result = await lastValueFrom(dialogRef.afterClosed());
-    // `undefined` means the dialog was cancelled, leave the condition unchanged
-    if (result === undefined) return;
-
+  updateGroupDisplayCondition(
+    group: FieldGroup,
+    condition: DataFilter<any> | null,
+  ) {
     this.fieldGroups.update((groups) =>
       groups.map((g) => {
         if (g !== group) return g;
-        const updated: FieldGroup = { ...g, displayCondition: result };
-        if (!result) delete updated.displayCondition;
+        const updated: FieldGroup = { ...g, displayCondition: condition };
+        if (!condition) delete updated.displayCondition;
         return updated;
       }),
     );
