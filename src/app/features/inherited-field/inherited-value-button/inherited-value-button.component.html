@@ -53,10 +53,15 @@
           }
         </div>
       }
+    } @else if (defaultValueHint()?.hasNoCommonValue) {
+      <div i18n>
+        The linked records have no value in common, so nothing is inherited. The
+        field keeps its current value.
+      </div>
     } @else if (defaultValueHint()?.isEmpty) {
       <div i18n>
-        Select exactly one record in the parent field to automatically inherit
-        its value here.
+        Select one or more records in the parent field to automatically inherit
+        their shared value here.
       </div>
     } @else if (defaultValueHint()?.isInSync) {
       <div i18n>(up-to-date, inherited from parent record)</div>

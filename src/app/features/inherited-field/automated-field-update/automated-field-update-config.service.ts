@@ -17,6 +17,7 @@ import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.s
 import { isEqual } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import { addMissingValues } from "../add-missing-values";
+import { getCommonValue, isEmptyValue } from "../get-common-value";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -25,6 +26,14 @@ interface AffectedRule {
   rule: DefaultValueConfigInheritedField;
   entityType: EntityConstructor;
   fieldId: string;
+}
+
+/**
+ * The new value of a target entity, which is its current value if the linked entities have no value in common.
+ */
+interface NewValue {
+  value: any;
+  hasNoCommonValue: boolean;
 }
 
 /**
@@ -111,28 +120,10 @@ export class AutomatedFieldUpdateConfigService {
   private getInheritanceRulesFromDirectEntity(
     sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
-    const rules: AffectedRule[] = [];
-
-    for (const targetEntityType of this.entityRegistry.values()) {
-      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
-        if (fieldConfig.defaultValue?.mode === "inherited-field") {
-          const rule = fieldConfig.defaultValue
-            .config as DefaultValueConfigInheritedField;
-
-          if (
-            rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE
-          ) {
-            rules.push({
-              rule,
-              entityType: targetEntityType,
-              fieldId,
-            });
-          }
-        }
-      }
-    }
-
-    return rules;
+    return this.getAllRules().filter(
+      ({ rule }) =>
+        rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE,
+    );
   }
 
   /**
@@ -147,39 +138,36 @@ export class AutomatedFieldUpdateConfigService {
   private getInheritanceRulesReferencingThisEntity(
     sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
-    const rules: AffectedRule[] = [];
-
-    for (const targetEntityType of this.entityRegistry.values()) {
-      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
-        if (fieldConfig.defaultValue?.mode === "inherited-field") {
-          const rule = fieldConfig.defaultValue
-            .config as DefaultValueConfigInheritedField;
-
-          // For inheritance rules: sourceReferenceEntity is undefined
-          if (!rule?.sourceReferenceEntity && rule?.sourceReferenceField) {
-            // Check if the sourceReferenceField could reference our entity type
-            const referenceFieldConfig = targetEntityType.schema.get(
-              rule.sourceReferenceField,
-            );
-
-            // If the reference field is configured to reference our entity type
-            if (
-              referenceFieldConfig?.dataType === "entity" &&
-              referenceFieldConfig?.additional ===
-                sourceReferenceEntity.ENTITY_TYPE
-            ) {
-              rules.push({
-                rule,
-                entityType: targetEntityType,
-                fieldId,
-              });
-            }
-          }
-        }
+    return this.getAllRules().filter(({ rule, entityType }) => {
+      // For inheritance rules: sourceReferenceEntity is undefined
+      if (rule?.sourceReferenceEntity || !rule?.sourceReferenceField) {
+        return false;
       }
-    }
 
-    return rules;
+      // Check if the sourceReferenceField is configured to reference our entity type
+      const referenceFieldConfig = entityType.schema.get(
+        rule.sourceReferenceField,
+      );
+      return (
+        referenceFieldConfig?.dataType === "entity" &&
+        referenceFieldConfig?.additional === sourceReferenceEntity.ENTITY_TYPE
+      );
+    });
+  }
+
+  /**
+   * Get the inheritance and automation rules defined in the field schemas of all entity types.
+   */
+  private getAllRules(): AffectedRule[] {
+    return [...this.entityRegistry.values()].flatMap((entityType) =>
+      [...entityType.schema.entries()]
+        .filter(([, field]) => field.defaultValue?.mode === "inherited-field")
+        .map(([fieldId, field]) => ({
+          rule: field.defaultValue.config as DefaultValueConfigInheritedField,
+          entityType,
+          fieldId,
+        })),
+    );
   }
 
   /**
@@ -190,24 +178,30 @@ export class AutomatedFieldUpdateConfigService {
     affectedRule: AffectedRule,
     sourceEntity: Entity,
   ): Promise<AffectedEntity[]> {
-    const { rule, entityType, fieldId } = affectedRule;
+    const { rule, entityType } = affectedRule;
 
     const referencedEntityIds = sourceEntity[rule.sourceReferenceField];
     if (!referencedEntityIds) return [];
 
     const targetEntities = await this.loadEntitiesByIds(
       entityType,
-      Array.isArray(referencedEntityIds)
-        ? referencedEntityIds
-        : [referencedEntityIds],
+      asArray(referencedEntityIds),
     );
+    const newValue: NewValue = {
+      value: this.calculateNewValue(sourceEntity, rule),
+      hasNoCommonValue: false,
+    };
 
     return this.processTargetEntities(
       targetEntities,
-      rule,
+      affectedRule,
       sourceEntity,
-      entityType,
-      fieldId,
+      new Map(
+        targetEntities.map((entity): [string, NewValue] => [
+          entity.getId(),
+          newValue,
+        ]),
+      ),
     );
   }
 
@@ -219,21 +213,72 @@ export class AutomatedFieldUpdateConfigService {
     affectedRule: AffectedRule,
     sourceEntity: Entity,
   ): Promise<AffectedEntity[]> {
-    const { rule, entityType, fieldId } = affectedRule;
+    const { rule, entityType } = affectedRule;
 
     // Load all entities of target type and filter for those referencing source entity
     const allTargetEntities = await this.entityMapper.loadType(entityType);
-    const targetEntities = allTargetEntities.filter(
-      (entity) => entity[rule.sourceReferenceField] === sourceEntity.getId(),
+    const targetEntities = allTargetEntities.filter((entity) =>
+      asArray(entity[rule.sourceReferenceField]).includes(sourceEntity.getId()),
+    );
+
+    const newValues = new Map<string, NewValue>(
+      await Promise.all(
+        targetEntities.map(async (entity): Promise<[string, NewValue]> => [
+          entity.getId(),
+          await this.loadNewValue(entity, affectedRule, sourceEntity),
+        ]),
+      ),
     );
 
     return this.processTargetEntities(
       targetEntities,
-      rule,
+      affectedRule,
       sourceEntity,
-      entityType,
-      fieldId,
+      newValues,
     );
+  }
+
+  /**
+   * Get the new value for a target entity linking to the (already updated) source entity.
+   * If the target links to several entities, it only inherits a value shared by all of them.
+   * Without a shared value (different values or some linked entities cannot be loaded),
+   * the target's current value is returned.
+   */
+  private async loadNewValue(
+    targetEntity: Entity,
+    { rule, fieldId }: AffectedRule,
+    sourceEntity: Entity,
+  ): Promise<NewValue> {
+    const otherIds = asArray(targetEntity[rule.sourceReferenceField]).filter(
+      (id) => id !== sourceEntity.getId(),
+    );
+    if (otherIds.length === 0) {
+      return {
+        value: this.calculateNewValue(sourceEntity, rule),
+        hasNoCommonValue: false,
+      };
+    }
+
+    const otherEntities = await this.loadEntitiesByIds(
+      sourceEntity.getConstructor(),
+      otherIds,
+    );
+    const sharedValue =
+      otherEntities.length === otherIds.length
+        ? this.calculateCommonValue([sourceEntity, ...otherEntities], rule)
+        : undefined;
+
+    return {
+      value:
+        sharedValue ??
+        this.transformSourceValueToDatabaseFormat(
+          targetEntity[fieldId],
+          targetEntity,
+          fieldId,
+          this.entitySchemaService,
+        ),
+      hasNoCommonValue: sharedValue === undefined,
+    };
   }
 
   /**
@@ -241,10 +286,13 @@ export class AutomatedFieldUpdateConfigService {
    */
   private processTargetEntities(
     targetEntities: Entity[],
-    rule: DefaultValueConfigInheritedField,
+    {
+      rule,
+      entityType: targetEntityType,
+      fieldId: targetFieldId,
+    }: AffectedRule,
     sourceEntity: Entity,
-    targetEntityType: EntityConstructor,
-    targetFieldId: string,
+    newValues: Map<string, NewValue>,
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
@@ -265,11 +313,11 @@ export class AutomatedFieldUpdateConfigService {
         targetFieldId,
         this.entitySchemaService,
       );
-      const newValue = combineWithCurrentValue(
-        currentValue,
-        this.calculateNewValue(sourceEntity, rule),
-      );
-      if (isEqual(currentValue, newValue)) continue;
+      const { value, hasNoCommonValue } = newValues.get(targetEntity.getId());
+      const newValue = combineWithCurrentValue(currentValue, value);
+      // an existing value is kept, but the user is informed that there is nothing to suggest
+      const showNoCommonValue = hasNoCommonValue && !isEmptyValue(currentValue);
+      if (isEqual(currentValue, newValue) && !showNoCommonValue) continue;
 
       affectedEntities.push({
         id: targetEntity.getId(),
@@ -281,6 +329,7 @@ export class AutomatedFieldUpdateConfigService {
         relatedReferenceField: rule.sourceReferenceField,
         relatedReferenceFieldEntityType,
         addToExisting,
+        hasNoCommonValue: showNoCommonValue,
       });
     }
 
@@ -313,6 +362,20 @@ export class AutomatedFieldUpdateConfigService {
     return Array.isArray(sourceValue)
       ? [...new Set(sourceValue.flatMap(mapValue))]
       : mapValue(sourceValue);
+  }
+
+  /**
+   * Calculate the new value that all given source entities have in common
+   * (see {@link calculateNewValue}), ignoring empty values.
+   * @return the shared value or undefined if the values differ
+   */
+  public calculateCommonValue(
+    sourceEntities: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): any {
+    return getCommonValue(
+      sourceEntities.map((entity) => this.calculateNewValue(entity, rule)),
+    );
   }
 
   /**

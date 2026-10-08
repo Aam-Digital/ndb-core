@@ -134,6 +134,8 @@ export interface FullDefaultValueHint {
    */
   isCollectedFromLinkedRecords?: boolean;
 
+  hasNoCommonValue?: undefined;
+
   isEmpty?: undefined | false;
 }
 
@@ -143,6 +145,11 @@ export interface FullDefaultValueHint {
 export interface EmptyDefaultValueHint {
   inheritedFromField: string;
   isEmpty: true;
+
+  /**
+   * Several parent records are linked but they have no value in common to inherit.
+   */
+  hasNoCommonValue?: boolean;
 
   isInSync?: undefined;
   inheritedFromType?: undefined;

@@ -15,6 +15,7 @@ import {
   DefaultValueConfigInheritedField,
   isCollectingFromLinkedRecords,
 } from "./inherited-field-config";
+import { getCommonValue } from "./get-common-value";
 import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
@@ -121,7 +122,7 @@ export class InheritedValueService extends DefaultValueStrategy {
       form,
       targetFormControl,
       fieldConfig,
-      this.getParentRefId(form, config),
+      this.getParentRefIds(form, config),
     );
 
     // subscribe to update inherited whenever source field changes
@@ -148,7 +149,7 @@ export class InheritedValueService extends DefaultValueStrategy {
    * @param form
    * @param targetFormControl
    * @param fieldConfig
-   * @param change The new entity ID value of the source (parent ref) field.
+   * @param change The new entity ID value(s) of the source (parent ref) field.
    * @private
    */
   private async onSourceValueChange(
@@ -159,51 +160,37 @@ export class InheritedValueService extends DefaultValueStrategy {
   ) {
     const defaultConfig: DefaultValueConfigInheritedField =
       fieldConfig.defaultValue?.config;
-    if (!defaultConfig) {
-      return;
-    }
-
-    if (form.formGroup.disabled) {
-      return;
-    }
-
     if (
-      targetFormControl.dirty &&
-      !!targetFormControl.value &&
-      form.entity.isNew
+      !defaultConfig ||
+      form.formGroup.disabled ||
+      !form.entity.isNew ||
+      (targetFormControl.dirty && !!targetFormControl.value)
     ) {
       return;
     }
 
-    if (!form.entity.isNew) {
-      return;
-    }
-
-    if (!change || "") {
+    const parentIds = asArray(change ?? []).filter((id) => !!id);
+    if (parentIds.length === 0) {
       targetFormControl.setValue(undefined);
       return;
     }
 
-    // source field is array, use first element if only one element
-    if (Array.isArray(change)) {
-      if (change.length === 1) {
-        change = change[0];
-      } else {
-        targetFormControl.setValue(undefined);
-        return;
-      }
-    }
+    const parentEntities = await Promise.all(
+      parentIds.map((id) => this.loadEntity(id)),
+    );
+    // without all linked parents available, no shared value can be determined
+    const sourceValue = parentEntities.every((parent) => !!parent)
+      ? getCommonValue(
+          parentEntities.map(
+            (parent) => parent[defaultConfig.sourceValueField],
+          ),
+        )
+      : undefined;
 
-    const parentEntity = await this.loadEntity(change);
-
-    if (
-      !parentEntity ||
-      parentEntity[defaultConfig.sourceValueField] === undefined
-    ) {
+    if (sourceValue === undefined) {
       targetFormControl.setValue(undefined);
       return;
     }
-    let sourceValue = parentEntity[defaultConfig.sourceValueField];
 
     if (fieldConfig.isArray) {
       // always wrap the source value in an array
@@ -252,19 +239,21 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
-    const parentRefValue = this.getParentRefId(form, defaultConfig);
-    if (!parentRefValue) {
+    const parentRefIds = this.getParentRefIds(form, defaultConfig);
+    const hasNoCommonValue =
+      parentRefIds.length > 1 &&
+      form.inheritedParentValues.get(field.id) === undefined;
+    if (parentRefIds.length === 0 || hasNoCommonValue) {
       return {
         inheritedFromField: defaultConfig.sourceReferenceField,
         isEmpty: true,
+        hasNoCommonValue,
       };
     }
 
     return {
       inheritedFromField: defaultConfig.sourceReferenceField,
-      inheritedFromType: parentRefValue
-        ? Entity.extractTypeFromId(parentRefValue)
-        : undefined,
+      inheritedFromType: Entity.extractTypeFromId(parentRefIds[0]),
       isInSync:
         JSON.stringify(form.inheritedParentValues.get(field.id)) ===
         JSON.stringify(this.getCurrentDatabaseValue(form, field)),
@@ -340,26 +329,20 @@ export class InheritedValueService extends DefaultValueStrategy {
       form,
     );
 
-    for (let [fieldId, parentEntityIds] of linkedEntityRefs) {
-      if (parentEntityIds.length > 1) {
-        // multi-inheritance not supported (yet) -> keep values in form and stop inheritance
-        form.inheritedParentValues.delete(fieldId);
-        continue;
-      }
+    for (const [fieldId, parentEntityIds] of linkedEntityRefs) {
+      const parentEntities = await Promise.all(
+        parentEntityIds.map((id) => this.loadEntity(id)),
+      );
 
-      let parentEntity: Entity;
-      if (parentEntityIds.length === 1) {
-        parentEntity = await this.loadEntity(parentEntityIds[0]);
-      }
-
-      const config = inheritedConfigs.get(fieldId);
-      const inheritedValue =
-        this.automatedFieldUpdateConfigService.calculateNewValue(
-          parentEntity,
-          config,
-        );
-
-      form.inheritedParentValues.set(fieldId, inheritedValue);
+      form.inheritedParentValues.set(
+        fieldId,
+        parentEntities.every((parent) => !!parent)
+          ? this.automatedFieldUpdateConfigService.calculateCommonValue(
+              parentEntities,
+              inheritedConfigs.get(fieldId),
+            )
+          : undefined,
+      );
     }
   }
 
@@ -377,48 +360,31 @@ export class InheritedValueService extends DefaultValueStrategy {
     const linkedEntityRefs: Map<string, string[]> = new Map();
 
     for (const [key, defaultValueConfig] of inheritedConfigs) {
-      let linkedEntities: null | string | string[] = this.getParentRefId(
-        form,
-        defaultValueConfig,
-        false,
-      );
-
-      if (linkedEntities == null || linkedEntities.length == 0) {
-        continue;
+      const parentRefIds = this.getParentRefIds(form, defaultValueConfig);
+      if (parentRefIds.length > 0) {
+        linkedEntityRefs.set(key, parentRefIds);
       }
-
-      linkedEntityRefs.set(key, asArray(linkedEntities));
     }
 
     return linkedEntityRefs;
   }
 
   /**
-   * Get the parent reference id from the form or entity.
+   * Get the ids of the linked parent entities from the form or entity.
    * @param form
    * @param defaultConfig
-   * @param castToSingle Whether for arrays of IDs, this should be cast to a single ID only.
+   * @return the ids of all linked parent entities (empty if none are linked)
    * @private
    */
-  private getParentRefId<T extends Entity>(
+  private getParentRefIds<T extends Entity>(
     form: EntityForm<T>,
     defaultConfig: DefaultValueConfigInheritedField,
-    castToSingle = true,
-  ): string | undefined {
+  ): string[] {
     const linkedFieldValue =
       form.formGroup?.get(defaultConfig.sourceReferenceField)?.value ??
       form.entity?.[defaultConfig.sourceReferenceField];
 
-    if (!castToSingle) {
-      return linkedFieldValue;
-    }
-
-    if (Array.isArray(linkedFieldValue)) {
-      // inheritance is only supported for a single parent reference
-      return linkedFieldValue?.length === 1 ? linkedFieldValue[0] : undefined;
-    } else {
-      return linkedFieldValue;
-    }
+    return asArray(linkedFieldValue ?? []).filter((id) => !!id);
   }
 
   private async loadEntity(entityId: string): Promise<Entity | undefined> {
