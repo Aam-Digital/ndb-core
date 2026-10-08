@@ -160,23 +160,12 @@ export class InheritedValueService extends DefaultValueStrategy {
   ) {
     const defaultConfig: DefaultValueConfigInheritedField =
       fieldConfig.defaultValue?.config;
-    if (!defaultConfig) {
-      return;
-    }
-
-    if (form.formGroup.disabled) {
-      return;
-    }
-
     if (
-      targetFormControl.dirty &&
-      !!targetFormControl.value &&
-      form.entity.isNew
+      !defaultConfig ||
+      form.formGroup.disabled ||
+      !form.entity.isNew ||
+      (targetFormControl.dirty && !!targetFormControl.value)
     ) {
-      return;
-    }
-
-    if (!form.entity.isNew) {
       return;
     }
 

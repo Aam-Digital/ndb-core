@@ -186,6 +186,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
     { id: "secondary", label: "Secondary" },
   ];
 
+  function createSchool(categoryId?: string): School {
+    const school = new School();
+    school.category = TEST_SCHOOL_ENUM.find((e) => e.id === categoryId);
+    return school;
+  }
+
   let mockDialogAfterClosed = () => of([]);
   const mockDialogRef = {
     afterClosed: () => mockDialogAfterClosed(),
@@ -632,11 +638,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       groupCategory: string | undefined,
     ) {
       const school = new School();
-      const otherSchools = otherSchoolCategories.map((id) => {
-        const other = new School();
-        other.category = TEST_SCHOOL_ENUM.find((e) => e.id === id);
-        return other;
-      });
+      const otherSchools = otherSchoolCategories.map(createSchool);
       const group = new CommonValueGroup();
       group.members = [school, ...otherSchools].map((s) => s.getId());
       group.category = groupCategory;

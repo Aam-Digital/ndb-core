@@ -112,28 +112,10 @@ export class AutomatedFieldUpdateConfigService {
   private getInheritanceRulesFromDirectEntity(
     sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
-    const rules: AffectedRule[] = [];
-
-    for (const targetEntityType of this.entityRegistry.values()) {
-      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
-        if (fieldConfig.defaultValue?.mode === "inherited-field") {
-          const rule = fieldConfig.defaultValue
-            .config as DefaultValueConfigInheritedField;
-
-          if (
-            rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE
-          ) {
-            rules.push({
-              rule,
-              entityType: targetEntityType,
-              fieldId,
-            });
-          }
-        }
-      }
-    }
-
-    return rules;
+    return this.getAllRules().filter(
+      ({ rule }) =>
+        rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE,
+    );
   }
 
   /**
@@ -148,39 +130,36 @@ export class AutomatedFieldUpdateConfigService {
   private getInheritanceRulesReferencingThisEntity(
     sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
-    const rules: AffectedRule[] = [];
-
-    for (const targetEntityType of this.entityRegistry.values()) {
-      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
-        if (fieldConfig.defaultValue?.mode === "inherited-field") {
-          const rule = fieldConfig.defaultValue
-            .config as DefaultValueConfigInheritedField;
-
-          // For inheritance rules: sourceReferenceEntity is undefined
-          if (!rule?.sourceReferenceEntity && rule?.sourceReferenceField) {
-            // Check if the sourceReferenceField could reference our entity type
-            const referenceFieldConfig = targetEntityType.schema.get(
-              rule.sourceReferenceField,
-            );
-
-            // If the reference field is configured to reference our entity type
-            if (
-              referenceFieldConfig?.dataType === "entity" &&
-              referenceFieldConfig?.additional ===
-                sourceReferenceEntity.ENTITY_TYPE
-            ) {
-              rules.push({
-                rule,
-                entityType: targetEntityType,
-                fieldId,
-              });
-            }
-          }
-        }
+    return this.getAllRules().filter(({ rule, entityType }) => {
+      // For inheritance rules: sourceReferenceEntity is undefined
+      if (rule?.sourceReferenceEntity || !rule?.sourceReferenceField) {
+        return false;
       }
-    }
 
-    return rules;
+      // Check if the sourceReferenceField is configured to reference our entity type
+      const referenceFieldConfig = entityType.schema.get(
+        rule.sourceReferenceField,
+      );
+      return (
+        referenceFieldConfig?.dataType === "entity" &&
+        referenceFieldConfig?.additional === sourceReferenceEntity.ENTITY_TYPE
+      );
+    });
+  }
+
+  /**
+   * Get the inheritance and automation rules defined in the field schemas of all entity types.
+   */
+  private getAllRules(): AffectedRule[] {
+    return [...this.entityRegistry.values()].flatMap((entityType) =>
+      [...entityType.schema.entries()]
+        .filter(([, field]) => field.defaultValue?.mode === "inherited-field")
+        .map(([fieldId, field]) => ({
+          rule: field.defaultValue.config as DefaultValueConfigInheritedField,
+          entityType,
+          fieldId,
+        })),
+    );
   }
 
   /**
