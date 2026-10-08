@@ -44,12 +44,10 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
     );
   }
 
-  readonly getColor = computed(() => {
-    if (this.entity()?.getType() === "Child") {
-      return (note: Note) => note?.getColorForId(this.entity()?.getId());
-    }
-    return (note: Note) => note?.getColor();
-  });
+  /** highlight notes of a meeting where this entity was marked absent (see {@link Note.getColorForId}) */
+  readonly getColor = computed(
+    () => (note: Note) => note?.getColorForId(this.entity()?.getId()),
+  );
   newRecordFactory = this.createNewRecordFactory();
 
   override createNewRecordFactory() {

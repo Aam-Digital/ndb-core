@@ -17,14 +17,21 @@ import { DateOnlyDatatype } from "../../../core/basic-datatypes/date-only/date-o
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { ConfigurableEnumDatatype } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
-// qlty-ignore: radarlint-js:typescript:S1874 - Note still declares childrenAttendance with this deprecated datatype
-import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../../core/entity/entity-actions/entity-actions.service";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../../core/entity/database-entity.decorator";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import {
+  AttendanceLogicalStatus,
+  AttendanceStatusType,
+} from "../../../features/attendance/model/attendance-status";
+import {
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "../deprecated/legacy-note-link-fields.testing";
 
 function createTestModel(): Note {
   const n1 = new Note("2");
@@ -70,12 +77,6 @@ describe("Note", () => {
           useClass: ConfigurableEnumDatatype,
           multi: true,
         },
-        {
-          provide: DefaultDatatype,
-          // qlty-ignore: radarlint-js:typescript:S1874 - Note still declares its childrenAttendance with this deprecated datatype
-          useClass: EventAttendanceMapDatatype,
-          multi: true,
-        },
         // these datatypes only use the services below to resolve referenced records,
         // which the pure schema transformations under test never do
         {
@@ -96,7 +97,6 @@ describe("Note", () => {
     {
       _id: "Note:some-id",
 
-      childrenAttendance: [],
       relatedEntities: [],
       date: "2023-05-01",
       subject: "Note Subject",
@@ -133,6 +133,86 @@ describe("Note", () => {
 
     note.warningLevel = warningLevels.find((level) => level.id === "URGENT");
     expect(note.getColor()).toBe(getWarningLevelColor(WarningLevel.URGENT));
+  });
+
+  describe("getColorForId", () => {
+    const MEETING: InteractionType = {
+      id: "M",
+      label: "Meeting",
+      color: "#FFFFFF",
+      isMeeting: true,
+    };
+    const ABSENT: AttendanceStatusType = {
+      id: "ABSENT",
+      shortName: "A",
+      label: "Absent",
+      countAs: AttendanceLogicalStatus.ABSENT,
+    };
+    const PRESENT: AttendanceStatusType = {
+      id: "PRESENT",
+      shortName: "P",
+      label: "Present",
+      countAs: AttendanceLogicalStatus.PRESENT,
+    };
+
+    afterEach(() => {
+      removeLegacyNoteFieldsFromSchema();
+      Note.schema.delete("attendance");
+    });
+
+    function noteMarking(field: string, status: AttendanceStatusType): Note {
+      const note = new Note("n1");
+      note.category = MEETING;
+      note[field] = [new AttendanceItem(status, "", "Child:1")];
+      return note;
+    }
+
+    it("highlights an absent participant of the modern attendance field", () => {
+      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
+
+      expect(noteMarking("attendance", ABSENT).getColorForId("Child:1")).toBe(
+        getWarningLevelColor(WarningLevel.URGENT),
+      );
+    });
+
+    it("highlights an absent participant of the legacy attendance field", () => {
+      addLegacyNoteFieldsToSchema();
+
+      expect(
+        noteMarking("childrenAttendance", ABSENT).getColorForId("Child:1"),
+      ).toBe(getWarningLevelColor(WarningLevel.URGENT));
+    });
+
+    it("uses the normal color for a present participant", () => {
+      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
+
+      expect(noteMarking("attendance", PRESENT).getColorForId("Child:1")).toBe(
+        MEETING.color,
+      );
+    });
+
+    it("uses the normal color for someone who is not a participant", () => {
+      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
+
+      expect(noteMarking("attendance", ABSENT).getColorForId("Child:2")).toBe(
+        MEETING.color,
+      );
+    });
+
+    it("uses the normal color if the system has no attendance field", () => {
+      const note = new Note("n1");
+      note.category = MEETING;
+
+      expect(note.getColorForId("Child:1")).toBe(MEETING.color);
+    });
+
+    it("uses the normal color if the category is not a meeting", () => {
+      Note.schema.set("attendance", { dataType: "attendance", isArray: true });
+      const note = noteMarking("attendance", ABSENT);
+      note.category = { ...MEETING, isMeeting: false };
+
+      expect(note.getColorForId("Child:1")).toBe(MEETING.color);
+    });
   });
 
   it("transforms interactionType from config", function () {

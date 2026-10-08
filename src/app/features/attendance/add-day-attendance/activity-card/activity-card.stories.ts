@@ -1,12 +1,12 @@
 import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
-import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type";
 import { StorybookBaseModule } from "#src/app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AttendanceItem } from "../../model/attendance-item";
 import { EventWithAttendance } from "../../model/event-with-attendance";
+import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 
 export default {
   title: "Features/Attendance/Components/ActivityCard",
@@ -20,73 +20,45 @@ export default {
 
 const demoChildren = [generateChild(), generateChild(), generateChild()];
 
-const simpleEvent = Note.create(new Date(), "some meeting");
-demoChildren.forEach((c) => {
-  simpleEvent["children"].push(c.getId());
-  simpleEvent.childrenAttendance.push(
-    new AttendanceItem(undefined, "", c.getId()),
+function withParticipants(event: TestEventEntity): EventWithAttendance {
+  event.attendance = demoChildren.map(
+    (c) => new AttendanceItem(undefined, "", c.getId()),
   );
+  return new EventWithAttendance(
+    event,
+    "attendance",
+    "date",
+    "relatesTo",
+    "authors",
+    undefined,
+  );
+}
+
+const simpleEvent = TestEventEntity.create({
+  date: new Date(),
+  title: "some meeting",
 });
 
-const longEvent = Note.create(new Date(), "another meeting");
-longEvent.text =
-  "a guardians meeting with all families who are in the neighbourhood";
-longEvent.category = {
-  id: "GUARDIAN_MEETING",
-  label: "Guardians Meeting",
-  isMeeting: true,
-};
-demoChildren.forEach((c) => {
-  longEvent["children"].push(c.getId());
-  longEvent.childrenAttendance.push(
-    new AttendanceItem(undefined, "", c.getId()),
-  );
+const longEvent = TestEventEntity.create({
+  date: new Date(),
+  title:
+    "a guardians meeting with all families who are in the neighbourhood",
 });
 
-const activityEvent = Note.create(new Date(), "Coaching Batch C");
-activityEvent.relatesTo = createEntityOfType("RecurringActivity").getId();
-demoChildren.forEach((c) => {
-  activityEvent["children"].push(c.getId());
-  activityEvent.childrenAttendance.push(
-    new AttendanceItem(undefined, "", c.getId()),
-  );
+const activityEvent = TestEventEntity.create({
+  date: new Date(),
+  title: "Coaching Batch C",
+  relatesTo: createEntityOfType("RecurringActivity").getId(),
 });
 
 export const OneTimeEvent: StoryObj<ActivityCardComponent> = {
-  args: {
-    event: new EventWithAttendance(
-      simpleEvent,
-      "childrenAttendance",
-      "date",
-      "relatesTo",
-      "authors",
-      undefined,
-    ),
-  },
+  args: { event: withParticipants(simpleEvent) },
 };
 
 export const OneTimeEventComplex: StoryObj<ActivityCardComponent> = {
-  args: {
-    event: new EventWithAttendance(
-      longEvent,
-      "childrenAttendance",
-      "date",
-      "relatesTo",
-      "authors",
-      undefined,
-    ),
-  },
+  args: { event: withParticipants(longEvent) },
 };
 
 export const RecurringEvent: StoryObj<ActivityCardComponent> = {
-  args: {
-    event: new EventWithAttendance(
-      activityEvent,
-      "childrenAttendance",
-      "date",
-      "relatesTo",
-      "authors",
-      undefined,
-    ),
-  },
+  args: { event: withParticipants(activityEvent) },
 };

@@ -30,6 +30,7 @@ import {
   AttendanceStatusType,
 } from "../model/attendance-status";
 import { AttendanceItem } from "../model/attendance-item";
+import { AttendanceDatatype } from "../model/attendance.datatype";
 
 /**
  * @deprecated Use the new {@link EditAttendanceComponent} with the `attendance` datatype instead.
@@ -101,6 +102,21 @@ export class EditLegacyAttendanceComponent
     return this.formControl.parent as FormGroup;
   }
 
+  /**
+   * Name of the Note field holding the attendance details.
+   *
+   * `Note` no longer declares `childrenAttendance` in code, so this is read from the
+   * (config-extended) schema of systems that still have a legacy attendance field.
+   */
+  private get attendanceField(): string | undefined {
+    return AttendanceDatatype.detectFieldInEntity(Note);
+  }
+
+  /** the attendance list of the form, or undefined if this system has no attendance field anymore */
+  private get attendanceList(): AttendanceItem[] | undefined {
+    return this.parent.get(this.attendanceField ?? "")?.value ?? undefined;
+  }
+
   constructor() {
     super();
     const screenWithObserver = inject(ScreenWidthObserver);
@@ -112,39 +128,36 @@ export class EditLegacyAttendanceComponent
   }
 
   ngOnInit() {
+    const attendanceField = this.attendanceField;
     const category = this.parent.get(
       "category",
     ) as FormControl<InteractionType>;
-    if (category) {
+    if (category && attendanceField) {
       category.valueChanges
         .pipe(startWith(category.value), untilDestroyed(this))
         .subscribe((val) => {
           this.showAttendance.set(!!val?.isMeeting);
           if (this.showAttendance()) {
-            let childrenAttendanceForm = new FormControl(
-              this.entity()?.copy()?.["childrenAttendance"],
+            const attendanceForm = new FormControl<AttendanceItem[]>(
+              this.entity()?.copy()?.[attendanceField] ?? [],
             );
-            this.parent.addControl(
-              "childrenAttendance",
-              childrenAttendanceForm,
-            );
+            this.parent.addControl(attendanceField, attendanceForm);
           } else {
-            this.parent.removeControl("childrenAttendance");
+            this.parent.removeControl(attendanceField);
           }
         });
     }
   }
 
   getAttendance(childId: string) {
-    const attendanceList: AttendanceItem[] =
-      this.parent.get("childrenAttendance").value;
-    let attendance = attendanceList.find(
+    const attendanceList = this.attendanceList;
+    let attendance = attendanceList?.find(
       (item) => item.participant === childId,
     );
     if (!attendance) {
       attendance = new AttendanceItem();
       attendance.participant = childId;
-      attendanceList.push(attendance);
+      attendanceList?.push(attendance);
     }
     return attendance;
   }
@@ -156,11 +169,9 @@ export class EditLegacyAttendanceComponent
       return;
     }
     children.splice(index, 1);
-    const attendanceList: AttendanceItem[] =
-      this.parent.get("childrenAttendance").value;
-    const attIndex = attendanceList.findIndex(
-      (item) => item.participant === id,
-    );
+    const attendanceList = this.attendanceList;
+    const attIndex =
+      attendanceList?.findIndex((item) => item.participant === id) ?? -1;
     if (attIndex >= 0) {
       attendanceList.splice(attIndex, 1);
     }

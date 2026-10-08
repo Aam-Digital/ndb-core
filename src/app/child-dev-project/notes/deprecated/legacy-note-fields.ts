@@ -52,3 +52,30 @@ export const LEGACY_NOTE_FIELDS: LegacyNoteField[] = [
     labels: { en: "Groups", de: "Gruppen", fr: "Groupes" },
   },
 ];
+
+/**
+ * Snapshot of the deprecated `childrenAttendance` field that used to be declared on the `Note` class.
+ *
+ * Unlike the link fields above this one was never shown in a view and never had a label:
+ * it was edited through the `EditLegacyAttendance` component of the `children` field
+ * and read by the roll-call UI of event types based on `Note`.
+ *
+ * Systems that still rely on it have the definition written into their own `entity:Note` config
+ * by the `oneoff-20261008-note-legacy-child-school-fields` CLI migration.
+ */
+export const LEGACY_NOTE_ATTENDANCE_FIELD: {
+  field: string;
+  definition: EntitySchemaField;
+} = {
+  field: "childrenAttendance",
+  definition: {
+    dataType: "event-attendance-map",
+    additional: {
+      participant: {
+        dataType: "entity",
+        additional: ["Child"],
+      },
+    },
+    anonymize: "retain",
+  },
+};

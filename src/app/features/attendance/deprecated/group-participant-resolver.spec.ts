@@ -93,7 +93,7 @@ describe("GroupParticipantResolverService (deprecated)", () => {
 
       const testNoteWithSchool = Note.create(date);
       testNoteWithSchool["children"] = ["1", "2"];
-      testNoteWithSchool.childrenAttendance = [
+      testNoteWithSchool["childrenAttendance"] = [
         new AttendanceItem(undefined, "", "1"),
         new AttendanceItem(undefined, "", "2"),
       ];
@@ -106,7 +106,7 @@ describe("GroupParticipantResolverService (deprecated)", () => {
       expect(actualEvents[0].getId()).toBe(testNoteWithSchool.getId());
 
       const note = actualEvents[0] as Note;
-      expect(note.childrenAttendance).toHaveLength(2);
+      expect(note["childrenAttendance"]).toHaveLength(2);
       expect(note["children"]).toEqual(expect.arrayContaining(["1", "2"]));
       expect(note["schools"]).toEqual([linkedSchoolId]);
     } finally {

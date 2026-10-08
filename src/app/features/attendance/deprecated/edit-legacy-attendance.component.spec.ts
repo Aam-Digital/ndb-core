@@ -11,6 +11,10 @@ import { InteractionType } from "#src/app/child-dev-project/notes/model/interact
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EditLegacyAttendanceComponent } from "./edit-legacy-attendance.component";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
+import {
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "#src/app/child-dev-project/notes/deprecated/legacy-note-link-fields.testing";
 
 describe("EditLegacyAttendanceComponent", () => {
   let component: EditLegacyAttendanceComponent;
@@ -22,6 +26,9 @@ describe("EditLegacyAttendanceComponent", () => {
   let childrenEntities: Entity[];
 
   beforeEach(async () => {
+    // this deprecated component only applies to systems that still have the legacy
+    // children / childrenAttendance fields in their config
+    addLegacyNoteFieldsToSchema();
     childrenEntities = [new TestEntity("child1"), new TestEntity("child2")];
 
     await TestBed.configureTestingModule({
@@ -50,6 +57,8 @@ describe("EditLegacyAttendanceComponent", () => {
     fixture.componentRef.setInput("entity", new Note());
     fixture.detectChanges();
   });
+
+  afterEach(() => removeLegacyNoteFieldsFromSchema());
 
   it("should show the child meeting note attendance component when the event is a meeting", () => {
     categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
@@ -93,6 +102,34 @@ describe("EditLegacyAttendanceComponent", () => {
         (item) => item.participant === childrenEntities[0].getId(),
       ),
     ).toBe(a1);
+  });
+
+  it("should not add an attendance control if the system has no legacy attendance field", () => {
+    removeLegacyNoteFieldsFromSchema();
+    // a form group of its own, so the component of the shared fixture does not write into it
+    const ownCategoryForm = new FormControl<InteractionType>(
+      defaultInteractionTypes.find((c) => c.isMeeting),
+    );
+    const ownChildrenForm = new FormControl(
+      childrenEntities.map((c) => c.getId()),
+    );
+    const ownParentForm = new FormGroup({
+      category: ownCategoryForm,
+      children: ownChildrenForm,
+    });
+
+    const freshFixture = TestBed.createComponent(
+      EditLegacyAttendanceComponent,
+    );
+    freshFixture.componentInstance.ngControl = {
+      control: ownChildrenForm,
+    } as any;
+    freshFixture.componentRef.setInput("formFieldConfig", { id: "children" });
+    freshFixture.componentRef.setInput("entity", new Note());
+    freshFixture.detectChanges();
+
+    expect(ownParentForm.get("childrenAttendance")).toBeNull();
+    expect(freshFixture.componentInstance.showAttendance()).toBe(false);
   });
 
   it("should mark form as dirty when some attendance detail was changed", () => {

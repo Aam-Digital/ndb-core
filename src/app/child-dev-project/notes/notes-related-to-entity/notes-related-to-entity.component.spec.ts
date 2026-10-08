@@ -69,13 +69,13 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(matchesFilter(unrelatedNote)).toBe(false);
   });
 
-  it("should use the attendance color function when passing a child", () => {
-    const note = new Note();
-    vi.spyOn(note, "getColorForId");
-    const entity = createEntityOfType("Child");
+  it("should color notes by the related entity's attendance, whatever its type", () => {
+    const entity = createEntityOfType("School");
     fixture.componentRef.setInput("entity", entity);
     fixture.detectChanges();
 
+    const note = new Note();
+    vi.spyOn(note, "getColorForId");
     component.getColor()(note);
 
     expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());

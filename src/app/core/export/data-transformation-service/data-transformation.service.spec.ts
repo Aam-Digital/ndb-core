@@ -425,21 +425,12 @@ describe("DataTransformationService", () => {
   async function createNoteInDB(
     subject: string,
     children: Entity[] = [],
-    attendanceStatus: string[] = [],
   ): Promise<Note> {
     const note = new Note();
     note.subject = subject;
     note.date = new Date();
     note["children"] = children.map((child) => child.getId());
 
-    for (let i = 0; i < attendanceStatus.length; i++) {
-      const attendance = new AttendanceItem();
-      attendance.participant = note["children"][i];
-      attendance.status = defaultAttendanceStatusTypes.find(
-        (s) => s.id === attendanceStatus[i],
-      );
-      note.childrenAttendance.push(attendance);
-    }
     await entityMapper.save(note);
     return note;
   }

@@ -24,6 +24,7 @@ import {
 } from "./interaction-type.interface";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { AttendanceLogicalStatus } from "#src/app/features/attendance/model/attendance-status";
+import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
@@ -36,7 +37,11 @@ import { asArray } from "../../../utils/asArray";
  * Previously, `Note` has also functioned to record an event with an attendance list of participants.
  * That functionality is getting generalized and decoupled from this specific entity.
  * Add a "attendance" type field to any entity type instead.
- * Attendance-related fields and methods here are currently kept (deprecated) for backwards compatibility until all existing data is migrated.
+ *
+ * `Note` therefore no longer declares the legacy `children`, `schools` and `childrenAttendance` fields.
+ * Systems that still hold data in them have the definitions written into their own `entity:Note` config
+ * by the `oneoff-20261008-note-legacy-child-school-fields` CLI migration
+ * (see `deprecated/legacy-note-fields.ts`).
  */
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -87,23 +92,6 @@ export class Note extends Entity {
     );
     return matchingField?.[0] ?? "relatedEntities";
   }
-
-  /**
-   * optional additional information about attendance at this event for each of the linked children
-   *
-   * @deprecated Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an `attendance` type field.
-   */
-  @DatabaseField({
-    anonymize: "retain",
-    dataType: "event-attendance-map",
-    additional: {
-      participant: {
-        dataType: "entity",
-        additional: ["Child"],
-      },
-    },
-  })
-  childrenAttendance: AttendanceItem[] = [];
 
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
@@ -207,17 +195,26 @@ export class Note extends Entity {
   /**
    * Special color override to reflect the attendance status for a specific participant.
    *
-   * @deprecated Attendance logic will be decoupled from Note and only use the new `attendance` datatype
+   * Looks at whichever attendance field the (config-extended) schema has,
+   * i.e. the modern `attendance` datatype as well as the legacy `event-attendance-map`.
    */
-  public getColorForId(childId: string): string {
-    if (
-      this.category?.isMeeting &&
-      this.childrenAttendance.find((item) => item.participant === childId)
-        ?.status.countAs === AttendanceLogicalStatus.ABSENT
-    ) {
-      // child is absent, highlight the entry
+  public getColorForId(participantId: string): string {
+    if (this.category?.isMeeting && this.isMarkedAbsent(participantId)) {
+      // participant is absent, highlight the entry
       return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
+  }
+
+  private isMarkedAbsent(participantId: string): boolean {
+    return AttendanceDatatype.detectAllFieldsInEntity(
+      this.getConstructor(),
+    ).some(({ fieldId }) =>
+      (this[fieldId] as AttendanceItem[] | undefined)?.some(
+        (item) =>
+          item?.participant === participantId &&
+          item?.status?.countAs === AttendanceLogicalStatus.ABSENT,
+      ),
+    );
   }
 }
