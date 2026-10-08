@@ -1727,8 +1727,6 @@
   "7892910188550548387": "In dieser Konfiguration unterstützt kein Datensatztyp Nutzerkonten, daher wurde kein Profil für Ihr Konto erstellt.",
   "5797725100345356958": "Ihr Profil \"{$profileName}\" wurde erstellt, konnte aber nicht automatisch mit Ihrem Konto verknüpft werden. Ein Administrator kann die Verknüpfung später in der Benutzerverwaltung vornehmen.",
   "230037563227577649": "Dieses Feld sollte in Formularen nur dann angezeigt werden, wenn der Datensatz aktuell einer Bedingung entspricht, die auf den Werten anderer Felder basiert.",
-  "4627583257713875293": "Sichtbarkeit einschränken",
-  "3951589631848438004": "Bedingung konfiguriert",
   "1128485605127100061": "Dieses Feld wird nur angezeigt, wenn der Datensatz folgende Bedingungen erfüllt ...",
   "2343990751852583823": "Erfüllt Bedingung, wenn mindestens eine der folgenden Bedingungen zutrifft (\"oder\"-Bedingungen).",
   "3802391394601762698": "Erfüllt Bedingung, wenn alle der folgenden Bedingungen erfüllt sind (\"und\"-Bedingungen).",
@@ -1797,5 +1795,11 @@
   "8886553422355876621": "The saved records are listed in the import history, where you can undo them. Please undo them there before importing this file again, to avoid creating duplicates.",
   "4508316916016535173": "The saved records could not be recorded in the import history, so they cannot be undone there. Please review the existing data before importing this file again, to avoid creating duplicates.",
   "2827542420902861147": "Import completed with errors",
-  "7708217896459321232": "Import only partially completed"
+  "7708217896459321232": "Import only partially completed",
+  "2692186539299745834": "Edit Display Condition",
+  "6883194915781783553": "Create Display Condition",
+  "2683918309637121888": "Condition configured: this field group is only shown while the record matches it.",
+  "4391519169795872812": "Condition configured: this field is only shown while the record matches it.",
+  "7091670994840297167": "Only show this field group in forms if the record currently matches a condition, based on the values of other fields.",
+  "2627044535960543081": "This field group is shown only while the record matches..."
 }
