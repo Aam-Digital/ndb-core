@@ -31,6 +31,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { lastValueFrom } from "rxjs";
+import { DataFilter } from "../../../filter/filters/filters";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -43,6 +44,7 @@ import { EntityFieldLabelComponent } from "../../../entity/entity-field-label/en
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AdminEntityService } from "../../admin-entity.service";
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
+import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 import {
   AdminEntityFieldComponent,
@@ -85,6 +87,7 @@ type FieldDragDropEvent = CdkDragDrop<
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
+    AdminDisplayConditionButtonComponent,
   ],
 })
 export class AdminEntityFormComponent {
@@ -563,6 +566,20 @@ export class AdminEntityFormComponent {
   updateGroupHeader(i: number, header: string) {
     this.fieldGroups.update((groups) =>
       groups.map((g, idx) => (idx === i ? { ...g, header } : g)),
+    );
+  }
+
+  updateGroupDisplayCondition(
+    group: FieldGroup,
+    condition: DataFilter<any> | null,
+  ) {
+    this.fieldGroups.update((groups) =>
+      groups.map((g) => {
+        if (g !== group) return g;
+        const updated: FieldGroup = { ...g, displayCondition: condition };
+        if (!condition) delete updated.displayCondition;
+        return updated;
+      }),
     );
   }
 

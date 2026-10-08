@@ -684,3 +684,60 @@ test("Closing an untouched new-entity dialog does not prompt discard-changes, bu
   await expect(discardDialog).not.toBeVisible();
   await expect(dialog).toBeVisible();
 });
+
+test("Display conditions show a single field and a whole field group only while the record matches", async ({
+  page,
+}) => {
+  await loadApp(page, generateUsers());
+
+  // configured in the all-features config: "Number Field" is only shown for "Alipore",
+  // the group of date fields only for "Tollygunge"
+  await page.getByRole("navigation").getByText("Schools").click();
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page.getByText("Configure Data Structure").click();
+  await page.getByText("Details View & Fields").click();
+
+  await page
+    .locator(".admin-form-column")
+    .filter({ hasText: "Date Only Field" })
+    .getByRole("button", { name: "Display Condition" })
+    .click();
+  const conditionDialog = page.getByRole("dialog");
+  await expect(
+    conditionDialog.getByText(
+      "This field group is shown only while the record matches",
+    ),
+  ).toBeVisible();
+  await expect(
+    conditionDialog.getByText(CENTER_TOLLYGUNGE.label, { exact: true }),
+  ).toBeVisible();
+  await argosScreenshot(page, "admin-field-group-display-condition");
+  await conditionDialog.getByRole("button", { name: "Cancel" }).click();
+  await expect(conditionDialog).not.toBeVisible();
+
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await page.getByRole("button", { name: "Add New" }).click();
+
+  const conditionalField = page.locator("#entity-field__numberField");
+  const fieldOfConditionalGroup = page.locator("#entity-field__dateOnlyField");
+  const enumDropdown = page.locator("#entity-field__enumDropdown");
+
+  await expect(page.locator("#entity-field__longTextField")).toBeVisible();
+  await expect(conditionalField).not.toBeVisible();
+  await expect(fieldOfConditionalGroup).not.toBeVisible();
+
+  await enumDropdown.locator(".fa-caret-down").click();
+  await page
+    .getByRole("option", { name: CENTER_ALIPORE.label, exact: true })
+    .click();
+  await expect(conditionalField).toBeVisible();
+  await expect(fieldOfConditionalGroup).not.toBeVisible();
+
+  await enumDropdown.locator(".fa-caret-down").click();
+  await page
+    .getByRole("option", { name: CENTER_TOLLYGUNGE.label, exact: true })
+    .click();
+  await expect(conditionalField).not.toBeVisible();
+  await expect(fieldOfConditionalGroup).toBeVisible();
+  await expect(page.locator("#entity-field__dateField")).toBeVisible();
+});

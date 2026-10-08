@@ -24,7 +24,14 @@
               [title]="group.header"
               (titleChange)="updateGroupHeader(i, $event)"
               (remove)="removeGroup(i)"
-            ></app-admin-section-header>
+            >
+              <app-admin-display-condition-button
+                target="fieldGroup"
+                [entityType]="entityType()"
+                [condition]="group.displayCondition"
+                (conditionChange)="updateGroupDisplayCondition(group, $event)"
+              ></app-admin-display-condition-button>
+            </app-admin-section-header>
           </div>
         }
         <div
