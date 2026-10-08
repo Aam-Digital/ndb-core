@@ -717,4 +717,5 @@ test("Display conditions show a single field and a whole field group only while 
   await expect(conditionalField).not.toBeVisible();
   await expect(fieldOfConditionalGroup).toBeVisible();
   await expect(page.locator("#entity-field__dateField")).toBeVisible();
+  await argosScreenshot(page, "entity-form-display-conditions");
 });
