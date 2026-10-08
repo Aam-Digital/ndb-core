@@ -1,3 +1,4 @@
+import { color } from "../lib/colors.js";
 import { type OrgOutcome, OrgRunner } from "../lib/org-runner.js";
 import type {
   MigrationDefinition,
@@ -22,20 +23,35 @@ const STATUS_TAGS: Record<MigrationResult["status"], string> = {
   failed: "FAILED   ",
 };
 
+const STATUS_COLORS: Record<
+  MigrationResult["status"],
+  Parameters<typeof color>[0]
+> = {
+  ok: "green",
+  "no-change": "blue",
+  "dry-run": "cyan",
+  partial: "yellow",
+  failed: "red",
+};
+
 /** Prints a single org's outcome line (plus warnings/details), as each org is processed. */
 export function printOutcome(
   { org, result: { result, writeStats } }: OrgOutcome<MigrationOutcome>,
   showWriteStats: boolean,
   verbose = false,
 ): void {
-  process.stdout.write(`  ${OrgRunner.orgLabel(org).padEnd(50)}`);
+  // pad before coloring: escape codes would otherwise count towards the width
+  process.stdout.write(
+    `  ${color("bold", OrgRunner.orgLabel(org).padEnd(50))}`,
+  );
   const suffix =
     showWriteStats && writeStats.intended > 0
       ? `  (${writeStats.succeeded}/${writeStats.intended} written)`
       : "";
-  console.log((STATUS_TAGS[result.status] ?? result.status) + suffix);
+  const tag = STATUS_TAGS[result.status] ?? result.status;
+  console.log(color(STATUS_COLORS[result.status] ?? "white", tag) + suffix);
   if (result.warnings?.length) {
-    result.warnings.forEach((w) => console.log(`    ! ${w}`));
+    result.warnings.forEach((w) => console.log(color("yellow", `    ! ${w}`)));
   }
   if (verbose && result.details) {
     String(result.details)
@@ -61,7 +77,19 @@ export function printSummary(
 
   console.log("\n" + "─".repeat(60));
   console.log(
-    `Summary: ${counts.ok} changed, ${counts.noChange} no-change, ${counts.partial} partial, ${counts.failed} failed`,
+    "Summary: " +
+      [
+        counts.ok > 0
+          ? color("green", `${counts.ok} changed`)
+          : `${counts.ok} changed`,
+        `${counts.noChange} no-change`,
+        counts.partial > 0
+          ? color("yellow", `${counts.partial} partial`)
+          : `${counts.partial} partial`,
+        counts.failed > 0
+          ? color("red", `${counts.failed} failed`)
+          : `${counts.failed} failed`,
+      ].join(", "),
   );
   console.log("─".repeat(60) + "\n");
 }

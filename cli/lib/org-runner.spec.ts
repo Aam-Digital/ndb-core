@@ -60,6 +60,35 @@ describe("OrgRunner.checkConnectivity", () => {
   });
 });
 
+describe("OrgRunner.filterOrgs", () => {
+  const orgs = [
+    { url: "a.example.com", password: "pw", name: "a", category: "prod" },
+    { url: "b.example.com", password: "pw", name: "b", category: "staging" },
+    { url: "c.example.com", password: "pw", name: "c", category: "" },
+  ];
+
+  it("keeps only orgs matching --category", () => {
+    const result = OrgRunner.filterOrgs(orgs, { category: "prod" });
+    expect(result.map((o) => o.url)).toEqual(["a.example.com"]);
+  });
+
+  it("drops orgs matching --exclude-category", () => {
+    const result = OrgRunner.filterOrgs(orgs, { excludeCategory: "staging" });
+    expect(result.map((o) => o.url)).toEqual([
+      "a.example.com",
+      "c.example.com",
+    ]);
+  });
+
+  it("combines --category and --exclude-category", () => {
+    const result = OrgRunner.filterOrgs(orgs, {
+      category: "prod",
+      excludeCategory: "prod",
+    });
+    expect(result).toEqual([]);
+  });
+});
+
 describe("OrgRunner.sortByCategory", () => {
   it("groups orgs by category, sorted alphabetically", () => {
     const orgs = [

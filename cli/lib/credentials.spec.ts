@@ -213,6 +213,38 @@ describe("getCredentials", () => {
     ]);
   });
 
+  it("drops orgs matching --exclude-category, before resolving urls", async () => {
+    vi.stubEnv("DOMAIN", "");
+    const raw = JSON.stringify([
+      { name: "broken", password: "pw1", category: "internal" },
+      {
+        name: "org-b",
+        password: "pw2",
+        url: "org-b.example.com",
+        category: "prod",
+      },
+    ]);
+    vi.mocked(fs.existsSync).mockImplementation((p) =>
+      String(p).endsWith("credentials.json"),
+    );
+    vi.mocked(fs.readFileSync).mockReturnValue(raw);
+
+    const { getCredentials } = await import("./credentials");
+    const result = await getCredentials(undefined, {
+      excludeCategory: "internal",
+    });
+
+    expect(result.orgs).toEqual([
+      {
+        url: "org-b.example.com",
+        name: "org-b",
+        password: "pw2",
+        username: undefined,
+        category: "prod",
+      },
+    ]);
+  });
+
   it("keeps original file order's index in error messages even when filtered", async () => {
     vi.stubEnv("DOMAIN", "aam-digital.com");
     const raw = JSON.stringify([

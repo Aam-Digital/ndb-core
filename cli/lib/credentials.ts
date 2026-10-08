@@ -55,6 +55,7 @@ let sessionPassphrase: string | undefined;
 export interface OrgFilter {
   org?: string;
   category?: string;
+  excludeCategory?: string;
 }
 
 /**
@@ -82,6 +83,12 @@ function matchesFilter(
     if (!nameMatches && !urlMatches && !derivedUrlMatches) return false;
   }
   if (filter.category && (c.category?.trim() ?? "") !== filter.category) {
+    return false;
+  }
+  if (
+    filter.excludeCategory &&
+    (c.category?.trim() ?? "") === filter.excludeCategory
+  ) {
     return false;
   }
   return true;
