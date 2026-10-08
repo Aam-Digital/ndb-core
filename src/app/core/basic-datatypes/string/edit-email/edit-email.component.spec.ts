@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EmailClientService } from "#src/app/features/email-client/email-client.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EditEmailComponent } from "./edit-email.component";
 
@@ -11,6 +12,9 @@ describe("EditEmailComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EditEmailComponent, NoopAnimationsModule],
+      providers: [
+        { provide: EmailClientService, useValue: { executeMailto: vi.fn() } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditEmailComponent);
