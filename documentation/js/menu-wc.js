@@ -741,6 +741,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AdminDefaultValueStaticComponent.html" data-type="entity-link" >AdminDefaultValueStaticComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/AdminDisplayConditionButtonComponent.html" data-type="entity-link" >AdminDisplayConditionButtonComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/AdminEditDescriptionOnlyFieldComponent.html" data-type="entity-link" >AdminEditDescriptionOnlyFieldComponent</a>
                             </li>
                             <li class="link">
