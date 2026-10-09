@@ -8,11 +8,14 @@ import {
   DefaultValueStrategy,
 } from "../../core/default-values/default-value-strategy.interface";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { DefaultValueMode } from "../../core/default-values/default-value-config";
 import { DefaultValueHint } from "../../core/default-values/default-value-service/default-value.service";
 import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
-import { DefaultValueConfigInheritedField } from "./inherited-field-config";
+import {
+  DefaultValueConfigInheritedField,
+  isCollectingFromLinkedRecords,
+} from "./inherited-field-config";
+import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
 import { Logging } from "../../core/logging/logging.service";
@@ -51,6 +54,42 @@ export class InheritedValueService extends DefaultValueStrategy {
 
   override async initEntityForm<T extends Entity>(form: EntityForm<T>) {
     await this.updateLinkedEntities(form);
+    await this.collectValuesOfLinkedRecords(form);
+  }
+
+  /**
+   * For fields collecting the values of all records that link to this entity,
+   * load these records once to be able to compare and sync the field's value.
+   */
+  private async collectValuesOfLinkedRecords<T extends Entity>(
+    form: EntityForm<T>,
+  ) {
+    if (form.entity.isNew) {
+      return;
+    }
+
+    const collectingFields = form.fieldConfigs.filter(
+      isCollectingFromLinkedRecords,
+    );
+    await Promise.all(
+      collectingFields.map(async (field) =>
+        form.inheritedParentValues.set(
+          field.id,
+          await this.automatedFieldUpdateConfigService
+            .collectValuesOfLinkedRecords(
+              form.entity,
+              field.defaultValue.config,
+            )
+            .catch((error) =>
+              Logging.warn(
+                "InheritedValueService could not load linked records for collected field",
+                { field: field.id },
+                error,
+              ),
+            ),
+        ),
+      ),
+    );
   }
 
   /**
@@ -200,6 +239,10 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
+    if (isCollectingFromLinkedRecords(field)) {
+      return this.getCollectedValuesUiHint(form, field, defaultConfig);
+    }
+
     // Only show the inheritance UI hint for actual inheritance configs (not automation)
     // Inheritance has sourceReferenceField but NO sourceReferenceEntity
     if (
@@ -222,31 +265,70 @@ export class InheritedValueService extends DefaultValueStrategy {
       inheritedFromType: parentRefValue
         ? Entity.extractTypeFromId(parentRefValue)
         : undefined,
-      isInSync: (() => {
-        const databaseValue = form.inheritedParentValues.get(field.id);
-        const currentValue = form.formGroup.get(field.id)?.value;
-        // convert current value to database format for comparison
-        const currentDatabaseValue =
-          this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
-            currentValue,
-            form.entity,
-            field.id,
-            this.entitySchemaService,
-          );
-        return (
-          JSON.stringify(databaseValue) === JSON.stringify(currentDatabaseValue)
-        );
-      })(),
-      syncFromParentField: () => {
-        const databaseValue = form.inheritedParentValues.get(field.id);
-        // convert database format back to entity format for the form control
-        const entityValue = this.entitySchemaService.valueToEntityFormat(
-          databaseValue,
+      isInSync:
+        JSON.stringify(form.inheritedParentValues.get(field.id)) ===
+        JSON.stringify(this.getCurrentDatabaseValue(form, field)),
+      syncFromParentField: () =>
+        this.setDatabaseValueToForm(
+          form,
           field,
-        );
-        form.formGroup.get(field.id).setValue(entityValue);
-      },
+          form.inheritedParentValues.get(field.id),
+        ),
     };
+  }
+
+  /**
+   * Hint for a field collecting the values of all records that link to this entity.
+   * No hint is shown as long as there are no values of linked records to sync from.
+   */
+  private getCollectedValuesUiHint<T extends Entity>(
+    form: EntityForm<T>,
+    field: FormFieldConfig,
+    config: DefaultValueConfigInheritedField,
+  ): DefaultValueHint | undefined {
+    const collectedValues: any[] = form.inheritedParentValues.get(field.id);
+    if (!collectedValues?.length) {
+      return;
+    }
+
+    return {
+      inheritedFromField: config.sourceReferenceField,
+      inheritedFromType: config.sourceReferenceEntity,
+      isCollectedFromLinkedRecords: true,
+      // the order of values does not matter here
+      isInSync:
+        xorWith(
+          collectedValues,
+          asArray(this.getCurrentDatabaseValue(form, field) ?? []),
+          isEqual,
+        ).length === 0,
+      syncFromParentField: () =>
+        this.setDatabaseValueToForm(form, field, collectedValues),
+    };
+  }
+
+  private getCurrentDatabaseValue<T extends Entity>(
+    form: EntityForm<T>,
+    field: FormFieldConfig,
+  ) {
+    return this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
+      form.formGroup.get(field.id)?.value,
+      form.entity,
+      field.id,
+      this.entitySchemaService,
+    );
+  }
+
+  private setDatabaseValueToForm<T extends Entity>(
+    form: EntityForm<T>,
+    field: FormFieldConfig,
+    databaseValue: any,
+  ) {
+    form.formGroup
+      .get(field.id)
+      .setValue(
+        this.entitySchemaService.valueToEntityFormat(databaseValue, field),
+      );
   }
 
   private async updateLinkedEntities<T extends Entity>(form: EntityForm<T>) {
@@ -367,21 +449,20 @@ export class InheritedValueService extends DefaultValueStrategy {
 }
 
 /**
- * Get the default value configs filtered for the given mode.
+ * Get the default value configs filtered for the given mode,
+ * excluding automation rules (with sourceReferenceEntity), which are handled by the AutomatedFieldUpdateConfigService.
  * @param fieldConfigs
  */
 export function getConfigsForInheritedMode(
   fieldConfigs: FormFieldConfig[],
 ): Map<string, DefaultValueConfigInheritedField> {
-  const mode: DefaultValueMode[] = ["inherited-field"];
-
-  let configs: Map<string, DefaultValueConfigInheritedField> = new Map();
-
-  for (const field of fieldConfigs) {
-    if (mode.includes(field.defaultValue?.mode)) {
-      configs.set(field.id, field.defaultValue?.config);
-    }
-  }
-
-  return configs;
+  return new Map(
+    fieldConfigs
+      .filter(
+        (field) =>
+          field.defaultValue?.mode === "inherited-field" &&
+          !field.defaultValue.config?.sourceReferenceEntity,
+      )
+      .map((field) => [field.id, field.defaultValue.config]),
+  );
 }

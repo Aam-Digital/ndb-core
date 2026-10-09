@@ -52,6 +52,9 @@ export interface AffectedEntity {
 
   form?: EntityForm<Entity>;
   selectedField?: FormFieldConfig;
+
+  /** Whether the new value only adds to the existing values (never removing any) */
+  addToExisting?: boolean;
 }
 
 /**

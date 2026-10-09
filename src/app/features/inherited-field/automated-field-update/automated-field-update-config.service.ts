@@ -8,9 +8,15 @@ import {
   AutomatedFieldUpdateComponent,
 } from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
-import { DefaultValueConfigInheritedField } from "../inherited-field-config";
+import {
+  DefaultValueConfigInheritedField,
+  isCollectingFromLinkedRecords,
+} from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { isEqual } from "lodash-es";
+import { asArray } from "#src/app/utils/asArray";
+import { addMissingValues } from "../add-missing-values";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -245,24 +251,37 @@ export class AutomatedFieldUpdateConfigService {
     const relatedReferenceFieldEntityType = rule.sourceReferenceEntity
       ? sourceEntityType
       : targetEntityType;
+    const fieldConfig = targetEntityType.schema.get(targetFieldId);
+    const addToExisting = isCollectingFromLinkedRecords(fieldConfig);
+    const combineWithCurrentValue = addToExisting
+      ? addMissingValues
+      : (_currentValue: any, newValue: any) => newValue;
 
     for (const targetEntity of targetEntities) {
-      const newValue = this.calculateNewValue(sourceEntity, rule);
+      // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
+      const currentValue = this.transformSourceValueToDatabaseFormat(
+        targetEntity[targetFieldId],
+        targetEntity,
+        targetFieldId,
+        this.entitySchemaService,
+      );
+      const newValue = combineWithCurrentValue(
+        currentValue,
+        this.calculateNewValue(sourceEntity, rule),
+      );
+      if (isEqual(currentValue, newValue)) continue;
 
-      if (targetEntity[targetFieldId] !== newValue) {
-        const fieldConfig = targetEntityType.schema.get(targetFieldId);
-
-        affectedEntities.push({
-          id: targetEntity.getId(),
-          newValue: newValue,
-          targetFieldId,
-          targetEntityType,
-          selectedField: { ...fieldConfig, id: targetFieldId },
-          affectedEntity: targetEntity,
-          relatedReferenceField: rule.sourceReferenceField,
-          relatedReferenceFieldEntityType,
-        });
-      }
+      affectedEntities.push({
+        id: targetEntity.getId(),
+        newValue: newValue,
+        targetFieldId,
+        targetEntityType,
+        selectedField: { ...fieldConfig, id: targetFieldId },
+        affectedEntity: targetEntity,
+        relatedReferenceField: rule.sourceReferenceField,
+        relatedReferenceFieldEntityType,
+        addToExisting,
+      });
     }
 
     return affectedEntities;
@@ -278,25 +297,44 @@ export class AutomatedFieldUpdateConfigService {
     sourceEntity: Entity,
     rule: DefaultValueConfigInheritedField,
   ): any {
-    if (!sourceEntity) {
-      return undefined;
-    }
-
-    const sourceValue = sourceEntity[rule.sourceValueField];
-    let newValue = sourceValue;
-
-    if (rule.valueMapping && sourceValue) {
-      const mappingKey = sourceValue.id;
-      newValue = rule.valueMapping[mappingKey] || sourceValue;
-
-      return newValue;
-    }
-
-    return this.transformSourceValueToDatabaseFormat(
-      newValue,
+    const sourceValue = this.transformSourceValueToDatabaseFormat(
+      sourceEntity?.[rule.sourceValueField],
       sourceEntity,
       rule.sourceValueField,
       this.entitySchemaService,
+    );
+
+    if (!rule.valueMapping) {
+      return sourceValue;
+    }
+
+    const mapValue = (value: string) => rule.valueMapping[value] ?? value;
+    // flatMap: mapped values are arrays if the target field is multi-select
+    return Array.isArray(sourceValue)
+      ? [...new Set(sourceValue.flatMap(mapValue))]
+      : mapValue(sourceValue);
+  }
+
+  /**
+   * Collect the values of all records that link to the given entity as defined by the automation rule
+   * (e.g. the cities of all children linking to a school), skipping duplicates.
+   * @param entity The record that the related records link to
+   * @param rule The automation rule (with sourceReferenceEntity)
+   * @return the combined values in database format
+   */
+  public async collectValuesOfLinkedRecords(
+    entity: Entity,
+    rule: DefaultValueConfigInheritedField,
+  ): Promise<any[]> {
+    const linkedRecords = (
+      await this.entityMapper.loadType(rule.sourceReferenceEntity)
+    ).filter((record) =>
+      asArray(record[rule.sourceReferenceField]).includes(entity.getId()),
+    );
+    return linkedRecords.reduce(
+      (values, record) =>
+        addMissingValues(values, this.calculateNewValue(record, rule)),
+      [],
     );
   }
 

@@ -71,6 +71,12 @@ class School extends Entity {
     additional: "school-category-enum",
   })
   category: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "school-category-enum",
+    isArray: true,
+  })
+  categories: ConfigurableEnumValue[];
 }
 
 @DatabaseEntity("Mentee")
@@ -97,6 +103,56 @@ class Mentorship extends Entity {
   mentee: string;
   @DatabaseField()
   otherField: string;
+}
+
+@DatabaseEntity("AggregatingAction")
+class AggregatingAction extends Entity {
+  @DatabaseField({
+    dataType: "entity",
+    additional: "AggregatingAction",
+  })
+  parentAction: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "AggregatingAction",
+        sourceReferenceField: "parentAction",
+        sourceValueField: "tags",
+        aggregation: "add",
+      },
+    },
+  })
+  tags: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "parentAction",
+        sourceValueField: "category",
+        aggregation: "add",
+      },
+    },
+  })
+  category: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "parentAction",
+        sourceValueField: "tags",
+      },
+    },
+  })
+  inheritedTags: ConfigurableEnumValue[];
 }
 
 describe("AutomatedFieldUpdateConfigService", () => {
@@ -132,6 +188,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("School", School);
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
+    entityRegistry.set("AggregatingAction", AggregatingAction);
 
     TestBed.configureTestingModule({
       providers: [
@@ -364,6 +421,37 @@ describe("AutomatedFieldUpdateConfigService", () => {
     expect(updatedChild2.category).toBe("secondary-student");
   });
 
+  it("should map each value of a multi-select enum source and remove duplicates", () => {
+    const school = new School();
+    school.categories = [TEST_SCHOOL_ENUM[0], TEST_SCHOOL_ENUM[1]];
+    const rule = {
+      sourceReferenceField: "school",
+      sourceValueField: "categories",
+      valueMapping: { primary: "primary-student", secondary: "student" },
+    };
+
+    expect(service.calculateNewValue(school, rule)).toEqual([
+      "primary-student",
+      "student",
+    ]);
+
+    rule.valueMapping.primary = "student";
+    expect(service.calculateNewValue(school, rule)).toEqual(["student"]);
+  });
+
+  it("should fall back to the database format of an unmapped enum source value", () => {
+    const school = new School();
+    school.category = TEST_SCHOOL_ENUM[1];
+
+    const result = service.calculateNewValue(school, {
+      sourceReferenceField: "school",
+      sourceValueField: "category",
+      valueMapping: { primary: "primary-student", secondary: null },
+    });
+
+    expect(result).toBe("secondary");
+  });
+
   it("should transform ConfigurableEnum value to database format (ID string)", () => {
     const school = new School("school1");
     const enumValue = TEST_SCHOOL_ENUM[0];
@@ -379,5 +467,145 @@ describe("AutomatedFieldUpdateConfigService", () => {
     );
 
     expect(result).toBe("primary");
+  });
+
+  const TEST_TAGS: ConfigurableEnumValue[] = [
+    { id: "health", label: "Health" },
+    { id: "education", label: "Education" },
+    { id: "water", label: "Water" },
+  ];
+  const toTags = (ids: string[] | undefined) =>
+    ids?.map((id) => TEST_TAGS.find((t) => t.id === id));
+  const toTagValue = (ids: string | string[]): any =>
+    Array.isArray(ids) ? toTags(ids) : toTags([ids])[0];
+
+  describe("aggregation 'add'", () => {
+    async function saveSubActionTags(
+      parentTags: string[] | undefined,
+      tagsBefore: string[],
+      tagsAfter: string[],
+    ) {
+      const parent = new AggregatingAction();
+      parent.tags = toTags(parentTags);
+      const subAction = new AggregatingAction();
+      subAction.parentAction = parent.getId();
+      subAction.tags = toTags(tagsBefore);
+      entityMapper.addAll([parent, subAction]);
+
+      const subActionBefore = subAction.copy();
+      subAction.tags = toTags(tagsAfter);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(subAction, subActionBefore);
+    }
+
+    it.each([
+      [["health"], [], ["education"], ["health", "education"]],
+      [undefined, [], ["education"], ["education"]],
+      [
+        ["water", "health"],
+        ["health"],
+        ["health", "education"],
+        ["water", "health", "education"],
+      ],
+    ])(
+      "parent %j + sub-action changed from %j to %j suggests %j",
+      async (parentTags, tagsBefore, tagsAfter, expectedSuggestion) => {
+        await saveSubActionTags(parentTags, tagsBefore, tagsAfter);
+
+        expect(mockDialog.open).toHaveBeenCalledTimes(1);
+        const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
+        expect(suggestion.newValue).toEqual(expectedSuggestion);
+        expect(suggestion.addToExisting).toBe(true);
+      },
+    );
+
+    it.each([
+      [["health", "education"], [], ["education"]],
+      [["health", "education"], ["health", "education"], ["education"]],
+      [undefined, ["health"], []],
+    ])(
+      "parent %j + sub-action changed from %j to %j opens no dialog",
+      async (parentTags, tagsBefore, tagsAfter) => {
+        await saveSubActionTags(parentTags, tagsBefore, tagsAfter);
+
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe("values inherited from the parent action", () => {
+    async function saveParentValue(
+      sourceField: string,
+      targetField: string,
+      childValue: string | string[],
+      parentValueBefore: string | string[],
+      parentValueAfter: string | string[],
+    ) {
+      const parent = new AggregatingAction();
+      parent[sourceField] = toTagValue(parentValueBefore);
+      const subAction = new AggregatingAction();
+      subAction.parentAction = parent.getId();
+      subAction[targetField] = toTagValue(childValue);
+      entityMapper.addAll([parent, subAction]);
+
+      const parentBefore = parent.copy();
+      parent[sourceField] = toTagValue(parentValueAfter);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(parent, parentBefore);
+    }
+
+    it.each([
+      [
+        "tags",
+        "inheritedTags",
+        ["health", "water"],
+        ["health", "water"],
+        ["water"],
+        ["water"],
+      ],
+      ["category", "category", "health", "health", "water", "water"],
+    ])(
+      "%s -> %s: sub-action %j + parent changed from %j to %j suggests %j (replacing)",
+      async (sourceField, targetField, childValue, before, after, expected) => {
+        await saveParentValue(
+          sourceField,
+          targetField,
+          childValue,
+          before,
+          after,
+        );
+
+        expect(mockDialog.open).toHaveBeenCalledTimes(1);
+        const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
+        expect(suggestion.newValue).toEqual(expected);
+        expect(suggestion.addToExisting).toBe(false);
+      },
+    );
+
+    it.each([
+      [
+        "tags",
+        "inheritedTags",
+        ["health", "water"],
+        ["health"],
+        ["health", "water"],
+      ],
+      ["category", "category", "water", "health", "water"],
+    ])(
+      "%s -> %s: sub-action %j + parent changed from %j to %j opens no dialog",
+      async (sourceField, targetField, childValue, before, after) => {
+        await saveParentValue(
+          sourceField,
+          targetField,
+          childValue,
+          before,
+          after,
+        );
+
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      },
+    );
   });
 });

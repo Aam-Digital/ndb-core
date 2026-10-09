@@ -39,6 +39,20 @@
     ></app-entity-field-select>
   </mat-form-field>
 
+  @if (isAddToExistingAvailable) {
+    <div class="margin-bottom-regular">
+      <mat-slide-toggle
+        matTooltip="Keep the existing values of this field and only add new values from the related records. Values are never removed automatically."
+        i18n-matTooltip
+        [checked]="addToExisting()"
+        (change)="addToExisting.set($event.checked)"
+        i18n
+      >
+        Add to existing values instead of replacing
+      </mat-slide-toggle>
+    </div>
+  }
+
   <!--
     Detailed trigger value -> target value mapping
   -->
