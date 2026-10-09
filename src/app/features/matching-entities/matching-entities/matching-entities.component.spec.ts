@@ -590,6 +590,44 @@ describe("MatchingEntitiesComponent", () => {
     ]);
   });
 
+  it("should keep a prefilter using $and when the user also selects filters", async () => {
+    const shown = new TestEntity();
+    shown.name = "active";
+    const hiddenByPrefilter = new TestEntity();
+    hiddenByPrefilter.name = "active";
+    hiddenByPrefilter.category = { id: "x", label: "inactive" };
+    const other = new OtherEntity();
+    await TestBed.inject(EntityMapperService).saveAll([
+      shown,
+      hiddenByPrefilter,
+      other,
+    ]);
+
+    fixture.componentRef.setInput("leftSide", {
+      entityType: TestEntity.ENTITY_TYPE,
+      prefilter: {
+        $and: [{ category: { $exists: false } }, { name: { $ne: "hidden" } }],
+      } as any,
+      columns: ["name"],
+    });
+    fixture.componentRef.setInput("rightSide", {
+      entityType: OtherEntity.ENTITY_TYPE,
+      columns: ["_id"],
+    });
+    fixture.componentRef.setInput("onMatch", testConfig.onMatch);
+    await stabilizeCurrentFixture();
+
+    // the filter bar combines two selections into its own $and
+    component.applySelectedFilters(component.sideDetails()![0], {
+      $and: [{ name: { $ne: "unrelated" } }, { name: { $ne: "other" } }],
+    } as any);
+
+    expect(component.filteredMapEntities().map((entity) => entity)).toEqual([
+      shown,
+      other,
+    ]);
+  });
+
   it("should display map if location properties are available", async () => {
     vi.useFakeTimers();
     try {
