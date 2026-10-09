@@ -41,7 +41,10 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { Entity } from "../../../core/entity/model/entity";
 import { FilterService } from "../../../core/filter/filter.service";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
+import {
+  combineFilterConditions,
+  DataFilter,
+} from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { RouteTarget } from "../../../route-target";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
@@ -466,7 +469,7 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj.set({ ...side.prefilter, ...filter });
+    side.filterObj.set(combineFilterConditions(side.prefilter, filter));
   }
 
   entityInMapClicked(entity: Entity) {

@@ -17,6 +17,12 @@ import { ColorInputComponent } from "#src/app/core/common-components/color-input
 import { ConditionalColorSectionComponent } from "./conditional-color-section/conditional-color-section.component";
 
 /**
+ * The condition of a section that has no filled-in row yet. A section's condition is never
+ * empty, because an empty condition marks the static color.
+ */
+const blankSectionCondition = () => ({ $or: [{}] });
+
+/**
  * A form control for configuring conditional colors based on entity fields.
  */
 @Component({
@@ -76,7 +82,7 @@ export class ConditionalColorConfigComponent extends CustomFormControlDirective<
 
     // Add new conditional section with one empty condition to start
     const newSection: ColorMapping = {
-      condition: { $or: [{}] },
+      condition: blankSectionCondition(),
       color: "",
     };
 
@@ -131,7 +137,13 @@ export class ConditionalColorConfigComponent extends CustomFormControlDirective<
 
     this.value = this.value.map((candidate, index) =>
       index === sectionIndex
-        ? { ...candidate, condition: updatedConditions }
+        ? {
+            ...candidate,
+            condition:
+              Object.keys(updatedConditions ?? {}).length > 0
+                ? updatedConditions
+                : blankSectionCondition(),
+          }
         : candidate,
     );
 
