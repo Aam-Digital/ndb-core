@@ -1,3 +1,30 @@
+<div class="flex-row align-center gap-regular margin-bottom-regular">
+  <mat-button-toggle-group
+    [value]="combinator()"
+    (change)="setCombinator($event.value)"
+    [disabled]="disabled"
+    hideSingleSelectionIndicator
+  >
+    <mat-button-toggle
+      value="any"
+      matTooltip='A record matches as soon as one of the conditions below applies ("or").'
+      i18n-matTooltip
+      i18n
+    >
+      Any
+    </mat-button-toggle>
+    <mat-button-toggle
+      value="all"
+      matTooltip='A record matches only if every one of the conditions below applies ("and").'
+      i18n-matTooltip
+      i18n
+    >
+      All
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <span i18n>of the following conditions match</span>
+</div>
+
 <div class="conditions-container">
   <div class="conditions-list flex-column">
     @for (
@@ -57,16 +84,7 @@
       </div>
     }
 
-    <div class="hint margin-top-regular">
-      @if (hint()) {
-        {{ hint() }}
-      } @else {
-        <ng-container i18n>
-          Condition applies if any one of the selected criteria matches ("or"
-          conditions).
-        </ng-container>
-      }
-    </div>
+    <div class="hint margin-top-regular">{{ combinatorHint() }}</div>
 
     <div class="button-row flex-row gap-small">
       <app-icon-button icon="plus" (buttonClick)="addCondition()" i18n>

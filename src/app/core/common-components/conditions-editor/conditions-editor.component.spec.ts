@@ -3,6 +3,9 @@ import { ConditionsEditorComponent } from "./conditions-editor.component";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { MatDialog } from "@angular/material/dialog";
 import { MockedTestingModule } from "app/utils/mocked-testing.module";
+import { By } from "@angular/platform-browser";
+import { of } from "rxjs";
+import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
@@ -97,12 +100,43 @@ describe("ConditionsEditorComponent", () => {
     expect(component.conditionsChange.emit).toHaveBeenCalledWith({});
   });
 
-  it("should emit conditionsChange when conditions are modified", () => {
-    vi.spyOn(component.conditionsChange, "emit");
+  it("should emit the built conditions when a row is completed", () => {
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("John");
     component.addCondition();
+    component.onConditionFieldChange(0, "name");
+    vi.spyOn(component.conditionsChange, "emit");
+
+    component.conditionFormControls.get("0").setValue("John");
+
     expect(component.conditionsChange.emit).toHaveBeenCalledWith({
-      $or: [{}],
+      name: "John",
     });
+  });
+
+  it("should keep its rows when the parent binds the emitted condition back in", () => {
+    // inline consumers store what the editor emits and pass it straight back as the input
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue("John");
+    component.conditionsChange.subscribe(
+      (emitted) => (component.conditions = emitted),
+    );
+    component.addCondition();
+    component.onConditionFieldChange(0, "name");
+    component.conditionFormControls.get("0").setValue("John");
+
+    component.addCondition();
+
+    expect(component.conditionsArray()).toEqual([{ name: "John" }, {}]);
+  });
+
+  it("should leave an incomplete row out of the emitted conditions", () => {
+    vi.spyOn(component.conditionsChange, "emit");
+
+    component.addCondition();
+
+    expect(component.conditionsChange.emit).toHaveBeenCalledWith({});
+    expect(component.conditionsArray()).toEqual([{}]);
   });
 
   it("should handle condition field change", () => {
@@ -305,6 +339,112 @@ describe("ConditionsEditorComponent", () => {
 
       expect(component.isNegated(0)).toBe(false);
       expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
+    });
+  });
+
+  describe("combinator", () => {
+    it("should default a new condition to all", () => {
+      expect(component.combinator()).toBe("all");
+    });
+
+    it("should take the combinator from the stored condition", () => {
+      component.conditions = { $or: [{ name: "Test" }] };
+      component.ngOnInit();
+      expect(component.combinator()).toBe("any");
+
+      component.conditions = { $and: [{ name: "A" }, { name: "B" }] };
+      component.ngOnInit();
+      expect(component.combinator()).toBe("all");
+    });
+
+    it("should read a flat condition as all instead of turning it into or", () => {
+      component.conditions = { name: "Test", genderSingle: "X" };
+      component.ngOnInit();
+
+      expect(component.combinator()).toBe("all");
+      expect(component.conditionsArray()).toEqual([
+        { name: "Test" },
+        { genderSingle: "X" },
+      ]);
+    });
+
+    it("should emit the rows in the shape of the chosen combinator", () => {
+      component.conditions = { $or: [{ name: "A" }, { genderSingle: "X" }] };
+      component.ngOnInit();
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      component.setCombinator("all");
+      expect(emit).toHaveBeenLastCalledWith({ name: "A", genderSingle: "X" });
+
+      component.setCombinator("any");
+      expect(emit).toHaveBeenLastCalledWith({
+        $or: [{ name: "A" }, { genderSingle: "X" }],
+      });
+    });
+
+    it("should use $and for all when a field repeats", () => {
+      component.conditions = { $or: [{ name: "A" }, { name: "B" }] };
+      component.ngOnInit();
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      component.setCombinator("all");
+
+      expect(emit).toHaveBeenLastCalledWith({
+        $and: [{ name: "A" }, { name: "B" }],
+      });
+    });
+
+    it("should switch the combinator from the toggle", () => {
+      component.conditions = { $or: [{ name: "A" }] };
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      const buttons = fixture.debugElement.queryAll(
+        By.css("mat-button-toggle button"),
+      );
+      buttons[1].nativeElement.click();
+
+      expect(component.combinator()).toBe("all");
+    });
+
+    it("should disable the toggle together with the editor", () => {
+      fixture.componentRef.setInput("disabled", true);
+      fixture.detectChanges();
+
+      const group = fixture.debugElement.query(
+        By.css("mat-button-toggle-group"),
+      );
+      expect(group.componentInstance.disabled).toBe(true);
+    });
+
+    it("should show the stored shape in the JSON editor", () => {
+      component.conditions = { $or: [{ name: "A" }, {}] };
+      component.ngOnInit();
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
+
+      component.openJsonEditor();
+
+      expect(mockDialog.open).toHaveBeenCalledWith(JsonEditorDialogComponent, {
+        data: { value: { $or: [{ name: "A" }] }, closeButton: true },
+      });
+    });
+
+    it("should read the combinator and rows from the JSON editor's result", () => {
+      mockDialog.open.mockReturnValue({
+        afterClosed: () => of({ $and: [{ name: "A" }, { name: "B" }] }),
+      });
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      component.openJsonEditor();
+
+      expect(component.combinator()).toBe("all");
+      expect(component.conditionsArray()).toEqual([
+        { name: "A" },
+        { name: "B" },
+      ]);
+      expect(emit).toHaveBeenLastCalledWith({
+        $and: [{ name: "A" }, { name: "B" }],
+      });
     });
   });
 });
