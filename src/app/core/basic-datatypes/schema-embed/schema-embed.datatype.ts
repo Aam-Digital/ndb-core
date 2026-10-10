@@ -15,9 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import {
+  DefaultDatatype,
+  referenceIdConditions,
+} from "../../entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { getInnerEntityReferenceFields } from "../../entity/schema/entity-reference-fields";
+import type { DataFilter } from "../../filter/filters/filters";
 import {
   EntitySchema,
   SchemaEmbeddedType,
@@ -87,6 +92,38 @@ export class SchemaEmbedDatatype<
     }
 
     return baseSchema;
+  }
+
+  /**
+   * The embedded object is stored as-is, so an inner reference is matched through the
+   * outer field - either inside an array of embedded objects or, where a single object
+   * is stored, through the dotted path to the inner property.
+   *
+   * The inner keys come from `additional` only (not from {@link getEffectiveSchema}),
+   * so they stay identical to the ones the in-memory post-filter inspects.
+   */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter<any>[] | undefined {
+    const innerKeys = getInnerEntityReferenceFields(schemaField).map(
+      ([key]) => key,
+    );
+    if (innerKeys.length === 0) {
+      // nothing we could match on - let the caller load the whole type instead
+      return undefined;
+    }
+
+    return innerKeys.flatMap((key) => [
+      { [fieldId]: { $elemMatch: { [key]: referencedId } } },
+      {
+        [fieldId]: {
+          $elemMatch: { [key]: { $elemMatch: { $eq: referencedId } } },
+        },
+      },
+      ...referenceIdConditions(`${fieldId}.${key}`, referencedId),
+    ]);
   }
 
   override transformToDatabaseFormat(

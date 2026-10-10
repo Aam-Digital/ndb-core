@@ -2,19 +2,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   OnInit,
   signal,
 } from "@angular/core";
+import { toObservable, toSignal } from "@angular/core/rxjs-interop";
+import { catchError, map, of, startWith, switchMap } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatTableModule } from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { ActivatedRoute } from "@angular/router";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { EntityBlockComponent } from "#src/app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { ListPaginatorComponent } from "#src/app/core/common-components/entities-table/list-paginator/list-paginator.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -25,7 +28,10 @@ import { RouteTarget } from "../../../route-target";
 import {
   DuplicateDetectionService,
   DuplicatePair,
+  isMatchableField,
 } from "../duplicate-detection.service";
+import { EntityConstructor } from "#src/app/core/entity/model/entity";
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import { BulkMergeService } from "../bulk-merge-service";
 
 @RouteTarget("ReviewDuplicates")
@@ -44,8 +50,8 @@ import { BulkMergeService } from "../bulk-merge-service";
     MatFormFieldModule,
     MatButtonModule,
     MatTableModule,
-    MatPaginatorModule,
     MatProgressBarModule,
+    ListPaginatorComponent,
   ],
 })
 export class ReviewDuplicatesComponent implements OnInit {
@@ -67,20 +73,63 @@ export class ReviewDuplicatesComponent implements OnInit {
 
   selectedEntityType = signal<string>("");
   selectedFields = signal<string[]>([]);
-  isLoading = signal(false);
-  searched = signal(false);
-  pairs = signal<DuplicatePair[]>([]);
 
-  pageSize = signal(5);
-  pageIndex = signal(0);
+  /** the search to run, or null while none has been started */
+  private readonly request = signal<{
+    ctor: EntityConstructor;
+    fields: string[];
+  } | null>(null);
+
+  /**
+   * The running analysis. It stays subscribed while a search is active, so the list
+   * reflects merges and any other change to the data without searching again;
+   * `switchMap` ends the previous analysis whenever a new search starts.
+   */
+  private readonly state = toSignal(
+    toObservable(this.request).pipe(
+      switchMap((request) =>
+        request
+          ? this.duplicateDetectionService
+              .watchDuplicates(request.ctor, request.fields)
+              .pipe(
+                map((pairs) => ({ status: "ready", pairs }) as const),
+                startWith({ status: "loading" } as const),
+                catchError((e) => {
+                  this.alertService.addDanger(
+                    $localize`Could not search for duplicates: ${e instanceof Error ? e.message : e}`,
+                  );
+                  return of({ status: "idle" } as const);
+                }),
+              )
+          : of({ status: "idle" } as const),
+      ),
+    ),
+    { initialValue: { status: "idle" } as const },
+  );
+
+  /** read-only: the pairs are maintained by the analysis, not set from here */
+  readonly pairs = computed<DuplicatePair[]>(() => {
+    const state = this.state();
+    return state.status === "ready" ? state.pairs : [];
+  });
+  readonly isLoading = computed(() => this.state().status === "loading");
+  readonly searched = computed(() => this.state().status === "ready");
+
+  /**
+   * Paging is left to the table's data source and {@link ListPaginatorComponent},
+   * which also clamps to the last page as the list shrinks whenever a duplicate is resolved.
+   */
+  readonly dataSource = new MatTableDataSource<DuplicatePair>();
 
   readonly displayedColumns = ["record", "possibleDuplicate", "actions"];
-  private searchRequestId = 0;
 
-  paginatedPairs = computed(() => {
-    const start = this.pageIndex() * this.pageSize();
-    return this.pairs().slice(start, start + this.pageSize());
-  });
+  constructor() {
+    effect(() => (this.dataSource.data = this.pairs()));
+  }
+
+  /** fields whose values could never match, see {@link isMatchableField} */
+  readonly hideUnmatchableField = (field: EntitySchemaField) =>
+    !isMatchableField(field);
 
   onEntityTypeChange(type: string) {
     this.selectedEntityType.set(type);
@@ -88,49 +137,22 @@ export class ReviewDuplicatesComponent implements OnInit {
   }
 
   clear() {
-    this.searchRequestId++;
-    this.pairs.set([]);
+    this.request.set(null);
     this.selectedFields.set([]);
-    this.searched.set(false);
-    this.isLoading.set(false);
-    this.pageIndex.set(0);
   }
 
-  async search() {
-    const requestId = ++this.searchRequestId;
+  search() {
     const type = this.selectedEntityType();
     const fields = [...this.selectedFields()];
     if (!type || !fields.length) {
-      this.pairs.set([]);
-      this.searched.set(false);
-      this.pageIndex.set(0);
-      this.isLoading.set(false);
+      this.request.set(null);
       return;
     }
 
-    this.isLoading.set(true);
-    this.pageIndex.set(0);
-    this.pairs.set([]);
-    this.searched.set(false);
-    try {
-      const ctor = this.entityRegistry.get(type);
-      const result = await this.duplicateDetectionService.findDuplicates(
-        ctor,
-        fields,
-      );
-      if (requestId !== this.searchRequestId) return;
-      this.pairs.set(result);
-      this.searched.set(true);
-    } catch (e) {
-      if (requestId !== this.searchRequestId) return;
-      this.alertService.addDanger(
-        $localize`Could not search for duplicates: ${e instanceof Error ? e.message : e}`,
-      );
-    } finally {
-      if (requestId === this.searchRequestId) {
-        this.isLoading.set(false);
-      }
-    }
+    // A new search is a new list, so it starts at the first page: the data source
+    // only ever clamps the page index downwards, never resets it.
+    this.dataSource.paginator?.firstPage();
+    this.request.set({ ctor: this.entityRegistry.get(type), fields });
   }
 
   async mergeRecords(pair: DuplicatePair) {
@@ -146,30 +168,11 @@ export class ReviewDuplicatesComponent implements OnInit {
       return;
     }
 
-    const merged = await this.bulkMergeService.executeAction([
+    // the merged record's update and the discarded one's removal reach the running
+    // analysis on their own, so the list updates without searching again
+    await this.bulkMergeService.executeAction([
       pair.record,
       pair.possibleDuplicate,
     ]);
-    if (merged) {
-      const nextPairs = this.pairs().filter(
-        (p) =>
-          p.record !== pair.record ||
-          p.possibleDuplicate !== pair.possibleDuplicate,
-      );
-      this.pairs.set(nextPairs);
-
-      const maxPageIndex = Math.max(
-        Math.ceil(nextPairs.length / this.pageSize()) - 1,
-        0,
-      );
-      if (this.pageIndex() > maxPageIndex) {
-        this.pageIndex.set(maxPageIndex);
-      }
-    }
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageSize.set(event.pageSize);
-    this.pageIndex.set(event.pageIndex);
   }
 }

@@ -10,13 +10,14 @@ import {
   EntitySpecialLoaderService,
   supportsPagination,
 } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
-import { EntityPage } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import {
+  EntityPage,
+  FULL_LOAD_PAGE_SIZE,
+} from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
-/**
- * Number of documents fetched per request when loading the complete dataset
- * (see {@link PaginatedDataSource.getAllData}).
- */
-export const FULL_LOAD_PAGE_SIZE = 500;
+// re-exported for the existing importers of this module; defined with the paging
+// helper it belongs to (see EntityMapperService.findAllType)
+export { FULL_LOAD_PAGE_SIZE };
 
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];

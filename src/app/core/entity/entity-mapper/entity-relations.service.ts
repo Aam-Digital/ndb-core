@@ -5,6 +5,10 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 import { EntityRegistry } from "../database-entity.decorator";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
+import { EntitySchemaService } from "../schema/entity-schema.service";
+import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields";
+import { Logging } from "../../logging/logging.service";
+import type { DataFilter } from "../../filter/filters/filters";
 
 /**
  * Service to work with related, interlinked entities.
@@ -15,6 +19,7 @@ import { EntitySchemaField } from "../schema/entity-schema-field";
 export class EntityRelationsService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly schemaService = inject(EntitySchemaService);
 
   /**
    * Get all entity types whose schema includes fields referencing the given type.
@@ -95,7 +100,11 @@ export class EntityRelationsService {
     refType: EntityConstructor,
     refProperties: FormFieldConfig[],
   ) {
-    const entities = await this.entityMapper.loadType(refType);
+    const entities = await this.loadCandidates(
+      primaryEntity,
+      refType,
+      refProperties,
+    );
 
     const affectedEntities = entities
       .map((entity) => ({
@@ -105,6 +114,55 @@ export class EntityRelationsService {
       .filter((affected) => affected.fields.length > 0);
 
     return affectedEntities;
+  }
+
+  /**
+   * The records of the given type that may reference the primary entity.
+   *
+   * Where every referencing property can express itself as a database query, this loads
+   * only the matching records instead of the whole entity type - which is what keeps a
+   * merge or a cascading delete from transferring the entire database (see #4134).
+   *
+   * All-or-nothing per type: a full load already contains every property's matches, so
+   * combining it with queries for the remaining properties would transfer the same
+   * documents twice. The caller post-filters the result either way, so a query that
+   * matches too much is harmless.
+   */
+  private async loadCandidates(
+    primaryEntity: Entity,
+    refType: EntityConstructor,
+    refProperties: FormFieldConfig[],
+  ): Promise<Entity[]> {
+    if (!this.entityMapper.supportsFind(refType)) {
+      // a local database answers no queries, but its full load is cheap
+      return this.entityMapper.loadType(refType);
+    }
+
+    const conditions: DataFilter<any>[] = [];
+    for (const refProperty of refProperties) {
+      const datatype = this.schemaService.getDatatypeOrDefault(
+        refProperty.dataType,
+      );
+      const propertyConditions = datatype.getReferenceSelector(
+        refProperty.id,
+        refProperty,
+        primaryEntity.getId(),
+      );
+
+      if (!propertyConditions?.length) {
+        Logging.debug(
+          "loading all records of an entity type because a referencing field cannot be queried",
+          { entityType: refType.ENTITY_TYPE, field: refProperty.id },
+        );
+        return this.entityMapper.loadType(refType);
+      }
+      conditions.push(...propertyConditions);
+    }
+
+    if (conditions.length === 0) {
+      return [];
+    }
+    return this.entityMapper.findAllType(refType, { $or: conditions });
   }
 }
 
@@ -136,27 +194,6 @@ export function itemReferencesId(
   }
 
   return false;
-}
-
-/**
- * From a field's `additional` embedded schema, return the entries
- * whose `dataType` is `"entity"` (i.e. inner entity-reference properties).
- *
- * Returns an empty array when the field has no embedded schema.
- */
-function getInnerEntityReferenceFields(
-  field?: EntitySchemaField,
-): [string, EntitySchemaField][] {
-  if (
-    !field?.additional ||
-    typeof field.additional !== "object" ||
-    Array.isArray(field.additional)
-  ) {
-    return [];
-  }
-  return Object.entries(
-    field.additional as Record<string, EntitySchemaField>,
-  ).filter(([, inner]) => inner.dataType === "entity");
 }
 
 /**
