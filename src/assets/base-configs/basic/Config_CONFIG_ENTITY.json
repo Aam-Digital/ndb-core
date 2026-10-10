@@ -355,6 +355,24 @@
           "dataType": "configurable-enum",
           "additional": "genders",
           "label": "Gender"
+        },
+        "identificationDocuments": {
+          "dataType": "schema-embed-array",
+          "label": "Identification Documents",
+          "additional": {
+            "documentType": {
+              "dataType": "string",
+              "label": "Document Type"
+            },
+            "documentNumber": {
+              "dataType": "string",
+              "label": "Document Number"
+            },
+            "issueDate": {
+              "dataType": "date",
+              "label": "Issue Date"
+            }
+          }
         }
       }
     },
@@ -374,6 +392,9 @@
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
+          },
+          {
+            "id": "identificationDocuments"
           }
         ],
         "columnGroups": {
@@ -383,7 +404,8 @@
             {
               "name": "Basic Info",
               "columns": [
-                "name"
+                "name",
+                "identificationDocuments"
               ]
             }
           ]
@@ -419,6 +441,12 @@
                         "gender"
                       ],
                       "header": "Additional"
+                    },
+                    {
+                      "fields": [
+                        "identificationDocuments"
+                      ],
+                      "header": "Identification Documents"
                     }
                   ]
                 }

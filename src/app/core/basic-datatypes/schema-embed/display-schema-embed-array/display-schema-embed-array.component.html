@@ -1,0 +1,12 @@
+@if (rows().length) {
+  <span class="entry-count" [appTemplateTooltip]="tooltip">
+    {{ rows().length }} <span i18n>entries</span>
+  </span>
+}
+
+<ng-template #tooltip>
+  <app-schema-embed-array-table
+    [rows]="rows()"
+    [columns]="columns()"
+  ></app-schema-embed-array-table>
+</ng-template>

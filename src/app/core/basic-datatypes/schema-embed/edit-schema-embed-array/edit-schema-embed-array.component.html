@@ -1,0 +1,22 @@
+<span
+  class="trigger-wrapper"
+  [appTemplateTooltip]="tooltip"
+  [tooltipDisabled]="rowCount() === 0"
+>
+  <button
+    type="button"
+    mat-stroked-button
+    [disabled]="!enabled()"
+    (click)="openDialog()"
+  >
+    <fa-icon icon="table"></fa-icon>
+    <span i18n>Manage entries ({{ rowCount() }})</span>
+  </button>
+</span>
+
+<ng-template #tooltip>
+  <app-schema-embed-array-table
+    [rows]="rows()"
+    [columns]="columns()"
+  ></app-schema-embed-array-table>
+</ng-template>

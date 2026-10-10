@@ -22,6 +22,7 @@ import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/
 import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
 import { EmailDatatype } from "./basic-datatypes/string/email.datatype";
 import { SchemaEmbedDatatype } from "./basic-datatypes/schema-embed/schema-embed.datatype";
+import { SchemaEmbedArrayDatatype } from "./basic-datatypes/schema-embed/schema-embed-array.datatype";
 import { EntityActionsService } from "./entity/entity-actions/entity-actions.service";
 
 /**
@@ -33,6 +34,11 @@ import { EntityActionsService } from "./entity/entity-actions/entity-actions.ser
     CurrentUserSubject,
     // base dataTypes
     { provide: DefaultDatatype, useClass: SchemaEmbedDatatype, multi: true },
+    {
+      provide: DefaultDatatype,
+      useClass: SchemaEmbedArrayDatatype,
+      multi: true,
+    },
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
     { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
