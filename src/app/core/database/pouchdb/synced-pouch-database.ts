@@ -237,14 +237,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
     syncHandler.on("active", () => armStallTimer());
     syncHandler.on("paused", () => armStallTimer());
-    // per-doc rejections (e.g. 401/403 during push) that do not fail the
-    // overall sync and would otherwise leave a doc silently unsynced
-    syncHandler.on("denied", (err) =>
-      Logging.warn(
-        "sync: server denied replication of a document",
-        { db: this.dbName },
-        err,
-      ),
+    // per-doc rejections (e.g. 401/403 during push) do not fail the overall
+    // sync, but leave the rejected change in the local database only
+    const deniedDocs: DeniedDoc[] = [];
+    syncHandler.on("denied", (event: { doc?: DeniedDoc }) =>
+      deniedDocs.push(event?.doc ?? {}),
     );
     armStallTimer();
 
@@ -304,7 +301,26 @@ export class SyncedPouchDatabase extends PouchDatabase {
         if (isFirstSync) {
           this.remoteDatabase.trackLostPermissions = true;
         }
+        this.logDeniedDocs(deniedDocs);
       });
+  }
+
+  /**
+   * Report the docs the server refused during one sync in a single warning,
+   * since a single push can be refused for hundreds of docs at once.
+   */
+  private logDeniedDocs(deniedDocs: DeniedDoc[]) {
+    if (deniedDocs.length === 0) {
+      return;
+    }
+    const ids = deniedDocs.map((doc) => doc.id).filter(Boolean);
+    Logging.warn("sync: server denied replication of documents", {
+      db: this.dbName,
+      denied: deniedDocs.length,
+      errors: [...new Set(deniedDocs.map((doc) => doc.name))],
+      entityTypes: [...new Set(ids.map((id) => id.split(":")[0]))],
+      sampleIds: ids.slice(0, this.SAMPLE_IDS_LOGGED),
+    });
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
@@ -503,6 +519,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
 }
 
 type SyncResult = PouchDB.Replication.SyncResultComplete<any>;
+
+/** The part of the error in a PouchDB "denied" event that is logged. */
+type DeniedDoc = { id?: string; name?: string };
 
 /**
  * What of the last synced batch can be reported when a sync fails right after

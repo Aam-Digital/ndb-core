@@ -25,7 +25,10 @@ import { filter, map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { DatabaseDocChange } from "../../database/database";
+import {
+  DatabaseDocChange,
+  PartialBulkWriteError,
+} from "../../database/database";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
@@ -249,17 +252,29 @@ export class EntityMapperService {
         );
         return this.dbResolver
           .getDatabase(databaseName)
-          .putAll(rawData, forceUpdate);
+          .putAll(rawData, forceUpdate)
+          .then(
+            (results) => {
+              applyStoredRevisions(entitiesInDatabase, results);
+              return results;
+            },
+            (error) => {
+              // putAll rejects as soon as any document failed, but the others
+              // are already stored (see Database.putAll). Without their new
+              // revisions, the next save of those entities would conflict
+              // with their own earlier write.
+              if (Array.isArray(error)) {
+                applyStoredRevisions(entitiesInDatabase, error);
+              } else if (error instanceof PartialBulkWriteError) {
+                applyStoredRevisions(entitiesInDatabase, error.storedResults);
+              }
+              throw error;
+            },
+          );
       },
     );
 
     const results = (await Promise.all(savePromises)).flat();
-    results.forEach((res, idx) => {
-      if (res.ok) {
-        const entity = entities[idx];
-        entity._rev = res.rev;
-      }
-    });
     return results;
   }
 
@@ -316,5 +331,23 @@ export class EntityMapperService {
       entity.created = newMetadata;
     }
     entity.updated = newMetadata;
+  }
+}
+
+/**
+ * Copy the revisions the database assigned back onto the saved entities.
+ *
+ * Matched by id rather than by position, so that a result missing from the
+ * response cannot shift revisions onto other entities.
+ */
+function applyStoredRevisions(entities: Entity[], results: any[]) {
+  const revisions = new Map(
+    results.filter((r) => r?.ok).map((r) => [r.id, r.rev]),
+  );
+  for (const entity of entities) {
+    const rev = revisions.get(entity.getId());
+    if (rev) {
+      entity._rev = rev;
+    }
   }
 }

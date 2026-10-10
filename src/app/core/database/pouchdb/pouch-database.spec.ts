@@ -296,6 +296,21 @@ describe("PouchDatabase tests", () => {
     ]);
   });
 
+  it("rejects with the results when the server refused a document", async () => {
+    const results = [
+      { ok: true, id: "1", rev: "1-a" },
+      // a remote database reports this as a plain object, not an Error
+      { id: "2", error: "forbidden", name: "forbidden", status: 500 },
+    ];
+    vi.spyOn(database.getPouchDB(), "bulkDocs").mockResolvedValue(
+      results as any,
+    );
+
+    await expect(database.putAll([{ _id: "1" }, { _id: "2" }])).rejects.toEqual(
+      results,
+    );
+  });
+
   describe("counting document update conflicts", () => {
     const STALE = { _id: "Child:1", name: "Rudolph", _rev: "1-invalid_rev" };
     let eventTrack: Mock;
