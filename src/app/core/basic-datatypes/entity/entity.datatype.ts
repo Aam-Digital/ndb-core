@@ -28,7 +28,9 @@ import { Entity } from "../../entity/model/entity";
 import {
   ColumnImportInput,
   ExportColumnMapping,
+  ExportContext,
 } from "../../entity/default-datatype/default.datatype";
+import { loadReadableEntityName } from "../../export/readable-entity-name";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { asArray } from "../../../utils/asArray";
 
@@ -69,8 +71,16 @@ export class EntityDatatype extends StringDatatype {
       {
         keySuffix: "_readable",
         label: schemaField.label + " (readable)",
-        resolveValue: async (value: string | string[]) =>
-          this.loadRelatedEntitiesToString(value, schemaField),
+        resolveValue: async (
+          value: string | string[],
+          _schemaField,
+          context?: ExportContext,
+        ) =>
+          this.loadRelatedEntitiesToString(
+            value,
+            schemaField,
+            context?.entityNameCache,
+          ),
       },
     ];
   }
@@ -387,20 +397,23 @@ export class EntityDatatype extends StringDatatype {
   private async loadRelatedEntitiesToString(
     value: string | string[],
     schemaField: EntitySchemaField,
+    cache?: Map<string, Promise<string>>,
   ): Promise<string[]> {
     if (!value) return [];
 
     const relatedEntitiesToStrings: string[] = [];
 
     const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
+    // one after the other (not in parallel) to not flood the database with requests
     for (const relatedEntityId of relatedEntitiesIds) {
-      const entityType =
-        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
-      const relatedEntity = await this.entityMapper
-        .load(entityType, relatedEntityId)
-        .catch(() => undefined);
-
-      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? "<not_found>");
+      relatedEntitiesToStrings.push(
+        await loadReadableEntityName(
+          this.entityMapper,
+          schemaField.additional,
+          relatedEntityId,
+          cache,
+        ),
+      );
     }
 
     return relatedEntitiesToStrings;

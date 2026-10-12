@@ -6,6 +6,9 @@ import { AttendanceDatatype } from "./model/attendance.datatype";
 import { AttendanceItem } from "./model/attendance-item";
 import { getReadableValue } from "#src/app/core/common-components/entities-table/value-accessor/value-accessor";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { loadReadableEntityName } from "#src/app/core/export/readable-entity-name";
+import { EXPORT_BATCH_SIZE } from "#src/app/core/export/download-service/download.service";
+import { mapInBatches } from "#src/app/utils/utils";
 
 /**
  * Exports a simple attendance list as CSV for entities with attendance-typed fields.
@@ -35,8 +38,9 @@ export class AttendanceExportService {
    */
   async exportAttendanceList(entity: Entity, fieldId: string): Promise<void> {
     const items: AttendanceItem[] = entity[fieldId] ?? [];
-    const rows = await Promise.all(
-      items.map((item) => this.buildParticipantRow(item)),
+    const nameCache = new Map<string, Promise<string>>();
+    const rows = await mapInBatches(items, EXPORT_BATCH_SIZE, (item) =>
+      this.buildParticipantRow(item, nameCache),
     );
 
     const filename = entity.toString().replaceAll(" ", "-");
@@ -49,9 +53,10 @@ export class AttendanceExportService {
 
   private async buildParticipantRow(
     item: AttendanceItem,
+    nameCache: Map<string, Promise<string>>,
   ): Promise<Record<string, string>> {
     return this.buildRow(
-      await this.resolveParticipantName(item.participant),
+      await this.resolveParticipantName(item.participant, nameCache),
       getReadableValue(item.status) ?? "",
       item.remarks ?? "",
     );
@@ -71,18 +76,22 @@ export class AttendanceExportService {
 
   /**
    * Resolve a participant reference to its readable name via `toString()`,
-   * falling back to "<not_found>" when the referenced entity cannot be loaded.
+   * falling back to "<not_found>" when the referenced entity does not exist.
+   * A transient loading failure (e.g. connection problem) is not hidden behind
+   * "<not_found>" but makes the export fail.
    */
   private async resolveParticipantName(
-    participantId?: string,
+    participantId: string | undefined,
+    nameCache: Map<string, Promise<string>>,
   ): Promise<string> {
     if (!participantId) {
       return "";
     }
-    const entityType = Entity.extractTypeFromId(participantId);
-    const participant = await this.entityMapper
-      .load(entityType, participantId)
-      .catch(() => undefined);
-    return participant?.toString() ?? "<not_found>";
+    return loadReadableEntityName(
+      this.entityMapper,
+      undefined,
+      participantId,
+      nameCache,
+    );
   }
 }

@@ -1,7 +1,47 @@
-import { calculateAge, groupBy, isValidDate, sortByAttribute } from "./utils";
+import {
+  calculateAge,
+  groupBy,
+  isValidDate,
+  mapInBatches,
+  sortByAttribute,
+} from "./utils";
 import moment from "moment";
 
 describe("Utils", () => {
+  it("mapInBatches should keep order and never exceed the batch size", async () => {
+    let running = 0;
+    let maxRunning = 0;
+    const result = await mapInBatches(
+      [1, 2, 3, 4, 5, 6, 7],
+      3,
+      async (n, index) => {
+        running++;
+        maxRunning = Math.max(maxRunning, running);
+        await new Promise((resolve) => setTimeout(resolve));
+        running--;
+        return `${index}:${n * 2}`;
+      },
+    );
+
+    expect(result).toEqual([
+      "0:2",
+      "1:4",
+      "2:6",
+      "3:8",
+      "4:10",
+      "5:12",
+      "6:14",
+    ]);
+    expect(maxRunning).toBe(3);
+  });
+
+  it("mapInBatches should stop starting new batches after a failure", async () => {
+    const fn = vi.fn().mockRejectedValueOnce(new Error("fail"));
+
+    await expect(mapInBatches([1, 2, 3, 4], 2, fn)).rejects.toThrow("fail");
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
   it("isValidDate for normal Date object", () => {
     const testDate = new Date();
     expect(isValidDate(testDate)).toBe(true);

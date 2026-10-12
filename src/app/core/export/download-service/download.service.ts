@@ -6,11 +6,15 @@ import {
 } from "../data-transformation-service/export-column-config";
 import { Papa } from "ngx-papaparse";
 import { EntityConstructor } from "app/core/entity/model/entity";
-import { ExportColumnMapping } from "app/core/entity/default-datatype/default.datatype";
+import {
+  ExportColumnMapping,
+  ExportContext,
+} from "app/core/entity/default-datatype/default.datatype";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { Workbook } from "exceljs";
 import moment from "moment";
+import { mapInBatches } from "app/utils/utils";
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -54,6 +58,14 @@ export function buildExportColumnResolvers(
 
   return resolvers;
 }
+
+/**
+ * Number of rows whose values are resolved in parallel during an export.
+ * Resolving referenced entities can require a database request per value; running
+ * them for all rows at once exhausts the browser's resources on large lists
+ * (`net::ERR_INSUFFICIENT_RESOURCES`), making some of the requests fail.
+ */
+export const EXPORT_BATCH_SIZE = 20;
 
 export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx" | "zip";
 
@@ -267,8 +279,9 @@ export class DownloadService {
       columnResolvers.set(columnId, resolver);
     }
 
-    const exportEntities = await Promise.all(
-      data.map((item) => this.mapEntityToExportRow(item, columnResolvers)),
+    const exportContext: ExportContext = { entityNameCache: new Map() };
+    const exportEntities = await mapInBatches(data, EXPORT_BATCH_SIZE, (item) =>
+      this.mapEntityToExportRow(item, columnResolvers, exportContext),
     );
 
     // Keep selected columns that have no schema resolver (e.g. runtime-attached
@@ -294,6 +307,7 @@ export class DownloadService {
   private async mapEntityToExportRow(
     item: any,
     columnResolvers: Map<string, ExportColumnResolver>,
+    exportContext: ExportContext,
   ): Promise<Object> {
     const newItem = {};
 
@@ -301,6 +315,7 @@ export class DownloadService {
       const formattedValue = await resolver.column.resolveValue(
         item[resolver.sourceFieldId],
         resolver.schemaField,
+        exportContext,
       );
       newItem[columnId] = this.ensureCsvFriendlyValue(formattedValue);
     }

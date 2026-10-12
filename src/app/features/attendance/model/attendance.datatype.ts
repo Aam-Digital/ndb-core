@@ -8,8 +8,10 @@ import { EventAttendanceMapDatatype } from "../deprecated/event-attendance-map.d
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import {
   ExportColumnMapping,
+  ExportContext,
   DefaultDatatype,
 } from "#src/app/core/entity/default-datatype/default.datatype";
+import { loadReadableEntityName } from "#src/app/core/export/readable-entity-name";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -59,15 +61,25 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
       {
         keySuffix: "",
         label: schemaField.label + " (participation details)",
-        resolveValue: async (value: AttendanceItem[]) => {
+        resolveValue: async (
+          value: AttendanceItem[],
+          _schemaField,
+          context?: ExportContext,
+        ) => {
           const attendance = Array.isArray(value) ? value : [];
-          const participantCache = new Map<string, Promise<string>>();
+          const participantCache =
+            context?.entityNameCache ?? new Map<string, Promise<string>>();
 
-          const details = await Promise.all(
-            attendance.map((attendanceItem) =>
-              this.toParticipationDetails(attendanceItem, participantCache),
-            ),
-          );
+          // one after the other (not in parallel) to not flood the database with requests
+          const details: string[] = [];
+          for (const attendanceItem of attendance) {
+            details.push(
+              await this.toParticipationDetails(
+                attendanceItem,
+                participantCache,
+              ),
+            );
+          }
           return details.join(", ");
         },
       },
@@ -138,18 +150,12 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
       return "";
     }
 
-    const cachedResult = participantCache.get(participantId);
-    if (cachedResult) {
-      return cachedResult;
-    }
-
-    const readableResultPromise = this.entityMapper
-      .load(Entity.extractTypeFromId(participantId), participantId)
-      .then((entity) => entity.toString())
-      .catch(() => "<not_found>");
-
-    participantCache.set(participantId, readableResultPromise);
-    return readableResultPromise;
+    return loadReadableEntityName(
+      this.entityMapper,
+      undefined,
+      participantId,
+      participantCache,
+    );
   }
 
   private getStatusLabel(attendanceItem: AttendanceItem): string {

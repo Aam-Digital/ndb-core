@@ -1,5 +1,5 @@
 import { TestBed } from "@angular/core/testing";
-import { DownloadService } from "./download.service";
+import { DownloadService, EXPORT_BATCH_SIZE } from "./download.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import {
   DatabaseEntity,
@@ -230,6 +230,54 @@ describe("DownloadService", () => {
     expect(rows).toHaveLength(1 + 1); // includes 1 header line
     expect(rows[1]).toBe(
       `"undefined-id,${testChild.getId()}","<not_found>,${testChild.toString()}"`,
+    );
+  });
+
+  it("should limit parallel entity lookups when exporting many rows", async () => {
+    class ManyRowsTestEntity extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        label: "referenced entity",
+      })
+      related: string;
+    }
+    let running = 0;
+    let maxRunning = 0;
+    mockedEntityMapper.load.mockImplementation(async () => {
+      running++;
+      maxRunning = Math.max(maxRunning, running);
+      await new Promise((resolve) => setTimeout(resolve));
+      running--;
+      return testChild as any;
+    });
+    // different ids, so that lookups are not de-duplicated by the cache
+    const entities = Array.from({ length: EXPORT_BATCH_SIZE * 3 }, (_, i) => {
+      const e = new ManyRowsTestEntity();
+      e.related = "TestEntity:" + i;
+      return e;
+    });
+
+    const rows = await service.prepareExportData(entities);
+
+    expect(rows).toHaveLength(entities.length + 1);
+    expect(mockedEntityMapper.load).toHaveBeenCalledTimes(entities.length);
+    expect(maxRunning).toBeLessThanOrEqual(EXPORT_BATCH_SIZE);
+  });
+
+  it("should fail the export on a transient error instead of writing <not_found>", async () => {
+    class FailingLoadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        label: "referenced entity",
+      })
+      related: string;
+    }
+    mockedEntityMapper.load.mockRejectedValue(new TypeError("Failed to fetch"));
+    const entity = new FailingLoadTestEntity();
+    entity.related = testChild.getId();
+
+    await expect(service.createCsv([entity])).rejects.toThrow(
+      "Failed to fetch",
     );
   });
 
