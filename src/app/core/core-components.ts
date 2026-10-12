@@ -234,6 +234,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EmbeddedArrayData",
+    () =>
+      import("./entity-details/embedded-array-data/embedded-array-data.component").then(
+        (c) => c.EmbeddedArrayDataComponent,
+      ),
+  ],
+  [
     "RelatedTimePeriodEntities",
     () =>
       import("./entity-details/related-time-period-entities/related-time-period-entities.component").then(
