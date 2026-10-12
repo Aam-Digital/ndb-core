@@ -33,6 +33,21 @@
         </mat-slide-toggle>
       </ng-container>
     }
+    @if (currentlyMatchingIneligible() > 0) {
+      <div autocompleteFooter>
+        <mat-slide-toggle
+          [checked]="includeIneligible()"
+          (toggleChange)="toggleIncludeIneligible()"
+          matTooltip="These records do not match the conditions configured for this field. Select them only as an exception (or update the record)."
+          i18n-matTooltip
+          i18n="
+            Label for checkbox|e.g. include records not matching the selection
+            filter of a field
+          "
+          >Also show {{ currentlyMatchingIneligible() }} not matching the filter
+        </mat-slide-toggle>
+      </div>
+    }
   </app-basic-autocomplete>
 
   @if (enabled()) {

@@ -32,7 +32,36 @@
           conditionFormFieldConfigs.get(conditionId + "");
           as formFieldConfig
         ) {
-          @if (conditionFormControls.get(conditionId + ""); as formControl) {
+          @if (currentRecordType()) {
+            <mat-form-field class="compare-mode-select">
+              <mat-label i18n>Compared with</mat-label>
+              <mat-select
+                [value]="isReferenceRow(conditionId)"
+                (valueChange)="setReferenceRow(conditionId, $event)"
+                [disabled]="disabled"
+              >
+                <mat-option [value]="false" i18n>a fixed value</mat-option>
+                <mat-option [value]="true" i18n
+                  >a field of the edited record</mat-option
+                >
+              </mat-select>
+            </mat-form-field>
+          }
+
+          @if (isReferenceRow(conditionId)) {
+            <mat-form-field class="value-input" floatLabel="always">
+              <mat-label i18n>Field of the edited record</mat-label>
+              <app-entity-field-select
+                [entityType]="currentRecordType()"
+                [value]="getReferencedField(conditionId)"
+                [hideOption]="referenceFieldFilters.get(conditionId + '')"
+                (valueChange)="onReferencedFieldChange(conditionId, $event)"
+              ></app-entity-field-select>
+            </mat-form-field>
+          } @else if (
+            conditionFormControls.get(conditionId + "");
+            as formControl
+          ) {
             <mat-form-field class="value-input" floatLabel="always">
               <mat-label>{{ formFieldConfig.label }}</mat-label>
               <app-dynamic-edit

@@ -30,6 +30,9 @@ export interface ConditionEditorDialogData {
 
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
   showInternalIdField?: boolean;
+
+  /** type of the record being edited when the condition is applied, whose fields condition rows can compare with */
+  currentRecordType?: EntityConstructor;
 }
 
 /**

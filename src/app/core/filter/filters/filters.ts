@@ -55,6 +55,72 @@ export function combineFilterConditions<T>(
   return { $and: relevant } as DataFilter<T>;
 }
 
+/**
+ * Prefix of a placeholder in a condition value that stands for the value of a field
+ * of the record currently being edited, e.g. `"$current_record.location"`.
+ */
+export const CURRENT_RECORD_PLACEHOLDER_PREFIX = "$current_record.";
+
+export function isCurrentRecordPlaceholder(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.startsWith(CURRENT_RECORD_PLACEHOLDER_PREFIX)
+  );
+}
+
+/**
+ * Replace all `$current_record.<fieldId>` placeholders in the given condition
+ * with the value of that field of the current record.
+ * A placeholder inside a list (e.g. of `$in`) is replaced by all values of a multi-value field.
+ *
+ * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
+ * @param getValue Returns the value of the given field of the current record (in database format).
+ * @returns The resolved condition,
+ *          or `undefined` if a referenced field is empty and the condition therefore cannot be applied.
+ */
+export function resolveCurrentRecordPlaceholders<T>(
+  condition: DataFilter<T>,
+  getValue: (fieldId: string) => unknown,
+): DataFilter<T> | undefined {
+  let hasEmptyReference = false;
+
+  const resolve = (value: unknown): unknown => {
+    if (isCurrentRecordPlaceholder(value)) {
+      const fieldValue = getValue(
+        value.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length),
+      );
+      hasEmptyReference ||= isEmptyValue(fieldValue);
+      return fieldValue;
+    }
+    if (Array.isArray(value)) {
+      return value.flatMap((item) => {
+        const resolvedItem = resolve(item);
+        return isCurrentRecordPlaceholder(item) && Array.isArray(resolvedItem)
+          ? resolvedItem
+          : [resolvedItem];
+      });
+    }
+    if (value && typeof value === "object") {
+      return Object.fromEntries(
+        Object.entries(value).map(([key, v]) => [key, resolve(v)]),
+      );
+    }
+    return value;
+  };
+
+  const resolved = resolve(condition) as DataFilter<T>;
+  return hasEmptyReference ? undefined : resolved;
+}
+
+function isEmptyValue(value: unknown): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0)
+  );
+}
+
 export function createEmptyValueFilter<T extends Entity>(
   fieldName: string,
   includeNestedId = false,
