@@ -1,6 +1,7 @@
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type.js";
+import { UpdateMetadata } from "#src/app/core/entity/model/update-metadata.js";
 
 test("Import children with entity reference, date and enum column mappings", async ({
   page,
@@ -149,6 +150,12 @@ test("Import children with entity reference, date and enum column mappings", asy
   // Verify entity references are resolved
   await expect(page.getByText("Springfield Elementary").first()).toBeVisible();
 
+  // The import status column shows that every row creates a new record
+  await expect(
+    page.getByRole("columnheader", { name: "Import Status" }),
+  ).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Creating" })).toHaveCount(3);
+
   await argosScreenshot(page, "import-step4-review-data");
 
   // Execute the import
@@ -268,4 +275,90 @@ test("Import a multi-value entity reference from a single comma-separated column
   await expect(noteDetails).toBeVisible();
   await expect(noteDetails.getByText("Springfield Elementary")).toBeVisible();
   await expect(noteDetails.getByText("Shelbyville Academy")).toBeVisible();
+});
+
+test("Import updates an existing record matched by a field and creates the others", async ({
+  page,
+}) => {
+  const users = generateUsers();
+
+  const existingChild = createEntityOfType("Child", "existing-child");
+  existingChild["name"] = "Alice Miller";
+  existingChild["projectNumber"] = "101";
+  existingChild["phone"] = "555-0000";
+  // like real records, the existing one has a creation date (new import rows don't)
+  existingChild.created = new UpdateMetadata("demo", new Date("2024-06-01"));
+
+  await loadApp(page, [...users, existingChild]);
+
+  await page.getByRole("navigation").getByText("Import").click();
+  await expect(page.getByText("Select a .xlsx or .csv file")).toBeVisible();
+
+  // "101" matches the existing record, "102" is new
+  const csvContent = [
+    "Project Number,Name,Phone Number",
+    "101,Alice Miller,555-0101",
+    "102,Dave Brown,555-0102",
+  ].join("\n");
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "update-children.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(csvContent),
+  });
+  await expect(page.getByText("2 rows detected")).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Step 2: import as Child, matching existing records by their project number
+  await expect(page.getByText("Select the import target type")).toBeVisible();
+  await page.getByRole("textbox", { name: "Import as" }).fill("Child");
+  await page.getByRole("option", { name: "Child" }).click();
+
+  await page
+    .getByText("Check/Update existing instead of creating new records")
+    .click();
+  await page
+    .getByRole("textbox", { name: "Fields that identify a unique record" })
+    .click();
+  await page.getByRole("option", { name: "Project Number" }).click();
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Step 3: all columns are auto-mapped by their label
+  await expect(
+    page.getByText("Define which columns / fields will be imported"),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+
+  // Step 4: the import status column shows which rows update an existing record
+  await expect(
+    page.getByText("Review your mapped data to be imported"),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("columnheader", { name: "Import Status" }),
+  ).toBeVisible();
+  // rows updating existing records are listed first (row 0 is the header row)
+  const reviewRows = page.getByRole("row");
+  await expect(reviewRows.nth(1)).toContainText("555-0101");
+  await expect(reviewRows.nth(1).getByText("Updating")).toBeVisible();
+  await expect(reviewRows.nth(2)).toContainText("555-0102");
+  await expect(reviewRows.nth(2).getByText("Creating")).toBeVisible();
+
+  await argosScreenshot(page, "import-review-update-existing");
+
+  await page.getByRole("button", { name: "Start Import" }).click();
+  const confirmDialog = page.getByRole("dialog");
+  await expect(
+    confirmDialog.getByText("2 records will be imported"),
+  ).toBeVisible();
+  await confirmDialog
+    .getByRole("button", { name: "Confirm & Run Import" })
+    .click();
+  await expect(confirmDialog).not.toBeVisible({ timeout: 15_000 });
+
+  // The existing record was updated instead of duplicated
+  await page.getByRole("navigation").getByText("Children").click();
+  await expect(page.getByRole("row", { name: /Dave Brown/ })).toBeVisible();
+  await expect(page.getByRole("row", { name: /Alice Miller/ })).toHaveCount(1);
 });

@@ -4,6 +4,11 @@
  */
 export interface NoteDetailsConfig {
   /**
+   * Entity type this view displays, required for entity loading and permission checks.
+   */
+  entityType?: string;
+
+  /**
    * Field names to be displayed in the top form section.
    */
   topForm?: string[];

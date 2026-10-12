@@ -1,6 +1,5 @@
 import { Injector, NgModule, inject } from "@angular/core";
 import { UserRoleGuard } from "./permission-guard/user-role.guard";
-import { PureAbility } from "@casl/ability";
 import { EntityAbility } from "./ability/entity-ability";
 import { AbilityService } from "./ability/ability.service";
 import { EntityPermissionGuard } from "./permission-guard/entity-permission.guard";
@@ -17,10 +16,6 @@ import { serviceProvider } from "../../utils/utils";
     EntityPermissionGuard,
     AbilityService,
     EntityAbility,
-    {
-      provide: PureAbility,
-      useExisting: EntityAbility,
-    },
     LocalPermissionEnforcerService,
     NoopPermissionEnforcerService,
     serviceProvider(PermissionEnforcerService, (injector: Injector) =>

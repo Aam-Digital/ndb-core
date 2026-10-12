@@ -9,6 +9,7 @@ import { ImportAdditionalService } from "./additional-actions/import-additional.
 import { ImportExistingService } from "./update-existing/import-existing.service";
 import { ImportProcessingContext } from "./import-processing-context";
 import { Logging } from "../logging/logging.service";
+import { PartialBulkWriteError } from "../database/database";
 
 /**
  * Details about a single cell transformation error during import.
@@ -34,6 +35,86 @@ export interface ImportTransformationResult {
 }
 
 /**
+ * The records that were stored although the save as a whole was rejected.
+ *
+ * A rejected save reports what became of the records (see `Database.putAll`): the
+ * results array when individual records failed, a {@link PartialBulkWriteError} when
+ * the write stopped partway. Any other rejection means nothing was stored.
+ */
+function storedRecordsOf(records: Entity[], error: unknown): Entity[] {
+  let results: any[];
+  if (Array.isArray(error)) {
+    results = error;
+  } else if (error instanceof PartialBulkWriteError) {
+    results = error.storedResults;
+  } else {
+    return [];
+  }
+
+  const storedIds = new Set(
+    results.filter((result) => result?.ok).map((result) => result.id),
+  );
+  return records.filter((entity) => storedIds.has(entity.getId()));
+}
+
+/**
+ * A short description of why a save failed, safe to pass on to a log or a message.
+ *
+ * A rejected save reports what happened to each individual document (see
+ * `Database.putAll`), i.e. potentially thousands of document ids - which have no place
+ * in remote monitoring (see #4174) or in a message shown to the user.
+ */
+export function describeSaveFailure(error: unknown): unknown {
+  if (error instanceof PartialBulkWriteError) {
+    return describeSaveFailure(error.cause);
+  }
+
+  if (Array.isArray(error)) {
+    const failed = error.filter((result) => !result?.ok);
+    return {
+      failedDocuments: failed.length,
+      statuses: [
+        ...new Set(failed.map((result) => result?.status ?? result?.name)),
+      ],
+    };
+  }
+
+  return error;
+}
+
+/**
+ * The step of an import that failed although records had already been saved.
+ *
+ * "records": the write of the imported records itself stopped partway.
+ * "links": all records were written and one of the additional link actions failed.
+ */
+export type ImportFailureStage = "records" | "links";
+
+/**
+ * Thrown when an import failed after part of its records had already been saved.
+ *
+ * A failed import used to mean that nothing was written, so retrying the file was
+ * always safe. Since a large import is written in several requests that no longer
+ * holds, and the user has to be told what did get imported - otherwise they re-run
+ * the whole file and duplicate it.
+ */
+export class PartialImportError extends Error {
+  constructor(
+    /** which step of the import failed (the saved records differ accordingly) */
+    readonly stage: ImportFailureStage,
+    /** number of records that were saved before the import failed */
+    readonly importedCount: number,
+    /** number of records the import was started with */
+    readonly totalCount: number,
+    /** the history entry recorded for the saved records, to review and undo them */
+    readonly completedImport: ImportMetadata | undefined,
+    cause: unknown,
+  ) {
+    super("Import failed after part of the records had been saved", { cause });
+  }
+}
+
+/**
  * Supporting import of data from spreadsheets.
  */
 @Injectable({
@@ -50,12 +131,89 @@ export class ImportService {
     entitiesToImport: Entity[],
     settings: ImportSettings,
   ): Promise<ImportMetadata> {
-    await this.entityMapper.saveAll(entitiesToImport);
-    await this.importAdditionalService.executeImport(
-      entitiesToImport,
-      settings,
-    );
+    try {
+      await this.entityMapper.saveAll(entitiesToImport);
+    } catch (error) {
+      throw await this.reportPartialImport(
+        "records",
+        storedRecordsOf(entitiesToImport, error),
+        entitiesToImport,
+        settings,
+        error,
+      );
+    }
+
+    try {
+      await this.importAdditionalService.executeImport(
+        entitiesToImport,
+        settings,
+      );
+    } catch (error) {
+      // the records themselves are all stored by now, whatever the additional
+      // actions failed at - so this is a partial import, not a failed one, and must
+      // be recorded as such instead of letting the user re-run the whole file.
+      // The error itself concerns the relationship records, so unlike above the
+      // saved records cannot be read off it.
+      throw await this.reportPartialImport(
+        "links",
+        entitiesToImport,
+        entitiesToImport,
+        settings,
+        error,
+      );
+    }
+
     return this.saveImportHistory(entitiesToImport, settings);
+  }
+
+  /**
+   * Record the records that were stored before the save failed and return the error
+   * to report for it.
+   *
+   * The database writes a large import in several requests, so a failure can leave
+   * part of the records stored - and anything failing after that write leaves all of
+   * them stored. A partial import that no history entry mentions could neither be
+   * recognised nor undone, leaving the user to find those records one by one - so it
+   * is recorded here before the failure is passed on.
+   */
+  private async reportPartialImport(
+    stage: ImportFailureStage,
+    savedEntities: Entity[],
+    entitiesToImport: Entity[],
+    settings: ImportSettings,
+    error: unknown,
+  ): Promise<unknown> {
+    if (savedEntities.length === 0) {
+      // nothing was stored, so this is an ordinary failed import
+      return error;
+    }
+
+    Logging.warn("Import failed after part of the records had been saved", {
+      stage,
+      importedCount: savedEntities.length,
+      totalCount: entitiesToImport.length,
+      entityType: settings.entityType,
+      reason: describeSaveFailure(error),
+    });
+
+    let completedImport: ImportMetadata;
+    try {
+      completedImport = await this.saveImportHistory(savedEntities, settings);
+    } catch (historyError) {
+      Logging.warn(
+        "Import history could not be saved for a partial import",
+        { entityType: settings.entityType },
+        historyError,
+      );
+    }
+
+    return new PartialImportError(
+      stage,
+      savedEntities.length,
+      entitiesToImport.length,
+      completedImport,
+      error,
+    );
   }
 
   private async saveImportHistory(

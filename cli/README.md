@@ -12,16 +12,17 @@ npm run cli -- migrate --help
 npm run cli -- migrate run --help
 ```
 
-| Command                          | Description                                   |
-| -------------------------------- | --------------------------------------------- |
-| `check`                          | Verify connectivity to all (or selected) orgs |
-| `migrate list`                   | List all available migrations                 |
-| `migrate run <id> [args...]`     | Run a migration (preview → confirm → apply)   |
-| `couchdb search <regex>`         | Find entity documents matching a regex        |
-| `couchdb edit <regex> <replace>` | Regex replace inside entity documents         |
-| `couchdb conflicts`              | List conflicted documents                     |
-| `statistics`                     | Print entity and user counts per org          |
-| `credentials merge <file>`       | Merge a server-collected credentials.json in  |
+| Command                          | Description                                                        |
+| -------------------------------- | ------------------------------------------------------------------ |
+| `check`                          | Verify connectivity to all (or selected) orgs                      |
+| `migrate list`                   | List all available migrations                                      |
+| `migrate run <id> [args...]`     | Run a migration (preview → confirm → apply)                        |
+| `couchdb search <regex>`         | Find entity documents matching a regex                             |
+| `couchdb edit <regex> <replace>` | Regex replace inside entity documents                              |
+| `couchdb conflicts`              | List conflicted documents                                          |
+| `couchdb cleanup-attachments`    | Delete orphaned `app-attachments` docs (preview → confirm → apply) |
+| `statistics`                     | Print entity and user counts per org                               |
+| `credentials merge <file>`       | Merge a server-collected credentials.json in                       |
 
 The `statistics` command requires Keycloak credentials (see below).
 It supports `--format csv` for spreadsheet export — use `npm run --silent` to suppress npm's script header when redirecting to a file:
@@ -66,13 +67,13 @@ Place a `credentials.json` in the `cli/` folder of your ndb-core checkout (it is
 
 Org fields:
 
-| Field      | Required | Description                                        |
-| ---------- | -------- | -------------------------------------------------- |
-| `name`     | yes      | Short org name, e.g. `c-myorg`                     |
-| `password` | yes      | CouchDB admin password                             |
-| `url`      | no       | Override host (default: `<name>.<DOMAIN env var>`) |
-| `username` | no       | CouchDB admin username (default: `admin`)          |
-| `category` | no       | Used with `--category` to filter org subsets       |
+| Field      | Required | Description                                                       |
+| ---------- | -------- | ----------------------------------------------------------------- |
+| `name`     | yes      | Short org name, e.g. `c-myorg`                                    |
+| `password` | yes      | CouchDB admin password                                            |
+| `url`      | no       | Override host (default: `<name>.<DOMAIN env var>`)                |
+| `username` | no       | CouchDB admin username (default: `admin`)                         |
+| `category` | no       | Used with `--category`/`--exclude-category` to filter org subsets |
 
 If `url` is omitted, the CLI builds it as `<name>.<DOMAIN>` where `DOMAIN` is read from the environment.
 

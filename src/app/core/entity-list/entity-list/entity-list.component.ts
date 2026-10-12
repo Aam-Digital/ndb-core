@@ -12,8 +12,9 @@ import {
   output,
   untracked,
 } from "@angular/core";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { toSignal } from "@angular/core/rxjs-interop";
+import { AuditRecord } from "../../../features/change-history/model/audit-record";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
   FilterConfig,
@@ -26,7 +27,7 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
-import { AsyncPipe, NgStyle, NgTemplateOutlet } from "@angular/common";
+import { NgStyle, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -50,9 +51,8 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
-import { AblePurePipe } from "@casl/angular";
+import { AblePipe } from "../../permissions/permission-pipe/able.pipe";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { EntityLoadPipe } from "../../common-components/entity-load/entity-load.pipe";
 import { PublicFormConfig } from "#src/app/features/public-form/public-form-config";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -102,10 +102,8 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
-    AsyncPipe,
-    AblePurePipe,
+    AblePipe,
     ViewActionsComponent,
-    EntityLoadPipe,
     EntityBulkActionsComponent,
   ],
 })
@@ -123,6 +121,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private readonly ability = inject(EntityAbility);
   private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly injector = inject(Injector);
+
+  /** the audit data the change log reads, as the permission subject to ask about */
+  protected readonly auditRecordType = AuditRecord.ENTITY_TYPE;
 
   public publicFormConfigs: PublicFormConfig[] = [];
 

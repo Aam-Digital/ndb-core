@@ -56,7 +56,7 @@ export class OrgRunner {
 
   static filterOrgs(
     orgs: SystemCredentials[],
-    options: { org?: string; category?: string },
+    options: { org?: string; category?: string; excludeCategory?: string },
   ): SystemCredentials[] {
     let result = orgs;
     if (options.org) {
@@ -67,6 +67,9 @@ export class OrgRunner {
     }
     if (options.category) {
       result = result.filter((c) => c.category === options.category);
+    }
+    if (options.excludeCategory) {
+      result = result.filter((c) => c.category !== options.excludeCategory);
     }
     return result;
   }

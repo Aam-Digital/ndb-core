@@ -497,6 +497,25 @@ const migrateNotesManagerComponent: ConfigMigration = (key, configPart) => {
 };
 
 /**
+ * Older `view:note/:id` configs (including base-configs bundled before the
+ * NoteDetails `entityType` input was introduced) do not set `entityType`.
+ * Without it, NoteDetailsComponent's entity-loading is never triggered and
+ * the Note details page stays on the loading spinner indefinitely.
+ */
+const migrateNoteDetailsEntityType: ConfigMigration = (key, configPart) => {
+  if (key !== "view:note/:id" || typeof configPart !== "object") {
+    return configPart;
+  }
+
+  configPart.config = configPart.config ?? {};
+  if (!configPart.config.entityType) {
+    configPart.config.entityType = "Note";
+  }
+
+  return configPart;
+};
+
+/**
  * Migrate ShortcutDashboard widget `link` values that point to entity routes
  * to use the runtime `/c/` prefix.
  *
@@ -757,6 +776,7 @@ export const configMigrations: ConfigMigration[] = [
   migrateEditDescriptionOnly,
   migrateEditAttendanceComponent,
   migrateNotesManagerComponent,
+  migrateNoteDetailsEntityType,
   removeConfigRoutesMigratedToFixedFeatures,
   migrateAttendanceRecurringActivityRoute,
   removeExportConfig,
@@ -770,9 +790,9 @@ export const configMigrations: ConfigMigration[] = [
 /**
  * Apply all config migrations to a plain JSON document.
  * Returns the migrated document as a plain object (no Angular entity re-hydration).
- * Used by the admin CLI; ConfigService wraps this and also applies defaultConfigs
- * (addDefaultNoteDetailsConfig, addDefaultTodoViews) before calling this, so the
- * migrations above can see those default-added view configs too.
+ * Used by the admin CLI; ConfigService wraps this and also applies the defaults that
+ * feature modules register in the DefaultConfigMigrationRegistryService before calling
+ * this, so the migrations above can see those default-added view configs too.
  */
 export function applyConfigMigrations<E>(doc: E): E {
   return JSON.parse(JSON.stringify(doc), (_that, rawValue) => {

@@ -11,6 +11,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -24,6 +25,7 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { negate, splitNegation, withSameNegation } from "./condition-negation";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -35,6 +37,7 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
   styleUrls: ["./conditions-editor.component.scss"],
   imports: [
     MatButtonModule,
+    MatSelectModule,
     MatFormFieldModule,
     MatTooltipModule,
     IconButtonComponent,
@@ -83,6 +86,26 @@ export class ConditionsEditorComponent implements OnInit {
    */
   getConditionField(condition: any): string {
     return Object.keys(condition || {})[0] || "";
+  }
+
+  /** whether the given row's stored condition is negated */
+  isNegated(conditionIndex: number): boolean {
+    const condition = this.conditionsArray()[conditionIndex];
+    const fieldKey = this.getConditionField(condition);
+    return splitNegation(condition?.[fieldKey]).negated;
+  }
+
+  /** switch a row between "is" and "is not", keeping its value */
+  setNegated(conditionIndex: number, negated: boolean): void {
+    const condition = this.conditionsArray()[conditionIndex];
+    const fieldKey = this.getConditionField(condition);
+    if (!fieldKey) return;
+
+    const { positive } = splitNegation(condition[fieldKey]);
+    condition[fieldKey] = negated ? negate(positive) : positive;
+
+    this.conditionsSignal.set({ ...this.conditions });
+    this.conditionsChange.emit(this.conditions);
   }
 
   /**
@@ -204,26 +227,29 @@ export class ConditionsEditorComponent implements OnInit {
     fieldConfig: EntitySchemaField,
     conditionFieldConfig: EntitySchemaField,
   ): any {
+    // a negated condition still edits the value inside it
+    const { positive } = splitNegation(conditionValue);
+
     let value;
-    if (fieldConfig.isArray && conditionValue?.$elemMatch?.$in) {
+    if (fieldConfig.isArray && positive?.$elemMatch?.$in) {
       // For array fields, extract value from $elemMatch.$in if present
-      value = conditionValue.$elemMatch.$in;
-    } else if (
-      fieldConfig.isArray &&
-      conditionValue?.$elemMatch !== undefined
-    ) {
+      value = positive.$elemMatch.$in;
+    } else if (fieldConfig.isArray && positive?.$elemMatch !== undefined) {
       // Support legacy array-condition format: { $elemMatch: "id" }
-      const elemMatch = conditionValue.$elemMatch;
+      const elemMatch = positive.$elemMatch;
       if (Array.isArray(elemMatch)) {
         value = elemMatch;
       } else {
         value = [elemMatch];
       }
-    } else if (!fieldConfig.isArray && conditionValue?.$in) {
+    } else if (!fieldConfig.isArray && positive?.$in) {
       // For non-array dropdown fields, extract value from $in
-      value = conditionValue.$in;
+      value = positive.$in;
+    } else if (positive?.$eq !== undefined) {
+      // a negated plain value is stored as $eq, which the value control cannot render
+      value = positive.$eq;
     } else {
-      value = conditionValue;
+      value = positive;
     }
 
     return this.entitySchemaService.valueToEntityFormat(
@@ -239,14 +265,17 @@ export class ConditionsEditorComponent implements OnInit {
     fieldConfig: EntitySchemaField,
     conditionFieldConfig: EntitySchemaField,
   ): void {
+    const previous = condition[fieldKey];
+
     const dbValue = this.entitySchemaService.valueToDatabaseFormat(
       value,
       conditionFieldConfig,
     );
 
+    let positive: any;
     if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
       // For array fields, wrap in $elemMatch with $in for proper array matching
-      condition[fieldKey] = { $elemMatch: { $in: dbValue } };
+      positive = { $elemMatch: { $in: dbValue } };
     } else if (
       !fieldConfig.isArray &&
       conditionFieldConfig.isArray &&
@@ -254,10 +283,12 @@ export class ConditionsEditorComponent implements OnInit {
       dbValue.length > 0
     ) {
       // For non-array dropdown fields, wrap multi selection in $in
-      condition[fieldKey] = { $in: dbValue };
+      positive = { $in: dbValue };
     } else {
-      condition[fieldKey] = dbValue;
+      positive = dbValue;
     }
+
+    condition[fieldKey] = withSameNegation(previous, positive);
 
     this.conditionsChange.emit(this.conditions);
   }

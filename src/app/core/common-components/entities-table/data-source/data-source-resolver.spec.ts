@@ -8,15 +8,29 @@ import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
+import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { Database } from "#src/app/core/database/database";
 
 describe("resolveDataSource", () => {
   let injector: Injector;
   const originalSessionType = environment.session_type;
   const originalDefaultDataSource = environment.default_data_source;
 
+  let databaseSupportsFind: boolean;
+
   beforeEach(() => {
+    databaseSupportsFind = true;
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
+      providers: [
+        {
+          provide: DatabaseResolverService,
+          useValue: {
+            getDatabase: () =>
+              ({ supportsFind: () => databaseSupportsFind }) as Database,
+          },
+        },
+      ],
     });
     injector = TestBed.inject(Injector);
   });
@@ -32,6 +46,16 @@ describe("resolveDataSource", () => {
     const dataSource = resolveDataSource<Entity>(injector);
 
     expect(dataSource).toBeInstanceOf(PaginatedDataSource);
+  });
+
+  it("should use the InMemoryDataSource in online mode if the database does not support pagination", () => {
+    // e.g. a SyncedPouchDatabase created before session_type was switched to online
+    environment.session_type = SessionType.online;
+    databaseSupportsFind = false;
+
+    const dataSource = resolveDataSource<Entity>(injector, "paginated");
+
+    expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
 
   it("should use the InMemoryDataSource in online mode when a loaderMethod is given and no dataSource is set", () => {

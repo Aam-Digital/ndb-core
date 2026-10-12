@@ -8,6 +8,39 @@ import {
   resetSentryEventCounts,
   toReportedError,
 } from "./logging.service";
+import { DatabaseException } from "../database/pouchdb/database-exception";
+import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
+
+/** How Sentry titles an event: by its last (thrown) exception. */
+function reportedTitle(event: any): string {
+  const values = event.exception.values;
+  const thrown = values[values.length - 1];
+  return `${thrown.type}: ${thrown.value}`;
+}
+
+/** An event for `Logging.error(message, err)`, where `chain` is `err` innermost-first. */
+function loggedEvent(message: string, ...chain: object[]): any {
+  return processSentryEvent(
+    {
+      exception: { values: [...chain, { type: "Error", value: message }] },
+    } as any,
+    { originalException: new LoggedError(message) } as any,
+  );
+}
+
+/** An event for a failed database request that reached the global error handler. */
+function unloggedDbFailure(): any {
+  return processSentryEvent(
+    {
+      exception: {
+        values: [
+          { type: "DatabaseException", value: "Failed to fetch from DB" },
+        ],
+      },
+    } as any,
+    {},
+  );
+}
 
 describe("LoggingService", () => {
   const testMessage = "FANCY_TEST_MESSAGE";
@@ -169,6 +202,59 @@ describe("LoggingService", () => {
       it("should still report other database failures", () => {
         expect(
           dbFailure("not_found", { originalException: { status: 404 } }),
+        ).not.toBeNull();
+      });
+    });
+
+    describe("expired sessions that could not be renewed", () => {
+      // the user is told by RemotePouchDatabase; the waiting consumer is not at fault
+      const unauthorized = (reason: string) =>
+        new DatabaseException({
+          status: 401,
+          name: "unauthorized",
+          error: "unauthorized",
+          reason,
+          message: reason,
+        });
+      const expired = () => unauthorized("exp not in future");
+
+      const report = (originalException: unknown) =>
+        processSentryEvent(
+          {
+            exception: {
+              values: [{ type: "Error", value: "exp not in future" }],
+            },
+          } as any,
+          { originalException },
+        );
+
+      it("should drop the error when it is thrown directly (e.g. unhandled)", () => {
+        expect(report(expired())).toBeNull();
+      });
+
+      it("should drop an error logged with it as context", () => {
+        expect(
+          report(toReportedError("Could not load the list", [expired()])),
+        ).toBeNull();
+      });
+
+      it("should drop an error that wraps it as a cause (e.g. a failed resource)", () => {
+        const outer = new Error("exp not in future", {
+          cause: new Error("wrapper", { cause: expired() }),
+        });
+
+        expect(report(outer)).toBeNull();
+      });
+
+      it("should still report other reasons for a 401", () => {
+        expect(
+          report(unauthorized("Token signature is not valid")),
+        ).not.toBeNull();
+      });
+
+      it("should still report an unrelated error with an unrelated cause", () => {
+        expect(
+          report(new Error("outer", { cause: new Error("inner") })),
         ).not.toBeNull();
       });
     });
@@ -421,26 +507,51 @@ describe("LoggingService", () => {
         expect(selfWrapped.fingerprint).toEqual(unwrapped.fingerprint);
       });
 
-      it("should group a registry lookup by key, not by the call site's stack", () => {
-        const lookupEvent = (key: string) =>
-          ({
-            exception: {
-              values: [
-                {
-                  type: "RegistryLookupError",
-                  value: `Requested item is not registered in EntityRegistry. Key: ${key}`,
-                },
-              ],
-            },
-          }) as any;
+      it("should group registry lookups of all keys into one issue, not by the call site's stack", () => {
+        const lookupEvent = (key: string) => {
+          const error = new RegistryLookupError("EntityRegistry", key);
+          return processSentryEvent(
+            {
+              exception: {
+                values: [{ type: error.name, value: error.message }],
+              },
+            } as any,
+            { originalException: error },
+          );
+        };
 
-        const fromPipe = processSentryEvent(lookupEvent("Event"), {});
-        const fromImport = processSentryEvent(lookupEvent("Event"), {});
-        const otherKey = processSentryEvent(lookupEvent("Child"), {});
+        const child = lookupEvent("Child");
+        const school = lookupEvent("School");
 
-        expect(fromPipe.fingerprint).toEqual(fromImport.fingerprint);
-        // a different missing registration is a different problem to fix
-        expect(otherKey.fingerprint).not.toEqual(fromPipe.fingerprint);
+        // one config referring to several unknown types is one problem to fix
+        expect(school.fingerprint).toEqual(child.fingerprint);
+        expect(child.exception.values[0].value).toBe(
+          school.exception.values[0].value,
+        );
+        // ... while each report still names the key that was missing
+        expect(child.extra).toMatchObject({
+          registry: "EntityRegistry",
+          registryKey: "Child",
+        });
+        expect(school.extra.registryKey).toBe("School");
+      });
+
+      it("should keep the registry lookups of different registries apart", () => {
+        const lookupEvent = (registry: string) => {
+          const error = new RegistryLookupError(registry, "SomeKey");
+          return processSentryEvent(
+            {
+              exception: {
+                values: [{ type: error.name, value: error.message }],
+              },
+            } as any,
+            { originalException: error },
+          );
+        };
+
+        expect(lookupEvent("EntityRegistry").fingerprint).not.toEqual(
+          lookupEvent("ComponentRegistry").fingerprint,
+        );
       });
 
       it("should group an error logged with a message by that message, not by the stack", () => {
@@ -522,8 +633,7 @@ describe("LoggingService", () => {
       it("should group an error a framework re-threw like the unwrapped one", () => {
         const lookupFailure = {
           type: "RegistryLookupError",
-          value:
-            "Requested item is not registered in EntityRegistry. Key: Child",
+          value: "Requested item is not registered in EntityRegistry",
         };
 
         const thrownDirectly = processSentryEvent(
@@ -545,6 +655,24 @@ describe("LoggingService", () => {
 
         expect(fromResourceLoader.fingerprint).toEqual(
           thrownDirectly.fingerprint,
+        );
+      });
+
+      it("should report an error a framework re-threw under the title of the unwrapped one", () => {
+        const thrownDirectly = unloggedDbFailure();
+        const fromResourceLoader = processSentryEvent(
+          chainedEvent(
+            { type: "DatabaseException", value: "Failed to fetch from DB" },
+            { type: "Error", value: "Failed to fetch from DB" },
+          ),
+          {},
+        );
+
+        expect(reportedTitle(thrownDirectly)).toBe(
+          "DatabaseException: Failed to reach the server",
+        );
+        expect(reportedTitle(fromResourceLoader)).toBe(
+          reportedTitle(thrownDirectly),
         );
       });
 
@@ -702,6 +830,34 @@ describe("LoggingService", () => {
           action: "create",
           entityId: "Config:CONFIG_ENTITY",
           entityType: "Config",
+        });
+      });
+
+      it("should name the missing registry key even when a framework re-threw the error", () => {
+        const lookupFailure = new RegistryLookupError(
+          "EntityRegistry",
+          "Child",
+        );
+        // Angular re-throws an error raised in a `resource()` loader as its own
+        const rethrown = new Error(`Error: ${lookupFailure.message}`, {
+          cause: lookupFailure,
+        });
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { type: lookupFailure.name, value: lookupFailure.message },
+                { type: "Error", value: rethrown.message },
+              ],
+            },
+          } as any,
+          { originalException: rethrown },
+        );
+
+        expect(event.extra).toMatchObject({
+          registry: "EntityRegistry",
+          registryKey: "Child",
         });
       });
     });
@@ -890,6 +1046,60 @@ describe("LoggingService", () => {
 
         expect(event.fingerprint).toContain("ConfigLoadError");
         expect(event.fingerprint).not.toEqual(["network-error"]);
+      });
+
+      it("should group a logged failed database request with the unlogged one, whichever component logged it", () => {
+        const notes = loggedEvent("Failed to load important notes", {
+          type: "DatabaseException",
+          value: "Failed to fetch",
+        });
+        const list = loggedEvent("Error loading data in datasource", {
+          type: "DatabaseException",
+          value: "Load failed",
+        });
+        const unlogged = unloggedDbFailure();
+
+        expect(notes.fingerprint).toEqual(unlogged.fingerprint);
+        expect(list.fingerprint).toEqual(unlogged.fingerprint);
+        // ... under the same title
+        expect(reportedTitle(notes)).toBe(reportedTitle(unlogged));
+        // ... still telling which component failed
+        expect(notes.tags.logged_message).toBe(
+          "Failed to load important notes",
+        );
+      });
+
+      it("should keep a logged named error caused by a failed request in its own issue", () => {
+        const event = loggedEvent(
+          "Application Bootstrap failed",
+          { type: "DatabaseException", value: "Failed to fetch" },
+          {
+            type: "ConfigLoadError",
+            value: "Failed to load configuration from the database.",
+          },
+        );
+
+        expect(event.fingerprint).not.toEqual(unloggedDbFailure().fingerprint);
+      });
+
+      it("should keep a logged failed chunk load in its own issue, as the app may never have started", () => {
+        const event = loggedEvent("Application Bootstrap failed", {
+          type: "TypeError",
+          value:
+            "Failed to fetch dynamically imported module: https://example.org/chunk-SL2Y43UW.js",
+        });
+
+        expect(event.fingerprint).not.toEqual(["network-error"]);
+        expect(event.fingerprint).toContain("application bootstrap failed");
+      });
+
+      it("should keep grouping other logged database failures by the logged message", () => {
+        const event = loggedEvent("Failed to load important notes", {
+          type: "DatabaseException",
+          value: "Unauthorized",
+        });
+
+        expect(event.fingerprint).toContain("failed to load important notes");
       });
     });
 

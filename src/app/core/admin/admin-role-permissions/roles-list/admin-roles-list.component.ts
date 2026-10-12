@@ -2,19 +2,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  computed,
   inject,
-  signal,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
-import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
-import { MatTableModule } from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { firstValueFrom } from "rxjs";
 
+import { ListPaginatorComponent } from "../../../common-components/entities-table/list-paginator/list-paginator.component";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { Logging } from "../../../logging/logging.service";
 import { JsonEditorService } from "../../json-editor/json-editor.service";
@@ -34,7 +32,7 @@ import {
   imports: [
     ViewTitleComponent,
     MatTableModule,
-    MatPaginatorModule,
+    ListPaginatorComponent,
     MatButtonModule,
     MatMenuModule,
     MatTooltipModule,
@@ -50,14 +48,8 @@ export class AdminRolesListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  readonly roles = signal<RoleWithPermissions[]>([]);
-  readonly pageIndex = signal(0);
-  readonly pageSize = signal(10);
-  readonly pageSizeOptions = [10, 25, 50, 100];
-  readonly pagedRoles = computed(() => {
-    const start = this.pageIndex() * this.pageSize();
-    return this.roles().slice(start, start + this.pageSize());
-  });
+  /** the roles to display; paging is handled by {@link ListPaginatorComponent} */
+  readonly dataSource = new MatTableDataSource<RoleWithPermissions>();
 
   readonly displayedColumns = ["name", "description", "permissions"];
 
@@ -75,16 +67,13 @@ export class AdminRolesListComponent implements OnInit {
 
   private async loadRoles() {
     try {
-      this.roles.set(await this.rolePermissionsService.loadRoles());
-      this.pageIndex.set(0);
+      this.dataSource.data = await this.rolePermissionsService.loadRoles();
+      // a freshly loaded list starts at the first page: the data source only
+      // ever clamps the page index downwards, never resets it
+      this.dataSource.paginator?.firstPage();
     } catch (err) {
       Logging.error("Failed to load roles:", err);
     }
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageIndex.set(event.pageIndex);
-    this.pageSize.set(event.pageSize);
   }
 
   openRoleDetails(role: RoleWithPermissions) {

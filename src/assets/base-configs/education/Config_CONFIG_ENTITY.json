@@ -333,6 +333,7 @@
     "view:note/:id": {
       "component": "NoteDetails",
       "config": {
+        "entityType": "Note",
         "topForm": [
           "date",
           "warningLevel",
@@ -786,10 +787,6 @@
         ]
       },
       "_id": "view:attendance/recurring-activity/:id"
-    },
-    "view:report": {
-      "component": "Reporting",
-      "_id": "view:report"
     },
     "entity:Child": {
       "label": "Student",

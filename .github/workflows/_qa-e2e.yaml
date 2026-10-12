@@ -37,7 +37,7 @@ jobs:
           cache: npm
 
       - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
-      - run: npm install --ci
+      - run: npm ci
 
       - name: Cache playwright
         id: cache-playwright
@@ -63,7 +63,7 @@ jobs:
 
       - name: Upload test artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results
           path: |

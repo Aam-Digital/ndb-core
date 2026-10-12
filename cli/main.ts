@@ -26,6 +26,10 @@ program
   .option("--credentials <path>", "Path to credentials.json")
   .option("--org <orgs>", "Comma-separated org names or URLs")
   .option("--category <category>", "Filter orgs by credential category")
+  .option(
+    "--exclude-category <category>",
+    "Exclude orgs by credential category",
+  )
   .option("--verbose", "Show detailed output");
 
 // ─── Commands ────────────────────────────────────────────────────────────────
