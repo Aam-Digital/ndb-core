@@ -258,8 +258,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="31"
-                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:31</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -346,8 +346,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="228"
-                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:228</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:241</a></div>
                         </td>
                     </tr>
 
@@ -427,8 +427,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="237"
-                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:237</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="250"
+                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:250</a></div>
                         </td>
                     </tr>
 
@@ -507,7 +507,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:21</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:22</a></div>
                         </td>
                     </tr>
 
@@ -531,6 +531,7 @@ import {
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { isEqual } from &quot;lodash-es&quot;;
 
 /**
  * Import data to update existing records
@@ -732,19 +733,31 @@ export class ImportExistingService {
       return &quot;skip&quot;;
     }
 
-    if (!importExisting.strictMatching) {
-      // For strings, use case-insensitive comparison
-      if (
-        typeof existingValue &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
-        typeof importValue &#x3D;&#x3D;&#x3D; &quot;string&quot;
-      ) {
-        return existingValue.toLowerCase() &#x3D;&#x3D;&#x3D; importValue.toLowerCase()
-          ? &quot;match&quot;
-          : &quot;no-match&quot;;
-      }
-    }
+    const strict &#x3D; !!importExisting.strictMatching;
+    return isEqual(
+      this.normalizeForComparison(existingValue, strict),
+      this.normalizeForComparison(importValue, strict),
+    )
+      ? &quot;match&quot;
+      : &quot;no-match&quot;;
+  }
 
-    return existingValue &#x3D;&#x3D;&#x3D; importValue ? &quot;match&quot; : &quot;no-match&quot;;
+  /**
+   * Bring a value in database format into a form to be compared by value (&#x60;isEqual&#x60;).
+   *
+   * Database formats are not always primitives (e.g. &#x60;Date&#x60; objects of &quot;date&quot; fields
+   * or arrays of multi-value fields), which would never be equal by reference (&#x60;&#x3D;&#x3D;&#x3D;&#x60;).
+   * Unless strict, strings are compared ignoring case and surrounding whitespace,
+   * because imported values are trimmed while existing ones may not be.
+   */
+  private normalizeForComparison(value: any, strict: boolean): any {
+    if (Array.isArray(value)) {
+      return value.map((v) &#x3D;&gt; this.normalizeForComparison(v, strict));
+    }
+    if (typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; !strict) {
+      return value.trim().toLowerCase();
+    }
+    return value;
   }
 
   getImportHistoryForUpdatedEntities(
