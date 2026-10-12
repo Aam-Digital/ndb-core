@@ -24,7 +24,6 @@ import { ImportProcessingContext } from "../../import/import-processing-context"
 import { splitArrayValue } from "../../import/split-array-value";
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Entity } from "../../entity/model/entity";
 import {
   ColumnImportInput,
   ExportColumnMapping,
