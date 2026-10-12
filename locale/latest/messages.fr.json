@@ -1190,7 +1190,6 @@
   "3867745417101128833": "Activez cette option pour diviser les valeurs contenant le séparateur en plusieurs entrées. Désactivez-la pour les valeurs qui contiennent le séparateur dans le texte (par exemple, « media (article, ad, tv) »).",
   "3905448599345156259": "Mise à niveau de la base de données prête",
   "5709046777415939097": "Votre base de données a été mise à jour pour de meilleures performances. Rechargez-la maintenant pour commencer à l'utiliser.",
-  "7724361443262323317": "La condition s'applique si l'un des critères sélectionnés correspond aux conditions « ou ». ",
   "5786452744215028715": "Modifier le JSON",
   "2915778723698518140": "Conflits écrasant les données mises à jour",
   "4233906413704543671": "Certaines données ont été modifiées lors de la synchronisation pendant la préparation de l'importation. Nous actualisons les données. Veuillez vérifier et relancer l'importation.",

@@ -1190,7 +1190,6 @@
   "3867745417101128833": "Aktivieren Sie diese Option, um Werte, die das Trennzeichen enthalten, in mehrere Einträge aufzuteilen. Deaktivieren Sie sie für Werte, die das Trennzeichen als Teil des Textes enthalten, um Probleme zu vermeiden (z. B. 'media (article, ad, tv)').",
   "3905448599345156259": "Datenbank Upgrade",
   "5709046777415939097": "Ihre Datenbank wurde für eine verbesserte Leistung aktualisiert. Jetzt neu laden, um das Update zu nutzen?",
-  "7724361443262323317": "Die Bedingung gilt, wenn eines der ausgewählten Kriterien mit den (\"oder\"-Bedingungen) übereinstimmt. ",
   "5786452744215028715": "JSON bearbeiten",
   "2915778723698518140": "Konflikte überschreiben aktualisierte Daten",
   "4233906413704543671": "Bei der Vorbereitung des Imports haben sich einige Datensätze durch die Synchronisierung geändert. Wir aktualisieren die Daten für Sie. Bitte überprüfen Sie die Daten und führen Sie den Import erneut aus.",
