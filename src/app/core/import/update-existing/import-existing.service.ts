@@ -9,6 +9,7 @@ import {
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Logging } from "../../logging/logging.service";
+import { isEqual } from "lodash-es";
 
 /**
  * Import data to update existing records
@@ -210,19 +211,31 @@ export class ImportExistingService {
       return "skip";
     }
 
-    if (!importExisting.strictMatching) {
-      // For strings, use case-insensitive comparison
-      if (
-        typeof existingValue === "string" &&
-        typeof importValue === "string"
-      ) {
-        return existingValue.toLowerCase() === importValue.toLowerCase()
-          ? "match"
-          : "no-match";
-      }
-    }
+    const strict = !!importExisting.strictMatching;
+    return isEqual(
+      this.normalizeForComparison(existingValue, strict),
+      this.normalizeForComparison(importValue, strict),
+    )
+      ? "match"
+      : "no-match";
+  }
 
-    return existingValue === importValue ? "match" : "no-match";
+  /**
+   * Bring a value in database format into a form to be compared by value (`isEqual`).
+   *
+   * Database formats are not always primitives (e.g. `Date` objects of "date" fields
+   * or arrays of multi-value fields), which would never be equal by reference (`===`).
+   * Unless strict, strings are compared ignoring case and surrounding whitespace,
+   * because imported values are trimmed while existing ones may not be.
+   */
+  private normalizeForComparison(value: any, strict: boolean): any {
+    if (Array.isArray(value)) {
+      return value.map((v) => this.normalizeForComparison(v, strict));
+    }
+    if (typeof value === "string" && !strict) {
+      return value.trim().toLowerCase();
+    }
+    return value;
   }
 
   getImportHistoryForUpdatedEntities(
