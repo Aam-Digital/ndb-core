@@ -272,16 +272,24 @@ export class DownloadService {
       columnResolvers.set(columnId, resolver);
     }
 
-    const exportContext: ExportContext = { entityNameCache: new Map() };
-    const exportEntities = await mapInBatches(data, EXPORT_BATCH_SIZE, (item) =>
-      this.mapEntityToExportRow(item, columnResolvers, exportContext),
-    );
-
     // Keep selected columns that have no schema resolver (e.g. runtime-attached
     // fields like a Child's `schoolId`, or configured query-expression columns)
     // and read their value directly from the entity, so they are not silently
     // dropped from the export.
     const columnKeys = selectedKeys ?? Array.from(columnLabels.keys());
+
+    // Only resolve the selected columns: resolving a column can require loading
+    // referenced entities, which is wasted effort for columns that are not exported.
+    const selectedResolvers = new Map(
+      columnKeys
+        .filter((key) => columnResolvers.has(key))
+        .map((key) => [key, columnResolvers.get(key)]),
+    );
+    const exportContext: ExportContext = { entityNameCache: new Map() };
+    const exportEntities = await mapInBatches(data, EXPORT_BATCH_SIZE, (item) =>
+      this.mapEntityToExportRow(item, selectedResolvers, exportContext),
+    );
+
     const headers = columnKeys.map(
       (key) => labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
     );

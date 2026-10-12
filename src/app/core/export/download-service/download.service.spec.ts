@@ -235,6 +235,30 @@ describe("DownloadService", () => {
     );
   });
 
+  it("should not resolve (load referenced entities for) columns that are not selected", async () => {
+    class SelectedColumnsTestEntity extends Entity {
+      @DatabaseField({ label: "Subject" })
+      subject: string;
+
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        label: "referenced entity",
+      })
+      related: string;
+    }
+    const entity = new SelectedColumnsTestEntity();
+    entity.subject = "Meeting";
+    entity.related = testChild.getId();
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".subject", label: "Subject" }],
+    );
+
+    expect(rows).toEqual([["Subject"], ["Meeting"]]);
+    expect(mockedEntityMapper.load).not.toHaveBeenCalled();
+  });
+
   it("should limit parallel entity lookups when exporting many rows", async () => {
     class ManyRowsTestEntity extends Entity {
       @DatabaseField({
