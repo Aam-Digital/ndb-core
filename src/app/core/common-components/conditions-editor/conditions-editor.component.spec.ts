@@ -139,6 +139,31 @@ describe("ConditionsEditorComponent", () => {
     expect(component.conditionsArray()).toEqual([{}]);
   });
 
+  it("should leave a negated row without a value out of the emitted conditions", () => {
+    component.addCondition();
+    component.onConditionFieldChange(0, "name");
+    vi.spyOn(component.conditionsChange, "emit");
+
+    component.setNegated(0, true);
+
+    expect(component.conditionsChange.emit).toHaveBeenLastCalledWith({});
+  });
+
+  it("should leave a multi-select row out of the emitted conditions once it is cleared", () => {
+    mockEntitySchemaService.valueToEntityFormat.mockReturnValue(null);
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue(["X"]);
+    component.addCondition();
+    component.onConditionFieldChange(0, "gender");
+    const formControl = component.conditionFormControls.get("0");
+    formControl.setValue(["X"]);
+    vi.spyOn(component.conditionsChange, "emit");
+
+    mockEntitySchemaService.valueToDatabaseFormat.mockReturnValue([]);
+    formControl.setValue([]);
+
+    expect(component.conditionsChange.emit).toHaveBeenLastCalledWith({});
+  });
+
   it("should handle condition field change", () => {
     component.addCondition();
     const fieldConfig = component.entityConstructor.schema.get("name");

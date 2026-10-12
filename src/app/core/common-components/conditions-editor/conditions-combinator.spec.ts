@@ -4,6 +4,7 @@ import {
   normalizeConditions,
   parseConditions,
 } from "./conditions-combinator";
+import { negate } from "./condition-negation";
 
 describe("conditions combinator helpers", () => {
   describe("parseConditions", () => {
@@ -114,6 +115,28 @@ describe("conditions combinator helpers", () => {
       expect(buildConditions("any", [{ a: 1 }, {}, { b: null }])).toEqual({
         $or: [{ a: 1 }],
       });
+    });
+
+    it.each([
+      ["an empty array", { a: [] }],
+      ["a negated null", { a: negate(null) }],
+      ["a negated empty array", { a: negate([]) }],
+      ["an $eq of null", { a: { $eq: null } }],
+    ])("should leave out a row whose value is %s", (_label, row) => {
+      // an "is not" row that is still waiting for its value is as unfinished as an "is" row
+      expect(buildConditions("any", [row])).toEqual({});
+      expect(buildConditions("all", [row])).toEqual({});
+    });
+
+    it.each([
+      ["false", { a: false }],
+      ["zero", { a: 0 }],
+      ["a negated value", { a: negate("x") }],
+      ["an $in list", { a: { $in: ["x"] } }],
+      ["an $elemMatch", { a: { $elemMatch: { $in: ["x"] } } }],
+      ["a negated $elemMatch", { a: negate({ $elemMatch: { $in: ["x"] } }) }],
+    ])("should keep a row whose value is %s", (_label, row) => {
+      expect(buildConditions("all", [row])).toEqual(row);
     });
 
     it("should not share objects with its input", () => {

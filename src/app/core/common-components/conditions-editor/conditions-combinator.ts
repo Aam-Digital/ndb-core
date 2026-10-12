@@ -1,3 +1,5 @@
+import { splitNegation } from "./condition-negation";
+
 /** How the rows of a condition combine: any one row ("or") or every row ("and") has to match. */
 export type Combinator = "any" | "all";
 
@@ -16,11 +18,27 @@ export interface ParsedConditions {
 const isPlainObject = (value: any): boolean =>
   !!value && typeof value === "object" && !Array.isArray(value);
 
+/**
+ * Whether a row's value is set: not null, undefined or an empty list. Negating an empty value
+ * leaves it just as empty, so an "is not" row that is still waiting for its value does not count.
+ */
+const hasValue = (value: any): boolean => {
+  const { positive } = splitNegation(value);
+  const operand =
+    isPlainObject(positive) && "$eq" in positive ? positive.$eq : positive;
+
+  return (
+    operand !== null &&
+    operand !== undefined &&
+    !(Array.isArray(operand) && operand.length === 0)
+  );
+};
+
 /** A row is complete once its field has a value. */
 const isCompleteRow = (row: any): boolean =>
   isPlainObject(row) &&
   Object.keys(row).length > 0 &&
-  Object.values(row).every((value) => value !== null && value !== undefined);
+  Object.values(row).every(hasValue);
 
 /**
  * Split a stored condition into the combinator it implies and its rows.
