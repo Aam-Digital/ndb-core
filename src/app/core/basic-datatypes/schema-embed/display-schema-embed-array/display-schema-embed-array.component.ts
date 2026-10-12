@@ -9,7 +9,7 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { SchemaEmbedDatatype } from "../schema-embed.datatype";
+import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
 
 /**
@@ -35,19 +35,10 @@ export class DisplaySchemaEmbedArrayComponent extends ViewDirective<
   rows = computed(() => this.value() ?? []);
 
   /** The inner fields (table columns), each with its resolved viewComponent for rendering cells. */
-  columns = computed<FormFieldConfig[]>(() => {
-    const fieldConfig = this.formFieldConfig();
-    if (!fieldConfig?.dataType) {
-      return [];
-    }
-    const dataType = this.entitySchemaService.getDatatypeOrDefault(
-      fieldConfig.dataType,
-    ) as SchemaEmbedDatatype;
-    return [...dataType.getEffectiveSchema(fieldConfig).values()].map(
-      (column) => ({
-        ...column,
-        viewComponent: this.entitySchemaService.getComponent(column, "view"),
-      }),
-    ) as FormFieldConfig[];
-  });
+  columns = computed<FormFieldConfig[]>(() =>
+    getSchemaEmbedArrayColumns(
+      this.formFieldConfig(),
+      this.entitySchemaService,
+    ),
+  );
 }

@@ -15,7 +15,7 @@ import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynami
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
-import { SchemaEmbedDatatype } from "../schema-embed.datatype";
+import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
 import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
 
@@ -62,21 +62,12 @@ export class EditSchemaEmbedArrayComponent
   private readonly dialog = inject(MatDialog);
 
   /** The inner fields (table columns), each with its resolved viewComponent for the hover preview. */
-  columns = computed<FormFieldConfig[]>(() => {
-    const fieldConfig = this.formFieldConfig();
-    if (!fieldConfig?.dataType) {
-      return [];
-    }
-    const dataType = this.entitySchemaService.getDatatypeOrDefault(
-      fieldConfig.dataType,
-    ) as SchemaEmbedDatatype;
-    return [...dataType.getEffectiveSchema(fieldConfig).values()].map(
-      (column) => ({
-        ...column,
-        viewComponent: this.entitySchemaService.getComponent(column, "view"),
-      }),
-    ) as FormFieldConfig[];
-  });
+  columns = computed<FormFieldConfig[]>(() =>
+    getSchemaEmbedArrayColumns(
+      this.formFieldConfig(),
+      this.entitySchemaService,
+    ),
+  );
 
   rows = computed(() => this.valueSignal() ?? []);
   rowCount = computed(() => this.rows().length);

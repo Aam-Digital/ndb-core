@@ -9,12 +9,11 @@ import {
   model,
   signal,
 } from "@angular/core";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import {
-  ScreenSize,
-  ScreenWidthObserver,
-} from "../../../utils/media/screen-size-observer.service";
+  getVisibleColumnIds,
+  injectCurrentScreenSize,
+} from "../../../utils/media/visible-columns";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import {
@@ -37,7 +36,6 @@ import { resolveDataSource } from "#src/app/core/common-components/entities-tabl
  * Load and display a list of entity subrecords (entities related to the current entity details view).
  */
 @DynamicComponent("RelatedEntities")
-@UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-related-entities",
@@ -46,7 +44,6 @@ import { resolveDataSource } from "#src/app/core/common-components/entities-tabl
 })
 export class RelatedEntitiesComponent<E extends Entity> {
   private entityRegistry = inject(EntityRegistry);
-  private screenWidthObserver = inject(ScreenWidthObserver);
   protected filterService = inject(FilterService);
   private readonly injector = inject(Injector);
 
@@ -100,14 +97,7 @@ export class RelatedEntitiesComponent<E extends Entity> {
   });
 
   readonly columnsToDisplay = computed(() =>
-    this._columns()
-      .filter((column) => {
-        if (column?.hideFromTable) return false;
-        const numericValue = ScreenSize[column?.visibleFrom];
-        if (numericValue === undefined) return true;
-        return this.currentScreenSize() >= numericValue;
-      })
-      .map((c) => c.id),
+    getVisibleColumnIds(this._columns(), this.currentScreenSize()),
   );
 
   /**
@@ -145,20 +135,9 @@ export class RelatedEntitiesComponent<E extends Entity> {
       : resolvedProperty.map((p) => this.resolvePropertyPath(p));
   });
   readonly filterObj = signal<DataFilter<E>>({});
-  private readonly currentScreenSize = signal(
-    this.screenWidthObserver.currentScreenSize(),
-  );
+  private readonly currentScreenSize = injectCurrentScreenSize();
 
   constructor() {
-    this.screenWidthObserver
-      .shared()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.currentScreenSize.set(
-          this.screenWidthObserver.currentScreenSize(),
-        );
-      });
-
     effect(() => {
       this.filterObj.set(this.initFilter());
     });
