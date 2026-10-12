@@ -1,5 +1,7 @@
+import { DatabaseException } from "../../database/pouchdb/database-exception";
 import { TestBed } from "@angular/core/testing";
-import { DownloadService, EXPORT_BATCH_SIZE } from "./download.service";
+import { DownloadService } from "./download.service";
+import { EXPORT_BATCH_SIZE } from "../readable-entity-name";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import {
   DatabaseEntity,
@@ -44,7 +46,7 @@ describe("DownloadService", () => {
         case testSchool.getId():
           return testSchool as any;
         default:
-          throw new Error();
+          throw new DatabaseException({ message: "missing", status: 404 });
       }
     });
 

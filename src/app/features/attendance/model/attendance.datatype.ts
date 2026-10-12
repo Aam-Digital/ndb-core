@@ -11,7 +11,11 @@ import {
   ExportContext,
   DefaultDatatype,
 } from "#src/app/core/entity/default-datatype/default.datatype";
-import { loadReadableEntityName } from "#src/app/core/export/readable-entity-name";
+import {
+  EXPORT_BATCH_SIZE,
+  loadReadableEntityName,
+} from "#src/app/core/export/readable-entity-name";
+import { mapInBatches } from "#src/app/utils/utils";
 
 /**
  * Datatype for attendance tracking on any entity.
@@ -70,16 +74,12 @@ export class AttendanceDatatype extends SchemaEmbedDatatype {
           const participantCache =
             context?.entityNameCache ?? new Map<string, Promise<string>>();
 
-          // one after the other (not in parallel) to not flood the database with requests
-          const details: string[] = [];
-          for (const attendanceItem of attendance) {
-            details.push(
-              await this.toParticipationDetails(
-                attendanceItem,
-                participantCache,
-              ),
-            );
-          }
+          const details = await mapInBatches(
+            attendance,
+            EXPORT_BATCH_SIZE,
+            (attendanceItem) =>
+              this.toParticipationDetails(attendanceItem, participantCache),
+          );
           return details.join(", ");
         },
       },

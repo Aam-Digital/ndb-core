@@ -15,6 +15,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { Workbook } from "exceljs";
 import moment from "moment";
 import { mapInBatches } from "app/utils/utils";
+import { EXPORT_BATCH_SIZE } from "../readable-entity-name";
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -58,14 +59,6 @@ export function buildExportColumnResolvers(
 
   return resolvers;
 }
-
-/**
- * Number of rows whose values are resolved in parallel during an export.
- * Resolving referenced entities can require a database request per value; running
- * them for all rows at once exhausts the browser's resources on large lists
- * (`net::ERR_INSUFFICIENT_RESOURCES`), making some of the requests fail.
- */
-export const EXPORT_BATCH_SIZE = 20;
 
 export type FileDownloadFormat = "csv" | "json" | "pdf" | "xlsx" | "zip";
 

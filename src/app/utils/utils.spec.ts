@@ -8,7 +8,7 @@ import {
 import moment from "moment";
 
 describe("Utils", () => {
-  it("mapInBatches should keep order and never exceed the batch size", async () => {
+  async function runMapInBatchesTracked() {
     let running = 0;
     let maxRunning = 0;
     const result = await mapInBatches(
@@ -22,6 +22,11 @@ describe("Utils", () => {
         return `${index}:${n * 2}`;
       },
     );
+    return { result, maxRunning };
+  }
+
+  it("mapInBatches should keep the order of the input", async () => {
+    const { result } = await runMapInBatchesTracked();
 
     expect(result).toEqual([
       "0:2",
@@ -32,6 +37,11 @@ describe("Utils", () => {
       "5:12",
       "6:14",
     ]);
+  });
+
+  it("mapInBatches should run at most batchSize items in parallel", async () => {
+    const { maxRunning } = await runMapInBatchesTracked();
+
     expect(maxRunning).toBe(3);
   });
 

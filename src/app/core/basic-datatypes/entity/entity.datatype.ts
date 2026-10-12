@@ -29,7 +29,11 @@ import {
   ExportColumnMapping,
   ExportContext,
 } from "../../entity/default-datatype/default.datatype";
-import { loadReadableEntityName } from "../../export/readable-entity-name";
+import {
+  EXPORT_BATCH_SIZE,
+  loadReadableEntityName,
+} from "../../export/readable-entity-name";
+import { mapInBatches } from "../../../utils/utils";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { asArray } from "../../../utils/asArray";
 
@@ -400,22 +404,15 @@ export class EntityDatatype extends StringDatatype {
   ): Promise<string[]> {
     if (!value) return [];
 
-    const relatedEntitiesToStrings: string[] = [];
-
     const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
-    // one after the other (not in parallel) to not flood the database with requests
-    for (const relatedEntityId of relatedEntitiesIds) {
-      relatedEntitiesToStrings.push(
-        await loadReadableEntityName(
-          this.entityMapper,
-          schemaField.additional,
-          relatedEntityId,
-          cache,
-        ),
-      );
-    }
-
-    return relatedEntitiesToStrings;
+    return mapInBatches(relatedEntitiesIds, EXPORT_BATCH_SIZE, (id) =>
+      loadReadableEntityName(
+        this.entityMapper,
+        schemaField.additional,
+        id,
+        cache,
+      ),
+    );
   }
 }
 

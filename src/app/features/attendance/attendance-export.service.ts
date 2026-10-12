@@ -6,8 +6,10 @@ import { AttendanceDatatype } from "./model/attendance.datatype";
 import { AttendanceItem } from "./model/attendance-item";
 import { getReadableValue } from "#src/app/core/common-components/entities-table/value-accessor/value-accessor";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
-import { loadReadableEntityName } from "#src/app/core/export/readable-entity-name";
-import { EXPORT_BATCH_SIZE } from "#src/app/core/export/download-service/download.service";
+import {
+  EXPORT_BATCH_SIZE,
+  loadReadableEntityName,
+} from "#src/app/core/export/readable-entity-name";
 import { mapInBatches } from "#src/app/utils/utils";
 
 /**
