@@ -270,8 +270,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="150"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:150</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="155"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:155</a></div>
                         </td>
                     </tr>
 
@@ -361,8 +361,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="175"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:175</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:180</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@ handling so the same data can be exported to both CSV and XLSX.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="219"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:219</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="224"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:224</a></div>
                         </td>
                     </tr>
 
@@ -533,8 +533,8 @@ For plain objects: the first row contains the object keys as headers.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="81"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:81</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -668,7 +668,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/core/export/download-service/download.service.ts:72</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/export/download-service/download.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -707,7 +707,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/export/download-service/download.service.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/export/download-service/download.service.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -734,11 +734,16 @@ import {
 } from &quot;../data-transformation-service/export-column-config&quot;;
 import { Papa } from &quot;ngx-papaparse&quot;;
 import { EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
-import { ExportColumnMapping } from &quot;app/core/entity/default-datatype/default.datatype&quot;;
+import {
+  ExportColumnMapping,
+  ExportContext,
+} from &quot;app/core/entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaField } from &quot;app/core/entity/schema/entity-schema-field&quot;;
 import { EntitySchemaService } from &quot;app/core/entity/schema/entity-schema.service&quot;;
 import { Workbook } from &quot;exceljs&quot;;
 import moment from &quot;moment&quot;;
+import { mapInBatches } from &quot;app/utils/utils&quot;;
+import { EXPORT_BATCH_SIZE } from &quot;../readable-entity-name&quot;;
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -995,15 +1000,24 @@ export class DownloadService {
       columnResolvers.set(columnId, resolver);
     }
 
-    const exportEntities &#x3D; await Promise.all(
-      data.map((item) &#x3D;&gt; this.mapEntityToExportRow(item, columnResolvers)),
-    );
-
     // Keep selected columns that have no schema resolver (e.g. runtime-attached
     // fields like a Child&#x27;s &#x60;schoolId&#x60;, or configured query-expression columns)
     // and read their value directly from the entity, so they are not silently
     // dropped from the export.
     const columnKeys &#x3D; selectedKeys ?? Array.from(columnLabels.keys());
+
+    // Only resolve the selected columns: resolving a column can require loading
+    // referenced entities, which is wasted effort for columns that are not exported.
+    const selectedResolvers &#x3D; new Map(
+      columnKeys
+        .filter((key) &#x3D;&gt; columnResolvers.has(key))
+        .map((key) &#x3D;&gt; [key, columnResolvers.get(key)]),
+    );
+    const exportContext: ExportContext &#x3D; { entityNameCache: new Map() };
+    const exportEntities &#x3D; await mapInBatches(data, EXPORT_BATCH_SIZE, (item) &#x3D;&gt;
+      this.mapEntityToExportRow(item, selectedResolvers, exportContext),
+    );
+
     const headers &#x3D; columnKeys.map(
       (key) &#x3D;&gt; labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
     );
@@ -1022,6 +1036,7 @@ export class DownloadService {
   private async mapEntityToExportRow(
     item: any,
     columnResolvers: Map&lt;string, ExportColumnResolver&gt;,
+    exportContext: ExportContext,
   ): Promise&lt;Object&gt; {
     const newItem &#x3D; {};
 
@@ -1029,6 +1044,7 @@ export class DownloadService {
       const formattedValue &#x3D; await resolver.column.resolveValue(
         item[resolver.sourceFieldId],
         resolver.schemaField,
+        exportContext,
       );
       newItem[columnId] &#x3D; this.ensureCsvFriendlyValue(formattedValue);
     }

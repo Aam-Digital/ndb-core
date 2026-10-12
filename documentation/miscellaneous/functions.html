@@ -683,6 +683,9 @@
                             <a href="#isSupported" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isSupported</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isUnresolvableReferenceError" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isUnresolvableReferenceError</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isValidDate" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isValidDate</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
@@ -707,7 +710,13 @@
                             <a href="#lastSyncedBatchContext" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>lastSyncedBatchContext</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#loadReadableEntityName" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>loadReadableEntityName</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#loggedUnreachableServer" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>loggedUnreachableServer</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#mapInBatches" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mapInBatches</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
                             <a href="#markAsSecondQuery" title="src/app/core/database/pouchdb/pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>markAsSecondQuery</b>&nbsp;&nbsp;&nbsp;(src/.../pouch-database.ts)</span></a>
@@ -945,6 +954,9 @@
                         </li>
                         <li>
                             <a href="#runPendingReset" title="src/bootstrap-reset.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>runPendingReset</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-reset.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#safeExtractType" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>safeExtractType</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
                         </li>
                         <li>
                             <a href="#serviceProvider" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>serviceProvider</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
@@ -2584,6 +2596,116 @@ Creates and assigns a new one if it doesn&#39;t exist yet.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mapInBatches"></a>
+                    <span class="name">
+                        <span ><b>mapInBatches</b></span>
+                        <a href="#mapInBatches"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>mapInBatches&lt;T, R&gt;(items, batchSize: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, fn)</code>
+                </td>
+            </tr>
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                                    <li>R</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Apply an async function to all items, but only run <code>batchSize</code> of them at the same time.</p>
+<p>Unlike a plain <code>Promise.all(items.map(...))</code> this does not fire all requests at once, which
+can exhaust the browser&#39;s resources (<code>net::ERR_INSUFFICIENT_RESOURCES</code>) for large lists.
+The result keeps the order of the input. If any call rejects, no further batches are started.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>items</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the items to process</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>batchSize</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>maximum number of items processed in parallel</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>fn</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>async function applied to each item</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;R[]&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -19016,6 +19138,253 @@ Never throws: a body that cannot be read only means less detail in the report.</
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;Record&lt;string, unknown&gt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/export/readable-entity-name.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isUnresolvableReferenceError"></a>
+                    <span class="name">
+                        <span ><b>isUnresolvableReferenceError</b></span>
+                        <a href="#isUnresolvableReferenceError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isUnresolvableReferenceError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the error means the referenced entity cannot be resolved at all
+(rather than a failure that may succeed on another attempt).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadReadableEntityName"></a>
+                    <span class="name">
+                        <span ><b>loadReadableEntityName</b></span>
+                        <a href="#loadReadableEntityName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadReadableEntityName(entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>, entityType, entityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, cache?: Map)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load a referenced entity and return its human-readable name for exports.</p>
+<p>Only a reference that really cannot be resolved (deleted, no permission, unknown type)
+results in <a href="../miscellaneous/variables.html#ENTITY_NOT_FOUND_PLACEHOLDER">ENTITY_NOT_FOUND_PLACEHOLDER</a>. Any other failure (connection problem,
+expired session, server error) is NOT disguised as &quot;not found&quot; - it is rethrown, so that the export
+fails visibly instead of silently containing wrong data for an entity that does exist.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityMapper</td>
+                                            <td>
+                                                            <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>used to load the entity</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>type to use if the id has no type prefix</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>id of the referenced entity (with or without type prefix)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>cache</td>
+                                            <td>
+                                                        <code>Map</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>optional, shared across one export run so every entity is loaded only once</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="safeExtractType"></a>
+                    <span class="name">
+                        <span ><b>safeExtractType</b></span>
+                        <a href="#safeExtractType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>safeExtractType(entityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string | undefined</code>
 
                         </div>
                             <div class="io-description">

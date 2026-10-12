@@ -229,7 +229,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="463" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:463</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="472" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:472</a></div>
                             </td>
                         </tr>
 
@@ -305,8 +305,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="489"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:489</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="498"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:498</a></div>
                         </td>
                     </tr>
 
@@ -372,8 +372,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="493"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:493</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="502"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:502</a></div>
                         </td>
                     </tr>
 
@@ -458,7 +458,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="473" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:473</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="482" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:482</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -492,7 +492,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="485" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:485</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="494" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:494</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -527,11 +527,16 @@ import { ImportProcessingContext } from &quot;../../import/import-processing-con
 import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
 import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
-import { Entity } from &quot;../../entity/model/entity&quot;;
 import {
   ColumnImportInput,
   ExportColumnMapping,
+  ExportContext,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import {
+  EXPORT_BATCH_SIZE,
+  loadReadableEntityName,
+} from &quot;../../export/readable-entity-name&quot;;
+import { mapInBatches } from &quot;../../../utils/utils&quot;;
 import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 import { asArray } from &quot;../../../utils/asArray&quot;;
 
@@ -572,8 +577,16 @@ export class EntityDatatype extends StringDatatype {
       {
         keySuffix: &quot;_readable&quot;,
         label: schemaField.label + &quot; (readable)&quot;,
-        resolveValue: async (value: string | string[]) &#x3D;&gt;
-          this.loadRelatedEntitiesToString(value, schemaField),
+        resolveValue: async (
+          value: string | string[],
+          _schemaField,
+          context?: ExportContext,
+        ) &#x3D;&gt;
+          this.loadRelatedEntitiesToString(
+            value,
+            schemaField,
+            context?.entityNameCache,
+          ),
       },
     ];
   }
@@ -890,23 +903,19 @@ export class EntityDatatype extends StringDatatype {
   private async loadRelatedEntitiesToString(
     value: string | string[],
     schemaField: EntitySchemaField,
+    cache?: Map&lt;string, Promise&lt;string&gt;&gt;,
   ): Promise&lt;string[]&gt; {
     if (!value) return [];
 
-    const relatedEntitiesToStrings: string[] &#x3D; [];
-
     const relatedEntitiesIds: string[] &#x3D; Array.isArray(value) ? value : [value];
-    for (const relatedEntityId of relatedEntitiesIds) {
-      const entityType &#x3D;
-        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
-      const relatedEntity &#x3D; await this.entityMapper
-        .load(entityType, relatedEntityId)
-        .catch(() &#x3D;&gt; undefined);
-
-      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? &quot;&lt;not_found&gt;&quot;);
-    }
-
-    return relatedEntitiesToStrings;
+    return mapInBatches(relatedEntitiesIds, EXPORT_BATCH_SIZE, (id) &#x3D;&gt;
+      loadReadableEntityName(
+        this.entityMapper,
+        schemaField.additional,
+        id,
+        cache,
+      ),
+    );
   }
 }
 

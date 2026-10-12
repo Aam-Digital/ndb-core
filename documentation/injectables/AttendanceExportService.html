@@ -233,8 +233,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">src/app/features/attendance/attendance-export.service.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="41"
+                                    class="link-to-prism">src/app/features/attendance/attendance-export.service.ts:41</a></div>
                         </td>
                     </tr>
 
@@ -316,8 +316,8 @@ manageable list. The file is named after the entity&#39;s <code>toString()</code
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="22"
-                                    class="link-to-prism">src/app/features/attendance/attendance-export.service.ts:22</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/features/attendance/attendance-export.service.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -381,6 +381,11 @@ import { AttendanceDatatype } from &quot;./model/attendance.datatype&quot;;
 import { AttendanceItem } from &quot;./model/attendance-item&quot;;
 import { getReadableValue } from &quot;#src/app/core/common-components/entities-table/value-accessor/value-accessor&quot;;
 import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  EXPORT_BATCH_SIZE,
+  loadReadableEntityName,
+} from &quot;#src/app/core/export/readable-entity-name&quot;;
+import { mapInBatches } from &quot;#src/app/utils/utils&quot;;
 
 /**
  * Exports a simple attendance list as CSV for entities with attendance-typed fields.
@@ -410,8 +415,9 @@ export class AttendanceExportService {
    */
   async exportAttendanceList(entity: Entity, fieldId: string): Promise&lt;void&gt; {
     const items: AttendanceItem[] &#x3D; entity[fieldId] ?? [];
-    const rows &#x3D; await Promise.all(
-      items.map((item) &#x3D;&gt; this.buildParticipantRow(item)),
+    const nameCache &#x3D; new Map&lt;string, Promise&lt;string&gt;&gt;();
+    const rows &#x3D; await mapInBatches(items, EXPORT_BATCH_SIZE, (item) &#x3D;&gt;
+      this.buildParticipantRow(item, nameCache),
     );
 
     const filename &#x3D; entity.toString().replaceAll(&quot; &quot;, &quot;-&quot;);
@@ -424,9 +430,10 @@ export class AttendanceExportService {
 
   private async buildParticipantRow(
     item: AttendanceItem,
+    nameCache: Map&lt;string, Promise&lt;string&gt;&gt;,
   ): Promise&lt;Record&lt;string, string&gt;&gt; {
     return this.buildRow(
-      await this.resolveParticipantName(item.participant),
+      await this.resolveParticipantName(item.participant, nameCache),
       getReadableValue(item.status) ?? &quot;&quot;,
       item.remarks ?? &quot;&quot;,
     );
@@ -446,19 +453,23 @@ export class AttendanceExportService {
 
   /**
    * Resolve a participant reference to its readable name via &#x60;toString()&#x60;,
-   * falling back to &quot;&lt;not_found&gt;&quot; when the referenced entity cannot be loaded.
+   * falling back to &quot;&lt;not_found&gt;&quot; when the referenced entity does not exist.
+   * A transient loading failure (e.g. connection problem) is not hidden behind
+   * &quot;&lt;not_found&gt;&quot; but makes the export fail.
    */
   private async resolveParticipantName(
-    participantId?: string,
+    participantId: string | undefined,
+    nameCache: Map&lt;string, Promise&lt;string&gt;&gt;,
   ): Promise&lt;string&gt; {
     if (!participantId) {
       return &quot;&quot;;
     }
-    const entityType &#x3D; Entity.extractTypeFromId(participantId);
-    const participant &#x3D; await this.entityMapper
-      .load(entityType, participantId)
-      .catch(() &#x3D;&gt; undefined);
-    return participant?.toString() ?? &quot;&lt;not_found&gt;&quot;;
+    return loadReadableEntityName(
+      this.entityMapper,
+      undefined,
+      participantId,
+      nameCache,
+    );
   }
 }
 </code></pre>

@@ -392,6 +392,9 @@
                             <a href="#emptyModel" title="src/app/core/admin/admin-role-permissions/role-details/admin-role-details.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>emptyModel</b>&nbsp;&nbsp;&nbsp;(src/.../admin-role-details.component.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#ENTITY_NOT_FOUND_PLACEHOLDER" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ENTITY_NOT_FOUND_PLACEHOLDER</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#entityAbilityFactory" title="src/app/core/permissions/ability/testing-entity-ability-factory.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>entityAbilityFactory</b>&nbsp;&nbsp;&nbsp;(src/.../testing-entity-ability-factory.ts)</span></a>
                         </li>
                         <li>
@@ -411,6 +414,9 @@
                         </li>
                         <li>
                             <a href="#EXPIRED_TOKEN_REASON" title="src/app/utils/expired-session-error.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>EXPIRED_TOKEN_REASON</b>&nbsp;&nbsp;&nbsp;(src/.../expired-session-error.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#EXPORT_BATCH_SIZE" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>EXPORT_BATCH_SIZE</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
                         </li>
                         <li>
                             <a href="#faker" title="src/app/core/demo-data/faker.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>faker</b>&nbsp;&nbsp;&nbsp;(src/.../faker.ts)</span></a>
@@ -7450,6 +7456,76 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>fresh empty matrix model; a factory (not a shared const) so callers can never alias a mutable object</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/export/readable-entity-name.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ENTITY_NOT_FOUND_PLACEHOLDER"></a>
+                    <span class="name">
+                        <span ><b>ENTITY_NOT_FOUND_PLACEHOLDER</b></span>
+                        <a href="#ENTITY_NOT_FOUND_PLACEHOLDER"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;&lt;not_found&gt;&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Placeholder exported for a referenced entity that does not exist (or cannot be read).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EXPORT_BATCH_SIZE"></a>
+                    <span class="name">
+                        <span ><b>EXPORT_BATCH_SIZE</b></span>
+                        <a href="#EXPORT_BATCH_SIZE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>20</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Maximum number of rows (and of values within one row) that are resolved in parallel during an export.
+Resolving referenced entities can require a database request per value; running
+them all at once exhausts the browser&#39;s resources on large lists
+(<code>net::ERR_INSUFFICIENT_RESOURCES</code>), making some of the requests fail.</p>
 </div>
                 </td>
             </tr>

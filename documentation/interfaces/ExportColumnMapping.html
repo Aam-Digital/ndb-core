@@ -237,7 +237,7 @@ fully controlling which CSV columns a field produces.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:45</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:53</a></div>
                                 </td>
                             </tr>
 
@@ -283,7 +283,7 @@ Use an empty string for the primary/default column.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:50</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:58</a></div>
                                 </td>
                             </tr>
 
@@ -328,7 +328,7 @@ Use an empty string for the primary/default column.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:55</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:63</a></div>
                                 </td>
                             </tr>
 
@@ -362,6 +362,14 @@ export interface ColumnImportInput {
 }
 
 /**
+ * State shared by all &#x60;resolveValue&#x60; calls of one export run.
+ */
+export interface ExportContext {
+  /** Readable names of referenced entities, so each one is loaded only once per export. */
+  entityNameCache: Map&lt;string, Promise&lt;string&gt;&gt;;
+}
+
+/**
  * Definition of an export column contributed by a datatype.
  *
  * Each datatype&#x27;s &#x60;getExportColumns&#x60; returns an array of these,
@@ -385,6 +393,7 @@ export interface ExportColumnMapping&lt;EntityType &#x3D; any&gt; {
   resolveValue: (
     value: EntityType,
     schemaField: EntitySchemaField,
+    context?: ExportContext,
   ) &#x3D;&gt; Promise&lt;any&gt; | any;
 }
 

@@ -298,6 +298,14 @@ export interface ColumnImportInput {
 }
 
 /**
+ * State shared by all &#x60;resolveValue&#x60; calls of one export run.
+ */
+export interface ExportContext {
+  /** Readable names of referenced entities, so each one is loaded only once per export. */
+  entityNameCache: Map&lt;string, Promise&lt;string&gt;&gt;;
+}
+
+/**
  * Definition of an export column contributed by a datatype.
  *
  * Each datatype&#x27;s &#x60;getExportColumns&#x60; returns an array of these,
@@ -321,6 +329,7 @@ export interface ExportColumnMapping&lt;EntityType &#x3D; any&gt; {
   resolveValue: (
     value: EntityType,
     schemaField: EntitySchemaField,
+    context?: ExportContext,
   ) &#x3D;&gt; Promise&lt;any&gt; | any;
 }
 
