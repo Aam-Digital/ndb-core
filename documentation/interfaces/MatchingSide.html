@@ -303,7 +303,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:69</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="72" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:72</a></div>
                                 </td>
                             </tr>
 
@@ -359,7 +359,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:81</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:84</a></div>
                                 </td>
                             </tr>
 
@@ -398,7 +398,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:71</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:74</a></div>
                                 </td>
                             </tr>
 
@@ -437,7 +437,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:67</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:70</a></div>
                                 </td>
                             </tr>
 
@@ -482,7 +482,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:79</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:82</a></div>
                                 </td>
                             </tr>
 
@@ -527,7 +527,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="74" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:74</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:77</a></div>
                                 </td>
                             </tr>
 
@@ -572,7 +572,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:76</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:79</a></div>
                                 </td>
                             </tr>
 
@@ -616,7 +616,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/features/matching-entities/matching-entities/matching-entities.component.ts:73</a></div>
                                 </td>
                             </tr>
 
@@ -820,7 +820,10 @@ import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/ent
 import { Entity } from &quot;../../../core/entity/model/entity&quot;;
 import { FilterService } from &quot;../../../core/filter/filter.service&quot;;
 import { FilterComponent } from &quot;../../../core/filter/filter/filter.component&quot;;
-import { DataFilter } from &quot;../../../core/filter/filters/filters&quot;;
+import {
+  combineFilterConditions,
+  DataFilter,
+} from &quot;../../../core/filter/filters/filters&quot;;
 import { FormDialogService } from &quot;../../../core/form-dialog/form-dialog.service&quot;;
 import { RouteTarget } from &quot;../../../route-target&quot;;
 import { FlattenArrayPipe } from &quot;../../../utils/flatten-array/flatten-array.pipe&quot;;
@@ -1245,7 +1248,7 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter&lt;Entity&gt;) {
-    side.filterObj.set({ ...side.prefilter, ...filter });
+    side.filterObj.set(combineFilterConditions(side.prefilter, filter));
   }
 
   entityInMapClicked(entity: Entity) {

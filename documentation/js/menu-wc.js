@@ -2889,6 +2889,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/PanelConfig.html" data-type="entity-link" >PanelConfig&lt;T &#x3D; any&gt;</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/ParsedConditions.html" data-type="entity-link" >ParsedConditions</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ParsedData.html" data-type="entity-link" >ParsedData&lt;T &#x3D; any[]&gt;</a>
                             </li>
                             <li class="link">

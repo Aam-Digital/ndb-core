@@ -240,7 +240,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:26</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:19</a></div>
                                 </td>
                             </tr>
 
@@ -285,7 +285,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:16</a></div>
                                 </td>
                             </tr>
 
@@ -330,7 +330,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:29</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:22</a></div>
                                 </td>
                             </tr>
 
@@ -380,7 +380,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -397,23 +397,16 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ChangeDetectionStrategy, Component, inject } from &quot;@angular/core&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
-import { MatButtonToggleModule } from &quot;@angular/material/button-toggle&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
 } from &quot;@angular/material/dialog&quot;;
-import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 
 import { ConditionsEditorComponent } from &quot;../conditions-editor/conditions-editor.component&quot;;
+import { normalizeConditions } from &quot;../conditions-editor/conditions-combinator&quot;;
 import { DialogCloseComponent } from &quot;../dialog-close/dialog-close.component&quot;;
 import { EntityConstructor } from &quot;../../entity/model/entity&quot;;
 
@@ -432,8 +425,8 @@ export interface ConditionEditorDialogData {
 }
 
 /**
- * Generic dialog to visually edit a Mango-query condition build from a list of
- * field/value rows, combined with either &quot;any&quot; ($or) or &quot;all&quot; (merged / $and) semantics.
+ * Dialog around the {@link ConditionsEditorComponent}: it says what the condition applies to and
+ * hands back the edited Mango-query condition.
  *
  * Configured via {@link ConditionEditorDialogData}
  *
@@ -445,8 +438,6 @@ export interface ConditionEditorDialogData {
   imports: [
     MatDialogModule,
     MatButtonModule,
-    MatButtonToggleModule,
-    MatTooltipModule,
     ConditionsEditorComponent,
     DialogCloseComponent,
   ],
@@ -463,44 +454,17 @@ export class ConditionEditorDialogComponent {
     this.data.conditions &amp;&amp; Object.keys(this.data.conditions).length &gt; 0
   );
 
-  /** whether all rows must match (&quot;all&quot;, implicit and / $and) or any row (&quot;any&quot;, $or) */
-  readonly combinator &#x3D; signal&lt;&quot;any&quot; | &quot;all&quot;&gt;(
-    Array.isArray(this.data.conditions?.$or) ? &quot;any&quot; : &quot;all&quot;,
-  );
-
-  /**
-   * Working state in the { $or: [...] } row format of the conditions editor.
-   * Deliberately not a signal: the conditions editor mutates this object in place
-   * and the template does not need to react to its changes.
-   */
-  editorConditions: any &#x3D; toEditorFormat(this.data.conditions);
-
-  readonly combinatorHint &#x3D; computed(() &#x3D;&gt;
-    this.combinator() &#x3D;&#x3D;&#x3D; &quot;any&quot;
-      ? $localize&#x60;Matches if any one of the conditions applies (&quot;or&quot; conditions).&#x60;
-      : $localize&#x60;Matches only if all conditions apply (&quot;and&quot; conditions).&#x60;,
-  );
+  /** the condition as the editor last reported it, initially the existing one */
+  private conditions: any &#x3D; normalizeConditions(this.data.conditions);
 
   onConditionsChange(conditions: any) {
-    this.editorConditions &#x3D; conditions;
+    this.conditions &#x3D; conditions;
   }
 
   apply() {
-    const rows: any[] &#x3D; (this.editorConditions?.$or ?? []).filter(
-      (row: any) &#x3D;&gt;
-        row &amp;&amp;
-        typeof row &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp;
-        Object.keys(row).length &gt; 0 &amp;&amp;
-        Object.values(row).every((v) &#x3D;&gt; v !&#x3D;&#x3D; null &amp;&amp; v !&#x3D;&#x3D; undefined),
+    this.dialogRef.close(
+      Object.keys(this.conditions).length &gt; 0 ? this.conditions : null,
     );
-
-    if (rows.length &#x3D;&#x3D;&#x3D; 0) {
-      this.dialogRef.close(null);
-    } else if (this.combinator() &#x3D;&#x3D;&#x3D; &quot;any&quot;) {
-      this.dialogRef.close({ $or: rows });
-    } else {
-      this.dialogRef.close(mergeToAllConditions(rows));
-    }
   }
 
   removeCondition() {
@@ -510,51 +474,6 @@ export class ConditionEditorDialogComponent {
   cancel() {
     this.dialogRef.close(undefined);
   }
-}
-
-/**
- * Convert any stored condition shape into the { $or: [...] } row format
- * that the conditions editor works with.
- *
- * Deep-copies the input so the editor (which mutates rows in place) cannot
- * touch the caller&#x27;s config: cancelling the dialog must leave it untouched.
- *
- * A condition can combine &#x60;$or&#x60;/&#x60;$and&#x60; with sibling keys (Mango&#x27;s implicit AND,
- * e.g. &#x60;{ status: &quot;active&quot;, $or: [...] }&#x60;). This editor has no concept of nested
- * groups, so such a sibling key cannot be kept ANDed with the &#x60;$or&#x60;/&#x60;$and&#x60; array -
- * instead it is folded in as one more row, to at least keep it visible and
- * editable rather than silently dropping it.
- */
-function toEditorFormat(condition: any): any {
-  if (!condition || typeof condition !&#x3D;&#x3D; &quot;object&quot;) {
-    return {};
-  }
-  const copy &#x3D; structuredClone(condition);
-  const rows: any[] &#x3D; [];
-
-  if (Array.isArray(copy.$or)) {
-    rows.push(...copy.$or);
-    delete copy.$or;
-  } else if (Array.isArray(copy.$and)) {
-    rows.push(...copy.$and);
-    delete copy.$and;
-  }
-  // remaining plain keys (either the whole condition, or siblings of $or/$and above)
-  rows.push(...Object.entries(copy).map(([key, value]) &#x3D;&gt; ({ [key]: value })));
-
-  return { $or: rows };
-}
-
-/**
- * Combine rows into &quot;all must match&quot; conditions:
- * a single merged object if keys are unique, otherwise an explicit $and.
- */
-function mergeToAllConditions(rows: any[]): any {
-  const keys &#x3D; rows.flatMap((row) &#x3D;&gt; Object.keys(row));
-  if (new Set(keys).size &#x3D;&#x3D;&#x3D; keys.length) {
-    return Object.assign({}, ...rows);
-  }
-  return { $and: rows };
 }
 </code></pre>
     </div>

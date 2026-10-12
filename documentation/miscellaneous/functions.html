@@ -197,6 +197,9 @@
                             <a href="#buildChangeEvents" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>buildChangeEvents</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#buildConditions" title="src/app/core/common-components/conditions-editor/conditions-combinator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>buildConditions</b>&nbsp;&nbsp;&nbsp;(src/.../conditions-combinator.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#buildEntityBasePaths" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>buildEntityBasePaths</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
                         </li>
                         <li>
@@ -737,9 +740,6 @@
                             <a href="#maxLevelBelow" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>maxLevelBelow</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#mergeToAllConditions" title="src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mergeToAllConditions</b>&nbsp;&nbsp;&nbsp;(src/.../condition-editor-dialog.component.ts)</span></a>
-                        </li>
-                        <li>
                             <a href="#messageText" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>messageText</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
@@ -800,6 +800,9 @@
                             <a href="#normalizeCellValue" title="src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeCellValue</b>&nbsp;&nbsp;&nbsp;(src/.../parsed-file-input.component.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#normalizeConditions" title="src/app/core/common-components/conditions-editor/conditions-combinator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeConditions</b>&nbsp;&nbsp;&nbsp;(src/.../conditions-combinator.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#normalizeDateOnly" title="src/app/core/common-components/entity-form/dynamic-form-validators/date-validators.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../date-validators.ts)</span></a>
                         </li>
                         <li>
@@ -825,6 +828,9 @@
                         </li>
                         <li>
                             <a href="#operationFilterOptions" title="src/app/features/change-history/audit-filter.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>operationFilterOptions</b>&nbsp;&nbsp;&nbsp;(src/.../audit-filter.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#parseConditions" title="src/app/core/common-components/conditions-editor/conditions-combinator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>parseConditions</b>&nbsp;&nbsp;&nbsp;(src/.../conditions-combinator.ts)</span></a>
                         </li>
                         <li>
                             <a href="#parseDateOnly" title="src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>parseDateOnly</b>&nbsp;&nbsp;&nbsp;(src/.../birthday-dashboard-index.service.ts)</span></a>
@@ -1017,9 +1023,6 @@
                         </li>
                         <li>
                             <a href="#testEntitySubclass" title="src/app/core/entity/model/entity.test-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>testEntitySubclass</b>&nbsp;&nbsp;&nbsp;(src/.../entity.test-utils.ts)</span></a>
-                        </li>
-                        <li>
-                            <a href="#toEditorFormat" title="src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toEditorFormat</b>&nbsp;&nbsp;&nbsp;(src/.../condition-editor-dialog.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#toFormFieldConfig" title="src/app/core/common-components/entity-form/FormConfig.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>toFormFieldConfig</b>&nbsp;&nbsp;&nbsp;(src/.../FormConfig.ts)</span></a>
@@ -5324,6 +5327,217 @@ and <code>_rev</code> onto whatever it is given, and a retained <code>_rev</code
 attempt would make the next one conflict.</p>
 </div>
 
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/common-components/conditions-editor/conditions-combinator.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildConditions"></a>
+                    <span class="name">
+                        <span ><b>buildConditions</b></span>
+                        <a href="#buildConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>buildConditions(combinator: <a href="../miscellaneous/typealiases.html#Combinator" target="_self">Combinator</a>, rows)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Assemble the stored condition for a combinator. Incomplete rows are left out.</p>
+<p>&quot;all&quot; merges the rows into one object when no field repeats and uses an explicit <code>$and</code>
+otherwise, because one object cannot hold the same key twice.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>combinator</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#Combinator" target="_self" >Combinator</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>rows</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="normalizeConditions"></a>
+                    <span class="name">
+                        <span ><b>normalizeConditions</b></span>
+                        <a href="#normalizeConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>normalizeConditions(stored: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The same condition in the shape the editor would store it.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>stored</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="parseConditions"></a>
+                    <span class="name">
+                        <span ><b>parseConditions</b></span>
+                        <a href="#parseConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>parseConditions(stored: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Split a stored condition into the combinator it implies and its rows.</p>
+<p>An <code>$or</code> only implies &quot;any&quot; once a row in it is filled in, so a section that was seeded with one
+blank row still gets the default. A condition can also combine <code>$or</code> / <code>$and</code> with sibling keys
+(Mango&#39;s implicit AND, e.g. <code>{ status: &quot;active&quot;, $or: [...] }</code>). The row editor has no concept
+of nested groups, so such a sibling key cannot stay ANDed with the array - it becomes one more
+row, which keeps it visible and editable instead of silently dropping it.</p>
+<p>The result never shares objects with <code>stored</code>, because the editor mutates rows in place.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>stored</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ParsedConditions.html" target="_self" >ParsedConditions</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -19975,140 +20189,6 @@ separate issue per batch.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#FindPage" target="_self" >FindPage</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/common-components/condition-editor-dialog/condition-editor-dialog.component.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="mergeToAllConditions"></a>
-                    <span class="name">
-                        <span ><b>mergeToAllConditions</b></span>
-                        <a href="#mergeToAllConditions"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>mergeToAllConditions(rows)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Combine rows into &quot;all must match&quot; conditions:
-a single merged object if keys are unique, otherwise an explicit $and.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>rows</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="toEditorFormat"></a>
-                    <span class="name">
-                        <span ><b>toEditorFormat</b></span>
-                        <a href="#toEditorFormat"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>toEditorFormat(condition: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Convert any stored condition shape into the { $or: [...] } row format
-that the conditions editor works with.</p>
-<p>Deep-copies the input so the editor (which mutates rows in place) cannot
-touch the caller&#39;s config: cancelling the dialog must leave it untouched.</p>
-<p>A condition can combine <code>$or</code>/<code>$and</code> with sibling keys (Mango&#39;s implicit AND,
-e.g. <code>{ status: &quot;active&quot;, $or: [...] }</code>). This editor has no concept of nested
-groups, so such a sibling key cannot be kept ANDed with the <code>$or</code>/<code>$and</code> array -
-instead it is folded in as one more row, to at least keep it visible and
-editable rather than silently dropping it.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>condition</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                         </div>
                             <div class="io-description">
