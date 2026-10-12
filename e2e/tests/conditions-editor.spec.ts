@@ -4,6 +4,24 @@ import { generateChild } from "#src/app/child-dev-project/children/demo-data-gen
 
 const CHILD_NAME = "<CONDITIONS TEST CHILD>";
 
+/**
+ * Ripples and transitions started by the last click are still running when a screenshot is taken
+ * right away, which makes the result depend on timing. A cancelled animation counts as finished.
+ */
+async function waitForAnimations(page: Parameters<typeof argosScreenshot>[0]) {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter(
+          (animation) =>
+            animation.effect?.getComputedTiming().endTime !== Infinity,
+        )
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
+}
+
 test("Conditional colour sections use the shared conditions editor", async ({
   page,
 }) => {
@@ -20,6 +38,7 @@ test("Conditional colour sections use the shared conditions editor", async ({
   await page.getByRole("combobox", { name: "Condition", exact: true }).click();
   await page.getByRole("option", { name: "is not" }).click();
 
+  await waitForAnimations(page);
   await argosScreenshot(page, "conditional-colour-condition-row");
 });
 
@@ -41,6 +60,7 @@ test("The conditions editor combines rows with Any or All", async ({
     .click();
   await page.getByRole("radio", { name: "Any", exact: true }).click();
 
+  await waitForAnimations(page);
   await argosScreenshot(page, "conditions-editor-any-combinator");
 });
 
@@ -66,6 +86,7 @@ test("Matching prefilters use the shared conditions editor", async ({
     .first()
     .click();
 
+  await waitForAnimations(page);
   await argosScreenshot(page, "matching-prefilter-condition-row");
 });
 
@@ -97,5 +118,10 @@ test("Permission conditions use the shared conditions editor dialog", async ({
     .click();
   await page.getByRole("option", { name: "is not" }).click();
 
-  await argosScreenshot(page, "permission-matrix-condition-dialog");
+  await waitForAnimations(page);
+  // the page behind the dialog shifts by a few pixels between runs, so only the dialog is captured
+  await argosScreenshot(page, "permission-matrix-condition-dialog", {
+    element: dialog,
+    fullPage: false,
+  });
 });
