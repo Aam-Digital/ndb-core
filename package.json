@@ -35,7 +35,7 @@
     "@angular/common": "^22.2.1",
     "@angular/compiler": "^22.2.1",
     "@angular/core": "^22.2.1",
-    "@angular/fire": "^21.0.0-rc.1-canary.95b3de1",
+    "@angular/fire": "^21.0.0-rc.2",
     "@angular/forms": "^22.2.1",
     "@angular/localize": "^22.2.1",
     "@angular/material": "^22.2.1",
