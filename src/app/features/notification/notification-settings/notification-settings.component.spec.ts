@@ -1,4 +1,10 @@
-import { signal, WritableSignal } from "@angular/core";
+import {
+  Component,
+  model,
+  output,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
   MatSlideToggle,
@@ -6,6 +12,7 @@ import {
 } from "@angular/material/slide-toggle";
 import { By } from "@angular/platform-browser";
 import { NotificationSettingsComponent } from "./notification-settings.component";
+import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
 import {
   EntityRegistry,
   entityRegistry,
@@ -61,6 +68,12 @@ type NotificationServiceMock = Pick<
   unregisterDevice: Mock;
   testNotification: Mock;
 };
+
+@Component({ selector: "app-notification-rule", template: "" })
+class NotificationRuleStubComponent {
+  value = model<NotificationRule>();
+  removeNotificationRule = output<void>();
+}
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
@@ -127,7 +140,12 @@ describe("NotificationSettingComponent", () => {
         },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(NotificationSettingsComponent, {
+        remove: { imports: [NotificationRuleComponent] },
+        add: { imports: [NotificationRuleStubComponent] },
+      })
+      .compileComponents();
 
     entityMapper = TestBed.inject(
       EntityMapperService,
