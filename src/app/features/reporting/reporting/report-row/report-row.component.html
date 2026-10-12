@@ -1,7 +1,7 @@
 <table mat-table [dataSource]="dataSource" class="full-width">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>
-      <span style="padding-left: 40px" i18n="Table report header"> Name </span>
+      <span class="name-header" i18n="Table report header"> Name </span>
     </th>
     <td
       mat-cell
@@ -12,7 +12,7 @@
       <button
         mat-icon-button
         [style.visibility]="node.isExpandable ? '' : 'hidden'"
-        [style.marginLeft.px]="node.level * 32"
+        [style.marginInlineStart.px]="node.level * 32"
         (click)="treeControl.toggle(node)"
         [attr.aria-label]="'Toggle ' + node.header.label"
       >

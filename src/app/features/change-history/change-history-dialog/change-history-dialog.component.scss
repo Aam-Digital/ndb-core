@@ -90,7 +90,7 @@ $history-open-bg: #f1f6fb;
     flex-direction: column;
     align-items: flex-end;
     color: colors.$text-secondary;
-    margin-right: sizes.$regular;
+    margin-inline-end: sizes.$regular;
     flex-shrink: 0;
 
     .relative {
@@ -118,7 +118,7 @@ $history-open-bg: #f1f6fb;
     flex-direction: row;
     align-items: center;
     gap: sizes.$small;
-    margin-right: 0;
+    margin-inline-end: 0;
   }
 }
 

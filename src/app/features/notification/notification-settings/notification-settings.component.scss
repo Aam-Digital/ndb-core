@@ -27,19 +27,19 @@
 
 .coming-soon-label {
   color: colors.$inactive;
-  margin-left: 10px;
+  margin-inline-start: 10px;
   font-style: italic;
 }
 
 .text-badge {
   font-size: 12px;
   font-weight: bold;
-  margin-left: 10px;
+  margin-inline-start: 10px;
   border-radius: 25px;
   padding-inline: 15px;
   border: 1px solid;
 }
 
 .indented-item {
-  margin-left: sizes.$large;
+  margin-inline-start: sizes.$large;
 }
