@@ -118,7 +118,7 @@
     "@types/pouchdb": "^6.4.2",
     "@typescript-eslint/eslint-plugin": "^8.71.0",
     "@typescript-eslint/parser": "^8.71.0",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.3",
     "age-encryption": "^0.3.1",
     "angular-eslint": "^22.5.0",
     "babel-loader": "^10.1.1",
@@ -142,7 +142,7 @@
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.0",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   },
   "overrides": {
     "@angular-devkit/build-angular": "^22.2.2",

@@ -80,8 +80,10 @@ describe("LoginComponent", () => {
     environment.session_type = originalSessionType;
   });
 
-  function toggleOnlineOnlyCheckbox() {
+  async function toggleOnlineOnlyCheckbox() {
     fixture.detectChanges();
+    // ngModel writes the initial value to the checkbox asynchronously
+    await fixture.whenStable();
     const checkbox: HTMLInputElement = fixture.nativeElement.querySelector(
       "mat-checkbox input[type=checkbox]",
     );
@@ -89,8 +91,8 @@ describe("LoginComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should persist the online-only preference and reload instead of switching the session type of the running app", () => {
-    toggleOnlineOnlyCheckbox();
+  it("should persist the online-only preference and reload instead of switching the session type of the running app", async () => {
+    await toggleOnlineOnlyCheckbox();
 
     expect(storage.getItem("session_online_only")).toBe("true");
     expect(mockLocation.reload).toHaveBeenCalled();
@@ -98,13 +100,13 @@ describe("LoginComponent", () => {
     expect(environment.session_type).toBe(SessionType.synced);
   });
 
-  it("should remove the online-only preference and reload when unticking it", () => {
+  it("should remove the online-only preference and reload when unticking it", async () => {
     environment.session_type = SessionType.online;
     storage.setItem("session_online_only", "true");
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
 
-    toggleOnlineOnlyCheckbox();
+    await toggleOnlineOnlyCheckbox();
 
     expect(storage.getItem("session_online_only")).toBeNull();
     expect(mockLocation.reload).toHaveBeenCalled();
