@@ -251,6 +251,28 @@ describe("MapComponent", () => {
     TestEntity.schema.delete("address");
   });
 
+  it("should skip entities with an incomplete geoLookup instead of throwing", () => {
+    TestEntity.schema.set("address", { dataType: "location" });
+    const validEntity = new TestEntity();
+    validEntity["address"] = TEST_LOCATION;
+    const incompleteEntity = new TestEntity();
+    incompleteEntity["address"] = {
+      locationString: "unresolved address",
+      geoLookup: { lat: undefined, lon: undefined, display_name: "" },
+    } as unknown as GeoLocation;
+
+    expect(() => {
+      fixture.componentRef.setInput("entities", [
+        validEntity,
+        incompleteEntity,
+      ]);
+      fixture.detectChanges();
+    }).not.toThrow();
+
+    expect(getEntityMarkers()).toHaveLength(1);
+    TestEntity.schema.delete("address");
+  });
+
   function getEntityMarkers(): L.Marker[] {
     const group = component["markerClusterGroup"];
     return (

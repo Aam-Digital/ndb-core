@@ -90,3 +90,12 @@ as opposed to just the width of the element */
   white-space: nowrap;
   border: 0;
 }
+
+/**
+ * A button in a view's header actions row: white background and stretched to the
+ * height of the row, so several such buttons line up with each other.
+ */
+.header-action-button {
+  background-color: white !important;
+  height: 100%;
+}

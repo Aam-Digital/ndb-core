@@ -1,5 +1,7 @@
+import { DatabaseException } from "../../database/pouchdb/database-exception";
 import { TestBed } from "@angular/core/testing";
 import { DownloadService } from "./download.service";
+import { EXPORT_BATCH_SIZE } from "../readable-entity-name";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import {
   DatabaseEntity,
@@ -44,7 +46,7 @@ describe("DownloadService", () => {
         case testSchool.getId():
           return testSchool as any;
         default:
-          throw new Error();
+          throw new DatabaseException({ message: "missing", status: 404 });
       }
     });
 
@@ -230,6 +232,78 @@ describe("DownloadService", () => {
     expect(rows).toHaveLength(1 + 1); // includes 1 header line
     expect(rows[1]).toBe(
       `"undefined-id,${testChild.getId()}","<not_found>,${testChild.toString()}"`,
+    );
+  });
+
+  it("should not resolve (load referenced entities for) columns that are not selected", async () => {
+    class SelectedColumnsTestEntity extends Entity {
+      @DatabaseField({ label: "Subject" })
+      subject: string;
+
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        label: "referenced entity",
+      })
+      related: string;
+    }
+    const entity = new SelectedColumnsTestEntity();
+    entity.subject = "Meeting";
+    entity.related = testChild.getId();
+
+    const rows = await service.prepareExportData(
+      [entity],
+      [{ query: ".subject", label: "Subject" }],
+    );
+
+    expect(rows).toEqual([["Subject"], ["Meeting"]]);
+    expect(mockedEntityMapper.load).not.toHaveBeenCalled();
+  });
+
+  it("should limit parallel entity lookups when exporting many rows", async () => {
+    class ManyRowsTestEntity extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        label: "referenced entity",
+      })
+      related: string;
+    }
+    let running = 0;
+    let maxRunning = 0;
+    mockedEntityMapper.load.mockImplementation(async () => {
+      running++;
+      maxRunning = Math.max(maxRunning, running);
+      await new Promise((resolve) => setTimeout(resolve));
+      running--;
+      return testChild as any;
+    });
+    // different ids, so that lookups are not de-duplicated by the cache
+    const entities = Array.from({ length: EXPORT_BATCH_SIZE * 3 }, (_, i) => {
+      const e = new ManyRowsTestEntity();
+      e.related = "TestEntity:" + i;
+      return e;
+    });
+
+    const rows = await service.prepareExportData(entities);
+
+    expect(rows).toHaveLength(entities.length + 1);
+    expect(mockedEntityMapper.load).toHaveBeenCalledTimes(entities.length);
+    expect(maxRunning).toBeLessThanOrEqual(EXPORT_BATCH_SIZE);
+  });
+
+  it("should fail the export on a transient error instead of writing <not_found>", async () => {
+    class FailingLoadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        label: "referenced entity",
+      })
+      related: string;
+    }
+    mockedEntityMapper.load.mockRejectedValue(new TypeError("Failed to fetch"));
+    const entity = new FailingLoadTestEntity();
+    entity.related = testChild.getId();
+
+    await expect(service.createCsv([entity])).rejects.toThrow(
+      "Failed to fetch",
     );
   });
 

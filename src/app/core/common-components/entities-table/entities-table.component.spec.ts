@@ -20,6 +20,8 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySpecialLoaderService } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "../../logging/logging.service";
+import { Component } from "@angular/core";
+import { MatTableModule } from "@angular/material/table";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -251,6 +253,42 @@ describe("EntitiesTableComponent", () => {
     expect(component.selectedRecords()).toEqual([]);
   });
 
+  it("should reset the selection if the free-text filter changes", () => {
+    const entities = [1, 2, 3].map(TestEntity.create);
+    fixture.componentRef.setInput("selectable", true);
+    component.recordsDataSource().allRecords.set(entities);
+    fixture.detectChanges();
+
+    component.selectedRecords.set(entities);
+    component.recordsDataSource().filter = "1";
+
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([]);
+  });
+
+  it("should only select the free-text filtered records when selecting all", () => {
+    fixture.componentRef.setInput("selectable", true);
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("columnsToDisplay", ["name"]);
+    fixture.detectChanges();
+
+    const matching = TestEntity.create("Matching");
+    const other = TestEntity.create("Other");
+    component.recordsDataSource().allRecords.set([matching, other]);
+    component.recordsDataSource().filter = "matching";
+    fixture.detectChanges();
+
+    const selectAllCheckbox = fixture.nativeElement.querySelector(
+      "th[mat-header-cell] mat-checkbox input",
+    );
+    selectAllCheckbox.click();
+    fixture.detectChanges();
+
+    expect(component.selectedRecords()).toEqual([matching]);
+    expect(selectAllCheckbox.checked).toBe(true);
+  });
+
   it("should filter data based on filter definition", () => {
     const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
@@ -350,6 +388,15 @@ describe("EntitiesTableComponent", () => {
     expect(component.effectiveFilter()).toEqual(NOT_ARCHIVED_FILTER);
   });
 
+  it("should hide the archived toggle for a type that cannot be archived", () => {
+    fixture.componentRef.setInput("showInactiveToggle", false);
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector(".filter-inactive-toggle"),
+    ).toBeNull();
+  });
+
   it("should overwrite entity schema fields with customColumn config", async () => {
     fixture.componentRef.setInput("entityType", TestEntity);
     const customField = {
@@ -430,6 +477,43 @@ describe("EntitiesTableComponent", () => {
 
     expect(component._columnsToDisplay()).toEqual(["name", "other"]);
     expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it("should display a column that the parent component defines through a projected matColumnDef", () => {
+    @Component({
+      template: `
+        <app-entities-table
+          [entityType]="entityType"
+          [columnsToDisplay]="['_customStatus', 'name']"
+          [recordsDataSource]="dataSource"
+          [editable]="false"
+        >
+          <ng-container matColumnDef="_customStatus">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">custom status cell</td>
+          </ng-container>
+        </app-entities-table>
+      `,
+      imports: [EntitiesTableComponent, MatTableModule],
+    })
+    class HostComponent {
+      entityType = TestEntity;
+      dataSource = TestBed.inject(InMemoryDataSource);
+    }
+
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    errorSpy.mockClear();
+    const hostFixture = TestBed.createComponent(HostComponent);
+    hostFixture.componentInstance.dataSource.allRecords.set([new TestEntity()]);
+    hostFixture.detectChanges();
+
+    expect(errorSpy).not.toHaveBeenCalledWith(
+      "Could not display an unknown table column",
+      expect.anything(),
+    );
+    const table: HTMLElement = hostFixture.nativeElement;
+    expect(table.textContent).toContain("custom status cell");
+    expect(table.querySelector(".mat-column-_customStatus")).not.toBeNull();
   });
 
   it("should set noSorting if dataType cannot be sorted properly", () => {

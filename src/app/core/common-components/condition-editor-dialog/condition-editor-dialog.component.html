@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  @if (hadConditions) {
+  @if (hadCondition) {
     <span i18n>Edit Condition</span>
   } @else {
     <span i18n>Add Condition</span>
@@ -8,11 +8,10 @@
 </h2>
 
 <mat-dialog-content>
-  <p>{{ conditionSentence }}</p>
+  <p>{{ data.explanation }}</p>
 
   <!-- the combinator comes before the conditions it applies to, so the dialog
-       reads as one sentence: "<role> can read <type> only where …
-       [Any|All] of the following conditions match: …" -->
+       reads as one sentence: "<explanation> … [Any|All] of the following conditions match: …" -->
   <div class="flex-row align-center gap-regular margin-bottom-regular">
     <mat-button-toggle-group
       [value]="combinator()"
@@ -41,16 +40,16 @@
 
   <app-conditions-editor
     [conditions]="editorConditions"
-    [entityConstructor]="entityConstructor"
+    [entityConstructor]="data.entityConstructor"
     [hint]="combinatorHint()"
-    [showInternalIdField]="true"
+    [showInternalIdField]="!!data.showInternalIdField"
     (conditionsChange)="onConditionsChange($event)"
   ></app-conditions-editor>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  @if (hadConditions) {
-    <button mat-button color="warn" (click)="removeConditions()" i18n>
+  @if (hadCondition) {
+    <button mat-button color="warn" (click)="removeCondition()" i18n>
       Remove condition
     </button>
   }

@@ -258,6 +258,17 @@
               [fieldId]="fieldIdForm.value"
               [dataType]="schemaFieldsForm.get('dataType').value"
             ></app-admin-searchable-checkbox>
+
+            <app-admin-display-condition-button
+              class="margin-top-regular"
+              target="field"
+              [showLabel]="true"
+              [entityType]="data.entityType"
+              [condition]="schemaFieldsForm.get('displayCondition').value"
+              (conditionChange)="
+                schemaFieldsForm.get('displayCondition').setValue($event)
+              "
+            ></app-admin-display-condition-button>
           </div>
         </div>
       </mat-tab>

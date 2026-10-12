@@ -7,6 +7,8 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { StringFilter } from "../filters/stringFilter";
+import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
+import { Logging } from "../../logging/logging.service";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -309,15 +311,40 @@ describe("FilterComponent", () => {
     expect(avilableOptions).toBeTruthy();
     expect((avilableOptions as any).options.length).toBe(2);
 
+    // each option matches the value stored as single value or inside an array
+    const optionFilter = (id: string) => ({
+      $or: [
+        { "category.id": id },
+        { "category.id": { $elemMatch: { $eq: id } } },
+      ],
+    });
+
     component.filterOptionSelected(avilableOptions, [t1.id]);
 
     // a single condition needs no $and wrapper
-    expect(emittedFilterObj).toEqual({ "category.id": t1.id } as any);
+    expect(emittedFilterObj).toEqual(optionFilter(t1.id) as any);
 
     component.filterOptionSelected(avilableOptions, [t1.id, t2.id]);
 
     expect(emittedFilterObj).toEqual({
-      $or: [{ "category.id": t1.id }, { "category.id": t2.id }],
+      $or: [optionFilter(t1.id), optionFilter(t2.id)],
     } as any);
+  });
+
+  it("should show no filters instead of breaking when they cannot be generated", async () => {
+    vi.spyOn(
+      TestBed.inject(FilterGeneratorService),
+      "generate",
+    ).mockRejectedValue(new Error("Failed to fetch from DB"));
+    const errorLog = vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+    await setComponentInputs({
+      entityType: Note,
+      filterConfig: [{ id: "category" }],
+    });
+
+    expect(component.filterSelections()).toEqual([]);
+    expect(errorLog).toHaveBeenCalled();
+    errorLog.mockRestore();
   });
 });

@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  effect,
   inject,
   OnInit,
   signal,
@@ -16,13 +16,13 @@ import {
   UserDetailsComponent,
   UserDetailsDialogData,
 } from "../user-details/user-details.component";
+import { ListPaginatorComponent } from "../../common-components/entities-table/list-paginator/list-paginator.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { MatTableModule } from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatButtonModule } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { AlertService } from "../../alerts/alert.service";
-import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,7 +33,7 @@ import { MatPaginatorModule, PageEvent } from "@angular/material/paginator";
     MatButtonModule,
     FaIconComponent,
     EntityBlockComponent,
-    MatPaginatorModule,
+    ListPaginatorComponent,
   ],
 
   templateUrl: "./user-list.component.html",
@@ -50,14 +50,9 @@ export class UserListComponent implements OnInit {
   );
 
   users = signal<UserAccount[]>([]);
-  pageIndex = signal(0);
-  pageSize = signal(10);
-  readonly pageSizeOptions = [10, 25, 50, 100];
-  pagedUsers = computed(() => {
-    const start = this.pageIndex() * this.pageSize();
-    const end = start + this.pageSize();
-    return this.users().slice(start, end);
-  });
+
+  /** paging is handled by the data source and {@link ListPaginatorComponent} */
+  readonly dataSource = new MatTableDataSource<UserAccount>();
 
   displayedColumns: string[] = [
     "email",
@@ -66,6 +61,10 @@ export class UserListComponent implements OnInit {
     "emailVerified",
     "roles",
   ];
+
+  constructor() {
+    effect(() => (this.dataSource.data = this.users()));
+  }
 
   ngOnInit() {
     const isOnline = typeof navigator !== "undefined" ? navigator.onLine : true;
@@ -83,7 +82,9 @@ export class UserListComponent implements OnInit {
     this.userAdminService.getAllUsers().subscribe({
       next: (users) => {
         this.users.set(users);
-        this.pageIndex.set(0);
+        // a freshly loaded list starts at the first page: the data source only
+        // ever clamps the page index downwards, never resets it
+        this.dataSource.paginator?.firstPage();
       },
       error: (err) => {
         Logging.error("Failed to load users:", err);
@@ -92,11 +93,6 @@ export class UserListComponent implements OnInit {
         );
       },
     });
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageIndex.set(event.pageIndex);
-    this.pageSize.set(event.pageSize);
   }
 
   getRoleNames(userAccount: UserAccount): string {

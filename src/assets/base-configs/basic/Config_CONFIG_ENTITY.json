@@ -512,9 +512,6 @@
         ]
       }
     },
-    "view:report": {
-      "component": "Reporting"
-    },
     "entity:Todo": {
       "label": "Task",
       "labelPlural": "Tasks",

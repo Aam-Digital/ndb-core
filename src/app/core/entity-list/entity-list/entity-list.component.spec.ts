@@ -14,9 +14,12 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { PublicFormsService } from "#src/app/features/public-form/public-forms.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { FeaturePermissionDialogComponent } from "../../permissions/feature-permission/feature-permission-dialog/feature-permission-dialog.component";
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
+import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
+import { Database } from "#src/app/core/database/database";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -265,6 +268,50 @@ describe("EntityListComponent", () => {
     }
   });
 
+  it("should offer permission configuration only for internal entity types", () => {
+    createComponent();
+    component.isDesktop = true;
+    fixture.detectChanges();
+
+    const permissionButton = () =>
+      Array.from(fixture.nativeElement.querySelectorAll("button")).find(
+        (button: HTMLElement) =>
+          button.textContent.includes("Configure Permissions"),
+      );
+
+    // regular entity types do not offer this at all (the list menu is already full)
+    expect(component.isFeatureType()).toBe(false);
+    expect(permissionButton()).toBeUndefined();
+
+    class FeatureTestEntity extends TestEntity {
+      static override isInternalEntity = true;
+    }
+    fixture.componentRef.setInput("entityConstructor", FeatureTestEntity);
+    fixture.detectChanges();
+
+    expect(component.isFeatureType()).toBe(true);
+    expect(permissionButton()).toBeTruthy();
+  });
+
+  it("should open the feature permission dialog for the displayed entity type", () => {
+    createComponent();
+    const openSpy = vi
+      .spyOn(TestBed.inject(MatDialog), "open")
+      .mockImplementation(() => makeMatDialogRef());
+
+    component.openPermissionsDialog();
+
+    expect(openSpy).toHaveBeenCalledWith(
+      FeaturePermissionDialogComponent,
+      expect.objectContaining({
+        data: {
+          entityType: TestEntity.ENTITY_TYPE,
+          entityLabel: TestEntity.labelPlural,
+        },
+      }),
+    );
+  });
+
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
     component = fixture.componentInstance;
@@ -343,6 +390,10 @@ describe("EntityListComponent", () => {
     const tmpSessionType = environment.session_type;
     try {
       environment.session_type = SessionType.online;
+      vi.spyOn(
+        TestBed.inject(DatabaseResolverService),
+        "getDatabase",
+      ).mockReturnValue({ supportsFind: () => true } as Database);
       createComponent();
 
       expect(component.showFreetextFilter()).toBe(false);

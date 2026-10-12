@@ -10,6 +10,22 @@ import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ImportExistingService } from "./import-existing.service";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DatabaseField } from "../../entity/database-field.decorator";
+
+@DatabaseEntity("ImportMatchTestEntity")
+class ImportMatchTestEntity extends Entity {
+  static override readonly ENTITY_TYPE = "ImportMatchTestEntity";
+
+  @DatabaseField({ label: "Last name" })
+  lastName: string;
+
+  @DatabaseField({ label: "Registered at", dataType: "date" })
+  registeredAt: Date;
+
+  @DatabaseField({ label: "Tags", isArray: true })
+  tags: string[];
+}
 
 describe("ImportExistingService", () => {
   let service: ImportService;
@@ -506,4 +522,71 @@ describe("ImportExistingService", () => {
     expect(parsedEntities[1]._rev).toBe(existingRecords[0]["_rev"]);
     expect(parsedEntities[1].getId()).toBe(existingRecords[0].getId());
   });
+
+  it.each<{
+    case: string;
+    existing: Partial<ImportMatchTestEntity>[];
+    row: any;
+    columnMapping: ImportSettings["columnMapping"];
+    matchExistingByFields: string[];
+  }>([
+    {
+      case: "a text value that has surrounding whitespace in the database",
+      existing: [{ lastName: "Smith " }],
+      row: { lastName: "Smith" },
+      columnMapping: [{ column: "lastName", propertyName: "lastName" }],
+      matchExistingByFields: ["lastName"],
+    },
+    {
+      case: "a date (with time) field, among records sharing the other field",
+      existing: [
+        { lastName: "Smith", registeredAt: new Date(2024, 0, 15) },
+        { lastName: "Smith", registeredAt: new Date(2023, 5, 1) },
+      ],
+      row: { lastName: "Smith", registeredAt: "2024-01-15" },
+      columnMapping: [
+        { column: "lastName", propertyName: "lastName" },
+        {
+          column: "registeredAt",
+          propertyName: "registeredAt",
+          additional: "YYYY-MM-DD",
+        },
+      ],
+      matchExistingByFields: ["lastName", "registeredAt"],
+    },
+    {
+      case: "an array field, among records sharing the other field",
+      existing: [
+        { lastName: "Smith", tags: ["a", "b"] },
+        { lastName: "Smith", tags: ["c"] },
+      ],
+      row: { lastName: "Smith", tags: "a,b" },
+      columnMapping: [
+        { column: "lastName", propertyName: "lastName" },
+        { column: "tags", propertyName: "tags" },
+      ],
+      matchExistingByFields: ["lastName", "tags"],
+    },
+  ])(
+    "should match the existing record by $case",
+    async ({ existing, row, columnMapping, matchExistingByFields }) => {
+      const existingRecords = existing.map((data) =>
+        Object.assign(new ImportMatchTestEntity(), data),
+      );
+      await entityMapper.saveAll(existingRecords);
+
+      const [result] = (
+        await service.transformRawDataToEntities([row], {
+          entityType: ImportMatchTestEntity.ENTITY_TYPE,
+          columnMapping,
+          importExisting: { matchExistingByFields },
+        })
+      ).entities;
+
+      expect(
+        result[ImportExistingService.MULTIPLE_MATCHING_ENTITIES_KEY],
+      ).toBeUndefined();
+      expect(result.getId()).toBe(existingRecords[0].getId());
+    },
+  );
 });

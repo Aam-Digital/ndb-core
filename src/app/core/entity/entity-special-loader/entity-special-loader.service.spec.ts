@@ -9,6 +9,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
 import type { Mock } from "vitest";
 import { TodoService } from "#src/app/features/todos/todo.service";
+import { AuditReferenceLoaderService } from "#src/app/features/change-history/audit-reference-loader.service";
 
 type ChildrenServiceMock = {
   getChildren: Mock;
@@ -25,6 +26,7 @@ describe("EntitySpecialLoaderService", () => {
   let mockChildrenService: ChildrenServiceMock;
   let mockHistoricalDataService: HistoricalDataServiceMock;
   let mockTodoService: Partial<TodoService>;
+  let mockAuditReferenceLoader: Partial<AuditReferenceLoaderService>;
 
   beforeEach(() => {
     mockChildrenService = {
@@ -37,12 +39,19 @@ describe("EntitySpecialLoaderService", () => {
     mockTodoService = {
       getTodosFor: vi.fn(),
     };
+    mockAuditReferenceLoader = {
+      loadPageFor: vi.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
         { provide: TodoService, useValue: mockTodoService },
+        {
+          provide: AuditReferenceLoaderService,
+          useValue: mockAuditReferenceLoader,
+        },
       ],
     });
     service = TestBed.inject(EntitySpecialLoaderService);
