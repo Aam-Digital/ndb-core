@@ -454,6 +454,26 @@
             ]
           },
           {
+            "title": "Identification Documents",
+            "components": [
+              {
+                "title": "",
+                "component": "EmbeddedArrayData",
+                "config": {
+                  "property": "identificationDocuments",
+                  "columns": [
+                    "documentType",
+                    "documentNumber",
+                    {
+                      "id": "issueDate",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
             "title": "Groups",
             "components": [
               {
