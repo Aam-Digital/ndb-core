@@ -124,6 +124,7 @@ export class NotificationSettingsComponent {
     }
 
     let config: NotificationConfig;
+    const userEntityId = this.userEntity.value?.getId();
 
     try {
       // try to load template from database
@@ -133,11 +134,18 @@ export class NotificationSettingsComponent {
         >(Config, NotificationConfig.TEMPLATE_ENTITY_ID)
       )?.data?.["notificationRules"];
 
+      if (!userEntityId) {
+        // rules about the current user need a user entity linked to the account
+        templateRules = templateRules.filter(
+          (rule) => !JSON.stringify(rule).includes(PLACEHOLDERS.CURRENT_USER),
+        );
+      }
+
       // replace user entity in template rules
       templateRules = JSON.parse(
-        JSON.stringify(templateRules).replace(
+        JSON.stringify(templateRules).replaceAll(
           PLACEHOLDERS.CURRENT_USER,
-          this.userEntity.value?.getId(),
+          userEntityId,
         ),
       );
 
@@ -147,10 +155,7 @@ export class NotificationSettingsComponent {
       Logging.debug("No NotificationConfig template found");
 
       // use fixed default config as fallback
-      config = generateDefaultNotificationConfig(
-        this.userId,
-        this.userEntity.value?.getId(),
-      );
+      config = generateDefaultNotificationConfig(this.userId, userEntityId);
     }
 
     const saved = await this.saveNotificationConfig(config);
@@ -281,9 +286,13 @@ export class NotificationSettingsComponent {
 }
 
 function generateDefaultNotificationConfig(userId: string, userEntity: string) {
-  userEntity = String(userEntity); // ensure that even "undefined" is added as a string so that the structure of conditions remains
-
   const config = new NotificationConfig(userId);
+  if (!userEntity) {
+    // all default rules are about the current user and need a linked user entity
+    config.notificationRules = [];
+    return config;
+  }
+
   config.notificationRules = [
     {
       label: $localize`:Default notification rule label:Tasks assigned to me`,
@@ -291,7 +300,7 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
       entityType: "Todo",
       changeType: ["created", "updated"],
       conditions: { assignedTo: { $elemMatch: userEntity } },
-      enabled: !!userEntity,
+      enabled: true,
     },
     {
       label: $localize`:Default notification rule label:Notes involving me`,
