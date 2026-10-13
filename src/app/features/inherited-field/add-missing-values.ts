@@ -18,3 +18,40 @@ export function addMissingValues(existingValues: any, valuesToAdd: any): any {
     ? [...existing, ...missingValues]
     : existingValues;
 }
+
+/**
+ * Get the values that were removed, i.e. that are in the old values but no longer in the new values.
+ * @param oldValues the values before the change (database format)
+ * @param newValues the values after the change (database format)
+ */
+export function getRemovedValues(oldValues: any, newValues: any): any[] {
+  return differenceWith(
+    asArray(oldValues ?? []),
+    asArray(newValues ?? []),
+    isEqual,
+  );
+}
+
+/**
+ * Add the given values to the existing values (skipping duplicates) and remove the values to remove.
+ * @param existingValues values already set (database format)
+ * @param valuesToAdd new values to be added (database format)
+ * @param valuesToRemove values to be removed from the existing values (database format)
+ * @return the combined values or the unchanged existingValues if nothing was added or removed
+ */
+export function addAndRemoveValues(
+  existingValues: any,
+  valuesToAdd: any,
+  valuesToRemove: any[] = [],
+): any {
+  const combinedValues = addMissingValues(existingValues, valuesToAdd);
+  const remainingValues = differenceWith(
+    asArray(combinedValues ?? []),
+    valuesToRemove,
+    isEqual,
+  );
+
+  return remainingValues.length === asArray(combinedValues ?? []).length
+    ? combinedValues
+    : remainingValues;
+}

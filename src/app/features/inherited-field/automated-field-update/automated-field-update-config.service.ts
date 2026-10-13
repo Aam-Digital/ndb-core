@@ -14,9 +14,13 @@ import {
 } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { isEqual } from "lodash-es";
+import { differenceWith, isEqual } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
-import { addMissingValues } from "../add-missing-values";
+import {
+  addAndRemoveValues,
+  addMissingValues,
+  getRemovedValues,
+} from "../add-missing-values";
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -71,7 +75,7 @@ export class AutomatedFieldUpdateConfigService {
       ...(
         await Promise.all(
           relevantDirectRules.map((rule) =>
-            this.loadAffectedEntitiesForRule(rule, entity),
+            this.loadAffectedEntitiesForRule(rule, entity, entityBeforeChanges),
           ),
         )
       ).flat(),
@@ -111,28 +115,10 @@ export class AutomatedFieldUpdateConfigService {
   private getInheritanceRulesFromDirectEntity(
     sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
-    const rules: AffectedRule[] = [];
-
-    for (const targetEntityType of this.entityRegistry.values()) {
-      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
-        if (fieldConfig.defaultValue?.mode === "inherited-field") {
-          const rule = fieldConfig.defaultValue
-            .config as DefaultValueConfigInheritedField;
-
-          if (
-            rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE
-          ) {
-            rules.push({
-              rule,
-              entityType: targetEntityType,
-              fieldId,
-            });
-          }
-        }
-      }
-    }
-
-    return rules;
+    return this.getAllRules().filter(
+      ({ rule }) =>
+        rule?.sourceReferenceEntity === sourceReferenceEntity.ENTITY_TYPE,
+    );
   }
 
   /**
@@ -147,39 +133,36 @@ export class AutomatedFieldUpdateConfigService {
   private getInheritanceRulesReferencingThisEntity(
     sourceReferenceEntity: EntityConstructor,
   ): AffectedRule[] {
-    const rules: AffectedRule[] = [];
-
-    for (const targetEntityType of this.entityRegistry.values()) {
-      for (const [fieldId, fieldConfig] of targetEntityType.schema.entries()) {
-        if (fieldConfig.defaultValue?.mode === "inherited-field") {
-          const rule = fieldConfig.defaultValue
-            .config as DefaultValueConfigInheritedField;
-
-          // For inheritance rules: sourceReferenceEntity is undefined
-          if (!rule?.sourceReferenceEntity && rule?.sourceReferenceField) {
-            // Check if the sourceReferenceField could reference our entity type
-            const referenceFieldConfig = targetEntityType.schema.get(
-              rule.sourceReferenceField,
-            );
-
-            // If the reference field is configured to reference our entity type
-            if (
-              referenceFieldConfig?.dataType === "entity" &&
-              referenceFieldConfig?.additional ===
-                sourceReferenceEntity.ENTITY_TYPE
-            ) {
-              rules.push({
-                rule,
-                entityType: targetEntityType,
-                fieldId,
-              });
-            }
-          }
-        }
+    return this.getAllRules().filter(({ rule, entityType }) => {
+      // For inheritance rules: sourceReferenceEntity is undefined
+      if (rule?.sourceReferenceEntity || !rule?.sourceReferenceField) {
+        return false;
       }
-    }
 
-    return rules;
+      // Check if the sourceReferenceField is configured to reference our entity type
+      const referenceFieldConfig = entityType.schema.get(
+        rule.sourceReferenceField,
+      );
+      return (
+        referenceFieldConfig?.dataType === "entity" &&
+        referenceFieldConfig?.additional === sourceReferenceEntity.ENTITY_TYPE
+      );
+    });
+  }
+
+  /**
+   * Get the inheritance and automation rules defined in the field schemas of all entity types.
+   */
+  private getAllRules(): AffectedRule[] {
+    return [...this.entityRegistry.values()].flatMap((entityType) =>
+      [...entityType.schema.entries()]
+        .filter(([, field]) => field.defaultValue?.mode === "inherited-field")
+        .map(([fieldId, field]) => ({
+          rule: field.defaultValue.config as DefaultValueConfigInheritedField,
+          entityType,
+          fieldId,
+        })),
+    );
   }
 
   /**
@@ -189,25 +172,28 @@ export class AutomatedFieldUpdateConfigService {
   private async loadAffectedEntitiesForRule(
     affectedRule: AffectedRule,
     sourceEntity: Entity,
+    sourceEntityBeforeChanges: Entity,
   ): Promise<AffectedEntity[]> {
-    const { rule, entityType, fieldId } = affectedRule;
+    const { rule, entityType } = affectedRule;
 
     const referencedEntityIds = sourceEntity[rule.sourceReferenceField];
     if (!referencedEntityIds) return [];
 
     const targetEntities = await this.loadEntitiesByIds(
       entityType,
-      Array.isArray(referencedEntityIds)
-        ? referencedEntityIds
-        : [referencedEntityIds],
+      asArray(referencedEntityIds),
     );
 
     return this.processTargetEntities(
       targetEntities,
-      rule,
+      affectedRule,
       sourceEntity,
-      entityType,
-      fieldId,
+      await this.loadRemovedValues(
+        targetEntities,
+        affectedRule,
+        sourceEntity,
+        sourceEntityBeforeChanges,
+      ),
     );
   }
 
@@ -219,7 +205,7 @@ export class AutomatedFieldUpdateConfigService {
     affectedRule: AffectedRule,
     sourceEntity: Entity,
   ): Promise<AffectedEntity[]> {
-    const { rule, entityType, fieldId } = affectedRule;
+    const { rule, entityType } = affectedRule;
 
     // Load all entities of target type and filter for those referencing source entity
     const allTargetEntities = await this.entityMapper.loadType(entityType);
@@ -229,11 +215,57 @@ export class AutomatedFieldUpdateConfigService {
 
     return this.processTargetEntities(
       targetEntities,
-      rule,
+      affectedRule,
       sourceEntity,
-      entityType,
-      fieldId,
     );
+  }
+
+  /**
+   * Find the values that were removed from the source entity and are not used by any other entity linking to the same target,
+   * for fields that collect the values of their linked entities (i.e. these values can be removed from the target).
+   * @return the values to remove by target entity id
+   */
+  private async loadRemovedValues(
+    targetEntities: Entity[],
+    { rule, entityType, fieldId }: AffectedRule,
+    sourceEntity: Entity,
+    sourceEntityBeforeChanges: Entity,
+  ): Promise<Map<string, any[]>> {
+    // values of a new entity have never been collected, even if it was pre-filled
+    const removedValues = getRemovedValues(
+      sourceEntityBeforeChanges.isNew
+        ? []
+        : this.calculateNewValue(sourceEntityBeforeChanges, rule),
+      this.calculateNewValue(sourceEntity, rule),
+    );
+    if (
+      removedValues.length === 0 ||
+      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
+    ) {
+      return new Map();
+    }
+
+    try {
+      return new Map(
+        await Promise.all(
+          targetEntities.map(async (target): Promise<[string, any[]]> => [
+            target.getId(),
+            differenceWith(
+              removedValues,
+              await this.collectValuesOfLinkedRecords(target, rule),
+              isEqual,
+            ),
+          ]),
+        ),
+      );
+    } catch (error) {
+      Logging.warn(
+        "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
+        { entityType: entityType.ENTITY_TYPE, fieldId },
+        error,
+      );
+      return new Map();
+    }
   }
 
   /**
@@ -241,10 +273,13 @@ export class AutomatedFieldUpdateConfigService {
    */
   private processTargetEntities(
     targetEntities: Entity[],
-    rule: DefaultValueConfigInheritedField,
+    {
+      rule,
+      entityType: targetEntityType,
+      fieldId: targetFieldId,
+    }: AffectedRule,
     sourceEntity: Entity,
-    targetEntityType: EntityConstructor,
-    targetFieldId: string,
+    removedValues: Map<string, any[]> = new Map(),
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
@@ -254,7 +289,7 @@ export class AutomatedFieldUpdateConfigService {
     const fieldConfig = targetEntityType.schema.get(targetFieldId);
     const addToExisting = isCollectingFromLinkedRecords(fieldConfig);
     const combineWithCurrentValue = addToExisting
-      ? addMissingValues
+      ? addAndRemoveValues
       : (_currentValue: any, newValue: any) => newValue;
 
     for (const targetEntity of targetEntities) {
@@ -268,6 +303,7 @@ export class AutomatedFieldUpdateConfigService {
       const newValue = combineWithCurrentValue(
         currentValue,
         this.calculateNewValue(sourceEntity, rule),
+        removedValues.get(targetEntity.getId()),
       );
       if (isEqual(currentValue, newValue)) continue;
 

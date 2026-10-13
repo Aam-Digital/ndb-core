@@ -31,9 +31,9 @@
           ></app-entity-field-edit>
           @if (entity.addToExisting) {
             <div class="hint-text" i18n>
-              Values are only added, never removed automatically. To remove
-              values no longer used by any linked record, edit them here or use
-              the link button next to the field in the record's details.
+              The values of the linked record are added to the existing ones.
+              Values it just lost are removed here too, unless another linked
+              record still has them.
             </div>
           }
         </td>

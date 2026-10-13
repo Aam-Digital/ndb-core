@@ -41,7 +41,8 @@ export interface DefaultValueConfigInheritedField {
    * How the new value is applied to this field:
    * - "replace" (default): overwrite the existing value
    * - "add": for fields allowing multiple values (isArray) only,
-   *   add new values to the existing ones (skipping duplicates) and never remove any
+   *   add new values to the existing ones (skipping duplicates);
+   *   values removed from a related record are removed too, unless another related record still has them
    */
   aggregation?: "replace" | "add";
 }

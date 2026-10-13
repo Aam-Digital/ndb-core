@@ -42,7 +42,7 @@
   @if (isAddToExistingAvailable) {
     <div class="margin-bottom-regular">
       <mat-slide-toggle
-        matTooltip="Keep the existing values of this field and only add new values from the related records. Values are never removed automatically."
+        matTooltip="Keep the existing values of this field and add the new values of the related records. Values removed from a related record are suggested for removal unless another related record still has them."
         i18n-matTooltip
         [checked]="addToExisting()"
         (change)="addToExisting.set($event.checked)"

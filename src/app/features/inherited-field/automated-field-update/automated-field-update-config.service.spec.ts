@@ -480,17 +480,27 @@ describe("AutomatedFieldUpdateConfigService", () => {
     Array.isArray(ids) ? toTags(ids) : toTags([ids])[0];
 
   describe("aggregation 'add'", () => {
+    function createSubAction(parent: AggregatingAction, tags: string[]) {
+      const subAction = new AggregatingAction();
+      subAction.parentAction = parent.getId();
+      subAction.tags = toTags(tags);
+      return subAction;
+    }
+
     async function saveSubActionTags(
       parentTags: string[] | undefined,
       tagsBefore: string[],
       tagsAfter: string[],
+      otherSubActionTags: string[][] = [],
     ) {
       const parent = new AggregatingAction();
       parent.tags = toTags(parentTags);
-      const subAction = new AggregatingAction();
-      subAction.parentAction = parent.getId();
-      subAction.tags = toTags(tagsBefore);
-      entityMapper.addAll([parent, subAction]);
+      const subAction = createSubAction(parent, tagsBefore);
+      subAction._rev = "1-existing";
+      const otherSubActions = otherSubActionTags.map((tags) =>
+        createSubAction(parent, tags),
+      );
+      entityMapper.addAll([parent, subAction, ...otherSubActions]);
 
       const subActionBefore = subAction.copy();
       subAction.tags = toTags(tagsAfter);
@@ -500,18 +510,35 @@ describe("AutomatedFieldUpdateConfigService", () => {
     }
 
     it.each([
-      [["health"], [], ["education"], ["health", "education"]],
-      [undefined, [], ["education"], ["education"]],
+      [["health"], [], ["education"], [], ["health", "education"]],
+      [undefined, [], ["education"], [], ["education"]],
       [
         ["water", "health"],
         ["health"],
         ["health", "education"],
+        [],
         ["water", "health", "education"],
       ],
+      [["health", "education"], ["education"], [], [], ["health"]],
+      [
+        ["health", "education"],
+        ["health", "education"],
+        ["education"],
+        [],
+        ["education"],
+      ],
+      [
+        ["health", "education"],
+        ["education"],
+        ["water"],
+        [],
+        ["health", "water"],
+      ],
+      [["health", "education"], ["education"], [], [["water"]], ["health"]],
     ])(
-      "parent %j + sub-action changed from %j to %j suggests %j",
-      async (parentTags, tagsBefore, tagsAfter, expectedSuggestion) => {
-        await saveSubActionTags(parentTags, tagsBefore, tagsAfter);
+      "parent %j + sub-action changed from %j to %j (other sub-actions %j) suggests %j",
+      async (parentTags, tagsBefore, tagsAfter, others, expectedSuggestion) => {
+        await saveSubActionTags(parentTags, tagsBefore, tagsAfter, others);
 
         expect(mockDialog.open).toHaveBeenCalledTimes(1);
         const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
@@ -521,17 +548,48 @@ describe("AutomatedFieldUpdateConfigService", () => {
     );
 
     it.each([
-      [["health", "education"], [], ["education"]],
-      [["health", "education"], ["health", "education"], ["education"]],
-      [undefined, ["health"], []],
+      [["health", "education"], [], ["education"], []],
+      [undefined, ["health"], [], []],
+      [["health", "education"], ["education"], [], [["education", "water"]]],
+      [
+        ["health", "education"],
+        ["health", "education"],
+        ["health"],
+        [["education"]],
+      ],
     ])(
-      "parent %j + sub-action changed from %j to %j opens no dialog",
-      async (parentTags, tagsBefore, tagsAfter) => {
-        await saveSubActionTags(parentTags, tagsBefore, tagsAfter);
+      "parent %j + sub-action changed from %j to %j (other sub-actions %j) opens no dialog",
+      async (parentTags, tagsBefore, tagsAfter, others) => {
+        await saveSubActionTags(parentTags, tagsBefore, tagsAfter, others);
 
         expect(mockDialog.open).not.toHaveBeenCalled();
       },
     );
+
+    it("does not remove values of a pre-filled new sub-action that were never collected", async () => {
+      const parent = new AggregatingAction();
+      parent.tags = toTags(["health", "education"]);
+      const subAction = createSubAction(parent, ["education"]);
+      entityMapper.addAll([parent, subAction]);
+
+      const subActionBefore = subAction.copy();
+      subAction.tags = toTags([]);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(subAction, subActionBefore);
+
+      expect(mockDialog.open).not.toHaveBeenCalled();
+    });
+
+    it("does not remove values if the other sub-actions cannot be checked", async () => {
+      vi.spyOn(entityMapper, "loadType").mockRejectedValueOnce(
+        new Error("no access"),
+      );
+
+      await saveSubActionTags(["health", "education"], ["education"], []);
+
+      expect(mockDialog.open).not.toHaveBeenCalled();
+    });
   });
 
   describe("values inherited from the parent action", () => {
