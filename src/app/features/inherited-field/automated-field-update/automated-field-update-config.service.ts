@@ -14,9 +14,13 @@ import {
 } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { isEqual } from "lodash-es";
+import { differenceWith, isEqual } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
-import { addMissingValues } from "../add-missing-values";
+import {
+  addAndRemoveValues,
+  addMissingValues,
+  getRemovedValues,
+} from "../add-missing-values";
 import { getCommonValue, isEmptyValue } from "../get-common-value";
 
 /**
@@ -80,7 +84,7 @@ export class AutomatedFieldUpdateConfigService {
       ...(
         await Promise.all(
           relevantDirectRules.map((rule) =>
-            this.loadAffectedEntitiesForRule(rule, entity),
+            this.loadAffectedEntitiesForRule(rule, entity, entityBeforeChanges),
           ),
         )
       ).flat(),
@@ -177,6 +181,7 @@ export class AutomatedFieldUpdateConfigService {
   private async loadAffectedEntitiesForRule(
     affectedRule: AffectedRule,
     sourceEntity: Entity,
+    sourceEntityBeforeChanges: Entity,
   ): Promise<AffectedEntity[]> {
     const { rule, entityType } = affectedRule;
 
@@ -201,6 +206,12 @@ export class AutomatedFieldUpdateConfigService {
           entity.getId(),
           newValue,
         ]),
+      ),
+      await this.loadRemovedValues(
+        targetEntities,
+        affectedRule,
+        sourceEntity,
+        sourceEntityBeforeChanges,
       ),
     );
   }
@@ -282,6 +293,54 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
+   * Find the values that were removed from the source entity and are not used by any other entity linking to the same target,
+   * for fields that collect the values of their linked entities (i.e. these values can be removed from the target).
+   * @return the values to remove by target entity id
+   */
+  private async loadRemovedValues(
+    targetEntities: Entity[],
+    { rule, entityType, fieldId }: AffectedRule,
+    sourceEntity: Entity,
+    sourceEntityBeforeChanges: Entity,
+  ): Promise<Map<string, any[]>> {
+    // values of a new entity have never been collected, even if it was pre-filled
+    const removedValues = getRemovedValues(
+      sourceEntityBeforeChanges.isNew
+        ? []
+        : this.calculateNewValue(sourceEntityBeforeChanges, rule),
+      this.calculateNewValue(sourceEntity, rule),
+    );
+    if (
+      removedValues.length === 0 ||
+      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
+    ) {
+      return new Map();
+    }
+
+    try {
+      return new Map(
+        await Promise.all(
+          targetEntities.map(async (target): Promise<[string, any[]]> => [
+            target.getId(),
+            differenceWith(
+              removedValues,
+              await this.collectValuesOfLinkedRecords(target, rule),
+              isEqual,
+            ),
+          ]),
+        ),
+      );
+    } catch (error) {
+      Logging.warn(
+        "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
+        { entityType: entityType.ENTITY_TYPE, fieldId },
+        error,
+      );
+      return new Map();
+    }
+  }
+
+  /**
    * Common logic for processing target entities and creating AffectedEntity objects
    */
   private processTargetEntities(
@@ -293,6 +352,7 @@ export class AutomatedFieldUpdateConfigService {
     }: AffectedRule,
     sourceEntity: Entity,
     newValues: Map<string, NewValue>,
+    removedValues: Map<string, any[]> = new Map(),
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
@@ -302,7 +362,7 @@ export class AutomatedFieldUpdateConfigService {
     const fieldConfig = targetEntityType.schema.get(targetFieldId);
     const addToExisting = isCollectingFromLinkedRecords(fieldConfig);
     const combineWithCurrentValue = addToExisting
-      ? addMissingValues
+      ? addAndRemoveValues
       : (_currentValue: any, newValue: any) => newValue;
 
     for (const targetEntity of targetEntities) {
@@ -314,7 +374,11 @@ export class AutomatedFieldUpdateConfigService {
         this.entitySchemaService,
       );
       const { value, hasNoCommonValue } = newValues.get(targetEntity.getId());
-      const newValue = combineWithCurrentValue(currentValue, value);
+      const newValue = combineWithCurrentValue(
+        currentValue,
+        value,
+        removedValues.get(targetEntity.getId()),
+      );
       // an existing value is kept, but the user is informed that there is nothing to suggest
       const showNoCommonValue = hasNoCommonValue && !isEmptyValue(currentValue);
       if (isEqual(currentValue, newValue) && !showNoCommonValue) continue;

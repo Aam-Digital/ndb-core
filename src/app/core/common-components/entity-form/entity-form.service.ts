@@ -310,6 +310,10 @@ export class EntityFormService {
     form.markAsPristine();
     form.disable();
     Object.assign(entity, updatedEntity);
+    // properties of cleared fields are deleted from updatedEntity, which Object.assign does not copy
+    Object.keys(form.getRawValue())
+      .filter((key) => !Object.hasOwn(updatedEntity, key))
+      .forEach((key) => delete entity[key]);
 
     entityForm.onFormStateChange.emit(
       new EntityFormSavedEvent(entity, originalEntity),
