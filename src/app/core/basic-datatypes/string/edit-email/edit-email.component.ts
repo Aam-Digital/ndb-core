@@ -15,10 +15,7 @@ import {
   ValidationErrors,
 } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import {
-  MatFormFieldControl,
-  MatFormFieldModule,
-} from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -37,7 +34,6 @@ import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/ed
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatInputModule,
-    MatFormFieldModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatTooltipModule,
