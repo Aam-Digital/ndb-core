@@ -25,8 +25,6 @@ export interface ApiClient {
 export interface ApiClientScope {
   name: string;
   description: string;
-  /** whether the current user is allowed to give this scope to an API client */
-  grantable: boolean;
 }
 
 /**

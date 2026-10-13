@@ -51,29 +51,11 @@ describe("CreateApiClientDialogComponent", () => {
   const reportingScope: ApiClientScope = {
     name: "reporting_read",
     description: "Access to reporting-api GET endpoints",
-    grantable: true,
   };
   const singleSignOnScope: ApiClientScope = {
     name: "third_party_authentication",
     description: "Access to create user sessions",
-    grantable: true,
   };
-
-  it("does not offer access that requires a role the user does not have", async () => {
-    await openDialog([
-      reportingScope,
-      { ...singleSignOnScope, grantable: false },
-    ]);
-
-    const options = await (
-      await loader.getHarness(MatSelectionListHarness)
-    ).getItems();
-
-    expect(await Promise.all(options.map((o) => o.isDisabled()))).toEqual([
-      false,
-      true,
-    ]);
-  });
 
   it("warns that single sign-on access allows signing in as any user", async () => {
     await openDialog([reportingScope, singleSignOnScope]);
@@ -108,8 +90,8 @@ describe("CreateApiClientDialogComponent", () => {
     await openDialog([reportingScope]);
     apiClientService.createApiClient.mockRejectedValue(
       new HttpErrorResponse({
-        status: 403,
-        error: { errorMessage: "requires the role 'admin_app'" },
+        status: 500,
+        error: { errorMessage: "Client scope 'reporting_read' does not exist" },
       }),
     );
 
@@ -119,7 +101,7 @@ describe("CreateApiClientDialogComponent", () => {
       fixture.detectChanges();
       expect(
         fixture.nativeElement.querySelector('[role="alert"]')?.textContent,
-      ).toContain("requires the role 'admin_app'");
+      ).toContain("Client scope 'reporting_read' does not exist");
     });
     expect(dialogRef.close).not.toHaveBeenCalled();
   });

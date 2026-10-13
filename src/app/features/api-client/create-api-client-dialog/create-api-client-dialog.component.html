@@ -27,13 +27,8 @@
         i18n-aria-label
       >
         @for (scope of scopes; track scope.name) {
-          <mat-list-option [value]="scope.name" [disabled]="!scope.grantable">
+          <mat-list-option [value]="scope.name">
             <span matListItemTitle>{{ getScopeLabel(scope) }}</span>
-            @if (!scope.grantable) {
-              <span matListItemLine i18n>
-                Only administrators can give this access.
-              </span>
-            }
           </mat-list-option>
         }
       </mat-selection-list>

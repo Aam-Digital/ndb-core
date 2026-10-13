@@ -84,13 +84,14 @@ describe("ApiClientService", () => {
     [
       "a failure the backend explains",
       new HttpErrorResponse({
-        status: 403,
+        status: 400,
         error: {
-          errorCode: "SCOPE_NOT_PERMITTED",
-          errorMessage: "requires the role 'admin_app'",
+          errorCode: "INVALID_NAME",
+          errorMessage:
+            "The name of an API client must have 1 to 100 characters",
         },
       }),
-      "requires the role 'admin_app'",
+      "must have 1 to 100 characters",
     ],
     [
       "an unexplained failure",
