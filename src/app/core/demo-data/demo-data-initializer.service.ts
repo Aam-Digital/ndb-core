@@ -44,7 +44,8 @@ export class DemoDataInitializerService {
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     id: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: ["user_app", ADMIN_APP_ROLE],
+    // e2e tests can give the demo admin further roles (like window["e2eDemoData"] for the data)
+    roles: ["user_app", ADMIN_APP_ROLE, ...(window["e2eUserRoles"] ?? [])],
     entityId: `User:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
 
