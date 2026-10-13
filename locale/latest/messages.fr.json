@@ -1800,5 +1800,7 @@
   "2683918309637121888": "Condition configured: this field group is only shown while the record matches it.",
   "4391519169795872812": "Condition configured: this field is only shown while the record matches it.",
   "7091670994840297167": "Only show this field group in forms if the record currently matches a condition, based on the values of other fields.",
-  "2627044535960543081": "This field group is shown only while the record matches..."
+  "2627044535960543081": "This field group is shown only while the record matches...",
+  "4312183290449350804": "Send email",
+  "2614015003922212269": "Send an email"
 }
