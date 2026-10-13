@@ -14,14 +14,17 @@ export class UserRoleGuard extends AbstractPermissionGuard {
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {
     const permittedRoles = routeData?.permittedUserRoles;
-    const user = this.sessionInfo.value;
+    const requiredRoles = routeData?.requiredUserRoles ?? [];
+    const userRoles = this.sessionInfo.value?.roles ?? [];
 
-    if (permittedRoles?.length > 0) {
-      // Check if user has a role which is in the list of permitted roles
-      return permittedRoles.some((role) => user.roles.includes(role));
-    } else {
-      // No config set => all users are allowed
-      return true;
-    }
+    // No config set => all users are allowed
+    const hasPermittedRole =
+      !(permittedRoles?.length > 0) ||
+      permittedRoles.some((role) => userRoles.includes(role));
+    const hasRequiredRoles = requiredRoles.every((role) =>
+      userRoles.includes(role),
+    );
+
+    return hasPermittedRole && hasRequiredRoles;
   }
 }

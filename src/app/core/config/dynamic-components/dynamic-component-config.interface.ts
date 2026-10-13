@@ -32,4 +32,10 @@ export interface DynamicComponentConfig<T = any> {
    * If not set, all logged-in users can visit the route.
    */
   permittedUserRoles?: string[];
+
+  /**
+   * Allows to restrict the route to users which have all of the given roles.
+   * Can be combined with `permittedUserRoles`, then both have to be fulfilled.
+   */
+  requiredUserRoles?: string[];
 }

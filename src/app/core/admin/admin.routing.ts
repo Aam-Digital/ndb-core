@@ -84,7 +84,10 @@ export const adminRoutes: Routes = [
     component: ApiClientListComponent,
     canActivate: [UserRoleGuard],
     data: {
-      permittedUserRoles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+      requiredUserRoles: [
+        ADMIN_APP_ROLE,
+        UserAdminService.ACCOUNT_MANAGER_ROLE,
+      ],
     },
   },
   {
