@@ -6,7 +6,7 @@ on:
       build_name:
         type: string
         required: true
-        description: Version/build name to inject into the app (e.g. "3.68.1-master.12" or "pr-123")
+        description: Version/build name to inject into the app (e.g. "3.68.1-edge.12" or "pr-123")
       docker_tags:
         type: string
         required: true

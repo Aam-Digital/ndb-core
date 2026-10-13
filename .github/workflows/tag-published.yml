@@ -23,13 +23,17 @@ jobs:
     with:
       build_name: ${{ github.ref_name }}
       # - tag with git tag name
-      # - tag with `:master` on pre-release tag builds (tag contains "-master")
+      # - tag with `:edge` on pre-release tag builds (x.y.z-edge.n, created on every master push)
+      # - during the transition from `-master.n` to `-edge.n` pre-releases, also keep tagging `:master`
+      #   for pre-release builds (consumers still following `:master` must switch to `:edge`;
+      #   then the `:master` tag is dropped)
       # - tag with `:stable` and `:latest` for release tags (created via create-release.yml)
       # (docker/metadata-action's own auto-`latest` is disabled in _build.yaml so it doesn't
       # apply `:latest` to every tag push regardless of this condition)
       docker_tags: |
         type=ref,event=tag
-        type=raw,value=master,enable=${{ contains(github.ref_name, '-master') }}
+        type=raw,value=edge,enable=${{ contains(github.ref_name, '-edge.') || contains(github.ref_name, '-master.') }}
+        type=raw,value=master,enable=${{ contains(github.ref_name, '-edge.') || contains(github.ref_name, '-master.') }}
         type=raw,value=stable,enable=${{ !contains(github.ref_name, '-') }}
         type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
 
@@ -50,7 +54,7 @@ jobs:
           path: dist
 
       - name: Upload Sourcemaps
-        # skipped for pre-releases (e.g. -master.n)
+        # skipped for pre-releases (e.g. -edge.n)
         if: ${{ !contains(github.ref_name, '-') }}
         run: |
           npm install -g @sentry/cli
@@ -76,7 +80,7 @@ jobs:
 
       - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
       - name: Create Release
-        # skipped for pre-releases (e.g. -master.n)
+        # skipped for pre-releases (e.g. -edge.n)
         if: ${{ !contains(github.ref_name, '-') }}
         run: |
           npm install -g @sentry/cli

@@ -55,7 +55,8 @@ is.
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) to automatically create new versions.
 
-1. Commits on the `master` branch are analyzed and a pre-release version is automatically tagged.
+1. Commits on the `master` branch are analyzed and a pre-release version `X.Y.Z-edge.N` is automatically tagged.
+   Its Docker image is also tagged `edge` (and, during the transition from the former `-master.N` versions, `master`).
 2. To create a stable release, a core team member manually triggers the release GitHub Action (`create-release.yml` workflow dispatch). This creates a regular (non-prerelease) version from `master`.
 
 ## Content Security Policy (CSP)

@@ -27,9 +27,10 @@ jobs:
                 gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
               done
 
-          # Delete any remaining orphaned pre-release git tags (semantic-release format: x.y.z-master.n)
+          # Delete any remaining orphaned pre-release git tags (semantic-release format: x.y.z-edge.n,
+          # formerly x.y.z-master.n)
           git fetch --tags
-          git tag -l '*-master.*' | while read -r tag; do
+          git tag -l '*-edge.*' '*-master.*' | while read -r tag; do
             echo "Deleting orphaned tag: $tag"
             git push --delete origin "$tag" || true
           done

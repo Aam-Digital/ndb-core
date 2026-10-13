@@ -4,7 +4,7 @@
     "official-release",
     {
       "name": "master",
-      "prerelease": true
+      "prerelease": "edge"
     }
   ],
   "plugins": [
