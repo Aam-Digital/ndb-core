@@ -97,13 +97,19 @@ export function getEmbeddedSchema(
     !Array.isArray(additional)
   ) {
     for (const [key, value] of Object.entries<EntitySchemaField>(additional)) {
-      if (
-        value &&
-        typeof value === "object" &&
-        typeof value.dataType === "string"
-      ) {
-        innerSchema.set(key, { ...value, id: key });
+      if (!value || typeof value !== "object") {
+        continue;
       }
+      const merged = { ...innerSchema.get(key), ...value, id: key };
+      // only recognize this as a field override if we can resolve a dataType for it
+      // (either from the override itself, or inherited from the base/embeddedType schema) -
+      // this is what tells apart an embedded-schema `additional` map from the many other,
+      // unrelated shapes `additional` is used for elsewhere (e.g. a single entity-type
+      // string, or a plain config object for some other datatype).
+      if (typeof merged.dataType !== "string") {
+        continue;
+      }
+      innerSchema.set(key, merged);
     }
   }
 

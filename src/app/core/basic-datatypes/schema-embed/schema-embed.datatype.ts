@@ -83,7 +83,7 @@ export class SchemaEmbedDatatype<
 
     // Add schema from additional config, taking precedence over baseSchema if present
     for (const [key, value] of Object.entries(additional)) {
-      baseSchema.set(key, { ...value, id: key });
+      baseSchema.set(key, { ...baseSchema.get(key), ...value, id: key });
     }
 
     return baseSchema;
