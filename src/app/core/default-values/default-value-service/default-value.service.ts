@@ -147,5 +147,5 @@ export interface EmptyDefaultValueHint {
   isInSync?: undefined;
   inheritedFromType?: undefined;
   syncFromParentField?: undefined;
-  isCollectedFromLinkedRecords?: undefined;
+  isCollectedFromLinkedRecords?: false;
 }
