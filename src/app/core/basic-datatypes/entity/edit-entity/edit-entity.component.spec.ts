@@ -404,11 +404,9 @@ describe("EditEntityComponent", () => {
     async function expectOfferedNames(expected: string[]) {
       await vi.waitFor(() => {
         fixture.detectChanges();
-        const offered = component.availableEntitiesResource
-          .value()
-          .map((e) => e["name"])
-          .sort();
-        expect(offered).toEqual(expected);
+        expect(
+          sortedNames(component.availableEntitiesResource.value()),
+        ).toEqual(expected);
       });
     }
 
@@ -508,3 +506,7 @@ describe("EditEntityComponent", () => {
     });
   });
 });
+
+function sortedNames(entities: Entity[]): string[] {
+  return entities.map((e) => e["name"]).sort((a, b) => a.localeCompare(b));
+}
