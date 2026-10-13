@@ -19,22 +19,9 @@ jobs:
       - name: Checkout repository files
         uses: actions/checkout@v7
 
-      - name: Stop container and remove folder
-        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
-        continue-on-error: true
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /var/docker/pr-${{ github.event.number }}
-            docker compose down
-            cd ..
-            rm -r pr-${{ github.event.number }}
-
       # Stopgap until the shared pr-image-cleanup workflow (Aam-Digital/.github) replaces the image steps below.
-      # A PR build that is still running when the PR is closed pushes `pr-<number>` after the deletes below
-      # (the usual cause of leaked tags), so stop such builds first.
+      # A PR build that is still running when the PR is closed pushes `pr-<number>` and redeploys it after the
+      # cleanup below (the usual cause of leaked tags), so stop such builds before anything else.
       - name: Cancel and wait for running PR builds
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         timeout-minutes: 15
@@ -55,6 +42,20 @@ jobs:
               sleep 10
             done
           done
+
+      - name: Stop container and remove folder
+        if: ${{ !cancelled() }}
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        continue-on-error: true
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/docker/pr-${{ github.event.number }}
+            docker compose down
+            cd ..
+            rm -r pr-${{ github.event.number }}
 
       - name: Delete Docker Hub tag
         if: ${{ !cancelled() }}
