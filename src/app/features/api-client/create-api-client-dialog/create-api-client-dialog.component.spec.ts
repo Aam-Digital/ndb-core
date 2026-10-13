@@ -82,9 +82,38 @@ describe("CreateApiClientDialogComponent", () => {
         scopes: ["reporting_read"],
       }),
     );
-    expect(apiClientService.createApiClient).toHaveBeenCalledWith("TolaData", [
-      "reporting_read",
-    ]);
+    expect(apiClientService.createApiClient).toHaveBeenCalledWith(
+      "TolaData",
+      ["reporting_read"],
+      undefined,
+    );
+  });
+
+  it("creates the API client with the client ID the user chose", async () => {
+    await openDialog([reportingScope]);
+    await (
+      await loader.getHarness(
+        MatInputHarness.with({ selector: '[formControlName="clientId"]' }),
+      )
+    ).setValue("tola-data");
+
+    await fillAndSubmit("TolaData", /Read reports/);
+
+    await vi.waitFor(() =>
+      expect(apiClientService.createApiClient).toHaveBeenCalledWith(
+        "TolaData",
+        ["reporting_read"],
+        "api-tola-data",
+      ),
+    );
+  });
+
+  it("does not accept a name of only spaces", async () => {
+    await openDialog([reportingScope]);
+
+    await fillAndSubmit("   ", /Read reports/);
+
+    expect(apiClientService.createApiClient).not.toHaveBeenCalled();
   });
 
   it("shows why the backend refused to create the API client", async () => {

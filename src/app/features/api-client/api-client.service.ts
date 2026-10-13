@@ -46,6 +46,9 @@ export interface ApiConnectionDetails {
   tokenUrl: string;
 }
 
+/** Every API client's client id starts with this (the backend only manages such clients). */
+export const API_CLIENT_ID_PREFIX = "api-";
+
 /**
  * Feature flags from the backend's `/actuator/features` endpoint;
  * sub-features are nested under their parent feature (e.g. `admin.api-client`).
@@ -107,12 +110,21 @@ export class ApiClientService {
     );
   }
 
+  /**
+   * @param clientId the client id for the external system, starting with {@link API_CLIENT_ID_PREFIX};
+   *   if not given, the backend generates one from the name
+   */
   createApiClient(
     name: string,
     scopes: string[],
+    clientId?: string,
   ): Promise<ApiClientCredentials> {
     return firstValueFrom(
-      this.http.post<ApiClientCredentials>(this.API_URL, { name, scopes }),
+      this.http.post<ApiClientCredentials>(this.API_URL, {
+        name,
+        scopes,
+        clientId,
+      }),
     );
   }
 

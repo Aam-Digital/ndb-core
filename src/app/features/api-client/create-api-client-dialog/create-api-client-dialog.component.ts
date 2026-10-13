@@ -23,6 +23,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { Logging } from "#src/app/core/logging/logging.service";
 import {
   ApiClientScope,
+  API_CLIENT_ID_PREFIX,
   ApiClientService,
   errorMessageOf,
 } from "../api-client.service";
@@ -65,14 +66,23 @@ export class CreateApiClientDialogComponent {
       nonNullable: true,
       validators: [
         Validators.required,
+        // the backend rejects a name of only spaces
+        Validators.pattern(/\S/),
         Validators.maxLength(this.MAX_NAME_LENGTH),
       ],
+    }),
+    // the part after API_CLIENT_ID_PREFIX; empty to let the backend generate it from the name
+    clientId: new FormControl("", {
+      nonNullable: true,
+      validators: [Validators.pattern(/^[A-Za-z0-9][A-Za-z0-9._-]{0,59}$/)],
     }),
     scopes: new FormControl<string[]>([], {
       nonNullable: true,
       validators: [Validators.required],
     }),
   });
+
+  readonly CLIENT_ID_PREFIX = API_CLIENT_ID_PREFIX;
 
   /** the client scopes the API client can be given */
   readonly scopes = resource({
@@ -104,11 +114,12 @@ export class CreateApiClientDialogComponent {
     this.saving.set(true);
     this.createError.set(undefined);
 
-    const { name, scopes } = this.form.getRawValue();
+    const { name, clientId, scopes } = this.form.getRawValue();
     try {
       const credentials = await this.apiClientService.createApiClient(
         name.trim(),
         scopes,
+        clientId.trim() ? API_CLIENT_ID_PREFIX + clientId.trim() : undefined,
       );
       this.dialogRef.close({ credentials, scopes });
     } catch (err) {
