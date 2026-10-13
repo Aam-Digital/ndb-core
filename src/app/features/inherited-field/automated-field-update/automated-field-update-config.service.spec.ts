@@ -613,6 +613,73 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
       expect(mockDialog.open).not.toHaveBeenCalled();
     });
+
+    describe("updating the linked parent from the sub-action", () => {
+      function createLinkedSubAction(
+        parentTags: string[],
+        subActionTags: string[],
+      ) {
+        const parent = new AggregatingAction();
+        parent.tags = toTags(parentTags);
+        const subAction = createSubAction(parent, subActionTags);
+        subAction._rev = "1-existing";
+        entityMapper.addAll([parent, subAction]);
+        mockDialog.open.mockClear();
+        return subAction;
+      }
+
+      it("suggests the sub-action's values for the parent even if the field was not changed", async () => {
+        const subAction = createLinkedSubAction(["health"], ["education"]);
+
+        const wasOpened = await service.updateLinkedRecords(subAction, "tags");
+
+        expect(wasOpened).toBe(true);
+        expect(mockDialog.open).toHaveBeenCalledTimes(1);
+        const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
+        expect(suggestion.newValue).toEqual(["health", "education"]);
+      });
+
+      it("does not open the dialog if the parent is up to date", async () => {
+        const subAction = createLinkedSubAction(["education"], ["education"]);
+
+        const wasOpened = await service.updateLinkedRecords(subAction, "tags");
+
+        expect(wasOpened).toBe(false);
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      });
+
+      it("does not open the dialog for a field that is not passed on to the parent", async () => {
+        const subAction = createLinkedSubAction(["health"], ["education"]);
+
+        const wasOpened = await service.updateLinkedRecords(
+          subAction,
+          "category",
+        );
+
+        expect(wasOpened).toBe(false);
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      });
+
+      it("offers the update only for fields passed on to an existing parent", () => {
+        const linkedSubAction = createLinkedSubAction([], ["education"]);
+        const unlinkedSubAction = new AggregatingAction();
+        unlinkedSubAction._rev = "1-existing";
+        const newSubAction = createSubAction(new AggregatingAction(), []);
+
+        expect(service.hasLinkedRecordsToUpdate(linkedSubAction, "tags")).toBe(
+          true,
+        );
+        expect(
+          service.hasLinkedRecordsToUpdate(linkedSubAction, "category"),
+        ).toBe(false);
+        expect(
+          service.hasLinkedRecordsToUpdate(unlinkedSubAction, "tags"),
+        ).toBe(false);
+        expect(service.hasLinkedRecordsToUpdate(newSubAction, "tags")).toBe(
+          false,
+        );
+      });
+    });
   });
 
   describe("values inherited from the parent action", () => {

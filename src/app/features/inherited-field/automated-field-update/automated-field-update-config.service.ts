@@ -3,10 +3,7 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  AffectedEntity,
-  AutomatedFieldUpdateComponent,
-} from "./automated-field-update.component";
+import type { AffectedEntity } from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
 import {
   DefaultValueConfigInheritedField,
@@ -100,6 +97,51 @@ export class AutomatedFieldUpdateConfigService {
     if (affectedEntities.length > 0) {
       await this.confirmAndSaveAffectedEntities(affectedEntities);
     }
+  }
+
+  /**
+   * Whether the given field of the entity is passed on to other entities that the entity links to
+   * by an automation rule (e.g. a sub-item's field that updates its linked parent).
+   */
+  public hasLinkedRecordsToUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !entity.isNew &&
+      this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).some(
+        ({ rule }) => asArray(entity[rule.sourceReferenceField] ?? []).length,
+      )
+    );
+  }
+
+  /**
+   * Open the dialog to update the entities linked by the given entity with the value of the given field,
+   * regardless of whether the field was changed recently.
+   * @return whether there were any linked entities to update
+   */
+  public async updateLinkedRecords(
+    entity: Entity,
+    fieldId: string,
+  ): Promise<boolean> {
+    const affectedEntities = (
+      await Promise.all(
+        this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
+          (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
+        ),
+      )
+    ).flat();
+
+    if (affectedEntities.length > 0) {
+      await this.confirmAndSaveAffectedEntities(affectedEntities);
+    }
+    return affectedEntities.length > 0;
+  }
+
+  private getRulesUsingFieldAsSource(
+    entityType: EntityConstructor,
+    fieldId: string,
+  ): AffectedRule[] {
+    return this.getInheritanceRulesFromDirectEntity(entityType).filter(
+      ({ rule }) => rule.sourceValueField === fieldId,
+    );
   }
 
   /**
@@ -590,6 +632,9 @@ export class AutomatedFieldUpdateConfigService {
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
   ): Promise<AffectedEntity[] | null> {
+    // loaded lazily to avoid a circular import (dialog -> field edit -> inherited value button -> this service)
+    const { AutomatedFieldUpdateComponent } =
+      await import("./automated-field-update.component");
     const dialogRef = this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: "90vh",
       data: { entities: entitiesToUpdate },
