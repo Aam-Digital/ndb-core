@@ -73,13 +73,13 @@ describe("UserRoleGuard", () => {
     [["admin_app"], false],
     [["account_manager", "user_app"], false],
   ])(
-    "allows a route with requiredUserRoles only to users with all of them (user roles %j)",
+    "allows a route with allRequiredUserRoles only to users with all of them (user roles %j)",
     async (roles, expected) => {
       sessionInfo.next({ name: "user", id: "3", roles });
 
       const result = await guard.canActivate({
         routeConfig: { path: "url" },
-        data: { requiredUserRoles: ["admin_app", "account_manager"] },
+        data: { allRequiredUserRoles: ["admin_app", "account_manager"] },
       } as any);
 
       expect(result).toBe(expected);

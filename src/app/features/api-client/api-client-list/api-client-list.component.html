@@ -31,12 +31,15 @@
       support team to enable the API integration.
     </span>
   </app-hint-box>
-} @else if (apiClients(); as apiClients) {
-  @if (apiClients.length === 0) {
+} @else if (loadingError(); as loadingError) {
+  <p class="color-error" role="alert">{{ loadingError }}</p>
+} @else if (apiClients.hasValue()) {
+  @let clients = apiClients.value();
+  @if (clients.length === 0) {
     <p i18n>There are no API clients yet.</p>
   } @else {
     <div class="table-container">
-      <table mat-table [dataSource]="apiClients" class="full-width table">
+      <table mat-table [dataSource]="clients" class="full-width table">
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef i18n>Name</th>
           <td mat-cell *matCellDef="let apiClient">{{ apiClient.name }}</td>

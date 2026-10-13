@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
+  computed,
   inject,
-  signal,
+  resource,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { firstValueFrom } from "rxjs";
@@ -59,7 +59,16 @@ export class ApiClientListComponent {
   readonly isCheckingAvailability =
     this.apiClientService.isCheckingAvailability;
   readonly isAvailable = this.apiClientService.isAvailable;
-  readonly apiClients = signal<ApiClient[] | undefined>(undefined);
+  /** the API clients, loaded once the backend is known to offer them */
+  readonly apiClients = resource({
+    params: () => (this.isAvailable() ? {} : undefined),
+    loader: () => this.apiClientService.getApiClients(),
+  });
+  readonly loadingError = computed(() =>
+    this.apiClients.error()
+      ? errorMessageOf(this.apiClients.error())
+      : undefined,
+  );
 
   readonly displayedColumns = [
     "name",
@@ -71,24 +80,6 @@ export class ApiClientListComponent {
 
   readonly getScopeLabel = getScopeLabel;
 
-  constructor() {
-    effect(() => {
-      if (this.isAvailable()) {
-        this.loadApiClients();
-      }
-    });
-  }
-
-  private async loadApiClients() {
-    try {
-      this.apiClients.set(await this.apiClientService.getApiClients());
-    } catch (err) {
-      Logging.warn("Could not load API clients", err);
-      this.apiClients.set([]);
-      this.alertService.addDanger(errorMessageOf(err));
-    }
-  }
-
   async create() {
     const dialogRef = this.dialog.open<
       CreateApiClientDialogComponent,
@@ -98,7 +89,7 @@ export class ApiClientListComponent {
     const result = await firstValueFrom(dialogRef.afterClosed());
     if (result) {
       this.showCredentials(result);
-      await this.loadApiClients();
+      this.apiClients.reload();
     }
   }
 
@@ -139,7 +130,7 @@ export class ApiClientListComponent {
       Logging.warn("Could not delete an API client", err);
       this.alertService.addDanger(errorMessageOf(err));
     }
-    await this.loadApiClients();
+    this.apiClients.reload();
   }
 
   private showCredentials(data: ApiClientCredentialsDialogData) {

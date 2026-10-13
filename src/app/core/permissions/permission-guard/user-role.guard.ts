@@ -8,13 +8,13 @@ import { SessionSubject } from "../../session/auth/session-info";
  */
 @Injectable()
 export class UserRoleGuard extends AbstractPermissionGuard {
-  private sessionInfo = inject(SessionSubject);
+  private readonly sessionInfo = inject(SessionSubject);
 
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {
     const permittedRoles = routeData?.permittedUserRoles;
-    const requiredRoles = routeData?.requiredUserRoles ?? [];
+    const requiredRoles = routeData?.allRequiredUserRoles ?? [];
     const userRoles = this.sessionInfo.value?.roles ?? [];
 
     // No config set => all users are allowed

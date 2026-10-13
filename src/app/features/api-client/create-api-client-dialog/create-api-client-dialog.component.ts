@@ -3,7 +3,7 @@ import {
   Component,
   computed,
   inject,
-  OnInit,
+  resource,
   signal,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -48,7 +48,7 @@ import { ApiClientCredentialsDialogData } from "../api-client-credentials-dialog
   ],
   templateUrl: "./create-api-client-dialog.component.html",
 })
-export class CreateApiClientDialogComponent implements OnInit {
+export class CreateApiClientDialogComponent {
   private readonly apiClientService = inject(ApiClientService);
   private readonly dialogRef =
     inject<
@@ -74,9 +74,17 @@ export class CreateApiClientDialogComponent implements OnInit {
     }),
   });
 
-  readonly scopes = signal<ApiClientScope[] | undefined>(undefined);
+  /** the client scopes the API client can be given */
+  readonly scopes = resource({
+    loader: () => this.apiClientService.getScopes(),
+  });
   readonly saving = signal(false);
-  readonly error = signal<string | undefined>(undefined);
+  private readonly createError = signal<string | undefined>(undefined);
+  readonly error = computed(
+    () =>
+      this.createError() ??
+      (this.scopes.error() ? errorMessageOf(this.scopes.error()) : undefined),
+  );
 
   private readonly selectedScopes = toSignal(
     this.form.controls.scopes.valueChanges,
@@ -89,23 +97,12 @@ export class CreateApiClientDialogComponent implements OnInit {
   readonly getScopeLabel = (scope: ApiClientScope) =>
     getScopeLabel(scope.name, scope.description);
 
-  ngOnInit() {
-    this.apiClientService
-      .getScopes()
-      .then((scopes) => this.scopes.set(scopes))
-      .catch((err) => {
-        Logging.warn("Could not load the client scopes for API clients", err);
-        this.scopes.set([]);
-        this.error.set(errorMessageOf(err));
-      });
-  }
-
   async create() {
     if (this.form.invalid || this.saving()) {
       return;
     }
     this.saving.set(true);
-    this.error.set(undefined);
+    this.createError.set(undefined);
 
     const { name, scopes } = this.form.getRawValue();
     try {
@@ -116,7 +113,7 @@ export class CreateApiClientDialogComponent implements OnInit {
       this.dialogRef.close({ credentials, scopes });
     } catch (err) {
       Logging.warn("Could not create API client", err);
-      this.error.set(errorMessageOf(err));
+      this.createError.set(errorMessageOf(err));
     } finally {
       this.saving.set(false);
     }

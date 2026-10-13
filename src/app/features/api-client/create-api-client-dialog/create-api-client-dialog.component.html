@@ -20,19 +20,20 @@
     </mat-form-field>
 
     <h3 i18n>Access</h3>
-    @if (scopes(); as scopes) {
+    @if (scopes.hasValue()) {
+      @let offeredScopes = scopes.value();
       <mat-selection-list
         formControlName="scopes"
         aria-label="Access"
         i18n-aria-label
       >
-        @for (scope of scopes; track scope.name) {
+        @for (scope of offeredScopes; track scope.name) {
           <mat-list-option [value]="scope.name">
             <span matListItemTitle>{{ getScopeLabel(scope) }}</span>
           </mat-list-option>
         }
       </mat-selection-list>
-    } @else {
+    } @else if (scopes.isLoading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
 
