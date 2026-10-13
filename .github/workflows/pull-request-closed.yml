@@ -32,37 +32,78 @@ jobs:
             cd ..
             rm -r pr-${{ github.event.number }}
 
-      - name: Delete Docker Hub tag
-        continue-on-error: true
+      # Stopgap until the shared pr-image-cleanup workflow (Aam-Digital/.github) replaces the image steps below.
+      # A PR build that is still running when the PR is closed pushes `pr-<number>` after the deletes below
+      # (the usual cause of leaked tags), so stop such builds first.
+      - name: Cancel and wait for running PR builds
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        timeout-minutes: 15
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
-          token=${token#*\"token\":\"}
-          token=${token%%\"*}
-          curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/pr-${{ github.event.number }}" -H "Authorization: Bearer $token"
+          set -euo pipefail
+          run_ids=$(gh run list -R "$GITHUB_REPOSITORY" --workflow pull-request-updated.yml --event pull_request \
+            --branch "$HEAD_REF" --limit 50 --json databaseId,status \
+            --jq '.[] | select(.status != "completed") | .databaseId')
+          for id in $run_ids; do
+            echo "Cancelling PR build run $id"
+            gh run cancel "$id" -R "$GITHUB_REPOSITORY" || true
+          done
+          for id in $run_ids; do
+            until [ "$(gh run view "$id" -R "$GITHUB_REPOSITORY" --json status --jq .status)" = "completed" ]; do
+              echo "Waiting for run $id to stop ..."
+              sleep 10
+            done
+          done
 
-      - name: Delete GHCR image
-        continue-on-error: true
+      - name: Delete Docker Hub tag
+        if: ${{ !cancelled() }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          TAG: pr-${{ github.event.number }}
         run: |
-          PACKAGE_NAME="${{ github.event.repository.name }}"
-          TAG="pr-${{ github.event.number }}"
-          
-          # Get the version ID for the specific tag
-          VERSION_ID=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            "/orgs/${{ github.repository_owner }}/packages/container/${PACKAGE_NAME}/versions" \
-            --jq ".[] | select(.metadata.container.tags[] == \"${TAG}\") | .id")
-          
-          if [ -n "$VERSION_ID" ]; then
-            echo "Deleting GHCR image version $VERSION_ID with tag $TAG"
-            gh api \
-              --method DELETE \
-              -H "Accept: application/vnd.github+json" \
-              "/orgs/${{ github.repository_owner }}/packages/container/${PACKAGE_NAME}/versions/${VERSION_ID}"
-          else
-            echo "No GHCR image found with tag $TAG"
+          set -euo pipefail
+          token=$(jq -n --arg u "$DOCKER_USERNAME" --arg p "$DOCKER_PASSWORD" '{identifier: $u, secret: $p}' \
+            | curl -fsS -X POST 'https://hub.docker.com/v2/auth/token' -H 'Content-Type: application/json' --data @- \
+            | jq -r '.access_token // empty')
+          if [ -z "$token" ]; then
+            echo "::error::Docker Hub login returned no access token"
+            exit 1
           fi
 
+          status=$(curl -sS -o response.txt -w '%{http_code}' -X DELETE \
+            "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/$TAG" \
+            -H "Authorization: Bearer $token")
+          case "$status" in
+            2??) echo "Deleted Docker Hub tag $TAG" ;;
+            404) echo "No Docker Hub tag $TAG found, nothing to delete" ;;
+            *) echo "::error::Deleting Docker Hub tag $TAG failed with HTTP $status"; cat response.txt; exit 1 ;;
+          esac
+
+      - name: Delete GHCR image
+        if: ${{ !cancelled() }}
+        env:
+          VERSIONS_URL: /orgs/${{ github.repository_owner }}/packages/container/${{ github.event.repository.name }}/versions
+          TAG: pr-${{ github.event.number }}
+        run: |
+          set -euo pipefail
+          # paginate: without it only the newest 30 versions are searched and older PR images are never found
+          version_ids=$(gh api --paginate "$VERSIONS_URL?per_page=100" \
+            --jq ".[] | select(.metadata.container.tags | index(\"$TAG\")) | .id")
+
+          if [ -z "$version_ids" ]; then
+            echo "No GHCR image found with tag $TAG, nothing to delete"
+            exit 0
+          fi
+
+          for id in $version_ids; do
+            echo "Deleting GHCR image version $id with tag $TAG"
+            gh api --method DELETE "$VERSIONS_URL/$id"
+          done
+
       - name: Delete github caches for current branch
+        if: ${{ !cancelled() }}
         run: |
           gh cache list -L 200 --ref "refs/pull/${{ github.event.number }}/merge" --json id --jq '.[] | .id' | while read -r id; do
             gh cache delete "$id"
