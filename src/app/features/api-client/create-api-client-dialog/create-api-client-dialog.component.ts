@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  OnInit,
   signal,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -47,7 +48,7 @@ import { ApiClientCredentialsDialogData } from "../api-client-credentials-dialog
   ],
   templateUrl: "./create-api-client-dialog.component.html",
 })
-export class CreateApiClientDialogComponent {
+export class CreateApiClientDialogComponent implements OnInit {
   private readonly apiClientService = inject(ApiClientService);
   private readonly dialogRef =
     inject<
@@ -88,7 +89,7 @@ export class CreateApiClientDialogComponent {
   readonly getScopeLabel = (scope: ApiClientScope) =>
     getScopeLabel(scope.name, scope.description);
 
-  constructor() {
+  ngOnInit() {
     this.apiClientService
       .getScopes()
       .then((scopes) => this.scopes.set(scopes))

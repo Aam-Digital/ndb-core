@@ -35,6 +35,7 @@ describe("CreateApiClientDialogComponent", () => {
 
     fixture = TestBed.createComponent(CreateApiClientDialogComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
+    fixture.detectChanges();
     await fixture.whenStable();
   }
 

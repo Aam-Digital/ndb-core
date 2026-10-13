@@ -19,7 +19,7 @@ export class UserRoleGuard extends AbstractPermissionGuard {
 
     // No config set => all users are allowed
     const hasPermittedRole =
-      !(permittedRoles?.length > 0) ||
+      !permittedRoles?.length ||
       permittedRoles.some((role) => userRoles.includes(role));
     const hasRequiredRoles = requiredRoles.every((role) =>
       userRoles.includes(role),
