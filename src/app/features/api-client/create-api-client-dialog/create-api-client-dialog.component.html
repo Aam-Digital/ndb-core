@@ -21,12 +21,18 @@
 
     <mat-form-field>
       <mat-label i18n>Client ID (optional)</mat-label>
-      <span matTextPrefix>{{ CLIENT_ID_PREFIX }}</span>
       <input matInput formControlName="clientId" />
-      <mat-hint i18n>
-        If the external system expects a certain client ID. Leave empty to
-        generate one from the name.
-      </mat-hint>
+      @if (chosenClientId(); as clientId) {
+        <mat-hint i18n
+          >The client ID will be "{{ CLIENT_ID_PREFIX
+          }}{{ clientId }}".</mat-hint
+        >
+      } @else {
+        <mat-hint i18n>
+          If the external system expects a certain client ID. Leave empty to
+          generate one from the name.
+        </mat-hint>
+      }
       @if (form.controls.clientId.hasError("pattern")) {
         <mat-error i18n>
           Only letters, digits, ".", "_" and "-" (starting with a letter or
@@ -54,7 +60,7 @@
     }
 
     @if (singleSignOnSelected()) {
-      <app-hint-box type="warning">
+      <app-hint-box type="warning" class="margin-top-small">
         <span i18n>
           With single sign-on, the external system can sign in to this system as
           any of its users, including administrators, without their password.

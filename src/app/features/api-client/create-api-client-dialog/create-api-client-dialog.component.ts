@@ -100,6 +100,13 @@ export class CreateApiClientDialogComponent {
     this.form.controls.scopes.valueChanges,
     { initialValue: [] as string[] },
   );
+  private readonly clientIdValue = toSignal(
+    this.form.controls.clientId.valueChanges,
+    { initialValue: "" },
+  );
+  /** the part of the client ID the user chose, if any */
+  readonly chosenClientId = computed(() => this.clientIdValue().trim());
+
   readonly singleSignOnSelected = computed(() =>
     this.selectedScopes().includes(SINGLE_SIGN_ON_SCOPE),
   );

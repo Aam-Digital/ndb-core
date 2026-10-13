@@ -49,6 +49,7 @@ import {
     CustomDatePipe,
   ],
   templateUrl: "./api-client-list.component.html",
+  styleUrl: "./api-client-list.component.scss",
 })
 export class ApiClientListComponent {
   private readonly apiClientService = inject(ApiClientService);
