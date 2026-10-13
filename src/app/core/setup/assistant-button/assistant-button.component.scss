@@ -7,7 +7,7 @@
   // cuts off the bottom corner facing the content; `clip-path` has no logical form
   clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%);
 
-  [dir="rtl"] & {
+  :host-context([dir="rtl"]) & {
     clip-path: polygon(0 0, 100% 0, calc(100% - 30px) 100%, 0 100%);
   }
 
