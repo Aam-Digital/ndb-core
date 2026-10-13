@@ -10,6 +10,7 @@ import {
   EntityAbility,
   permissionConditionsMatcher,
 } from "../../../permissions/ability/entity-ability";
+import { splitNegation } from "../../conditions-editor/condition-negation";
 
 /**
  * Minimal structural type of the CASL rules (see `Ability.rulesFor`)
@@ -271,15 +272,35 @@ export function describeConditionFragment(
     return fragment.map(formatValue).join(", ");
   }
 
-  const operators = Object.entries(fragment);
-  if (operators.length === 1) {
-    const [operator, value] = operators[0];
-    if (operator === "$eq") {
-      return describeConditionFragment(value, formatValue);
-    }
-    if (operator === "$in" && Array.isArray(value)) {
-      return value.map(formatValue).join(", ");
-    }
+  const { negated, positive } = splitNegation(fragment);
+  if (negated) {
+    return $localize`:a negated permission condition value:not ${describeConditionFragment(positive, formatValue)}`;
   }
-  return JSON.stringify(fragment);
+
+  return (
+    describeSingleOperator(fragment, formatValue) ?? JSON.stringify(fragment)
+  );
+}
+
+/**
+ * Human-readable display of a fragment holding exactly one operator we have
+ * wording for, or `undefined` if it is not such a fragment.
+ */
+function describeSingleOperator(
+  fragment: object,
+  formatValue: (value: any) => string,
+): string | undefined {
+  const operators = Object.entries(fragment);
+  if (operators.length !== 1) {
+    return undefined;
+  }
+
+  const [operator, value] = operators[0];
+  if (operator === "$eq") {
+    return describeConditionFragment(value, formatValue);
+  }
+  if (operator === "$in" && Array.isArray(value)) {
+    return value.map(formatValue).join(", ");
+  }
+  return undefined;
 }

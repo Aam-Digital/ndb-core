@@ -41,7 +41,10 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { Entity } from "../../../core/entity/model/entity";
 import { FilterService } from "../../../core/filter/filter.service";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
+import {
+  combineFilterConditions,
+  DataFilter,
+} from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { RouteTarget } from "../../../route-target";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
@@ -60,6 +63,7 @@ import {
 } from "./matching-entities-config";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { FeatureDisabledInfoComponent } from "#src/app/core/common-components/feature-disabled-info/feature-disabled-info.component";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -106,6 +110,7 @@ export interface MatchingSide extends MatchingSideConfig {
     RouterLink,
     AblePipe,
     EntityTypePipe,
+    FeatureDisabledInfoComponent,
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
@@ -193,9 +198,23 @@ export class MatchingEntitiesComponent implements OnInit {
    */
   readonly comparisonColumns = signal<[ColumnConfig, ColumnConfig][]>([]);
 
+  readonly isConfigured = computed(() => {
+    const entityInputType = this.entity()?.getType();
+    return [this.resolvedLeftSide(), this.resolvedRightSide()].every((side) => {
+      const entityType = side.entityType || entityInputType;
+      return !!entityType && this.entityRegistry.has(entityType);
+    });
+  });
+
   // TODO: fill selection on hover already?
 
   async ngOnInit() {
+    if (!this.isConfigured()) {
+      // leave `sideDetails` unset, so that the template shows the info about the
+      // missing config instead of sides without an entity type
+      return;
+    }
+
     this.comparisonColumns.set(this.cloneColumns(this.resolvedColumns()));
 
     // Both sides are started before the first `await` so that their data sources
@@ -450,7 +469,7 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj.set({ ...side.prefilter, ...filter });
+    side.filterObj.set(combineFilterConditions(side.prefilter, filter));
   }
 
   entityInMapClicked(entity: Entity) {
