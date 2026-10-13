@@ -1,3 +1,16 @@
+@if (canUpdateLinkedRecords()) {
+  <div [appTemplateTooltip]="updateLinkedRecordsTooltip" class="inline-box">
+    <button
+      mat-icon-button
+      type="button"
+      [disabled]="form()?.formGroup?.enabled"
+      (click)="updateLinkedRecords()"
+    >
+      <fa-icon icon="circle-arrow-up"></fa-icon>
+    </button>
+  </div>
+}
+
 @if (defaultValueHint()) {
   <div [appTemplateTooltip]="tooltip" class="inline-box">
     <button
@@ -70,5 +83,22 @@
       </div>
       <div i18n></div>
     }
+  </div>
+</ng-template>
+
+<ng-template #updateLinkedRecordsTooltip>
+  <div class="field-hint">
+    <div i18n>
+      The value of this field is automatically passed on to linked records.
+    </div>
+
+    <br />
+
+    <div i18n>
+      Click to review and update them now
+      @if (form()?.formGroup?.enabled) {
+        (not available while editing)
+      }
+    </div>
   </div>
 </ng-template>
