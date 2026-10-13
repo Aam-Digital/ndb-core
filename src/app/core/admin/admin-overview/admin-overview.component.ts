@@ -34,6 +34,7 @@ import { SetupWizardService } from "../setup-wizard/setup-wizard.service";
 import { SETUP_WIZARD_ROUTE } from "../setup-wizard/setup-wizard-config";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { ApiClientService } from "#src/app/features/api-client/api-client.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -69,6 +70,9 @@ export class AdminOverviewComponent {
   private entityMapper = inject(EntityMapperService);
   private readonly sectionStateService = inject(AdminSectionStateService);
   private readonly setupWizardService = inject(SetupWizardService);
+
+  protected readonly isApiAccessAvailable =
+    inject(ApiClientService).isAvailable;
 
   public templates: MenuItem[] = [];
 

@@ -18,6 +18,8 @@ import { AdminPrimaryActionComponent } from "./admin-primary-action/admin-primar
 import { AdminAiAgentComponent } from "./admin-ai-agent/admin-ai-agent.component";
 import { AdminConfigCleanupComponent } from "./config-cleanup/admin-config-cleanup.component";
 import { ADMIN_APP_ROLE } from "../permissions/permission-types";
+import { ApiClientListComponent } from "../../features/api-client/api-client-list/api-client-list.component";
+import { UserAdminService } from "../user/user-admin-service/user-admin.service";
 
 const ROLE_MANAGEMENT_ROLES = ["account_manager", ADMIN_APP_ROLE];
 
@@ -75,6 +77,14 @@ export const adminRoutes: Routes = [
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: [ADMIN_APP_ROLE],
+    },
+  },
+  {
+    path: "api-clients",
+    component: ApiClientListComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
     },
   },
   {

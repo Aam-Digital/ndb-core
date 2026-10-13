@@ -27,6 +27,7 @@ import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manage
 import { AdminMenuComponent } from "#src/app/core/admin/admin-menu/admin-menu.component";
 import { AdminPrimaryActionComponent } from "#src/app/core/admin/admin-primary-action/admin-primary-action.component";
 import { AdvancedFeaturesComponent } from "#src/app/core/admin/advanced-features/advanced-features.component";
+import { ApiClientListComponent } from "#src/app/features/api-client/api-client-list/api-client-list.component";
 import { AnonymizeOptionsComponent } from "#src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
 import { AppComponent } from "#src/app/app.component";
 import { AttendanceBlockComponent } from "#src/app/features/attendance/deprecated/attendance-block/attendance-block.component";
@@ -155,6 +156,7 @@ const PLAIN_COMPONENTS: Type<unknown>[] = [
   AdminPrimaryActionComponent,
   AdvancedFeaturesComponent,
   AnonymizeOptionsComponent,
+  ApiClientListComponent,
   AppComponent,
   AttendanceBlockComponent,
   BetaFeatureComponent,
