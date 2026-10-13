@@ -25,13 +25,13 @@ import { ADMIN_APP_ROLE } from "../permissions/permission-types";
  */
 @Injectable()
 export class DemoDataInitializerService {
-  private demoDataService = inject(DemoDataService);
-  private localAuthService = inject(LocalAuthService);
-  private sessionManager = inject(SessionManagerService);
-  private dialog = inject(MatDialog);
-  private dbResolver = inject(DatabaseResolverService);
-  private loginState = inject(LoginStateSubject);
-  private sessionInfo = inject(SessionSubject);
+  private readonly demoDataService = inject(DemoDataService);
+  private readonly localAuthService = inject(LocalAuthService);
+  private readonly sessionManager = inject(SessionManagerService);
+  private readonly dialog = inject(MatDialog);
+  private readonly dbResolver = inject(DatabaseResolverService);
+  private readonly loginState = inject(LoginStateSubject);
+  private readonly sessionInfo = inject(SessionSubject);
 
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
 
