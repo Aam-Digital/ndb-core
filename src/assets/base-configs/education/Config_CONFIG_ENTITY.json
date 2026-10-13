@@ -321,10 +321,6 @@
           },
           {
             "id": "authors"
-          },
-          {
-            "id": "childrenAttendance.participant",
-            "label": "Children attendance -> Participant"
           }
         ]
       },
