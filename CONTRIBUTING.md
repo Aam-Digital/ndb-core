@@ -77,7 +77,7 @@ If you participate in the development, either by fixing a bug or implementing a 
    Any reviews, feedback and discussions about your code will take place in this PR on GitHub. Please follow it and explain or adapt your code if necessary.
 7. A **different developer will review** your PR and provide feedback or approve it.
 8. PRs have an automatic test system (the CI adds a comment with the link) where others can test the changes.
-  - each PR and each commit on `master` branch also are available as a docker image (`pr-<pr_number>`, e.g. pr-101; `<version>-master.<built>`, e.g. 3.52.0-master.1) that can be deployed for testing or as a hotfix, if necessary
+  - each PR and each commit on `master` branch also are available as a docker image (`pr-<pr_number>`, e.g. pr-101; `<version>-edge.<build>`, e.g. 3.52.0-edge.1; the newest one is also tagged `edge`) that can be deployed for testing or as a hotfix, if necessary
 9. A core team member will merge the PR onto the `master` branch after review.
 10. After merging, the branch is automatically deleted and the corresponding issue(s) are closed.
 

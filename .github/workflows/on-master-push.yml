@@ -6,13 +6,10 @@ on:
       - master
 
 permissions:
-  contents: write  # needed for semantic-release and gh-pages
-  id-token: write  # required for _qa-unit.yaml (QLTY code coverage)
+  contents: read
+  id-token: write # required for _qa-unit.yaml (QLTY code coverage)
 
 jobs:
-  toolchain:
-    uses: ./.github/workflows/_node-toolchain.yml
-
   qa:
     uses: ./.github/workflows/_qa-unit.yaml
 
@@ -25,6 +22,8 @@ jobs:
 
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # push to gh-pages
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v7
@@ -42,33 +41,23 @@ jobs:
           publish_dir: doc/compodoc
           destination_dir: documentation
 
+  # Creates the prerelease `X.Y.Z-edge.N` (manual release mode, see Aam-Digital/.github), once there is a
+  # releasable change since the last full release. The image is built by release-published.yml.
   pre-release:
-    runs-on: ubuntu-latest
     needs:
       - qa
       - qa-e2e
-      - toolchain
-    steps:
-      - name: Checkout repository files
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Set up node
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ needs.toolchain.outputs.node-version }}
-          cache: npm
-
-      - name: Set up npm
-        run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
-
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@1989a0fefc4aea321e07f717680ed8e345925dc1 # v7.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          extra_plugins: |
-            semantic-release-replace-plugin@1.2.6
-            @semantic-release/git
+    uses: Aam-Digital/.github/.github/workflows/release.yml@feat/reusable-workflows # TODO switch to @v1
+    permissions:
+      contents: read
+    with:
+      type: prerelease
+      # the same plugins as for full releases (create-release.yml): the configuration in .releaserc is loaded
+      extra-plugins: |
+        semantic-release-replace-plugin@1.2.6
+        @semantic-release/git
+        @semantic-release/github
+        semantic-release-slack-bot
+    secrets:
+      token: ${{ secrets.GH_TOKEN }}
+      slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

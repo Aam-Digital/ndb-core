@@ -1,4 +1,7 @@
 name: Build
+# Builds the web app and, from it, the Docker image `aamdigital/ndb-server` (Docker Hub) and
+# `ghcr.io/aam-digital/ndb-core`, with the shared docker-image workflow (see Aam-Digital/.github).
+# Check names: `<caller job> / build-webapp`, `<caller job> / build-image / build`.
 
 on:
   workflow_call:
@@ -6,31 +9,44 @@ on:
       build_name:
         type: string
         required: true
-        description: Version/build name to inject into the app (e.g. "3.68.1-master.12" or "pr-123")
-      docker_tags:
+        description: Version/build name to inject into the app (e.g. "3.68.1-edge.12" or "pr-123")
+      version:
         type: string
-        required: true
-        description: Docker tags configuration for docker/metadata-action (multiline string)
-      skip-image:
+        required: false
+        default: ""
+        description: Image version tag (releases and prereleases only; empty for PR builds)
+      stable:
         type: boolean
         required: false
         default: false
-        description: If true, skip Docker build and push (e.g. for fork PRs)
+        description: Also tag the image `stable` and `latest` (full releases only)
+      tags:
+        type: string
+        required: false
+        default: ""
+        description: Extra image tags, comma-separated (e.g. "edge,master" or "pr-123")
+      labels:
+        type: string
+        required: false
+        default: ""
+        description: Extra OCI labels (`key=value`, one per line)
+      platforms:
+        type: string
+        required: false
+        default: linux/amd64,linux/arm64
+        description: Image platforms (PR builds pass `linux/amd64`)
+      push:
+        type: boolean
+        required: false
+        default: true
+        description: Push the image. If false (e.g. for fork PRs), the image is only built.
 
 permissions:
   contents: read
-  packages: write  # needed for pushing to ghcr.io
-
-env:
-  DOCKERHUB_IMAGE: aamdigital/ndb-server
-  GHCR_IMAGE: ghcr.io/${{ github.repository }}
+  packages: write # needed for pushing to ghcr.io
 
 jobs:
-  toolchain:
-    uses: ./.github/workflows/_node-toolchain.yml
-
   build-webapp:
-    needs: toolchain
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -39,10 +55,11 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: ${{ needs.toolchain.outputs.node-version }}
+          node-version-file: .nvmrc
           cache: npm
+      - name: Set up npm (packageManager in package.json)
+        run: npm install --global "npm@$(jq -r '.packageManager | sub("^npm@"; "") | sub("\\+.*$"; "")' package.json)"
 
-      - run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
       - run: echo "building app for BUILD_NAME $BUILD_NAME"
       - run: npm ci
       - run: |
@@ -70,61 +87,30 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  # Not skipped for fork PRs (`push: false` only builds the image): a skipped job would not report the nested
+  # check `<caller job> / build-image / build`, which is a required status check.
   build-image:
-    runs-on: ubuntu-latest
-    if: ${{ !inputs.skip-image }}
     needs:
       - build-webapp
-    steps:
-      - name: Checkout repository files
-        uses: actions/checkout@v7
-
-      - name: Download webapp files
-        uses: actions/download-artifact@v8
-        with:
-          name: webapp-files
-          path: dist
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: |
-            ${{ env.DOCKERHUB_IMAGE }}
-            ${{ env.GHCR_IMAGE }}
-          tags: ${{ inputs.docker_tags }}
-          flavor: |
-            latest=false
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v4
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push multi-platform image
-        uses: docker/build-push-action@v7
-        with:
-          platforms: linux/amd64,linux/arm64
-          context: ./
-          file: ./build/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
-        env:
-          SOURCE_DATE_EPOCH: 0
+    uses: Aam-Digital/.github/.github/workflows/docker-image.yml@feat/reusable-workflows # TODO switch to @v1
+    permissions:
+      contents: read
+      packages: write
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
+    with:
+      images: |
+        aamdigital/ndb-server
+        ghcr.io/aam-digital/ndb-core
+      file: build/Dockerfile
+      artifact-name: webapp-files
+      artifact-path: dist
+      version: ${{ inputs.version }}
+      stable: ${{ inputs.stable }}
+      tags: ${{ inputs.tags }}
+      labels: ${{ inputs.labels }}
+      platforms: ${{ inputs.platforms }}
+      push: ${{ inputs.push }}
+      # reproducible image timestamps (buildx reads SOURCE_DATE_EPOCH as a build argument, too)
+      build-args: SOURCE_DATE_EPOCH=0
