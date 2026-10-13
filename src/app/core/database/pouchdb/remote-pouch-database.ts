@@ -1,4 +1,9 @@
 import { DatabaseException, PouchDatabase } from "./pouch-database";
+import {
+  BulkWriteLimits,
+  DEFAULT_BULK_WRITE_LIMITS,
+  writeInBatchedRequests,
+} from "./bulk-write-batches";
 import { environment } from "../../../../environments/environment";
 import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
@@ -93,6 +98,9 @@ export class RemotePouchDatabase extends PouchDatabase {
    * behaviour without this map.
    */
   private readonly MAX_ANNOUNCED_REVISIONS = 1000;
+
+  /** The budgets one `_bulk_docs` request of a bulk write has to stay within. */
+  private readonly bulkWriteLimits: BulkWriteLimits = DEFAULT_BULK_WRITE_LIMITS;
 
   /** Cooldown (ms) between user-facing connection issue alerts. */
   private readonly CONNECTION_ALERT_COOLDOWN_MS = 60000;
@@ -511,7 +519,23 @@ export class RemotePouchDatabase extends PouchDatabase {
     return result;
   }
 
+  /**
+   * Write the given documents, split across several requests where they do not fit
+   * into one (see {@link writeInBatchedRequests}).
+   */
   override async putAll(objects: any[], forceOverwrite = false): Promise<any> {
+    return writeInBatchedRequests(
+      objects,
+      (documents) => this.putAllInOneRequest(documents, forceOverwrite),
+      this.bulkWriteLimits,
+      this.dbName,
+    );
+  }
+
+  private async putAllInOneRequest(
+    objects: any[],
+    forceOverwrite: boolean,
+  ): Promise<any[]> {
     try {
       const results = await super.putAll(objects, forceOverwrite);
       this.announceStoredDocs(objects, results);

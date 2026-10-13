@@ -162,4 +162,15 @@ describe("buildPermissionConditionValidator", () => {
     const rejected = validator(new FormControl("English"));
     expect(rejected.permissionCondition.errorMessage).toContain("English");
   });
+
+  it("should describe a negated condition as 'not <value>'", () => {
+    const toLabel = (v: any) => (v === "M" ? "Male" : String(v));
+
+    expect(describeConditionFragment({ $not: { $eq: "M" } }, toLabel)).toBe(
+      "not Male",
+    );
+    expect(describeConditionFragment({ $not: { $in: ["M"] } }, toLabel)).toBe(
+      "not Male",
+    );
+  });
 });

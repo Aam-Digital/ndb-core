@@ -79,4 +79,32 @@ describe("ConditionalColorConfigComponent", () => {
       $or: [{ status: "inactive" }],
     });
   });
+
+  it("should store the condition a section's editor reports", () => {
+    component.value = [
+      { condition: {}, color: "#defaultColor" },
+      { condition: { $or: [{}] }, color: "#00FF00" },
+    ];
+
+    component.onConditionChange(component.conditionalColorSections[0], {
+      status: "active",
+    });
+
+    expect(component.conditionalColorSections[0].condition).toEqual({
+      status: "active",
+    });
+  });
+
+  it("should keep a section conditional while its condition is still blank", () => {
+    // an empty condition marks the static color, which the editor reports until a row is filled in
+    component.value = [
+      { condition: {}, color: "#defaultColor" },
+      { condition: { status: "active" }, color: "#00FF00" },
+    ];
+
+    component.onConditionChange(component.conditionalColorSections[0], {});
+
+    expect(component.conditionalColorSections.length).toBe(1);
+    expect(component.staticColor).toBe("#defaultColor");
+  });
 });

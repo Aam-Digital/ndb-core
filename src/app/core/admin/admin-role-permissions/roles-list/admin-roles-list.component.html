@@ -52,7 +52,7 @@
 </p>
 
 <div class="table-container">
-  <table mat-table [dataSource]="pagedRoles()" class="full-width table">
+  <table mat-table [dataSource]="dataSource" class="full-width table">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef i18n>Role</th>
       <td mat-cell *matCellDef="let role">
@@ -108,15 +108,9 @@
     ></tr>
   </table>
 
-  <mat-paginator
+  <app-list-paginator
     class="table-footer"
-    [length]="roles().length"
-    [pageIndex]="pageIndex()"
-    [pageSize]="pageSize()"
-    [pageSizeOptions]="pageSizeOptions"
-    [showFirstLastButtons]="true"
-    (page)="onPageChange($event)"
-    aria-label="Roles pagination"
-    i18n-aria-label
-  ></mat-paginator>
+    [dataSource]="dataSource"
+    [idForSavingPagination]="'admin-roles-list'"
+  ></app-list-paginator>
 </div>

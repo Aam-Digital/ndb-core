@@ -259,20 +259,16 @@
               [dataType]="schemaFieldsForm.get('dataType').value"
             ></app-admin-searchable-checkbox>
 
-            <div class="flex-row align-center gap-regular">
-              <button
-                mat-stroked-button
-                type="button"
-                (click)="openDisplayConditionDialog()"
-                matTooltip="Only show this field in forms if the record currently matches a condition, based on the values of other fields."
-                i18n-matTooltip
-              >
-                <span i18n>Display Condition</span>
-              </button>
-              @if (schemaFieldsForm.get("displayCondition").value) {
-                <span i18n>Condition configured</span>
-              }
-            </div>
+            <app-admin-display-condition-button
+              class="margin-top-regular"
+              target="field"
+              [showLabel]="true"
+              [entityType]="data.entityType"
+              [condition]="schemaFieldsForm.get('displayCondition').value"
+              (conditionChange)="
+                schemaFieldsForm.get('displayCondition').setValue($event)
+              "
+            ></app-admin-display-condition-button>
           </div>
         </div>
       </mat-tab>

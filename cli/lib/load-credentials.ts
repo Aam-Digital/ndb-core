@@ -5,6 +5,7 @@ export async function loadCredentials(opts: {
   credentials?: string;
   org?: string;
   category?: string;
+  excludeCategory?: string;
 }): Promise<{
   orgs: SystemCredentials[];
   keycloak: Awaited<ReturnType<typeof getCredentials>>["keycloak"];
@@ -14,6 +15,7 @@ export async function loadCredentials(opts: {
     file = await getCredentials(opts.credentials, {
       org: opts.org,
       category: opts.category,
+      excludeCategory: opts.excludeCategory,
     });
   } catch (e: unknown) {
     console.error(e instanceof Error ? e.message : String(e));
@@ -28,8 +30,16 @@ export async function loadCredentials(opts: {
   return { orgs, keycloak: file.keycloak };
 }
 
-function describeFilter(opts: { org?: string; category?: string }): string {
-  if (opts.org) return `--org "${opts.org}"`;
-  if (opts.category) return `--category "${opts.category}"`;
-  return "all";
+function describeFilter(opts: {
+  org?: string;
+  category?: string;
+  excludeCategory?: string;
+}): string {
+  const parts: string[] = [];
+  if (opts.org) parts.push(`--org "${opts.org}"`);
+  if (opts.category) parts.push(`--category "${opts.category}"`);
+  if (opts.excludeCategory) {
+    parts.push(`--exclude-category "${opts.excludeCategory}"`);
+  }
+  return parts.length > 0 ? parts.join(" ") : "all";
 }
