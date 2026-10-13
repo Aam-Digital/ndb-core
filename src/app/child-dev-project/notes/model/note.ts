@@ -101,6 +101,7 @@ export class Note extends Entity {
   @DatabaseField({
     anonymize: "retain",
     dataType: "event-attendance-map",
+    label: "Attendance",
     additional: {
       participant: {
         dataType: "entity",

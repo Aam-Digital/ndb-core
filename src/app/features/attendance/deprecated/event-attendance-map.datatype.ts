@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { AttendanceItem } from "../model/attendance-item";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { SchemaEmbeddedType } from "#src/app/core/entity/schema/entity-schema";
 
 /**
  * Holds a full register of EventAttendance entries.
@@ -19,6 +20,14 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
 
   override editComponent = "EditAttendance";
   override viewComponent = "DisplayAttendance";
+
+  /**
+   * Not used by (de)serialization here (which always hand-rolls the whole
+   * `AttendanceItem.schema` directly, see below), but declared so that generic tooling
+   * (e.g. `getEmbeddedSchema` for filters) can discover `AttendanceItem`'s fields
+   * without requiring every one of them to be redeclared in a field's `additional` config.
+   */
+  embeddedType: SchemaEmbeddedType<AttendanceItem> = AttendanceItem;
 
   private readonly schemaService = inject(EntitySchemaService);
 
