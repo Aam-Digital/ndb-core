@@ -77,6 +77,11 @@ export class ApiClientService {
   });
 
   /**
+   * Whether it is still being checked if the backend can manage API clients ({@link isAvailable}).
+   */
+  readonly isCheckingAvailability = this.featureFlagsResource.isLoading;
+
+  /**
    * Whether the backend of this system can manage API clients.
    */
   readonly isAvailable = computed(

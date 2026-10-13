@@ -35,6 +35,8 @@ import { SETUP_WIZARD_ROUTE } from "../setup-wizard/setup-wizard-config";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { ApiClientService } from "#src/app/features/api-client/api-client.service";
+import { SessionSubject } from "#src/app/core/session/auth/session-info";
+import { UserAdminService } from "#src/app/core/user/user-admin-service/user-admin.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -71,8 +73,14 @@ export class AdminOverviewComponent {
   private readonly sectionStateService = inject(AdminSectionStateService);
   private readonly setupWizardService = inject(SetupWizardService);
 
-  protected readonly isApiAccessAvailable =
-    inject(ApiClientService).isAvailable;
+  private readonly apiClientService = inject(ApiClientService);
+  private readonly isAccountManager =
+    inject(SessionSubject).value?.roles.includes(
+      UserAdminService.ACCOUNT_MANAGER_ROLE,
+    ) ?? false;
+  protected readonly isApiAccessAvailable = computed(
+    () => this.isAccountManager && this.apiClientService.isAvailable(),
+  );
 
   public templates: MenuItem[] = [];
 

@@ -56,6 +56,8 @@ export class ApiClientListComponent {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly alertService = inject(AlertService);
 
+  readonly isCheckingAvailability =
+    this.apiClientService.isCheckingAvailability;
   readonly isAvailable = this.apiClientService.isAvailable;
   readonly apiClients = signal<ApiClient[] | undefined>(undefined);
 
