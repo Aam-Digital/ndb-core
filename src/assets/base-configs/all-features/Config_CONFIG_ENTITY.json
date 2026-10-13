@@ -1463,7 +1463,14 @@
           "id": "enumDropdown",
           "label": "enum dropdown",
           "dataType": "configurable-enum",
-          "additional": "center"
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceField": "entityMultiField",
+              "sourceValueField": "center"
+            }
+          }
         },
         "enumMulti": {
           "id": "enumMulti",
