@@ -26,7 +26,12 @@ describe("ApiClientService", () => {
   afterEach(() => Object.assign(environment, originalKeycloakConfig));
 
   it.each<[string, Observable<unknown>, boolean]>([
-    ["enables it", of({ "api-client": { enabled: true } }), true],
+    [
+      "enables it",
+      of({ admin: { enabled: true, "api-client": { enabled: true } } }),
+      true,
+    ],
+    ["has no Keycloak admin access", of({ admin: { enabled: true } }), false],
     ["does not enable it", of({ reporting: { enabled: true } }), false],
     [
       "is not deployed",

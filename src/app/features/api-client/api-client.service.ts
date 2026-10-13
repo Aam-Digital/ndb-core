@@ -47,8 +47,16 @@ export interface ApiConnectionDetails {
 }
 
 /**
- * Self-service management of API clients, through the api-client module of the aam-services backend.
- * see https://github.com/Aam-Digital/aam-services/blob/main/docs/api-specs/api-client-api-v1.yaml
+ * Feature flags from the backend's `/actuator/features` endpoint;
+ * sub-features are nested under their parent feature (e.g. `admin.api-client`).
+ */
+type BackendFeatureFlags = Record<string, { enabled: boolean }> & {
+  admin?: { enabled: boolean; "api-client"?: { enabled: boolean } };
+};
+
+/**
+ * Self-service management of API clients, through the admin module of the aam-services backend.
+ * see https://github.com/Aam-Digital/aam-services/blob/main/docs/api-specs/admin-api-v1.yaml
  */
 @Injectable({
   providedIn: "root",
@@ -56,13 +64,14 @@ export interface ApiConnectionDetails {
 export class ApiClientService {
   private readonly http = inject(HttpClient);
 
-  private readonly API_URL = environment.API_PROXY_PREFIX + "/v1/api-client";
+  private readonly API_URL =
+    environment.API_PROXY_PREFIX + "/v1/admin/api-client";
 
   private readonly featureFlagsResource = resource({
     loader: async () => {
       try {
         return await firstValueFrom(
-          this.http.get<Record<string, { enabled: boolean }>>(
+          this.http.get<BackendFeatureFlags>(
             environment.API_PROXY_PREFIX + "/actuator/features",
           ),
         );
@@ -83,7 +92,9 @@ export class ApiClientService {
    * Whether the backend of this system can manage API clients.
    */
   readonly isAvailable = computed(
-    () => this.featureFlagsResource.value()?.["api-client"]?.enabled ?? false,
+    () =>
+      this.featureFlagsResource.value()?.["admin"]?.["api-client"]?.enabled ??
+      false,
   );
 
   getApiClients(): Promise<ApiClient[]> {
