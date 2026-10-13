@@ -1910,8 +1910,11 @@ export class DynamicEditComponent
                 <p class="comment">
                     <code>./dynamic-edit.component.scss</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">.input-action-button {
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+
+.input-action-button {
   margin: -12px;
+  color: colors.$muted;
 }
 </code></pre>
     </div>

@@ -227,8 +227,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="98"
-                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:98</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="106"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:106</a></div>
                         </td>
                     </tr>
 
@@ -335,15 +335,15 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>executeMailto(entities: <a href="../classes/Entity.html" target="_self">Entity | Entity[]</a>)</code>
+                    <code>executeMailto(entities: <a href="../classes/Entity.html" target="_self">Entity | Entity[]</a>, fieldId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="40"
-                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:40</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -363,6 +363,7 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Description</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -377,6 +378,26 @@
                                             </td>
 
 
+                                            <td>
+                                                    <p>the entity/entities whose email field(s) to use as recipient(s)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the schema field id to read the recipient from. If not given, the first field with an <code>EmailDatatype</code> in the entity&#39;s schema is used.</p>
+
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -437,13 +458,21 @@ export class EmailClientService {
    * Build a mailto link from an entity&#x27;s email fields and open the local mail client.
    *
    * If no default email client is available on the device / configured in the browser, then nothing will happen here.
+   *
+   * @param entities the entity/entities whose email field(s) to use as recipient(s)
+   * @param fieldId the schema field id to read the recipient from. If not given, the first field with an &#x60;EmailDatatype&#x60; in the entity&#x27;s schema is used.
    */
-  async executeMailto(entities: Entity | Entity[]): Promise&lt;boolean&gt; {
+  async executeMailto(
+    entities: Entity | Entity[],
+    fieldId?: string,
+  ): Promise&lt;boolean&gt; {
     const isBulk &#x3D; Array.isArray(entities);
     const entityList &#x3D; isBulk ? entities : [entities];
 
-    const { recipients, excludedEntities } &#x3D;
-      this.getEmailsForEntities(entityList);
+    const { recipients, excludedEntities } &#x3D; this.getEmailsForEntities(
+      entityList,
+      fieldId,
+    );
 
     if (!recipients.length) {
       await this.confirmationDialog.getConfirmation(
@@ -555,13 +584,15 @@ export class EmailClientService {
     return note;
   }
 
-  private getEmailsForEntities(entities: Entity[]): {
+  private getEmailsForEntities(
+    entities: Entity[],
+    fieldId?: string,
+  ): {
     recipients: string[];
     excludedEntities: Entity[];
   } {
-    const emailFieldId &#x3D; this.findFirstEmailFieldId(
-      entities?.[0].getConstructor(),
-    );
+    const emailFieldId &#x3D;
+      fieldId ?? this.findFirstEmailFieldId(entities?.[0].getConstructor());
     if (!emailFieldId) return { recipients: [], excludedEntities: entities };
 
     const recipients &#x3D; new Set&lt;string&gt;();
