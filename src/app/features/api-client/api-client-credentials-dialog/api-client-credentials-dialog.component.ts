@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { Clipboard } from "@angular/cdk/clipboard";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -36,6 +37,7 @@ export interface ApiClientCredentialsDialogData {
 export class ApiClientCredentialsDialogComponent {
   private readonly apiClientService = inject(ApiClientService);
   private readonly alertService = inject(AlertService);
+  private readonly clipboard = inject(Clipboard);
   private readonly data =
     inject<ApiClientCredentialsDialogData>(MAT_DIALOG_DATA);
 
@@ -55,9 +57,14 @@ export class ApiClientCredentialsDialogComponent {
     ];
   }
 
-  async copy(value: string) {
-    await navigator.clipboard.writeText(value);
-    this.alertService.addInfo($localize`Copied to clipboard`);
+  copy(value: string) {
+    if (this.clipboard.copy(value)) {
+      this.alertService.addInfo($localize`Copied to clipboard`);
+    } else {
+      this.alertService.addWarning(
+        $localize`Could not copy to the clipboard. Please select and copy the text instead.`,
+      );
+    }
   }
 
   copyAll() {

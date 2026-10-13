@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { Clipboard } from "@angular/cdk/clipboard";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -12,15 +13,10 @@ import { ApiClientService } from "../api-client.service";
 describe("ApiClientCredentialsDialogComponent", () => {
   let fixture: ComponentFixture<ApiClientCredentialsDialogComponent>;
   let loader: HarnessLoader;
-  let writeText: Mock;
+  let copy: Mock;
 
   beforeEach(async () => {
-    // jsdom has no clipboard; added here and removed again in afterEach
-    writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", {
-      value: { writeText },
-      configurable: true,
-    });
+    copy = vi.fn().mockReturnValue(true);
 
     await TestBed.configureTestingModule({
       imports: [ApiClientCredentialsDialogComponent, FontAwesomeTestingModule],
@@ -43,16 +39,13 @@ describe("ApiClientCredentialsDialogComponent", () => {
           },
         },
         { provide: AlertService, useValue: { addInfo: vi.fn() } },
+        { provide: Clipboard, useValue: { copy } },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ApiClientCredentialsDialogComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    delete (navigator as { clipboard?: unknown }).clipboard;
   });
 
   it("shows the secret together with where to use it", () => {
@@ -69,6 +62,6 @@ describe("ApiClientCredentialsDialogComponent", () => {
       await loader.getHarness(MatButtonHarness.with({ text: /Copy all/ }))
     ).click();
 
-    expect(writeText).toHaveBeenCalledWith("all the details");
+    expect(copy).toHaveBeenCalledWith("all the details");
   });
 });
