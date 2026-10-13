@@ -443,8 +443,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="201"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:201</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="206"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:206</a></div>
                         </td>
                     </tr>
 
@@ -482,8 +482,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="245"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:245</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="250"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:250</a></div>
                         </td>
                     </tr>
 
@@ -551,8 +551,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="238"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:238</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="243"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:243</a></div>
                         </td>
                     </tr>
 
@@ -588,8 +588,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="274"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:274</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="279"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:279</a></div>
                         </td>
                     </tr>
 
@@ -627,8 +627,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="165"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:165</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -696,8 +696,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="177"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:177</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -763,8 +763,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="221"
-                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:221</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="226"
+                                    class="link-to-prism">src/app/features/notification/notification-settings/notification-settings.component.ts:226</a></div>
                         </td>
                     </tr>
 
@@ -1125,6 +1125,7 @@ export class NotificationSettingsComponent {
     }
 
     let config: NotificationConfig;
+    const userEntityId &#x3D; this.userEntity.value?.getId();
 
     try {
       // try to load template from database
@@ -1134,11 +1135,18 @@ export class NotificationSettingsComponent {
         &gt;(Config, NotificationConfig.TEMPLATE_ENTITY_ID)
       )?.data?.[&quot;notificationRules&quot;];
 
+      if (!userEntityId) {
+        // rules about the current user need a user entity linked to the account
+        templateRules &#x3D; templateRules.filter(
+          (rule) &#x3D;&gt; !JSON.stringify(rule).includes(PLACEHOLDERS.CURRENT_USER),
+        );
+      }
+
       // replace user entity in template rules
       templateRules &#x3D; JSON.parse(
-        JSON.stringify(templateRules).replace(
+        JSON.stringify(templateRules).replaceAll(
           PLACEHOLDERS.CURRENT_USER,
-          this.userEntity.value?.getId(),
+          userEntityId,
         ),
       );
 
@@ -1148,10 +1156,7 @@ export class NotificationSettingsComponent {
       Logging.debug(&quot;No NotificationConfig template found&quot;);
 
       // use fixed default config as fallback
-      config &#x3D; generateDefaultNotificationConfig(
-        this.userId,
-        this.userEntity.value?.getId(),
-      );
+      config &#x3D; generateDefaultNotificationConfig(this.userId, userEntityId);
     }
 
     const saved &#x3D; await this.saveNotificationConfig(config);
@@ -1282,9 +1287,13 @@ export class NotificationSettingsComponent {
 }
 
 function generateDefaultNotificationConfig(userId: string, userEntity: string) {
-  userEntity &#x3D; String(userEntity); // ensure that even &quot;undefined&quot; is added as a string so that the structure of conditions remains
-
   const config &#x3D; new NotificationConfig(userId);
+  if (!userEntity) {
+    // all default rules are about the current user and need a linked user entity
+    config.notificationRules &#x3D; [];
+    return config;
+  }
+
   config.notificationRules &#x3D; [
     {
       label: $localize&#x60;:Default notification rule label:Tasks assigned to me&#x60;,
@@ -1292,7 +1301,7 @@ function generateDefaultNotificationConfig(userId: string, userEntity: string) {
       entityType: &quot;Todo&quot;,
       changeType: [&quot;created&quot;, &quot;updated&quot;],
       conditions: { assignedTo: { $elemMatch: userEntity } },
-      enabled: !!userEntity,
+      enabled: true,
     },
     {
       label: $localize&#x60;:Default notification rule label:Notes involving me&#x60;,

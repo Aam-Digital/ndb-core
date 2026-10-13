@@ -1057,8 +1057,8 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="339"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:339</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="347"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:347</a></div>
                         </td>
                     </tr>
 
@@ -1144,7 +1144,7 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:369</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:377</a></code>
 </div>
                         </td>
                     </tr>
@@ -1211,8 +1211,8 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="333"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:333</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="341"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:341</a></div>
                         </td>
                     </tr>
 
@@ -1278,8 +1278,8 @@ Overrides the <code>additional</code> configuration of the FormFieldConfig if gi
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="327"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:327</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="335"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts:335</a></div>
                         </td>
                     </tr>
 
@@ -3102,6 +3102,14 @@ export class EditEntityComponent&lt;
 
   private async getEntity(selectedId: string): Promise&lt;E | undefined&gt; {
     const type &#x3D; Entity.extractTypeFromId(selectedId);
+
+    if (!this.entityRegistry.has(type)) {
+      Logging.debug(
+        &quot;[ENTITY_SELECT] Selected value is not an id of a known entity type.&quot;,
+        selectedId,
+      );
+      return undefined;
+    }
 
     const entity &#x3D; await this.entityMapperService
       .load&lt;E&gt;(type, selectedId)
