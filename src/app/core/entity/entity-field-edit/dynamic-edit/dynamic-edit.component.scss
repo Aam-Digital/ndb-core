@@ -1,3 +1,6 @@
+@use "variables/colors";
+
 .input-action-button {
   margin: -12px;
+  color: colors.$muted;
 }
