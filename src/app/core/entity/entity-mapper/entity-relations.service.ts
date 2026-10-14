@@ -121,7 +121,7 @@ export class EntityRelationsService {
    *
    * Where every referencing property can express itself as a database query, this loads
    * only the matching records instead of the whole entity type - which is what keeps a
-   * merge or a cascading delete from transferring the entire database (see #4134).
+   * merge or a cascading delete from transferring the entire database.
    *
    * All-or-nothing per type: a full load already contains every property's matches, so
    * combining it with queries for the remaining properties would transfer the same
