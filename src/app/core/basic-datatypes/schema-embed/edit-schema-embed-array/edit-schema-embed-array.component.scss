@@ -7,6 +7,10 @@
   pointer-events: auto;
 }
 
+.no-entries {
+  font-style: italic;
+}
+
 .input-action-button {
   margin: -12px;
   color: colors.$muted;

@@ -6,8 +6,7 @@ import { LoginState } from "#src/app/core/session/session-states/login-state.enu
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { EditSchemaEmbedArrayComponent } from "./edit-schema-embed-array.component";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
-import { SchemaEmbedArraySummaryComponent } from "../schema-embed-array-summary/schema-embed-array-summary.component";
-import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
+import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/display-schema-embed-array.component";
 
 describe("EditSchemaEmbedArrayComponent", () => {
   let component: EditSchemaEmbedArrayComponent;
@@ -48,17 +47,13 @@ describe("EditSchemaEmbedArrayComponent", () => {
   });
 
   const summary = () =>
-    fixture.debugElement.query(By.directive(SchemaEmbedArraySummaryComponent))
-      .componentInstance as SchemaEmbedArraySummaryComponent;
+    fixture.debugElement.query(By.directive(DisplaySchemaEmbedArrayComponent))
+      ?.componentInstance as DisplaySchemaEmbedArrayComponent | undefined;
   const button = () => fixture.debugElement.query(By.css("button"));
 
   it("shows a summary of the current entries", () => {
     expect(summary().rows()).toEqual(formControl.value);
-    expect(
-      summary()
-        .columns()
-        .map((c) => c.id),
-    ).toEqual(["documentType", "documentNumber"]);
+    expect(summary().formFieldConfig().id).toBe("documents");
   });
 
   it("updates the summary when the value changes", () => {
@@ -66,6 +61,14 @@ describe("EditSchemaEmbedArrayComponent", () => {
     fixture.detectChanges();
 
     expect(summary().rows()).toHaveLength(3);
+  });
+
+  it("shows a 'no entries' text instead of the summary when empty", () => {
+    formControl.setValue([]);
+    fixture.detectChanges();
+
+    expect(summary()).toBeUndefined();
+    expect(fixture.nativeElement.textContent).toContain("no entries");
   });
 
   it("opens the dialog when clicking the field, also when disabled (read-only)", () => {
@@ -77,27 +80,6 @@ describe("EditSchemaEmbedArrayComponent", () => {
     expect(button().nativeElement.disabled).toBe(false);
     component.onContainerClick();
     expect(mockDialog.open).toHaveBeenCalledTimes(2);
-  });
-
-  it("enables the hover preview tooltip whenever there are entries, regardless of disabled state", () => {
-    formControl.disable();
-    fixture.detectChanges();
-
-    const directive = fixture.debugElement
-      .query(By.directive(TemplateTooltipDirective))
-      .injector.get(TemplateTooltipDirective);
-    expect(directive.tooltipDisabled()).toBe(false);
-    expect(directive.contentTemplate()).toBeTruthy();
-  });
-
-  it("disables the hover preview tooltip when there are no entries", () => {
-    formControl.setValue([]);
-    fixture.detectChanges();
-
-    const directive = fixture.debugElement
-      .query(By.directive(TemplateTooltipDirective))
-      .injector.get(TemplateTooltipDirective);
-    expect(directive.tooltipDisabled()).toBe(true);
   });
 
   it("opens the dialog with the field's formControl, resolved columns and label", () => {
