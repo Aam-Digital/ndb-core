@@ -6,6 +6,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntitySchema } from "../../../entity/schema/entity-schema";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { SchemaEmbedDatatype } from "../../../basic-datatypes/schema-embed/schema-embed.datatype";
 
 interface ConfigurableEnumUsage {
   entityType: string;
@@ -140,8 +141,6 @@ export class ConfigurableEnumCleanupService {
   private getEmbeddedSchema(
     schemaField: EntitySchemaField,
   ): EntitySchema | undefined {
-    // TODO: Extract shared embedded-schema expansion with SchemaEmbedDatatype.getEffectiveSchema()
-    // once a second caller appears outside config cleanup.
     if (!schemaField?.dataType) {
       return;
     }
@@ -149,43 +148,12 @@ export class ConfigurableEnumCleanupService {
     const datatype = this.entitySchemaService.getDatatypeOrDefault(
       schemaField.dataType,
       true,
-    ) as { embeddedType?: { schema: EntitySchema } } | undefined;
-
-    const hasEmbeddedType = !!datatype?.embeddedType?.schema;
-    const isSchemaEmbed = schemaField.dataType === "schema-embed";
-
-    if (!hasEmbeddedType && !isSchemaEmbed) {
+    );
+    if (!(datatype instanceof SchemaEmbedDatatype)) {
       return;
     }
 
-    const embeddedSchema = new Map<string, EntitySchemaField>();
-
-    for (const [key, value] of datatype?.embeddedType?.schema?.entries() ??
-      []) {
-      embeddedSchema.set(key, { ...value, id: key });
-    }
-
-    for (const [key, value] of Object.entries(
-      this.getAdditionalSchemaConfig(schemaField.additional),
-    )) {
-      embeddedSchema.set(key, { ...value, id: key });
-    }
-
-    return embeddedSchema;
-  }
-
-  private getAdditionalSchemaConfig(additional: unknown): {
-    [fieldId: string]: EntitySchemaField;
-  } {
-    if (
-      !additional ||
-      typeof additional !== "object" ||
-      Array.isArray(additional)
-    ) {
-      return {};
-    }
-
-    return additional as { [fieldId: string]: EntitySchemaField };
+    return datatype.getEffectiveSchema(schemaField);
   }
 
   private normalizeEnumId(rawId: unknown): string | undefined {

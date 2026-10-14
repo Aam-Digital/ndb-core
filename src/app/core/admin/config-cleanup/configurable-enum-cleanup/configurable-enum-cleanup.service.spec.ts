@@ -6,6 +6,9 @@ import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntitySchema } from "../../../entity/schema/entity-schema";
+import { SchemaEmbedDatatype } from "../../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { SchemaEmbedArrayDatatype } from "../../../basic-datatypes/schema-embed/schema-embed-array.datatype";
+import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 
 class AttendanceItemMock {
   static readonly schema: EntitySchema = new Map([
@@ -19,6 +22,10 @@ class AttendanceItemMock {
   ]);
 }
 
+class AttendanceMockDatatype extends SchemaEmbedDatatype {
+  override embeddedType = AttendanceItemMock;
+}
+
 class Child extends Entity {
   static override readonly ENTITY_TYPE = "Child";
   static override readonly schema = new Map([
@@ -27,6 +34,18 @@ class Child extends Entity {
       {
         dataType: "configurable-enum",
         additional: "genders",
+      },
+    ],
+    [
+      "documents",
+      {
+        dataType: "schema-embed-array",
+        additional: {
+          documentType: {
+            dataType: "configurable-enum",
+            additional: "document-types",
+          },
+        },
       },
     ],
   ]);
@@ -60,13 +79,11 @@ describe("ConfigurableEnumCleanupService", () => {
       remove: vi.fn(),
     };
 
+    const datatypes = new Map<string, DefaultDatatype>();
     mockEntitySchemaService = {
-      getDatatypeOrDefault: vi.fn((datatypeName: string) => {
-        if (datatypeName === "attendance") {
-          return { embeddedType: AttendanceItemMock };
-        }
-        return undefined;
-      }),
+      getDatatypeOrDefault: vi.fn((datatypeName: string) =>
+        datatypes.get(datatypeName),
+      ),
     };
 
     const entityRegistry = new EntityRegistry();
@@ -80,6 +97,11 @@ describe("ConfigurableEnumCleanupService", () => {
         { provide: EntitySchemaService, useValue: mockEntitySchemaService },
       ],
     }).compileComponents();
+
+    TestBed.runInInjectionContext(() => {
+      datatypes.set("attendance", new AttendanceMockDatatype());
+      datatypes.set("schema-embed-array", new SchemaEmbedArrayDatatype());
+    });
 
     service = TestBed.inject(ConfigurableEnumCleanupService);
   });
@@ -111,6 +133,21 @@ describe("ConfigurableEnumCleanupService", () => {
     expect(
       analysis.usedEnumDetails.map((x) => x.enumEntity.getId(true)),
     ).toEqual(["attendance-status"]);
+    expect(analysis.unusedEnums.map((x) => x.enumEntity.getId(true))).toEqual([
+      "unused",
+    ]);
+  });
+
+  it("should detect configurable-enum usage in config-based schema-embed-array fields", async () => {
+    const documentTypes = new ConfigurableEnum("document-types");
+    const unused = new ConfigurableEnum("unused");
+    mockEntityMapper.loadType.mockResolvedValue([documentTypes, unused]);
+
+    const analysis = await service.analyzeUnusedConfigurableEnums();
+
+    expect(
+      analysis.usedEnumDetails.map((x) => x.enumEntity.getId(true)),
+    ).toEqual(["document-types"]);
     expect(analysis.unusedEnums.map((x) => x.enumEntity.getId(true))).toEqual([
       "unused",
     ]);
