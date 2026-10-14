@@ -743,7 +743,7 @@ export class ImportantNotesDashboardComponent {
 @use &quot;variables/sizes&quot;;
 
 .subject-cell {
-  text-align: right;
+  text-align: end;
 }
 
 .row-view {
@@ -751,11 +751,11 @@ export class ImportantNotesDashboardComponent {
   position: relative;
 
   &amp; &gt; td:first-child {
-    padding-left: 2 * sizes.$small;
+    padding-inline-start: 2 * sizes.$small;
   }
 
   &amp; &gt; td:last-child {
-    padding-right: sizes.$small;
+    padding-inline-end: sizes.$small;
   }
 }
 </code></pre>

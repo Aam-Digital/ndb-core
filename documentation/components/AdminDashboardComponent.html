@@ -1083,7 +1083,7 @@ export class AdminDashboardComponent {
 }
 
 .back-button {
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 
 ::ng-deep app-dashboard-widget {
@@ -1165,7 +1165,7 @@ export class AdminDashboardComponent {
 .drag-handle {
   position: absolute;
   top: 50%;
-  left: -8px;
+  inset-inline-start: -8px;
   color: colors.$accent;
   cursor: move;
   z-index: 20;
@@ -1177,7 +1177,7 @@ export class AdminDashboardComponent {
 .widget-remove-icon {
   position: absolute;
   top: -8px;
-  right: -8px;
+  inset-inline-end: -8px;
   color: black;
   font-size: 20px;
   z-index: 20;
@@ -1198,6 +1198,9 @@ export class AdminDashboardComponent {
 
   position: absolute;
   top: 50%;
+  // physical &#x60;left&#x60; on purpose: this centers the element geometrically together with the
+  // transform below, so it must not mirror - &#x60;inset-inline-start&#x60; would offset it by its
+  // own width in RTL, because the transform pulls towards the same edge in both directions.
   left: 50%;
   transform: translate(-50%, -50%);
 
@@ -1299,7 +1302,7 @@ $widget-height: 430px;
 .dashboard-menu-btn {
   position: fixed;
   top: 80px; // Adjust based on your header height
-  right: 20px;
+  inset-inline-end: 20px;
   z-index: 1000;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

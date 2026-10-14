@@ -698,10 +698,12 @@ export class EntityFieldsMenuComponent implements OnInit {
                 <pre class="line-numbers"><code class="language-scss">@use &quot;variables/breakpoints&quot;;
 
 .square-button {
-  border-radius: 0 0 0 4px;
+  border-radius: 0;
+  border-end-start-radius: 4px;
 }
 :host ::ng-deep .mat-mdc-icon-button .mat-mdc-button-persistent-ripple {
-  border-radius: 0 0 0 4px;
+  border-radius: 0;
+  border-end-start-radius: 4px;
 }
 
 @media screen and (min-width: breakpoints.$md) {

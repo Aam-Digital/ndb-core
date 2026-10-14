@@ -2542,7 +2542,7 @@ export class EditConfigurableEnumComponent
 .settings-icon {
   position: absolute;
   top: -15px;
-  right: -15px;
+  inset-inline-end: -15px;
   z-index: 1;
   font-size: 0.5em;
   padding: 0px 4px !important;
@@ -2552,15 +2552,16 @@ export class EditConfigurableEnumComponent
     content: &quot;&quot;;
     position: absolute;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     width: 28px;
     height: 28px;
     background: linear-gradient(
-      225deg,
+      calc(225deg * var(--text-x-direction, 1)),
       rgba(0, 0, 0, 0.08) 50%,
       transparent 50%
     );
-    border-radius: 0 4px 0 0;
+    border-radius: 0;
+    border-start-end-radius: 4px;
     z-index: -1;
     transition: all 0.2s ease;
   }
@@ -2588,7 +2589,7 @@ export class EditConfigurableEnumComponent
 .icon-container {
   position: absolute;
   top: 0;
-  right: 0;
+  inset-inline-end: 0;
 }
 </code></pre>
     </div>
