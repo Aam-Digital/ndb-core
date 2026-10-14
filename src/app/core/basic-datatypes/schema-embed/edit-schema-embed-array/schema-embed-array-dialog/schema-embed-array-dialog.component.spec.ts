@@ -109,10 +109,15 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     expect(formControl.dirty).toBe(false);
   });
 
-  it("edits a cell locally without touching the outer control yet", () => {
-    const textInputs = fixture.debugElement.queryAll(
-      By.directive(EditTextComponent),
-    );
+  it("edits a cell locally without touching the outer control yet", async () => {
+    // cell edit components are lazy-loaded, so they may not be rendered yet
+    let textInputs: ReturnType<typeof fixture.debugElement.queryAll> = [];
+    await vi.waitFor(() => {
+      textInputs = fixture.debugElement.queryAll(
+        By.directive(EditTextComponent),
+      );
+      expect(textInputs).toHaveLength(4);
+    });
     // second row's "documentType" cell
     const secondRowType = textInputs[2].componentInstance as EditTextComponent;
     secondRowType.formControl.setValue("Updated Type");

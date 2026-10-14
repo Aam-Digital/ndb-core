@@ -44,14 +44,16 @@ describe("SchemaEmbedArrayTableComponent", () => {
       { documentType: "ID Card", issueDate: new Date("2021-06-15") },
     ]);
     fixture.detectChanges();
-    await fixture.whenStable();
 
     expect(fixture.debugElement.queryAll(By.css("tbody tr"))).toHaveLength(2);
-    expect(
-      fixture.debugElement.queryAll(By.directive(DisplayTextComponent)),
-    ).toHaveLength(2);
-    expect(
-      fixture.debugElement.queryAll(By.directive(DisplayDateComponent)),
-    ).toHaveLength(2);
+    // cell view components are lazy-loaded, so they may not be rendered yet
+    await vi.waitFor(() => {
+      expect(
+        fixture.debugElement.queryAll(By.directive(DisplayTextComponent)),
+      ).toHaveLength(2);
+      expect(
+        fixture.debugElement.queryAll(By.directive(DisplayDateComponent)),
+      ).toHaveLength(2);
+    });
   });
 });
