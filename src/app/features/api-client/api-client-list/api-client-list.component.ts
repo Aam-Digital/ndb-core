@@ -17,12 +17,12 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
-import { Logging } from "#src/app/core/logging/logging.service";
 import {
   ApiClient,
   ApiClientCredentials,
   ApiClientService,
   errorMessageOf,
+  logRequestError,
 } from "../api-client.service";
 import { getScopeLabel } from "../api-client-scopes";
 import { CreateApiClientDialogComponent } from "../create-api-client-dialog/create-api-client-dialog.component";
@@ -63,7 +63,11 @@ export class ApiClientListComponent {
   /** the API clients, loaded once the backend is known to offer them */
   readonly apiClients = resource({
     params: () => (this.isAvailable() ? {} : undefined),
-    loader: () => this.apiClientService.getApiClients(),
+    loader: async () =>
+      (await this.apiClientService.getApiClients()).map((apiClient) => ({
+        ...apiClient,
+        scopeLabels: apiClient.scopes.map((scope) => getScopeLabel(scope)),
+      })),
   });
   readonly loadingError = computed(() =>
     this.apiClients.error()
@@ -78,8 +82,6 @@ export class ApiClientListComponent {
     "created",
     "actions",
   ];
-
-  readonly getScopeLabel = getScopeLabel;
 
   async create() {
     const dialogRef = this.dialog.open<
@@ -109,7 +111,7 @@ export class ApiClientListComponent {
         apiClient.clientId,
       );
     } catch (err) {
-      Logging.warn("Could not regenerate the secret of an API client", err);
+      logRequestError("Could not regenerate the secret of an API client", err);
       this.alertService.addDanger(errorMessageOf(err));
       return;
     }
@@ -128,7 +130,7 @@ export class ApiClientListComponent {
     try {
       await this.apiClientService.deleteApiClient(apiClient.clientId);
     } catch (err) {
-      Logging.warn("Could not delete an API client", err);
+      logRequestError("Could not delete an API client", err);
       this.alertService.addDanger(errorMessageOf(err));
     }
     this.apiClients.reload();

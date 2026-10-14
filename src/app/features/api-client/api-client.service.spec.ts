@@ -3,7 +3,12 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, of, throwError } from "rxjs";
 import type { Mock } from "vitest";
 import { environment } from "#src/environments/environment";
-import { ApiClientService, errorMessageOf } from "./api-client.service";
+import { Logging } from "#src/app/core/logging/logging.service";
+import {
+  ApiClientService,
+  errorMessageOf,
+  logRequestError,
+} from "./api-client.service";
 
 describe("ApiClientService", () => {
   let mockHttpClient: { get: Mock };
@@ -105,5 +110,22 @@ describe("ApiClientService", () => {
     ],
   ])("explains %s to the user", (_, error, expectedMessage) => {
     expect(errorMessageOf(error)).toContain(expectedMessage);
+  });
+
+  it.each<[number, "debug" | "warn"]>([
+    [0, "debug"],
+    [404, "debug"],
+    [409, "debug"],
+    [500, "warn"],
+    [502, "warn"],
+  ])("logs a failed request with status %s as %s", (status, expectedLevel) => {
+    const debug = vi.spyOn(Logging, "debug").mockImplementation(() => {});
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    logRequestError("failed", new HttpErrorResponse({ status }));
+
+    expect(debug).toHaveBeenCalledTimes(expectedLevel === "debug" ? 1 : 0);
+    expect(warn).toHaveBeenCalledTimes(expectedLevel === "warn" ? 1 : 0);
+    vi.restoreAllMocks();
   });
 });

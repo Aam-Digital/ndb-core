@@ -51,7 +51,7 @@
       >
         @for (scope of offeredScopes; track scope.name) {
           <mat-list-option [value]="scope.name">
-            <span matListItemTitle>{{ getScopeLabel(scope) }}</span>
+            <span matListItemTitle>{{ scope.label }}</span>
           </mat-list-option>
         }
       </mat-selection-list>

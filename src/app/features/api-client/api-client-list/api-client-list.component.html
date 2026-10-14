@@ -55,8 +55,8 @@
         <ng-container matColumnDef="scopes">
           <th mat-header-cell *matHeaderCellDef i18n>Access</th>
           <td mat-cell *matCellDef="let apiClient">
-            @for (scope of apiClient.scopes; track scope) {
-              <div>{{ getScopeLabel(scope) }}</div>
+            @for (label of apiClient.scopeLabels; track label) {
+              <div>{{ label }}</div>
             }
           </td>
         </ng-container>

@@ -177,6 +177,22 @@ export class ApiClientService {
 }
 
 /**
+ * Log a failed request to the api-client module of the backend.
+ * Expected failures (4xx, e.g. a duplicate client id, or no connection) are only logged as debug,
+ * so that they are not reported to the error monitoring; server errors (5xx) are logged as warning.
+ */
+export function logRequestError(message: string, err: unknown) {
+  if (
+    err instanceof HttpErrorResponse &&
+    (err.status === 0 || (err.status >= 400 && err.status < 500))
+  ) {
+    Logging.debug(message, err);
+  } else {
+    Logging.warn(message, err);
+  }
+}
+
+/**
  * The message for the user of a failed request to the api-client module of the backend.
  */
 export function errorMessageOf(err: unknown): string {

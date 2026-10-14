@@ -20,12 +20,11 @@ import { MatListModule } from "@angular/material/list";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
-import { Logging } from "#src/app/core/logging/logging.service";
 import {
-  ApiClientScope,
   API_CLIENT_ID_PREFIX,
   ApiClientService,
   errorMessageOf,
+  logRequestError,
 } from "../api-client.service";
 import { getScopeLabel, SINGLE_SIGN_ON_SCOPE } from "../api-client-scopes";
 import { ApiClientCredentialsDialogData } from "../api-client-credentials-dialog/api-client-credentials-dialog.component";
@@ -86,7 +85,11 @@ export class CreateApiClientDialogComponent {
 
   /** the client scopes the API client can be given */
   readonly scopes = resource({
-    loader: () => this.apiClientService.getScopes(),
+    loader: async () =>
+      (await this.apiClientService.getScopes()).map((scope) => ({
+        name: scope.name,
+        label: getScopeLabel(scope.name, scope.description),
+      })),
   });
   readonly saving = signal(false);
   private readonly createError = signal<string | undefined>(undefined);
@@ -111,9 +114,6 @@ export class CreateApiClientDialogComponent {
     this.selectedScopes().includes(SINGLE_SIGN_ON_SCOPE),
   );
 
-  readonly getScopeLabel = (scope: ApiClientScope) =>
-    getScopeLabel(scope.name, scope.description);
-
   async create() {
     if (this.form.invalid || this.saving()) {
       return;
@@ -130,7 +130,7 @@ export class CreateApiClientDialogComponent {
       );
       this.dialogRef.close({ credentials, scopes });
     } catch (err) {
-      Logging.warn("Could not create API client", err);
+      logRequestError("Could not create API client", err);
       this.createError.set(errorMessageOf(err));
     } finally {
       this.saving.set(false);

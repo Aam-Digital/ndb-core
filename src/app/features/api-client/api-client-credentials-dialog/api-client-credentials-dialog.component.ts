@@ -41,18 +41,31 @@ export class ApiClientCredentialsDialogComponent {
   private readonly data =
     inject<ApiClientCredentialsDialogData>(MAT_DIALOG_DATA);
 
-  readonly fields: { label: string; value: string }[];
+  readonly fields: { label: string; value: string; copyLabel: string }[];
   readonly scopeLabels = this.data.scopes.map((s) => getScopeLabel(s));
 
   constructor() {
     const connection = this.apiClientService.getConnectionDetails();
     this.fields = [
-      { label: $localize`API base URL`, value: connection.apiBaseUrl },
-      { label: $localize`Token URL`, value: connection.tokenUrl },
-      { label: $localize`Client ID`, value: this.data.credentials.clientId },
+      {
+        label: $localize`API base URL`,
+        value: connection.apiBaseUrl,
+        copyLabel: $localize`Copy API base URL`,
+      },
+      {
+        label: $localize`Token URL`,
+        value: connection.tokenUrl,
+        copyLabel: $localize`Copy token URL`,
+      },
+      {
+        label: $localize`Client ID`,
+        value: this.data.credentials.clientId,
+        copyLabel: $localize`Copy client ID`,
+      },
       {
         label: $localize`Client secret`,
         value: this.data.credentials.clientSecret,
+        copyLabel: $localize`Copy client secret`,
       },
     ];
   }
