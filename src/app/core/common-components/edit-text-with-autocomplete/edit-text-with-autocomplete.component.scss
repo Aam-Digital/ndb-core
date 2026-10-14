@@ -4,4 +4,9 @@
 
 .tooltip-suffix {
   margin-inline-start: 4px;
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }

@@ -20,11 +20,7 @@
   <ng-container i18n="PWA iOS Install Instructions - Line 1">
     To install the app
   </ng-container>
-  <button
-    mat-button
-    style="position: absolute; right: -10px; top: 0"
-    (click)="snackBar.dismiss()"
-  >
+  <button mat-button class="snackbar-close-button" (click)="snackBar.dismiss()">
     <fa-icon icon="window-close" class="nav-icon"></fa-icon>
   </button>
   <ol>
