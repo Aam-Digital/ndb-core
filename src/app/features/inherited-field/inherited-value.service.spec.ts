@@ -30,6 +30,7 @@ describe("InheritedValueService", () => {
     mockEntityMapperService = {
       load: vi.fn(),
       loadType: vi.fn(),
+      supportsFind: vi.fn().mockReturnValue(false),
       receiveUpdates: vi.fn(),
     };
     mockEntityMapperService.receiveUpdates.mockReturnValue(updateSubject);
