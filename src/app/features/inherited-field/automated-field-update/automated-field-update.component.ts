@@ -59,6 +59,9 @@ export interface AffectedEntity {
 
   /** Whether the entities linked to the affected entity have no value in common, so the current value is kept */
   hasNoCommonValue?: boolean;
+
+  /** Whether the affected entity is no longer linked to the changed entity */
+  unlinked?: boolean;
 }
 
 /**

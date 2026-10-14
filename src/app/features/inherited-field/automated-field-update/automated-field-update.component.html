@@ -38,7 +38,12 @@
               </span>
             </div>
           }
-          @if (entity.addToExisting) {
+          @if (entity.unlinked) {
+            <div class="hint-text" i18n>
+              The record is no longer linked. Values that no other linked record
+              has are removed here.
+            </div>
+          } @else if (entity.addToExisting) {
             <div class="hint-text" i18n>
               The values of the linked record are added to the existing ones.
               Values it just lost are removed here too, unless another linked

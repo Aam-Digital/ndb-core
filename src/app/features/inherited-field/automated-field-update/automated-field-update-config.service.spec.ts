@@ -153,6 +153,26 @@ class AggregatingAction extends Entity {
     },
   })
   inheritedTags: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+  })
+  mainTag: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "AggregatingAction",
+        sourceReferenceField: "parentAction",
+        sourceValueField: "mainTag",
+        aggregation: "add",
+      },
+    },
+  })
+  mainTags: ConfigurableEnumValue[];
 }
 
 @DatabaseEntity("CommonValueGroup")
@@ -339,6 +359,35 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
     expect(updatedMentee.status).toBe("open for mentorship");
+  });
+
+  it("should pass the value of an existing mentorship on to a newly linked mentee", async () => {
+    const mentee = new Mentee();
+    mentee.status = "open for mentorship";
+    const mentorship = new Mentorship();
+    mentorship.status = TEST_MENTORSHIP_ENUM[0];
+    entityMapper.addAll([mentee, mentorship]);
+    const originalMentorship = mentorship.copy();
+
+    mentorship.mentee = mentee.getId();
+    await service.applyRulesToDependentEntities(mentorship, originalMentorship);
+
+    const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
+    expect(updatedMentee.status).toBe("in-mentorship");
+  });
+
+  it("should not clear the value of a mentee when a mentorship without value is linked", async () => {
+    const mentee = new Mentee();
+    mentee.status = "open for mentorship";
+    const mentorship = new Mentorship();
+    entityMapper.addAll([mentee, mentorship]);
+    const originalMentorship = mentorship.copy();
+    mockDialog.open.mockClear();
+
+    mentorship.mentee = mentee.getId();
+    await service.applyRulesToDependentEntities(mentorship, originalMentorship);
+
+    expect(mockDialog.open).not.toHaveBeenCalled();
   });
 
   it("should update child category when school category changes", async () => {
@@ -679,6 +728,124 @@ describe("AutomatedFieldUpdateConfigService", () => {
           false,
         );
       });
+    });
+
+    describe("when the link to the parent changes", () => {
+      /**
+       * Save a sub-action that was moved from one parent to another, without changing its tags.
+       * @param from tags of the previous parent (undefined: was not linked before)
+       * @param to tags of the new parent (undefined: not linked anymore)
+       */
+      async function saveMovedSubAction(
+        from: string[] | undefined,
+        to: string[] | undefined,
+        tags: string[],
+        otherSubActionsOfPreviousParent: string[][] = [],
+      ) {
+        const previousParent = new AggregatingAction();
+        previousParent.tags = toTags(from);
+        const newParent = new AggregatingAction();
+        newParent.tags = toTags(to);
+        const subAction = createSubAction(previousParent, tags);
+        subAction._rev = "1-existing";
+        if (!from) subAction.parentAction = undefined;
+        const others = otherSubActionsOfPreviousParent.map((t) =>
+          createSubAction(previousParent, t),
+        );
+        entityMapper.addAll([previousParent, newParent, subAction, ...others]);
+
+        const subActionBefore = subAction.copy();
+        subAction.parentAction = to ? newParent.getId() : undefined;
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(subAction, subActionBefore);
+
+        return { previousParent, newParent };
+      }
+
+      const suggestions = () =>
+        mockDialog.open.mock.calls[0]?.[1].data.entities.map((e) => [
+          e.id,
+          e.newValue,
+        ]);
+
+      it("adds the values of an existing sub-action to the parent it is newly linked to", async () => {
+        const { newParent } = await saveMovedSubAction(
+          undefined,
+          ["health"],
+          ["education"],
+        );
+
+        expect(suggestions()).toEqual([
+          [newParent.getId(), ["health", "education"]],
+        ]);
+      });
+
+      it("adds the values to the new parent and removes those only this sub-action had from the previous parent", async () => {
+        const { previousParent, newParent } = await saveMovedSubAction(
+          ["health", "education"],
+          [],
+          ["education"],
+        );
+
+        expect(suggestions()).toEqual([
+          [newParent.getId(), ["education"]],
+          [previousParent.getId(), ["health"]],
+        ]);
+      });
+
+      it("keeps values of the previous parent that another sub-action still has", async () => {
+        const { newParent } = await saveMovedSubAction(
+          ["health", "education"],
+          [],
+          ["education"],
+          [["education"]],
+        );
+
+        expect(suggestions()).toEqual([[newParent.getId(), ["education"]]]);
+      });
+
+      it("removes the values only this sub-action had when it is unlinked from its parent", async () => {
+        const { previousParent } = await saveMovedSubAction(
+          ["health", "education"],
+          undefined,
+          ["education"],
+        );
+
+        expect(suggestions()).toEqual([[previousParent.getId(), ["health"]]]);
+      });
+
+      it("removes the single value of a sub-action when it is unlinked from its parent", async () => {
+        const parent = new AggregatingAction();
+        parent.mainTags = toTags(["health", "education"]);
+        const subAction = new AggregatingAction();
+        subAction.parentAction = parent.getId();
+        subAction.mainTag = toTagValue("education");
+        subAction._rev = "1-existing";
+        entityMapper.addAll([parent, subAction]);
+
+        const subActionBefore = subAction.copy();
+        subAction.parentAction = undefined;
+        mockDialog.open.mockClear();
+        await service.applyRulesToDependentEntities(subAction, subActionBefore);
+
+        const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
+        expect(suggestion.id).toBe(parent.getId());
+        expect(suggestion.newValue).toEqual(["health"]);
+        expect(suggestion.unlinked).toBe(true);
+      });
+
+      it.each([
+        ["has no values", [], ["health"]],
+        ["has only values the new parent already has", ["health"], ["health"]],
+      ])(
+        "opens no dialog if the newly linked sub-action %s to add",
+        async (_, tags, parentTags) => {
+          await saveMovedSubAction(undefined, parentTags, tags);
+
+          expect(mockDialog.open).not.toHaveBeenCalled();
+        },
+      );
     });
   });
 

@@ -296,6 +296,11 @@ export class InheritedValueService extends DefaultValueStrategy {
     };
   }
 
+  /**
+   * The collected values and rule results are in database format (e.g. the id of a dropdown value),
+   * whereas the form holds the entity format (e.g. the full dropdown value object).
+   * Comparing and merging both in database format avoids false mismatches and objects saved instead of ids.
+   */
   private getCurrentDatabaseValue<T extends Entity>(
     form: EntityForm<T>,
     field: FormFieldConfig,

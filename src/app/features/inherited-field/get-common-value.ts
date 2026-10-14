@@ -1,15 +1,5 @@
 import { isEqual, uniqWith } from "lodash-es";
-
-/**
- * Whether the value is empty, i.e. not set or an empty text or list.
- */
-export function isEmptyValue(value: any): boolean {
-  return (
-    value == null ||
-    value === "" ||
-    (Array.isArray(value) && value.length === 0)
-  );
-}
+import { isEmptyValue } from "./add-missing-values";
 
 /**
  * Get the value that all given values have in common, ignoring empty values.
