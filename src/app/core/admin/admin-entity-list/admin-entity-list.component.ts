@@ -22,6 +22,7 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
 import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import {
+  EmbeddedFieldRef,
   getEmbeddedFieldId,
   getEmbeddedFieldLabel,
   getEmbeddedFieldRefs,
@@ -63,6 +64,10 @@ export class AdminEntityListComponent {
       },
   );
 
+  private allEmbeddedFieldRefs = computed<EmbeddedFieldRef[]>(() =>
+    getEmbeddedFieldRefs(this.schemaService, this.entityConstructor()),
+  );
+
   /**
    * Properties nested inside embedded fields (e.g. "childrenAttendance.participant"),
    * offered as additional filter options - but only for those embedded fields that are
@@ -74,7 +79,7 @@ export class AdminEntityListComponent {
     const displayedColumnIds = new Set(
       this.columnGroups().groups.flatMap((g) => g.columns),
     );
-    return getEmbeddedFieldRefs(this.schemaService, this.entityConstructor())
+    return this.allEmbeddedFieldRefs()
       .filter((ref) => displayedColumnIds.has(ref.outerProp))
       .map((ref) => ({
         id: getEmbeddedFieldId(ref),
@@ -86,6 +91,20 @@ export class AdminEntityListComponent {
     ...(this.config().columns ?? []),
     ...this.embeddedFilterFields(),
   ]);
+
+  /**
+   * Outer fields that hold embedded properties (e.g. "childrenAttendance") - excluded from
+   * the filter picker's flat schema-field candidates, since filtering by equality on the raw
+   * embedded array/object value doesn't make sense (it falls through to a generic value-list
+   * filter that compares whole arrays/objects); only the specific nested properties (offered
+   * via `embeddedFilterFields`) are meaningful filters. Not applied to the column picker, where
+   * picking the whole embedded field is legitimate (e.g. to display it via `DisplayAttendance`).
+   */
+  filterExcludedFields = computed<string[]>(() =>
+    Array.from(
+      new Set(this.allEmbeddedFieldRefs().map((ref) => ref.outerProp)),
+    ),
+  );
 
   constructor() {
     // keep the config object updated in-place while using signals for the component

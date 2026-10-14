@@ -14,6 +14,7 @@
   <app-admin-list-manager
     [items]="filters()"
     [additionalFields]="filterAdditionalFields()"
+    [excludedFields]="filterExcludedFields()"
     [entityType]="entityConstructor()"
     templateType="filter"
     fieldLabel="Add Filter:"
