@@ -1,3 +1,4 @@
+import { DatabaseException } from "#src/app/core/database/pouchdb/database-exception";
 import { TestBed } from "@angular/core/testing";
 import { AttendanceExportService } from "./attendance-export.service";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -130,17 +131,32 @@ describe("AttendanceExportService", () => {
     ]);
   });
 
-  it("should show <not_found> when the participant entity cannot be loaded", async () => {
+  it("should show <not_found> when the participant entity does not exist", async () => {
     const entity = new AttendanceTestEntity();
     entity.participants = [
       new AttendanceItem(NullAttendanceStatusType, "", "Child:unknown-1"),
     ];
-    mockEntityMapper.load.mockRejectedValue(new Error("not found"));
+    mockEntityMapper.load.mockRejectedValue(
+      new DatabaseException({ message: "missing", status: 404 }),
+    );
 
     await service.exportAttendanceList(entity, "participants");
 
     const [rows] = mockDownloadService.triggerDownload.mock.calls[0];
     expect(rows[0].Name).toBe("<not_found>");
+  });
+
+  it("should fail instead of exporting <not_found> on a connection error", async () => {
+    const entity = new AttendanceTestEntity();
+    entity.participants = [
+      new AttendanceItem(NullAttendanceStatusType, "", "Child:1"),
+    ];
+    mockEntityMapper.load.mockRejectedValue(new TypeError("Failed to fetch"));
+
+    await expect(
+      service.exportAttendanceList(entity, "participants"),
+    ).rejects.toThrow("Failed to fetch");
+    expect(mockDownloadService.triggerDownload).not.toHaveBeenCalled();
   });
 
   it("should name the file after the entity toString with spaces replaced by dashes", async () => {

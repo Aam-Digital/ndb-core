@@ -43,10 +43,19 @@
   align-items: center;
 }
 
+/* pull the icon buttons' own padding back in, so they line up with the progress bar's edges */
+.progress-nav-start {
+  margin-inline-start: -10px;
+}
+
+.progress-nav-end {
+  margin-inline-end: -10px;
+}
+
 .tab-body {
   position: absolute;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   bottom: 0;
   top: 0;
   display: flex;

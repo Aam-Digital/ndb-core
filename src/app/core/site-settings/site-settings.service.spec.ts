@@ -199,6 +199,10 @@ describe("SiteSettingsService", () => {
           "onLine",
           originalOnlineDescriptor,
         );
+      } else {
+        // `onLine` is normally inherited from Navigator.prototype: remove the own property again,
+        // otherwise it shadows the prototype getter that later specs in this worker stub
+        Reflect.deleteProperty(window.navigator, "onLine");
       }
       environment.session_type = originalSessionType;
     }

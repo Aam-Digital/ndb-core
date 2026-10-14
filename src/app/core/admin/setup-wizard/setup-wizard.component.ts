@@ -3,6 +3,7 @@ import {
   OnInit,
   inject,
   ChangeDetectionStrategy,
+  computed,
 } from "@angular/core";
 import {
   MatStep,
@@ -13,20 +14,14 @@ import {
 import { MatActionList, MatListItem } from "@angular/material/list";
 import { RouterLink } from "@angular/router";
 import { MatButton } from "@angular/material/button";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Config } from "../../config/config";
-import {
-  CONFIG_SETUP_WIZARD_ID,
-  SetupWizardConfig,
-  SetupWizardStep,
-} from "./setup-wizard-config";
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
-import { Logging } from "../../logging/logging.service";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { resolveLocaleConfig } from "../../language/active-locale";
+import { SetupWizardService } from "./setup-wizard.service";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +36,7 @@ import { resolveLocaleConfig } from "../../language/active-locale";
     MatButton,
     MatStepperNext,
     MatStepperIcon,
+    MatProgressSpinner,
     MarkdownComponent,
     MatTooltip,
   ],
@@ -49,34 +45,24 @@ import { resolveLocaleConfig } from "../../language/active-locale";
 })
 export class SetupWizardComponent implements OnInit {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
-  private entityMapper = inject(EntityMapperService);
+  private readonly setupWizardService = inject(SetupWizardService);
   private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, {
     optional: true,
   });
 
   readonly LOCAL_STORAGE_KEY = "SETUP_WIZARD_STATUS";
 
-  steps: SetupWizardStep[];
+  readonly state = this.setupWizardService.state;
+  readonly steps = computed(() =>
+    // display only - the service's config stays raw so saving keeps all languages
+    resolveLocaleConfig(this.setupWizardService.config()?.data?.steps ?? []),
+  );
+
   currentStep: number = 0;
   completedSteps: number[] = [0];
 
-  private configEntity: Config<SetupWizardConfig>;
-
-  async ngOnInit() {
-    await this.loadSetupConfig();
+  ngOnInit() {
     this.loadLocalStatus();
-  }
-
-  private async loadSetupConfig() {
-    try {
-      this.configEntity = await this.entityMapper.load<
-        Config<SetupWizardConfig>
-      >(Config, CONFIG_SETUP_WIZARD_ID);
-      // display only - `configEntity` stays raw so saving keeps all languages
-      this.steps = resolveLocaleConfig(this.configEntity?.data.steps);
-    } catch (e) {
-      Logging.debug("no setup wizard config loaded", e);
-    }
   }
 
   private loadLocalStatus() {
@@ -108,8 +94,7 @@ export class SetupWizardComponent implements OnInit {
   }
 
   async finishWizard() {
-    this.configEntity.data.finished = true;
-    await this.entityMapper.save(this.configEntity);
+    await this.setupWizardService.markAsFinished();
     this.dialogRef?.close();
   }
 }

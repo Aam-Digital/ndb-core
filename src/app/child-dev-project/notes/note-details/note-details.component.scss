@@ -12,7 +12,7 @@
 
 .additional-actions-menu {
   position: absolute;
-  right: sizes.$small;
+  inset-inline-end: sizes.$small;
   top: sizes.$regular;
 }
 

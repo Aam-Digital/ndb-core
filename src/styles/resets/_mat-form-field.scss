@@ -4,3 +4,8 @@
   display: inline-flex;
   align-items: center;
 }
+
+/* Material blocks pointer events on disabled form fields, which we use as our default view */
+button.input-action-button {
+  pointer-events: auto;
+}

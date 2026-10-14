@@ -6,9 +6,9 @@
 
   // undo margins of routed view
   margin-top: - sizes.$margin-main-view-top;
-  margin-right: - sizes.$margin-main-view-right;
+  margin-inline-end: - sizes.$margin-main-view-right;
   margin-bottom: - sizes.$margin-main-view-bottom;
-  margin-left: - sizes.$margin-main-view-left;
+  margin-inline-start: - sizes.$margin-main-view-left;
 }
 
 .header {

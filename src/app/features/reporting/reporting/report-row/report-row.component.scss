@@ -7,3 +7,8 @@ table tr:nth-child(even) {
 .expand-icon-button {
   color: colors.$muted;
 }
+
+/* aligns the header with the rows below, which are indented by their expand button */
+.name-header {
+  padding-inline-start: 40px;
+}

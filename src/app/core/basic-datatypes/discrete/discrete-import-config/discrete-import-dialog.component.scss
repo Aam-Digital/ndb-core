@@ -3,13 +3,13 @@
 }
 
 .mapping-table th {
-  text-align: left;
+  text-align: start;
 }
 
 .first-column {
   width: 40%;
   max-width: 400px;
-  padding-right: 20px;
+  padding-inline-end: 20px;
 }
 
 :host ::ng-deep mat-form-field {

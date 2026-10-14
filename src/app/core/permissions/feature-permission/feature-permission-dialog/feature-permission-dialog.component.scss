@@ -15,7 +15,7 @@
   th,
   td {
     padding: 8px 12px;
-    text-align: left;
+    text-align: start;
   }
 
   thead th {
@@ -45,7 +45,7 @@
   }
 
   .readonly-icon {
-    margin-left: 6px;
+    margin-inline-start: 6px;
     font-size: 0.85em;
     opacity: 0.7;
   }

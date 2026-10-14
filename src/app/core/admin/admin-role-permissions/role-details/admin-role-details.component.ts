@@ -8,7 +8,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -32,7 +32,9 @@ import {
   RolePermissionsService,
   RoleWithPermissions,
 } from "../role-permissions.service";
+import { PermissionsConfigService } from "../../../permissions/permissions-config.service";
 import { UserAdminApiError } from "../../../user/user-admin-service/user-admin.service";
+import { EntityPermissionError } from "../../../entity/entity-mapper/entity-permission-error";
 import {
   DatabaseRule,
   DEFAULT_SECTION_KEY,
@@ -63,6 +65,7 @@ const emptyModel = (): MatrixModel => ({ rows: [], unsupportedRules: [] });
 })
 export class AdminRoleDetailsComponent implements OnInit {
   private readonly rolePermissionsService = inject(RolePermissionsService);
+  private readonly permissionsConfig = inject(PermissionsConfigService);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
@@ -159,6 +162,14 @@ export class AdminRoleDetailsComponent implements OnInit {
 
   readonly deleteDisabledTooltip = $localize`Your account does not have permission to delete roles in the user account server.`;
 
+  /** whether the user may write the permissions config holding the rule matrix (reactive) */
+  readonly canEditPermissions = toSignal(
+    this.permissionsConfig.canManagePermissions$,
+    { requireSync: true },
+  );
+
+  readonly editDisabledTooltip = $localize`Your account does not have permission to change the permissions of a role.`;
+
   /** protected roles (reserved + technical) cannot be deleted or have their description edited */
   readonly isProtected = computed(() => !!this.role()?.isProtected);
 
@@ -175,6 +186,10 @@ export class AdminRoleDetailsComponent implements OnInit {
   );
 
   startEditing() {
+    // the disabled Edit button stays interactive (so its tooltip can explain
+    // why), which means it still emits clicks
+    if (!this.canEditPermissions()) return;
+
     this.originalModel = structuredClone(this.model());
     this.editing.set(true);
   }
@@ -198,6 +213,14 @@ export class AdminRoleDetailsComponent implements OnInit {
   }
 
   async save() {
+    // the disabled Save button stays interactive (so its tooltip can explain
+    // why), which means it still emits clicks.
+    // This covers creating a role too: createRole() writes the realm role first
+    // and its rules second, so a save that cannot write the config would leave
+    // a role behind without any of the rules picked, and the retry would then
+    // fail because the role already exists.
+    if (!this.canEditPermissions()) return;
+
     if (this.isNew()) {
       return this.saveNewRole();
     }
@@ -208,9 +231,12 @@ export class AdminRoleDetailsComponent implements OnInit {
         matrixToRules(this.model()),
       );
     } catch (err) {
-      // keep the user in edit mode with their unsaved changes so they can retry
+      // keep the user in edit mode with their unsaved changes so they can
+      // retry - except when a missing permission means retrying cannot help
       this.showError(
-        $localize`Could not save the permissions. Please try again.`,
+        err instanceof EntityPermissionError
+          ? this.editDisabledTooltip
+          : $localize`Could not save the permissions. Please try again.`,
         err,
       );
       return;

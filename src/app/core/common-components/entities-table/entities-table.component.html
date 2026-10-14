@@ -71,7 +71,7 @@
     INLINE EDIT ACTIONS
     -->
     <ng-container [matColumnDef]="ACTIONCOLUMN_EDIT">
-      <th mat-header-cell *matHeaderCellDef class="remove-padding-left">
+      <th mat-header-cell *matHeaderCellDef class="remove-padding-start">
         <app-entity-create-button
           [entityType]="entityType()"
           [newRecordFactory]="newRecordFactory()"
@@ -113,13 +113,15 @@
   <!--
   SHOW ARCHIVED TOGGLE
   -->
-  <div class="table-footer filter-inactive-toggle">
-    <mat-slide-toggle
-      [checked]="showInactive()"
-      (change)="showInactive.set($event.checked)"
-      i18n="slider|also show entries that are archived"
-    >
-      Include archived records
-    </mat-slide-toggle>
-  </div>
+  @if (showInactiveToggle()) {
+    <div class="table-footer filter-inactive-toggle">
+      <mat-slide-toggle
+        [checked]="showInactive()"
+        (change)="showInactive.set($event.checked)"
+        i18n="slider|also show entries that are archived"
+      >
+        Include archived records
+      </mat-slide-toggle>
+    </div>
+  }
 </div>

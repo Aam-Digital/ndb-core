@@ -1,59 +1,42 @@
-// Service worker to trigger system notifications if app is not running in foreground
-// see source: https://github.com/firebase/snippets-web/blob/56d70627e2dc275f01cd0e55699794bf40faca80/messaging/service-worker.js#L10-L33
+// Service worker receiving push messages from Firebase Cloud Messaging.
+// If no app window is visible, Firebase shows the notification itself (and opens the app when it is clicked).
+// Otherwise, Firebase passes the message on to the app window instead (see NotificationService.listenForMessages),
+// which shows it in a format that Firebase's click handler here also processes.
+// see https://firebase.google.com/docs/cloud-messaging/js/receive
 
-importScripts("https://www.gstatic.com/firebasejs/11.2.0/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/11.2.0/firebase-messaging-compat.js");
+importScripts(
+  "https://www.gstatic.com/firebasejs/11.2.0/firebase-app-compat.js",
+);
+importScripts(
+  "https://www.gstatic.com/firebasejs/11.2.0/firebase-messaging-compat.js",
+);
 
-function loadConfig() {
-  return fetch("/assets/firebase-config.json")
-    .then(function(response) {
-      return parseResponse(response);
+// The app passes the Firebase config as URL parameters when registering this service worker
+// (see FirebaseMessagingServiceWorker).
+// Firebase has to be initialized synchronously here: event listeners must be added during the initial run of this script,
+// otherwise a push message that wakes up the stopped service worker is lost.
+const firebaseConfig = Object.fromEntries(
+  new URL(self.location.href).searchParams,
+);
+
+if (firebaseConfig.apiKey) {
+  firebase.initializeApp(firebaseConfig);
+  firebase.messaging();
+} else {
+  // Registered by an older app version without the config in the URL (re-registered when the app is opened next).
+  // Initializing Firebase asynchronously misses push messages that wake up the stopped service worker.
+  fetch("/assets/firebase-config.json")
+    .then(function (response) {
+      return response.json();
     })
-    .catch(function(error) {
-      console.error("Could not fetch firebase-config in service worker. Background Notifications not available.", error);
+    .then(function (config) {
+      firebase.initializeApp(config);
+      firebase.messaging();
+    })
+    .catch(function (error) {
+      console.error(
+        "Could not load firebase-config in service worker. Background Notifications not available.",
+        error,
+      );
     });
 }
-
-function parseResponse(response) {
-  return response.json()
-    .then(function(firebaseConfig) {
-      return firebaseConfig;
-    })
-    .catch(function(error) {
-      console.error("Could not parse firebase-config in service worker. Background Notifications not available.", error);
-    });
-}
-
-loadConfig()
-  .then(function(firebaseConfig) {
-    // Initialize the Firebase app in the service worker by passing in
-    // your app's Firebase config object.
-    // https://firebase.google.com/docs/web/setup#config-object
-    firebase.initializeApp(firebaseConfig);
-
-    // Retrieve an instance of Firebase Messaging so that it can handle background
-    // messages.
-    const messaging = firebase.messaging();
-
-    messaging.onBackgroundMessage(function(payload) {
-      console.log("[firebase-messaging-sw.js] Received background message ", payload);
-      const { title, body, image } = payload.notification;
-      const notificationOptions = {
-        body: body,
-        icon: "/assets/icons/favicon.png",
-        data: {
-          url: window.location.protocol + "//" + window.location.hostname
-        }
-      };
-      const notification = self.registration.showNotification(title, notificationOptions);
-
-      notification.onclick = (event) => {
-        let url = event.target["data"]?.["url"];
-        event.preventDefault();
-        if (url) {
-          window.open(url, "_self");
-        }
-      };
-    });
-
-  });

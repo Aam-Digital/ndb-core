@@ -33,6 +33,17 @@ import { EntityActionPermission } from "../../permissions/permission-types";
 import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
+ * One page of entities, and the cursor to continue from.
+ *
+ * The cursor is opaque: a Mango bookmark from the database, or whatever a
+ * paginated loader uses to mark its own position. Callers only pass it back.
+ */
+export interface EntityPage<T extends Entity> {
+  records: T[];
+  bookmark?: string;
+}
+
+/**
  * Handles loading and saving of data for any higher-level feature module.
  * The EntityMapperService implicitly transforms objects from instances of Entity classes to the format to be written
  * to the database and back - ensuring they you always receive instances of {@link Entity} subclasses, that you can
@@ -105,7 +116,7 @@ export class EntityMapperService {
     filter: DataFilter<T>,
     page?: { limit: number; bookmark?: string },
     sort?: { prop?: string; dir?: "asc" | "desc" },
-  ): Promise<{ records: T[]; bookmark?: string }> {
+  ): Promise<EntityPage<T>> {
     const ctor = this.resolveConstructor(entityType);
     const result = await this.dbResolver
       .getDatabase(ctor.DATABASE)

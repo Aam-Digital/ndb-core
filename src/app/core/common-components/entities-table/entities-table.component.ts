@@ -3,14 +3,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ContentChildren,
+  contentChildren,
   effect,
   inject,
   input,
   model,
   OnInit,
   output,
-  QueryList,
   untracked,
   ViewChild,
 } from "@angular/core";
@@ -106,6 +105,14 @@ export class EntitiesTableComponent<T extends Entity>
   newRecordFactory = input<() => T>();
   editable = input<boolean>(true);
   selectable = input<boolean>(false);
+  /**
+   * Whether to offer the "include archived records" toggle.
+   *
+   * Turn this off for types that have no `inactive` flag, where the toggle
+   * would offer a filter that can never match. Such a list should also set
+   * `showInactive` so no archived condition is added to its queries.
+   */
+  showInactiveToggle = input<boolean>(true);
 
   // --- Outputs & Models ---
   entityClick = output<T>();
@@ -165,7 +172,11 @@ export class EntitiesTableComponent<T extends Entity>
         .map((column) => column.id);
     }
 
-    const knownIds = new Set(this._allColumns().map((c) => c.id));
+    const knownIds = new Set([
+      ...this._allColumns().map((c) => c.id),
+      // columns defined by the parent through a projected matColumnDef (e.g. the import status column)
+      ...this.projectedColumns().map((c) => c.name),
+    ]);
     const columns: string[] = [];
     for (const col of colsToDisplay) {
       if (typeof col === "string" && col.startsWith("__")) {
@@ -217,7 +228,7 @@ export class EntitiesTableComponent<T extends Entity>
   });
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
-  @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
+  readonly projectedColumns = contentChildren(MatColumnDef);
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     this.sortStore.attachSort(sort);
@@ -261,7 +272,7 @@ export class EntitiesTableComponent<T extends Entity>
   }
 
   ngAfterContentInit() {
-    this.projectedColumns.forEach((columnDef) =>
+    this.projectedColumns().forEach((columnDef) =>
       this.table.addColumnDef(columnDef),
     );
   }

@@ -35,6 +35,7 @@ import {
   MatSlideToggleChange,
 } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
@@ -69,10 +70,6 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
-import {
-  ConditionEditorDialogComponent,
-  ConditionEditorDialogData,
-} from "app/core/common-components/condition-editor-dialog/condition-editor-dialog.component";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -117,6 +114,7 @@ export interface AdminEntityFieldData {
     ReactiveFormsModule,
     FontAwesomeModule,
     MatTooltipModule,
+    AdminDisplayConditionButtonComponent,
     BasicAutocompleteComponent,
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,
@@ -623,23 +621,6 @@ export class AdminEntityFieldComponent implements OnInit {
   resetToBaseFieldSettings() {
     this.dialogRef.close(this.fieldIdForm.getRawValue());
   }
-  openDisplayConditionDialog() {
-    const dialogRef = this.dialog.open(ConditionEditorDialogComponent, {
-      data: {
-        entityConstructor: this.data.entityType,
-        conditions: this.schemaFieldsForm.get("displayCondition").value,
-        explanation: $localize`This field is shown only while the record matches...`,
-      } satisfies ConditionEditorDialogData,
-      width: "600px",
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      // `undefined` means the dialog was cancelled, leave the condition unchanged
-      if (result === undefined) return;
-      this.schemaFieldsForm.get("displayCondition").setValue(result);
-    });
-  }
-
   /**
    * The raw, unresolved value of a schema field property, taken from the config
    * document so that all configured languages are available for editing.

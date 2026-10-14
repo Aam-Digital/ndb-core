@@ -4,8 +4,10 @@ import { EntityActionsMenuService } from "../../core/entity-details/entity-actio
 import { Entity } from "../../core/entity/model/entity";
 import { ChangeHistoryService } from "./change-history.service";
 import { ChangeHistoryDialogComponent } from "./change-history-dialog/change-history-dialog.component";
-
-export { AUDIT_RECORD_SUBJECT } from "./change-history.service";
+import { changeHistoryRoutes } from "./change-history.routing";
+import { AuditRecord } from "./model/audit-record";
+import { changeHistoryComponents } from "./change-history-components";
+import { ComponentRegistry } from "../../dynamic-components";
 
 function asSingle(entity: Entity | Entity[]): Entity | undefined {
   return Array.isArray(entity) ? entity[0] : entity;
@@ -21,15 +23,20 @@ function asSingle(entity: Entity | Entity[]): Entity | undefined {
  */
 @NgModule({})
 export class ChangeHistoryModule {
+  static readonly routes = changeHistoryRoutes;
+  static readonly databaseEntities = [AuditRecord];
+
   private readonly entityActionsMenu = inject(EntityActionsMenuService);
   private readonly dialog = inject(MatDialog);
   private readonly changeHistory = inject(ChangeHistoryService);
 
   constructor() {
+    inject(ComponentRegistry).addAll(changeHistoryComponents);
+
     this.entityActionsMenu.registerActions([
       {
         action: "view-change-history",
-        label: $localize`:entity context menu:View change history`,
+        label: $localize`:entity context menu:View change log`,
         icon: "clock-rotate-left",
         tooltip: $localize`:entity context menu tooltip:Show who changed this record, when, and what changed.`,
         availableFor: "individual-only",

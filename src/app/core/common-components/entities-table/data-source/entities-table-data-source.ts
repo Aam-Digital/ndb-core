@@ -12,6 +12,7 @@ import { debounceTime } from "rxjs/operators";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -124,6 +125,12 @@ export abstract class EntitiesTableDataSource<
   };
 
   /**
+   * Incremented whenever a new configuration triggers loading of new data.
+   * This allows stale requests to be detected.
+   */
+  protected loadGeneration = 0;
+
+  /**
    * Request a (re)load of the records for the current config/filter/sort/page.
    *
    * All the triggers that fire while a view initializes are debounced into a
@@ -148,11 +155,15 @@ export abstract class EntitiesTableDataSource<
   private executeLoad(): void {
     const reload = this.pendingReload;
     this.pendingReload = undefined;
+    const generation = ++this.loadGeneration;
+    const isCurrentLoad = () => generation === this.loadGeneration;
     const load = this.loadRecords()
       .then((data) => {
-        // a previous failure has now recovered
-        this.loadErrorSnackBarRef?.dismiss();
-        this.loadErrorSnackBarRef = undefined;
+        if (isCurrentLoad()) {
+          // a previous failure has now recovered
+          this.loadErrorSnackBarRef?.dismiss();
+          this.loadErrorSnackBarRef = undefined;
+        }
         return data;
       })
       .catch((err) => {
@@ -161,10 +172,18 @@ export abstract class EntitiesTableDataSource<
           err,
           this.loadRecordConfig(),
         );
-        this.showLoadErrorToast();
+        if (isCurrentLoad()) {
+          // replaces any session alert shown for the same failure (one snackbar
+          // at a time), so it has to name that cause itself
+          this.showLoadErrorToast(isExpiredSessionError(err));
+        }
         return [];
       })
-      .finally(() => this.isLoading.set(false));
+      .finally(() => {
+        if (isCurrentLoad()) {
+          this.isLoading.set(false);
+        }
+      });
     // let awaiters (e.g. bulk operations) adopt the actual load's outcome
     reload?.resolve(load);
   }
@@ -173,11 +192,17 @@ export abstract class EntitiesTableDataSource<
    * Notify the user that the list could not be loaded and offer a manual retry.
    * The retry routes through {@link setRecords} so it reuses the normal
    * (debounced, `isLoading`-tracked) reload path.
+   *
+   * @param sessionExpired whether the server rejected the request because the
+   *   login session expired and could not be renewed, rather than a connection problem
    */
-  private showLoadErrorToast(): void {
+  private showLoadErrorToast(sessionExpired = false): void {
     this.loadErrorSnackBarRef?.dismiss();
+    const message = sessionExpired
+      ? $localize`:Table data loading failed because the login session expired:Could not load the list because your login session has expired and could not be renewed. Please try again later.`
+      : $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`;
     this.loadErrorSnackBarRef = this.snackBar.open(
-      $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`,
+      message,
       $localize`:Retry loading table data:Retry`,
       { duration: 3600000 },
     );

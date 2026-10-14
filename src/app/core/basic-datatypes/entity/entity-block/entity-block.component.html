@@ -16,13 +16,17 @@
   >
     <app-fa-dynamic-icon
       [icon]="notFoundIcon()"
-      class="margin-right-small"
+      class="margin-end-small"
     ></app-fa-dynamic-icon>
 
-    @if (missingEntityType()) {
-      {{ missingEntityType()?.label }}:
+    @if (showEntityId()) {
+      <app-record-id-display [recordId]="entityId()"></app-record-id-display>
+    } @else {
+      @if (missingEntityType()) {
+        {{ missingEntityType()?.label }}:
+      }
+      <span i18n="Entity block not found message">not available</span>
     }
-    <span i18n="Entity block not found message">not available</span>
   </span>
 } @else {
   <span
@@ -32,15 +36,23 @@
     (click)="showDetailsPage()"
     [appTemplateTooltip]="tooltip"
     [tooltipDisabled]="!entityBlockConfig()"
-    [title]="entityResource.value()?.toString()"
+    [title]="
+      showsOnlyId()
+        ? entityResource.value()?.getId()
+        : entityResource.value()?.toString()
+    "
   >
     <app-fa-dynamic-icon
       [icon]="entityIcon()"
       [style.color]="entityColor()"
-      class="margin-right-small"
+      class="margin-end-small"
     ></app-fa-dynamic-icon>
 
-    {{ entityResource.value()?.toString() }}
+    @if (showsOnlyId()) {
+      {{ idOnlyLabel() }}
+    } @else {
+      {{ entityResource.value()?.toString() }}
+    }
   </span>
 }
 

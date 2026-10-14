@@ -7,12 +7,12 @@ $toolbar-width: 300px;
 .toolbar {
   width: $toolbar-width;
   padding: sizes.$small;
-  margin-right: -(sizes.$small);
+  margin-inline-end: -(sizes.$small);
   margin-bottom: -(sizes.$small);
 
   @include mat-elevation.elevation(4);
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: 0;
   background-color: transparent;
 }
 
@@ -77,8 +77,8 @@ $toolbar-width: 300px;
   /* center within parent: */
   top: 0;
   bottom: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   margin: auto;
   width: fit-content;
 

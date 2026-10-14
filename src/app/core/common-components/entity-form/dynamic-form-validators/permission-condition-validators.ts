@@ -1,12 +1,16 @@
 import { inject, Injectable } from "@angular/core";
 import { ValidatorFn } from "@angular/forms";
-import { Ability, subject } from "@casl/ability";
+import { createMongoAbility, MongoAbility, subject } from "@casl/ability";
 import { Entity } from "../../../entity/model/entity";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import {
+  EntityAbility,
+  permissionConditionsMatcher,
+} from "../../../permissions/ability/entity-ability";
+import { splitNegation } from "../../conditions-editor/condition-negation";
 
 /**
  * Minimal structural type of the CASL rules (see `Ability.rulesFor`)
@@ -107,7 +111,7 @@ export class PermissionConditionValidatorsService {
 interface FieldDecision {
   fragment: any;
   inverted: boolean;
-  matcher: Ability;
+  matcher: MongoAbility;
 }
 
 /**
@@ -132,7 +136,7 @@ interface FieldDecision {
  *   (database-format) condition value, e.g. resolving enum ids to labels
  */
 export function buildPermissionConditionValidator(
-  rules: RuleWithConditions[],
+  rules: readonly RuleWithConditions[],
   fieldId: string,
   toDbFormat: (value: any) => any = (value) => value,
   formatValue?: (value: any) => string,
@@ -231,13 +235,18 @@ function createFieldDecision(
   return {
     fragment,
     inverted: !!rule.inverted,
-    matcher: new Ability([
-      {
-        action: MATCH_ACTION,
-        subject: MATCH_SUBJECT,
-        conditions: { [fieldId]: fragment },
-      },
-    ]),
+    // the same matcher the ability uses, so a condition the ability accepts is
+    // never reported as a field error here (and vice versa)
+    matcher: createMongoAbility(
+      [
+        {
+          action: MATCH_ACTION,
+          subject: MATCH_SUBJECT,
+          conditions: { [fieldId]: fragment },
+        },
+      ],
+      { conditionsMatcher: permissionConditionsMatcher },
+    ),
   };
 }
 
@@ -263,15 +272,35 @@ export function describeConditionFragment(
     return fragment.map(formatValue).join(", ");
   }
 
-  const operators = Object.entries(fragment);
-  if (operators.length === 1) {
-    const [operator, value] = operators[0];
-    if (operator === "$eq") {
-      return describeConditionFragment(value, formatValue);
-    }
-    if (operator === "$in" && Array.isArray(value)) {
-      return value.map(formatValue).join(", ");
-    }
+  const { negated, positive } = splitNegation(fragment);
+  if (negated) {
+    return $localize`:a negated permission condition value:not ${describeConditionFragment(positive, formatValue)}`;
   }
-  return JSON.stringify(fragment);
+
+  return (
+    describeSingleOperator(fragment, formatValue) ?? JSON.stringify(fragment)
+  );
+}
+
+/**
+ * Human-readable display of a fragment holding exactly one operator we have
+ * wording for, or `undefined` if it is not such a fragment.
+ */
+function describeSingleOperator(
+  fragment: object,
+  formatValue: (value: any) => string,
+): string | undefined {
+  const operators = Object.entries(fragment);
+  if (operators.length !== 1) {
+    return undefined;
+  }
+
+  const [operator, value] = operators[0];
+  if (operator === "$eq") {
+    return describeConditionFragment(value, formatValue);
+  }
+  if (operator === "$in" && Array.isArray(value)) {
+    return value.map(formatValue).join(", ");
+  }
+  return undefined;
 }

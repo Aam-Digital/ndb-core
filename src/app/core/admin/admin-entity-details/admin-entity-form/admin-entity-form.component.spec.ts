@@ -7,9 +7,10 @@ import { MatDialog } from "@angular/material/dialog";
 import { By } from "@angular/platform-browser";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { ConditionEditorDialogComponent } from "../../../common-components/condition-editor-dialog/condition-editor-dialog.component";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import {
   ColumnConfig,
@@ -386,6 +387,106 @@ describe("AdminEntityFormComponent", () => {
     component.hideField(field, group);
 
     expect(component.config().fieldGroups[0].fields).not.toContain(field);
+  });
+
+  it.each([
+    {
+      initial: undefined,
+      dialogResult: { name: "x" },
+      expected: { name: "x" },
+    },
+    { initial: { name: "x" }, dialogResult: null, expected: undefined },
+    {
+      initial: { name: "x" },
+      dialogResult: undefined,
+      expected: { name: "x" },
+    },
+  ])(
+    "should apply the condition dialog's result as the field group's displayCondition (dialog result: $dialogResult)",
+    async ({ initial, dialogResult, expected }) => {
+      fixture.componentRef.setInput("config", {
+        fieldGroups: [
+          {
+            header: "Group 1",
+            fields: ["name"],
+            ...(initial && { displayCondition: initial }),
+          },
+        ],
+      });
+      fixture.detectChanges();
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(dialogResult) });
+
+      const conditionButton: HTMLButtonElement =
+        fixture.nativeElement.querySelector(
+          'app-admin-section-header button[aria-label$="Display Condition"]',
+        );
+      conditionButton.click();
+      await fixture.whenStable();
+
+      expect(mockDialog.open).toHaveBeenCalledWith(
+        ConditionEditorDialogComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({ conditions: initial }),
+        }),
+      );
+      expect(component.fieldGroups()[0]).toEqual({
+        header: "Group 1",
+        fields: ["name"],
+        ...(expected && { displayCondition: expected }),
+      });
+    },
+  );
+
+  it("should highlight a group's display condition button in the accent color only while a condition is configured", async () => {
+    fixture.componentRef.setInput("config", {
+      fieldGroups: [
+        { header: "Plain", fields: ["name"] },
+        {
+          header: "Conditional",
+          fields: ["other"],
+          displayCondition: { name: "x" },
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll(
+        'app-admin-section-header button[aria-label$="Display Condition"]',
+      ),
+    );
+
+    expect(buttons.map((b) => b.classList.contains("mat-accent"))).toEqual([
+      false,
+      true,
+    ]);
+  });
+
+  it("should apply the condition dialog's result to the group it was opened for, even if the groups were reordered meanwhile", async () => {
+    const dialogResult = new Subject<unknown>();
+    mockDialog.open.mockReturnValue({ afterClosed: () => dialogResult });
+
+    fixture.nativeElement
+      .querySelector(
+        'app-admin-section-header button[aria-label$="Display Condition"]',
+      )
+      .click();
+    component.dropFieldGroups({
+      previousIndex: 0,
+      currentIndex: 1,
+    } as CdkDragDrop<unknown>);
+    dialogResult.next({ name: "x" });
+    dialogResult.complete();
+    await fixture.whenStable();
+
+    expect(component.fieldGroups()).toEqual([
+      { fields: ["category"] },
+      {
+        header: "Group 1",
+        fields: ["name", "other"],
+        displayCondition: { name: "x" },
+      },
+    ]);
   });
 
   it("should update the global schema when updateEntitySchema is true", async () => {
