@@ -60,6 +60,7 @@
       [entityType]="entityType()"
       [availableFields]="availableItems()"
       [activeFields]="itemsAsStrings"
+      [excludedFields]="excludedFields()"
       (activeFieldsChange)="updateItems($event)"
     ></app-entity-fields-menu>
   </div>
