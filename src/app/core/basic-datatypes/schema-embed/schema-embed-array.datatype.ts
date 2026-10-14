@@ -29,8 +29,8 @@ export class SchemaEmbedArrayDatatype<
   static override readonly dataType: string = "schema-embed-array";
   static override readonly label: string = $localize`:datatype-label:embedded table (multiple entries with several fields)`;
 
-  override readonly editComponent = "EditSchemaEmbedArray";
-  override readonly viewComponent = "DisplaySchemaEmbedArray";
+  override editComponent = "EditSchemaEmbedArray";
+  override viewComponent = "DisplaySchemaEmbedArray";
 
   override normalizeSchemaField(
     schemaField: EntitySchemaField,
