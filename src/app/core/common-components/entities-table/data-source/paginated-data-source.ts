@@ -15,10 +15,6 @@ import {
   FULL_LOAD_PAGE_SIZE,
 } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 
-// re-exported for the existing importers of this module; defined with the paging
-// helper it belongs to (see EntityMapperService.findAllType)
-export { FULL_LOAD_PAGE_SIZE };
-
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
 
