@@ -44,8 +44,8 @@ export class DuplicateDetectionService {
    *
    * The analysis is kept up to date from the entity updates while subscribed, so that
    * merging a pair (or any other change to the data) does not require a new scan of the
-   * whole entity type - which is what made resolving many duplicates in a row expensive
-   * (#4134). Unsubscribing stops the analysis.
+   * whole entity type - which is what made resolving many duplicates in a row expensive.
+   * Unsubscribing stops the analysis.
    */
   watchDuplicates(
     entityConstructor: EntityConstructor,
