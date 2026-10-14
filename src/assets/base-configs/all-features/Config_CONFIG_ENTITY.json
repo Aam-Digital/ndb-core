@@ -1615,7 +1615,7 @@
         "embeddedArrayOfObjects": {
           "id": "embeddedArrayOfObjects",
           "label": "Embedded Array of Objects",
-          "dataType": "schema-embed",
+          "dataType": "schema-embed-array",
           "additional": {
             "type": {
               "dataType": "string",
@@ -1625,8 +1625,7 @@
               "dataType": "number",
               "label": "embedded item value"
             }
-          },
-          "isArray": true
+          }
         }
       },
       "hasPII": false
