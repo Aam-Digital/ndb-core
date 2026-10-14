@@ -11,17 +11,22 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
+import { SchemaEmbedArraySummaryComponent } from "../schema-embed-array-summary/schema-embed-array-summary.component";
 
 /**
  * Generic view component for the `schema-embed-array` datatype.
  *
- * Shows just a small "N entries" text (nothing when there are no entries), and reveals a
- * read-only preview table on hover via {@link TemplateTooltipDirective}
+ * Shows a one-line summary of the entries (see {@link SchemaEmbedArraySummaryComponent};
+ * nothing when there are no entries), and reveals a read-only preview table on hover via {@link TemplateTooltipDirective}
  */
 @DynamicComponent("DisplaySchemaEmbedArray")
 @Component({
   selector: "app-display-schema-embed-array",
-  imports: [TemplateTooltipDirective, SchemaEmbedArrayTableComponent],
+  imports: [
+    TemplateTooltipDirective,
+    SchemaEmbedArrayTableComponent,
+    SchemaEmbedArraySummaryComponent,
+  ],
   templateUrl: "./display-schema-embed-array.component.html",
   styleUrls: ["./display-schema-embed-array.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,

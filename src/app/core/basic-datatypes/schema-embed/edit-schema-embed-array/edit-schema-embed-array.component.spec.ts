@@ -6,6 +6,7 @@ import { LoginState } from "#src/app/core/session/session-states/login-state.enu
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { EditSchemaEmbedArrayComponent } from "./edit-schema-embed-array.component";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
+import { SchemaEmbedArraySummaryComponent } from "../schema-embed-array-summary/schema-embed-array-summary.component";
 import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 
 describe("EditSchemaEmbedArrayComponent", () => {
@@ -46,37 +47,36 @@ describe("EditSchemaEmbedArrayComponent", () => {
     fixture.detectChanges();
   });
 
-  it("shows a button with the current number of entries", () => {
-    const button = fixture.debugElement.query(By.css("button"));
-    expect(button.nativeElement.textContent).toContain("2");
-    expect(button.nativeElement.disabled).toBe(false);
+  const summary = () =>
+    fixture.debugElement.query(By.directive(SchemaEmbedArraySummaryComponent))
+      .componentInstance as SchemaEmbedArraySummaryComponent;
+  const button = () => fixture.debugElement.query(By.css("button"));
+
+  it("shows a summary of the current entries", () => {
+    expect(summary().rows()).toEqual(formControl.value);
+    expect(
+      summary()
+        .columns()
+        .map((c) => c.id),
+    ).toEqual(["documentType", "documentNumber"]);
   });
 
-  it("updates the displayed count when the value changes", () => {
+  it("updates the summary when the value changes", () => {
     formControl.setValue([...formControl.value, {}]);
     fixture.detectChanges();
 
-    const button = fixture.debugElement.query(By.css("button"));
-    expect(button.nativeElement.textContent).toContain("3");
+    expect(summary().rows()).toHaveLength(3);
   });
 
-  it("keeps the button visible but visibly disabled when the control is disabled", () => {
+  it("opens the dialog when clicking the field, also when disabled (read-only)", () => {
+    component.onContainerClick();
+    expect(mockDialog.open).toHaveBeenCalledTimes(1);
+
     formControl.disable();
     fixture.detectChanges();
-
-    const button = fixture.debugElement.query(By.css("button"));
-    expect(button).toBeTruthy();
-    expect(button.nativeElement.disabled).toBe(true);
-  });
-
-  it("shows the button again once a disabled control is re-enabled", () => {
-    formControl.disable();
-    fixture.detectChanges();
-    formControl.enable();
-    fixture.detectChanges();
-
-    const button = fixture.debugElement.query(By.css("button"));
-    expect(button.nativeElement.disabled).toBe(false);
+    expect(button().nativeElement.disabled).toBe(false);
+    component.onContainerClick();
+    expect(mockDialog.open).toHaveBeenCalledTimes(2);
   });
 
   it("enables the hover preview tooltip whenever there are entries, regardless of disabled state", () => {
@@ -103,7 +103,7 @@ describe("EditSchemaEmbedArrayComponent", () => {
   it("opens the dialog with the field's formControl, resolved columns and label", () => {
     fixture.detectChanges();
 
-    fixture.debugElement.query(By.css("button")).nativeElement.click();
+    button().nativeElement.click();
 
     expect(mockDialog.open).toHaveBeenCalledWith(
       SchemaEmbedArrayDialogComponent,

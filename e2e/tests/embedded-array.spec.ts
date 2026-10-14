@@ -125,8 +125,9 @@ test("Embedded array form field: manage entries in a dialog", async ({
 
   // Basic Information tab contains the same property as a form field
   await page.getByRole("button", { name: "Edit" }).click();
-  const manageButton = page.getByRole("button", { name: /Manage entries/ });
-  await expect(manageButton).toContainText("(0)");
+  const field = page.locator("app-edit-schema-embed-array");
+  const manageButton = field.getByRole("button", { name: "Manage entries" });
+  await expect(field).toContainText("no entries");
   await manageButton.click();
 
   const dialog = page.getByRole("dialog");
@@ -140,20 +141,18 @@ test("Embedded array form field: manage entries in a dialog", async ({
   await expect(dialog).not.toBeVisible();
 
   // Entries only get persisted by saving the whole form
-  await expect(manageButton).toContainText("(1)");
+  await expect(field).toContainText(PASSPORT.type);
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("button", { name: "Edit" })).toBeVisible();
 
-  // In view mode the button stays visible (disabled) with the entry count
-  await expect(manageButton).toBeDisabled();
-  await expect(manageButton).toContainText("(1)");
-
-  // Persisted: reopen the record and view the entry in the dialog
+  // In view mode, clicking the field's summary text opens the dialog read-only
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("cell", { name: CHILD_NAME }).click();
-  await expect(manageButton).toContainText("(1)");
-  await page.getByRole("button", { name: "Edit" }).click();
-  await manageButton.click();
+  await field.getByText(PASSPORT.type).click();
   await expect(dialog.getByRole("textbox").first()).toHaveValue(PASSPORT.type);
   await expect(dialog.getByRole("textbox").nth(1)).toHaveValue(PASSPORT.number);
+  await expect(dialog.getByRole("textbox").first()).toBeDisabled();
+  await expect(
+    dialog.getByRole("button", { name: "Add entry" }),
+  ).not.toBeVisible();
 });

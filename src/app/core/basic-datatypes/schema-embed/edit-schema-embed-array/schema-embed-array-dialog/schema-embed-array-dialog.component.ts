@@ -63,10 +63,8 @@ export class SchemaEmbedArrayDialogComponent {
   protected readonly columns = this.data.columns;
 
   /**
-   * The field's disabled state as of when the dialog opened. Read once, not tracked live: the
-   * trigger button that opens this dialog is itself natively `[disabled]`, so this can only
-   * ever be `false` in practice - but every row still honors it defensively, in case that ever
-   * changes.
+   * The field's disabled state as of when the dialog opened (read once, not tracked live).
+   * The dialog is also opened while the surrounding form is in view mode and is read-only then.
    */
   protected readonly isDisabled = this.formControl.disabled;
 

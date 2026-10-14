@@ -1,7 +1,10 @@
 @if (rows().length) {
-  <span class="entry-count" [appTemplateTooltip]="tooltip">
-    {{ rows().length }} <span i18n>entries</span>
-  </span>
+  <app-schema-embed-array-summary
+    class="entry-summary"
+    [rows]="rows()"
+    [columns]="columns()"
+    [appTemplateTooltip]="tooltip"
+  ></app-schema-embed-array-summary>
 }
 
 <ng-template #tooltip>

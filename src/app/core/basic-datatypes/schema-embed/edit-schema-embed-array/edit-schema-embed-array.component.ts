@@ -6,6 +6,7 @@ import {
   input,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -18,18 +19,20 @@ import { TemplateTooltipDirective } from "#src/app/core/common-components/templa
 import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
 import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
+import { SchemaEmbedArraySummaryComponent } from "../schema-embed-array-summary/schema-embed-array-summary.component";
 
 /**
  * Generic edit component for the `schema-embed-array` datatype.
  *
- * Renders a single button showing the current number of entries; clicking it opens
+ * Renders a short read-only summary (see {@link SchemaEmbedArraySummaryComponent}) with an
+ * icon button, similar to the location field; clicking anywhere in the field (or the button) opens
  * {@link SchemaEmbedArrayDialogComponent}, a popup with the full editable table (one row
  * per array entry, one column per field defined in the field's `additional` schema, or
  * `embeddedType` for subclasses). Edits inside the dialog apply immediately to this field's
  * own FormControl, exactly as the previous inline table did.
  *
- * The button stays visible (but visibly disabled) while the surrounding form isn't in edit
- * mode, and hovering it - whether enabled or disabled - shows a read-only preview table via
+ * While the surrounding form isn't in edit mode, the dialog opens read-only. Hovering the
+ * field shows a read-only preview table via
  * {@link TemplateTooltipDirective}, the same pattern the attendance datatype's display
  * component uses.
  */
@@ -38,9 +41,11 @@ import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/sche
   selector: "app-edit-schema-embed-array",
   imports: [
     MatButtonModule,
+    MatTooltipModule,
     FontAwesomeModule,
     TemplateTooltipDirective,
     SchemaEmbedArrayTableComponent,
+    SchemaEmbedArraySummaryComponent,
   ],
   templateUrl: "./edit-schema-embed-array.component.html",
   styleUrls: ["./edit-schema-embed-array.component.scss"],
@@ -71,6 +76,14 @@ export class EditSchemaEmbedArrayComponent
 
   rows = computed(() => this.valueSignal() ?? []);
   rowCount = computed(() => this.rows().length);
+
+  protected readonly manageLabel = $localize`Manage entries`;
+  protected readonly viewLabel = $localize`View entries`;
+
+  /** Opens the dialog - also in view mode, where it is read-only. */
+  override onContainerClick() {
+    this.openDialog();
+  }
 
   openDialog() {
     this.dialog.open(SchemaEmbedArrayDialogComponent, {

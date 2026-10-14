@@ -1,18 +1,26 @@
-<span
-  class="trigger-wrapper"
+<div
+  class="trigger-wrapper flex-row align-center gap-regular clickable"
   [appTemplateTooltip]="tooltip"
   [tooltipDisabled]="rowCount() === 0"
+  (click)="onContainerClick(); $event.stopPropagation()"
 >
+  <app-schema-embed-array-summary
+    class="flex-grow"
+    [rows]="rows()"
+    [columns]="columns()"
+  ></app-schema-embed-array-summary>
+
   <button
     type="button"
-    mat-stroked-button
-    [disabled]="!enabled()"
-    (click)="openDialog()"
+    mat-icon-button
+    class="input-action-button"
+    (click)="openDialog(); $event.stopPropagation()"
+    [attr.aria-label]="enabled() ? manageLabel : viewLabel"
+    [matTooltip]="enabled() ? manageLabel : viewLabel"
   >
     <fa-icon icon="table"></fa-icon>
-    <span i18n>Manage entries ({{ rowCount() }})</span>
   </button>
-</span>
+</div>
 
 <ng-template #tooltip>
   <app-schema-embed-array-table

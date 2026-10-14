@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
+import { SchemaEmbedArraySummaryComponent } from "../schema-embed-array-summary/schema-embed-array-summary.component";
 import { DisplaySchemaEmbedArrayComponent } from "./display-schema-embed-array.component";
 import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
 
@@ -46,14 +47,18 @@ describe("DisplaySchemaEmbedArrayComponent", () => {
     ]);
   });
 
-  it("shows the number of entries as text", () => {
+  it("shows a summary of the entries", () => {
     fixture.componentRef.setInput("value", [
       { documentType: "Passport" },
       { documentType: "ID Card" },
     ]);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.textContent.trim()).toBe("2 entries");
+    expect(
+      fixture.debugElement.query(
+        By.directive(SchemaEmbedArraySummaryComponent),
+      ),
+    ).toBeTruthy();
   });
 
   it("shows nothing when there are no entries", () => {
@@ -61,7 +66,7 @@ describe("DisplaySchemaEmbedArrayComponent", () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent.trim()).toBe("");
-    expect(fixture.debugElement.query(By.css(".entry-count"))).toBeFalsy();
+    expect(fixture.debugElement.query(By.css(".entry-summary"))).toBeFalsy();
   });
 
   it("shows nothing when the value is undefined", () => {
