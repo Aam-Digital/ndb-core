@@ -31,7 +31,7 @@ describe("DuplicateDetectionService", () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  /** the first result of a one-off analysis, as the previous `findDuplicates` returned */
+  /** the first result of a one-off analysis */
   function findDuplicates(fields: string[]): Promise<DuplicatePair[]> {
     return firstValueFrom(service.watchDuplicates(TestEntity, fields));
   }
