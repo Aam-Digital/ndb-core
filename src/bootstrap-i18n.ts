@@ -57,10 +57,6 @@ function applyDocumentLanguage(locale: string): void {
   document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
 }
 
-/**
- * Needed for locale-aware components & pipes (date formats, first day of week, numbers).
- * Imports are listed explicitly so only the locales we offer end up in the bundle.
- */
 async function registerLocaleDataFor(locale: string): Promise<void> {
   let localeModule;
   if (locale == "de") {
