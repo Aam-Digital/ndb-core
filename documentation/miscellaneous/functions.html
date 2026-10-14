@@ -362,6 +362,9 @@
                             <a href="#equals" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>equals</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#errorMessageOf" title="src/app/features/api-client/api-client.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>errorMessageOf</b>&nbsp;&nbsp;&nbsp;(src/.../api-client.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#errorToText" title="src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>errorToText</b>&nbsp;&nbsp;&nbsp;(src/.../pouchdb-corruption-recovery.service.ts)</span></a>
                         </li>
                         <li>
@@ -525,6 +528,12 @@
                         </li>
                         <li>
                             <a href="#getRuntimePathFromViewConfig" title="src/app/core/config/dynamic-routing/route-paths.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getRuntimePathFromViewConfig</b>&nbsp;&nbsp;&nbsp;(src/.../route-paths.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#getScopeDocumentation" title="src/app/features/api-client/api-client-scopes.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getScopeDocumentation</b>&nbsp;&nbsp;&nbsp;(src/.../api-client-scopes.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#getScopeLabel" title="src/app/features/api-client/api-client-scopes.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getScopeLabel</b>&nbsp;&nbsp;&nbsp;(src/.../api-client-scopes.ts)</span></a>
                         </li>
                         <li>
                             <a href="#getUrlWithoutParams" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getUrlWithoutParams</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
@@ -717,6 +726,9 @@
                         </li>
                         <li>
                             <a href="#loggedUnreachableServer" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>loggedUnreachableServer</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#logRequestError" title="src/app/features/api-client/api-client.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>logRequestError</b>&nbsp;&nbsp;&nbsp;(src/.../api-client.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#mapInBatches" title="src/app/utils/utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>mapInBatches</b>&nbsp;&nbsp;&nbsp;(src/.../utils.ts)</span></a>
@@ -12287,6 +12299,137 @@ against a value coming from an entity picker (which always includes the prefix).
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/api-client/api-client.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="errorMessageOf"></a>
+                    <span class="name">
+                        <span ><b>errorMessageOf</b></span>
+                        <a href="#errorMessageOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>errorMessageOf(err)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The message for the user of a failed request to the api-client module of the backend.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logRequestError"></a>
+                    <span class="name">
+                        <span ><b>logRequestError</b></span>
+                        <a href="#logRequestError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>logRequestError(message: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, err)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Log a failed request to the api-client module of the backend.
+Expected failures (4xx, e.g. a duplicate client id, or no connection) are only logged as debug,
+so that they are not reported to the error monitoring; server errors (5xx) are logged as warning.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/database/pouchdb/pouchdb-corruption-recovery.service.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -17690,6 +17833,139 @@ This also transforms date objects to <code>YYYY-MM-DD</code> format.</p>
 
                                             <td>
                                                     No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/api-client/api-client-scopes.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getScopeDocumentation"></a>
+                    <span class="name">
+                        <span ><b>getScopeDocumentation</b></span>
+                        <a href="#getScopeDocumentation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getScopeDocumentation(scopes)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>scopes</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getScopeLabel"></a>
+                    <span class="name">
+                        <span ><b>getScopeLabel</b></span>
+                        <a href="#getScopeLabel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getScopeLabel(scope: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, description?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>scope</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>description</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
                                             </td>
 
 

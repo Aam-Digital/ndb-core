@@ -215,6 +215,12 @@ as stored in the config database</p>
                         </li>
                         <li>
                                     <span class="modifier">Optional</span>
+                                <a href="#allRequiredUserRoles" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">allRequiredUserRoles</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
                                 <a href="#component" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">component</span>
                                 </a>
@@ -334,6 +340,58 @@ as stored in the config database</p>
                             <div class="io-description"><p>indicate that the route is lazy loaded.</p>
 <p>At the moment that means the routing is set in the app.routing.ts and not loaded from the config.
 The ViewConfig of a lazy-loaded route is only used for additional flags like <code>requiresAdmin</code>.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="allRequiredUserRoles"></a>
+                                <span class="name "><b>allRequiredUserRoles</b>
+                                    <a href="#allRequiredUserRoles">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>allRequiredUserRoles:     <code>string[]</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>string[]</code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/config/dynamic-routing/view-config.interface.ts:40</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Restricts the route to users with <strong>every one</strong> of these roles (&quot;all of&quot;), e.g. <code>[&quot;admin_app&quot;, &quot;account_manager&quot;]</code>
+for a page that requires both.
+If set together with <code>permittedUserRoles</code>, a user has to fulfil both.</p>
 </div>
                         </td>
                     </tr>
@@ -480,14 +538,13 @@ The component id has to be registered in the component map.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/config/dynamic-routing/view-config.interface.ts:34</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/config/dynamic-routing/view-config.interface.ts:33</a></div>
                                 </td>
                             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-description"><p>Allows to restrict the route to the given list of user roles.
-If set, the route can only be visited by users which have a role which is in the list.
+                            <div class="io-description"><p>Restricts the route to users with <strong>at least one</strong> of these roles (&quot;any of&quot;).
 If not set, all logged-in users can visit the route.</p>
 </div>
                         </td>

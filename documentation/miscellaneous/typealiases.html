@@ -155,6 +155,9 @@
                             <a href="#AuditDelta" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>AuditDelta</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#BackendFeatureFlags" title="src/app/features/api-client/api-client.service.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>BackendFeatureFlags</b>&nbsp;&nbsp;&nbsp;(src/.../api-client.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#ChangeOperation" title="src/app/features/change-history/change-history.types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ChangeOperation</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.types.ts)</span></a>
                         </li>
                         <li>
@@ -509,6 +512,32 @@ be passed just as well as a raw document.</p>
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="../interfaces/RawAuditDoc.html" target="_self" >Pick&lt;RawAuditDoc | &quot;operation&quot; | &quot;diff&quot;&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/api-client/api-client.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="BackendFeatureFlags"></a>
+                    <span class="name "><b>BackendFeatureFlags</b><a href="#BackendFeatureFlags"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Feature flags from the backend&#39;s <code>/actuator/features</code> endpoint;
+sub-features are nested under their parent feature (e.g. <code>admin.api-client</code>).</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>Record&lt;string &amp; { enabled: boolean }&gt; &amp; literal type</code>
 </code>
                 </td>
             </tr>

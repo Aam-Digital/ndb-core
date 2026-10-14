@@ -170,6 +170,9 @@
                             <a href="#ADMIN_APP_ROLE" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ADMIN_APP_ROLE</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#API_CLIENT_ID_PREFIX" title="src/app/features/api-client/api-client.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>API_CLIENT_ID_PREFIX</b>&nbsp;&nbsp;&nbsp;(src/.../api-client.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES" title="src/app/core/config/config.app-initializer.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES</b>&nbsp;&nbsp;&nbsp;(src/.../config.app-initializer.ts)</span></a>
                         </li>
                         <li>
@@ -809,6 +812,12 @@
                             <a href="#routing" title="src/app/core/user/user.routing.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>routing</b>&nbsp;&nbsp;&nbsp;(src/.../user.routing.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#SCOPE_DOCUMENTATION" title="src/app/features/api-client/api-client-scopes.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SCOPE_DOCUMENTATION</b>&nbsp;&nbsp;&nbsp;(src/.../api-client-scopes.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#SCOPE_LABELS" title="src/app/features/api-client/api-client-scopes.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SCOPE_LABELS</b>&nbsp;&nbsp;&nbsp;(src/.../api-client-scopes.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#SECOND_QUERY_BOOKMARK" title="src/app/core/database/pouchdb/pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SECOND_QUERY_BOOKMARK</b>&nbsp;&nbsp;&nbsp;(src/.../pouch-database.ts)</span></a>
                         </li>
                         <li>
@@ -822,6 +831,9 @@
                         </li>
                         <li>
                             <a href="#shadowUrl" title="src/app/features/location/map-utils.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>shadowUrl</b>&nbsp;&nbsp;&nbsp;(src/.../map-utils.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#SINGLE_SIGN_ON_SCOPE" title="src/app/features/api-client/api-client-scopes.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SINGLE_SIGN_ON_SCOPE</b>&nbsp;&nbsp;&nbsp;(src/.../api-client-scopes.ts)</span></a>
                         </li>
                         <li>
                             <a href="#SM" title="src/app/utils/media/screen-size-observer.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>SM</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</span></a>
@@ -1848,6 +1860,41 @@ to avoid breaking note details with a default config from AdminModule</p>
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>Special filter with pre-defined categories of Todo items.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/api-client/api-client.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="API_CLIENT_ID_PREFIX"></a>
+                    <span class="name">
+                        <span ><b>API_CLIENT_ID_PREFIX</b></span>
+                        <a href="#API_CLIENT_ID_PREFIX"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>miscellaneous</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;api-&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Every API client&#39;s client id starts with this (the backend only manages such clients).</p>
 </div>
                 </td>
             </tr>
@@ -11437,6 +11484,117 @@ The name provided to the annotation can then be used in the configuration.</p>
                 <td class="col-md-4">
                     <div class="io-description"><p>RoutingModule for UserModule related routes.
 Separating these routes from the main AppModule routing allows lazy-loading of modules.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/api-client/api-client-scopes.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SCOPE_DOCUMENTATION"></a>
+                    <span class="name">
+                        <span ><b>SCOPE_DOCUMENTATION</b></span>
+                        <a href="#SCOPE_DOCUMENTATION"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Record&lt;string, string&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  reporting_read:
+    &quot;https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/reporting.md#api-access-to-reports&quot;,
+  reporting_write:
+    &quot;https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/reporting.md#api-access-to-reports&quot;,
+  third_party_authentication:
+    &quot;https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/third-party-authentication.md#usage&quot;,
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Documentation for the external system&#39;s developers, per client scope.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SCOPE_LABELS"></a>
+                    <span class="name">
+                        <span ><b>SCOPE_LABELS</b></span>
+                        <a href="#SCOPE_LABELS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Record&lt;string, string&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  reporting_read: $localize&#x60;:API client scope:Read reports and their results&#x60;,
+  reporting_write: $localize&#x60;:API client scope:Calculate reports and get notified of changes (webhooks)&#x60;,
+  third_party_authentication: $localize&#x60;:API client scope:Sign in users from the external system (single sign-on)&#x60;,
+}</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Human-readable labels of the client scopes the backend offers for API clients.
+Scopes not listed here are shown with the description provided by the backend.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SINGLE_SIGN_ON_SCOPE"></a>
+                    <span class="name">
+                        <span ><b>SINGLE_SIGN_ON_SCOPE</b></span>
+                        <a href="#SINGLE_SIGN_ON_SCOPE"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;third_party_authentication&quot;</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The client scope that allows an external system to sign in as any user of the system.</p>
 </div>
                 </td>
             </tr>

@@ -248,8 +248,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="67"
+                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -291,8 +291,8 @@ Make sure a user is logged in before calling this method so that a valid databas
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/demo-data/demo-data-initializer.service.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -342,13 +342,13 @@ import { ADMIN_APP_ROLE } from &quot;../permissions/permission-types&quot;;
  */
 @Injectable()
 export class DemoDataInitializerService {
-  private demoDataService &#x3D; inject(DemoDataService);
-  private localAuthService &#x3D; inject(LocalAuthService);
-  private sessionManager &#x3D; inject(SessionManagerService);
-  private dialog &#x3D; inject(MatDialog);
-  private dbResolver &#x3D; inject(DatabaseResolverService);
-  private loginState &#x3D; inject(LoginStateSubject);
-  private sessionInfo &#x3D; inject(SessionSubject);
+  private readonly demoDataService &#x3D; inject(DemoDataService);
+  private readonly localAuthService &#x3D; inject(LocalAuthService);
+  private readonly sessionManager &#x3D; inject(SessionManagerService);
+  private readonly dialog &#x3D; inject(MatDialog);
+  private readonly dbResolver &#x3D; inject(DatabaseResolverService);
+  private readonly loginState &#x3D; inject(LoginStateSubject);
+  private readonly sessionInfo &#x3D; inject(SessionSubject);
 
   private liveSyncHandle: PouchDB.Replication.Sync&lt;any&gt;;
 
@@ -361,7 +361,8 @@ export class DemoDataInitializerService {
   private readonly adminUser: SessionInfo &#x3D; {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     id: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: [&quot;user_app&quot;, ADMIN_APP_ROLE],
+    // e2e tests can give the demo admin further roles (like window[&quot;e2eDemoData&quot;] for the data)
+    roles: [&quot;user_app&quot;, ADMIN_APP_ROLE, ...(window[&quot;e2eUserRoles&quot;] ?? [])],
     entityId: &#x60;User:${DemoUserGeneratorService.ADMIN_USERNAME}&#x60;,
   };
 

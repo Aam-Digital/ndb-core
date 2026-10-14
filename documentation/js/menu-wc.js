@@ -831,6 +831,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AnonymizeOptionsComponent.html" data-type="entity-link" >AnonymizeOptionsComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ApiClientCredentialsDialogComponent.html" data-type="entity-link" >ApiClientCredentialsDialogComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/ApiClientListComponent.html" data-type="entity-link" >ApiClientListComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/ApplicationLoadingComponent.html" data-type="entity-link" >ApplicationLoadingComponent</a>
                             </li>
                             <li class="link">
@@ -949,6 +955,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/ContextAwareAssistantComponent.html" data-type="entity-link" >ContextAwareAssistantComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/CreateApiClientDialogComponent.html" data-type="entity-link" >CreateApiClientDialogComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/CustomFormLinkButtonComponent.html" data-type="entity-link" >CustomFormLinkButtonComponent</a>
@@ -1953,6 +1962,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/AlertService.html" data-type="entity-link" >AlertService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/ApiClientService.html" data-type="entity-link" >ApiClientService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/AssistantService.html" data-type="entity-link" >AssistantService</a>
                                 </li>
                                 <li class="link">
@@ -2386,6 +2398,21 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/AlertConfig.html" data-type="entity-link" >AlertConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ApiClient.html" data-type="entity-link" >ApiClient</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ApiClientCredentials.html" data-type="entity-link" >ApiClientCredentials</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ApiClientCredentialsDialogData.html" data-type="entity-link" >ApiClientCredentialsDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ApiClientScope.html" data-type="entity-link" >ApiClientScope</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ApiConnectionDetails.html" data-type="entity-link" >ApiConnectionDetails</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/AttendanceFeatureConfig.html" data-type="entity-link" >AttendanceFeatureConfig</a>
