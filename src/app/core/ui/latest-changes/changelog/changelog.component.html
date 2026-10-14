@@ -52,7 +52,7 @@
           ><fa-icon icon="calendar-alt"></fa-icon>
           {{ changelog?.published_at | customDate: "shortDate" }}</span
         >
-        <span class="padding-left-small"
+        <span class="padding-start-small"
           ><fa-icon icon="tag"></fa-icon> {{ changelog?.tag_name }}</span
         >
       </div>
@@ -84,7 +84,7 @@
     mat-raised-button
     [mat-dialog-close]="true"
     i18n="Generic close button"
-    class="remove-margin-left"
+    class="remove-margin-start"
   >
     Close
   </button>

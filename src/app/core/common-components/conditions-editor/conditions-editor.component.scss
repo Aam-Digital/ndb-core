@@ -13,11 +13,19 @@
 }
 
 .field-selector {
-  flex: 0 0 250px;
+  // shrinks before the value input does, but keeps the field name readable
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+
+.operator-select {
+  flex: 0 0 110px;
 }
 
 .value-input {
-  flex: 1;
+  // wraps to its own line rather than being squeezed unreadably narrow
+  flex: 1 1 220px;
+  min-width: 200px;
 }
 
 .hint {

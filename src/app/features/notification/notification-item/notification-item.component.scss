@@ -6,7 +6,7 @@
 
 .notification-details {
   flex: 1;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
 }
 
@@ -34,7 +34,7 @@
   border-radius: 50%;
   box-sizing: border-box;
   display: inline-block;
-  margin-right: 8px;
+  margin-inline-end: 8px;
   cursor: pointer;
 }
 
@@ -50,7 +50,7 @@
 }
 
 .menu-option {
-  margin-left: 12px;
+  margin-inline-start: 12px;
 }
 
 .read-notification {

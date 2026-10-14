@@ -1281,10 +1281,6 @@
       },
       "_id": "view:attendance/recurring-activity/:id"
     },
-    "view:report": {
-      "component": "Reporting",
-      "_id": "view:report"
-    },
     "view:help": {
       "component": "MarkdownPage",
       "config": {
@@ -1479,7 +1475,14 @@
         "numberField": {
           "id": "numberField",
           "label": "Number Field",
-          "dataType": "number"
+          "dataType": "number",
+          "displayCondition": {
+            "enumDropdown": {
+              "$in": [
+                "C1"
+              ]
+            }
+          }
         },
         "longTextField": {
           "id": "longTextField",
@@ -1644,7 +1647,14 @@
                         "dateWithAgeField",
                         "monthField",
                         "dateField"
-                      ]
+                      ],
+                      "displayCondition": {
+                        "enumDropdown": {
+                          "$in": [
+                            "C2"
+                          ]
+                        }
+                      }
                     },
                     {
                       "fields": [
@@ -1772,9 +1782,6 @@
           "label": "Contact"
         }
       }
-    },
-    "view:matching": {
-      "component": "MatchingEntities"
     },
     "appConfig:matching-entities": {
       "columns": [

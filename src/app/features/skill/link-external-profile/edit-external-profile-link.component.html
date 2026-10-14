@@ -67,10 +67,7 @@
           @if (isLoading()) {
             <div style="display: flex">
               <label i18n>loading data...</label>
-              <mat-spinner
-                diameter="18"
-                style="margin-left: 12px"
-              ></mat-spinner>
+              <mat-spinner diameter="18" class="loading-spinner"></mat-spinner>
             </div>
           } @else {
             <span i18n>Update data</span>

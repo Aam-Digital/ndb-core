@@ -24,13 +24,18 @@ import { ImportProcessingContext } from "../../import/import-processing-context"
 import { splitArrayValue } from "../../import/split-array-value";
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Entity } from "../../entity/model/entity";
 import {
   ColumnImportInput,
   ExportColumnMapping,
+  ExportContext,
   referenceIdConditions,
 } from "../../entity/default-datatype/default.datatype";
 import type { DataFilter } from "../../filter/filters/filters";
+import {
+  EXPORT_BATCH_SIZE,
+  loadReadableEntityName,
+} from "../../export/readable-entity-name";
+import { mapInBatches } from "../../../utils/utils";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { asArray } from "../../../utils/asArray";
 
@@ -80,8 +85,16 @@ export class EntityDatatype extends StringDatatype {
       {
         keySuffix: "_readable",
         label: schemaField.label + " (readable)",
-        resolveValue: async (value: string | string[]) =>
-          this.loadRelatedEntitiesToString(value, schemaField),
+        resolveValue: async (
+          value: string | string[],
+          _schemaField,
+          context?: ExportContext,
+        ) =>
+          this.loadRelatedEntitiesToString(
+            value,
+            schemaField,
+            context?.entityNameCache,
+          ),
       },
     ];
   }
@@ -398,23 +411,19 @@ export class EntityDatatype extends StringDatatype {
   private async loadRelatedEntitiesToString(
     value: string | string[],
     schemaField: EntitySchemaField,
+    cache?: Map<string, Promise<string>>,
   ): Promise<string[]> {
     if (!value) return [];
 
-    const relatedEntitiesToStrings: string[] = [];
-
     const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
-    for (const relatedEntityId of relatedEntitiesIds) {
-      const entityType =
-        Entity.extractTypeFromId(relatedEntityId) || schemaField.additional;
-      const relatedEntity = await this.entityMapper
-        .load(entityType, relatedEntityId)
-        .catch(() => undefined);
-
-      relatedEntitiesToStrings.push(relatedEntity?.toString() ?? "<not_found>");
-    }
-
-    return relatedEntitiesToStrings;
+    return mapInBatches(relatedEntitiesIds, EXPORT_BATCH_SIZE, (id) =>
+      loadReadableEntityName(
+        this.entityMapper,
+        schemaField.additional,
+        id,
+        cache,
+      ),
+    );
   }
 }
 

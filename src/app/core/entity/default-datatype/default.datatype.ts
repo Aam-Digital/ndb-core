@@ -34,6 +34,14 @@ export interface ColumnImportInput {
 }
 
 /**
+ * State shared by all `resolveValue` calls of one export run.
+ */
+export interface ExportContext {
+  /** Readable names of referenced entities, so each one is loaded only once per export. */
+  entityNameCache: Map<string, Promise<string>>;
+}
+
+/**
  * Definition of an export column contributed by a datatype.
  *
  * Each datatype's `getExportColumns` returns an array of these,
@@ -57,6 +65,7 @@ export interface ExportColumnMapping<EntityType = any> {
   resolveValue: (
     value: EntityType,
     schemaField: EntitySchemaField,
+    context?: ExportContext,
   ) => Promise<any> | any;
 }
 

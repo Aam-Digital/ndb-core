@@ -4,7 +4,7 @@
     cdkDropList
     (cdkDropListDropped)="dropFieldGroups($event)"
     cdkDropListOrientation="mixed"
-    class="flex-grow padding-right-regular drop-list"
+    class="flex-grow padding-end-regular drop-list"
     [class.admin-grid-layout]="!fieldsOnlyMode()"
     [class.fieldsOnlyMode]="fieldsOnlyMode()"
   >
@@ -24,7 +24,14 @@
               [title]="group.header"
               (titleChange)="updateGroupHeader(i, $event)"
               (remove)="removeGroup(i)"
-            ></app-admin-section-header>
+            >
+              <app-admin-display-condition-button
+                target="fieldGroup"
+                [entityType]="entityType()"
+                [condition]="group.displayCondition"
+                (conditionChange)="updateGroupDisplayCondition(group, $event)"
+              ></app-admin-display-condition-button>
+            </app-admin-section-header>
           </div>
         }
         <div
