@@ -9,6 +9,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from "@angular/core";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -75,6 +76,7 @@ export interface AffectedEntity {
     EntityFieldEditComponent,
     EntityBlockComponent,
     EntityFieldLabelPipe,
+    FontAwesomeModule,
     MatButton,
     MatDialogModule,
   ],

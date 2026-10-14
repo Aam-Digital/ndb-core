@@ -30,9 +30,12 @@
             [hideInheritButton]="true"
           ></app-entity-field-edit>
           @if (entity.hasNoCommonValue) {
-            <div class="hint-text" i18n>
-              The linked records have no value in common, so no new value is
-              suggested. The current value is kept unless you change it here.
+            <div class="hint-text no-common-value-warning">
+              <fa-icon icon="warning"></fa-icon>
+              <span i18n>
+                The linked records have no value in common, so no new value is
+                suggested. The current value is kept unless you change it here.
+              </span>
             </div>
           }
           @if (entity.addToExisting) {
