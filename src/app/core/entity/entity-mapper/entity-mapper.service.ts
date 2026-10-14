@@ -100,6 +100,15 @@ export class EntityMapperService {
   }
 
   /**
+   * Whether {@link findType} can be used for this entity type.
+   * Otherwise (e.g. a local database) use {@link loadType} and filter the records.
+   */
+  public supportsFind(entityType: EntityConstructor | string): boolean {
+    const ctor = this.resolveConstructor(entityType);
+    return this.dbResolver.getDatabase(ctor.DATABASE).supportsFind();
+  }
+
+  /**
    * Similar to loadType but allows supports filtering, pagination and sorting.
    *
    * Pagination uses a `bookmark` cursor (see {@link Database.find}): pass the

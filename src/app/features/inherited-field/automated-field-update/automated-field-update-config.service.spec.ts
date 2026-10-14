@@ -640,6 +640,74 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(mockDialog.open).not.toHaveBeenCalled();
     });
 
+    describe("if the database supports queries", () => {
+      beforeEach(() => {
+        vi.spyOn(entityMapper, "supportsFind").mockReturnValue(true);
+      });
+
+      it("loads only the sub-actions of the parent with a query instead of all records", async () => {
+        const findType = vi.spyOn(entityMapper, "findType");
+
+        await saveSubActionTags(
+          ["health", "education"],
+          ["education"],
+          [],
+          [["water"]],
+        );
+
+        expect(findType).toHaveBeenCalled();
+        expect(findType.mock.calls[0][0]).toBe("AggregatingAction");
+        // matches both a single reference and a list of references to the parent
+        expect(findType.mock.calls[0][1]).toEqual({
+          $or: [
+            { parentAction: expect.any(String) },
+            { parentAction: { $elemMatch: { $eq: expect.any(String) } } },
+          ],
+        });
+        expect(
+          mockDialog.open.mock.calls[0][1].data.entities[0].newValue,
+        ).toEqual(["health"]);
+      });
+
+      it("considers the values of sub-actions on every page of the results", async () => {
+        const parent = new AggregatingAction();
+        parent.tags = toTags(["health", "education"]);
+        const subAction = createSubAction(parent, ["education"]);
+        subAction._rev = "1-existing";
+        entityMapper.addAll([parent, subAction]);
+        const fullPage = Array.from({ length: 500 }, () =>
+          createSubAction(parent, ["water"]),
+        );
+        const lastPage = [createSubAction(parent, ["education"])];
+        const findType = vi
+          .spyOn(entityMapper, "findType")
+          .mockResolvedValueOnce({ records: fullPage, bookmark: "next" })
+          .mockResolvedValueOnce({ records: lastPage, bookmark: "end" });
+        const subActionBefore = subAction.copy();
+        subAction.tags = toTags([]);
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(subAction, subActionBefore);
+
+        // "education" is still used by a sub-action on the second page
+        expect(findType.mock.calls[1][2]).toEqual({
+          limit: 500,
+          bookmark: "next",
+        });
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      });
+
+      it("does not remove values if the query fails", async () => {
+        vi.spyOn(entityMapper, "findType").mockRejectedValueOnce(
+          new Error("no access"),
+        );
+
+        await saveSubActionTags(["health", "education"], ["education"], []);
+
+        expect(mockDialog.open).not.toHaveBeenCalled();
+      });
+    });
+
     describe("updating the linked parent from the sub-action", () => {
       function createLinkedSubAction(
         parentTags: string[],

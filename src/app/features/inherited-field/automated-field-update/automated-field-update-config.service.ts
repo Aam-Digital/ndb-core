@@ -20,6 +20,9 @@ import {
   isEmptyValue,
 } from "../add-missing-values";
 
+/** Number of records requested per query when loading the records that link to an entity. */
+const LINKED_RECORDS_PAGE_SIZE = 500;
+
 /**
  * Represents a rule with its associated entity type and field information
  */
@@ -329,9 +332,14 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<AffectedEntity[]> {
     const { rule, entityType } = affectedRule;
 
-    // Load all entities of target type and filter for those referencing source entity
-    const allTargetEntities = await this.entityMapper.loadType(entityType);
-    const targetEntities = allTargetEntities.filter(
+    // a list of references (see the rule for several parents) is not supported yet, only a single reference
+    const targetEntities = (
+      await this.loadRecordsLinkingTo(
+        entityType,
+        rule.sourceReferenceField,
+        sourceEntity.getId(),
+      )
+    ).filter(
       (entity) => entity[rule.sourceReferenceField] === sourceEntity.getId(),
     );
 
@@ -478,16 +486,56 @@ export class AutomatedFieldUpdateConfigService {
     entity: Entity,
     rule: DefaultValueConfigInheritedField,
   ): Promise<any[]> {
-    const linkedRecords = (
-      await this.entityMapper.loadType(rule.sourceReferenceEntity)
-    ).filter((record) =>
-      asArray(record[rule.sourceReferenceField]).includes(entity.getId()),
+    const linkedRecords = await this.loadRecordsLinkingTo(
+      rule.sourceReferenceEntity,
+      rule.sourceReferenceField,
+      entity.getId(),
     );
     return linkedRecords.reduce(
       (values, record) =>
         addMissingValues(values, this.calculateNewValue(record, rule)),
       [],
     );
+  }
+
+  /**
+   * Load the records of the given type that reference the given entity in the given field
+   * (a single reference or a list of references).
+   *
+   * If the database supports queries only the matching records are loaded,
+   * otherwise all records of the type are loaded locally and filtered.
+   */
+  private async loadRecordsLinkingTo(
+    entityType: string | EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise<Entity[]> {
+    const isLinking = (record: Entity) =>
+      asArray(record[referenceField]).includes(entityId);
+    if (!this.entityMapper.supportsFind(entityType)) {
+      return (await this.entityMapper.loadType(entityType)).filter(isLinking);
+    }
+
+    // a list of references is only matched by $elemMatch, a single reference by equality
+    const filter = {
+      $or: [
+        { [referenceField]: entityId },
+        { [referenceField]: { $elemMatch: { $eq: entityId } } },
+      ],
+    };
+    const linkingRecords: Entity[] = [];
+    let bookmark: string | undefined;
+    let page: Entity[];
+    do {
+      const result = await this.entityMapper.findType(entityType, filter, {
+        limit: LINKED_RECORDS_PAGE_SIZE,
+        bookmark,
+      });
+      page = result.records;
+      bookmark = result.bookmark;
+      linkingRecords.push(...page);
+    } while (page.length === LINKED_RECORDS_PAGE_SIZE);
+    return linkingRecords.filter(isLinking);
   }
 
   /**
