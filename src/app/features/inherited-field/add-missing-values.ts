@@ -2,6 +2,17 @@ import { differenceWith, isEqual, uniqWith } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 
 /**
+ * Whether the value is empty, i.e. not set or an empty text or list.
+ */
+export function isEmptyValue(value: any): boolean {
+  return (
+    value == null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0)
+  );
+}
+
+/**
  * Append the given values to the existing values, skipping any duplicates.
  * @param existingValues values already set (database format)
  * @param valuesToAdd new values to be added (database format)

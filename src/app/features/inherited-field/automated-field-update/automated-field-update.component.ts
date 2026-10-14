@@ -55,6 +55,9 @@ export interface AffectedEntity {
 
   /** Whether the new value only adds to the existing values (never removing any) */
   addToExisting?: boolean;
+
+  /** Whether the affected entity is no longer linked to the changed entity */
+  unlinked?: boolean;
 }
 
 /**

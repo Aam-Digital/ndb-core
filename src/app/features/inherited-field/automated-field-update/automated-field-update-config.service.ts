@@ -17,6 +17,7 @@ import {
   addAndRemoveValues,
   addMissingValues,
   getRemovedValues,
+  isEmptyValue,
 } from "../add-missing-values";
 
 /**
@@ -61,7 +62,9 @@ export class AutomatedFieldUpdateConfigService {
 
     const relevantDirectRules: AffectedRule[] =
       this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
-        (r) => changedFieldIds.includes(r.rule.sourceValueField),
+        (r) =>
+          changedFieldIds.includes(r.rule.sourceValueField) ||
+          changedFieldIds.includes(r.rule.sourceReferenceField),
       );
     const relevantIndirectRules: AffectedRule[] =
       this.getInheritanceRulesReferencingThisEntity(
@@ -72,7 +75,12 @@ export class AutomatedFieldUpdateConfigService {
       ...(
         await Promise.all(
           relevantDirectRules.map((rule) =>
-            this.loadAffectedEntitiesForRule(rule, entity, entityBeforeChanges),
+            this.loadAffectedEntitiesForRule(
+              rule,
+              entity,
+              entityBeforeChanges,
+              changedFieldIds.includes(rule.rule.sourceValueField),
+            ),
           ),
         )
       ).flat(),
@@ -210,33 +218,105 @@ export class AutomatedFieldUpdateConfigService {
   /**
    * Load affected entities for a single automation rule (direct references)
    * Source entity has reference field pointing TO target entities
+   * @param valueChanged whether the source value changed (all linked entities are affected),
+   *   or only the link (then only newly linked entities get the value, and unlinked ones may lose it)
    */
   private async loadAffectedEntitiesForRule(
     affectedRule: AffectedRule,
     sourceEntity: Entity,
     sourceEntityBeforeChanges: Entity,
+    valueChanged = true,
   ): Promise<AffectedEntity[]> {
     const { rule, entityType } = affectedRule;
 
-    const referencedEntityIds = sourceEntity[rule.sourceReferenceField];
-    if (!referencedEntityIds) return [];
+    const linkedIds = this.getLinkedIds(sourceEntity, rule);
+    const previousIds = sourceEntityBeforeChanges.isNew
+      ? []
+      : this.getLinkedIds(sourceEntityBeforeChanges, rule);
+    // a changed link alone only passes on a value that is set, instead of clearing the value of the new parent
+    const idsToUpdate = valueChanged
+      ? linkedIds
+      : linkedIds.filter(
+          (id) =>
+            !previousIds.includes(id) &&
+            !isEmptyValue(this.calculateNewValue(sourceEntity, rule)),
+        );
 
     const targetEntities = await this.loadEntitiesByIds(
       entityType,
-      asArray(referencedEntityIds),
+      idsToUpdate,
+    );
+    const previouslyLinkedTargets = targetEntities.filter((target) =>
+      previousIds.includes(target.getId()),
     );
 
-    return this.processTargetEntities(
-      targetEntities,
-      affectedRule,
-      sourceEntity,
-      await this.loadRemovedValues(
+    return [
+      ...this.processTargetEntities(
         targetEntities,
         affectedRule,
         sourceEntity,
-        sourceEntityBeforeChanges,
+        await this.loadRemovedValues(
+          previouslyLinkedTargets,
+          affectedRule,
+          getRemovedValues(
+            sourceEntityBeforeChanges.isNew
+              ? []
+              : this.calculateNewValue(sourceEntityBeforeChanges, rule),
+            this.calculateNewValue(sourceEntity, rule),
+          ),
+        ),
       ),
+      ...(await this.loadAffectedEntitiesForUnlinkedEntities(
+        affectedRule,
+        sourceEntityBeforeChanges,
+        previousIds.filter((id) => !linkedIds.includes(id)),
+      )),
+    ];
+  }
+
+  private getLinkedIds(
+    entity: Entity,
+    rule: DefaultValueConfigInheritedField,
+  ): string[] {
+    const referencedIds = entity[rule.sourceReferenceField];
+    return referencedIds ? asArray(referencedIds) : [];
+  }
+
+  /**
+   * Load the entities that the source entity is no longer linked to,
+   * to suggest removing the values only the source entity contributed to their collected field.
+   */
+  private async loadAffectedEntitiesForUnlinkedEntities(
+    affectedRule: AffectedRule,
+    sourceEntityBeforeChanges: Entity,
+    unlinkedIds: string[],
+  ): Promise<AffectedEntity[]> {
+    const { rule, entityType, fieldId } = affectedRule;
+    if (
+      unlinkedIds.length === 0 ||
+      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
+    ) {
+      return [];
+    }
+
+    const unlinkedTargets = await this.loadEntitiesByIds(
+      entityType,
+      unlinkedIds,
     );
+    return this.processTargetEntities(
+      unlinkedTargets,
+      affectedRule,
+      sourceEntityBeforeChanges,
+      await this.loadRemovedValues(
+        unlinkedTargets,
+        affectedRule,
+        getRemovedValues(
+          this.calculateNewValue(sourceEntityBeforeChanges, rule),
+          [],
+        ),
+      ),
+      [],
+    ).map((affectedEntity) => ({ ...affectedEntity, unlinked: true }));
   }
 
   /**
@@ -263,23 +343,16 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Find the values that were removed from the source entity and are not used by any other entity linking to the same target,
+   * Find the values that the source entity no longer has and that are not used by any other entity linking to the same target,
    * for fields that collect the values of their linked entities (i.e. these values can be removed from the target).
+   * @param removedValues the values that the source entity lost for the target entities
    * @return the values to remove by target entity id
    */
   private async loadRemovedValues(
     targetEntities: Entity[],
     { rule, entityType, fieldId }: AffectedRule,
-    sourceEntity: Entity,
-    sourceEntityBeforeChanges: Entity,
+    removedValues: any[],
   ): Promise<Map<string, any[]>> {
-    // values of a new entity have never been collected, even if it was pre-filled
-    const removedValues = getRemovedValues(
-      sourceEntityBeforeChanges.isNew
-        ? []
-        : this.calculateNewValue(sourceEntityBeforeChanges, rule),
-      this.calculateNewValue(sourceEntity, rule),
-    );
     if (
       removedValues.length === 0 ||
       !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
@@ -322,6 +395,7 @@ export class AutomatedFieldUpdateConfigService {
     }: AffectedRule,
     sourceEntity: Entity,
     removedValues: Map<string, any[]> = new Map(),
+    valuesToAdd: any = this.calculateNewValue(sourceEntity, rule),
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
@@ -344,7 +418,7 @@ export class AutomatedFieldUpdateConfigService {
       );
       const newValue = combineWithCurrentValue(
         currentValue,
-        this.calculateNewValue(sourceEntity, rule),
+        valuesToAdd,
         removedValues.get(targetEntity.getId()),
       );
       if (isEqual(currentValue, newValue)) continue;
