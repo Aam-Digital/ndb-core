@@ -47,27 +47,17 @@ export class ApiClientCredentialsDialogComponent {
   constructor() {
     const connection = this.apiClientService.getConnectionDetails();
     this.fields = [
-      {
-        label: $localize`API base URL`,
-        value: connection.apiBaseUrl,
-        copyLabel: $localize`Copy API base URL`,
-      },
-      {
-        label: $localize`Token URL`,
-        value: connection.tokenUrl,
-        copyLabel: $localize`Copy token URL`,
-      },
-      {
-        label: $localize`Client ID`,
-        value: this.data.credentials.clientId,
-        copyLabel: $localize`Copy client ID`,
-      },
+      { label: $localize`API base URL`, value: connection.apiBaseUrl },
+      { label: $localize`Token URL`, value: connection.tokenUrl },
+      { label: $localize`Client ID`, value: this.data.credentials.clientId },
       {
         label: $localize`Client secret`,
         value: this.data.credentials.clientSecret,
-        copyLabel: $localize`Copy client secret`,
       },
-    ];
+    ].map((field) => ({
+      ...field,
+      copyLabel: $localize`:aria label of a copy button:Copy ${field.label}:fieldName:`,
+    }));
   }
 
   copy(value: string) {

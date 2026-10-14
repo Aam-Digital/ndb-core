@@ -64,4 +64,16 @@ describe("ApiClientCredentialsDialogComponent", () => {
 
     expect(copy).toHaveBeenCalledWith("all the details");
   });
+
+  it("names what each copy button copies, for screen readers", async () => {
+    await (
+      await loader.getHarness(
+        MatButtonHarness.with({
+          selector: '[aria-label="Copy Client secret"]',
+        }),
+      )
+    ).click();
+
+    expect(copy).toHaveBeenCalledWith("s3cret");
+  });
 });
