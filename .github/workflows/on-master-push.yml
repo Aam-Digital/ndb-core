@@ -44,6 +44,7 @@ jobs:
   # Creates the prerelease `X.Y.Z-edge.N` (manual release mode, see Aam-Digital/.github), once there is a
   # releasable change since the last full release. The image is built by release-published.yml.
   pre-release:
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
     needs:
       - qa
       - qa-e2e
