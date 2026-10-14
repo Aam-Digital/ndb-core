@@ -1,10 +1,10 @@
 /*
- * returns a gradient that draws a little triangle on the top-right
- * corner (if used as background)
+ * returns a gradient that draws a little triangle on the corner at the top of the
+ * reading-end side (if used as background), i.e. top-right in LTR, top-left in RTL
  */
-@function top-right-triangle($color, $threshold: 85%) {
+@function top-inline-end-triangle($color, $threshold: 85%) {
   @return linear-gradient(
-    45deg,
+    calc(45deg * var(--text-x-direction, 1)),
     transparent 0%,
     transparent $threshold,
     $color $threshold,
