@@ -25,6 +25,8 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import { resolveLocaleText } from "../../../language/active-locale";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -59,9 +61,15 @@ import {
   styleUrl: "./admin-tabs.component.scss",
 })
 export class AdminTabsComponent<
-  E extends { title: string } | { name: string },
+  E extends { title: TranslatableText } | { name: TranslatableText },
 > {
   tabs = model<E[]>([]);
+
+  /**
+   * Whether tab titles may be configured in several languages.
+   * Off by default - a list view's column group name doubles as its identifier.
+   */
+  translatableTitle = input<boolean>(false);
   newTabFactory = input<() => E>(
     () => ({ [this.tabTitleProperty()]: "" }) as E,
   );
@@ -73,6 +81,12 @@ export class AdminTabsComponent<
     }
     return tabs[0].hasOwnProperty("name") ? "name" : "title";
   });
+
+  /** the tab's title as text - a translatable title may hold a per-language map */
+  tabTitle(tab: E): string {
+    const title: TranslatableText = tab[this.tabTitleProperty()];
+    return resolveLocaleText(title) ?? "";
+  }
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })
   tabTemplate: TemplateRef<any>;

@@ -1316,7 +1316,10 @@
         },
         "projectNumber": {
           "dataType": "string",
-          "label": "Project Number",
+          "label": {
+            "en-US": "Project Number",
+            "de": "Projektnummer"
+          },
           "labelShort": "PN",
           "searchable": true,
           "anonymize": "retain",

@@ -1,0 +1,26 @@
+<h1 matDialogTitle i18n="title of the translations popup dialog">
+  Configure translations
+</h1>
+<app-dialog-close (click)="onCancel()"></app-dialog-close>
+
+<mat-dialog-content class="dialog-content">
+  @if (data.fieldLabel) {
+    <p i18n>Translations for "{{ data.fieldLabel }}"</p>
+  }
+
+  @for (row of rows; track row.locale) {
+    <mat-form-field class="full-width">
+      <mat-label>{{ row.localeLabel }}</mat-label>
+      <input matInput [(ngModel)]="row.text" [name]="row.locale" />
+    </mat-form-field>
+  }
+
+  <p class="hint-text" i18n>
+    Languages left empty fall back to the text of the default language.
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="onSave()" i18n>Save</button>
+  <button mat-raised-button (click)="onCancel()" i18n>Cancel</button>
+</mat-dialog-actions>

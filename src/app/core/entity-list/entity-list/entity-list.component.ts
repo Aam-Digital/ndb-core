@@ -58,6 +58,9 @@ import { PublicFormsService } from "#src/app/features/public-form/public-forms.s
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
+import { resolveLocaleText } from "../../language/active-locale";
+import { TranslatableText } from "../../config/multi-lingual-config";
+import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import {
   FeaturePermissionDialogComponent,
   FeaturePermissionDialogData,
@@ -125,7 +128,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   /** the audit data the change log reads, as the permission subject to ask about */
   protected readonly auditRecordType = AuditRecord.ENTITY_TYPE;
 
-  public publicFormConfigs: PublicFormConfig[] = [];
+  /** public forms for this entity type, with titles resolved for display */
+  public publicForms: { config: PublicFormConfig; title: string }[] = [];
 
   /**
    * Whether the current user may import records of this type.
@@ -192,6 +196,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   columns = input<(FormFieldConfig | string)[]>([]);
   columnGroups = input<ColumnGroupsConfig>();
   groups: GroupConfig[] = [];
+  /** the same groups with their names resolved, for the tab labels */
+  displayGroups: { name: string; columns: string[] }[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
   filters = input<FilterConfig[]>([]);
@@ -270,12 +276,17 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   private async loadPublicFormConfig() {
     const allForms = await this.publicFormsService.getAllPublicFormConfigs();
-    this.publicFormConfigs = allForms.filter(
-      (config) =>
-        config.entity &&
-        config.entity.toLowerCase() ===
-          this.entityConstructor()?.ENTITY_TYPE?.toLowerCase(),
-    );
+    this.publicForms = allForms
+      .filter(
+        (config) =>
+          config.entity &&
+          config.entity.toLowerCase() ===
+            this.entityConstructor()?.ENTITY_TYPE?.toLowerCase(),
+      )
+      .map((config) => ({
+        config,
+        title: resolveLocaleText(config.title) ?? "",
+      }));
     this.cdr.markForCheck();
   }
 
@@ -323,15 +334,17 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
+      // the fallback needs a text that matches the first group in some language
+      const firstGroup = resolveLocaleText(columnGroup.groups[0].name) ?? "";
       this.defaultColumnGroup =
         columnGroup.default && this.configuredTabExists(columnGroup.default)
           ? columnGroup.default
-          : columnGroup.groups[0].name;
+          : firstGroup;
 
       this.mobileColumnGroup =
         columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
           ? columnGroup.mobile
-          : columnGroup.groups[0].name;
+          : firstGroup;
     } else {
       this.groups = [
         {
@@ -344,10 +357,25 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
     }
+
+    this.displayGroups = this.groups.map((group) => ({
+      ...group,
+      name: resolveLocaleText(group.name) ?? "",
+    }));
   }
 
   private configuredTabExists(groupName: string): boolean {
-    return this.groups.some((group) => group.name === groupName);
+    return this.groups.some((group) =>
+      this.groupNameMatches(group.name, groupName),
+    );
+  }
+
+  /** Whether a group's name is the text `columnGroups.default`/`.mobile` references, in any language. */
+  private groupNameMatches(name: TranslatableText, reference: string): boolean {
+    if (typeof name === "string" || name == null) {
+      return name === reference;
+    }
+    return Object.values(name).includes(reference);
   }
 
   applyFilter(filterValue: string) {
@@ -363,7 +391,17 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   }
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
-    return this.groups.findIndex((c) => c.name === columnGroupName);
+    // prefer the default language, so another group's translation cannot win
+    const exact = this.groups.findIndex(
+      (c) =>
+        (typeof c.name === "string" ? c.name : c.name?.[DEFAULT_LANGUAGE]) ===
+        columnGroupName,
+    );
+    if (exact !== -1) return exact;
+
+    return this.groups.findIndex((c) =>
+      this.groupNameMatches(c.name, columnGroupName),
+    );
   }
 
   /**

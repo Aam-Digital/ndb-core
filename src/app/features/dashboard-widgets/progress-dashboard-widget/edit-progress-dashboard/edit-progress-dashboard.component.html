@@ -1,12 +1,10 @@
 <div mat-dialog-title style="display: flex">
   <mat-form-field class="title-field margin-top-small">
-    <input
+    <app-translatable-text-input
       [formControl]="title"
-      matInput
-      type="text"
       i18n-placeholder="Edit the progress of one or multiple tasks"
       placeholder="Title"
-    />
+    ></app-translatable-text-input>
     @if (title.hasError("required")) {
       <mat-error i18n> This field is required </mat-error>
     }
@@ -19,13 +17,11 @@
   @for (control of parts.controls; track $index; let index = $index) {
     <div class="entry-wrapper mat-elevation-z1" [formGroup]="$any(control)">
       <mat-form-field class="header-field">
-        <input
+        <app-translatable-text-input
           formControlName="label"
-          matInput
-          type="text"
           i18n-placeholder="The label of a process or task"
           placeholder="Task"
-        />
+        ></app-translatable-text-input>
         @if (control.hasError("required", "label")) {
           <mat-error i18n> This field is required </mat-error>
         }

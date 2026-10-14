@@ -1,20 +1,36 @@
 [
   {
     "_id": "ProgressDashboardConfig:1",
-    "title": "Annual Survey",
+    "title": {
+      "en-US": "Annual Survey",
+      "de": "Jährliche Umfrage",
+      "fr": "Enquête annuelle"
+    },
     "parts": [
       {
-        "label": "Clubs visited",
+        "label": {
+          "en-US": "Clubs visited",
+          "de": "Besuchte Vereine",
+          "fr": "Clubs visités"
+        },
         "currentValue": 12,
         "targetValue": 25
       },
       {
-        "label": "Schools checked",
+        "label": {
+          "en-US": "Schools checked",
+          "de": "Überprüfte Schulen",
+          "fr": "Écoles vérifiées"
+        },
         "currentValue": 18,
         "targetValue": 30
       },
       {
-        "label": "Government Officials met",
+        "label": {
+          "en-US": "Government Officials met",
+          "de": "Getroffene Beamte",
+          "fr": "Fonctionnaires rencontrés"
+        },
         "currentValue": 8,
         "targetValue": 15
       }

@@ -1,4 +1,5 @@
 import { Entity } from "../entity/model/entity";
+import { TranslatableText } from "../config/multi-lingual-config";
 
 /**
  * The configuration for an entity details page
@@ -23,7 +24,7 @@ export interface Panel {
   /**
    * The title of this panel. This should group the contained components.
    */
-  title: string;
+  title: TranslatableText;
 
   /**
    * The configurations for the components in this panel.
@@ -43,7 +44,7 @@ export interface PanelComponent {
   /**
    * An optional second title for only this component.
    */
-  title?: string;
+  title?: TranslatableText;
 
   /**
    * The name of the component. When registered, this usually is the name of the

@@ -29,7 +29,8 @@
       {
         "subject": [
           "NotificationConfig",
-          "NotificationEvent"
+          "NotificationEvent",
+          "UserSettings"
         ],
         "action": "manage"
       }

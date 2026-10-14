@@ -3,6 +3,7 @@
 
   <mat-select
     [value]="currentLocale()"
+    [disabled]="disabled()"
     (selectionChange)="changeLocale($event.value)"
   >
     @for (locale of availableLocales(); track locale.id) {
@@ -11,4 +12,8 @@
       </mat-option>
     }
   </mat-select>
+
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
+  }
 </mat-form-field>

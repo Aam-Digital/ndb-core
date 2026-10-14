@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, LOCALE_ID } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -7,6 +7,9 @@ import { Logging } from "../logging/logging.service";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
+import { resolveTranslatableConfig } from "./multi-lingual-config";
+import { DEFAULT_LANGUAGE } from "../language/language-statics";
+import { availableLocales } from "../language/languages";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -31,6 +34,17 @@ export class ConfigService extends LatestEntityLoader<Config> {
     DefaultConfigMigrationRegistryService,
   );
 
+  /**
+   * The current config with all multi-lingual values resolved to the active
+   * locale. This is the display view returned by
+   * getConfig()/getAllConfigs(); currentConfig stays raw (translation maps
+   * intact) as the persisted source of truth.
+   */
+  private resolvedConfigData: Record<string, any>;
+
+  private readonly locale = inject(LOCALE_ID);
+  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
+
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
   constructor(
@@ -53,6 +67,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
       }
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
       this.currentConfig = this.applyMigrations(config);
+      this.resolvedConfigData = resolveTranslatableConfig(
+        this.currentConfig.data,
+        this.locale,
+        DEFAULT_LANGUAGE,
+        this.validLocaleIds,
+      );
       this.logConfigRev();
     });
 
@@ -140,25 +160,61 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return rawObject ? JSON.parse(value) : value;
   }
 
+  /**
+   * Get a config item, with any multi-lingual values resolved to the active locale.
+   *
+   * Use getRawConfig() instead if you will edit the value and save it back to the
+   * config document, otherwise translations for other languages would be lost.
+   */
   public getConfig<T>(id: string): T | undefined {
+    return this.resolvedConfigData?.[id];
+  }
+
+  /**
+   * Get a config item with its raw values (multi-lingual maps left intact).
+   * Required for any read-modify-save flow.
+   */
+  public getRawConfig<T>(id: string): T | undefined {
     return this.currentConfig?.data?.[id];
   }
 
   /**
    * Return all config items of the given "type"
-   * (determined by the given prefix of their id).
+   * (determined by the given prefix of their id),
+   * with any multi-lingual values resolved to the active locale.
    *
    * @param prefix The prefix of config items to return (e.g. "view:" or "entity:")
    */
   public getAllConfigs<T>(prefix: string): T[] {
-    if (!this.currentConfig?.data) {
+    return ConfigService.collectConfigsByPrefix<T>(
+      this.resolvedConfigData,
+      prefix,
+    );
+  }
+
+  /**
+   * Like getAllConfigs(), but with raw values (multi-lingual maps left intact).
+   * Required for any read-modify-save flow.
+   */
+  public getAllRawConfigs<T>(prefix: string): T[] {
+    return ConfigService.collectConfigsByPrefix<T>(
+      this.currentConfig?.data,
+      prefix,
+    );
+  }
+
+  private static collectConfigsByPrefix<T>(
+    data: Record<string, any> | undefined,
+    prefix: string,
+  ): T[] {
+    if (!data) {
       return [];
     }
-    const matchingConfigs = [];
-    for (const id of Object.keys(this.currentConfig.data)) {
+    const matchingConfigs: T[] = [];
+    for (const id of Object.keys(data)) {
       if (id.startsWith(prefix)) {
-        this.currentConfig.data[id]._id = id;
-        matchingConfigs.push(this.currentConfig.data[id]);
+        data[id]._id = id;
+        matchingConfigs.push(data[id]);
       }
     }
     return matchingConfigs;

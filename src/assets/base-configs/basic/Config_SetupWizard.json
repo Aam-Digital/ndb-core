@@ -4,12 +4,28 @@
     "openOnStart": false,
     "steps": [
       {
-        "title": "Welcome",
-        "text": "\n# Welcome to Aam Digital!\nWe are here to help you manage your participants' or beneficiaries' details\nand your team's interactions with them.\n\nThe Aam Digital platform is very flexible and you can customize the structures and views\nto exactly fit your project needs.\nThe following steps guide you through the most important configuration options for this.\nAnd you can start working with your data within a few minutes already.\n\nWe also have some tutorials, guides and videos for you: [Aam Digital Support Center](https://chatwoot.help/hc/aam-digital/en)\n\nFeel free to leave this setup wizard in between to explore the existing system first.\nYou can always come back to this view through the \"Setup Wizard\" button at the bottom of the main menu on the left.\nTo dismiss and hide this wizard, go to the last step of the wizard and \"finish\" the setup process."
+        "title": {
+          "en-US": "Welcome",
+          "de": "Willkommen",
+          "fr": "Bienvenue"
+        },
+        "text": {
+          "en-US": "\n# Welcome to Aam Digital!\nWe are here to help you manage your participants' or beneficiaries' details\nand your team's interactions with them.\n\nThe Aam Digital platform is very flexible and you can customize the structures and views\nto exactly fit your project needs.\nThe following steps guide you through the most important configuration options for this.\nAnd you can start working with your data within a few minutes already.\n\nWe also have some tutorials, guides and videos for you: [Aam Digital Support Center](https://chatwoot.help/hc/aam-digital/en)\n\nFeel free to leave this setup wizard in between to explore the existing system first.\nYou can always come back to this view through the \"Setup Wizard\" button at the bottom of the main menu on the left.\nTo dismiss and hide this wizard, go to the last step of the wizard and \"finish\" the setup process.",
+          "de": "# Willkommen bei Aam Digital!\nWir helfen Ihnen, die Daten Ihrer Teilnehmer:innen oder Begünstigten und die Interaktionen Ihres Teams zu verwalten.\n\nDie Aam Digital Plattform ist sehr flexibel und kann genau an Ihre Projektbedürfnisse angepasst werden.\nDie folgenden Schritte führen Sie durch die wichtigsten Konfigurationsoptionen.\nIn wenigen Minuten können Sie schon mit Ihren Daten arbeiten.\n\nWir haben auch Tutorials, Anleitungen und Videos für Sie: [Aam Digital Support Center](https://chatwoot.help/hc/aam-digital/en)\n\nSie können den Einrichtungsassistenten jederzeit unterbrechen und das System erkunden.\nÜber den Button \"Setup Wizard\" im Hauptmenü auf der linken Seite können Sie jederzeit zurückkehren.\nZum endgültigen Ausblenden schließen Sie den Assistenten mit \"Finish\" im letzten Schritt.",
+          "fr": "# Bienvenue sur Aam Digital !\nNous sommes là pour vous aider à gérer les informations de vos bénéficiaires et les interactions de votre équipe avec eux.\n\nLa plateforme Aam Digital est très flexible et peut être adaptée à vos besoins spécifiques de projet.\nLes étapes suivantes vous guideront à travers les options de configuration les plus importantes.\nVous pourrez commencer à utiliser vos données en quelques minutes seulement.\n\nNous avons aussi des tutoriels, des guides et des vidéos pour vous : [Aam Digital Support Center](https://chatwoot.help/hc/aam-digital/en)\n\nN'hésitez pas à quitter cet assistant de configuration à tout moment pour explorer le système.\nVous pouvez toujours revenir via le bouton \"Assistant de configuration\" dans le menu principal à gauche.\nPour désactiver définitivement cet assistant, terminez le processus avec \"Terminer\" à la dernière étape."
+        }
       },
       {
-        "title": "Profiles & Fields",
-        "text": "\nThe system already holds some basic structures for your case management.\nYou can adapt the fields and how the details are displayed.\n\nIf you have further requirements, don't hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).\n\n_Please note that the setup wizard and form builder is still under active development (\"beta\" version).\nSome advanced configuration options are not available here yet for you to configure yourself and may need assistance from the tech support team.\nWe are currently extending and optimizing the user interfaces for these steps._\n",
+        "title": {
+          "en-US": "Profiles & Fields",
+          "de": "Profile & Felder",
+          "fr": "Profils & Champs"
+        },
+        "text": {
+          "en-US": "\nThe system already holds some basic structures for your case management.\nYou can adapt the fields and how the details are displayed.\n\nIf you have further requirements, don't hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).\n\n_Please note that the setup wizard and form builder is still under active development (\"beta\" version).\nSome advanced configuration options are not available here yet for you to configure yourself and may need assistance from the tech support team.\nWe are currently extending and optimizing the user interfaces for these steps._\n",
+          "de": "Das System enthält bereits einige grundlegende Strukturen für Ihr Fallmanagement.\nSie können die Felder und deren Anzeige anpassen.\n\nWenn Sie weitere Anforderungen haben, zögern Sie nicht, uns unter [support@aam-digital.com](mailto:support@aam-digital.com) zu kontaktieren.\n\n_Bitte beachten Sie, dass sich der Einrichtungsassistent und der Formular-Builder noch in der aktiven Entwicklung befinden („Beta“-Version).\nEinige erweiterte Konfigurationsoptionen sind hier noch nicht verfügbar und benötigen eventuell Unterstützung durch unser technisches Support-Team._",
+          "fr": "Le système contient déjà des structures de base pour votre gestion de cas.\nVous pouvez adapter les champs et la manière dont les détails sont affichés.\n\nSi vous avez d'autres besoins, n'hésitez pas à nous contacter à [support@aam-digital.com](mailto:support@aam-digital.com).\n\n_Veuillez noter que l'assistant de configuration et le constructeur de formulaires sont encore en cours de développement actif (version \"bêta\").\nCertaines options de configuration avancées ne sont pas encore disponibles ici et peuvent nécessiter l'assistance de notre équipe technique._"
+        },
         "actions": [
           {
             "label": "Customize Child profile",
@@ -22,8 +38,16 @@
         ]
       },
       {
-        "title": "User Accounts",
-        "text": "\nYou can collaborate on Aam Digital as a team.\nData is synced and all users have access to the latest information.",
+        "title": {
+          "en-US": "User Accounts",
+          "de": "Benutzerkonten",
+          "fr": "Comptes Utilisateur"
+        },
+        "text": {
+          "en-US": "\nYou can collaborate on Aam Digital as a team.\nData is synced and all users have access to the latest information.",
+          "de": "Sie können Aam Digital als Team gemeinsam nutzen.\nDaten werden synchronisiert und alle Benutzer:innen haben Zugriff auf die neuesten Informationen.",
+          "fr": "Vous pouvez collaborer sur Aam Digital en équipe.\nLes données sont synchronisées et tous les utilisateurs ont accès aux dernières informations."
+        },
         "actions": [
           {
             "label": "Manage User Accounts",
@@ -32,8 +56,16 @@
         ]
       },
       {
-        "title": "Import Data",
-        "text": "\nIf you have exising data from a previous system, you can easily import it.\nSave the data in \".csv\" format (e.g. from MS Excel).\nYou do not need any specific column names in your file to be imported.\nThe Import Module helps your map your spreadsheet data to the relevant fields in your Aam Digital profiles.",
+        "title": {
+          "en-US": "Import Data",
+          "de": "Daten importieren",
+          "fr": "Importer des Données"
+        },
+        "text": {
+          "en-US": "\nIf you have exising data from a previous system, you can easily import it.\nSave the data in \".csv\" format (e.g. from MS Excel).\nYou do not need any specific column names in your file to be imported.\nThe Import Module helps your map your spreadsheet data to the relevant fields in your Aam Digital profiles.",
+          "de": "Wenn Sie bereits vorhandene Daten aus einem früheren System haben, können Sie diese einfach importieren.\nSpeichern Sie die Daten im \".csv\"-Format (z. B. aus MS Excel).\nSie benötigen keine bestimmten Spaltennamen in Ihrer Datei.\nDas Importmodul hilft Ihnen, Ihre Tabellendaten den relevanten Feldern in Aam Digital zuzuordnen.",
+          "fr": "Si vous avez déjà des données provenant d’un ancien système, vous pouvez les importer facilement.\nEnregistrez les données au format \".csv\" (par exemple depuis MS Excel).\nIl n’est pas nécessaire d’avoir des noms de colonnes spécifiques dans votre fichier.\nLe module d’importation vous aide à faire correspondre les données du tableau aux champs pertinents de vos profils Aam Digital."
+        },
         "actions": [
           {
             "label": "Import Data",
@@ -42,8 +74,16 @@
         ]
       },
       {
-        "title": "Done!",
-        "text": "\nThat's it. You are ready to explore your system and start work!\n\nYou can always adapt your setup further, after you started using it.\nWe recommend to keep things simple in the beginning,\nstart using it for some of your tasks\nand then add further fields and adjust your setup.\n\nFeel free to reach out to us with your questions or feedback: [support@aam-digital.com](mailto:support@aam-digital.com)"
+        "title": {
+          "en-US": "Done!",
+          "de": "Fertig!",
+          "fr": "Terminé !"
+        },
+        "text": {
+          "en-US": "\nThat's it. You are ready to explore your system and start work!\n\nYou can always adapt your setup further, after you started using it.\nWe recommend to keep things simple in the beginning,\nstart using it for some of your tasks\nand then add further fields and adjust your setup.\n\nFeel free to reach out to us with your questions or feedback: [support@aam-digital.com](mailto:support@aam-digital.com)",
+          "de": "Das war’s. Sie können das System jetzt erkunden und loslegen!\n\nSie können Ihre Konfiguration jederzeit anpassen, auch nachdem Sie begonnen haben, damit zu arbeiten.\nWir empfehlen, zunächst mit einer einfachen Konfiguration zu starten,\neinige Aufgaben damit zu erledigen\nund dann bei Bedarf weitere Felder und Anpassungen hinzuzufügen.\n\nKontaktieren Sie uns gerne bei Fragen oder Feedback: [support@aam-digital.com](mailto:support@aam-digital.com)",
+          "fr": "C’est tout. Vous êtes prêt à explorer votre système et commencer le travail !\n\nVous pouvez toujours ajuster votre configuration plus tard.\nNous recommandons de garder une configuration simple au début,\ncommencer avec quelques tâches,\npuis ajouter des champs supplémentaires selon vos besoins.\n\nN'hésitez pas à nous contacter pour toute question ou remarque : [support@aam-digital.com](mailto:support@aam-digital.com)"
+        }
       }
     ]
   }
