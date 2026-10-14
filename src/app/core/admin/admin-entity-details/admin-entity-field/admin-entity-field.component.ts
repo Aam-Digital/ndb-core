@@ -152,6 +152,12 @@ export class AdminEntityFieldComponent implements OnInit {
     EntityDatatype.dataType,
   ];
 
+  /** edit components of entity fields that apply a `selectionCondition` (all based on EditEntity) */
+  private static readonly SELECTION_CONDITION_EDIT_COMPONENTS: string[] = [
+    "EditEntity",
+    "EditLegacyAttendance",
+  ];
+
   ngOnInit() {
     this.entityType = this.data.entityType;
     this.initSettings();
@@ -359,11 +365,16 @@ export class AdminEntityFieldComponent implements OnInit {
   /**
    * The record type this field references,
    * if a `selectionCondition` can be applied to the field:
-   * It must reference exactly one type and use the standard entity dropdown (which applies the condition).
+   * It must reference exactly one type and use an edit component based on the entity dropdown (which applies the condition).
    */
   getSelectionConditionTargetType(): EntityConstructor | undefined {
     const editComponent = this.schemaFieldsForm.get("editComponent").value;
-    if (editComponent && editComponent !== "EditEntity") {
+    if (
+      editComponent &&
+      !AdminEntityFieldComponent.SELECTION_CONDITION_EDIT_COMPONENTS.includes(
+        editComponent,
+      )
+    ) {
       return undefined;
     }
 

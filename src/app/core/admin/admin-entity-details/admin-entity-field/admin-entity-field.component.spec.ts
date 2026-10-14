@@ -584,8 +584,13 @@ describe("AdminEntityFieldComponent", () => {
         false,
       ],
       [
-        "a custom edit component not applying the filter",
+        "the legacy attendance editor (based on the entity dropdown)",
         { ...entityRef, editComponent: "EditLegacyAttendance" },
+        true,
+      ],
+      [
+        "a custom edit component not applying the filter",
+        { ...entityRef, editComponent: "EditAttendance" },
         false,
       ],
       [
