@@ -7,13 +7,13 @@
 
 .progress-cell {
   white-space: nowrap;
-  padding-left: sizes.$small;
+  padding-inline-start: sizes.$small;
   text-align: end;
 }
 
 .config-panel {
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   bottom: 0;
   margin: 4px;
 }

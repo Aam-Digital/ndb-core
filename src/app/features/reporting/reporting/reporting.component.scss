@@ -25,17 +25,17 @@
   border: 1px solid colors.$grey-darker;
 
   .header {
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    border-start-start-radius: 12px;
+    border-start-end-radius: 12px;
     background: colors.$error;
     padding: 12px;
     color: colors.$grey-light;
   }
   .content {
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
+    border-end-start-radius: 12px;
+    border-end-end-radius: 12px;
+    padding-inline-start: 12px;
+    padding-inline-end: 12px;
     padding-bottom: 12px;
     background: white;
     font-size: small;

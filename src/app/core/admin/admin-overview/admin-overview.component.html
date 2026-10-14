@@ -118,6 +118,16 @@
       >
         <span matListItemTitle i18n>User Roles & Permissions</span>
       </mat-list-item>
+      @if (isApiAccessAvailable()) {
+        <mat-list-item
+          [routerLink]="['/admin/api-clients']"
+          matTooltip="Create credentials for external systems to access data through the API."
+          i18n-matTooltip
+          matTooltipPosition="before"
+        >
+          <span matListItemTitle i18n>API Access</span>
+        </mat-list-item>
+      }
     </mat-nav-list>
   </mat-expansion-panel>
 

@@ -9,7 +9,7 @@
 .column-menu {
   position: absolute;
   top: 0;
-  right: 0;
+  inset-inline-end: 0;
 }
 
 .table-row:hover {
@@ -21,8 +21,8 @@
      content stays visible while new data is being loaded */
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   z-index: 10;
 }
 
@@ -49,5 +49,5 @@
 .mat-column-__edit {
   flex: 0 0 auto !important;
   width: 78px;
-  padding-right: 0;
+  padding-inline-end: 0;
 }
