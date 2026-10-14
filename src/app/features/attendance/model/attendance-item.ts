@@ -42,7 +42,7 @@ export class AttendanceItem {
 
   @DatabaseField({
     dataType: "entity",
-    label: "Participant",
+    label: $localize`:Attendance remarks field label:Participant`,
   })
   participant?: string;
 
