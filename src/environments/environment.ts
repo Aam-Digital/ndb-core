@@ -33,6 +33,12 @@ export const environment = {
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  /**
+   * The `environment` that remote monitoring files this deployment's events under.
+   * Defaults to "production" for production builds - set it in the `config.json`
+   * of test, demo or preview deployments, so that their events can be told apart.
+   */
+  remoteLoggingEnvironment: undefined as string | undefined,
 
   demo_mode: true,
   session_type: SessionType.mock,
