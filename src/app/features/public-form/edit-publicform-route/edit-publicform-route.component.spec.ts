@@ -54,11 +54,17 @@ describe("EditPublicformRouteComponent", () => {
   it("should show a hint to copy manually if clipboard access is denied", async () => {
     const alertService = TestBed.inject(AlertService);
     vi.spyOn(alertService, "addWarning").mockImplementation(() => undefined);
-    vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
-      new Error("denied"),
-    );
+    vi.stubGlobal("navigator", {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error("denied")) },
+    });
 
     component.copyToClipboard();
-    await vi.waitFor(() => expect(alertService.addWarning).toHaveBeenCalled());
+    try {
+      await vi.waitFor(() =>
+        expect(alertService.addWarning).toHaveBeenCalled(),
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
