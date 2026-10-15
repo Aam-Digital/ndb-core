@@ -259,6 +259,30 @@ describe("AbilityService", () => {
     }
   });
 
+  it("should report a failure to enforce updated rules rather than leave it unhandled", async () => {
+    vi.useFakeTimers();
+    const errorSpy = vi.spyOn(Logging, "error");
+    try {
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      const failure = new Error("enforcement failed");
+      vi.mocked(
+        TestBed.inject(PermissionEnforcerService).enforcePermissionsOnLocalData,
+      ).mockRejectedValue(failure);
+
+      entityUpdates.next({
+        entity: new Config(Config.PERMISSION_KEY, rules),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(errorSpy).toHaveBeenCalledWith(expect.any(String), failure);
+    } finally {
+      vi.useRealTimers();
+      errorSpy.mockRestore();
+    }
+  });
+
   it("should allow to access user properties in the rules", async () => {
     vi.useFakeTimers();
     try {

@@ -100,7 +100,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((rules) => {
         if (this.rulesKnown) {
-          this.updateAbilityWithUserRules(rules);
+          // nobody awaits this: without the catch, a failure would only reach
+          // the global error handler, as an unhandled error without context
+          this.updateAbilityWithUserRules(rules).catch((err) =>
+            Logging.error("Could not apply the updated permission rules", err),
+          );
         } else {
           // While the rules are unknown, a session or user change must not
           // re-derive the permissive fallback and hand it to the enforcer: that
