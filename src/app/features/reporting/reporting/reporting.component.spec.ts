@@ -16,10 +16,12 @@ import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/moc
 import { ReportEntity, SqlReport } from "../report-config";
 import {
   ReportCalculation,
+  ReportCalculationError,
   ReportData,
   SqlReportService,
 } from "../sql-report/sql-report.service";
 import { of } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
 import {
   entityRegistry,
   EntityRegistry,
@@ -360,23 +362,49 @@ describe("ReportingComponent", () => {
     );
   });
 
-  it("should show error when getReportResults returns an error", async () => {
-    // Given
+  it.each<[string, Error, string]>([
+    ["an unexpected error", new Error("foo"), "foo"],
+    [
+      "a request rejected with a backend message",
+      new HttpErrorResponse({
+        status: 400,
+        url: "/report-calculation",
+        error: {
+          errorCode: "BAD_REQUEST",
+          errorMessage: 'reportDefinition[1] needs a non-empty "query"',
+        },
+      }),
+      'reportDefinition[1] needs a non-empty "query"',
+    ],
+    [
+      "a request failed without a backend message",
+      new HttpErrorResponse({ status: 502, url: "/report-calculation" }),
+      "Http failure response for /report-calculation: 502",
+    ],
+    [
+      "a calculation finished with an error",
+      new ReportCalculationError("Invalid ReportCalculation outcome.", {
+        ...validReportCalculation,
+        status: "FINISHED_ERROR",
+        errorDetails: "syntax error at SELEC",
+      }),
+      "Invalid ReportCalculation outcome. syntax error at SELEC",
+    ],
+  ])("shows the details of %s", async (_, error, expectedDetails) => {
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
+    mockSqlReportService.query.mockRejectedValue(error);
 
-    mockSqlReportService.query.mockReturnValue(Promise.reject(Error("foo")));
-
-    // When
     await component.calculateResults(
       report,
       new Date("2023-01-01"),
       new Date("2023-01-01"),
     );
+    fixture.detectChanges();
 
-    // Then
-    expect(component.isError()).toBe(true);
-    expect(component.errorDetails()).not.toBeNull();
+    const errorBox: HTMLElement =
+      fixture.nativeElement.querySelector(".error-message");
+    expect(errorBox.textContent).toContain(expectedDetails);
     expect(component.data()).toEqual([]);
   });
 
