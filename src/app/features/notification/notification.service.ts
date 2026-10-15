@@ -317,8 +317,12 @@ export class NotificationService {
           NotificationEvent.DATABASE,
         );
         if (db instanceof SyncedPouchDatabase) {
+          // sync() already logs its failures
           db.sync().catch((err) =>
-            Logging.warn("Failed sync notifications db upon push message", err),
+            Logging.debug(
+              "Failed sync notifications db upon push message",
+              err,
+            ),
           );
         }
 
