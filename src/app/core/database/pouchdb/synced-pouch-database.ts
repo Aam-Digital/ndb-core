@@ -1,5 +1,6 @@
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../../logging/logging.service";
+import { NamedError } from "../../logging/reported-errors";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { NgZone } from "@angular/core";
 import { RemotePouchDatabase } from "./remote-pouch-database";
@@ -519,12 +520,8 @@ function lastSyncedBatchContext(docIds: string[]): Record<string, unknown> {
 }
 
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {
+class SyncStalledError extends NamedError {
   constructor() {
-    super("Sync cancelled after making no progress");
-    // set explicitly: an Error subclass inherits the name "Error", and the class
-    // name is minified in production - remote monitoring would report this as
-    // "Error: No error message" (see logging module README)
-    this.name = "SyncStalledError";
+    super("SyncStalledError", "Sync cancelled after making no progress");
   }
 }

@@ -1,30 +1,26 @@
 import { environment } from "../../../../environments/environment";
+import { NamedError } from "../../logging/reported-errors";
 
 /**
  * Thrown when an item that the config refers to - a dynamic component, an entity
  * type, a route - is looked up in a {@link Registry} without having been registered.
  *
- * The key is deliberately not part of the message, only carried as a property:
+ * The key is deliberately not part of the message, only reported as a detail:
  * remote monitoring groups this error by its message, and one missing
  * registration rarely comes alone (a config referring to entity types of
  * another setup misses several at once), so a key in the message opens a
- * separate issue per key for what is one problem. The key is attached to the
- * report as extra data instead (see `enrichSentryEvent` in logging.service.ts).
+ * separate issue per key for what is one problem.
  */
-export class RegistryLookupError extends Error {
+export class RegistryLookupError extends NamedError {
   constructor(
     readonly registryName: string,
     readonly key: string,
   ) {
-    super(`Requested item is not registered in ${registryName}`);
-
-    // Set explicitly, and to a literal: remote monitoring reads the exception
-    // type as `error.name || error.constructor.name`. A subclass inherits
-    // "Error" from Error.prototype, so without this the error would be reported
-    // as a plain "Error" and drop out of the fingerprint-based grouping
-    // (CAUSE_GROUPED_ERROR_TYPES in logging.service.ts). The constructor name is
-    // no alternative either - it is minified in production builds.
-    this.name = "RegistryLookupError";
+    super(
+      "RegistryLookupError",
+      `Requested item is not registered in ${registryName}`,
+      { details: { registry: registryName, registryKey: key } },
+    );
   }
 }
 
@@ -36,7 +32,7 @@ export class RegistryLookupError extends Error {
  * it aborts bootstrap - so it reaches remote monitoring through the top-level
  * bootstrap error handler in `main.ts`.
  */
-export class RegistryDuplicateError extends Error {
+export class RegistryDuplicateError extends NamedError {
   constructor(
     readonly registryName: string,
     readonly key: string,
@@ -45,10 +41,11 @@ export class RegistryDuplicateError extends Error {
     // the already-registered element are interpolated here: stringifying the
     // latter dumps a whole class constructor or async import function into
     // the message
-    super(`${registryName}: Duplicate definition of an already registered key`);
-
-    // set explicitly for the same reason as in RegistryLookupError above
-    this.name = "RegistryDuplicateError";
+    super(
+      "RegistryDuplicateError",
+      `${registryName}: Duplicate definition of an already registered key`,
+      { details: { registry: registryName, registryKey: key } },
+    );
   }
 }
 
@@ -96,9 +93,8 @@ export abstract class Registry<T> extends Map<string, T> {
   public override get(key: string): T {
     if (!this.has(key)) {
       // A missing registration is one problem no matter which component, pipe or
-      // route hit it first. The dedicated error type lets remote monitoring group
-      // it by registry instead of by stack trace, which otherwise opens a
-      // separate issue per call site (see CAUSE_GROUPED_ERROR_TYPES).
+      // route hit it first: as a NamedError, remote monitoring groups it by
+      // registry instead of opening a separate issue per call site.
       throw new RegistryLookupError(this.registryName, key);
       // To register a component, add @DynamicComponent("COMPONENTNAME") to the components .ts-file and implement the onInitFromDynamicConfig method, e.g. onInitFromDynamicConfig(config: any) {}
     }
