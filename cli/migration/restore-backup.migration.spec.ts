@@ -95,7 +95,7 @@ describe("restoreBackup migration", () => {
   it("skips a doc whose current version is unknown to the backup if the migration's write was not recorded", async () => {
     const store = seed();
     await migrateConfig(store, "20261015T090000Z", "migrated");
-    const backupKey = Object.keys(store).find((k) => k.includes("_local/"))!;
+    const backupKey = Object.keys(store).find((k) => k.includes("_local/"));
     delete store[backupKey].writtenRev;
 
     const result = await restore(store, ["some-migration"]);

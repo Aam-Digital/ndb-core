@@ -44,12 +44,12 @@ describe("listBackups", () => {
 
   it("loads the docs separately if _local_docs does not include them", async () => {
     const couchdb = buildRevTrackingCouchdb(store);
-    const get = couchdb.get as ReturnType<typeof vi.fn>;
+    const get = vi.mocked(couchdb.get);
     const realGet = get.getMockImplementation()!;
-    get.mockImplementation(async (path: string, ...rest: unknown[]) => {
-      const result = await realGet(path, ...rest);
+    get.mockImplementation(async (path, db) => {
+      const result = await realGet(path, db);
       return path.includes("_local_docs")
-        ? result.map(({ id }: { id: string }) => ({ id }))
+        ? (result as { id: string }[]).map(({ id }) => ({ id }))
         : result;
     });
 

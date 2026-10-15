@@ -45,9 +45,8 @@ export const restoreBackup: MigrationDefinition = {
       requestedRun,
     );
     if (allBackups.length === 0) {
-      ctx.log.info(
-        `No backups of ${migrationId}${requestedRun ? ` run ${requestedRun}` : ""}`,
-      );
+      const run = requestedRun ? " run " + requestedRun : "";
+      ctx.log.info(`No backups of ${migrationId}${run}`);
       return { changed: false, status: "no-change" };
     }
     const runAt = allBackups[allBackups.length - 1].runAt;

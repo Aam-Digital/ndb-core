@@ -34,8 +34,8 @@ export function buildRevTrackingCouchdb(store: RevStore): Couchdb {
       const [docPath, query] = path.split("?");
       if (docPath.endsWith("/_local_docs")) {
         const params = new URLSearchParams(query);
-        const start = JSON.parse(params.get("startkey")!);
-        const end = JSON.parse(params.get("endkey")!);
+        const start = JSON.parse(params.get("startkey"));
+        const end = JSON.parse(params.get("endkey"));
         const dbPrefix = key(docPath).split("/")[0] + "/";
         return Object.entries(store)
           .filter(([k]) => k.startsWith(dbPrefix + "_local/"))
@@ -54,7 +54,7 @@ export function buildRevTrackingCouchdb(store: RevStore): Couchdb {
       if (existing && !existing._deleted && existing._rev !== data._rev) {
         throw httpError(409);
       }
-      const generation = existing ? parseInt(existing._rev!) + 1 : 1;
+      const generation = existing ? parseInt(existing._rev) + 1 : 1;
       const rev = `${generation}-stub`;
       const id = k.slice(k.indexOf("/") + 1);
       store[k] = { ...structuredClone(data), _id: id, _rev: rev };
