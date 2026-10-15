@@ -175,3 +175,29 @@ export function serviceProvider<T>(
     deps: [Injector],
   };
 }
+
+/**
+ * Apply an async function to all items, but only run `batchSize` of them at the same time.
+ *
+ * Unlike a plain `Promise.all(items.map(...))` this does not fire all requests at once, which
+ * can exhaust the browser's resources (`net::ERR_INSUFFICIENT_RESOURCES`) for large lists.
+ * The result keeps the order of the input. If any call rejects, no further batches are started.
+ *
+ * @param items the items to process
+ * @param batchSize maximum number of items processed in parallel
+ * @param fn async function applied to each item
+ */
+export async function mapInBatches<T, R>(
+  items: T[],
+  batchSize: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = [];
+  for (let start = 0; start < items.length; start += batchSize) {
+    const batch = items.slice(start, start + batchSize);
+    results.push(
+      ...(await Promise.all(batch.map((item, i) => fn(item, start + i)))),
+    );
+  }
+  return results;
+}

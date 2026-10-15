@@ -305,7 +305,7 @@ describe("EditEntityComponent", () => {
 
   it("should ignore a value that is not an entity id", async () => {
     // e.g. a misconfigured inherited default value can put a whole object here
-    const warnSpy = vi.spyOn(Logging, "warn");
+    const debugSpy = vi.spyOn(Logging, "debug");
     fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
     component
       .control()
@@ -317,7 +317,31 @@ describe("EditEntityComponent", () => {
     expect(component.availableEntitiesResource.value()).toEqual(
       expect.arrayContaining(test1Entities),
     );
-    expect(warnSpy).toHaveBeenCalled();
+    expect(debugSpy).toHaveBeenCalledWith(
+      expect.stringContaining("non-id value"),
+      expect.anything(),
+    );
+  });
+
+  it("should treat a value that is not an id of a known entity type like an inaccessible record", async () => {
+    const warnSpy = vi.spyOn(Logging, "warn");
+    warnSpy.mockClear();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    vi.spyOn(entityMapper, "load").mockRejectedValue(
+      new Error("Requested item is not registered in EntityRegistry"),
+    );
+    fixture.componentRef.setInput("entityType", TestEntity.ENTITY_TYPE);
+    component.control().setValue(["undefined"]);
+    fixture.detectChanges();
+    await refreshAvailableEntities();
+
+    expect(warnSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining("ENTITY_SELECT"),
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(component.hasInaccessible()).toBe(true);
+    expect(component.control().value).toEqual(["undefined"]);
   });
 
   it("should expose one create option per entity type when multiple types are configured", () => {
