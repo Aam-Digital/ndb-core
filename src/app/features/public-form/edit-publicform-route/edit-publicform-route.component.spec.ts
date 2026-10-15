@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { setupCustomFormControlEditComponent } from "../../../core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { AlertService } from "../../../core/alerts/alert.service";
 import { EditPublicformRouteComponent } from "./edit-publicform-route.component";
 
 describe("EditPublicformRouteComponent", () => {
@@ -48,5 +49,16 @@ describe("EditPublicformRouteComponent", () => {
       expect(formControl.valid).toBe(false);
       expect(formControl.errors?.["pattern"]).toBeTruthy();
     }
+  });
+
+  it("should show a hint to copy manually if clipboard access is denied", async () => {
+    const alertService = TestBed.inject(AlertService);
+    vi.spyOn(alertService, "addWarning").mockImplementation(() => undefined);
+    vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
+      new Error("denied"),
+    );
+
+    component.copyToClipboard();
+    await vi.waitFor(() => expect(alertService.addWarning).toHaveBeenCalled());
   });
 });
