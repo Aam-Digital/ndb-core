@@ -86,7 +86,7 @@ export class ExampleComponent {
 - Use `providedIn: 'root'` for singleton services
 - Design services around single responsibility
 - Use the `inject()` function instead of constructor injection
-- Implement proper error handling and logging
+- Implement proper error handling and logging (see [Error Handling & Remote Logging](#error-handling--remote-logging-sentry))
 - Use dependency injection for testability
 
 ### State Management
@@ -198,6 +198,62 @@ When developing new functionality:
 - Follow WCAG guidelines for accessibility
 - Optimize bundle size with lazy loading
 - Use Angular Material accessibility features
+
+## Error Handling & Remote Logging (Sentry)
+
+`Logging.warn()` / `Logging.error()` and every unhandled error are reported to Sentry. How messages
+are worded, grouped and filtered there is documented in
+[`src/app/core/logging/README.md`](src/app/core/logging/README.md) — read it before changing how
+something is logged.
+
+A Sentry issue should mean "a developer has something to fix". Before adding a log call, decide
+who has to act on the failure:
+
+| Cause                          | Examples                                                                                                                                                                                | Report to Sentry?                       | Instead                                                                   |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------- |
+| Bug in our code                | a `TypeError` in a template, an id built with the wrong entity type                                                                                                                     | yes — `Logging.error` (or let it throw) | —                                                                         |
+| Server or infrastructure fault | an unexpected `400`/`5xx` from our own backend                                                                                                                                          | yes — `Logging.warn`, with the response | tell the user the action failed                                           |
+| User or device environment     | offline / flaky connection, expired session, a record the user may not read, a browser permission the user denied (clipboard, notifications), browser storage evicted                   | no — `Logging.debug`                    | tell the user what happened and what they can do                          |
+| Instance configuration or data | unknown `dataType`, icon or validator in the config; permission rule variable for an account without linked profile; file field pointing to a missing file; optional feature not set up | no — `Logging.debug`                    | make it visible to admins in the UI, and validate config when it is saved |
+
+Rules that keep one root cause in one Sentry issue:
+
+- **Report a failure once.** Either handle it (log, recover, tell the user) or rethrow it — not
+  both. A method that logs and then rethrows makes every caller that does not catch report it a
+  second time, as an unhandled error with a different title and less context (a failed sync showed
+  up as both `sync failed` and `Error: No error message`). Likewise, when a service already logged a
+  failure and returns a result flag, the component must not log it again.
+- **Never leave a promise floating.** An `async` call inside `subscribe()`, an effect or an event
+  handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
+  `ErrorHandler` and is reported as a separate, unhandled issue.
+- **Pass the caught error as context** — `Logging.warn("Could not load X", err)`. A
+  `catchError(() => of(null))` followed by a log call without the error makes the report
+  impossible to diagnose. Do not log the same error object twice in one call.
+- **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
+  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`) and `isExpiredSessionError()`
+  (`src/app/utils/expired-session-error.ts`). A component that only treats `404` as expected
+  turns every dropped connection into one more Sentry issue under its own message. Note that
+  `Logging.warn()` is sent as a message event: the `beforeSend` filters for connectivity and
+  expired sessions do not inspect an error passed as context, so classify before calling it.
+- **Check whether an optional feature is configured before using it** (e.g. push notifications
+  without a Firebase config) instead of logging its failure on every page load.
+- **A known limitation is not an event.** If something fails on every sync or render for a known
+  reason (e.g. `purge()` on the legacy `idb` adapter), check the capability up front.
+- **Expect config values of the wrong type.** Config is plain JSON edited by admins; a template or
+  `computed()` must not crash because a value is not of the type its interface declares.
+
+When investigating Sentry issues:
+
+- Issues from one browser session (same `trace` id in the event's context) usually share one root
+  cause even when their titles differ — compare trace ids before treating them separately.
+- The `environment` tag reads `production` for every deployment, including internal test
+  instances and PR preview builds; check the `url` and `release` tags (`pr-…`, `…-master.N`)
+  before treating an issue as customer-facing.
+- Event counts are capped per session (see the logging README); weigh how many sessions,
+  instances and releases an issue affects instead.
+- Grouping and filtering run in the client (`beforeSend`), so a change only applies to events from
+  clients that loaded the new release — cached older app versions keep reporting under the old
+  titles. Check the `release` tag first, and archive superseded issues once the fix is rolled out.
 
 ## Testing Guidelines
 
