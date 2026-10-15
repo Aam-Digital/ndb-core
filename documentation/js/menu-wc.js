@@ -1826,6 +1826,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/MockEntityMapperService.html" data-type="entity-link" >MockEntityMapperService</a>
                             </li>
                             <li class="link">
+                                <a href="classes/NamedError.html" data-type="entity-link" >NamedError</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/NotAvailableOfflineError.html" data-type="entity-link" >NotAvailableOfflineError</a>
                             </li>
                             <li class="link">
@@ -1902,6 +1905,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/SyncedPouchDatabase.html" data-type="entity-link" >SyncedPouchDatabase</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/SyncFailedError.html" data-type="entity-link" >SyncFailedError</a>
                             </li>
                             <li class="link">
                                 <a href="classes/SyncStalledError.html" data-type="entity-link" >SyncStalledError</a>

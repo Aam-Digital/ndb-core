@@ -164,7 +164,7 @@
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                        <code>Error</code>
+                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
             </p>
 
 
@@ -182,7 +182,7 @@
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                        <code>Error</code>
+                                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -191,6 +191,34 @@
     </div>
 
     <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#details" >details</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+
+</section>
 
             <section data-compodoc="block-constructor">
     <h3 id="constructor">Constructor</h3>
@@ -203,7 +231,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="522" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:522</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="552" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:552</a></div>
                             </td>
                         </tr>
 
@@ -211,6 +239,53 @@
         </table>
 </section>
 
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="details"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>details</b></span>
+                        <a href="#details"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Record&lt;string, unknown&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/NamedError.html#source" target="_self" >NamedError:11</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Context for the report, kept out of the message so that it does not split the issue.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
 
 
 
@@ -224,6 +299,7 @@
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { PouchDatabase } from &quot;./pouch-database&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { NamedError } from &quot;../../logging/reported-errors&quot;;
 import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
 import { NgZone } from &quot;@angular/core&quot;;
 import { RemotePouchDatabase } from &quot;./remote-pouch-database&quot;;
@@ -403,10 +479,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localDb &#x3D; await this.getPouchDBOnceReady();
-
-    const localInfo &#x3D; await localDb.info();
-    const isFirstSync &#x3D; localInfo.doc_count &#x3D;&#x3D;&#x3D; 0;
+    let localDb: PouchDB.Database;
+    let isFirstSync: boolean;
+    try {
+      localDb &#x3D; await this.getPouchDBOnceReady();
+      isFirstSync &#x3D; (await localDb.info()).doc_count &#x3D;&#x3D;&#x3D; 0;
+    } catch (err) {
+      // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
+      this.handleSyncFailure(err, []);
+      throw err;
+    }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking &amp; purge
       this.remoteDatabase.trackLostPermissions &#x3D; false;
@@ -497,30 +579,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        if (this.isDocumentWriteError(err)) {
-          Logging.warn(
-            &#x60;sync failed: document write error (possible oversized document)&#x60;,
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-            err,
-          );
-        } else if (isKnownMultiTabDatabaseCorruption(err)) {
-          this.corruptionRecovery?.handleKnownMultiTabCorruption(
-            err,
-            &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-          );
-        } else if (
-          this.isSyncConnectivityError(err) ||
-          err instanceof SyncStalledError
-        ) {
-          Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
-        } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
-          // expired session; the fetch layer already triggers re-login
-          Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
-        } else {
-          Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
-        }
-        this.syncState.next(SyncState.FAILED);
+        this.handleSyncFailure(err, lastSyncedDocIds);
         throw err;
       })
       .finally(() &#x3D;&gt; {
@@ -529,6 +588,37 @@ export class SyncedPouchDatabase extends PouchDatabase {
           this.remoteDatabase.trackLostPermissions &#x3D; true;
         }
       });
+  }
+
+  /**
+   * Log a failed sync according to its cause (only once: callers like
+   * {@link ensureSynced} rely on this) and mark the sync state as failed.
+   */
+  private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    if (this.isDocumentWriteError(err)) {
+      Logging.warn(
+        &#x60;sync failed: document write error (possible oversized document)&#x60;,
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        err,
+      );
+    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+      );
+    } else if (
+      this.isSyncConnectivityError(err) ||
+      err instanceof SyncStalledError
+    ) {
+      Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
+    } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
+      // expired session; the fetch layer already triggers re-login
+      Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
+    } else {
+      Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
+    }
+    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
@@ -668,7 +758,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   /**
    * Ensure the database is synced with the remote server.
-   * Throws {@link NotAvailableOfflineError} if offline.
+   * Throws {@link NotAvailableOfflineError} if offline, or a {@link SyncFailedError}
+   * if the sync failed (which &#x60;sync()&#x60; has already logged).
    * Otherwise triggers a one-time sync and resolves when complete.
    */
   async ensureSynced(): Promise&lt;void&gt; {
@@ -678,7 +769,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
     }
 
-    await this.sync();
+    try {
+      await this.sync();
+    } catch (err) {
+      throw new SyncFailedError(err);
+    }
 
     if (this.syncState.value &#x3D;&#x3D;&#x3D; SyncState.UNSYNCED) {
       throw new NotAvailableOfflineError(
@@ -742,14 +837,20 @@ function lastSyncedBatchContext(docIds: string[]): Record&lt;string, unknown&gt;
   };
 }
 
+/**
+ * Thrown by {@link SyncedPouchDatabase.ensureSynced} when the sync failed.
+ * The sync has already logged the failure: callers only need to tell the user.
+ */
+export class SyncFailedError extends NamedError {
+  constructor(cause: unknown) {
+    super(&quot;SyncFailedError&quot;, &quot;Could not sync with the server&quot;, { cause });
+  }
+}
+
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {
+class SyncStalledError extends NamedError {
   constructor() {
-    super(&quot;Sync cancelled after making no progress&quot;);
-    // set explicitly: an Error subclass inherits the name &quot;Error&quot;, and the class
-    // name is minified in production - remote monitoring would report this as
-    // &quot;Error: No error message&quot; (see logging module README)
-    this.name &#x3D; &quot;SyncStalledError&quot;;
+    super(&quot;SyncStalledError&quot;, &quot;Sync cancelled after making no progress&quot;);
   }
 }
 </code></pre>

@@ -536,8 +536,8 @@ a message to be displayed on the final setup screen, if there is anything to rep
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="285"
-                                    class="link-to-prism">src/app/core/setup/system-init-assistant/user-profile-setup/user-profile-setup.component.ts:285</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="287"
+                                    class="link-to-prism">src/app/core/setup/system-init-assistant/user-profile-setup/user-profile-setup.component.ts:287</a></div>
                         </td>
                     </tr>
 
@@ -1078,7 +1078,9 @@ export class UserProfileSetupComponent implements OnInit {
       await (database as SyncedPouchDatabase)?.ensureSynced?.();
       return true;
     } catch (err) {
-      Logging.warn(&quot;Failed to sync a new profile before linking it&quot;, err);
+      // offline, or a sync failure already logged by the sync itself;
+      // the user is told that the profile is not linked
+      Logging.debug(&quot;Failed to sync a new profile before linking it&quot;, err);
       return false;
     }
   }

@@ -308,7 +308,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:45</a></div>
                             </td>
                         </tr>
 
@@ -341,8 +341,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="222"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:222</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:228</a></div>
                         </td>
                     </tr>
 
@@ -416,8 +416,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="113"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:113</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="119"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:119</a></div>
                         </td>
                     </tr>
 
@@ -610,7 +610,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -642,7 +642,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -673,7 +673,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:41</a></div>
                         </td>
                     </tr>
 
@@ -704,7 +704,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:41</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -739,7 +739,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -770,7 +770,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -801,7 +801,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:37</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -924,6 +924,7 @@ import { EntityConfigReadyService } from &quot;../entity/entity-config-ready.ser
 import { environment } from &quot;../../../environments/environment&quot;;
 import { hasRemoteSession } from &quot;../session/session-type&quot;;
 import { LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
+import { isConnectivityError } from &quot;../../utils/connectivity-error&quot;;
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -967,9 +968,7 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() &#x3D;&gt; {
       super.startLoading().catch((err) &#x3D;&gt; {
-        const error &#x3D; new Error(&quot;Failed to load site settings&quot;, { cause: err });
-        error.name &#x3D; &quot;SiteSettingsLoadError&quot;;
-        Logging.error(error);
+        Logging.error(&quot;Failed to load site settings&quot;, err);
       });
     });
   }
@@ -1005,9 +1004,16 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
       ) {
         return;
       }
-      Logging.warn(&quot;SiteSettingsService: anonymous fetch failed&quot;, {
-        status: response.status,
-      });
+      const failure &#x3D; { status: response.status };
+      if (isConnectivityError(failure)) {
+        // a gateway error: the server could not be reached (e.g. during a deployment)
+        Logging.debug(
+          &quot;SiteSettingsService: anonymous fetch failed (connectivity)&quot;,
+          failure,
+        );
+        return;
+      }
+      Logging.warn(&quot;SiteSettingsService: anonymous fetch failed&quot;, failure);
       return;
     }
 

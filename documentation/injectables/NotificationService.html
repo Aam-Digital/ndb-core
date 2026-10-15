@@ -327,8 +327,8 @@ cloud messaging HTTP API for sending notifications.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="363"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:363</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="374"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:374</a></div>
                         </td>
                     </tr>
 
@@ -367,8 +367,8 @@ cloud messaging HTTP API for sending notifications.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="167"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:167</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="174"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:174</a></div>
                         </td>
                     </tr>
 
@@ -404,8 +404,8 @@ cloud messaging HTTP API for sending notifications.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="298"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:298</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="305"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:305</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="111"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:111</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="118"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:118</a></div>
                         </td>
                     </tr>
 
@@ -515,8 +515,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="121"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:121</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:128</a></div>
                         </td>
                     </tr>
 
@@ -554,8 +554,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="238"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:238</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="245"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:245</a></div>
                         </td>
                     </tr>
 
@@ -654,8 +654,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="271"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:271</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="278"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:278</a></div>
                         </td>
                     </tr>
 
@@ -691,8 +691,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="200"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:200</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:207</a></div>
                         </td>
                     </tr>
 
@@ -730,8 +730,8 @@ Displays a browser notification when a message is received.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="257"
-                                    class="link-to-prism">src/app/features/notification/notification.service.ts:257</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="264"
+                                    class="link-to-prism">src/app/features/notification/notification.service.ts:264</a></div>
                         </td>
                     </tr>
 
@@ -888,7 +888,7 @@ Displays a browser notification when a message is received.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="357" class="link-to-prism">src/app/features/notification/notification.service.ts:357</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="368" class="link-to-prism">src/app/features/notification/notification.service.ts:368</a></div>
                         </td>
                     </tr>
 
@@ -994,6 +994,13 @@ export class NotificationService {
   }
 
   private init() {
+    if (!environment.notificationsConfig) {
+      // push notifications are not set up for this deployment. A device may still
+      // have granted the browser permission (e.g. for another app on the domain,
+      // or while notifications were set up earlier), but without a Firebase config
+      // both the service worker and the message listener can only fail.
+      return;
+    }
     if (!this.hasNotificationPermissionGranted()) {
       // push notifications cannot have been enabled on this device
       return;
@@ -1213,8 +1220,12 @@ export class NotificationService {
           NotificationEvent.DATABASE,
         );
         if (db instanceof SyncedPouchDatabase) {
+          // sync() already logs its failures
           db.sync().catch((err) &#x3D;&gt;
-            Logging.warn(&quot;Failed sync notifications db upon push message&quot;, err),
+            Logging.debug(
+              &quot;Failed sync notifications db upon push message&quot;,
+              err,
+            ),
           );
         }
 

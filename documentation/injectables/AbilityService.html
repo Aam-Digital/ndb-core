@@ -715,7 +715,11 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((rules) &#x3D;&gt; {
         if (this.rulesKnown) {
-          this.updateAbilityWithUserRules(rules);
+          // nobody awaits this: without the catch, a failure would only reach
+          // the global error handler, as an unhandled error without context
+          this.updateAbilityWithUserRules(rules).catch((err) &#x3D;&gt;
+            Logging.error(&quot;Could not apply the updated permission rules&quot;, err),
+          );
         } else {
           // While the rules are unknown, a session or user change must not
           // re-derive the permissive fallback and hand it to the enforcer: that
@@ -779,9 +783,7 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
       return;
     }
 
-    const error &#x3D; new Error(&quot;Failed to load permission rules&quot;, { cause: err });
-    error.name &#x3D; &quot;PermissionRulesLoadError&quot;;
-    Logging.error(error);
+    Logging.error(&quot;Failed to load permission rules&quot;, err);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise&lt;any&gt; {

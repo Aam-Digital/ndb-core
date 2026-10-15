@@ -361,7 +361,7 @@ re-sync.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/PermissionEnforcerService.html#source" target="_self" >PermissionEnforcerService:103</a></code>
+                                <div class="io-line">        <code><a href="../injectables/PermissionEnforcerService.html#source" target="_self" >PermissionEnforcerService:132</a></code>
 </div>
                         </td>
                     </tr>
@@ -509,7 +509,9 @@ export class LocalPermissionEnforcerService extends PermissionEnforcerService {
       // Sync so the server can also process access changes and provide lostPermissions.
       // NOTE: the sync may temporarily re-add entities that were purged above if the
       // concurrent push (user entity change) hasn&#x27;t been processed by the server yet.
-      await this.dbResolver.resetSync();
+      if (!(await this.resetSync())) {
+        return;
+      }
       // Second pass: purge any entities that were re-synced before the server
       // processed the access change (handles push/pull race condition).
       await this.purgeEntitiesWithoutPermissions(subjects);
@@ -531,12 +533,39 @@ export class LocalPermissionEnforcerService extends PermissionEnforcerService {
         Logging.debug(
           &quot;Detected changed permissions for user. Resetting sync ...&quot;,
         );
-        await this.dbResolver.resetSync();
+        if (!(await this.resetSync())) {
+          return;
+        }
       }
     }
 
     // update stored rules to check for future changes
     this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+  }
+
+  /**
+   * Re-sync all data, so that the server can process the changed access, too.
+   *
+   * A failed sync is not logged again here: the database already reported it,
+   * according to its cause (see &#x60;SyncedPouchDatabase.sync()&#x60;). Letting it
+   * propagate instead reported it a second time, as an unhandled error without
+   * any of that context, because the rules are applied in the background
+   * where nobody awaits the result.
+   *
+   * @returns whether the sync succeeded. If not, the caller must not store the
+   *   rules as enforced, so that the next check retries the enforcement.
+   */
+  private async resetSync(): Promise&lt;boolean&gt; {
+    try {
+      await this.dbResolver.resetSync();
+      return true;
+    } catch (err) {
+      Logging.debug(
+        &quot;Re-sync for changed permissions failed, retrying with the next check&quot;,
+        err,
+      );
+      return false;
+    }
   }
 
   getLastEnforcedRules(): DatabaseRule[] | undefined {

@@ -168,7 +168,7 @@ bootstrap error handler in <code>main.ts</code>.</p>
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                        <code>Error</code>
+                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
             </p>
 
 
@@ -186,7 +186,7 @@ bootstrap error handler in <code>main.ts</code>.</p>
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                        <code>Error</code>
+                                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -195,6 +195,34 @@ bootstrap error handler in <code>main.ts</code>.</p>
     </div>
 
     <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#details" >details</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+
+</section>
 
             <section data-compodoc="block-constructor">
     <h3 id="constructor">Constructor</h3>
@@ -207,7 +235,7 @@ bootstrap error handler in <code>main.ts</code>.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/config/registry/dynamic-registry.ts:35</a></div>
                             </td>
                         </tr>
 
@@ -257,6 +285,53 @@ bootstrap error handler in <code>main.ts</code>.</p>
         </table>
 </section>
 
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="details"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>details</b></span>
+                        <a href="#details"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Record&lt;string, unknown&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/NamedError.html#source" target="_self" >NamedError:11</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Context for the report, kept out of the message so that it does not split the issue.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
 
 
 
@@ -269,32 +344,28 @@ bootstrap error handler in <code>main.ts</code>.</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { environment } from &quot;../../../../environments/environment&quot;;
+import { NamedError } from &quot;../../logging/reported-errors&quot;;
 
 /**
  * Thrown when an item that the config refers to - a dynamic component, an entity
  * type, a route - is looked up in a {@link Registry} without having been registered.
  *
- * The key is deliberately not part of the message, only carried as a property:
+ * The key is deliberately not part of the message, only reported as a detail:
  * remote monitoring groups this error by its message, and one missing
  * registration rarely comes alone (a config referring to entity types of
  * another setup misses several at once), so a key in the message opens a
- * separate issue per key for what is one problem. The key is attached to the
- * report as extra data instead (see &#x60;enrichSentryEvent&#x60; in logging.service.ts).
+ * separate issue per key for what is one problem.
  */
-export class RegistryLookupError extends Error {
+export class RegistryLookupError extends NamedError {
   constructor(
     readonly registryName: string,
     readonly key: string,
   ) {
-    super(&#x60;Requested item is not registered in ${registryName}&#x60;);
-
-    // Set explicitly, and to a literal: remote monitoring reads the exception
-    // type as &#x60;error.name || error.constructor.name&#x60;. A subclass inherits
-    // &quot;Error&quot; from Error.prototype, so without this the error would be reported
-    // as a plain &quot;Error&quot; and drop out of the fingerprint-based grouping
-    // (CAUSE_GROUPED_ERROR_TYPES in logging.service.ts). The constructor name is
-    // no alternative either - it is minified in production builds.
-    this.name &#x3D; &quot;RegistryLookupError&quot;;
+    super(
+      &quot;RegistryLookupError&quot;,
+      &#x60;Requested item is not registered in ${registryName}&#x60;,
+      { details: { registry: registryName, registryKey: key } },
+    );
   }
 }
 
@@ -306,7 +377,7 @@ export class RegistryLookupError extends Error {
  * it aborts bootstrap - so it reaches remote monitoring through the top-level
  * bootstrap error handler in &#x60;main.ts&#x60;.
  */
-export class RegistryDuplicateError extends Error {
+export class RegistryDuplicateError extends NamedError {
   constructor(
     readonly registryName: string,
     readonly key: string,
@@ -315,10 +386,11 @@ export class RegistryDuplicateError extends Error {
     // the already-registered element are interpolated here: stringifying the
     // latter dumps a whole class constructor or async import function into
     // the message
-    super(&#x60;${registryName}: Duplicate definition of an already registered key&#x60;);
-
-    // set explicitly for the same reason as in RegistryLookupError above
-    this.name &#x3D; &quot;RegistryDuplicateError&quot;;
+    super(
+      &quot;RegistryDuplicateError&quot;,
+      &#x60;${registryName}: Duplicate definition of an already registered key&#x60;,
+      { details: { registry: registryName, registryKey: key } },
+    );
   }
 }
 
@@ -366,9 +438,8 @@ export abstract class Registry&lt;T&gt; extends Map&lt;string, T&gt; {
   public override get(key: string): T {
     if (!this.has(key)) {
       // A missing registration is one problem no matter which component, pipe or
-      // route hit it first. The dedicated error type lets remote monitoring group
-      // it by registry instead of by stack trace, which otherwise opens a
-      // separate issue per call site (see CAUSE_GROUPED_ERROR_TYPES).
+      // route hit it first: as a NamedError, remote monitoring groups it by
+      // registry instead of opening a separate issue per call site.
       throw new RegistryLookupError(this.registryName, key);
       // To register a component, add @DynamicComponent(&quot;COMPONENTNAME&quot;) to the components .ts-file and implement the onInitFromDynamicConfig method, e.g. onInitFromDynamicConfig(config: any) {}
     }

@@ -164,7 +164,7 @@
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                        <code>Error</code>
+                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
             </p>
 
 
@@ -182,7 +182,7 @@
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                        <code>Error</code>
+                                            <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -211,6 +211,12 @@
                                     <span class="modifier">Optional</span>
                                 <a href="#originalName" >originalName</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#details" >details</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -235,7 +241,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:17</a></div>
                             </td>
                         </tr>
 
@@ -310,7 +316,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="5" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:5</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:7</a></div>
                         </td>
                     </tr>
 
@@ -337,7 +343,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:15</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/core/database/pouchdb/database-exception.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -349,6 +355,47 @@ deliberately kept as &quot;DatabaseException&quot; for stable Sentry grouping â€
 would otherwise erase the original name and hide that a failure is actually
 a transient network abort. Read by <a href="../miscellaneous/functions.html#isConnectivityError">isConnectivityError</a> so wrapped
 transient errors stay classifiable.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="details"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>details</b></span>
+                        <a href="#details"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Record&lt;string, unknown&gt;</code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/NamedError.html" target="_self" >NamedError</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/NamedError.html#source" target="_self" >NamedError:11</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Context for the report, kept out of the message so that it does not split the issue.</p>
 </div>
                 </td>
             </tr>
@@ -367,7 +414,12 @@ transient errors stay classifiable.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">export class DatabaseException extends Error {
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { NamedError } from &quot;../../logging/reported-errors&quot;;
+
+/**
+ * This overwrites PouchDB&#x27;s error class which only logs limited information
+ */
+export class DatabaseException extends NamedError {
   entityId?: string;
 
   /**
@@ -384,7 +436,7 @@ transient errors stay classifiable.</p>
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    super(error?.message || &quot;Database error&quot;);
+    super(&quot;DatabaseException&quot;, error?.message || &quot;Database error&quot;);
 
     this.entityId &#x3D; entityId;
     // Capture the wrapped error&#x27;s name before Object.assign / &#x60;this.name&#x60; erase it.

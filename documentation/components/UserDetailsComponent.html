@@ -620,8 +620,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="594"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:594</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="595"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:595</a></div>
                         </td>
                     </tr>
 
@@ -657,8 +657,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="619"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:619</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="620"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:620</a></div>
                         </td>
                     </tr>
 
@@ -696,8 +696,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="497"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:497</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="498"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:498</a></div>
                         </td>
                     </tr>
 
@@ -733,8 +733,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="590"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:590</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="591"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:591</a></div>
                         </td>
                     </tr>
 
@@ -772,8 +772,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="538"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:538</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="539"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:539</a></div>
                         </td>
                     </tr>
 
@@ -839,8 +839,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="611"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:611</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="612"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:612</a></div>
                         </td>
                     </tr>
 
@@ -918,8 +918,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="615"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:615</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="616"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:616</a></div>
                         </td>
                     </tr>
 
@@ -957,8 +957,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="565"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:565</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="566"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:566</a></div>
                         </td>
                     </tr>
 
@@ -1304,7 +1304,7 @@ the invitation email (verified email + set initial password).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="563" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:563</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="564" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:564</a></div>
                         </td>
                     </tr>
 
@@ -1858,7 +1858,8 @@ export class UserDetailsComponent {
       this.userAdminService.updateUser(currentUser.id, update).pipe(
         map((result) &#x3D;&gt; {
           if (!result.userUpdated) {
-            Logging.warn(&quot;User account not updated&quot;);
+            // already reported by the UserAdminService with its cause
+            Logging.debug(&quot;User account not updated&quot;);
             return null;
           }
 

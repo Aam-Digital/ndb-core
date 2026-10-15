@@ -457,7 +457,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:85</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:86</a></div>
                             </td>
                         </tr>
 
@@ -603,7 +603,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="469" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:469</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="489" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:489</a></div>
                         </td>
                     </tr>
 
@@ -640,7 +640,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -671,7 +671,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -702,7 +702,7 @@ provides functionality to sync with a remote CouchDB.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:62</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:63</a></div>
                         </td>
                     </tr>
 
@@ -1059,8 +1059,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="450"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:450</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="466"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:466</a></div>
                         </td>
                     </tr>
 
@@ -1068,7 +1068,8 @@ This change can come from the current user or remotely from the (live) synchroni
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Ensure the database is synced with the remote server.
-Throws <a href="../classes/NotAvailableOfflineError.html">NotAvailableOfflineError</a> if offline.
+Throws <a href="../classes/NotAvailableOfflineError.html">NotAvailableOfflineError</a> if offline, or a <a href="../classes/SyncFailedError.html">SyncFailedError</a>
+if the sync failed (which <code>sync()</code> has already logged).
 Otherwise triggers a one-time sync and resolves when complete.</p>
 </div>
 
@@ -1100,8 +1101,8 @@ Otherwise triggers a one-time sync and resolves when complete.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="83"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:83</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -1148,7 +1149,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:146</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:147</a></code>
 </div>
                         </td>
                     </tr>
@@ -1238,8 +1239,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="471"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:471</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="491"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:491</a></div>
                         </td>
                     </tr>
 
@@ -1284,7 +1285,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:310</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:325</a></code>
 </div>
                         </td>
                     </tr>
@@ -1377,7 +1378,7 @@ Can be used as a replication source for background migration.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:323</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:338</a></code>
 </div>
                         </td>
                     </tr>
@@ -1458,8 +1459,8 @@ Can be used as a replication source for background migration.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="440"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:440</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="455"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:455</a></div>
                         </td>
                     </tr>
 
@@ -1500,8 +1501,8 @@ Uses <code>checkpoint: false</code> once so PouchDB ignores previous checkpoints
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="173"
-                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:173</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="174"
+                                    class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:174</a></div>
                         </td>
                     </tr>
 
@@ -3196,7 +3197,7 @@ Callers should fall back to loading all docs otherwise.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:35</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:36</a></div>
                                 </td>
                             </tr>
 
@@ -3218,7 +3219,7 @@ Callers should fall back to loading all docs otherwise.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:76</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -3243,6 +3244,7 @@ Useful for observing when this specific database&#39;s sync completes.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { PouchDatabase } from &quot;./pouch-database&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { NamedError } from &quot;../../logging/reported-errors&quot;;
 import { KeycloakAuthService } from &quot;../../session/auth/keycloak/keycloak-auth.service&quot;;
 import { NgZone } from &quot;@angular/core&quot;;
 import { RemotePouchDatabase } from &quot;./remote-pouch-database&quot;;
@@ -3422,10 +3424,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localDb &#x3D; await this.getPouchDBOnceReady();
-
-    const localInfo &#x3D; await localDb.info();
-    const isFirstSync &#x3D; localInfo.doc_count &#x3D;&#x3D;&#x3D; 0;
+    let localDb: PouchDB.Database;
+    let isFirstSync: boolean;
+    try {
+      localDb &#x3D; await this.getPouchDBOnceReady();
+      isFirstSync &#x3D; (await localDb.info()).doc_count &#x3D;&#x3D;&#x3D; 0;
+    } catch (err) {
+      // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
+      this.handleSyncFailure(err, []);
+      throw err;
+    }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking &amp; purge
       this.remoteDatabase.trackLostPermissions &#x3D; false;
@@ -3516,30 +3524,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        if (this.isDocumentWriteError(err)) {
-          Logging.warn(
-            &#x60;sync failed: document write error (possible oversized document)&#x60;,
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-            err,
-          );
-        } else if (isKnownMultiTabDatabaseCorruption(err)) {
-          this.corruptionRecovery?.handleKnownMultiTabCorruption(
-            err,
-            &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-          );
-        } else if (
-          this.isSyncConnectivityError(err) ||
-          err instanceof SyncStalledError
-        ) {
-          Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
-        } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
-          // expired session; the fetch layer already triggers re-login
-          Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
-        } else {
-          Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
-        }
-        this.syncState.next(SyncState.FAILED);
+        this.handleSyncFailure(err, lastSyncedDocIds);
         throw err;
       })
       .finally(() &#x3D;&gt; {
@@ -3548,6 +3533,37 @@ export class SyncedPouchDatabase extends PouchDatabase {
           this.remoteDatabase.trackLostPermissions &#x3D; true;
         }
       });
+  }
+
+  /**
+   * Log a failed sync according to its cause (only once: callers like
+   * {@link ensureSynced} rely on this) and mark the sync state as failed.
+   */
+  private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    if (this.isDocumentWriteError(err)) {
+      Logging.warn(
+        &#x60;sync failed: document write error (possible oversized document)&#x60;,
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        err,
+      );
+    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+      );
+    } else if (
+      this.isSyncConnectivityError(err) ||
+      err instanceof SyncStalledError
+    ) {
+      Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
+    } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
+      // expired session; the fetch layer already triggers re-login
+      Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
+    } else {
+      Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
+    }
+    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite &#x3D; false): Promise&lt;any&gt; {
@@ -3687,7 +3703,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   /**
    * Ensure the database is synced with the remote server.
-   * Throws {@link NotAvailableOfflineError} if offline.
+   * Throws {@link NotAvailableOfflineError} if offline, or a {@link SyncFailedError}
+   * if the sync failed (which &#x60;sync()&#x60; has already logged).
    * Otherwise triggers a one-time sync and resolves when complete.
    */
   async ensureSynced(): Promise&lt;void&gt; {
@@ -3697,7 +3714,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
     }
 
-    await this.sync();
+    try {
+      await this.sync();
+    } catch (err) {
+      throw new SyncFailedError(err);
+    }
 
     if (this.syncState.value &#x3D;&#x3D;&#x3D; SyncState.UNSYNCED) {
       throw new NotAvailableOfflineError(
@@ -3761,14 +3782,20 @@ function lastSyncedBatchContext(docIds: string[]): Record&lt;string, unknown&gt;
   };
 }
 
+/**
+ * Thrown by {@link SyncedPouchDatabase.ensureSynced} when the sync failed.
+ * The sync has already logged the failure: callers only need to tell the user.
+ */
+export class SyncFailedError extends NamedError {
+  constructor(cause: unknown) {
+    super(&quot;SyncFailedError&quot;, &quot;Could not sync with the server&quot;, { cause });
+  }
+}
+
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {
+class SyncStalledError extends NamedError {
   constructor() {
-    super(&quot;Sync cancelled after making no progress&quot;);
-    // set explicitly: an Error subclass inherits the name &quot;Error&quot;, and the class
-    // name is minified in production - remote monitoring would report this as
-    // &quot;Error: No error message&quot; (see logging module README)
-    this.name &#x3D; &quot;SyncStalledError&quot;;
+    super(&quot;SyncStalledError&quot;, &quot;Sync cancelled after making no progress&quot;);
   }
 }
 </code></pre>
