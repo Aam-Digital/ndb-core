@@ -329,6 +329,37 @@ describe("processSentryEvent", () => {
     });
   });
 
+  it("should drop an unhandled error raised only by a script inlined into the page (e.g. injected by an in-app browser)", () => {
+    const pageFrame = {
+      filename: "https://x.aam-digital.app/public-form/form/mentor",
+    };
+    const unhandled = (frames: { filename: string }[]) =>
+      processSentryEvent(
+        {
+          exception: {
+            values: [
+              {
+                type: "RangeError",
+                value: "Maximum call stack size exceeded.",
+                mechanism: { type: "onerror", handled: false },
+                stacktrace: { frames },
+              },
+            ],
+          },
+        } as Sentry.ErrorEvent,
+        {},
+      );
+
+    expect(unhandled([pageFrame, pageFrame])).toBeNull();
+    // any frame in one of our script files: keep it
+    expect(
+      unhandled([
+        { filename: "https://x.aam-digital.app/main-ABC.js" },
+        pageFrame,
+      ]),
+    ).not.toBeNull();
+  });
+
   it.each([
     {
       case: "of the failed request underneath a wrapper",
