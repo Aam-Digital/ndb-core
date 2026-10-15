@@ -209,12 +209,17 @@ something is logged.
 A Sentry issue should mean "a developer has something to fix". Before adding a log call, decide
 who has to act on the failure:
 
-| Cause                          | Examples                                                                                                                                                                                | Report to Sentry?                       | Instead                                                                   |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------- |
-| Bug in our code                | a `TypeError` in a template, an id built with the wrong entity type                                                                                                                     | yes — `Logging.error` (or let it throw) | —                                                                         |
-| Server or infrastructure fault | an unexpected `400`/`5xx` from our own backend                                                                                                                                          | yes — `Logging.warn`, with the response | tell the user the action failed                                           |
-| User or device environment     | offline / flaky connection, expired session, a record the user may not read, a browser permission the user denied (clipboard, notifications), browser storage evicted                   | no — `Logging.debug`                    | tell the user what happened and what they can do                          |
-| Instance configuration or data | unknown `dataType`, icon or validator in the config; permission rule variable for an account without linked profile; file field pointing to a missing file; optional feature not set up | no — `Logging.debug`                    | make it visible to admins in the UI, and validate config when it is saved |
+- **Bug in our code** (e.g. a `TypeError` in a template, an id built with the wrong entity type):
+  report it — `Logging.error`, or let it throw.
+- **Server or infrastructure fault** (e.g. an unexpected `400`/`5xx` from our own backend):
+  report it with `Logging.warn`, including the response, and tell the user the action failed.
+- **User or device environment** (e.g. offline / flaky connection, expired session, a record the
+  user may not read, a browser permission the user denied such as clipboard or notifications):
+  do not report it (`Logging.debug`); tell the user what happened and what they can do.
+- **Instance configuration or data** (e.g. an unknown `dataType`, icon or validator in the config;
+  a permission rule variable for an account without linked profile; a file field pointing to a
+  missing file; an optional feature not set up for the instance): do not report it
+  (`Logging.debug`); make it visible to admins in the UI, and validate config when it is saved.
 
 Rules that keep one root cause in one Sentry issue:
 
