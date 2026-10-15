@@ -523,6 +523,13 @@ export interface FullDefaultValueHint {
 
   syncFromParentField: () &#x3D;&gt; void;
 
+  /**
+   * The value is collected from all records of the inheritedFromType
+   * that link to this record in their inheritedFromField
+   * (rather than inherited from a single parent record selected in this record&#x27;s inheritedFromField).
+   */
+  isCollectedFromLinkedRecords?: boolean;
+
   isEmpty?: undefined | false;
 }
 
@@ -536,6 +543,7 @@ export interface EmptyDefaultValueHint {
   isInSync?: undefined;
   inheritedFromType?: undefined;
   syncFromParentField?: undefined;
+  isCollectedFromLinkedRecords?: false;
 }
 </code></pre>
     </div>

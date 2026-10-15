@@ -306,7 +306,7 @@ e.g. setting the category field based on the category field in a linked &quot;pa
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:38</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:41</a></code>
 </div>
                         </td>
                     </tr>
@@ -351,7 +351,7 @@ e.g. setting the category field based on the category field in a linked &quot;pa
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:193</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:232</a></code>
 </div>
                         </td>
                     </tr>
@@ -450,7 +450,7 @@ to display to the user.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:52</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:55</a></code>
 </div>
                         </td>
                     </tr>
@@ -534,7 +534,7 @@ to display to the user.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:183</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:222</a></code>
 </div>
                         </td>
                     </tr>
@@ -618,7 +618,7 @@ to display to the user.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:63</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:102</a></code>
 </div>
                         </td>
                     </tr>
@@ -731,7 +731,7 @@ and watching future changes of the source (parent) field for automatic updates.<
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:30</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:33</a></code>
 </div>
                         </td>
                     </tr>
@@ -755,11 +755,14 @@ import {
   DefaultValueStrategy,
 } from &quot;../../core/default-values/default-value-strategy.interface&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import { DefaultValueMode } from &quot;../../core/default-values/default-value-config&quot;;
 import { DefaultValueHint } from &quot;../../core/default-values/default-value-service/default-value.service&quot;;
 import { asArray } from &quot;../../utils/asArray&quot;;
 import { FormFieldConfig } from &quot;../../core/common-components/entity-form/FormConfig&quot;;
-import { DefaultValueConfigInheritedField } from &quot;./inherited-field-config&quot;;
+import {
+  DefaultValueConfigInheritedField,
+  isCollectingFromLinkedRecords,
+} from &quot;./inherited-field-config&quot;;
+import { isEqual, xorWith } from &quot;lodash-es&quot;;
 import { EntitySchemaService } from &quot;../../core/entity/schema/entity-schema.service&quot;;
 import { AutomatedFieldUpdateConfigService } from &quot;./automated-field-update/automated-field-update-config.service&quot;;
 import { Logging } from &quot;../../core/logging/logging.service&quot;;
@@ -798,6 +801,42 @@ export class InheritedValueService extends DefaultValueStrategy {
 
   override async initEntityForm&lt;T extends Entity&gt;(form: EntityForm&lt;T&gt;) {
     await this.updateLinkedEntities(form);
+    await this.collectValuesOfLinkedRecords(form);
+  }
+
+  /**
+   * For fields collecting the values of all records that link to this entity,
+   * load these records once to be able to compare and sync the field&#x27;s value.
+   */
+  private async collectValuesOfLinkedRecords&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+  ) {
+    if (form.entity.isNew) {
+      return;
+    }
+
+    const collectingFields &#x3D; form.fieldConfigs.filter(
+      isCollectingFromLinkedRecords,
+    );
+    await Promise.all(
+      collectingFields.map(async (field) &#x3D;&gt;
+        form.inheritedParentValues.set(
+          field.id,
+          await this.automatedFieldUpdateConfigService
+            .collectValuesOfLinkedRecords(
+              form.entity,
+              field.defaultValue.config,
+            )
+            .catch((error) &#x3D;&gt;
+              Logging.warn(
+                &quot;InheritedValueService could not load linked records for collected field&quot;,
+                { field: field.id },
+                error,
+              ),
+            ),
+        ),
+      ),
+    );
   }
 
   /**
@@ -947,6 +986,10 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
+    if (isCollectingFromLinkedRecords(field)) {
+      return this.getCollectedValuesUiHint(form, field, defaultConfig);
+    }
+
     // Only show the inheritance UI hint for actual inheritance configs (not automation)
     // Inheritance has sourceReferenceField but NO sourceReferenceEntity
     if (
@@ -969,31 +1012,75 @@ export class InheritedValueService extends DefaultValueStrategy {
       inheritedFromType: parentRefValue
         ? Entity.extractTypeFromId(parentRefValue)
         : undefined,
-      isInSync: (() &#x3D;&gt; {
-        const databaseValue &#x3D; form.inheritedParentValues.get(field.id);
-        const currentValue &#x3D; form.formGroup.get(field.id)?.value;
-        // convert current value to database format for comparison
-        const currentDatabaseValue &#x3D;
-          this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
-            currentValue,
-            form.entity,
-            field.id,
-            this.entitySchemaService,
-          );
-        return (
-          JSON.stringify(databaseValue) &#x3D;&#x3D;&#x3D; JSON.stringify(currentDatabaseValue)
-        );
-      })(),
-      syncFromParentField: () &#x3D;&gt; {
-        const databaseValue &#x3D; form.inheritedParentValues.get(field.id);
-        // convert database format back to entity format for the form control
-        const entityValue &#x3D; this.entitySchemaService.valueToEntityFormat(
-          databaseValue,
+      isInSync:
+        JSON.stringify(form.inheritedParentValues.get(field.id)) &#x3D;&#x3D;&#x3D;
+        JSON.stringify(this.getCurrentDatabaseValue(form, field)),
+      syncFromParentField: () &#x3D;&gt;
+        this.setDatabaseValueToForm(
+          form,
           field,
-        );
-        form.formGroup.get(field.id).setValue(entityValue);
-      },
+          form.inheritedParentValues.get(field.id),
+        ),
     };
+  }
+
+  /**
+   * Hint for a field collecting the values of all records that link to this entity.
+   * No hint is shown as long as there are no values of linked records to sync from.
+   */
+  private getCollectedValuesUiHint&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+    config: DefaultValueConfigInheritedField,
+  ): DefaultValueHint | undefined {
+    const collectedValues: any[] &#x3D; form.inheritedParentValues.get(field.id);
+    if (!collectedValues?.length) {
+      return;
+    }
+
+    return {
+      inheritedFromField: config.sourceReferenceField,
+      inheritedFromType: config.sourceReferenceEntity,
+      isCollectedFromLinkedRecords: true,
+      // the order of values does not matter here
+      isInSync:
+        xorWith(
+          collectedValues,
+          asArray(this.getCurrentDatabaseValue(form, field) ?? []),
+          isEqual,
+        ).length &#x3D;&#x3D;&#x3D; 0,
+      syncFromParentField: () &#x3D;&gt;
+        this.setDatabaseValueToForm(form, field, collectedValues),
+    };
+  }
+
+  /**
+   * The collected values and rule results are in database format (e.g. the id of a dropdown value),
+   * whereas the form holds the entity format (e.g. the full dropdown value object).
+   * Comparing and merging both in database format avoids false mismatches and objects saved instead of ids.
+   */
+  private getCurrentDatabaseValue&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+  ) {
+    return this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
+      form.formGroup.get(field.id)?.value,
+      form.entity,
+      field.id,
+      this.entitySchemaService,
+    );
+  }
+
+  private setDatabaseValueToForm&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+    databaseValue: any,
+  ) {
+    form.formGroup
+      .get(field.id)
+      .setValue(
+        this.entitySchemaService.valueToEntityFormat(databaseValue, field),
+      );
   }
 
   private async updateLinkedEntities&lt;T extends Entity&gt;(form: EntityForm&lt;T&gt;) {
@@ -1114,23 +1201,22 @@ export class InheritedValueService extends DefaultValueStrategy {
 }
 
 /**
- * Get the default value configs filtered for the given mode.
+ * Get the default value configs filtered for the given mode,
+ * excluding automation rules (with sourceReferenceEntity), which are handled by the AutomatedFieldUpdateConfigService.
  * @param fieldConfigs
  */
 export function getConfigsForInheritedMode(
   fieldConfigs: FormFieldConfig[],
 ): Map&lt;string, DefaultValueConfigInheritedField&gt; {
-  const mode: DefaultValueMode[] &#x3D; [&quot;inherited-field&quot;];
-
-  let configs: Map&lt;string, DefaultValueConfigInheritedField&gt; &#x3D; new Map();
-
-  for (const field of fieldConfigs) {
-    if (mode.includes(field.defaultValue?.mode)) {
-      configs.set(field.id, field.defaultValue?.config);
-    }
-  }
-
-  return configs;
+  return new Map(
+    fieldConfigs
+      .filter(
+        (field) &#x3D;&gt;
+          field.defaultValue?.mode &#x3D;&#x3D;&#x3D; &quot;inherited-field&quot; &amp;&amp;
+          !field.defaultValue.config?.sourceReferenceEntity,
+      )
+      .map((field) &#x3D;&gt; [field.id, field.defaultValue.config]),
+  );
 }
 </code></pre>
     </div>

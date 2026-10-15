@@ -240,7 +240,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="197" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:197</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="217" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:217</a></div>
                                 </td>
                             </tr>
 
@@ -279,7 +279,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="198" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:198</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="218" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:218</a></div>
                                 </td>
                             </tr>
 
@@ -318,7 +318,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:199</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="219" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:219</a></div>
                                 </td>
                             </tr>
 
@@ -357,7 +357,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="200" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:200</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="220" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:220</a></div>
                                 </td>
                             </tr>
 
@@ -505,6 +505,17 @@ export class AutomatedFieldMappingComponent {
    */
   mappingEnabled &#x3D; signal(false);
 
+  /**
+   * Only offered for fields allowing multiple values and for rules where the related records link to this record,
+   * because the inherit button for a single linked parent always replaces the value.
+   */
+  readonly isAddToExistingAvailable: boolean;
+
+  /**
+   * If the user enabled adding new values to the existing values of this field instead of replacing them
+   */
+  addToExisting &#x3D; signal(false);
+
   isInvalidMapping: boolean &#x3D; false;
 
   constructor() {
@@ -525,6 +536,10 @@ export class AutomatedFieldMappingComponent {
     if (this.value?.valueMapping) {
       this.mappingEnabled.set(true);
     }
+
+    this.isAddToExistingAvailable &#x3D;
+      !!this.value?.sourceReferenceEntity &amp;&amp; !!data.currentField?.isArray;
+    this.addToExisting.set(this.value?.aggregation &#x3D;&#x3D;&#x3D; &quot;add&quot;);
   }
 
   save() {
@@ -554,6 +569,11 @@ export class AutomatedFieldMappingComponent {
     if (Object.keys(selectedMappings).length &#x3D;&#x3D;&#x3D; 0) {
       // do not store empty mappings and delete any potentially existing mappings
       delete newValue.valueMapping;
+    }
+    if (this.isAddToExistingAvailable &amp;&amp; this.addToExisting()) {
+      newValue.aggregation &#x3D; &quot;add&quot;;
+    } else {
+      delete newValue.aggregation;
     }
 
     this.dialogRef.close(newValue);

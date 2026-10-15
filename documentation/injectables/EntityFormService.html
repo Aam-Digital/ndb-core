@@ -525,8 +525,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="383"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:383</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="387"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:387</a></div>
                         </td>
                     </tr>
 
@@ -1015,6 +1015,10 @@ export class EntityFormService {
     form.markAsPristine();
     form.disable();
     Object.assign(entity, updatedEntity);
+    // properties of cleared fields are deleted from updatedEntity, which Object.assign does not copy
+    Object.keys(form.getRawValue())
+      .filter((key) &#x3D;&gt; !Object.hasOwn(updatedEntity, key))
+      .forEach((key) &#x3D;&gt; delete entity[key]);
 
     entityForm.onFormStateChange.emit(
       new EntityFormSavedEvent(entity, originalEntity),

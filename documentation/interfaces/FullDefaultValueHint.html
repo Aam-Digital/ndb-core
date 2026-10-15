@@ -189,6 +189,12 @@ used to display context to the user about this.</p>
                         </li>
                         <li>
                                     <span class="modifier">Optional</span>
+                                <a href="#isCollectedFromLinkedRecords" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">isCollectedFromLinkedRecords</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
                                 <a href="#isEmpty" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">isEmpty</span>
                                 </a>
@@ -296,6 +302,58 @@ used to display context to the user about this.</p>
                 <tbody>
                         <tr>
                             <td class="col-md-4">
+                                <a name="isCollectedFromLinkedRecords"></a>
+                                <span class="name "><b>isCollectedFromLinkedRecords</b>
+                                    <a href="#isCollectedFromLinkedRecords">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>isCollectedFromLinkedRecords:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:135</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The value is collected from all records of the inheritedFromType
+that link to this record in their inheritedFromField
+(rather than inherited from a single parent record selected in this record&#39;s inheritedFromField).</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
                                 <a name="isEmpty"></a>
                                 <span class="name "><b>isEmpty</b>
                                     <a href="#isEmpty">
@@ -330,7 +388,7 @@ used to display context to the user about this.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:130</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:137</a></div>
                                 </td>
                             </tr>
 
@@ -548,6 +606,13 @@ export interface FullDefaultValueHint {
 
   syncFromParentField: () &#x3D;&gt; void;
 
+  /**
+   * The value is collected from all records of the inheritedFromType
+   * that link to this record in their inheritedFromField
+   * (rather than inherited from a single parent record selected in this record&#x27;s inheritedFromField).
+   */
+  isCollectedFromLinkedRecords?: boolean;
+
   isEmpty?: undefined | false;
 }
 
@@ -561,6 +626,7 @@ export interface EmptyDefaultValueHint {
   isInSync?: undefined;
   inheritedFromType?: undefined;
   syncFromParentField?: undefined;
+  isCollectedFromLinkedRecords?: false;
 }
 </code></pre>
     </div>

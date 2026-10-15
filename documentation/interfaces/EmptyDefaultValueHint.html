@@ -188,6 +188,12 @@
                                 </a>
                         </li>
                         <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#isCollectedFromLinkedRecords" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">isCollectedFromLinkedRecords</span>
+                                </a>
+                        </li>
+                        <li>
                                 <a href="#isEmpty" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">isEmpty</span>
                                 </a>
@@ -248,7 +254,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:137</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:144</a></div>
                                 </td>
                             </tr>
 
@@ -292,7 +298,51 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="141" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:141</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="148" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:148</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="isCollectedFromLinkedRecords"></a>
+                                <span class="name "><b>isCollectedFromLinkedRecords</b>
+                                    <a href="#isCollectedFromLinkedRecords">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>isCollectedFromLinkedRecords:     <code>unknown</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>unknown</code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:150</a></div>
                                 </td>
                             </tr>
 
@@ -331,7 +381,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:138</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="145" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:145</a></div>
                                 </td>
                             </tr>
 
@@ -375,7 +425,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="140" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:140</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="147" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:147</a></div>
                                 </td>
                             </tr>
 
@@ -419,7 +469,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="142" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:142</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="149" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:149</a></div>
                                 </td>
                             </tr>
 
@@ -559,6 +609,13 @@ export interface FullDefaultValueHint {
 
   syncFromParentField: () &#x3D;&gt; void;
 
+  /**
+   * The value is collected from all records of the inheritedFromType
+   * that link to this record in their inheritedFromField
+   * (rather than inherited from a single parent record selected in this record&#x27;s inheritedFromField).
+   */
+  isCollectedFromLinkedRecords?: boolean;
+
   isEmpty?: undefined | false;
 }
 
@@ -572,6 +629,7 @@ export interface EmptyDefaultValueHint {
   isInSync?: undefined;
   inheritedFromType?: undefined;
   syncFromParentField?: undefined;
+  isCollectedFromLinkedRecords?: false;
 }
 </code></pre>
     </div>

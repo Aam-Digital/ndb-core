@@ -140,7 +140,13 @@
                             <a href="#addAlphaToHexColor" title="src/app/utils/style-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>addAlphaToHexColor</b>&nbsp;&nbsp;&nbsp;(src/.../style-utils.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#addAndRemoveValues" title="src/app/features/inherited-field/add-missing-values.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>addAndRemoveValues</b>&nbsp;&nbsp;&nbsp;(src/.../add-missing-values.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#additions" title="src/app/features/change-history/change-history-normalize.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>additions</b>&nbsp;&nbsp;&nbsp;(src/.../change-history-normalize.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#addMissingValues" title="src/app/features/inherited-field/add-missing-values.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>addMissingValues</b>&nbsp;&nbsp;&nbsp;(src/.../add-missing-values.ts)</span></a>
                         </li>
                         <li>
                             <a href="#addPropertySchema" title="src/app/core/entity/database-field.decorator.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>addPropertySchema</b>&nbsp;&nbsp;&nbsp;(src/.../database-field.decorator.ts)</span></a>
@@ -530,6 +536,9 @@
                             <a href="#getReadableValue" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getReadableValue</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#getRemovedValues" title="src/app/features/inherited-field/add-missing-values.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getRemovedValues</b>&nbsp;&nbsp;&nbsp;(src/.../add-missing-values.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#getReportDefinitionEntryError" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getReportDefinitionEntryError</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
                         </li>
                         <li>
@@ -629,6 +638,9 @@
                             <a href="#isClickableTarget" title="src/app/core/common-components/entities-table/entities-table-selection.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isClickableTarget</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isCollectingFromLinkedRecords" title="src/app/features/inherited-field/inherited-field-config.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isCollectingFromLinkedRecords</b>&nbsp;&nbsp;&nbsp;(src/.../inherited-field-config.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isConfigurableEnum" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isConfigurableEnum</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</span></a>
                         </li>
                         <li>
@@ -651,6 +663,9 @@
                         </li>
                         <li>
                             <a href="#isEmptyFilterCondition" title="src/app/core/config/config-migrations.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isEmptyFilterCondition</b>&nbsp;&nbsp;&nbsp;(src/.../config-migrations.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isEmptyValue" title="src/app/features/inherited-field/add-missing-values.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isEmptyValue</b>&nbsp;&nbsp;&nbsp;(src/.../add-missing-values.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isEntityViewConfig" title="src/app/core/config/dynamic-routing/route-paths.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isEntityViewConfig</b>&nbsp;&nbsp;&nbsp;(src/.../route-paths.ts)</span></a>
@@ -1181,6 +1196,349 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/inherited-field/add-missing-values.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addAndRemoveValues"></a>
+                    <span class="name">
+                        <span ><b>addAndRemoveValues</b></span>
+                        <a href="#addAndRemoveValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>addAndRemoveValues(existingValues: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, valuesToAdd: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, valuesToRemove)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Add the given values to the existing values (skipping duplicates) and remove the values to remove.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>existingValues</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>values already set (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>valuesToAdd</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>new values to be added (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>valuesToRemove</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>[]</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>values to be removed from the existing values (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the combined values or the unchanged existingValues if nothing was added or removed</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addMissingValues"></a>
+                    <span class="name">
+                        <span ><b>addMissingValues</b></span>
+                        <a href="#addMissingValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>addMissingValues(existingValues: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, valuesToAdd: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Append the given values to the existing values, skipping any duplicates.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>existingValues</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>values already set (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>valuesToAdd</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>new values to be added (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the combined values or the unchanged existingValues if all values are already included</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getRemovedValues"></a>
+                    <span class="name">
+                        <span ><b>getRemovedValues</b></span>
+                        <a href="#getRemovedValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getRemovedValues(oldValues: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, newValues: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the values that were removed, i.e. that are in the old values but no longer in the new values.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>oldValues</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the values before the change (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>newValues</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the values after the change (database format)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>any[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isEmptyValue"></a>
+                    <span class="name">
+                        <span ><b>isEmptyValue</b></span>
+                        <a href="#isEmptyValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isEmptyValue(value: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the value is empty, i.e. not set or an empty text or list.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
                             </div>
                 </td>
             </tr>
@@ -15523,7 +15881,8 @@ This generates a camelCase string, removing special characters.</p>
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Get the default value configs filtered for the given mode.</p>
+                        <div class="io-description"><p>Get the default value configs filtered for the given mode,
+excluding automation rules (with sourceReferenceEntity), which are handled by the AutomatedFieldUpdateConfigService.</p>
 </div>
 
                             <div class="io-description">
@@ -18907,6 +19266,70 @@ actions as an array.</p>
                                             <td>
                                                             <code><a href="../miscellaneous/typealiases.html#EntityActionPermission" target="_self" >EntityActionPermission</a></code>
                                             </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/inherited-field/inherited-field-config.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isCollectingFromLinkedRecords"></a>
+                    <span class="name">
+                        <span ><b>isCollectingFromLinkedRecords</b></span>
+                        <a href="#isCollectingFromLinkedRecords"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isCollectingFromLinkedRecords(field)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the field collects the values of all related records that link to this record
+(e.g. a school&#39;s field collecting the cities of all its children),
+adding to the existing values instead of replacing them.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
 
                                             <td>
                                                     No
