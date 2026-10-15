@@ -1853,5 +1853,18 @@
   "3388473245390989633": "Some queries or groups are incomplete. Complete or remove them to save the report.",
   "2570278763179992446": "Enter an SQL query or remove this entry.",
   "3661941807145562365": "Enter a title for this group.",
-  "833401053301598693": "Add a query or sub-group to this group, or remove it."
+  "833401053301598693": "Add a query or sub-group to this group, or remove it.",
+  "3958108001182279478": "The linked records could not be updated.",
+  "1483739443225840120": "Keep the existing values of this field and add the new values of the related records. Values removed from a related record are suggested for removal unless another related record still has them.",
+  "3315932929881195708": " Add to existing values instead of replacing ",
+  "5028495687205527994": " Adding to the existing values is only possible if the related records link to this record (option \"Entity > field\"), not if this record links to them. ",
+  "1042430747121527091": " Adding to the existing values is only possible for fields that allow multiple values. ",
+  "4806075564438460249": " The record is no longer linked. Values that no other linked record has are removed here. ",
+  "2022730156749216888": " The values of the linked record are added to the existing ones. Values it just lost are removed here too, unless another linked record still has them. ",
+  "2418117011256452480": " Values collected from all records linking to this record in their field \"{$START_TAG_APP_ENTITY_FIELD_LABEL}{$CLOSE_TAG_APP_ENTITY_FIELD_LABEL}\" ",
+  "8950829728398101984": "(up-to-date, contains the values of all linked records)",
+  "8573738767206372632": " (manually changed): click to replace with the values of all linked records {$START_BLOCK_IF} (requires the form to be in \"Edit\" mode) {$CLOSE_BLOCK_IF}",
+  "4679020173464919644": " The value of this field is automatically passed on to linked records. ",
+  "2888132684647253568": " Click to review and update them now {$START_BLOCK_IF} (not available while editing) {$CLOSE_BLOCK_IF}",
+  "7352627178056298273": "The linked records are up to date."
 }
