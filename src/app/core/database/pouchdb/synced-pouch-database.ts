@@ -180,10 +180,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localDb = await this.getPouchDBOnceReady();
-
-    const localInfo = await localDb.info();
-    const isFirstSync = localInfo.doc_count === 0;
+    let localDb: PouchDB.Database;
+    let isFirstSync: boolean;
+    try {
+      localDb = await this.getPouchDBOnceReady();
+      isFirstSync = (await localDb.info()).doc_count === 0;
+    } catch (err) {
+      // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
+      this.handleSyncFailure(err, []);
+      throw err;
+    }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
       this.remoteDatabase.trackLostPermissions = false;
@@ -274,30 +280,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        if (this.isDocumentWriteError(err)) {
-          Logging.warn(
-            `sync failed: document write error (possible oversized document)`,
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-            err,
-          );
-        } else if (isKnownMultiTabDatabaseCorruption(err)) {
-          this.corruptionRecovery?.handleKnownMultiTabCorruption(
-            err,
-            "sync failed: likely multi-tab IndexedDB corruption",
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-          );
-        } else if (
-          this.isSyncConnectivityError(err) ||
-          err instanceof SyncStalledError
-        ) {
-          Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-        } else if (err?.status === 401 || err?.statusCode === 401) {
-          // expired session; the fetch layer already triggers re-login
-          Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
-        } else {
-          Logging.warn(`sync failed`, { db: this.dbName }, err);
-        }
-        this.syncState.next(SyncState.FAILED);
+        this.handleSyncFailure(err, lastSyncedDocIds);
         throw err;
       })
       .finally(() => {
@@ -306,6 +289,37 @@ export class SyncedPouchDatabase extends PouchDatabase {
           this.remoteDatabase.trackLostPermissions = true;
         }
       });
+  }
+
+  /**
+   * Log a failed sync according to its cause (only once: callers like
+   * {@link ensureSynced} rely on this) and mark the sync state as failed.
+   */
+  private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    if (this.isDocumentWriteError(err)) {
+      Logging.warn(
+        `sync failed: document write error (possible oversized document)`,
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        err,
+      );
+    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        "sync failed: likely multi-tab IndexedDB corruption",
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+      );
+    } else if (
+      this.isSyncConnectivityError(err) ||
+      err instanceof SyncStalledError
+    ) {
+      Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
+    } else if (err?.status === 401 || err?.statusCode === 401) {
+      // expired session; the fetch layer already triggers re-login
+      Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
+    } else {
+      Logging.warn(`sync failed`, { db: this.dbName }, err);
+    }
+    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {

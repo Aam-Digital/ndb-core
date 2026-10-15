@@ -164,7 +164,7 @@ export class EditFileComponent
       errorMessage = $localize`:File Upload Error Message:File too large. Usually files up to 5 MB are supported (or your system administrator's custom limit).`;
     } else if (err instanceof NotAvailableOfflineError) {
       errorMessage = $localize`:File Upload Error Message:Changes to file attachments are not available offline.`;
-    } else if (isConnectivityError(err)) {
+    } else if (isConnectivityError(err) || isConnectivityError(err?.cause)) {
       // a request that never reached the server (e.g. a mobile connection dropping
       // mid-upload) is a transient condition of the network, not a defect - it is
       // reported to the user but deliberately not to remote monitoring

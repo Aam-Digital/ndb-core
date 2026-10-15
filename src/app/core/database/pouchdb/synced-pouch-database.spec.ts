@@ -411,6 +411,22 @@ describe("SyncedPouchDatabase", () => {
     await expect(result).rejects.toMatchObject({ cause: failure });
   });
 
+  it("should log a failure of the local database before syncing, as ensureSynced callers rely on", async () => {
+    const { mockLocalDb } = mockPouchDatabaseService();
+    const failure = new Error("local database broken");
+    mockLocalDb.info.mockRejectedValue(failure);
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    await expect(service.sync()).rejects.toBe(failure);
+
+    expect(warn).toHaveBeenCalledWith(
+      "sync failed",
+      expect.anything(),
+      failure,
+    );
+    warn.mockRestore();
+  });
+
   it("ensureSynced should throw NotAvailableOfflineError when sync ends UNSYNCED", async () => {
     const syncSpy = vi.spyOn(service, "sync").mockImplementation(async () => {
       service["syncState"].next(SyncState.UNSYNCED);

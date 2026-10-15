@@ -292,6 +292,11 @@ describe("EditFileComponent", () => {
       message: "connection",
     },
     {
+      case: "a sync before the upload that lost the connection",
+      error: new SyncFailedError(new HttpErrorResponse({ status: 0 })),
+      message: "connection",
+    },
+    {
       // the sync has already logged its failure
       case: "a failed sync before the upload",
       error: new SyncFailedError(new Error("sync failed")),
@@ -328,6 +333,7 @@ describe("EditFileComponent", () => {
         );
         expect(loggingError).not.toHaveBeenCalled();
       } finally {
+        loggingError.mockRestore();
         vi.useRealTimers();
       }
     },
