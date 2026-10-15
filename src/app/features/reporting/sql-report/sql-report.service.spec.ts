@@ -2,13 +2,14 @@ import { TestBed } from "@angular/core/testing";
 
 import {
   ReportCalculation,
+  ReportCalculationError,
   ReportData,
   SqlReportRow,
   SqlReportService,
 } from "./sql-report.service";
 import { entityRegistry } from "../../../core/entity/database-entity.decorator";
-import { HttpClient } from "@angular/common/http";
-import { of } from "rxjs";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { Observable, of, throwError } from "rxjs";
 import { ReportEntity, SqlReport } from "../report-config";
 import moment from "moment";
 
@@ -190,6 +191,80 @@ describe("SqlReportService", () => {
     // Then
     expect(mockHttpClient.post).not.toHaveBeenCalled();
     expect(result).toEqual(validReportDataResponse);
+  });
+
+  describe("when no usable cached calculation exists", () => {
+    const from = moment("2024-01-01").toDate();
+    const to = moment("2024-01-01").toDate();
+    const cachedCalculation = (
+      status: ReportCalculation["status"],
+    ): ReportCalculation => ({
+      ...validReportCalculationsResponse[2],
+      status,
+    });
+    const requestFailure = () =>
+      throwError(() => new HttpErrorResponse({ status: 500 }));
+
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    /** run `query` while letting the calculation polling run to its end */
+    async function runQuery(): Promise<ReportData> {
+      const result = service.query(new ReportEntity() as SqlReport, from, to);
+      result.catch(() => {}); // rejections are asserted by the caller
+      await vi.advanceTimersByTimeAsync(5000);
+      return result;
+    }
+
+    it.each<[string, () => Observable<unknown>[]]>([
+      ["the lookup of cached calculations fails", () => [requestFailure()]],
+      [
+        "the cached calculations did not finish successfully",
+        () => [
+          of([
+            cachedCalculation("FINISHED_ERROR"),
+            cachedCalculation("PENDING"),
+          ]),
+        ],
+      ],
+      [
+        "the cached calculation's data cannot be loaded",
+        () => [of([cachedCalculation("FINISHED_SUCCESS")]), requestFailure()],
+      ],
+    ])("calculates anew once when %s", async (_, cacheLookupResponses) => {
+      for (const response of cacheLookupResponses()) {
+        mockHttpClient.get.mockReturnValueOnce(response);
+      }
+      mockHttpClient.get
+        .mockReturnValueOnce(of(cachedCalculation("FINISHED_SUCCESS")))
+        .mockReturnValueOnce(of(validReportDataResponse));
+      mockHttpClient.post.mockReturnValue(of({ id: "calculation-id" }));
+
+      await expect(runQuery()).resolves.toEqual(validReportDataResponse);
+      expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not start a second calculation when the backend rejects the calculation", async () => {
+      const rejection = new HttpErrorResponse({
+        status: 400,
+        error: { errorMessage: "Invalid ReportConfig" },
+      });
+      mockHttpClient.get.mockReturnValueOnce(of([]));
+      mockHttpClient.post.mockReturnValue(throwError(() => rejection));
+
+      await expect(runQuery()).rejects.toBe(rejection);
+      expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not start a second calculation when the calculation finishes with an error", async () => {
+      mockHttpClient.get
+        .mockReturnValueOnce(of([]))
+        .mockReturnValue(of(cachedCalculation("FINISHED_ERROR")));
+      mockHttpClient.post.mockReturnValue(of({ id: "calculation-id" }));
+
+      await expect(runQuery()).rejects.toBeInstanceOf(ReportCalculationError);
+      expect(mockHttpClient.post).toHaveBeenCalledTimes(1);
+    });
   });
 
   it("should convert data into SqlReportRow[]", async () => {

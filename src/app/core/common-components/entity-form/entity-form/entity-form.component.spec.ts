@@ -9,6 +9,11 @@ import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge"
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { MockDestroyRef } from "../../../../utils/mock-destroy-ref";
+import { FieldGroup } from "../../../entity-details/form/field-group";
+import { AutomatedFieldUpdateConfigService } from "#src/app/features/inherited-field/automated-field-update/automated-field-update-config.service";
+import { AlertService } from "../../../alerts/alert.service";
+import { Logging } from "../../../logging/logging.service";
+import { EntityFormSavedEvent } from "../entity-form";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<TestEntity>;
@@ -38,6 +43,10 @@ describe("EntityFormComponent", () => {
     setupInitialForm(new TestEntity(), testColumns);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   async function setupInitialForm(entity, columns) {
     const form = await TestBed.inject(EntityFormService).createEntityForm(
       columns[0],
@@ -52,6 +61,42 @@ describe("EntityFormComponent", () => {
     fixture.componentRef.setInput("form", form);
     fixture.detectChanges();
   }
+
+  it("continues processing saved events after reporting an automatic update failure", async () => {
+    const entity = new TestEntity();
+    await setupInitialForm(entity, testColumns);
+    const previousEntity = entity.copy();
+    const error = new Error("Failed to fetch dynamically imported module");
+    const applyRules = vi
+      .spyOn(
+        TestBed.inject(AutomatedFieldUpdateConfigService),
+        "applyRulesToDependentEntities",
+      )
+      .mockRejectedValueOnce(error)
+      .mockResolvedValue(undefined);
+    const logError = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    const alert = vi
+      .spyOn(TestBed.inject(AlertService), "addDanger")
+      .mockImplementation(() => {});
+
+    component
+      .form()
+      .onFormStateChange.emit(new EntityFormSavedEvent(entity, previousEntity));
+    await Promise.resolve();
+
+    expect(applyRules).toHaveBeenCalledWith(entity, previousEntity);
+    expect(logError).toHaveBeenCalledWith(expect.any(String), error);
+    expect(alert).toHaveBeenCalledOnce();
+
+    component
+      .form()
+      .onFormStateChange.emit(new EntityFormSavedEvent(entity, previousEntity));
+    await Promise.resolve();
+
+    expect(applyRules).toHaveBeenCalledTimes(2);
+    expect(logError).toHaveBeenCalledOnce();
+    expect(alert).toHaveBeenCalledOnce();
+  });
 
   it("should remove fields without read permissions when entity is not new", async () => {
     const existingEntity = new TestEntity();
@@ -220,6 +265,97 @@ describe("EntityFormComponent", () => {
     component.form().formGroup.enable();
     expect(component.form().formGroup.get("other").disabled).toBe(false);
   });
+
+  async function setupFormWithGroups(entity: TestEntity, groups: FieldGroup[]) {
+    const form = await TestBed.inject(EntityFormService).createEntityForm(
+      groups.flatMap((g) => g.fields),
+      entity,
+      new MockDestroyRef(),
+    );
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("fieldGroups", groups);
+    fixture.componentRef.setInput("form", form);
+    fixture.detectChanges();
+  }
+
+  it("should hide and disable the whole group (including fields without a form control) while the group's displayCondition is not met", async () => {
+    const entity = new TestEntity();
+    entity.name = "irrelevant";
+    const conditionalGroup: FieldGroup = {
+      header: "Details",
+      fields: [
+        { id: "other" },
+        { id: "textBlock", viewComponent: "DisplayDescriptionOnly" },
+      ],
+      displayCondition: { name: "shown" },
+    };
+
+    await setupFormWithGroups(entity, [
+      { fields: [{ id: "name" }] },
+      conditionalGroup,
+    ]);
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(true);
+
+    component.form().formGroup.get("name").setValue("shown");
+
+    expect(component.filteredFieldGroups()).toEqual([
+      { fields: [{ id: "name" }] },
+      conditionalGroup,
+    ]);
+    expect(component.form().formGroup.get("other").disabled).toBe(false);
+  });
+
+  it("should update the form's validity when a required field is hidden or shown by a displayCondition", async () => {
+    const entity = new TestEntity();
+    entity.name = "shown";
+    await setupFormWithGroups(entity, [
+      { fields: [{ id: "name" }] },
+      {
+        fields: [{ id: "other", validators: { required: true } }],
+        displayCondition: { name: "shown" },
+      },
+    ]);
+    const formGroup = component.form().formGroup;
+    expect(formGroup.valid).toBe(false);
+
+    formGroup.get("name").setValue("hidden");
+    expect(formGroup.valid).toBe(true);
+
+    formGroup.get("name").setValue("shown");
+    expect(formGroup.valid).toBe(false);
+  });
+
+  it.each([
+    { name: "shown", other: "yes", expectedVisible: true },
+    { name: "shown", other: "no", expectedVisible: false },
+    { name: "hidden", other: "yes", expectedVisible: false },
+  ])(
+    "should show a field only if both its own and its group's displayCondition are met (name: $name, other: $other)",
+    async ({ name, other, expectedVisible }) => {
+      const entity = new TestEntity();
+      Object.assign(entity, { name, other });
+
+      await setupFormWithGroups(entity, [
+        { fields: [{ id: "name" }, { id: "other" }] },
+        {
+          fields: [{ id: "rating", displayCondition: { other: "yes" } }],
+          displayCondition: { name: "shown" },
+        },
+      ]);
+
+      const visibleFieldIds = component
+        .filteredFieldGroups()
+        .flatMap((g) => g.fields.map((f) => (f as { id: string }).id));
+      expect(visibleFieldIds.includes("rating")).toBe(expectedVisible);
+      expect(component.form().formGroup.get("rating").disabled).toBe(
+        !expectedVisible,
+      );
+    },
+  );
 
   it("should not remove fields when creating new and conditions are not met yet", async () => {
     fixture.componentRef.setInput("fieldGroups", [

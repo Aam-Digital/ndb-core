@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 .report-definition {
   width: 100%;
 }
@@ -13,6 +15,16 @@
 .report-row.group-row {
   background: rgba(0, 0, 0, 0.03);
   border-color: rgba(0, 0, 0, 0.24);
+}
+
+// an entry that cannot be calculated (shown once the user tried to save)
+.report-row.invalid-row {
+  border-color: colors.$error;
+}
+
+.row-error {
+  font-size: 0.75em;
+  padding-block-start: 2px;
 }
 
 .query-editor {

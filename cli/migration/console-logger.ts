@@ -1,3 +1,4 @@
+import { colorErr } from "../lib/colors.js";
 import type { MigrationLogger } from "./migration-definition.js";
 
 export class ConsoleLogger implements MigrationLogger {
@@ -8,11 +9,11 @@ export class ConsoleLogger implements MigrationLogger {
   }
 
   warn(msg: string): void {
-    console.warn(`    ! ${msg}`);
+    console.warn(colorErr("yellow", `    ! ${msg}`));
   }
 
   error(msg: string): void {
-    console.error(`    ✗ ${msg}`);
+    console.error(colorErr("red", `    ✗ ${msg}`));
   }
 
   verbose(msg: string): void {

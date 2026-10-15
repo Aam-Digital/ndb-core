@@ -13,6 +13,8 @@ import { EntityActionsMenuService } from "#src/app/core/entity-details/entity-ac
 import { EntityAction } from "#src/app/core/entity-details/entity-actions-menu/entity-action.interface";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { AttendanceExportService } from "./attendance-export.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 @NgModule({
   providers: [
@@ -82,11 +84,21 @@ export class AttendanceModule {
       availableFor: "individual-only" as const,
       execute: async (e: Entity) => {
         const singleEntity = Array.isArray(e) ? e[0] : e;
-        await attendanceExportService.exportAttendanceList(
-          singleEntity,
-          field.fieldId,
-        );
-        return true;
+        try {
+          await attendanceExportService.exportAttendanceList(
+            singleEntity,
+            field.fieldId,
+          );
+          return true;
+        } catch (err) {
+          Logging.warn("Attendance list download failed:", err);
+          this.injector
+            .get(AlertService)
+            .addDanger(
+              $localize`Download failed [${err instanceof Error ? err.message : String(err)}]`,
+            );
+          return false;
+        }
       },
     }));
   }

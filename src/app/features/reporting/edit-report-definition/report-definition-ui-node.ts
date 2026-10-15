@@ -46,12 +46,62 @@ export function newGroupNode(): ReportDefinitionUiNode {
   };
 }
 
+/**
+ * A persisted entry is a group when it carries `items`, or a `groupTitle` but no `query`
+ * (an incomplete group, which must keep its title to be fixed in the editor).
+ */
+function isGroupDto(dto: ReportDefinitionDto): boolean {
+  return (
+    Array.isArray(dto.items) ||
+    (dto.query === undefined && dto.groupTitle !== undefined)
+  );
+}
+
+/**
+ * Why a report-definition entry cannot be calculated, or `undefined` if it can.
+ * Mirrors the rule the backend enforces: every entry needs a non-empty `query`,
+ * or a non-empty `groupTitle` with non-empty `items`.
+ *
+ * @param entry the entry to check (its child entries are not checked)
+ * @param hasItems whether the entry has child entries; in the editor's flat rows these
+ *  are rows of their own rather than the entry's `items`
+ */
+export function getReportDefinitionEntryError(
+  entry: ReportDefinitionDto,
+  hasItems = (entry.items?.length ?? 0) > 0,
+): string | undefined {
+  if (entry.query?.trim()) {
+    return undefined;
+  }
+  if (!isGroupDto(entry)) {
+    return $localize`:ReportConfig:Enter an SQL query or remove this entry.`;
+  }
+  if (!entry.groupTitle?.trim()) {
+    return $localize`:ReportConfig:Enter a title for this group.`;
+  }
+  if (!hasItems) {
+    return $localize`:ReportConfig:Add a query or sub-group to this group, or remove it.`;
+  }
+  return undefined;
+}
+
+/** Whether any entry of the definition, at any nesting level, cannot be calculated. */
+export function hasInvalidReportDefinitionEntry(
+  entries: ReportDefinitionDto[],
+): boolean {
+  return entries.some(
+    (entry) =>
+      getReportDefinitionEntryError(entry) !== undefined ||
+      hasInvalidReportDefinitionEntry(entry.items ?? []),
+  );
+}
+
 /** Convert persisted report-definition DTOs into UI nodes with transient ids. */
 export function toUiNodes(
   dtos: ReportDefinitionDto[] | undefined,
 ): ReportDefinitionUiNode[] {
   return (dtos ?? []).map((dto) =>
-    Array.isArray(dto.items)
+    isGroupDto(dto)
       ? {
           uniqueId: uuid(),
           groupTitle: dto.groupTitle ?? "",

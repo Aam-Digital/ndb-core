@@ -70,7 +70,9 @@ export class LocalPermissionEnforcerService extends PermissionEnforcerService {
       // Sync so the server can also process access changes and provide lostPermissions.
       // NOTE: the sync may temporarily re-add entities that were purged above if the
       // concurrent push (user entity change) hasn't been processed by the server yet.
-      await this.dbResolver.resetSync();
+      if (!(await this.resetSync())) {
+        return;
+      }
       // Second pass: purge any entities that were re-synced before the server
       // processed the access change (handles push/pull race condition).
       await this.purgeEntitiesWithoutPermissions(subjects);
@@ -92,12 +94,39 @@ export class LocalPermissionEnforcerService extends PermissionEnforcerService {
         Logging.debug(
           "Detected changed permissions for user. Resetting sync ...",
         );
-        await this.dbResolver.resetSync();
+        if (!(await this.resetSync())) {
+          return;
+        }
       }
     }
 
     // update stored rules to check for future changes
     this.localStorage.setItem(this.getUserStorageKey(), userRulesString);
+  }
+
+  /**
+   * Re-sync all data, so that the server can process the changed access, too.
+   *
+   * A failed sync is not logged again here: the database already reported it,
+   * according to its cause (see `SyncedPouchDatabase.sync()`). Letting it
+   * propagate instead reported it a second time, as an unhandled error without
+   * any of that context, because the rules are applied in the background
+   * where nobody awaits the result.
+   *
+   * @returns whether the sync succeeded. If not, the caller must not store the
+   *   rules as enforced, so that the next check retries the enforcement.
+   */
+  private async resetSync(): Promise<boolean> {
+    try {
+      await this.dbResolver.resetSync();
+      return true;
+    } catch (err) {
+      Logging.debug(
+        "Re-sync for changed permissions failed, retrying with the next check",
+        err,
+      );
+      return false;
+    }
   }
 
   getLastEnforcedRules(): DatabaseRule[] | undefined {

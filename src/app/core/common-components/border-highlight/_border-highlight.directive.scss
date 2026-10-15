@@ -6,10 +6,10 @@
 @use "../../../../styles/variables/sizes";
 
 /**
- * adds a border to the left side of an element that can be used to highlight things.
+ * adds a border to the reading-start side of an element that can be used to highlight things.
  * This itself does not actually change the appearance, but specifying a border-color will do so.
  */
-.border-left-highlight {
-  border-left-width: sizes.$small !important;
-  border-left-style: solid !important;
+.border-start-highlight {
+  border-inline-start-width: sizes.$small !important;
+  border-inline-start-style: solid !important;
 }

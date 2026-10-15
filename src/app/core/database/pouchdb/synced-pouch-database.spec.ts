@@ -8,7 +8,7 @@ import {
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
-import { SyncedPouchDatabase } from "./synced-pouch-database";
+import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { Logging } from "../../logging/logging.service";
 
@@ -398,6 +398,33 @@ describe("SyncedPouchDatabase", () => {
     await service.ensureSynced();
 
     expect(syncSpy).toHaveBeenCalled();
+  });
+
+  it("ensureSynced should throw a SyncFailedError when the sync fails (already logged by the sync)", async () => {
+    const failure = new Error("sync failed");
+    vi.spyOn(service, "sync").mockRejectedValue(failure);
+    mockNavigator.onLine = true;
+
+    const result = service.ensureSynced();
+
+    await expect(result).rejects.toBeInstanceOf(SyncFailedError);
+    await expect(result).rejects.toMatchObject({ cause: failure });
+  });
+
+  it("should log a failure of the local database before syncing, as ensureSynced callers rely on", async () => {
+    const { mockLocalDb } = mockPouchDatabaseService();
+    const failure = new Error("local database broken");
+    mockLocalDb.info.mockRejectedValue(failure);
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    await expect(service.sync()).rejects.toBe(failure);
+
+    expect(warn).toHaveBeenCalledWith(
+      "sync failed",
+      expect.anything(),
+      failure,
+    );
+    warn.mockRestore();
   });
 
   it("ensureSynced should throw NotAvailableOfflineError when sync ends UNSYNCED", async () => {

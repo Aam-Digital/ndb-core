@@ -1475,7 +1475,14 @@
         "numberField": {
           "id": "numberField",
           "label": "Number Field",
-          "dataType": "number"
+          "dataType": "number",
+          "displayCondition": {
+            "enumDropdown": {
+              "$in": [
+                "C1"
+              ]
+            }
+          }
         },
         "longTextField": {
           "id": "longTextField",
@@ -1640,7 +1647,14 @@
                         "dateWithAgeField",
                         "monthField",
                         "dateField"
-                      ]
+                      ],
+                      "displayCondition": {
+                        "enumDropdown": {
+                          "$in": [
+                            "C2"
+                          ]
+                        }
+                      }
                     },
                     {
                       "fields": [

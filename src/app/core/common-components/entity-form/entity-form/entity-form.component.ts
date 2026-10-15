@@ -18,7 +18,9 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import moment from "moment";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 import { FieldGroup } from "../../../entity-details/form/field-group";
+import { ColumnConfig } from "../FormConfig";
 import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/entity-field-edit.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
@@ -26,6 +28,7 @@ import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FilterService } from "../../../filter/filter.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { AlertService } from "../../../alerts/alert.service";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -55,6 +58,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
   private filterService = inject(FilterService);
+  private alertService = inject(AlertService);
   private automatedFieldUpdateConfigService = inject(
     AutomatedFieldUpdateConfigService,
   );
@@ -81,7 +85,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
   readonly entityState = signal<T | undefined>(undefined);
   readonly isEntityLocked = computed(() => !!this.entityState()?.anonymized);
 
-  /** ids of fields currently hidden because their `displayCondition` is not met */
+  /** ids of fields currently hidden because their own or their group's `displayCondition` is not met */
   private readonly conditionHiddenFieldIds = signal<ReadonlySet<string>>(
     new Set(),
   );
@@ -143,10 +147,20 @@ export class EntityFormComponent<T extends Entity = Entity> {
           filter((event) => event instanceof EntityFormSavedEvent),
         )
         .subscribe(async (event: EntityFormSavedEvent) => {
-          await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
-            event.newEntity,
-            event.previousEntity,
-          );
+          try {
+            await this.automatedFieldUpdateConfigService.applyRulesToDependentEntities(
+              event.newEntity,
+              event.previousEntity,
+            );
+          } catch (error) {
+            Logging.error(
+              "EntityForm could not update the linked records after saving",
+              error,
+            );
+            this.alertService.addDanger(
+              $localize`The linked records could not be updated.`,
+            );
+          }
         });
       onCleanup(() => sub.unsubscribe());
     });
@@ -167,14 +181,14 @@ export class EntityFormComponent<T extends Entity = Entity> {
   }
 
   /**
-   * Re-evaluate each field's `displayCondition` (if any) against the entity's current,
-   * possibly unsaved state (i.e. including the current form values) and hide/disable
-   * fields whose condition is not met.
+   * Re-evaluate the `displayCondition` (if any) of each field and of each field group against
+   * the entity's current, possibly unsaved state (i.e. including the current form values)
+   * and hide/disable fields whose own condition or whose group's condition is not met.
    *
-   * Only touches controls that declare a `displayCondition`. A field is only re-enabled if
-   * this component itself had previously disabled it for an unmet condition - never a field
-   * that is disabled for some unrelated reason (the form is still in read-only "view" mode,
-   * missing update permissions, an anonymized entity), so it never overrides those.
+   * A field is only re-enabled if this component itself had previously disabled it for an
+   * unmet condition - never a field that is disabled for some unrelated reason (the form is
+   * still in read-only "view" mode, missing update permissions, an anonymized entity),
+   * so it never overrides those.
    */
   private updateFieldDisplayConditions(form: EntityForm<T>) {
     const entity = this.entityState();
@@ -185,10 +199,15 @@ export class EntityFormComponent<T extends Entity = Entity> {
       this.lastDisplayConditionForm = form;
     }
 
-    const fieldsWithCondition = form.fieldConfigs.filter(
-      (f) => f.displayCondition && Object.keys(f.displayCondition).length > 0,
+    const fieldsWithCondition = form.fieldConfigs.filter(hasDisplayCondition);
+    const groupsWithCondition = (this.fieldGroups() ?? []).filter(
+      hasDisplayCondition,
     );
-    if (fieldsWithCondition.length === 0) {
+    if (
+      fieldsWithCondition.length === 0 &&
+      groupsWithCondition.length === 0 &&
+      this.conditionDisabledFieldIds.size === 0
+    ) {
       this.conditionHiddenFieldIds.set(new Set());
       return;
     }
@@ -196,36 +215,60 @@ export class EntityFormComponent<T extends Entity = Entity> {
     const currentEntityState = entity.copy();
     Object.assign(currentEntityState, form.formGroup.getRawValue());
 
-    const action = entity.isNew ? "create" : "update";
     const hiddenFieldIds = new Set<string>();
-
-    for (const field of fieldsWithCondition) {
-      const control = form.formGroup.get(field.id);
-      if (!control) continue;
-
-      const isMet = this.evaluateDisplayCondition(
-        field.displayCondition,
-        currentEntityState,
-      );
-
-      if (!isMet) {
-        hiddenFieldIds.add(field.id);
-        if (control.enabled) {
-          this.conditionDisabledFieldIds.add(field.id);
-          control.disable({ onlySelf: true, emitEvent: false });
-        }
-        continue;
-      }
-
+    for (const group of groupsWithCondition) {
       if (
-        this.conditionDisabledFieldIds.has(field.id) &&
+        !this.evaluateDisplayCondition(
+          group.displayCondition,
+          currentEntityState,
+        )
+      ) {
+        group.fields
+          .map(getFieldId)
+          .filter(Boolean)
+          .forEach((id) => hiddenFieldIds.add(id));
+      }
+    }
+    for (const field of fieldsWithCondition) {
+      if (
+        !this.evaluateDisplayCondition(
+          field.displayCondition,
+          currentEntityState,
+        )
+      ) {
+        hiddenFieldIds.add(field.id);
+      }
+    }
+
+    let controlStateChanged = false;
+    for (const fieldId of hiddenFieldIds) {
+      const control = form.formGroup.get(fieldId);
+      if (control?.enabled) {
+        this.conditionDisabledFieldIds.add(fieldId);
+        control.disable({ onlySelf: true, emitEvent: false });
+        controlStateChanged = true;
+      }
+    }
+
+    const action = entity.isNew ? "create" : "update";
+    for (const fieldId of this.conditionDisabledFieldIds) {
+      if (
+        !hiddenFieldIds.has(fieldId) &&
         !this.isEntityLocked() &&
         !form.formGroup.disabled &&
-        this.ability.can(action, entity, field.id)
+        this.ability.can(action, entity, fieldId)
       ) {
-        control.enable({ onlySelf: true, emitEvent: false });
-        this.conditionDisabledFieldIds.delete(field.id);
+        form.formGroup
+          .get(fieldId)
+          ?.enable({ onlySelf: true, emitEvent: false });
+        this.conditionDisabledFieldIds.delete(fieldId);
+        controlStateChanged = true;
       }
+    }
+
+    if (controlStateChanged) {
+      // `onlySelf` leaves the form's own validity stale (e.g. still invalid because of a now hidden required field)
+      form.formGroup.updateValueAndValidity({ emitEvent: false });
     }
 
     this.conditionHiddenFieldIds.set(hiddenFieldIds);
@@ -310,7 +353,7 @@ export class EntityFormComponent<T extends Entity = Entity> {
       .map((group) => ({
         ...group,
         fields: group.fields.filter((field) => {
-          const fieldId = typeof field === "string" ? field : field?.id;
+          const fieldId = getFieldId(field);
           // an incompletely configured field (e.g. no id selected) must not break the whole group
           return (
             fieldId &&
@@ -331,4 +374,16 @@ export class EntityFormComponent<T extends Entity = Entity> {
       JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
   }
+}
+
+function hasDisplayCondition(item: {
+  displayCondition?: DataFilter<any>;
+}): boolean {
+  return (
+    !!item.displayCondition && Object.keys(item.displayCondition).length > 0
+  );
+}
+
+function getFieldId(field: ColumnConfig): string | undefined {
+  return typeof field === "string" ? field : field?.id;
 }

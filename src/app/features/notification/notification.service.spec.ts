@@ -11,6 +11,8 @@ import { DatabaseResolverService } from "app/core/database/database-resolver.ser
 import { FirebaseMessagingServiceWorker } from "./firebase-messaging-service-worker";
 import type firebase from "firebase/compat/app";
 import type { Mock } from "vitest";
+import { environment } from "../../../environments/environment";
+import { FirebaseConfiguration } from "./notification-config.interface";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
@@ -44,7 +46,13 @@ describe("NotificationService", () => {
     });
   }
 
+  let originalFirebaseConfig: FirebaseConfiguration;
+
   beforeEach(() => {
+    originalFirebaseConfig = environment.notificationsConfig;
+    environment.notificationsConfig = {
+      projectId: "test-project",
+    } as FirebaseConfiguration;
     notificationPermission = "granted";
     vi.stubGlobal("Notification", {
       get permission() {
@@ -88,7 +96,10 @@ describe("NotificationService", () => {
     service = TestBed.inject(NotificationService);
   });
 
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    environment.notificationsConfig = originalFirebaseConfig;
+  });
 
   it("shows push messages received after login, without waiting for the backend to confirm the device", async () => {
     login();
@@ -121,8 +132,14 @@ describe("NotificationService", () => {
     expect(mockRegistration.showNotification).toHaveBeenCalledTimes(1);
   });
 
-  it("does not listen for push messages without the notification permission", () => {
-    notificationPermission = "default";
+  it.each([
+    ["the notification permission", () => (notificationPermission = "default")],
+    [
+      "push notifications set up for the deployment",
+      () => (environment.notificationsConfig = undefined),
+    ],
+  ])("does not listen for push messages without %s", (_, removeSetup) => {
+    removeSetup();
 
     login();
 

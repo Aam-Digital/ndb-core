@@ -19,6 +19,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { DatabaseResolverService } from "../../../database/database-resolver.service";
 import { SessionType } from "../../../session/session-type";
 import { environment } from "../../../../../environments/environment";
+import { Logging } from "../../../logging/logging.service";
 
 /**
  * A dumb component handling presentation of the sync indicator icon
@@ -99,7 +100,13 @@ export class BackgroundProcessingIndicatorComponent {
    * Clear sync checkpoints and trigger a full re-sync.
    */
   async resetSync(): Promise<void> {
-    await this.dbResolver.resetSync();
+    try {
+      await this.dbResolver.resetSync();
+    } catch (err) {
+      // already reported by the database according to its cause; called from a
+      // click handler, so a rethrow would only report it again as an unhandled error
+      Logging.debug("Manually triggered re-sync failed", err);
+    }
   }
 
   markWasClosed(): void {
