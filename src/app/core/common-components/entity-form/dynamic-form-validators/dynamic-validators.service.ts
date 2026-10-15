@@ -122,7 +122,8 @@ export class DynamicValidatorsService {
       case "readonlyAfterSet":
         return value ? buildReadonlyValidator(entity) : null;
       default:
-        Logging.warn("Trying to generate a validator that does not exist", {
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug("Trying to generate a validator that does not exist", {
           validator: key,
         });
         return null;
