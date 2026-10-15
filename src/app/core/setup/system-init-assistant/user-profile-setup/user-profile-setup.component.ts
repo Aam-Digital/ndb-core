@@ -250,7 +250,9 @@ export class UserProfileSetupComponent implements OnInit {
       await (database as SyncedPouchDatabase)?.ensureSynced?.();
       return true;
     } catch (err) {
-      Logging.warn("Failed to sync a new profile before linking it", err);
+      // offline, or a sync failure already logged by the sync itself;
+      // the user is told that the profile is not linked
+      Logging.debug("Failed to sync a new profile before linking it", err);
       return false;
     }
   }

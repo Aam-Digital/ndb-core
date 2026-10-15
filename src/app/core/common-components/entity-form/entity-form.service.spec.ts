@@ -518,6 +518,27 @@ describe("EntityFormService", () => {
     TestEntity.schema.delete("test");
   });
 
+  it("should remove fields cleared in the form from the saved entity", async () => {
+    TestEntity.schema.set("test", { dataType: "string" });
+    // fields of configured entity types are defined on the prototype
+    Object.defineProperty(TestEntity.prototype, "test", {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
+    const entity = new TestEntity();
+    entity["test"] = "old value";
+    const form = await createForm([{ id: "test" }], entity);
+    form.formGroup.get("test").setValue(null as never);
+
+    await service.saveChanges(form, entity);
+
+    expect(entity["test"]).toBeUndefined();
+
+    delete TestEntity.prototype["test"];
+    TestEntity.schema.delete("test");
+  });
+
   it("should trim leading/trailing whitespace from string fields on save", async () => {
     TestBed.inject(EntityAbility).update([
       { action: "manage", subject: "all" },

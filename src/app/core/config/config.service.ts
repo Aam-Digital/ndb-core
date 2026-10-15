@@ -4,6 +4,7 @@ import { shareReplay } from "rxjs/operators";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
+import { NamedError } from "../logging/reported-errors";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
@@ -77,9 +78,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private abortWithError(message: string, cause?: unknown) {
-    const error = new Error(message, { cause });
-    error.name = "ConfigLoadError";
-    Logging.error(error);
+    Logging.error(new NamedError("ConfigLoadError", message, { cause }));
 
     if (this.registerReloadAttempt()) {
       alert(
