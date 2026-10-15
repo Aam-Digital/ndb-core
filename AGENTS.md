@@ -227,19 +227,19 @@ Rules that keep one root cause in one Sentry issue:
   both. A method that logs and then rethrows makes every caller that does not catch report it a
   second time, as an unhandled error with a different title and less context (a failed sync showed
   up as both `sync failed` and `Error: No error message`). Likewise, when a service already logged a
-  failure and returns a result flag, the component must not log it again.
+  failure and returns a result flag, the component must not log it again. (As a safety net, an
+  unhandled error that was already passed to `Logging` as context is not reported again.)
 - **Never leave a promise floating.** An `async` call inside `subscribe()`, an effect or an event
   handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
   `ErrorHandler` and is reported as a separate, unhandled issue.
-- **Pass the caught error as context** — `Logging.warn("Could not load X", err)`. A
-  `catchError(() => of(null))` followed by a log call without the error makes the report
+- **Pass the caught error as context** — `Logging.warn("Could not load X", err)`. Only then is the
+  report grouped and filtered by its cause (connectivity, expired session, status) like any other
+  error. A `catchError(() => of(null))` followed by a log call without the error makes the report
   impossible to diagnose. Do not log the same error object twice in one call.
 - **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
   `isConnectivityError()` (`src/app/utils/connectivity-error.ts`) and `isExpiredSessionError()`
   (`src/app/utils/expired-session-error.ts`). A component that only treats `404` as expected
-  turns every dropped connection into one more Sentry issue under its own message. Note that
-  `Logging.warn()` is sent as a message event: the `beforeSend` filters for connectivity and
-  expired sessions do not inspect an error passed as context, so classify before calling it.
+  logs every dropped connection as a warning of its own, and cannot tell the user what happened.
 - **Check whether an optional feature is configured before using it** (e.g. push notifications
   without a Firebase config) instead of logging its failure on every page load.
 - **A known limitation is not an event.** If something fails on every sync or render for a known
@@ -251,9 +251,10 @@ When investigating Sentry issues:
 
 - Issues from one browser session (same `trace` id in the event's context) usually share one root
   cause even when their titles differ — compare trace ids before treating them separately.
-- The `environment` tag reads `production` for every deployment, including internal test
-  instances and PR preview builds; check the `url` and `release` tags (`pr-…`, `…-master.N`)
-  before treating an issue as customer-facing.
+- The `environment` tag reads `production` for every production build, including internal test
+  instances and PR preview builds, unless their `config.json` sets `remoteLoggingEnvironment`;
+  check the `url` and `release` tags (`pr-…`, `…-master.N`) before treating an issue as
+  customer-facing.
 - Event counts are capped per session (see the logging README); weigh how many sessions,
   instances and releases an issue affects instead.
 - Grouping and filtering run in the client (`beforeSend`), so a change only applies to events from
