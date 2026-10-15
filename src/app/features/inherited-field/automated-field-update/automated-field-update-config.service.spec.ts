@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import type { MockInstance } from "vitest";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update-config.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -14,6 +15,7 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
 import { of } from "rxjs";
@@ -34,6 +36,15 @@ const mockAutomationConfig = {
       active: "in-mentorship",
       finished: "open for mentorship",
     },
+  },
+};
+
+const mockMultiTypeAutomationConfig = {
+  mode: "inherited-field" as DefaultValueMode,
+  config: {
+    sourceReferenceEntity: "Assignment",
+    sourceValueField: "title",
+    sourceReferenceField: "relatedEntities",
   },
 };
 
@@ -89,6 +100,22 @@ class Mentee extends Entity {
     defaultValue: mockAutomationConfig,
   })
   status: string;
+  @DatabaseField({
+    defaultValue: mockMultiTypeAutomationConfig,
+  })
+  latestAssignment: string;
+}
+
+@DatabaseEntity("Assignment")
+class Assignment extends Entity {
+  @DatabaseField()
+  title: string;
+  @DatabaseField({
+    dataType: "entity",
+    isArray: true,
+    additional: ["Mentee", "School"],
+  })
+  relatedEntities: string[] = [];
 }
 
 @DatabaseEntity("Mentorship")
@@ -219,6 +246,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("School", School);
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
+    entityRegistry.set("Assignment", Assignment);
     entityRegistry.set("AggregatingAction", AggregatingAction);
 
     mockIndexing = {
@@ -342,6 +370,52 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const originalMentee = await entityMapper.load(Mentee, mentee.getId());
     expect(originalMentee.status).toBe("open for mentorship");
+  });
+
+  describe("source reference field that can hold several entity types", () => {
+    let warn: MockInstance;
+
+    beforeEach(() => {
+      warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      warn.mockRestore();
+    });
+
+    it.each([
+      [
+        "ids of other entity types",
+        (mentee: Mentee) => ["School:s1", mentee.getId()],
+      ],
+      [
+        "an id without type prefix",
+        (mentee: Mentee) => [Entity.extractEntityIdFromId(mentee.getId())],
+      ],
+    ])(
+      "should update the mentee and not try to load %s as a mentee",
+      async (_, relatedIdsOf) => {
+        const mentee = new Mentee();
+        mentee.name = "Mentee A";
+        mentee.getSchema();
+
+        const assignment = new Assignment();
+        assignment.relatedEntities = relatedIdsOf(mentee);
+        entityMapper.addAll([mentee, assignment]);
+
+        const originalAssignment = assignment.copy();
+        assignment.title = "interview scheduled";
+
+        await service.applyRulesToDependentEntities(
+          assignment,
+          originalAssignment,
+        );
+
+        const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
+        expect(updatedMentee.latestAssignment).toBe("interview scheduled");
+        expect(warn).not.toHaveBeenCalled();
+      },
+    );
   });
 
   it("should apply automation value mapping correctly", async () => {
