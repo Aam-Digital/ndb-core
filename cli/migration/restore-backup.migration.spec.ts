@@ -104,6 +104,33 @@ describe("restoreBackup migration", () => {
     expect(result.warnings).toHaveLength(1);
   });
 
+  it("recreates a doc the migration deleted", async () => {
+    const store = seed();
+    const ctx = context(store, "some-migration", "20261015T090000Z");
+    await ctx.put(CONFIG_PATH, { _rev: "1-a", _deleted: true });
+
+    await restore(store, ["some-migration"]);
+
+    expect(store[CONFIG]._deleted).toBeUndefined();
+    expect(store[CONFIG].data).toBe("original");
+  });
+
+  it("can roll back a restore that deleted a doc", async () => {
+    const store: RevStore = {};
+    const ctx = context(store, "some-migration", "20261015T090000Z");
+    await ctx.put("/app/ConfigurableEnum:new", { values: [] });
+    await restore(store, ["some-migration"]);
+
+    const undo = context(store, "restore-backup", "20261017T000000Z", [
+      "restore-backup",
+    ]);
+    const result = await restoreBackup.run(undo);
+
+    expect(result.warnings).toEqual([]);
+    expect(store["app/ConfigurableEnum:new"]._deleted).toBeUndefined();
+    expect(store["app/ConfigurableEnum:new"].values).toEqual([]);
+  });
+
   it("can itself be rolled back", async () => {
     const store = seed();
     await migrateConfig(store, "20261015T090000Z", "migrated");

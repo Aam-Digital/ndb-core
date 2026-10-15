@@ -23,9 +23,12 @@ export interface MigrationBackup {
   writtenRev?: string;
 }
 
-/** A compact UTC timestamp like `20261015T093012Z`, identifying one run of a migration. */
+/**
+ * A compact UTC timestamp like `20261015T093012.345Z`, identifying one run of a migration.
+ * Includes milliseconds, so that two runs started in the same second do not share their backup ids.
+ */
 export function backupRunTimestamp(date = new Date()): string {
-  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  return date.toISOString().replace(/[-:]/g, "");
 }
 
 /** `_local` id (without the `_local/` prefix) of the backup of a doc */

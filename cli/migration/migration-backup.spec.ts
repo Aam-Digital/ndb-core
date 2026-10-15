@@ -1,4 +1,4 @@
-import { listBackups } from "./migration-backup.js";
+import { backupRunTimestamp, listBackups } from "./migration-backup.js";
 import {
   buildRevTrackingCouchdb,
   type RevStore,
@@ -58,5 +58,13 @@ describe("listBackups", () => {
     expect(backups).toEqual([
       expect.objectContaining({ migrationId: "m", runAt: "20261015T090000Z" }),
     ]);
+  });
+});
+
+describe("backupRunTimestamp", () => {
+  it("keeps milliseconds, so runs started in the same second get different ids", () => {
+    expect(backupRunTimestamp(new Date("2026-10-15T09:30:12.345Z"))).toBe(
+      "20261015T093012.345Z",
+    );
   });
 });

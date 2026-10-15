@@ -80,12 +80,13 @@ async function restoreDoc(
     if (!is404Error(error)) throw error;
   }
 
+  const currentRev = current?._rev ?? (await deletedRev(ctx, backup));
   // without a recorded write rev, the migration's write may have failed: then the doc should still be at the backed-up rev
   const expectedRev =
     backup.writtenRev ?? (backup.doc?._rev as string | undefined);
-  if (current?._rev !== expectedRev) {
+  if (currentRev !== expectedRev) {
     warnings.push(
-      `${backup.docId} not restored: it was edited after the migration (expected ${expectedRev ?? "no document"}, found ${current?._rev ?? "no document"}). Compare it to its backup and restore it manually if needed.`,
+      `${backup.docId} not restored: it was edited after the migration (expected ${expectedRev ?? "no document"}, found ${currentRev ?? "no document"}). Compare it to its backup and restore it manually if needed.`,
     );
     return false;
   }
@@ -108,6 +109,22 @@ async function restoreDoc(
       return false;
     }
   }
+  // a deleted doc is recreated without a rev
   await ctx.put(path, current ? { ...restored, _rev: current._rev } : restored);
   return true;
+}
+
+/**
+ * The rev of the deletion, if the doc is deleted (a GET only answers 404 then),
+ * e.g. because the migration (or an earlier restore) deleted it.
+ */
+async function deletedRev(
+  ctx: MigrationContext,
+  backup: MigrationBackup,
+): Promise<string | undefined> {
+  const result = (await ctx.couchdb.post(`/${backup.db}/_all_docs`, {
+    keys: [backup.docId],
+  })) as { rows?: { value?: { rev: string; deleted?: boolean } }[] };
+  const value = result?.rows?.[0]?.value;
+  return value?.deleted ? value.rev : undefined;
 }
