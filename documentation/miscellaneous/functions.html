@@ -524,6 +524,9 @@
                             <a href="#getReadableValue" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getReadableValue</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#getReportDefinitionEntryError" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getReportDefinitionEntryError</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#getReservedRole" title="src/app/core/permissions/reserved-roles.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getReservedRole</b>&nbsp;&nbsp;&nbsp;(src/.../reserved-roles.ts)</span></a>
                         </li>
                         <li>
@@ -576,6 +579,9 @@
                         </li>
                         <li>
                             <a href="#hasDisplayCondition" title="src/app/core/common-components/entity-form/entity-form/entity-form.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasDisplayCondition</b>&nbsp;&nbsp;&nbsp;(src/.../entity-form.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#hasInvalidReportDefinitionEntry" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasInvalidReportDefinitionEntry</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
                         </li>
                         <li>
                             <a href="#hasMappedInheritedSourceField" title="src/app/core/import/import-inheritance-warning.util.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>hasMappedInheritedSourceField</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</span></a>
@@ -657,6 +663,9 @@
                         </li>
                         <li>
                             <a href="#isGeoLocation" title="src/app/core/common-components/entities-table/value-accessor/value-accessor.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isGeoLocation</b>&nbsp;&nbsp;&nbsp;(src/.../value-accessor.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isGroupDto" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isGroupDto</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isGroupNode" title="src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isGroupNode</b>&nbsp;&nbsp;&nbsp;(src/.../report-definition-ui-node.ts)</span></a>
@@ -17739,6 +17748,472 @@ This also transforms date objects to <code>YYYY-MM-DD</code> format.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getReportDefinitionEntryError"></a>
+                    <span class="name">
+                        <span ><b>getReportDefinitionEntryError</b></span>
+                        <a href="#getReportDefinitionEntryError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getReportDefinitionEntryError(entry: <a href="../interfaces/ReportDefinitionDto.html" target="_self">ReportDefinitionDto</a>, hasItems: unknown)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Why a report-definition entry cannot be calculated, or <code>undefined</code> if it can.
+Mirrors the rule the backend enforces: every entry needs a non-empty <code>query</code>,
+or a non-empty <code>groupTitle</code> with non-empty <code>items</code>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entry</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ReportDefinitionDto.html" target="_self" >ReportDefinitionDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>the entry to check (its child entries are not checked)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>hasItems</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>(entry.items?.length ?? 0) &gt; 0</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>whether the entry has child entries; in the editor&#39;s flat rows these
+are rows of their own rather than the entry&#39;s <code>items</code></p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasInvalidReportDefinitionEntry"></a>
+                    <span class="name">
+                        <span ><b>hasInvalidReportDefinitionEntry</b></span>
+                        <a href="#hasInvalidReportDefinitionEntry"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasInvalidReportDefinitionEntry(entries)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether any entry of the definition, at any nesting level, cannot be calculated.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entries</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isGroupDto"></a>
+                    <span class="name">
+                        <span ><b>isGroupDto</b></span>
+                        <a href="#isGroupDto"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isGroupDto(dto: <a href="../interfaces/ReportDefinitionDto.html" target="_self">ReportDefinitionDto</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A persisted entry is a group when it carries <code>items</code>, or a <code>groupTitle</code> but no <code>query</code>
+(an incomplete group, which must keep its title to be fixed in the editor).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ReportDefinitionDto.html" target="_self" >ReportDefinitionDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isGroupNode"></a>
+                    <span class="name">
+                        <span ><b>isGroupNode</b></span>
+                        <a href="#isGroupNode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isGroupNode(node: <a href="../interfaces/ReportDefinitionUiNode.html" target="_self">ReportDefinitionUiNode</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A node is a group when it carries an <code>items</code> array; otherwise it is a query.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>node</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="newGroupNode"></a>
+                    <span class="name">
+                        <span ><b>newGroupNode</b></span>
+                        <a href="#newGroupNode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>newGroupNode()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A new, empty group node.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="newQueryNode"></a>
+                    <span class="name">
+                        <span ><b>newQueryNode</b></span>
+                        <a href="#newQueryNode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>newQueryNode()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A new, empty query node.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toReportDefinition"></a>
+                    <span class="name">
+                        <span ><b>toReportDefinition</b></span>
+                        <a href="#toReportDefinition"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toReportDefinition(nodes)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Convert UI nodes back to plain report-definition DTOs (dropping the transient ids).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>nodes</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionDto.html" target="_self" >ReportDefinitionDto[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toUiNodes"></a>
+                    <span class="name">
+                        <span ><b>toUiNodes</b></span>
+                        <a href="#toUiNodes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toUiNodes(dtos)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Convert persisted report-definition DTOs into UI nodes with transient ids.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dtos</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/permissions/reserved-roles.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -19056,256 +19531,6 @@ indicate a misconfiguration and must keep being reported.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/features/reporting/edit-report-definition/report-definition-ui-node.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="isGroupNode"></a>
-                    <span class="name">
-                        <span ><b>isGroupNode</b></span>
-                        <a href="#isGroupNode"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>isGroupNode(node: <a href="../interfaces/ReportDefinitionUiNode.html" target="_self">ReportDefinitionUiNode</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>A node is a group when it carries an <code>items</code> array; otherwise it is a query.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>node</td>
-                                            <td>
-                                                            <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="newGroupNode"></a>
-                    <span class="name">
-                        <span ><b>newGroupNode</b></span>
-                        <a href="#newGroupNode"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>newGroupNode()</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>A new, empty group node.</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="newQueryNode"></a>
-                    <span class="name">
-                        <span ><b>newQueryNode</b></span>
-                        <a href="#newQueryNode"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>newQueryNode()</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>A new, empty query node.</p>
-</div>
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="toReportDefinition"></a>
-                    <span class="name">
-                        <span ><b>toReportDefinition</b></span>
-                        <a href="#toReportDefinition"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>toReportDefinition(nodes)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Convert UI nodes back to plain report-definition DTOs (dropping the transient ids).</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>nodes</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionDto.html" target="_self" >ReportDefinitionDto[]</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="toUiNodes"></a>
-                    <span class="name">
-                        <span ><b>toUiNodes</b></span>
-                        <a href="#toUiNodes"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>toUiNodes(dtos)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Convert persisted report-definition DTOs into UI nodes with transient ids.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>dtos</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../interfaces/ReportDefinitionUiNode.html" target="_self" >ReportDefinitionUiNode[]</a></code>
 
                         </div>
                             <div class="io-description">

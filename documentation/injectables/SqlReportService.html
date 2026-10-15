@@ -262,8 +262,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="285"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:285</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="305"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:305</a></div>
                         </td>
                     </tr>
 
@@ -329,8 +329,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="166"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:166</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:182</a></div>
                         </td>
                     </tr>
 
@@ -459,8 +459,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="350"
-                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:350</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="370"
+                                    class="link-to-prism">src/app/features/reporting/sql-report/sql-report.service.ts:370</a></div>
                         </td>
                     </tr>
 
@@ -814,35 +814,51 @@ export class SqlReportService {
     to: Date,
     forceCalculation &#x3D; false,
   ): Promise&lt;ReportData&gt; {
-    if (forceCalculation) {
-      return firstValueFrom(
-        this.createReportCalculation(report.getId(), from, to),
+    if (!forceCalculation) {
+      const cachedData &#x3D; await this.fetchCachedReportData(
+        report.getId(),
+        from,
+        to,
       );
+      if (cachedData) {
+        return cachedData;
+      }
     }
 
+    // A failed new calculation (request rejected or calculation finished with an error) is not
+    // retried: it would fail the same way and only run the report&#x27;s queries on the server again.
     return firstValueFrom(
-      this.http
-        .get&lt;ReportCalculation[]&gt;(
-          &#x60;${SqlReportService.API_URL}/report-calculation/report/${report.getId()}&#x60;,
-        )
-        .pipe(
-          switchMap((reportDetails) &#x3D;&gt; {
-            let lastReports &#x3D; this.getLastReports(reportDetails, from, to);
+      this.createReportCalculation(report.getId(), from, to),
+    );
+  }
 
-            if (lastReports.length &#x3D;&#x3D;&#x3D; 0) {
-              return this.createReportCalculation(report.getId(), from, to);
-            } else {
-              return this.fetchReportCalculationData(lastReports[0].id);
-            }
-          }),
+  /**
+   * The data of the latest successful calculation of the report for the given period.
+   * Resolves &#x60;undefined&#x60; instead of failing if there is no usable calculation,
+   * so the caller falls back to creating a new calculation.
+   */
+  private async fetchCachedReportData(
+    reportId: string,
+    from: Date,
+    to: Date,
+  ): Promise&lt;ReportData | undefined&gt; {
+    try {
+      const calculations &#x3D; await firstValueFrom(
+        this.http.get&lt;ReportCalculation[]&gt;(
+          &#x60;${SqlReportService.API_URL}/report-calculation/report/${reportId}&#x60;,
         ),
-    ).catch((error) &#x3D;&gt; {
-      if (!forceCalculation) {
-        return this.query(report, from, to, true);
-      } else {
-        throw error;
+      );
+      const lastCalculation &#x3D; this.getLastReports(calculations, from, to)[0];
+      if (!lastCalculation) {
+        return undefined;
       }
-    });
+      return await firstValueFrom(
+        this.fetchReportCalculationData(lastCalculation.id),
+      );
+    } catch (error) {
+      Logging.debug(&quot;Could not load cached report calculation&quot;, error);
+      return undefined;
+    }
   }
 
   /**
@@ -966,7 +982,11 @@ export class SqlReportService {
   ) {
     return reportDetails
       .filter((value) &#x3D;&gt; {
-        return this.filterFromToDates(value, from, to);
+        // pending or failed calculations have no data to show
+        return (
+          value.status &#x3D;&#x3D;&#x3D; &quot;FINISHED_SUCCESS&quot; &amp;&amp;
+          this.filterFromToDates(value, from, to)
+        );
       })
       .sort((a: ReportCalculation, b: ReportCalculation) &#x3D;&gt;
         this.sortByEndDate(a, b),
