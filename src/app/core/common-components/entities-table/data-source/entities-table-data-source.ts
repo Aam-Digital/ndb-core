@@ -13,6 +13,7 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { BulkOperationStateService } from "#src/app/core/entity/entity-actions/bulk-operation-state.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { isExpiredSessionError } from "#src/app/utils/expired-session-error";
+import { isNotPermittedError } from "#src/app/utils/not-permitted-error";
 import {
   MatSnackBar,
   MatSnackBarRef,
@@ -167,15 +168,30 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        Logging.error(
-          "Error loading data in datasource",
-          err,
-          this.loadRecordConfig(),
-        );
+        const notPermitted = isNotPermittedError(err);
+        if (notPermitted) {
+          // a permission rule excludes these records for the user, not an app error
+          Logging.debug(
+            "User is not permitted to load data in datasource",
+            err,
+          );
+        } else {
+          Logging.error(
+            "Error loading data in datasource",
+            err,
+            this.loadRecordConfig(),
+          );
+        }
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself
-          this.showLoadErrorToast(isExpiredSessionError(err));
+          this.showLoadErrorToast(
+            notPermitted
+              ? "notPermitted"
+              : isExpiredSessionError(err)
+                ? "sessionExpired"
+                : "connection",
+          );
         }
         return [];
       })
@@ -193,14 +209,19 @@ export abstract class EntitiesTableDataSource<
    * The retry routes through {@link setRecords} so it reuses the normal
    * (debounced, `isLoading`-tracked) reload path.
    *
-   * @param sessionExpired whether the server rejected the request because the
-   *   login session expired and could not be renewed, rather than a connection problem
+   * @param cause why the server rejected the request: the user may not access these records,
+   *   the login session expired and could not be renewed, or (default) a connection problem
    */
-  private showLoadErrorToast(sessionExpired = false): void {
+  private showLoadErrorToast(
+    cause: "connection" | "sessionExpired" | "notPermitted" = "connection",
+  ): void {
     this.loadErrorSnackBarRef?.dismiss();
-    const message = sessionExpired
-      ? $localize`:Table data loading failed because the login session expired:Could not load the list because your login session has expired and could not be renewed. Please try again later.`
-      : $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`;
+    const messages = {
+      notPermitted: $localize`:Table data loading failed because the user is not permitted:Could not load the list because you don't have access to these records.`,
+      sessionExpired: $localize`:Table data loading failed because the login session expired:Could not load the list because your login session has expired and could not be renewed. Please try again later.`,
+      connection: $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`,
+    };
+    const message = messages[cause];
     this.loadErrorSnackBarRef = this.snackBar.open(
       message,
       $localize`:Retry loading table data:Retry`,

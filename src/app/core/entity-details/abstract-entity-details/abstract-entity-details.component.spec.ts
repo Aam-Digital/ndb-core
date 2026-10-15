@@ -10,6 +10,8 @@ import { Component } from "@angular/core";
 import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import type { Mock } from "vitest";
+import { AlertService } from "../../alerts/alert.service";
+import { Logging } from "../../logging/logging.service";
 
 type EntityActionsServiceMock = {
   remove: Mock;
@@ -134,6 +136,33 @@ describe("AbstractEntityDetailsComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
       expect(router.navigate).toHaveBeenCalled();
     } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should tell the user they don't have access (and not report it) if loading the record is not permitted", async () => {
+    vi.useFakeTimers();
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    try {
+      const entityMapper = TestBed.inject(EntityMapperService);
+      vi.spyOn(entityMapper, "load").mockRejectedValue({
+        status: 401,
+        error: "User is not permitted",
+      });
+      const alertService = TestBed.inject(AlertService);
+      vi.spyOn(alertService, "addWarning");
+      const router = fixture.debugElement.injector.get(Router);
+      vi.spyOn(router, "navigate").mockResolvedValue(true);
+
+      fixture.componentRef.setInput("id", "forbidden-record");
+      fixture.detectChanges();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(alertService.addWarning).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(["/404"]);
+      expect(warnSpy).not.toHaveBeenCalled();
+    } finally {
+      warnSpy.mockRestore();
       vi.useRealTimers();
     }
   });

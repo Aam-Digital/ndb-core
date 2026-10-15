@@ -17,6 +17,8 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { Logging } from "../../logging/logging.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
+import { AlertService } from "../../alerts/alert.service";
+import { isNotPermittedError } from "../../../utils/not-permitted-error";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -31,6 +33,7 @@ export abstract class AbstractEntityDetailsComponent {
   protected readonly ability = inject(EntityAbility);
   protected readonly router = inject(Router);
   protected readonly unsavedChanges = inject(UnsavedChangesService);
+  protected readonly alertService = inject(AlertService);
 
   readonly isLoading = signal(false);
   private changesSubscription: Subscription;
@@ -118,7 +121,13 @@ export abstract class AbstractEntityDetailsComponent {
           if (isCancelled()) {
             return cancelledLoad;
           }
-          if (error?.status !== 404) {
+          if (isNotPermittedError(error)) {
+            // a permission rule excludes this record for the user (e.g. remote-only session)
+            Logging.debug("User is not permitted to load record", error);
+            this.alertService.addWarning(
+              $localize`:record details not permitted:You don't have access to this record.`,
+            );
+          } else if (error?.status !== 404) {
             Logging.warn("Error loading record", error);
           }
           return null;

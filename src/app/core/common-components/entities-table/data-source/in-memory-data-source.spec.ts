@@ -141,6 +141,31 @@ describe("InMemoryDataSource", () => {
         expect.anything(),
       );
     });
+    it("tells the user they don't have access (and does not report it) if not permitted", async () => {
+      vi.spyOn(entityMapper, "loadType").mockRejectedValue(
+        new DatabaseException({
+          status: 401,
+          message: "unauthorized",
+          error: "User is not permitted",
+        }),
+      );
+      const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+      const ds = TestBed.runInInjectionContext(
+        () => new InMemoryDataSource<Entity>(),
+      );
+      ds.loadRecordConfig.set({ entityCtr: TestEntity });
+      TestBed.tick();
+      await new Promise((resolve) => setTimeout(resolve));
+      TestBed.tick();
+
+      expect(snackBarOpen).toHaveBeenCalledWith(
+        expect.stringContaining("don't have access"),
+        expect.anything(),
+        expect.anything(),
+      );
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
   });
 
   describe("getAllData", () => {
