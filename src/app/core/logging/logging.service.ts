@@ -1020,6 +1020,47 @@ function registryErrorContext(err: unknown): Record<string, string> {
     : {};
 }
 
+/** The properties of an error that are reported as extra data, see {@link errorDetails}. */
+const REPORTED_ERROR_PROPERTIES = [
+  "entityId",
+  "status",
+  "reason",
+  "name",
+  "action",
+  "entityType",
+];
+
+/**
+ * The structured properties of an error worth reporting.
+ *
+ * The whole cause chain is searched, outermost first: a wrapper that says
+ * which operation failed (a `LoggedError`, a `ConfigLoadError`) usually has
+ * none of these itself, while the status and reason of the request that
+ * failed underneath it are what tells e.g. an expired session from a missing
+ * permission.
+ */
+function errorDetails(err: object): Record<string, unknown> {
+  const details: Record<string, unknown> = {};
+  for (const error of causeChain(err) as Record<string, any>[]) {
+    for (const key of REPORTED_ERROR_PROPERTIES) {
+      details[key] ??= error[key];
+    }
+    // a library may pass on the whole `fetch` Response rather than the status
+    // (keycloak-js does), which otherwise leaves a report saying only that the
+    // status was invalid and never which one it was
+    if (typeof error.response?.status === "number") {
+      details.status ??= error.response.status;
+    }
+  }
+
+  return {
+    ...Object.fromEntries(
+      Object.entries(details).filter(([, value]) => value !== undefined),
+    ),
+    ...registryErrorContext(err),
+  };
+}
+
 /**
  * Enrich events with structured extra data
  * from custom Error properties (e.g. DatabaseException's entityId, status, reason).
@@ -1031,41 +1072,11 @@ function enrichSentryEvent(
   // Attach structured properties from custom Error subclasses (e.g. DatabaseException,
   // EntityPermissionError) so that details like entityId, status, reason are visible in
   // Sentry's "Additional Data" - even though (deliberately) not part of the message itself.
-  //
-  // The whole cause chain is searched, outermost first: a wrapper that says
-  // which operation failed (a `LoggedError`, a `ConfigLoadError`) usually has
-  // none of these itself, while the status and reason of the request that
-  // failed underneath it are what tells e.g. an expired session from a missing
-  // permission.
   const err = hint.originalException;
   if (err && typeof err === "object") {
-    const extras: Record<string, unknown> = {};
-    for (const error of causeChain(err) as Record<string, any>[]) {
-      for (const key of [
-        "entityId",
-        "status",
-        "reason",
-        "name",
-        "action",
-        "entityType",
-      ]) {
-        if (extras[key] === undefined && error[key] !== undefined) {
-          extras[key] = error[key];
-        }
-      }
-      // a library may pass on the whole `fetch` Response rather than the status
-      // (keycloak-js does), which otherwise leaves a report saying only that the
-      // status was invalid and never which one it was
-      const nestedStatus = error.response?.status;
-      if (extras.status === undefined && typeof nestedStatus === "number") {
-        extras.status = nestedStatus;
-      }
-    }
-
-    Object.assign(extras, registryErrorContext(err));
-
-    if (Object.keys(extras).length > 0) {
-      event.extra = { ...event.extra, ...extras };
+    const details = errorDetails(err);
+    if (Object.keys(details).length > 0) {
+      event.extra = { ...event.extra, ...details };
     }
   }
 
