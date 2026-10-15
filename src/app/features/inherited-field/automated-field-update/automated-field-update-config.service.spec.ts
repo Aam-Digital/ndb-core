@@ -177,19 +177,6 @@ class AggregatingAction extends Entity {
   mainTags: ConfigurableEnumValue[];
 }
 
-/** a different type whose id also starts with "AggregatingAction" */
-@DatabaseEntity("AggregatingActionLog")
-class AggregatingActionLog extends Entity {
-  @DatabaseField()
-  parentAction: string;
-  @DatabaseField({
-    dataType: "configurable-enum",
-    additional: "action-tags",
-    isArray: true,
-  })
-  tags: ConfigurableEnumValue[];
-}
-
 const isIndexOfParentAction = ([, , field]: string[]) =>
   field === "parentAction";
 
@@ -208,14 +195,10 @@ describe("AutomatedFieldUpdateConfigService", () => {
     { id: "secondary", label: "Secondary" },
   ];
 
-  /**
-   * Like the real indexing service this finds the records of a type by a reference property,
-   * including (if enabled) records of other types whose id starts with the type name.
-   */
+  /** Like the real indexing service this finds the records of a type by a reference property. */
   let mockIndexing: {
     generateIndexOnProperty: ReturnType<typeof vi.fn>;
     queryIndexDocs: ReturnType<typeof vi.fn>;
-    indexIncludesOtherTypes: boolean;
   };
 
   let mockDialogAfterClosed = () => of([]);
@@ -237,10 +220,8 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
     entityRegistry.set("AggregatingAction", AggregatingAction);
-    entityRegistry.set("AggregatingActionLog", AggregatingActionLog);
 
     mockIndexing = {
-      indexIncludesOtherTypes: false,
       generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
       queryIndexDocs: vi.fn(),
     };
@@ -249,10 +230,9 @@ describe("AutomatedFieldUpdateConfigService", () => {
         const field = indexName.split("/by_")[1];
         return entityMapper
           .getAllData()
-          .filter((record) =>
-            mockIndexing.indexIncludesOtherTypes
-              ? record.getId().startsWith(ctor.ENTITY_TYPE)
-              : Entity.extractTypeFromId(record.getId()) === ctor.ENTITY_TYPE,
+          .filter(
+            (record) =>
+              Entity.extractTypeFromId(record.getId()) === ctor.ENTITY_TYPE,
           )
           .filter((record) => asArray(record[field]).includes(key));
       },
@@ -745,28 +725,6 @@ describe("AutomatedFieldUpdateConfigService", () => {
           "linking_AggregatingAction_parentAction/by_parentAction",
           parent.getId(),
         );
-      });
-
-      it("ignores records of other types whose id starts with the same type name", async () => {
-        const parent = new AggregatingAction();
-        parent.tags = toTags(["health", "education"]);
-        const subAction = createSubAction(parent, ["education"]);
-        subAction._rev = "1-existing";
-        // the index of "AggregatingAction" also contains this record
-        const otherType = new AggregatingActionLog();
-        otherType.parentAction = parent.getId();
-        otherType.tags = toTags(["health"]);
-        entityMapper.addAll([parent, subAction, otherType]);
-        const subActionBefore = subAction.copy();
-        subAction.tags = toTags([]);
-        mockIndexing.indexIncludesOtherTypes = true;
-        mockDialog.open.mockClear();
-
-        await service.applyRulesToDependentEntities(subAction, subActionBefore);
-
-        // "health" is not used by another sub-action (only by the log record), but "education" is removed
-        const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
-        expect(suggestion.newValue).toEqual(["health"]);
       });
 
       it("loads and checks all records of the type if the index cannot be queried", async () => {

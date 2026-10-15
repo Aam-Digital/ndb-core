@@ -567,14 +567,10 @@ export class AutomatedFieldUpdateConfigService {
         );
     }
 
-    const records = await this.dbIndexing.queryIndexDocs(
+    return this.dbIndexing.queryIndexDocs(
       ctor,
       `${indexId}/by_${referenceField}`,
       entityId,
-    );
-    // the index also contains records of other types whose id starts with this type's name (e.g. "ChildSchoolRelation" for "Child")
-    return records.filter(
-      (record) => Entity.extractTypeFromId(record.getId()) === ctor.ENTITY_TYPE,
     );
   }
 
