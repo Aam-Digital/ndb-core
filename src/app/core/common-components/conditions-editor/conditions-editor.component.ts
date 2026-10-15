@@ -11,8 +11,10 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "app/core/entity/model/entity";
@@ -24,6 +26,13 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { negate, splitNegation, withSameNegation } from "./condition-negation";
+import {
+  buildConditions,
+  Combinator,
+  DEFAULT_COMBINATOR,
+  parseConditions,
+} from "./conditions-combinator";
 
 /**
  * Reusable component for editing conditions (field-value pairs) with JSON support
@@ -35,8 +44,10 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
   styleUrls: ["./conditions-editor.component.scss"],
   imports: [
     MatButtonModule,
+    MatSelectModule,
     MatFormFieldModule,
     MatTooltipModule,
+    MatButtonToggleModule,
     IconButtonComponent,
     FontAwesomeModule,
     DynamicEditComponent,
@@ -50,8 +61,14 @@ export class ConditionsEditorComponent implements OnInit {
   @Input() disabled = false;
   @Input() label = $localize`Edit JSON`;
 
-  /** optional text replacing the default "any one criteria matches" explanation */
-  readonly hint = input<string>();
+  /** whether every row has to match ("all", and) or any one row ("any", or) */
+  readonly combinator = signal<Combinator>(DEFAULT_COMBINATOR);
+
+  readonly combinatorHint = computed(() =>
+    this.combinator() === "any"
+      ? $localize`Matches if any one of the conditions applies ("or" conditions).`
+      : $localize`Matches only if all conditions apply ("and" conditions).`,
+  );
 
   /** also offer the internal "_id" field in the field dropdown (e.g. for permission conditions) */
   readonly showInternalIdField = input(false);
@@ -59,6 +76,13 @@ export class ConditionsEditorComponent implements OnInit {
   @Output() conditionsChange = new EventEmitter<any>();
 
   private readonly conditionsSignal = signal<any>({});
+
+  /**
+   * The rows being edited, as `{ $or: rows }`. It is not the `conditions` input: parents that
+   * store what the editor emits bind it straight back into that input, which is only read once,
+   * when the editor starts.
+   */
+  private working: { $or?: any[] } = {};
 
   conditionFormFieldConfigs = new Map<string, FormFieldConfig>();
   conditionFormControls = new Map<string, FormControl>();
@@ -68,8 +92,7 @@ export class ConditionsEditorComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.entityConstructor) return;
-    this.conditions = this.normalizeConditions(this.conditions);
-    this.conditionsSignal.set(this.conditions);
+    this.loadConditions(this.conditions);
     this.rebuildFormConfigs();
   }
 
@@ -85,17 +108,42 @@ export class ConditionsEditorComponent implements OnInit {
     return Object.keys(condition || {})[0] || "";
   }
 
+  /** whether the given row's stored condition is negated */
+  isNegated(conditionIndex: number): boolean {
+    const condition = this.conditionsArray()[conditionIndex];
+    const fieldKey = this.getConditionField(condition);
+    return splitNegation(condition?.[fieldKey]).negated;
+  }
+
+  /** switch a row between "is" and "is not", keeping its value */
+  setNegated(conditionIndex: number, negated: boolean): void {
+    const condition = this.conditionsArray()[conditionIndex];
+    const fieldKey = this.getConditionField(condition);
+    if (!fieldKey) return;
+
+    const { positive } = splitNegation(condition[fieldKey]);
+    condition[fieldKey] = negated ? negate(positive) : positive;
+
+    this.conditionsSignal.set({ ...this.working });
+    this.emitConditions();
+  }
+
+  setCombinator(combinator: Combinator): void {
+    this.combinator.set(combinator);
+    this.emitConditions();
+  }
+
   /**
    * Add a new condition
    */
   addCondition(): void {
-    if (!this.conditions.$or) {
-      this.conditions.$or = [];
+    if (!this.working.$or) {
+      this.working.$or = [];
     }
 
-    this.conditions.$or.push({});
-    this.conditionsSignal.set({ ...this.conditions });
-    this.conditionsChange.emit(this.conditions);
+    this.working.$or.push({});
+    this.conditionsSignal.set({ ...this.working });
+    this.emitConditions();
   }
 
   /**
@@ -108,14 +156,14 @@ export class ConditionsEditorComponent implements OnInit {
     conditions.splice(conditionIndex, 1);
 
     if (conditions.length === 0) {
-      this.conditions = {};
+      this.working = {};
       this.conditionsSignal.set({});
     } else {
-      this.conditionsSignal.set({ ...this.conditions });
+      this.conditionsSignal.set({ ...this.working });
     }
 
     this.rebuildFormConfigs();
-    this.conditionsChange.emit(conditions.length === 0 ? {} : this.conditions);
+    this.emitConditions();
   }
 
   /**
@@ -139,10 +187,10 @@ export class ConditionsEditorComponent implements OnInit {
 
     Object.keys(condition).forEach((key) => delete condition[key]);
     condition[actualFieldKey] = null;
-    this.conditionsSignal.set({ ...this.conditions });
+    this.conditionsSignal.set({ ...this.working });
 
     this.createFormConfigForCondition(conditionIndex, actualFieldKey);
-    this.conditionsChange.emit(this.conditions);
+    this.emitConditions();
   }
 
   /**
@@ -204,26 +252,29 @@ export class ConditionsEditorComponent implements OnInit {
     fieldConfig: EntitySchemaField,
     conditionFieldConfig: EntitySchemaField,
   ): any {
+    // a negated condition still edits the value inside it
+    const { positive } = splitNegation(conditionValue);
+
     let value;
-    if (fieldConfig.isArray && conditionValue?.$elemMatch?.$in) {
+    if (fieldConfig.isArray && positive?.$elemMatch?.$in) {
       // For array fields, extract value from $elemMatch.$in if present
-      value = conditionValue.$elemMatch.$in;
-    } else if (
-      fieldConfig.isArray &&
-      conditionValue?.$elemMatch !== undefined
-    ) {
+      value = positive.$elemMatch.$in;
+    } else if (fieldConfig.isArray && positive?.$elemMatch !== undefined) {
       // Support legacy array-condition format: { $elemMatch: "id" }
-      const elemMatch = conditionValue.$elemMatch;
+      const elemMatch = positive.$elemMatch;
       if (Array.isArray(elemMatch)) {
         value = elemMatch;
       } else {
         value = [elemMatch];
       }
-    } else if (!fieldConfig.isArray && conditionValue?.$in) {
+    } else if (!fieldConfig.isArray && positive?.$in) {
       // For non-array dropdown fields, extract value from $in
-      value = conditionValue.$in;
+      value = positive.$in;
+    } else if (positive?.$eq !== undefined) {
+      // a negated plain value is stored as $eq, which the value control cannot render
+      value = positive.$eq;
     } else {
-      value = conditionValue;
+      value = positive;
     }
 
     return this.entitySchemaService.valueToEntityFormat(
@@ -239,14 +290,17 @@ export class ConditionsEditorComponent implements OnInit {
     fieldConfig: EntitySchemaField,
     conditionFieldConfig: EntitySchemaField,
   ): void {
+    const previous = condition[fieldKey];
+
     const dbValue = this.entitySchemaService.valueToDatabaseFormat(
       value,
       conditionFieldConfig,
     );
 
+    let positive: any;
     if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
       // For array fields, wrap in $elemMatch with $in for proper array matching
-      condition[fieldKey] = { $elemMatch: { $in: dbValue } };
+      positive = { $elemMatch: { $in: dbValue } };
     } else if (
       !fieldConfig.isArray &&
       conditionFieldConfig.isArray &&
@@ -254,12 +308,14 @@ export class ConditionsEditorComponent implements OnInit {
       dbValue.length > 0
     ) {
       // For non-array dropdown fields, wrap multi selection in $in
-      condition[fieldKey] = { $in: dbValue };
+      positive = { $in: dbValue };
     } else {
-      condition[fieldKey] = dbValue;
+      positive = dbValue;
     }
 
-    this.conditionsChange.emit(this.conditions);
+    condition[fieldKey] = withSameNegation(previous, positive);
+
+    this.emitConditions();
   }
 
   private shouldUseMultiSelectCondition(
@@ -297,50 +353,33 @@ export class ConditionsEditorComponent implements OnInit {
    */
   openJsonEditor(): void {
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: { value: this.conditions, closeButton: true },
+      data: {
+        value: buildConditions(this.combinator(), this.working.$or ?? []),
+        closeButton: true,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.conditions = this.normalizeConditions(result);
-        this.conditionsSignal.set(this.conditions);
+        this.loadConditions(result);
         this.rebuildFormConfigs();
-        this.conditionsChange.emit(this.conditions);
+        this.emitConditions();
       }
     });
   }
 
-  /**
-   * Normalize conditions to the standard { $or: [...] } format.
-   * Handles both current format and legacy formats where conditions were stored
-   * as direct key-value pairs without the $or wrapper.
-   *
-   * @param input - The conditions object to normalize
-   * @returns Normalized conditions in { $or: [...] } format
-   */
-  private normalizeConditions(input: any): any {
-    if (!input || typeof input !== "object" || Array.isArray(input)) {
-      return {};
-    }
+  /** The stored condition becomes the editor's working state: its combinator and its rows. */
+  private loadConditions(stored: any): void {
+    const { combinator, rows } = parseConditions(stored);
+    this.combinator.set(combinator);
+    this.working = rows.length > 0 ? { $or: rows } : {};
+    this.conditionsSignal.set(this.working);
+  }
 
-    const existingOr = Array.isArray(input.$or)
-      ? input.$or.filter(
-          (condition) => condition && typeof condition === "object",
-        )
-      : [];
-    if (existingOr.length > 0) {
-      // Prefer the explicit $or format to avoid keeping duplicated legacy keys.
-      return { $or: existingOr };
-    }
-
-    const legacyEntries = Object.entries(input).filter(
-      ([key]) => key !== "$or",
+  /** Report the rows in their stored shape; rows that are not filled in yet stay out of it. */
+  private emitConditions(): void {
+    this.conditionsChange.emit(
+      buildConditions(this.combinator(), this.working.$or ?? []),
     );
-    if (legacyEntries.length === 0) {
-      return {};
-    }
-    return {
-      $or: legacyEntries.map(([key, value]) => ({ [key]: value })),
-    };
   }
 }

@@ -3,7 +3,7 @@
   @if (entityConstructor()?.icon) {
     <app-fa-dynamic-icon
       [icon]="entityConstructor()!.icon"
-      class="standard-icon-with-text margin-left-regular"
+      class="standard-icon-with-text margin-start-regular"
     ></app-fa-dynamic-icon>
   }
   @if (!entity()?.isNew) {
@@ -22,9 +22,7 @@
     [showExpanded]="true"
   >
     @if (
-      ("update"
-        | ablePure: ("CONFIG_ENTITY" | entityLoad: "Config" | async)
-        | async) && !entityConstructor()?.isInternalEntity
+      ("update" | able: "Config") && !entityConstructor()?.isInternalEntity
     ) {
       <button
         mat-menu-item

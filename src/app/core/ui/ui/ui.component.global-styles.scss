@@ -13,7 +13,8 @@
  * block).
  */
 .sidenav-content> :where(:not(router-outlet)) {
-  padding: sizes.$margin-main-view-top sizes.$margin-main-view-right sizes.$margin-main-view-bottom sizes.$margin-main-view-left;
+  padding-block: sizes.$margin-main-view-top sizes.$margin-main-view-bottom;
+  padding-inline: sizes.$margin-main-view-left sizes.$margin-main-view-right;
   display: block;
   box-sizing: border-box;
 }
@@ -37,4 +38,17 @@ mat-form-field {
 
 :root {
   --toolbar-height: #{sizes.$toolbar-height};
+
+  /**
+   * Sign of the inline (reading) axis: +1 left-to-right, -1 right-to-left.
+   *
+   * CSS logical properties cover almost everything, but a few things have no logical
+   * equivalent - gradient angles, mirrored icons, transforms. Multiply those by this
+   * variable instead of writing a separate `[dir="rtl"]` rule for each.
+   */
+  --text-x-direction: 1;
+}
+
+[dir="rtl"] {
+  --text-x-direction: -1;
 }

@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>
+  @if (hadCondition) {
+    <span i18n>Edit Condition</span>
+  } @else {
+    <span i18n>Add Condition</span>
+  }
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</h2>
+
+<mat-dialog-content>
+  <p>{{ data.explanation }}</p>
+
+  <app-conditions-editor
+    [conditions]="data.conditions"
+    [entityConstructor]="data.entityConstructor"
+    [showInternalIdField]="!!data.showInternalIdField"
+    (conditionsChange)="onConditionsChange($event)"
+  ></app-conditions-editor>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  @if (hadCondition) {
+    <button mat-button color="warn" (click)="removeCondition()" i18n>
+      Remove condition
+    </button>
+  }
+  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  <button mat-raised-button color="accent" (click)="apply()" i18n>
+    Apply Condition
+  </button>
+</mat-dialog-actions>

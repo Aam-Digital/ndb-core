@@ -56,6 +56,18 @@ describe("EmbeddedArrayDataComponent", () => {
     fixture.detectChanges();
   }
 
+  /**
+   * Cell content loads through `appDynamicComponent`, which resolves its view component
+   * via a dynamic `import()` that `fixture.whenStable()` does not reliably wait for
+   * (zone.js does not track native dynamic imports), so polling is needed to observe it.
+   */
+  async function waitForRowTexts(expected: string[][]) {
+    await vi.waitFor(() => {
+      fixture.detectChanges();
+      expect(rowTexts()).toEqual(expected);
+    });
+  }
+
   function headerTexts(): string[] {
     return Array.from<HTMLElement>(fixture.nativeElement.querySelectorAll("th"))
       .map((th) => th.textContent.trim())
@@ -96,7 +108,7 @@ describe("EmbeddedArrayDataComponent", () => {
   it("displays one row per embedded entry", async () => {
     await render();
 
-    expect(rowTexts()).toEqual([
+    await waitForRowTexts([
       ["Passport", "A1"],
       ["ID Card", "B2"],
     ]);
@@ -153,6 +165,6 @@ describe("EmbeddedArrayDataComponent", () => {
     rows()[0].click();
     await render();
 
-    expect(rowTexts()).toEqual([["Visa", "C3"]]);
+    await waitForRowTexts([["Visa", "C3"]]);
   });
 });

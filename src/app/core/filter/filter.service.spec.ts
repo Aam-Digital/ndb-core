@@ -6,6 +6,10 @@ import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import moment from "moment";
 import { DataFilter, Filter } from "./filters/filters";
+import { buildEnumValueFilter } from "./filters/configurableEnumFilter";
+import { EntityFilter } from "./filters/entityFilter";
+import { Entity } from "../entity/model/entity";
+import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 
@@ -53,6 +57,64 @@ describe("FilterService", () => {
 
     expect(note.subject).toBe("Test");
     expect(note.category).toEqual(guardianTalk);
+  });
+
+  it("should support patching with the filter of a ConfigurableEnumFilter option", () => {
+    const guardianTalk = defaultInteractionTypes.find(
+      ({ id }) => id === "GUARDIAN_TALK",
+    );
+    const filter = buildEnumValueFilter<Note>("category", guardianTalk.id);
+    const note = new Note();
+
+    service.alignEntityWithFilter(note, filter);
+
+    // single select: the `$elemMatch` variant of the filter must not override the value
+    expect(note.category).toEqual(guardianTalk);
+  });
+
+  it("should patch a multi-select configurable enum field with an array", () => {
+    @DatabaseEntity("MultiEnumPatchTestEntity")
+    class MultiEnumPatchTestEntity extends Entity {
+      tags: any[];
+    }
+    MultiEnumPatchTestEntity.schema.set("tags", {
+      dataType: "configurable-enum",
+      additional: "TestEnum",
+      isArray: true,
+    });
+    const guardianTalk = defaultInteractionTypes.find(
+      ({ id }) => id === "GUARDIAN_TALK",
+    );
+    const entity = new MultiEnumPatchTestEntity();
+
+    service.alignEntityWithFilter(
+      entity,
+      buildEnumValueFilter<MultiEnumPatchTestEntity>("tags", guardianTalk.id),
+    );
+
+    expect(entity.tags).toEqual([guardianTalk]);
+  });
+
+  it("should patch entity references with the filter of an EntityFilter option", () => {
+    const child = new TestEntity();
+
+    // multi-select reference
+    const [childrenOption] = new EntityFilter<Note>("children", "Children", [
+      child,
+    ]).options;
+    const note = new Note();
+    service.alignEntityWithFilter(note, childrenOption.filter);
+    expect(note.children).toEqual([child.getId()]);
+
+    // single-select reference
+    const [childIdOption] = new EntityFilter<ChildSchoolRelation>(
+      "childId",
+      "Child",
+      [child],
+    ).options;
+    const relation = new ChildSchoolRelation();
+    service.alignEntityWithFilter(relation, childIdOption.filter);
+    expect(relation.childId).toBe(child.getId());
   });
 
   it("should support patching with date values", () => {

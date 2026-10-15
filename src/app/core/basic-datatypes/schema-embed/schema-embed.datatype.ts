@@ -57,6 +57,9 @@ export interface SchemaEmbedDatatypeAdditional {
  *
  * The config in `additional` is merged with the `embeddedType` schema (if present),
  * allowing runtime config to extend or override a class's annotations.
+ *
+ * This datatype only handles (de)serialization and has no UI components (it is hidden in the admin UI);
+ * for a user-configurable field use {@link SchemaEmbedArrayDatatype} (`"schema-embed-array"`) instead.
  */
 @Injectable()
 export class SchemaEmbedDatatype<

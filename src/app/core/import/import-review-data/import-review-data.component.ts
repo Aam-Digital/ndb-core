@@ -43,6 +43,7 @@ import { Logging } from "../../logging/logging.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+import { Sort } from "@angular/material/sort";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +73,12 @@ export class ImportReviewDataComponent implements OnChanges {
   private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   readonly IMPORT_STATUS_COLUMN = "_importStatus";
+
+  /**
+   * Keep the order of the records as prepared in parseRawData (updates before new records),
+   * instead of the table's default sort inferred from the first column.
+   */
+  readonly KEEP_RECORDS_ORDER: Sort = { active: "", direction: "" };
 
   @Input() rawData: any[];
 
@@ -209,6 +216,15 @@ export class ImportReviewDataComponent implements OnChanges {
         })
         .afterClosed(),
     );
+
+    if (confirmationResult?.partiallyCompleted) {
+      // part of the file is in the database already, so refreshing the data and
+      // letting the user press "Import" again would import those records a second
+      // time. The dialog has told them what was saved and where to undo it, so the
+      // prepared import is discarded instead of being offered for a retry.
+      this.importComplete.emit(confirmationResult.completedImport);
+      return;
+    }
 
     if (confirmationResult?.errorOccured) {
       // Problem during import - maybe underlying data changed. Refresh and let user retry

@@ -27,9 +27,15 @@ export interface DynamicComponentConfig<T = any> {
   config?: T;
 
   /**
-   * Allows to restrict the route to the given list of user roles.
-   * If set, the route can only be visited by users which have a role which is in the list.
+   * Restricts the route to users with **at least one** of these roles ("any of").
    * If not set, all logged-in users can visit the route.
    */
   permittedUserRoles?: string[];
+
+  /**
+   * Restricts the route to users with **every one** of these roles ("all of"), e.g. `["admin_app", "account_manager"]`
+   * for a page that requires both.
+   * If set together with `permittedUserRoles`, a user has to fulfil both.
+   */
+  allRequiredUserRoles?: string[];
 }

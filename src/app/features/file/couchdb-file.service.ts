@@ -131,13 +131,18 @@ export class CouchdbFileService extends FileService {
 
   private runAllFilesRemoval(entity: Entity) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId()}`;
-    return this.httpClient
-      .get<{ _rev: string }>(attachmentPath)
-      .pipe(
-        concatMap(({ _rev }) =>
-          this.httpClient.delete(`${attachmentPath}?rev=${_rev}`),
-        ),
-      );
+    return this.httpClient.get<{ _rev: string }>(attachmentPath).pipe(
+      concatMap(({ _rev }) =>
+        this.httpClient.delete(`${attachmentPath}?rev=${_rev}`),
+      ),
+      catchError((err) => {
+        if (err.status === HttpStatusCode.NotFound) {
+          return of({ ok: true });
+        } else {
+          throw err;
+        }
+      }),
+    );
   }
 
   protected override getShowFileUrl(entity: Entity, property: string): string {

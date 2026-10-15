@@ -355,24 +355,6 @@
           "dataType": "configurable-enum",
           "additional": "genders",
           "label": "Gender"
-        },
-        "identificationDocuments": {
-          "dataType": "schema-embed-array",
-          "label": "Identification Documents",
-          "additional": {
-            "documentType": {
-              "dataType": "string",
-              "label": "Document Type"
-            },
-            "documentNumber": {
-              "dataType": "string",
-              "label": "Document Number"
-            },
-            "issueDate": {
-              "dataType": "date",
-              "label": "Issue Date"
-            }
-          }
         }
       }
     },
@@ -392,9 +374,6 @@
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
-          },
-          {
-            "id": "identificationDocuments"
           }
         ],
         "columnGroups": {
@@ -404,8 +383,7 @@
             {
               "name": "Basic Info",
               "columns": [
-                "name",
-                "identificationDocuments"
+                "name"
               ]
             }
           ]
@@ -441,32 +419,6 @@
                         "gender"
                       ],
                       "header": "Additional"
-                    },
-                    {
-                      "fields": [
-                        "identificationDocuments"
-                      ],
-                      "header": "Identification Documents"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          {
-            "title": "Identification Documents",
-            "components": [
-              {
-                "title": "",
-                "component": "EmbeddedArrayData",
-                "config": {
-                  "property": "identificationDocuments",
-                  "columns": [
-                    "documentType",
-                    "documentNumber",
-                    {
-                      "id": "issueDate",
-                      "visibleFrom": "md"
                     }
                   ]
                 }
@@ -511,9 +463,6 @@
           }
         ]
       }
-    },
-    "view:report": {
-      "component": "Reporting"
     },
     "entity:Todo": {
       "label": "Task",

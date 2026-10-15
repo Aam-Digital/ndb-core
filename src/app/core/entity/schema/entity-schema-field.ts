@@ -18,6 +18,7 @@
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
 import { DefaultValueConfig } from "../../default-values/default-value-config";
+import { DataFilter } from "#src/app/core/filter/filters/filters";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
@@ -156,6 +157,16 @@ export interface EntitySchemaField {
    * that should not be shown in the admin form builder or saved to config.
    */
   isInternalField?: boolean;
+
+  /**
+   * (Optional) A Mango/MongoDB style query condition, evaluated against the current
+   * (possibly not yet saved) state of the entity, that determines whether this field
+   * is displayed in forms.
+   *
+   * If the condition is not met, the form field is hidden and its value is excluded
+   * from validation (e.g. a "required" validator is skipped while hidden).
+   */
+  displayCondition?: DataFilter<any>;
 }
 
 /**

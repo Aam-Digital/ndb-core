@@ -317,7 +317,14 @@ export class MapComponent implements AfterViewInit {
       .forEach((entity) => {
         this.getMapProperties(entity)
           .map((prop) => entity[prop]?.geoLookup)
-          .filter((loc: GeoResult) => !!loc)
+          .filter(
+            (loc: GeoResult) =>
+              !!loc &&
+              loc.lat != null &&
+              loc.lon != null &&
+              !isNaN(Number(loc.lat)) &&
+              !isNaN(Number(loc.lon)),
+          )
           .forEach((loc: GeoResult) => {
             const entityColor = entity.getColor() || "#808080";
             const marker = L.marker([loc.lat, loc.lon], {

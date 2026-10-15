@@ -1,0 +1,19 @@
+/* Hug the id text.
+   This element is often a flex item (the change log's record cell, the history
+   dialog's subtitle), where a stretched host leaves dead space beside the id:
+   it looks like part of the id line but carries no copy handler, so a click
+   there falls through to whatever the row does instead of copying. */
+:host {
+  align-self: flex-start;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* understated on purpose: a reader looking for a record by name should not have
+   their attention pulled to a string that means nothing to them */
+.record-id {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 85%;
+  opacity: 0.75;
+}

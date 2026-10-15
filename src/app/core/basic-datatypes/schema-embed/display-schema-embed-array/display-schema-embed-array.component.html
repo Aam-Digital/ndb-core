@@ -1,7 +1,32 @@
 @if (rows().length) {
-  <span class="entry-count" [appTemplateTooltip]="tooltip">
-    {{ rows().length }} <span i18n>entries</span>
-  </span>
+  <div class="summary" [appTemplateTooltip]="tooltip">
+    @if (previewValues().length) {
+      @for (value of previewValues(); track $index; let last = $last) {
+        <ng-container
+          [appDynamicComponent]="{
+            component: summaryColumn().viewComponent,
+            config: { value: value, formFieldConfig: summaryColumn() },
+          }"
+        ></ng-container>
+        @if (!last) {
+          <span>, </span>
+        }
+      }
+      @if (moreCount() > 0) {
+        &ngsp;
+        <span i18n="schema-embed-array summary: number of further entries"
+          >+{{ moreCount() }} more</span
+        >
+      }
+    } @else {
+      <span i18n="schema-embed-array field summary">
+        {rows().length, plural,
+          =1 {1 entry}
+          other {{{ rows().length }} entries}
+        }
+      </span>
+    }
+  </div>
 }
 
 <ng-template #tooltip>

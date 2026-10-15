@@ -264,6 +264,13 @@ export class EditEntityComponent<
           continue;
         }
 
+        // a misconfigured default value can put a whole object into the form control,
+        // which would blow up the id parsing below and break the whole view
+        if (typeof id !== "string") {
+          Logging.debug("[ENTITY_SELECT] Ignoring a non-id value.", { id });
+          continue;
+        }
+
         if (availableEntities.find((e) => id === e.getId())) {
           continue;
         }
@@ -295,6 +302,14 @@ export class EditEntityComponent<
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
+
+    if (!this.entityRegistry.has(type)) {
+      Logging.debug(
+        "[ENTITY_SELECT] Selected value is not an id of a known entity type.",
+        selectedId,
+      );
+      return undefined;
+    }
 
     const entity = await this.entityMapperService
       .load<E>(type, selectedId)

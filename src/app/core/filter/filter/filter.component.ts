@@ -20,6 +20,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
 import { IconButtonComponent } from "../../common-components/icon-button/icon-button.component";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -106,12 +107,21 @@ export class FilterComponent<T extends Entity = Entity> {
         return [];
       }
 
-      return this.filterGenerator.generate(
-        params.filterConfig,
-        params.entityType,
-        params.entities,
-        params.onlyShowRelevantFilterOptions,
-      );
+      // Never let the loader reject: reading `value()` of a resource in error
+      // state throws, which would break every effect depending on the filters.
+      try {
+        return await this.filterGenerator.generate(
+          params.filterConfig,
+          params.entityType,
+          params.entities,
+          params.onlyShowRelevantFilterOptions,
+        );
+      } catch (err) {
+        Logging.error("Could not generate filters", err, {
+          entityType: params.entityType.ENTITY_TYPE,
+        });
+        return [];
+      }
     },
   });
 

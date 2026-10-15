@@ -94,7 +94,10 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="value">
-        <td *matCellDef="let group" class="text-align-end padding-left-regular">
+        <td
+          *matCellDef="let group"
+          class="text-align-end padding-start-regular"
+        >
           {{ group.value }}
         </td>
       </ng-container>

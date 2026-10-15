@@ -1,22 +1,25 @@
-<span
-  class="trigger-wrapper"
-  [appTemplateTooltip]="tooltip"
-  [tooltipDisabled]="rowCount() === 0"
+<div
+  class="trigger-wrapper flex-row align-center gap-regular clickable"
+  (click)="onContainerClick(); $event.stopPropagation()"
 >
+  @if (rows().length) {
+    <app-display-schema-embed-array
+      class="flex-grow"
+      [value]="rows()"
+      [formFieldConfig]="formFieldConfig()"
+    ></app-display-schema-embed-array>
+  } @else {
+    <span class="no-entries flex-grow" i18n>no entries</span>
+  }
+
   <button
     type="button"
-    mat-stroked-button
-    [disabled]="!enabled()"
-    (click)="openDialog()"
+    mat-icon-button
+    class="input-action-button"
+    (click)="openDialog(); $event.stopPropagation()"
+    [attr.aria-label]="enabled() ? manageLabel : viewLabel"
+    [matTooltip]="enabled() ? manageLabel : viewLabel"
   >
     <fa-icon icon="table"></fa-icon>
-    <span i18n>Manage entries ({{ rowCount() }})</span>
   </button>
-</span>
-
-<ng-template #tooltip>
-  <app-schema-embed-array-table
-    [rows]="rows()"
-    [columns]="columns()"
-  ></app-schema-embed-array-table>
-</ng-template>
+</div>

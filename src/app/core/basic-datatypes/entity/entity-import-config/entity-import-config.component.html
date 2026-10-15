@@ -10,7 +10,7 @@
   }
 
   <div class="flex-row gap-regular align-center">
-    <mat-form-field class="margin-left-small">
+    <mat-form-field class="margin-start-small">
       <mat-label i18n="import - entity - match by property label">
         Match by {{ referencedEntityLabel() }} property
       </mat-label>
@@ -22,7 +22,7 @@
           <mat-option [value]="prop.property">
             {{ prop.label }}
             @if (prop.typeHint) {
-              <span class="hint-text margin-left-small">{{
+              <span class="hint-text margin-start-small">{{
                 prop.typeHint
               }}</span>
             }
