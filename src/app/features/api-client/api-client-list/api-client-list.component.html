@@ -1,0 +1,114 @@
+<div class="flex-row flex-wrap">
+  <div class="flex-grow">
+    <app-view-title i18n>API Access</app-view-title>
+  </div>
+  @if (isAvailable()) {
+    <button
+      mat-stroked-button
+      color="accent"
+      class="standard-add-button"
+      (click)="create()"
+    >
+      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <span i18n>New API Client</span>
+    </button>
+  }
+</div>
+
+<p i18n class="margin-bottom-regular">
+  External systems can access data of this system through the API, e.g. to
+  import report results into another platform or to let their users sign in
+  here. Each external system gets its own credentials ("API client"), which you
+  can create and revoke here.
+</p>
+
+@if (isCheckingAvailability()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+} @else if (!isAvailable()) {
+  <app-hint-box>
+    <span i18n>
+      API access is not available for this system. Please contact your technical
+      support team to enable the API integration.
+    </span>
+  </app-hint-box>
+} @else if (loadingError(); as loadingError) {
+  <p class="color-error" role="alert">{{ loadingError }}</p>
+} @else if (apiClients.hasValue()) {
+  @let clients = apiClients.value();
+  @if (clients.length === 0) {
+    <p i18n>There are no API clients yet.</p>
+  } @else {
+    <div class="table-container">
+      <table mat-table [dataSource]="clients" class="full-width table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef i18n>Name</th>
+          <td mat-cell *matCellDef="let apiClient">{{ apiClient.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="clientId">
+          <th mat-header-cell *matHeaderCellDef i18n>Client ID</th>
+          <td mat-cell *matCellDef="let apiClient">
+            <code>{{ apiClient.clientId }}</code>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="scopes">
+          <th mat-header-cell *matHeaderCellDef i18n>Access</th>
+          <td mat-cell *matCellDef="let apiClient">
+            @for (label of apiClient.scopeLabels; track label) {
+              <div>{{ label }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef i18n>Created</th>
+          <td mat-cell *matCellDef="let apiClient">
+            {{ apiClient.createdAt | customDate: "mediumDate" }}
+            @if (apiClient.createdBy) {
+              <div class="hint-text">{{ apiClient.createdBy }}</div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let apiClient" class="text-align-end">
+            <button
+              mat-icon-button
+              (click)="regenerateSecret(apiClient)"
+              matTooltip="Generate new secret"
+              i18n-matTooltip
+              aria-label="Generate new secret"
+              i18n-aria-label
+            >
+              <fa-icon icon="key"></fa-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="delete(apiClient)"
+              matTooltip="Delete"
+              i18n-matTooltip
+              aria-label="Delete"
+              i18n-aria-label
+            >
+              <fa-icon icon="trash"></fa-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  }
+
+  <div class="margin-top-regular">
+    <span class="hint-text" i18n>
+      Only API clients created on this page are listed here. Integrations that
+      your technical support team set up for you are managed by them.
+    </span>
+  </div>
+} @else {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}

@@ -10,6 +10,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { Logging } from "../../../core/logging/logging.service";
+import { SyncFailedError } from "../../../core/database/pouchdb/synced-pouch-database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
 import { FileService } from "../file.service";
@@ -282,41 +283,61 @@ describe("EditFileComponent", () => {
     }
   });
 
-  it("should name the connection for an upload aborted mid-flight, without reporting it", async () => {
-    vi.useFakeTimers();
-    const loggingError = vi
-      .spyOn(Logging, "error")
-      .mockImplementation(() => {});
-    try {
-      setupComponent("old.file");
-      mockEntityMapper.load.mockResolvedValue(
-        Object.assign(new Entity(component.entity().getId()), {
-          _rev: "2",
-          testProp: "old.file",
-        }),
-      );
-      const subject = new Subject();
-      mockFileService.uploadFile.mockReturnValue(subject);
-      component.formControl.enable();
-
-      component.onFileSelected(file);
-      component.entity()[component.formFieldConfig().id] = file.name;
-      component.formControl.disable();
-
+  it.each([
+    {
       // a request that never reached the server, e.g. a mobile connection
       // dropping mid-upload, arrives as status 0
-      subject.error(new HttpErrorResponse({ status: 0 }));
-      await vi.advanceTimersByTimeAsync(0);
+      case: "an upload aborted mid-flight",
+      error: new HttpErrorResponse({ status: 0 }),
+      message: "connection",
+    },
+    {
+      case: "a sync before the upload that lost the connection",
+      error: new SyncFailedError(new HttpErrorResponse({ status: 0 })),
+      message: "connection",
+    },
+    {
+      // the sync has already logged its failure
+      case: "a failed sync before the upload",
+      error: new SyncFailedError(new Error("sync failed")),
+      message: "Failed to update file",
+    },
+  ])(
+    "should tell the user about $case without reporting it",
+    async ({ error, message }) => {
+      vi.useFakeTimers();
+      const loggingError = vi
+        .spyOn(Logging, "error")
+        .mockImplementation(() => {});
+      try {
+        setupComponent("old.file");
+        mockEntityMapper.load.mockResolvedValue(
+          Object.assign(new Entity(component.entity().getId()), {
+            _rev: "2",
+            testProp: "old.file",
+          }),
+        );
+        const subject = new Subject();
+        mockFileService.uploadFile.mockReturnValue(subject);
+        component.formControl.enable();
 
-      expect(mockAlertService.addDanger).toHaveBeenCalledWith(
-        expect.stringContaining("connection"),
-      );
-      // a transient network abort is not a defect worth reporting
-      expect(loggingError).not.toHaveBeenCalled();
-    } finally {
-      vi.useRealTimers();
-    }
-  });
+        component.onFileSelected(file);
+        component.entity()[component.formFieldConfig().id] = file.name;
+        component.formControl.disable();
+
+        subject.error(error);
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(mockAlertService.addDanger).toHaveBeenCalledWith(
+          expect.stringContaining(message),
+        );
+        expect(loggingError).not.toHaveBeenCalled();
+      } finally {
+        loggingError.mockRestore();
+        vi.useRealTimers();
+      }
+    },
+  );
 
   it("should show a file when clicking on the form element", () => {
     setupComponent("existing.file");

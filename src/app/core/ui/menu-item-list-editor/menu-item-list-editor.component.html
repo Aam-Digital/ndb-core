@@ -19,7 +19,7 @@
   @for (row of rows(); track row.id; let i = $index) {
     <div
       class="drop-item"
-      [style.margin-left.px]="row.level * indentPerLevel"
+      [style.marginInlineStart.px]="row.level * indentPerLevel"
       cdkDrag
       [cdkDragData]="row"
     >

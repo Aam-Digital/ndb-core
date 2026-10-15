@@ -1,6 +1,6 @@
 @use "../variables/sizes";
 
 .standard-icon-with-text {
-  margin-right: sizes.$small;
+  margin-inline-end: sizes.$small;
   vertical-align: baseline;
 }

@@ -1,5 +1,11 @@
 @use "variables/colors";
 
+.snackbar-close-button {
+  position: absolute;
+  inset-inline-end: -10px;
+  top: 0;
+}
+
 .pwa-install-button {
   border-top: solid 1px rgba(0, 0, 0, 0.12);
   border-radius: 0;

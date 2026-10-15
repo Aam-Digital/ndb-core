@@ -1,1 +1,18 @@
-<input [formControl]="formControl" matInput type="email" />
+<div class="flex-row align-center gap-small">
+  <input [formControl]="formControl" matInput type="email" class="flex-grow" />
+
+  @if (valueSignal() && entity()) {
+    <button
+      mat-icon-button
+      type="button"
+      class="input-action-button"
+      i18n-aria-label
+      aria-label="Send email"
+      i18n-matTooltip
+      matTooltip="Send an email"
+      (click)="openEmailDialog($event)"
+    >
+      <fa-icon icon="envelope"></fa-icon>
+    </button>
+  }
+</div>

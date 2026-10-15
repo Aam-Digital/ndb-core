@@ -86,7 +86,7 @@ export class ExampleComponent {
 - Use `providedIn: 'root'` for singleton services
 - Design services around single responsibility
 - Use the `inject()` function instead of constructor injection
-- Implement proper error handling and logging
+- Implement proper error handling and logging (see [Error Handling & Remote Logging](#error-handling--remote-logging-sentry))
 - Use dependency injection for testability
 
 ### State Management
@@ -198,6 +198,48 @@ When developing new functionality:
 - Follow WCAG guidelines for accessibility
 - Optimize bundle size with lazy loading
 - Use Angular Material accessibility features
+
+## Error Handling & Remote Logging (Sentry)
+
+`Logging.warn()` / `Logging.error()` and every unhandled error are reported to Sentry. How messages
+are worded, grouped and filtered there is documented in
+[`src/app/core/logging/README.md`](src/app/core/logging/README.md) — read it before changing how
+something is logged.
+
+A Sentry issue should mean "a developer has something to fix". Before adding a log call, decide
+who has to act on the failure:
+
+- **Bug in our code** (e.g. a `TypeError` in a template, an id built with the wrong entity type):
+  report it — `Logging.error`, or let it throw.
+- **Server or infrastructure fault** (e.g. an unexpected `400`/`5xx` from our own backend):
+  report it with `Logging.warn`, including the response, and tell the user the action failed.
+- **User or device environment** (e.g. offline / flaky connection, expired session, a record the
+  user may not read, a browser permission the user denied such as clipboard or notifications):
+  do not report it (`Logging.debug`); tell the user what happened and what they can do.
+- **Instance configuration or data** (e.g. an unknown `dataType`, icon or validator in the config;
+  a permission rule variable for an account without linked profile; a file field pointing to a
+  missing file; an optional feature not set up for the instance): do not report it
+  (`Logging.debug`); make it visible to admins in the UI, and validate config when it is saved.
+
+Rules that keep one root cause in one Sentry issue:
+
+- **Log a failure once, with the caught error as context** (`Logging.warn("Could not load X", err)`):
+  see "Log an error together with a message" and "Log a failure once" in the logging README.
+- **Never leave a promise floating.** An `async` call inside `subscribe()`, an effect or an event
+  handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
+  `ErrorHandler` and is reported as a separate, unhandled issue.
+- **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
+  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`) and `isExpiredSessionError()`
+  (`src/app/utils/expired-session-error.ts`). A component that only treats `404` as expected
+  logs every dropped connection as a warning of its own, and cannot tell the user what happened.
+- **Check whether an optional feature is configured before using it** (e.g. push notifications
+  without a Firebase config) instead of logging its failure on every page load.
+- **A known limitation is not an event.** If something fails on every sync or render for a known
+  reason (e.g. `purge()` on the legacy `idb` adapter), check the capability up front.
+- **Expect config values of the wrong type.** Config is plain JSON edited by admins; a template or
+  `computed()` must not crash because a value is not of the type its interface declares.
+
+When investigating Sentry issues, see "Investigating issues in Sentry" in the logging README.
 
 ## Testing Guidelines
 

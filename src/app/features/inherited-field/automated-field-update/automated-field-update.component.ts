@@ -54,7 +54,7 @@ export interface AffectedEntity {
   form?: EntityForm<Entity>;
   selectedField?: FormFieldConfig;
 
-  /** Whether the new value only adds to the existing values (never removing any) */
+  /** Whether the new value is merged into the existing values instead of replacing them completely */
   addToExisting?: boolean;
 
   /** Whether the entities linked to the affected entity have no value in common, so the current value is kept */
