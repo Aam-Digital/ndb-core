@@ -135,6 +135,17 @@ export class AutomatedFieldMappingComponent {
    */
   mappingEnabled = signal(false);
 
+  /**
+   * Only offered for fields allowing multiple values and for rules where the related records link to this record,
+   * because the inherit button for a single linked parent always replaces the value.
+   */
+  readonly isAddToExistingAvailable: boolean;
+
+  /**
+   * If the user enabled adding new values to the existing values of this field instead of replacing them
+   */
+  addToExisting = signal(false);
+
   isInvalidMapping: boolean = false;
 
   constructor() {
@@ -155,6 +166,10 @@ export class AutomatedFieldMappingComponent {
     if (this.value?.valueMapping) {
       this.mappingEnabled.set(true);
     }
+
+    this.isAddToExistingAvailable =
+      !!this.value?.sourceReferenceEntity && !!data.currentField?.isArray;
+    this.addToExisting.set(this.value?.aggregation === "add");
   }
 
   save() {
@@ -184,6 +199,11 @@ export class AutomatedFieldMappingComponent {
     if (Object.keys(selectedMappings).length === 0) {
       // do not store empty mappings and delete any potentially existing mappings
       delete newValue.valueMapping;
+    }
+    if (this.isAddToExistingAvailable && this.addToExisting()) {
+      newValue.aggregation = "add";
+    } else {
+      delete newValue.aggregation;
     }
 
     this.dialogRef.close(newValue);

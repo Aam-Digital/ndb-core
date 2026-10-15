@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { InheritedValueService } from "./inherited-value.service";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import {
   cleanUpTemporarySchemaFields,
   getDefaultInheritedForm,
@@ -24,14 +25,20 @@ describe("InheritedValueService", () => {
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: any;
   let mockAbility: any;
+  let mockIndexing: any;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
     mockEntityMapperService = {
       load: vi.fn(),
+      loadType: vi.fn(),
       receiveUpdates: vi.fn(),
     };
     mockEntityMapperService.receiveUpdates.mockReturnValue(updateSubject);
+    mockIndexing = {
+      generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
+      queryIndexDocs: vi.fn().mockResolvedValue([]),
+    };
     TestBed.configureTestingModule({
       providers: [
         {
@@ -40,6 +47,7 @@ describe("InheritedValueService", () => {
           multi: true,
         },
         { provide: EntityMapperService, useValue: mockEntityMapperService },
+        { provide: DatabaseIndexingService, useValue: mockIndexing },
         { provide: EntityAbility, useValue: mockAbility },
         {
           provide: EntitySchemaService,
@@ -693,7 +701,7 @@ describe("InheritedValueService", () => {
     vi.useFakeTimers();
     try {
       const parentEntity = new Entity("Parent:1");
-      parentEntity["status"] = { id: "active", label: "Active" };
+      parentEntity["status"] = "active";
       mockEntityMapperService.load.mockReturnValue(
         Promise.resolve(parentEntity),
       );
@@ -732,7 +740,7 @@ describe("InheritedValueService", () => {
     vi.useFakeTimers();
     try {
       const parentEntity = new Entity("Parent:1");
-      parentEntity["status"] = { id: "active", label: "Active" };
+      parentEntity["status"] = "active";
       mockEntityMapperService.load.mockReturnValue(
         Promise.resolve(parentEntity),
       );
@@ -776,5 +784,104 @@ describe("InheritedValueService", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  describe("field collecting the values of all linked records", () => {
+    async function initCollectingForm(
+      currentValue: string[],
+      linkedRecordValues: string[][],
+      aggregation: "add" | "replace" = "add",
+    ) {
+      TestBed.inject(EntityRegistry).set("Entity", Entity);
+      const form = getDefaultInheritedForm({
+        parent: { dataType: "entity", additional: "Entity", isArray: true },
+        field: {
+          isArray: true,
+          defaultValue: {
+            mode: "inherited-field",
+            config: {
+              sourceReferenceEntity: "Entity",
+              sourceReferenceField: "parent",
+              sourceValueField: "category",
+              aggregation,
+            },
+          },
+        },
+      });
+      form.entity._rev = "1-existing";
+      form.entity["parent"] = "Entity:own-parent";
+      form.formGroup.get("field").setValue(currentValue);
+
+      const linkedRecords = linkedRecordValues.map((values, i) => {
+        const record = new Entity();
+        record["parent"] =
+          i === 0 ? [form.entity.getId(), "Entity:other"] : form.entity.getId();
+        record["category"] = values;
+        return record;
+      });
+      // the index returns only the records linking to the entity
+      mockIndexing.queryIndexDocs.mockResolvedValue(linkedRecords);
+
+      await defaultValueService.handleEntityForm(form, form.entity);
+      return form;
+    }
+
+    it.each([
+      [["a", "b"], [["b"], ["a"]], true],
+      [["a", "b", "manual"], [["a"], ["b"]], false],
+      [["a"], [["a"], ["a", "b"]], false],
+    ])(
+      "current %j with linked records %j is in sync: %s",
+      async (currentValue, linkedRecordValues, expectedInSync) => {
+        const form = await initCollectingForm(currentValue, linkedRecordValues);
+
+        const hint = defaultValueService.getDefaultValueUiHint(form, "field");
+
+        expect(hint.isCollectedFromLinkedRecords).toBe(true);
+        expect(hint.isInSync).toBe(expectedInSync);
+      },
+    );
+
+    it("should replace the value with the values of all linked records on sync", async () => {
+      const form = await initCollectingForm(
+        ["a", "stale"],
+        [
+          ["a", "b"],
+          ["b", "c"],
+        ],
+      );
+
+      defaultValueService
+        .getDefaultValueUiHint(form, "field")
+        .syncFromParentField();
+
+      expect(form.formGroup.get("field").value).toEqual(["a", "b", "c"]);
+      expect(
+        defaultValueService.getDefaultValueUiHint(form, "field").isInSync,
+      ).toBe(true);
+    });
+
+    it("should not show a hint without values of linked records", async () => {
+      const form = await initCollectingForm(["manual"], []);
+
+      expect(
+        defaultValueService.getDefaultValueUiHint(form, "field"),
+      ).toBeUndefined();
+    });
+
+    it("should not show a hint for automation rules replacing the value", async () => {
+      const form = await initCollectingForm(["a"], [["b"]], "replace");
+
+      expect(
+        defaultValueService.getDefaultValueUiHint(form, "field"),
+      ).toBeUndefined();
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+    });
+
+    it("should not load the record's own parent for an automation rule", async () => {
+      await initCollectingForm(["a"], [["a"]]);
+
+      expect(mockEntityMapperService.load).not.toHaveBeenCalled();
+    });
   });
 });
