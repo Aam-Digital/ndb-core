@@ -75,11 +75,15 @@ would not be reported. Only a warning without any error is reported as a plain m
 below). Angular's `HttpErrorResponse` is not an `Error` and counts as "no error" here: whether a
 failed response is exceptional is for the code that made the request to decide.
 
+So do not drop the error before logging (a `catchError(() => of(null))` followed by a log call
+without it leaves the report impossible to diagnose), and do not pass the same error object twice.
+
 ### Log a failure once
 
 Either handle a failure where it is caught (log it, recover, tell the user) or rethrow it — not both.
 When the rethrown error reaches a caller that does not catch it either, it is reported a second time as
-an unhandled error, under its own and usually less telling title.
+an unhandled error, under its own and usually less telling title. Likewise, when a service has logged
+a failure and only returns a result flag, the component receiving it must not log it again.
 
 As a safety net, `processSentryEvent` drops such an unhandled report when the very same error object
 was passed to `Logging` as context before (at any level, including `debug`): that call already decided
@@ -227,6 +231,20 @@ normalized, so keys differing only in digits would collide.
 Note that changing a fingerprint does not re-group events already in Sentry: existing issues stay as they
 are and the new grouping applies to events reported from then on. To see the effect of a change, the
 issues it replaces have to be archived once the release carrying it is rolled out.
+
+### Investigating issues in Sentry
+
+- Issues from one browser session (same `trace` id in the event's context) usually share one root
+  cause even when their titles differ: compare trace ids before treating them separately.
+- The `environment` tag reads `production` for every production build, including internal test
+  instances and PR preview builds, unless their `config.json` sets `remoteLoggingEnvironment` (see
+  above). Check the `url` and `release` tags (`pr-…`, `…-master.N`) before treating an issue as
+  customer-facing.
+- Weigh sessions, deployments and releases rather than the event count (see "One report per issue per
+  session").
+- Grouping and filtering run in the client, so a change to them only applies to events from clients
+  that loaded the new release: cached older app versions keep reporting under the old titles. Check
+  the `release` tag before investigating an issue that a change should already have handled.
 
 ## Key files
 

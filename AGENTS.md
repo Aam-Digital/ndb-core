@@ -223,19 +223,11 @@ who has to act on the failure:
 
 Rules that keep one root cause in one Sentry issue:
 
-- **Report a failure once.** Either handle it (log, recover, tell the user) or rethrow it — not
-  both. A method that logs and then rethrows makes every caller that does not catch report it a
-  second time, as an unhandled error with a different title and less context (a failed sync showed
-  up as both `sync failed` and `Error: No error message`). Likewise, when a service already logged a
-  failure and returns a result flag, the component must not log it again. (As a safety net, an
-  unhandled error that was already passed to `Logging` as context is not reported again.)
+- **Log a failure once, with the caught error as context** (`Logging.warn("Could not load X", err)`):
+  see "Log an error together with a message" and "Log a failure once" in the logging README.
 - **Never leave a promise floating.** An `async` call inside `subscribe()`, an effect or an event
   handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
   `ErrorHandler` and is reported as a separate, unhandled issue.
-- **Pass the caught error as context** — `Logging.warn("Could not load X", err)`. Only then is the
-  report grouped and filtered by its cause (connectivity, expired session, status) like any other
-  error. A `catchError(() => of(null))` followed by a log call without the error makes the report
-  impossible to diagnose. Do not log the same error object twice in one call.
 - **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
   `isConnectivityError()` (`src/app/utils/connectivity-error.ts`) and `isExpiredSessionError()`
   (`src/app/utils/expired-session-error.ts`). A component that only treats `404` as expected
@@ -247,19 +239,7 @@ Rules that keep one root cause in one Sentry issue:
 - **Expect config values of the wrong type.** Config is plain JSON edited by admins; a template or
   `computed()` must not crash because a value is not of the type its interface declares.
 
-When investigating Sentry issues:
-
-- Issues from one browser session (same `trace` id in the event's context) usually share one root
-  cause even when their titles differ — compare trace ids before treating them separately.
-- The `environment` tag reads `production` for every production build, including internal test
-  instances and PR preview builds, unless their `config.json` sets `remoteLoggingEnvironment`;
-  check the `url` and `release` tags (`pr-…`, `…-master.N`) before treating an issue as
-  customer-facing.
-- Event counts are capped per session (see the logging README); weigh how many sessions,
-  instances and releases an issue affects instead.
-- Grouping and filtering run in the client (`beforeSend`), so a change only applies to events from
-  clients that loaded the new release — cached older app versions keep reporting under the old
-  titles. Check the `release` tag first, and archive superseded issues once the fix is rolled out.
+When investigating Sentry issues, see "Investigating issues in Sentry" in the logging README.
 
 ## Testing Guidelines
 
