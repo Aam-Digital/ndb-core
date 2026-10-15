@@ -25,6 +25,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { Entity } from "../../../core/entity/model/entity";
 import { Logging } from "../../../core/logging/logging.service";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
+import { SyncFailedError } from "../../../core/database/pouchdb/synced-pouch-database";
 import { isConnectivityError } from "../../../utils/connectivity-error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileService } from "../file.service";
@@ -169,10 +170,13 @@ export class EditFileComponent
       // reported to the user but deliberately not to remote monitoring
       errorMessage = $localize`:File Upload Error Message:Upload was interrupted. Please check your internet connection and try again.`;
     } else {
-      Logging.error("Failed to update file", {
-        status: err?.status,
-        message: err?.message,
-      });
+      // a failed sync before the upload is already logged by the sync itself
+      if (!(err instanceof SyncFailedError)) {
+        Logging.error("Failed to update file", {
+          status: err?.status,
+          message: err?.message,
+        });
+      }
       errorMessage = $localize`:File Upload Error Message:Failed to update file attachment. Please try again.`;
     }
     this.alertService.addDanger(errorMessage);

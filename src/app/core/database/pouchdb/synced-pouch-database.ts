@@ -445,7 +445,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   /**
    * Ensure the database is synced with the remote server.
-   * Throws {@link NotAvailableOfflineError} if offline.
+   * Throws {@link NotAvailableOfflineError} if offline, or a {@link SyncFailedError}
+   * if the sync failed (which `sync()` has already logged).
    * Otherwise triggers a one-time sync and resolves when complete.
    */
   async ensureSynced(): Promise<void> {
@@ -455,7 +456,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
     }
 
-    await this.sync();
+    try {
+      await this.sync();
+    } catch (err) {
+      throw new SyncFailedError(err);
+    }
 
     if (this.syncState.value === SyncState.UNSYNCED) {
       throw new NotAvailableOfflineError(
@@ -517,6 +522,16 @@ function lastSyncedBatchContext(docIds: string[]): Record<string, unknown> {
     lastSyncedBatchSize: docIds.length,
     lastSyncedEntityTypes: [...new Set(docIds.map((id) => id.split(":")[0]))],
   };
+}
+
+/**
+ * Thrown by {@link SyncedPouchDatabase.ensureSynced} when the sync failed.
+ * The sync has already logged the failure: callers only need to tell the user.
+ */
+export class SyncFailedError extends NamedError {
+  constructor(cause: unknown) {
+    super("SyncFailedError", "Could not sync with the server", { cause });
+  }
 }
 
 /** Thrown internally when a sync is cancelled for making no progress. */
