@@ -98,6 +98,10 @@ releases without source maps report minified frames).
   reported as extra data, without splitting the issue.
 - Do not use it for generic errors (`TypeError`, ...): for those, the stack trace is the only thing
   telling two unrelated bugs apart.
+- A failure that is only logged, not thrown, needs no name: `Logging.error(message, err)` is grouped
+  the same way. Name it only where a network failure must keep an issue of its own instead of going
+  into the shared network issue, because the app cannot continue (`ConfigLoadError`,
+  `AppBootstrapError`).
 
 ### How events are grouped
 

@@ -650,13 +650,15 @@ describe("AbilityService", () => {
       expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
     });
 
-    it("should report an unexpected failure as PermissionRulesLoadError", async () => {
+    it("should report an unexpected failure with the error", async () => {
       const errorSpy = vi.spyOn(Logging, "error");
+      const failure = new Error("something unexpected");
 
-      await initWithLoadError(new Error("something unexpected"));
+      await initWithLoadError(failure);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "PermissionRulesLoadError" }),
+        "Failed to load permission rules",
+        failure,
       );
     });
   });

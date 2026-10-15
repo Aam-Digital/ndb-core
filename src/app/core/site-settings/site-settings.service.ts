@@ -7,7 +7,6 @@ import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
-import { NamedError } from "../logging/reported-errors";
 import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
@@ -60,15 +59,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     // so config-defined SiteSettings fields are transformed correctly.
     this.entityConfigReady.setupCompleted$.pipe(take(1)).subscribe(() => {
       super.startLoading().catch((err) => {
-        Logging.error(
-          new NamedError(
-            "SiteSettingsLoadError",
-            "Failed to load site settings",
-            {
-              cause: err,
-            },
-          ),
-        );
+        Logging.error("Failed to load site settings", err);
       });
     });
   }

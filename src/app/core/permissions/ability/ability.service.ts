@@ -11,7 +11,6 @@ import { PermissionEnforcerService } from "../permission-enforcer/permission-enf
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
 import { Logging } from "../../logging/logging.service";
-import { NamedError } from "../../logging/reported-errors";
 import { get, has } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
@@ -169,15 +168,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       return;
     }
 
-    Logging.error(
-      new NamedError(
-        "PermissionRulesLoadError",
-        "Failed to load permission rules",
-        {
-          cause: err,
-        },
-      ),
-    );
+    Logging.error("Failed to load permission rules", err);
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
