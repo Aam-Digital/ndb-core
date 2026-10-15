@@ -11,6 +11,7 @@ import {
 } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { differenceWith, isEqual } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import {
@@ -20,9 +21,6 @@ import {
   isEmptyValue,
 } from "../add-missing-values";
 import { getCommonValue } from "../get-common-value";
-
-/** Number of records requested per query when loading the records that link to an entity. */
-const LINKED_RECORDS_PAGE_SIZE = 500;
 
 /**
  * Represents a rule with its associated entity type and field information
@@ -51,6 +49,10 @@ export class AutomatedFieldUpdateConfigService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+
+  /** ids of the reference indexes that were already requested in this session */
+  private readonly requestedReferenceIndexes = new Set<string>();
 
   /**
    * Track processed entity revisions to prevent duplicate automated status updates within the same save operation
@@ -590,42 +592,75 @@ export class AutomatedFieldUpdateConfigService {
 
   /**
    * Load the records of the given type that reference the given entity in the given field
-   * (a single reference or a list of references).
-   *
-   * If the database supports queries only the matching records are loaded,
-   * otherwise all records of the type are loaded locally and filtered.
+   * (a single reference or a list of references) through a database index,
+   * instead of loading and checking all records of the type.
+   * If the index cannot be used (e.g. it cannot be created in online-only mode),
+   * all records of the type are loaded and checked instead.
    */
   private async loadRecordsLinkingTo(
     entityType: string | EntityConstructor,
     referenceField: string,
     entityId: string,
   ): Promise<Entity[]> {
-    const isLinking = (record: Entity) =>
-      asArray(record[referenceField]).includes(entityId);
-    if (!this.entityMapper.supportsFind(entityType)) {
-      return (await this.entityMapper.loadType(entityType)).filter(isLinking);
+    const ctor =
+      typeof entityType === "string"
+        ? this.entityRegistry.get(entityType)
+        : entityType;
+    if (!ctor?.schema.has(referenceField)) {
+      return [];
     }
 
-    // a list of references is only matched by $elemMatch, a single reference by equality
-    const filter = {
-      $or: [
-        { [referenceField]: entityId },
-        { [referenceField]: { $elemMatch: { $eq: entityId } } },
-      ],
-    };
-    const linkingRecords: Entity[] = [];
-    let bookmark: string | undefined;
-    let page: Entity[];
-    do {
-      const result = await this.entityMapper.findType(entityType, filter, {
-        limit: LINKED_RECORDS_PAGE_SIZE,
-        bookmark,
-      });
-      page = result.records;
-      bookmark = result.bookmark;
-      linkingRecords.push(...page);
-    } while (page.length === LINKED_RECORDS_PAGE_SIZE);
-    return linkingRecords.filter(isLinking);
+    try {
+      return await this.queryLinkingRecordsIndex(
+        ctor,
+        referenceField,
+        entityId,
+      );
+    } catch (error) {
+      Logging.warn(
+        "AutomatedFieldUpdateConfigService: Could not use the index of linked records, loading all records of the type instead",
+        { entityType: ctor.ENTITY_TYPE, referenceField },
+        error,
+      );
+      return (await this.entityMapper.loadType(ctor)).filter((record) =>
+        asArray(record[referenceField]).includes(entityId),
+      );
+    }
+  }
+
+  private async queryLinkingRecordsIndex(
+    ctor: EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise<Entity[]> {
+    const indexId = `linking_${ctor.ENTITY_TYPE}_${referenceField}`;
+    if (!this.requestedReferenceIndexes.has(indexId)) {
+      this.requestedReferenceIndexes.add(indexId);
+      // the query below waits until the index is ready
+      this.dbIndexing
+        .generateIndexOnProperty(
+          indexId,
+          ctor,
+          referenceField as keyof Entity & string,
+        )
+        .catch((error) =>
+          Logging.warn(
+            "AutomatedFieldUpdateConfigService: Could not create the index of linked records",
+            { indexId },
+            error,
+          ),
+        );
+    }
+
+    const records = await this.dbIndexing.queryIndexDocs(
+      ctor,
+      `${indexId}/by_${referenceField}`,
+      entityId,
+    );
+    // the index also contains records of other types whose id starts with this type's name (e.g. "ChildSchoolRelation" for "Child")
+    return records.filter(
+      (record) => Entity.extractTypeFromId(record.getId()) === ctor.ENTITY_TYPE,
+    );
   }
 
   /**

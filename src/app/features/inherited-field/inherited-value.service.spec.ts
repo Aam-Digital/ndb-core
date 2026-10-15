@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { InheritedValueService } from "./inherited-value.service";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import {
   cleanUpTemporarySchemaFields,
   getDefaultInheritedForm,
@@ -24,16 +25,20 @@ describe("InheritedValueService", () => {
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: any;
   let mockAbility: any;
+  let mockIndexing: any;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
     mockEntityMapperService = {
       load: vi.fn(),
       loadType: vi.fn(),
-      supportsFind: vi.fn().mockReturnValue(false),
       receiveUpdates: vi.fn(),
     };
     mockEntityMapperService.receiveUpdates.mockReturnValue(updateSubject);
+    mockIndexing = {
+      generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
+      queryIndexDocs: vi.fn().mockResolvedValue([]),
+    };
     TestBed.configureTestingModule({
       providers: [
         {
@@ -42,6 +47,7 @@ describe("InheritedValueService", () => {
           multi: true,
         },
         { provide: EntityMapperService, useValue: mockEntityMapperService },
+        { provide: DatabaseIndexingService, useValue: mockIndexing },
         { provide: EntityAbility, useValue: mockAbility },
         {
           provide: EntitySchemaService,
@@ -850,7 +856,9 @@ describe("InheritedValueService", () => {
       linkedRecordValues: string[][],
       aggregation: "add" | "replace" = "add",
     ) {
+      TestBed.inject(EntityRegistry).set("Entity", Entity);
       const form = getDefaultInheritedForm({
+        parent: { dataType: "entity", additional: "Entity", isArray: true },
         field: {
           isArray: true,
           defaultValue: {
@@ -875,13 +883,8 @@ describe("InheritedValueService", () => {
         record["category"] = values;
         return record;
       });
-      const unrelatedRecord = new Entity();
-      unrelatedRecord["parent"] = "Entity:other";
-      unrelatedRecord["category"] = ["unrelated"];
-      mockEntityMapperService.loadType.mockResolvedValue([
-        ...linkedRecords,
-        unrelatedRecord,
-      ]);
+      // the index returns only the records linking to the entity
+      mockIndexing.queryIndexDocs.mockResolvedValue(linkedRecords);
 
       await defaultValueService.handleEntityForm(form, form.entity);
       return form;
@@ -936,7 +939,7 @@ describe("InheritedValueService", () => {
       expect(
         defaultValueService.getDefaultValueUiHint(form, "field"),
       ).toBeUndefined();
-      expect(mockEntityMapperService.loadType).not.toHaveBeenCalled();
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
     });
 
     it("should not load the record's own parent for an automation rule", async () => {

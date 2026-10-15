@@ -19,6 +19,7 @@ import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-lab
 import { Entity } from "../../../core/entity/model/entity";
 import { debounceTime } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { Logging } from "../../../core/logging/logging.service";
 import { AutomatedFieldUpdateConfigService } from "../automated-field-update/automated-field-update-config.service";
 
 /**
@@ -52,6 +53,9 @@ export class InheritedValueButtonComponent {
 
   /** Whether this field's value is passed on to linked records, which can be updated through this button */
   canUpdateLinkedRecords = signal(false);
+
+  /** Whether the linked records are being loaded or are being reviewed in the dialog */
+  isUpdatingLinkedRecords = signal(false);
 
   constructor() {
     effect((onCleanup) => {
@@ -101,13 +105,28 @@ export class InheritedValueButtonComponent {
   }
 
   async updateLinkedRecords() {
-    const wereUpdated =
-      await this.automatedFieldUpdateConfigService.updateLinkedRecords(
-        this.form().entity,
-        this.field().id,
+    this.isUpdatingLinkedRecords.set(true);
+    try {
+      const wereUpdated =
+        await this.automatedFieldUpdateConfigService.updateLinkedRecords(
+          this.form().entity,
+          this.field().id,
+        );
+      if (!wereUpdated) {
+        this.alertService.addInfo(
+          $localize`The linked records are up to date.`,
+        );
+      }
+    } catch (error) {
+      Logging.error(
+        "InheritedValueButton could not update the linked records",
+        error,
       );
-    if (!wereUpdated) {
-      this.alertService.addInfo($localize`The linked records are up to date.`);
+      this.alertService.addDanger(
+        $localize`The linked records could not be updated.`,
+      );
+    } finally {
+      this.isUpdatingLinkedRecords.set(false);
     }
   }
 }

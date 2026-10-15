@@ -146,11 +146,6 @@ export class MockEntityMapperService extends EntityMapperService {
     return this.getAll(type);
   }
 
-  /** the mock can always filter, but a real local database cannot (see {@link findType}) */
-  override supportsFind(): boolean {
-    return false;
-  }
-
   override async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T> = {},
