@@ -22,6 +22,11 @@ import {
 } from "../add-missing-values";
 import { getCommonValue } from "../get-common-value";
 
+/** the property of an entity that a reference index can be created for */
+type IndexedProperty = Parameters<
+  DatabaseIndexingService["generateIndexOnProperty"]
+>[2];
+
 /**
  * Represents a rule with its associated entity type and field information
  */
@@ -641,7 +646,7 @@ export class AutomatedFieldUpdateConfigService {
         .generateIndexOnProperty(
           indexId,
           ctor,
-          referenceField as keyof Entity & string,
+          referenceField as IndexedProperty,
         )
         .catch((error) =>
           Logging.warn(
