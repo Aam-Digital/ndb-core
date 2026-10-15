@@ -99,6 +99,21 @@ export class AutomatedFieldUpdateComponent implements OnInit {
 
   entityConstructor: EntityConstructor;
 
+  /**
+   * The first affected entity, if all affected entities are linked through the same field
+   * (otherwise each entity shows how it is linked).
+   */
+  readonly sharedLinkEntity: AffectedEntity | undefined =
+    this.data.entities.every(
+      (entity) =>
+        entity.relatedReferenceField ===
+          this.data.entities[0].relatedReferenceField &&
+        entity.relatedReferenceFieldEntityType ===
+          this.data.entities[0].relatedReferenceFieldEntityType,
+    )
+      ? this.data.entities[0]
+      : undefined;
+
   async ngOnInit(): Promise<void> {
     for (const entity of this.data.entities) {
       const fieldId = entity.targetFieldId;
