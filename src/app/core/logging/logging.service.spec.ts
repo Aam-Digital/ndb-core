@@ -8,6 +8,7 @@ import {
   processSentryEvent,
   resetSentryEventCounts,
 } from "./sentry-event-processing";
+import { normalizeErrorValue } from "./sentry-grouping";
 import { DatabaseException } from "../database/pouchdb/database-exception";
 import { RegistryLookupError } from "#src/app/core/config/registry/dynamic-registry";
 
@@ -98,6 +99,31 @@ describe("LoggingService", () => {
 
   it("should report an error logged directly as it is", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
+  });
+});
+
+describe("normalizeErrorValue", () => {
+  it.each([
+    [
+      "Http failure response for https://example.org/db/app/Child:1: 404 Not Found",
+      "Http failure response for <url> <n> Not Found",
+    ],
+    [
+      "Missing document Child:7f3a2b1c-1d2e-4f5a-8b9c-0d1e2f3a4b5c",
+      "Missing document <entityId>",
+    ],
+    [
+      "Missing revision 3-a1b2c3d4e5f60718293a4b5c6d7e8f90",
+      "Missing revision <rev>",
+    ],
+    ["No user entity User:some.person", "No user entity <entityId>"],
+    ["TypeError: x is undefined", "TypeError: x is undefined"],
+    [
+      'Server returned code 413 with body "<html><title>413 Too Large</title></html>"',
+      "Server returned code <n>",
+    ],
+  ])("should normalize %j to %j", (value, expected) => {
+    expect(normalizeErrorValue(value)).toBe(expected);
   });
 });
 
