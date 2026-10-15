@@ -146,35 +146,18 @@ describe("LoggingService", () => {
       expect(reported.cause).toBe(cause);
     });
 
-    it("should report a warning about the situation itself as a plain message", () => {
+    it.each([
+      ["data about the situation", { dataType: "School" }],
+      // not an Error: whether a failed response is exceptional is for the
+      // calling code to decide
+      [
+        "a failed HTTP response",
+        new HttpErrorResponse({ status: 404, url: "https://example.org/x" }),
+      ],
+    ])("should report a warning with %s as a plain message", (_, context) => {
       expect(
-        toReportedError(
-          "Unknown dataType for a field",
-          [{ dataType: "School" }],
-          LogLevel.WARN,
-        ),
+        toReportedError("Could not load X", [context], LogLevel.WARN),
       ).toBeUndefined();
-    });
-
-    it("should link a failed HTTP response into the reported chain, keeping its status", () => {
-      // not an Error, so Sentry would neither chain it nor report it as an exception
-      const response = new HttpErrorResponse({
-        status: 502,
-        url: "https://example.org/api/v1/scopes",
-      });
-
-      const reported = toReportedError(
-        "Could not load the client scopes",
-        [response],
-        LogLevel.WARN,
-      );
-
-      expect(reported.cause).toBeInstanceOf(Error);
-      expect(reported.cause).toMatchObject({
-        name: "HttpErrorResponse",
-        message: response.message,
-        status: 502,
-      });
     });
   });
 
@@ -1243,45 +1226,6 @@ describe("LoggingService", () => {
 
         expect(event.fingerprint).toContain("failed to load important notes");
       });
-
-      it.each([
-        { status: 502, inNetworkIssue: true },
-        { status: 0, inNetworkIssue: true },
-        { status: 404, inNetworkIssue: false },
-      ])(
-        "should treat a logged HTTP request failing with $status as unreachable server: $inNetworkIssue",
-        ({ status, inNetworkIssue }) => {
-          const reported = toReportedError(
-            "Could not load the client scopes",
-            [
-              new HttpErrorResponse({
-                status,
-                url: "https://example.org/api/v1/scopes",
-              }),
-            ],
-            LogLevel.WARN,
-          );
-
-          const event = processSentryEvent(
-            {
-              exception: {
-                values: [
-                  {
-                    type: "HttpErrorResponse",
-                    value: (reported.cause as Error).message,
-                  },
-                  { type: "Error", value: reported.message },
-                ],
-              },
-            } as any,
-            { originalException: reported },
-          );
-
-          expect(event.fingerprint.includes("network-error")).toBe(
-            inNetworkIssue,
-          );
-        },
-      );
     });
 
     describe("offline network errors", () => {

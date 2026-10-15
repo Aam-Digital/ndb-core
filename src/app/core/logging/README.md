@@ -71,9 +71,9 @@ message, which is stable across releases and identical for every call site loggi
 `Logging.warn(message, err)` is reported the same way, only at level `warning`. As a plain message
 event, the error would only be extra data that none of the processing below looks at: a failed request
 would not count as a connectivity failure, an expired session would not be filtered, and the status
-would not be reported. An `HttpErrorResponse` (which is not an `Error`) is converted into one that
-keeps its message and `status`, so that Sentry chains it, too. Only a warning without any error is
-reported as a plain message (see case 4 below).
+would not be reported. Only a warning without any error is reported as a plain message (see case 4
+below). Angular's `HttpErrorResponse` is not an `Error` and counts as "no error" here: whether a
+failed response is exceptional is for the code that made the request to decide.
 
 ### Log a failure once
 
@@ -132,10 +132,9 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    A `DatabaseException` that is itself a connectivity failure goes into this issue as well, even
    though it is a recognized type (case 1): its name only says which layer made the request, and the
    same dropped connection would otherwise have one issue for requests made through PouchDB and
-   another for those that failed outside of it. So does a `LoggedError` directly wrapping a request
-   to our own backend that never reached it (a `DatabaseException` or an `HttpErrorResponse`, by its
-   message or a gateway status): every component loading data at that moment logs it under a message
-   of its own, which is kept as the `logged_message` tag instead of opening one issue per component.
+   another for those that failed outside of it. So does a `LoggedError` directly wrapping such a
+   `DatabaseException`: every component loading data at that moment logs it under a message of its
+   own, which is kept as the `logged_message` tag instead of opening one issue per component.
 
    The status counts as well as the message: an event whose error carries a gateway status
    (`0`/`502`/`503`/`504`) is a request that never reached the backend, whatever the message says.

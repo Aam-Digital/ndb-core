@@ -8,7 +8,7 @@ import {
   provideAppInitializer,
   EnvironmentProviders,
 } from "@angular/core";
-import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
+import { HttpStatusCode } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { TraceService } from "@sentry/angular";
 import {
@@ -302,45 +302,15 @@ export function toReportedError(
   context: any[],
   logLevel: LogLevel = LogLevel.ERROR,
 ): Error | undefined {
-  const loggedError = asError(message);
-  if (loggedError) {
-    return loggedError;
+  if (message instanceof Error) {
+    return message;
   }
 
-  const cause = context.map(asError).find(Boolean);
+  const cause = context.find((c) => c instanceof Error);
   if (!cause && logLevel !== LogLevel.ERROR) {
     return undefined;
   }
   return new LoggedError(messageText(message), cause);
-}
-
-/**
- * The value as an Error that remote monitoring can report, if it is one.
- *
- * Angular's `HttpErrorResponse` is not an `Error`, so Sentry would neither
- * report it as an exception nor link it into a reported chain as a `cause`.
- * It is converted into one that keeps its message and status.
- */
-function asError(value: unknown): Error | undefined {
-  if (value instanceof Error) {
-    return value;
-  }
-  if (value instanceof HttpErrorResponse) {
-    return new HttpResponseError(value);
-  }
-  return undefined;
-}
-
-/** An `HttpErrorResponse` as an Error, see {@link asError}. */
-class HttpResponseError extends Error {
-  readonly status: number;
-
-  constructor(response: HttpErrorResponse) {
-    super(response.message);
-    // a literal: the class name is minified in production builds
-    this.name = "HttpErrorResponse";
-    this.status = response.status;
-  }
 }
 
 /**
@@ -351,7 +321,7 @@ const loggedErrors = new WeakSet<object>();
 
 function rememberLoggedErrors(context: any[]) {
   for (const value of context) {
-    if (value instanceof Error || value instanceof HttpErrorResponse) {
+    if (value instanceof Error) {
       loggedErrors.add(value);
     }
   }
@@ -717,7 +687,7 @@ function groupSentryEvent(
   }
 
   if (hint?.originalException instanceof LoggedError) {
-    const unreachableServer = loggedUnreachableServer(event, values);
+    const unreachableServer = loggedUnreachableServer(values);
     if (unreachableServer) {
       event.tags = {
         ...event.tags,
@@ -798,35 +768,24 @@ function rewrappedCauseGroupedError(
  * them into that one issue instead; the logged message is kept as a tag, and
  * the route is still the `transaction` tag.
  *
- * Only a request to our own backend (see {@link BACKEND_REQUEST_ERROR_TYPES})
+ * Only an error of a recognized type (see {@link CAUSE_GROUPED_ERROR_TYPES})
  * directly below the wrapper qualifies:
  * - a named error in between (a `ConfigLoadError` caused by a failed fetch)
  *   says more than the fact that a request failed, and keeps its own issue;
- * - any other failure to load something keeps its own issue as well: a chunk
- *   that did not load during bootstrap, so that the app never started, would
- *   disappear among requests of no consequence.
- *
- * A request counts as not having reached the server by its message or by a
- * gateway status, which a failed HTTP response carries instead (see
- * {@link hasConnectivityStatus}).
+ * - any other failed request has no issue of its own to go to, only the shared
+ *   network bucket - where a chunk that did not load during bootstrap, so that
+ *   the app never started, would disappear among requests of no consequence.
  */
 function loggedUnreachableServer(
-  event: Sentry.ErrorEvent,
   values: Sentry.Exception[],
 ): Sentry.Exception | undefined {
   const wrapped = values[values.length - 2];
   return wrapped &&
-    BACKEND_REQUEST_ERROR_TYPES.includes(wrapped.type ?? "") &&
-    (isConnectivityException(wrapped) || hasConnectivityStatus(event))
+    CAUSE_GROUPED_ERROR_TYPES.includes(wrapped.type ?? "") &&
+    isConnectivityException(wrapped)
     ? wrapped
     : undefined;
 }
-
-/**
- * The types of error that stand for a failed request to our own backend:
- * a `DatabaseException` and an `HttpErrorResponse` (as converted by `asError`).
- */
-const BACKEND_REQUEST_ERROR_TYPES = ["DatabaseException", "HttpErrorResponse"];
 
 /**
  * Report an exception under the normalized message it is grouped by, keeping
