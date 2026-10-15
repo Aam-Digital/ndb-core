@@ -43,6 +43,9 @@ export interface LoadRecordConfig<T extends Entity> {
   loaderMethod?: LoaderMethod;
 }
 
+/** Why loading the records of a list failed, as named to the user. */
+type LoadErrorCause = "connection" | "sessionExpired" | "notPermitted";
+
 /**
  * Abstract data source for tables that handles all data handling internally.
  * Depending on the environment all data might be in-memory or only requested from the server on demand.
@@ -168,14 +171,18 @@ export abstract class EntitiesTableDataSource<
         return data;
       })
       .catch((err) => {
-        const notPermitted = isNotPermittedError(err);
-        if (notPermitted) {
+        let cause: LoadErrorCause = "connection";
+        if (isNotPermittedError(err)) {
           // a permission rule excludes these records for the user, not an app error
+          cause = "notPermitted";
           Logging.debug(
             "User is not permitted to load data in datasource",
             err,
           );
         } else {
+          if (isExpiredSessionError(err)) {
+            cause = "sessionExpired";
+          }
           Logging.error(
             "Error loading data in datasource",
             err,
@@ -185,13 +192,7 @@ export abstract class EntitiesTableDataSource<
         if (isCurrentLoad()) {
           // replaces any session alert shown for the same failure (one snackbar
           // at a time), so it has to name that cause itself
-          this.showLoadErrorToast(
-            notPermitted
-              ? "notPermitted"
-              : isExpiredSessionError(err)
-                ? "sessionExpired"
-                : "connection",
-          );
+          this.showLoadErrorToast(cause);
         }
         return [];
       })
@@ -212,9 +213,7 @@ export abstract class EntitiesTableDataSource<
    * @param cause why the server rejected the request: the user may not access these records,
    *   the login session expired and could not be renewed, or (default) a connection problem
    */
-  private showLoadErrorToast(
-    cause: "connection" | "sessionExpired" | "notPermitted" = "connection",
-  ): void {
+  private showLoadErrorToast(cause: LoadErrorCause = "connection"): void {
     this.loadErrorSnackBarRef?.dismiss();
     const messages = {
       notPermitted: $localize`:Table data loading failed because the user is not permitted:Could not load the list because you don't have access to these records.`,
