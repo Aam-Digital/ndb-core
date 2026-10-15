@@ -1,0 +1,25 @@
+<div
+  class="trigger-wrapper flex-row align-center gap-regular clickable"
+  (click)="onContainerClick(); $event.stopPropagation()"
+>
+  @if (rows().length) {
+    <app-display-schema-embed-array
+      class="flex-grow"
+      [value]="rows()"
+      [formFieldConfig]="formFieldConfig()"
+    ></app-display-schema-embed-array>
+  } @else {
+    <span class="no-entries flex-grow" i18n>no entries</span>
+  }
+
+  <button
+    type="button"
+    mat-icon-button
+    class="input-action-button"
+    (click)="openDialog(); $event.stopPropagation()"
+    [attr.aria-label]="enabled() ? manageLabel : viewLabel"
+    [matTooltip]="enabled() ? manageLabel : viewLabel"
+  >
+    <fa-icon icon="table"></fa-icon>
+  </button>
+</div>

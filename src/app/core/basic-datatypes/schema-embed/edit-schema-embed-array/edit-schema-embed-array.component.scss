@@ -1,0 +1,22 @@
+@use "variables/colors";
+
+:host {
+  display: block;
+  // Material blocks pointer events on disabled form fields (our default view mode);
+  // keep them so the entries can still be previewed on hover and viewed in the dialog.
+  pointer-events: auto;
+}
+
+.no-entries {
+  font-style: italic;
+}
+
+.input-action-button {
+  margin: -12px;
+  color: colors.$muted;
+}
+
+.clickable,
+.clickable * {
+  cursor: pointer;
+}

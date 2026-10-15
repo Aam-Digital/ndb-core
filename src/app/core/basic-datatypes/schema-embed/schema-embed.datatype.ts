@@ -62,6 +62,9 @@ export interface SchemaEmbedDatatypeAdditional {
  *
  * The config in `additional` is merged with the `embeddedType` schema (if present),
  * allowing runtime config to extend or override a class's annotations.
+ *
+ * This datatype only handles (de)serialization and has no UI components (it is hidden in the admin UI);
+ * for a user-configurable field use {@link SchemaEmbedArrayDatatype} (`"schema-embed-array"`) instead.
  */
 @Injectable()
 export class SchemaEmbedDatatype<
@@ -77,8 +80,12 @@ export class SchemaEmbedDatatype<
   /**
    * Build the effective inner schema from the embedded type's annotations
    * and/or the `additional` config.
+   *
+   * Public so that generic UI components (e.g. for `schema-embed-array`) can resolve the
+   * same merged column list this datatype uses for (de)serialization, without duplicating
+   * the merge logic or being limited to the `additional`-only (config-based) case.
    */
-  private getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
+  getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
     // Clone the base schema to avoid mutating the original class schema
     const baseSchema: EntitySchema = new Map(
       this.embeddedType?.schema ?? new Map(),

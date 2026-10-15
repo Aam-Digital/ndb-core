@@ -163,6 +163,16 @@ describe("Schema data type: schema-embed", () => {
         } as SchemaEmbedDatatypeAdditional,
       })
       embedded: any;
+
+      @DatabaseField({
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          value: { dataType: "month" },
+          value2: { dataType: "number" },
+        } as SchemaEmbedDatatypeAdditional,
+      })
+      embeddedArray: any[];
     }
 
     let entitySchemaService: EntitySchemaService;
@@ -233,6 +243,30 @@ describe("Schema data type: schema-embed", () => {
       expect(rawData.embedded.value).toEqual("2020-01");
       expect(rawData.embedded.value2).toEqual(42);
       expect(rawData.embedded.extra).toBeUndefined();
+    });
+
+    it("applies inner schema transformation to each entry of an array", () => {
+      const entity = new ConfigTestEntity();
+      entity.embeddedArray = [
+        { value: moment("2020-01-01").toDate(), value2: 1 },
+        { value: moment("2021-06-01").toDate(), value2: 2 },
+      ];
+
+      const rawData =
+        entitySchemaService.transformEntityToDatabaseFormat(entity);
+      expect(rawData.embeddedArray).toEqual([
+        { value: "2020-01", value2: 1 },
+        { value: "2021-06", value2: 2 },
+      ]);
+
+      const loadedEntity = new ConfigTestEntity();
+      entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
+
+      expect(loadedEntity.embeddedArray).toHaveLength(2);
+      expect(
+        moment(loadedEntity.embeddedArray[1].value).isSame("2021-06-01", "day"),
+      ).toBe(true);
+      expect(loadedEntity.embeddedArray[1].value2).toEqual(2);
     });
   });
 });

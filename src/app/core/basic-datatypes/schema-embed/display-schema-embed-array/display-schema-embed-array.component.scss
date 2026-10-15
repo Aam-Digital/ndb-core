@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  cursor: help;
+}
+
+.summary {
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  // keep the rendered view components inline, so the summary stays on a single line
+  ::ng-deep > * {
+    display: inline;
+  }
+}
