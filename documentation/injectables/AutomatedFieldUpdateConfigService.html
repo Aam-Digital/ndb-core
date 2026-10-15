@@ -1439,8 +1439,15 @@ export class AutomatedFieldUpdateConfigService {
     entityType: EntityConstructor,
     entityIds: string[],
   ): Promise&lt;Entity[]&gt; {
+    // The reference field can hold ids of several entity types. Ids without any type prefix
+    // are still loaded, because the mapper adds the prefix of the given type itself.
+    const typePrefix &#x3D; &#x60;${entityType.ENTITY_TYPE}:&#x60;;
+    const idsOfEntityType &#x3D; entityIds.filter(
+      (id) &#x3D;&gt; String(id).startsWith(typePrefix) || !String(id).includes(&quot;:&quot;),
+    );
+
     const loadedEntities &#x3D; await Promise.all(
-      entityIds.map(async (id) &#x3D;&gt; {
+      idsOfEntityType.map(async (id) &#x3D;&gt; {
         try {
           const entity &#x3D; await this.entityMapper.load(entityType, id);
           return entity;
