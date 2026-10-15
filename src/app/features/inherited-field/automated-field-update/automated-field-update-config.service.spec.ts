@@ -13,7 +13,9 @@ import {
   EntityRegistry,
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
-import { Entity } from "#src/app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
+import { asArray } from "#src/app/utils/asArray";
 import { of } from "rxjs";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { DefaultValueMode } from "../../../core/default-values/default-value-config";
@@ -175,6 +177,19 @@ class AggregatingAction extends Entity {
   mainTags: ConfigurableEnumValue[];
 }
 
+/** a different type whose id also starts with "AggregatingAction" */
+@DatabaseEntity("AggregatingActionLog")
+class AggregatingActionLog extends Entity {
+  @DatabaseField()
+  parentAction: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+  })
+  tags: ConfigurableEnumValue[];
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -189,6 +204,16 @@ describe("AutomatedFieldUpdateConfigService", () => {
     { id: "primary", label: "Primary" },
     { id: "secondary", label: "Secondary" },
   ];
+
+  /**
+   * Like the real indexing service this finds the records of a type by a reference property,
+   * including (if enabled) records of other types whose id starts with the type name.
+   */
+  let mockIndexing: {
+    generateIndexOnProperty: ReturnType<typeof vi.fn>;
+    queryIndexDocs: ReturnType<typeof vi.fn>;
+    indexIncludesOtherTypes: boolean;
+  };
 
   let mockDialogAfterClosed = () => of([]);
   const mockDialogRef = {
@@ -209,10 +234,30 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
     entityRegistry.set("AggregatingAction", AggregatingAction);
+    entityRegistry.set("AggregatingActionLog", AggregatingActionLog);
 
+    mockIndexing = {
+      indexIncludesOtherTypes: false,
+      generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
+      queryIndexDocs: vi.fn(),
+    };
+    mockIndexing.queryIndexDocs.mockImplementation(
+      async (ctor: EntityConstructor, indexName: string, key: string) => {
+        const field = indexName.split("/by_")[1];
+        return entityMapper
+          .getAllData()
+          .filter((record) =>
+            mockIndexing.indexIncludesOtherTypes
+              ? record.getId().startsWith(ctor.ENTITY_TYPE)
+              : Entity.extractTypeFromId(record.getId()) === ctor.ENTITY_TYPE,
+          )
+          .filter((record) => asArray(record[field]).includes(key));
+      },
+    );
     TestBed.configureTestingModule({
       providers: [
         AutomatedFieldUpdateConfigService,
+        { provide: DatabaseIndexingService, useValue: mockIndexing },
         EntitySchemaService,
         ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
@@ -630,23 +675,61 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(mockDialog.open).not.toHaveBeenCalled();
     });
 
-    it("does not remove values if the other sub-actions cannot be checked", async () => {
-      vi.spyOn(entityMapper, "loadType").mockRejectedValueOnce(
-        new Error("no access"),
-      );
+    describe("loading the sub-actions of a parent through the reference index", () => {
+      it("creates the index of the reference field once and queries it with the parent id", async () => {
+        const parent = new AggregatingAction();
+        parent.tags = toTags(["health", "education"]);
+        const subAction = createSubAction(parent, ["education"]);
+        subAction._rev = "1-existing";
+        entityMapper.addAll([parent, subAction]);
+        const subActionBefore = subAction.copy();
+        subAction.tags = toTags([]);
 
-      await saveSubActionTags(["health", "education"], ["education"], []);
+        await service.applyRulesToDependentEntities(subAction, subActionBefore);
+        await service.applyRulesToDependentEntities(subAction, subActionBefore);
 
-      expect(mockDialog.open).not.toHaveBeenCalled();
-    });
-
-    describe("if the database supports queries", () => {
-      beforeEach(() => {
-        vi.spyOn(entityMapper, "supportsFind").mockReturnValue(true);
+        expect(
+          mockIndexing.generateIndexOnProperty.mock.calls.filter(
+            ([, , field]) => field === "parentAction",
+          ),
+        ).toEqual([
+          [
+            "linking_AggregatingAction_parentAction",
+            AggregatingAction,
+            "parentAction",
+          ],
+        ]);
+        expect(mockIndexing.queryIndexDocs).toHaveBeenCalledWith(
+          AggregatingAction,
+          "linking_AggregatingAction_parentAction/by_parentAction",
+          parent.getId(),
+        );
       });
 
-      it("loads only the sub-actions of the parent with a query instead of all records", async () => {
-        const findType = vi.spyOn(entityMapper, "findType");
+      it("ignores records of other types whose id starts with the same type name", async () => {
+        const parent = new AggregatingAction();
+        parent.tags = toTags(["health", "education"]);
+        const subAction = createSubAction(parent, ["education"]);
+        subAction._rev = "1-existing";
+        // the index of "AggregatingAction" also contains this record
+        const otherType = new AggregatingActionLog();
+        otherType.parentAction = parent.getId();
+        otherType.tags = toTags(["health"]);
+        entityMapper.addAll([parent, subAction, otherType]);
+        const subActionBefore = subAction.copy();
+        subAction.tags = toTags([]);
+        mockIndexing.indexIncludesOtherTypes = true;
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(subAction, subActionBefore);
+
+        // "health" is not used by another sub-action (only by the log record), but "education" is removed
+        const suggestion = mockDialog.open.mock.calls[0][1].data.entities[0];
+        expect(suggestion.newValue).toEqual(["health"]);
+      });
+
+      it("loads and checks all records of the type if the index cannot be queried", async () => {
+        mockIndexing.queryIndexDocs.mockRejectedValue(new Error("no index"));
 
         await saveSubActionTags(
           ["health", "education"],
@@ -655,56 +738,39 @@ describe("AutomatedFieldUpdateConfigService", () => {
           [["water"]],
         );
 
-        expect(findType).toHaveBeenCalled();
-        expect(findType.mock.calls[0][0]).toBe("AggregatingAction");
-        // matches both a single reference and a list of references to the parent
-        expect(findType.mock.calls[0][1]).toEqual({
-          $or: [
-            { parentAction: expect.any(String) },
-            { parentAction: { $elemMatch: { $eq: expect.any(String) } } },
-          ],
-        });
+        // "education" is removed, as no other sub-action has it
         expect(
           mockDialog.open.mock.calls[0][1].data.entities[0].newValue,
         ).toEqual(["health"]);
       });
 
-      it("considers the values of sub-actions on every page of the results", async () => {
-        const parent = new AggregatingAction();
-        parent.tags = toTags(["health", "education"]);
-        const subAction = createSubAction(parent, ["education"]);
-        subAction._rev = "1-existing";
-        entityMapper.addAll([parent, subAction]);
-        const fullPage = Array.from({ length: 500 }, () =>
-          createSubAction(parent, ["water"]),
-        );
-        const lastPage = [createSubAction(parent, ["education"])];
-        const findType = vi
-          .spyOn(entityMapper, "findType")
-          .mockResolvedValueOnce({ records: fullPage, bookmark: "next" })
-          .mockResolvedValueOnce({ records: lastPage, bookmark: "end" });
-        const subActionBefore = subAction.copy();
-        subAction.tags = toTags([]);
-        mockDialog.open.mockClear();
-
-        await service.applyRulesToDependentEntities(subAction, subActionBefore);
-
-        // "education" is still used by a sub-action on the second page
-        expect(findType.mock.calls[1][2]).toEqual({
-          limit: 500,
-          bookmark: "next",
-        });
-        expect(mockDialog.open).not.toHaveBeenCalled();
-      });
-
-      it("does not remove values if the query fails", async () => {
-        vi.spyOn(entityMapper, "findType").mockRejectedValueOnce(
+      it("does not remove values if neither the index nor the records of the type can be loaded", async () => {
+        mockIndexing.queryIndexDocs.mockRejectedValue(new Error("no index"));
+        // only the check of the other sub-actions fails
+        vi.spyOn(entityMapper, "loadType").mockRejectedValueOnce(
           new Error("no access"),
         );
 
         await saveSubActionTags(["health", "education"], ["education"], []);
 
         expect(mockDialog.open).not.toHaveBeenCalled();
+      });
+
+      it("still updates records linking to the changed entity if the index cannot be queried", async () => {
+        mockIndexing.queryIndexDocs.mockRejectedValue(new Error("no index"));
+        const school = new School();
+        school.category = TEST_SCHOOL_ENUM[0];
+        const child = new Child();
+        child.school = school.getId();
+        child.category = "old";
+        entityMapper.addAll([school, child]);
+        const originalSchool = school.copy();
+
+        school.category = TEST_SCHOOL_ENUM[1];
+        await service.applyRulesToDependentEntities(school, originalSchool);
+
+        const updatedChild = await entityMapper.load(Child, child.getId());
+        expect(updatedChild.category).toBe("secondary-student");
       });
     });
 
