@@ -1,5 +1,6 @@
 import { LogLevel } from "./log-level";
 import type * as Sentry from "@sentry/angular";
+import { HttpErrorResponse } from "@angular/common/http";
 import {
   LoggedError,
   LoggingService,
@@ -131,12 +132,103 @@ describe("LoggingService", () => {
       // Sentry links the cause into the reported chain, so its stack is not lost
       expect(reported.cause).toBe(cause);
     });
+
+    it("should report a warning that comes with an error like an error, so that it is classified by its cause", () => {
+      const cause = new Error("Failed to fetch");
+
+      const reported = toReportedError(
+        "Could not load file",
+        ["SiteSettings:global", cause],
+        LogLevel.WARN,
+      );
+
+      expect(reported).toBeInstanceOf(LoggedError);
+      expect(reported.cause).toBe(cause);
+    });
+
+    it("should report a warning about the situation itself as a plain message", () => {
+      expect(
+        toReportedError(
+          "Unknown dataType for a field",
+          [{ dataType: "School" }],
+          LogLevel.WARN,
+        ),
+      ).toBeUndefined();
+    });
+
+    it("should link a failed HTTP response into the reported chain, keeping its status", () => {
+      // not an Error, so Sentry would neither chain it nor report it as an exception
+      const response = new HttpErrorResponse({
+        status: 502,
+        url: "https://example.org/api/v1/scopes",
+      });
+
+      const reported = toReportedError(
+        "Could not load the client scopes",
+        [response],
+        LogLevel.WARN,
+      );
+
+      expect(reported.cause).toBeInstanceOf(Error);
+      expect(reported.cause).toMatchObject({
+        name: "HttpErrorResponse",
+        message: response.message,
+        status: 502,
+      });
+    });
   });
 
   describe("processSentryEvent (beforeSend)", () => {
     // the repeat budget is per issue and lives for a whole app session, so
     // without this the events of one test count against the next one's
     beforeEach(() => resetSentryEventCounts());
+
+    it.each([
+      {
+        report: "an unhandled rethrow of an error logged where it was caught",
+        logged: true,
+        handled: false,
+        reported: false,
+      },
+      {
+        report: "an error logged again on purpose",
+        logged: true,
+        handled: true,
+        reported: true,
+      },
+      {
+        report: "an unhandled error that was never logged",
+        logged: false,
+        handled: false,
+        reported: true,
+      },
+    ])("should report $report: $reported", ({ logged, handled, reported }) => {
+      const error = new Error("Sync cancelled after making no progress");
+      if (logged) {
+        // even at debug level: the log call decided it needs no report
+        loggingService.debug("sync failed (connectivity)", error);
+      }
+
+      const event = processSentryEvent(
+        {
+          exception: {
+            values: [
+              {
+                type: "SyncStalledError",
+                value: error.message,
+                mechanism: {
+                  type: "auto.function.angular.error_handler",
+                  handled,
+                },
+              },
+            ],
+          },
+        } as any,
+        { originalException: error },
+      );
+
+      expect(event !== null).toBe(reported);
+    });
 
     it("should drop an identical event after MAX_REPEATED_SENTRY_EVENTS occurrences", () => {
       const event = () =>
@@ -669,7 +761,7 @@ describe("LoggingService", () => {
         );
 
         expect(reportedTitle(thrownDirectly)).toBe(
-          "DatabaseException: Failed to reach the server",
+          "NetworkError: Failed to reach the server",
         );
         expect(reportedTitle(fromResourceLoader)).toBe(
           reportedTitle(thrownDirectly),
@@ -830,6 +922,39 @@ describe("LoggingService", () => {
           action: "create",
           entityId: "Config:CONFIG_ENTITY",
           entityType: "Config",
+        });
+      });
+
+      it("should report the status and reason of the failed request underneath a wrapper", () => {
+        const failedRequest = new DatabaseException({
+          status: 401,
+          name: "unauthorized",
+          error: "unauthorized",
+          reason: "Unknown kid",
+          message: "unauthorized",
+        });
+        const wrapper = new Error(
+          "Failed to load configuration from the database.",
+          { cause: failedRequest },
+        );
+        wrapper.name = "ConfigLoadError";
+
+        const event = processSentryEvent(
+          {
+            exception: {
+              values: [
+                { type: "DatabaseException", value: "unauthorized" },
+                { type: "ConfigLoadError", value: wrapper.message },
+              ],
+            },
+          } as any,
+          { originalException: wrapper },
+        );
+
+        expect(event.extra).toMatchObject({
+          name: "ConfigLoadError",
+          status: 401,
+          reason: "Unknown kid",
         });
       });
 
@@ -1028,6 +1153,23 @@ describe("LoggingService", () => {
         expect(event.fingerprint).toEqual(["network-error"]);
       });
 
+      it("should collect a failed database request in the same issue as any other failed request, as a warning", () => {
+        const dbFailure = unloggedDbFailure();
+        const otherFailure = processSentryEvent(
+          fetchFailure("Failed to fetch", "pouchdb.js"),
+          {},
+        );
+
+        expect(dbFailure.fingerprint).toEqual(otherFailure.fingerprint);
+        expect(reportedTitle(dbFailure)).toBe(reportedTitle(otherFailure));
+        expect(dbFailure.level).toBe("warning");
+        expect(otherFailure.level).toBe("warning");
+        // ... still telling that it was a database request
+        expect(dbFailure.tags.network_error).toBe(
+          "DatabaseException: Failed to fetch from DB",
+        );
+      });
+
       it("should keep a named error out of the network bucket, as its own message says more", () => {
         const event = processSentryEvent(
           {
@@ -1101,6 +1243,45 @@ describe("LoggingService", () => {
 
         expect(event.fingerprint).toContain("failed to load important notes");
       });
+
+      it.each([
+        { status: 502, inNetworkIssue: true },
+        { status: 0, inNetworkIssue: true },
+        { status: 404, inNetworkIssue: false },
+      ])(
+        "should treat a logged HTTP request failing with $status as unreachable server: $inNetworkIssue",
+        ({ status, inNetworkIssue }) => {
+          const reported = toReportedError(
+            "Could not load the client scopes",
+            [
+              new HttpErrorResponse({
+                status,
+                url: "https://example.org/api/v1/scopes",
+              }),
+            ],
+            LogLevel.WARN,
+          );
+
+          const event = processSentryEvent(
+            {
+              exception: {
+                values: [
+                  {
+                    type: "HttpErrorResponse",
+                    value: (reported.cause as Error).message,
+                  },
+                  { type: "Error", value: reported.message },
+                ],
+              },
+            } as any,
+            { originalException: reported },
+          );
+
+          expect(event.fingerprint.includes("network-error")).toBe(
+            inNetworkIssue,
+          );
+        },
+      );
     });
 
     describe("offline network errors", () => {

@@ -8,7 +8,7 @@ import {
   provideAppInitializer,
   EnvironmentProviders,
 } from "@angular/core";
-import { HttpStatusCode } from "@angular/common/http";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { TraceService } from "@sentry/angular";
 import {
@@ -143,6 +143,7 @@ export class LoggingService {
     logLevel: LogLevel = LogLevel.INFO,
     ...context: any[]
   ) {
+    rememberLoggedErrors(context);
     this.logToConsole(message, logLevel, ...context);
 
     if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
@@ -186,15 +187,14 @@ export class LoggingService {
     }
     const scope = {
       extra: Object.keys(extra).length > 0 ? extra : undefined,
+      level: this.translateLogLevel(logLevel),
     };
 
-    if (logLevel === LogLevel.ERROR) {
-      Sentry.captureException(toReportedError(message, context), scope);
+    const error = toReportedError(message, context, logLevel);
+    if (error) {
+      Sentry.captureException(error, scope);
     } else {
-      Sentry.captureMessage(messageText(message), {
-        ...scope,
-        level: this.translateLogLevel(logLevel),
-      });
+      Sentry.captureMessage(messageText(message), scope);
     }
   }
 
@@ -283,17 +283,78 @@ function messageText(message: any): string {
 }
 
 /**
- * The Error to report for a log call: an error that was logged directly is
- * reported as it is, anything else is wrapped in a {@link LoggedError}.
+ * The Error to report for a log call, or `undefined` for one that is reported
+ * as a plain message.
+ *
+ * An error that was logged directly is reported as it is, anything else is
+ * wrapped in a {@link LoggedError} with the error from the context as its cause.
+ *
+ * A warning is reported as an exception, too, as soon as it comes with an
+ * error: as a plain message, the error would only be extra data, which none of
+ * the processing in {@link processSentryEvent} looks at. A failed request would
+ * then not count as a connectivity failure, an expired session would not be
+ * filtered, and the status would not be reported - so every component logging
+ * a dropped connection opened an issue of its own. Only a warning without any
+ * error is about the logged situation itself, and is grouped by its message.
  */
-export function toReportedError(message: any, context: any[]): Error {
-  if (message instanceof Error) {
-    return message;
+export function toReportedError(
+  message: any,
+  context: any[],
+  logLevel: LogLevel = LogLevel.ERROR,
+): Error | undefined {
+  const loggedError = asError(message);
+  if (loggedError) {
+    return loggedError;
   }
-  return new LoggedError(
-    messageText(message),
-    context.find((c) => c instanceof Error),
-  );
+
+  const cause = context.map(asError).find(Boolean);
+  if (!cause && logLevel !== LogLevel.ERROR) {
+    return undefined;
+  }
+  return new LoggedError(messageText(message), cause);
+}
+
+/**
+ * The value as an Error that remote monitoring can report, if it is one.
+ *
+ * Angular's `HttpErrorResponse` is not an `Error`, so Sentry would neither
+ * report it as an exception nor link it into a reported chain as a `cause`.
+ * It is converted into one that keeps its message and status.
+ */
+function asError(value: unknown): Error | undefined {
+  if (value instanceof Error) {
+    return value;
+  }
+  if (value instanceof HttpErrorResponse) {
+    return new HttpResponseError(value);
+  }
+  return undefined;
+}
+
+/** An `HttpErrorResponse` as an Error, see {@link asError}. */
+class HttpResponseError extends Error {
+  readonly status: number;
+
+  constructor(response: HttpErrorResponse) {
+    super(response.message);
+    // a literal: the class name is minified in production builds
+    this.name = "HttpErrorResponse";
+    this.status = response.status;
+  }
+}
+
+/**
+ * Errors that were passed to the logger as context (at any level), i.e. caught
+ * and dealt with where they occurred - see {@link isRethrownLoggedError}.
+ */
+const loggedErrors = new WeakSet<object>();
+
+function rememberLoggedErrors(context: any[]) {
+  for (const value of context) {
+    if (value instanceof Error || value instanceof HttpErrorResponse) {
+      loggedErrors.add(value);
+    }
+  }
 }
 
 /**
@@ -334,7 +395,8 @@ export function processSentryEvent(
   if (
     isOfflineNetworkError(event) ||
     isDocumentUpdateConflict(event, hint) ||
-    isCausedByExpiredSession(hint)
+    isCausedByExpiredSession(hint) ||
+    isRethrownLoggedError(event, hint)
   ) {
     return null;
   }
@@ -378,10 +440,40 @@ function isDocumentUpdateConflict(
   ].some((msg) => msg && fingerprintKey(msg).includes(CONFLICT_MESSAGE));
 }
 
+/**
+ * Whether the event is an error that was already logged where it was caught,
+ * and then went unhandled because it was also rethrown to a caller that does
+ * not catch it.
+ *
+ * The log call already decided how to report the failure: with a message
+ * saying what failed, and at the level its cause deserves (a sync stalled by a
+ * flaky connection only at debug level). The unhandled error adds nothing but
+ * a second issue for the same failure, under the error's own and usually less
+ * telling title - a failed sync came in both as "sync failed" and as
+ * "Error: No error message" (AAM-DIGITAL-6Y8, AAM-DIGITAL-7B5).
+ *
+ * Only unhandled events are dropped, so an error that is logged again on
+ * purpose (`Logging.error(err)` after `Logging.debug("...", err)`) is still
+ * reported. The caller that let it go unhandled is still worth fixing: it
+ * should catch, or the error should not be rethrown.
+ */
+function isRethrownLoggedError(
+  event: Sentry.ErrorEvent,
+  hint: Sentry.EventHint,
+): boolean {
+  const thrown = hint?.originalException;
+  return (
+    typeof thrown === "object" &&
+    thrown !== null &&
+    loggedErrors.has(thrown) &&
+    !!event.exception?.values?.some((v) => v.mechanism?.handled === false)
+  );
+}
+
 /** How PouchDB words a rejected write, after {@link fingerprintKey} normalization. */
 const CONFLICT_MESSAGE = "document update conflict";
 
-/** How many `cause` levels {@link isCausedByExpiredSession} follows. */
+/** How many `cause` levels {@link causeChain} follows. */
 const MAX_CAUSE_DEPTH = 5;
 
 /**
@@ -405,14 +497,26 @@ const MAX_CAUSE_DEPTH = 5;
  * loses the `status` and `reason` of a wrapped `DatabaseException`.
  */
 function isCausedByExpiredSession(hint: Sentry.EventHint): boolean {
-  let error: unknown = hint?.originalException;
-  for (let depth = 0; error && depth <= MAX_CAUSE_DEPTH; depth++) {
-    if (isExpiredSessionError(error)) {
-      return true;
-    }
-    error = (error as { cause?: unknown }).cause;
+  return causeChain(hint?.originalException).some(isExpiredSessionError);
+}
+
+/**
+ * The error and the `cause`s it wraps, outermost first (up to
+ * {@link MAX_CAUSE_DEPTH} levels, and safe against a cause referring back).
+ */
+function causeChain(error: unknown): object[] {
+  const chain: object[] = [];
+  let current = error;
+  while (
+    current &&
+    typeof current === "object" &&
+    !chain.includes(current) &&
+    chain.length <= MAX_CAUSE_DEPTH
+  ) {
+    chain.push(current);
+    current = (current as { cause?: unknown }).cause;
   }
-  return false;
+  return chain;
 }
 
 /**
@@ -613,14 +717,14 @@ function groupSentryEvent(
   }
 
   if (hint?.originalException instanceof LoggedError) {
-    const unreachableServer = loggedUnreachableServer(values);
+    const unreachableServer = loggedUnreachableServer(event, values);
     if (unreachableServer) {
       event.tags = {
         ...event.tags,
         // Sentry rejects tag values longer than 200 characters
         logged_message: normalizeErrorValue(thrownError.value).slice(0, 200),
       };
-      return groupByErrorChain(event, values, unreachableServer);
+      return groupAsNetworkError(event, thrownError, unreachableServer);
     }
     return groupByErrorChain(event, values, thrownError);
   }
@@ -694,24 +798,35 @@ function rewrappedCauseGroupedError(
  * them into that one issue instead; the logged message is kept as a tag, and
  * the route is still the `transaction` tag.
  *
- * Only an error of a recognized type (see {@link CAUSE_GROUPED_ERROR_TYPES})
+ * Only a request to our own backend (see {@link BACKEND_REQUEST_ERROR_TYPES})
  * directly below the wrapper qualifies:
  * - a named error in between (a `ConfigLoadError` caused by a failed fetch)
  *   says more than the fact that a request failed, and keeps its own issue;
- * - any other failed request has no issue of its own to go to, only the shared
- *   network bucket - where a chunk that did not load during bootstrap, so that
- *   the app never started, would disappear among requests of no consequence.
+ * - any other failure to load something keeps its own issue as well: a chunk
+ *   that did not load during bootstrap, so that the app never started, would
+ *   disappear among requests of no consequence.
+ *
+ * A request counts as not having reached the server by its message or by a
+ * gateway status, which a failed HTTP response carries instead (see
+ * {@link hasConnectivityStatus}).
  */
 function loggedUnreachableServer(
+  event: Sentry.ErrorEvent,
   values: Sentry.Exception[],
 ): Sentry.Exception | undefined {
   const wrapped = values[values.length - 2];
   return wrapped &&
-    CAUSE_GROUPED_ERROR_TYPES.includes(wrapped.type ?? "") &&
-    isConnectivityException(wrapped)
+    BACKEND_REQUEST_ERROR_TYPES.includes(wrapped.type ?? "") &&
+    (isConnectivityException(wrapped) || hasConnectivityStatus(event))
     ? wrapped
     : undefined;
 }
+
+/**
+ * The types of error that stand for a failed request to our own backend:
+ * a `DatabaseException` and an `HttpErrorResponse` (as converted by `asError`).
+ */
+const BACKEND_REQUEST_ERROR_TYPES = ["DatabaseException", "HttpErrorResponse"];
 
 /**
  * Report an exception under the normalized message it is grouped by, keeping
@@ -778,8 +893,17 @@ function groupByErrorChain(
   values: Sentry.Exception[],
   groupedError: Sentry.Exception,
 ): Sentry.ErrorEvent {
+  const thrownError = values[values.length - 1];
   const groupedType = groupedError.type ?? "";
   const groupedValue = groupingValue(groupedError);
+  if (groupedValue === NETWORK_FAILURE) {
+    // the error identifying the problem is the failed request itself - a
+    // `DatabaseException` only says which layer made it, and is no different
+    // from the requests that fail outside of that layer (e.g. a response body
+    // cut off while PouchDB reads it). Kept apart, the same dropped
+    // connection had two issues (AAM-DIGITAL-77A, AAM-DIGITAL-77E).
+    return groupAsNetworkError(event, thrownError, groupedError);
+  }
   const fingerprint = [groupedType, groupedValue];
 
   const rootCause = values[0];
@@ -788,23 +912,14 @@ function groupByErrorChain(
   // compared by content, not by identity: an error wrapping another error of
   // the same type and message describes one failure, not two, and has to match
   // the fingerprint of the same failure reported without the extra wrapper.
-  // Two links that are both network failures are one such case - which of them
-  // the chain happens to include says nothing about the problem.
   const isDistinctCause =
-    !(groupedValue === NETWORK_FAILURE && rootValue === NETWORK_FAILURE) &&
-    (rootType !== groupedType || rootValue !== groupedValue);
+    rootType !== groupedType || rootValue !== groupedValue;
 
   if (isDistinctCause) {
     fingerprint.push(rootType, rootValue);
     groupedError.value = `${groupedError.value} ${describeCause(rootCause)}`;
   }
 
-  if (groupedValue === NETWORK_FAILURE) {
-    // the wordings collected here differ per browser, so use a stable title
-    reportAsUnreachableServer(event, groupedError);
-  }
-
-  const thrownError = values[values.length - 1];
   if (thrownError !== groupedError) {
     // Sentry titles an event by its thrown error, so a title taken from the
     // links above the grouped one would differ from the title the same problem
@@ -818,16 +933,10 @@ function groupByErrorChain(
 }
 
 /**
- * Replace the reported message by one that does not depend on which browser
- * (or library) sent the event, keeping the original one available as extra data.
+ * The title of the network issue, which does not depend on which browser (or
+ * library) sent the event (see {@link groupAsNetworkError}).
  */
-function reportAsUnreachableServer(
-  event: Sentry.ErrorEvent,
-  exception: Sentry.Exception,
-) {
-  event.extra = { ...event.extra, originalError: exception.value };
-  exception.value = "Failed to reach the server";
-}
+const UNREACHABLE_SERVER_TITLE = "Failed to reach the server";
 
 /**
  * Placeholder for a connectivity failure, which every browser words differently
@@ -868,22 +977,32 @@ function describeCause(rootCause: Sentry.Exception): string {
  * The browsers' differing wordings ("Failed to fetch" / "Load failed" / ...)
  * would make the title flip-flop between events of the merged issue, so it is
  * replaced by a stable one and kept as a searchable tag instead.
+ *
+ * Reported as a warning: the failure is (almost always) the connection of one
+ * device, and an outage shows as a rise of this one issue, not as an error.
+ *
+ * @param thrownError the error the event is titled by
+ * @param failedRequest the link of the chain that is the failed request, if
+ *   that is not the thrown error itself (e.g. the cause of a `LoggedError`)
  */
 function groupAsNetworkError(
   event: Sentry.ErrorEvent,
   thrownError: Sentry.Exception,
+  failedRequest: Sentry.Exception = thrownError,
 ): Sentry.ErrorEvent {
-  const original = `${thrownError.type ?? "Error"}: ${normalizeErrorValue(thrownError.value)}`;
+  const original = `${failedRequest.type ?? "Error"}: ${normalizeErrorValue(failedRequest.value)}`;
 
   event.fingerprint = ["network-error"];
+  event.level = "warning";
   event.tags = {
     ...event.tags,
     // Sentry rejects tag values longer than 200 characters
     network_error: original.slice(0, 200),
   };
 
-  reportAsUnreachableServer(event, thrownError);
+  event.extra = { ...event.extra, originalError: failedRequest.value };
   thrownError.type = "NetworkError";
+  thrownError.value = UNREACHABLE_SERVER_TITLE;
 
   return event;
 }
@@ -901,8 +1020,9 @@ function isConnectivityException(exception: Sentry.Exception): boolean {
  * reached the backend - a gateway error names the problem in its status rather
  * than in a message {@link isConnectivityException} could recognize.
  *
- * Event-level, because the status describes the error that was captured (it is
- * attached by {@link enrichSentryEvent}) rather than one link of its chain.
+ * Event-level: the status is attached by {@link enrichSentryEvent}, from the
+ * outermost error in the chain that has one - the captured error itself, or
+ * the failed request it wraps.
  */
 function hasConnectivityStatus(event: Sentry.ErrorEvent): boolean {
   const status = event.extra?.status;
@@ -932,19 +1052,13 @@ const FALLBACK_EXCEPTION_TYPE = "Error";
  * (see {@link rewrappedCauseGroupedError}), which does not carry the key.
  */
 function registryErrorContext(err: unknown): Record<string, string> {
-  const seen = new Set<unknown>();
-  let e = err;
-  while (e && typeof e === "object" && !seen.has(e)) {
-    if (
-      e instanceof RegistryLookupError ||
-      e instanceof RegistryDuplicateError
-    ) {
-      return { registry: e.registryName, registryKey: e.key };
-    }
-    seen.add(e);
-    e = (e as { cause?: unknown }).cause;
-  }
-  return {};
+  const registryError = causeChain(err).find(
+    (e) =>
+      e instanceof RegistryLookupError || e instanceof RegistryDuplicateError,
+  ) as RegistryLookupError | RegistryDuplicateError | undefined;
+  return registryError
+    ? { registry: registryError.registryName, registryKey: registryError.key }
+    : {};
 }
 
 /**
@@ -958,29 +1072,34 @@ function enrichSentryEvent(
   // Attach structured properties from custom Error subclasses (e.g. DatabaseException,
   // EntityPermissionError) so that details like entityId, status, reason are visible in
   // Sentry's "Additional Data" - even though (deliberately) not part of the message itself.
+  //
+  // The whole cause chain is searched, outermost first: a wrapper that says
+  // which operation failed (a `LoggedError`, a `ConfigLoadError`) usually has
+  // none of these itself, while the status and reason of the request that
+  // failed underneath it are what tells e.g. an expired session from a missing
+  // permission.
   const err = hint.originalException;
   if (err && typeof err === "object") {
     const extras: Record<string, unknown> = {};
-    for (const key of [
-      "entityId",
-      "status",
-      "reason",
-      "name",
-      "action",
-      "entityType",
-    ]) {
-      if (key in err && (err as any)[key] !== undefined) {
-        extras[key] = (err as any)[key];
+    for (const error of causeChain(err) as Record<string, any>[]) {
+      for (const key of [
+        "entityId",
+        "status",
+        "reason",
+        "name",
+        "action",
+        "entityType",
+      ]) {
+        if (extras[key] === undefined && error[key] !== undefined) {
+          extras[key] = error[key];
+        }
       }
-    }
-    // a library may pass on the whole `fetch` Response rather than the status
-    // (keycloak-js does), which otherwise leaves a report saying only that the
-    // status was invalid and never which one it was
-    if (extras.status === undefined) {
-      const status = (err as { response?: { status?: unknown } }).response
-        ?.status;
-      if (typeof status === "number") {
-        extras.status = status;
+      // a library may pass on the whole `fetch` Response rather than the status
+      // (keycloak-js does), which otherwise leaves a report saying only that the
+      // status was invalid and never which one it was
+      const nestedStatus = error.response?.status;
+      if (extras.status === undefined && typeof nestedStatus === "number") {
+        extras.status = nestedStatus;
       }
     }
 

@@ -24,6 +24,10 @@ that control whether log messages are sent to the remote monitoring and how they
 
 Higher log levels (`warn` and `error`) are forwarded to our remote monitoring service, [Sentry](https://sentry.io/).
 
+Events are filed under the Sentry `environment` "production" for every production build. Deployments
+that are not used in production (internal test instances, demos, PR previews) should set
+`remoteLoggingEnvironment` in their `config.json`, so that their events can be filtered out of triage.
+
 ### Keep message strings static
 
 How messages are grouped there depends on the (static) message text, so keep `Logging.warn()` / `Logging.error()`
@@ -64,6 +68,24 @@ the original as its `cause`. Sentry links a `cause` into the reported exception 
 error and its stack trace are still in the event — but the title and the grouping now come from the
 message, which is stable across releases and identical for every call site logging that same problem.
 
+`Logging.warn(message, err)` is reported the same way, only at level `warning`. As a plain message
+event, the error would only be extra data that none of the processing below looks at: a failed request
+would not count as a connectivity failure, an expired session would not be filtered, and the status
+would not be reported. An `HttpErrorResponse` (which is not an `Error`) is converted into one that
+keeps its message and `status`, so that Sentry chains it, too. Only a warning without any error is
+reported as a plain message (see case 4 below).
+
+### Log a failure once
+
+Either handle a failure where it is caught (log it, recover, tell the user) or rethrow it — not both.
+When the rethrown error reaches a caller that does not catch it either, it is reported a second time as
+an unhandled error, under its own and usually less telling title.
+
+As a safety net, `processSentryEvent` drops such an unhandled report when the very same error object
+was passed to `Logging` as context before (at any level, including `debug`): that call already decided
+how to report it. A failed sync used to show up both as `sync failed` and as `Error: No error message`
+this way. Only unhandled events are dropped — logging the same error again on purpose still reports it.
+
 ### How events are grouped
 
 Sentry groups errors **by their stack trace** whenever one is available — the exception message is not
@@ -103,15 +125,26 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    open-ended stream of near-identical issues with the same (non-)answer. They are still reported
    rather than dropped, because a server outage surfaces exactly this way — as one issue, whose
    number of affected sessions and deployments is the signal (not its event count, see the cap
-   below).
+   below). For the same reason they are reported at level `warning`, not `error`.
    The browsers' differing wordings would make the merged issue's title flip-flop, so it is
    replaced by a stable one and kept as the searchable `network_error` tag.
+
+   A `DatabaseException` that is itself a connectivity failure goes into this issue as well, even
+   though it is a recognized type (case 1): its name only says which layer made the request, and the
+   same dropped connection would otherwise have one issue for requests made through PouchDB and
+   another for those that failed outside of it. So does a `LoggedError` directly wrapping a request
+   to our own backend that never reached it (a `DatabaseException` or an `HttpErrorResponse`, by its
+   message or a gateway status): every component loading data at that moment logs it under a message
+   of its own, which is kept as the `logged_message` tag instead of opening one issue per component.
 
    The status counts as well as the message: an event whose error carries a gateway status
    (`0`/`502`/`503`/`504`) is a request that never reached the backend, whatever the message says.
    That status is read from `err.status` or, where a library hands on the whole `fetch` Response
    instead of lifting the status out of it, from `err.response.status` — which is how `keycloak-js`
    reports every rejected response, all of them worded `Server responded with an invalid status.`
+   The `cause` chain is searched for it, outermost first, as a wrapper that says which operation
+   failed usually has no status of its own (the same holds for the `reason`, `entityId` etc. that
+   `enrichSentryEvent` reports as extra data).
 
    A chunk that fails to load counts as one of these: a lazily loaded part of the app not arriving
    means either that the device is offline or that a deployment replaced the chunk the running app
@@ -121,7 +154,9 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    failed") and per chunk URL.
 
    This runs _after_ case 1 on purpose: a `ConfigLoadError` caused by a failed request is about the
-   config load, not about the network, and keeps its own issue.
+   config load, not about the network, and keeps its own issue. So does a `LoggedError` wrapping a
+   chunk that failed to load: during bootstrap that means the app never started, which must not
+   disappear among requests of no consequence.
 
 3. **Exceptions reported without a stack** (e.g. an `HttpErrorResponse`) — Sentry falls back to
    grouping those by message, so an id or url interpolated into it opens a new issue every time.
@@ -131,7 +166,8 @@ is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`
    for a proxy error — a whole HTML error page pushing every other row off the screen. The raw
    message stays available as the event's `originalError`.
 
-4. **Message-only events** (`Logging.warn(...)`) group by their normalized message, which enforces the
+4. **Message-only events** (`Logging.warn(...)` without an error) group by their normalized message,
+   which enforces the
    "keep message strings static" rule above: a message that does interpolate variable data still
    produces one issue instead of one per value.
 
@@ -161,10 +197,10 @@ and punctuation and casing are dropped, so that occurrences of the same problem 
 library is inconsistent about them (PouchDB reports both `Unauthorized` and `unauthorized`).
 
 A link of the chain that is itself a connectivity failure is replaced by `network failure`
-altogether, in the fingerprint and in the title: every browser words it differently
-(`Failed to fetch` / `Load failed` / ...), so a `DatabaseException` would otherwise be one issue per
-browser. For the same reason a network failure wrapping a network failure is treated as one link —
-which of the two the chain happens to include says nothing about the problem.
+altogether, in the fingerprint and in the title of a wrapper that keeps its own issue
+(`ConfigLoadError: … (caused by DatabaseException: network failure)`): every browser words it
+differently (`Failed to fetch` / `Load failed` / ...), so the wrapper would otherwise be one issue per
+browser.
 
 When adding a new error type, add its name to `CAUSE_GROUPED_ERROR_TYPES`. What Sentry reports as the
 exception type is `error.name || error.constructor.name`, so the name has to be set explicitly and to
