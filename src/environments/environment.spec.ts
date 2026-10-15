@@ -9,6 +9,7 @@ export const environment = {
   appVersion: "test",
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  remoteLoggingEnvironment: undefined as string | undefined,
   demo_mode: false,
   session_type: SessionType.mock,
   webmaster_email: undefined,
