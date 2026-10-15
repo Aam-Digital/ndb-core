@@ -1849,5 +1849,9 @@
   "2284540007585664259": " If the external system expects a certain client ID. Leave empty to generate one from the name. ",
   "7330435548640144411": " Only letters, digits, \".\", \"_\" and \"-\" (starting with a letter or digit, 60 characters at most) ",
   "7695438251844023112": " With single sign-on, the external system can sign in to this system as any of its users, including administrators, without their password. Only give this access to systems you fully trust. ",
-  "7941428823403788384": " Create "
+  "7941428823403788384": " Create ",
+  "3388473245390989633": "Some queries or groups are incomplete. Complete or remove them to save the report.",
+  "2570278763179992446": "Enter an SQL query or remove this entry.",
+  "3661941807145562365": "Enter a title for this group.",
+  "833401053301598693": "Add a query or sub-group to this group, or remove it."
 }
