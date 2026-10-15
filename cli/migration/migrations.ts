@@ -8,6 +8,7 @@ import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.mi
 import { shortcutDashboardLinkPrefix } from "./shortcut-dashboard-link-prefix.migration.js";
 import { reportQueryIsActive } from "./report-query-isactive.migration.js";
 import { noteLegacyChildSchoolFields } from "./note-legacy-child-school-fields.migration.js";
+import { restoreBackup } from "./restore-backup.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
 
 export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
@@ -27,4 +28,5 @@ export const migrations: MigrationDefinition[] = [
   setMapCountrycodes,
   reportQueryIsActive,
   noteLegacyChildSchoolFields,
+  restoreBackup,
 ];

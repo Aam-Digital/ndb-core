@@ -308,6 +308,7 @@ describe("noteLegacyChildSchoolFields migration", () => {
     expect(confirm).toHaveBeenCalledTimes(1);
     expect(confirm).toHaveBeenCalledWith(
       expect.stringContaining("2 Note docs have data"),
+      "restore-schools",
     );
     const data = configData(store);
     expect(data["entity:Note"].attributes).toEqual({ schools: SCHOOL_FIELD });
@@ -549,6 +550,7 @@ describe("noteLegacyChildSchoolFields migration", () => {
 
     expect(confirm).toHaveBeenCalledWith(
       expect.stringContaining("(and ReportConfig:export use it)"),
+      "restore-schools",
     );
   });
 
@@ -779,7 +781,30 @@ describe("noteLegacyChildSchoolFields migration", () => {
     });
   });
 
-  it("warns about entity types extending Note", async () => {
+  it("warns about extending types not configuring a legacy field kept in entity:Note", async () => {
+    // kept without data (shown in the configured form), so not written into EventNote
+    const store = seed({
+      ...childAndSchoolTypes,
+      "view:note/:id": {
+        component: "NoteDetails",
+        config: { entityType: "Note", bottomForm: ["children"] },
+      },
+      "entity:EventNote": { extends: "Note" },
+      "entity:Note": { attributes: { children: CHILD_FIELD } },
+    });
+
+    const result = await noteLegacyChildSchoolFields.run(
+      buildTestContext(store),
+    );
+
+    expect(result.warnings).toEqual([
+      expect.stringContaining(
+        "entity:EventNote extends Note but does not configure children",
+      ),
+    ]);
+  });
+
+  it("does not warn about extending types without legacy fields to inherit", async () => {
     const store = seed({
       ...explicitNoteDetails,
       "entity:EventNote": { extends: "Note" },
@@ -789,9 +814,33 @@ describe("noteLegacyChildSchoolFields migration", () => {
       buildTestContext(store),
     );
 
-    expect(result.warnings).toEqual([
-      expect.stringContaining("entity:EventNote extends Note"),
-    ]);
+    expect(result.warnings).toBeUndefined();
+  });
+
+  it("recognizes a legacy field stored in the outdated entity-array format", async () => {
+    const outdatedChildField = {
+      label: "Children",
+      dataType: "entity-array",
+      additional: "Child",
+    };
+    const store = seed(
+      {
+        ...childAndSchoolTypes,
+        ...explicitNoteDetails,
+        "entity:EventNote": { extends: "Note" },
+        "entity:Note": { attributes: { children: outdatedChildField } },
+      },
+      { "app/Note:1": { _id: "Note:1", children: ["Child:1"] } },
+    );
+
+    await noteLegacyChildSchoolFields.run(buildTestContext(store));
+
+    const data = configData(store);
+    expect(data["entity:EventNote"].attributes.children).toEqual(
+      outdatedChildField,
+    );
+    // children still links Child records, so relatedEntities only takes over School
+    expect(data["entity:Note"].attributes.relatedEntities).toBeUndefined();
   });
 
   it("writes a field configured for Note into extending types missing it", async () => {
@@ -1233,9 +1282,11 @@ describe("noteLegacyChildSchoolFields migration", () => {
     );
     expect(confirm).toHaveBeenCalledWith(
       expect.stringContaining("1000+ Note docs have data"),
+      "restore-children",
     );
     expect(confirm).toHaveBeenCalledWith(
       expect.stringContaining("1+ Note docs have data"),
+      "restore-schools",
     );
     expect(configData(store)["entity:Note"].attributes).toEqual({
       children: CHILD_FIELD,
@@ -1292,9 +1343,11 @@ describe("noteLegacyChildSchoolFields migration", () => {
       );
       const withWarning = await noteLegacyChildSchoolFields.run(
         buildTestContext(
-          seed({
-            ...explicitNoteDetails,
-            "entity:EventNote": { extends: "Note" },
+          seed(explicitNoteDetails, {
+            "app/SiteSettings:global": {
+              _id: "SiteSettings:global",
+              defaultLanguage: "es",
+            },
           }),
         ),
       );

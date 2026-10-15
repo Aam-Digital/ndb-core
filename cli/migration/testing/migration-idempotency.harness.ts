@@ -98,7 +98,8 @@ export function buildTestContext(
   store: DocStore,
   dryRun = false,
   args: string[] = [],
-  confirm: (question: string) => Promise<boolean> = async () => true,
+  confirm: (question: string, id: string) => Promise<boolean> = async () =>
+    true,
 ): MigrationContext & { store: DocStore } {
   const stubCouchdb = buildStubCouchdb(store);
   const writes = { intended: 0, succeeded: 0, failed: 0 };

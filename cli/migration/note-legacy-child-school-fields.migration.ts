@@ -323,6 +323,7 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
           if (
             !(await ctx.confirm(
               `Note.${field} is not shown in any view, but ${formatCount(field)} ${countedTypes} docs have data in it${usedBy}. Restore the field to keep these notes linked to their ${legacy.entityType} records?`,
+              `restore-${field}`,
             ))
           ) {
             warnings.push(
@@ -604,10 +605,24 @@ export const noteLegacyChildSchoolFields: MigrationDefinition = {
       );
     }
 
-    for (const [key, entityConfig] of Object.entries<any>(migratedData)) {
-      if (key.startsWith("entity:") && entityConfig?.extends === "Note") {
+    // fields holding data are written into each extending type above,
+    // but a legacy field kept in entity:Note without data is only inherited if entity:Note comes first in the doc
+    const finalNoteAttributes = config.data["entity:Note"]?.attributes ?? {};
+    const keptInNote = [
+      ...LEGACY_NOTE_FIELDS.filter((legacy) =>
+        isLegacyDefinition(finalNoteAttributes[legacy.field], legacy),
+      ).map((legacy) => legacy.field),
+      ...(isLegacyAttendanceDefinition(finalNoteAttributes[ATTENDANCE_FIELD])
+        ? [ATTENDANCE_FIELD]
+        : []),
+    ];
+    for (const entityType of noteBasedTypes.filter((t) => t !== "Note")) {
+      const missing = keptInNote.filter(
+        (field) => !config.data[`entity:${entityType}`]?.attributes?.[field],
+      );
+      if (missing.length > 0) {
         warnings.push(
-          `${key} extends Note and may rely on the legacy children/schools/childrenAttendance fields of the Note core schema, which it only inherits if entity:Note configures them - review manually`,
+          `entity:${entityType} extends Note but does not configure ${missing.join(", ")} itself, which it only inherits if entity:Note comes first in the config doc - review manually`,
         );
       }
     }
@@ -647,7 +662,7 @@ function linkedByOtherField(noteAttributes: Record<string, any>, type: string) {
   return Object.entries(noteAttributes).some(
     ([key, definition]) =>
       key !== "relatedEntities" &&
-      definition?.dataType === "entity" &&
+      isEntityLinkDefinition(definition) &&
       asArray(definition.additional ?? []).includes(type),
   );
 }
@@ -662,8 +677,18 @@ function isLegacyAttendanceDefinition(definition: any) {
 /** Whether a configured field is the legacy link field (and not a custom field that happens to share the name) */
 function isLegacyDefinition(definition: any, legacy: LegacyNoteField) {
   return (
-    definition?.dataType === "entity" &&
+    isEntityLinkDefinition(definition) &&
     asArray(definition.additional ?? []).includes(legacy.entityType)
+  );
+}
+
+/**
+ * Whether a stored field definition links records,
+ * also in the outdated `entity-array` format (only converted to `entity` by the config migrations on load).
+ */
+function isEntityLinkDefinition(definition: any) {
+  return (
+    definition?.dataType === "entity" || definition?.dataType === "entity-array"
   );
 }
 

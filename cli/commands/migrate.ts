@@ -7,6 +7,7 @@ import { OrgRunner, type OrgOutcome } from "../lib/org-runner.js";
 import { askYesNo, createPromptSession } from "../lib/prompt.js";
 import { PausableTimeout } from "../lib/timeout.js";
 import { ConsoleLogger } from "../migration/console-logger.js";
+import { backupRunTimestamp } from "../migration/migration-backup.js";
 import {
   failedMigrationResult,
   type MigrationOutcome,
@@ -63,6 +64,11 @@ export function registerMigrateCommand(program: Command): void {
       const { orgs } = creds;
       const runner = new OrgRunner();
       const logger = new ConsoleLogger(!!opts.verbose);
+      // one id for all orgs' backups of this run, so the whole run can be restored together
+      const backupRun = {
+        migrationId: migration.id,
+        runAt: backupRunTimestamp(),
+      };
 
       const connectivity = await runner.checkConnectivity(orgs);
       printConnectivity(connectivity);
@@ -83,13 +89,15 @@ export function registerMigrateCommand(program: Command): void {
 
       /**
        * Answer a migration's question for one org, asking only once:
-       * the apply run reuses the answer given during the preview.
+       * the apply run reuses the answer given during the preview
+       * (matched by the question's stable id, as its text may include live details like doc counts).
        */
       const answerQuestion = async (
         question: string,
+        id: string,
         answers: Map<string, boolean>,
       ): Promise<boolean> => {
-        let answer = answers.get(question);
+        let answer = answers.get(id);
         if (answer !== undefined) return answer;
 
         if (opts.yes) {
@@ -101,7 +109,7 @@ export function registerMigrateCommand(program: Command): void {
         } else {
           answer = await askYesNo(prompt, `    ? ${question} [y/N]`);
         }
-        answers.set(question, answer);
+        answers.set(id, answer);
         return answer;
       };
 
@@ -121,8 +129,10 @@ export function registerMigrateCommand(program: Command): void {
           org,
           dryRun,
           logger,
+          backupRun,
           args,
-          (question) => timeout.pause(() => answerQuestion(question, answers)),
+          (question, id) =>
+            timeout.pause(() => answerQuestion(question, id, answers)),
         );
         try {
           const result = await timeout.run(migration.run(ctx));
@@ -183,6 +193,13 @@ export function registerMigrateCommand(program: Command): void {
       }
       if (skippedCount > 0) {
         console.log(`${skippedCount} org(s) skipped (declined) — not applied.`);
+      }
+
+      if (outcomes.some((o) => o.result.writeStats.succeeded > 0)) {
+        console.log(
+          `Previous versions of changed documents are backed up (_local/migration-backup:${backupRun.migrationId}:${backupRun.runAt}:…).\n` +
+            `To roll back: migrate run restore-backup ${backupRun.migrationId} ${backupRun.runAt}`,
+        );
       }
 
       printSummary(outcomes, unreachableCount);

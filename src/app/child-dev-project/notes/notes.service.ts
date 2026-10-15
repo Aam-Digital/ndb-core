@@ -62,7 +62,9 @@ export class NotesService {
   /**
    * Query all notes that have been linked to the given other entity
    * (through any of its entity fields, see {@link Note.getLinkFields}).
-   * This does not include notes the given entity is one of the `authors` of.
+   * This intentionally does not include notes the given entity is only one of the `authors` of:
+   * authoring a note does not make it a note *about* that record
+   * (so e.g. a NotesRelatedToEntity panel on a User profile no longer lists the notes the user wrote).
    * @param entityId ID (with prefix!) of the related record
    */
   async getNotesRelatedTo(entityId: string): Promise<Note[]> {

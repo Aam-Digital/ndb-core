@@ -31,6 +31,26 @@ It supports `--format csv` for spreadsheet export — use `npm run --silent` to 
 npm run --silent cli -- statistics --format csv > stats.csv
 ```
 
+## Migration backups & restore
+
+Before `migrate run` overwrites a document, it stores the previous version in the same database as
+`_local/migration-backup:<migration-id>:<run-timestamp>:<doc-id>`
+(or marks the document as newly created, so a restore deletes it again).
+`_local` documents are not replicated to users' devices, not part of the `_changes` feed and not in the change history (audit log).
+Whether they are part of server-level backups depends on how the backup is taken (volume snapshots include them, replication does not).
+
+A run that changed something prints the command to undo it:
+
+```bash
+npm run cli -- migrate run restore-backup <migration-id> [<run-timestamp>]
+```
+
+Without a timestamp, the latest run of that migration is restored on each org.
+Like any migration, it previews the changes per org and asks for confirmation;
+if a document was edited again after the migration, it asks before discarding those edits.
+A restore is backed up itself, so it can be undone with `migrate run restore-backup restore-backup`.
+Writes that bypass `ctx.put` (e.g. `ctx.couchdb.putAll`) are not backed up.
+
 ## Prerequisites
 
 - An ndb-core checkout

@@ -1,0 +1,119 @@
+import { listBackups, type MigrationBackup } from "./migration-backup.js";
+import {
+  failedMigrationResult,
+  type MigrationContext,
+  type MigrationDefinition,
+  type MigrationResult,
+} from "./migration-definition.js";
+import { is404Error } from "./tracked-migration-context.js";
+
+const USAGE_EXAMPLE =
+  "migrate run restore-backup <migration-id> [<run-timestamp>]";
+
+/** All current migrations only write to the main database, so only its backups are looked up. */
+const BACKUP_DB = "app";
+
+type Doc = Record<string, unknown> & { _id?: string; _rev?: string };
+
+/**
+ * Roll back the documents an earlier `migrate run` changed, from the backups it kept (see migration-backup.ts).
+ *
+ * Restores the latest run of the given migration on each org, or the run with the given timestamp
+ * (printed at the end of a run, and part of the backups' `_local/migration-backup:<migration-id>:<run-timestamp>:<doc-id>` ids).
+ * A document created by the migration is deleted again.
+ * If a document was edited again after the migration, the operator is asked before those later changes are overwritten.
+ *
+ * The restore itself goes through the same backed-up writes, so it can be undone with
+ * `migrate run restore-backup restore-backup`.
+ */
+export const restoreBackup: MigrationDefinition = {
+  id: "restore-backup",
+  description: `Roll back the documents an earlier migration run changed, from the backups it kept, e.g. \`${USAGE_EXAMPLE}\`. Without a timestamp, restores each org's latest run of that migration.`,
+
+  async run(ctx): Promise<MigrationResult> {
+    if (ctx.args.length < 1 || ctx.args.length > 2) {
+      return failedMigrationResult(
+        `Expected the id of the migration to roll back and optionally the run timestamp, e.g. \`${USAGE_EXAMPLE}\``,
+      );
+    }
+    const [migrationId, requestedRun] = ctx.args;
+
+    const allBackups = await listBackups(
+      ctx.couchdb,
+      BACKUP_DB,
+      migrationId,
+      requestedRun,
+    );
+    if (allBackups.length === 0) {
+      ctx.log.info(
+        `No backups of ${migrationId}${requestedRun ? ` run ${requestedRun}` : ""}`,
+      );
+      return { changed: false, status: "no-change" };
+    }
+    const runAt = allBackups[allBackups.length - 1].runAt;
+    const backups = allBackups.filter((b) => b.runAt === runAt);
+    ctx.log.info(
+      `Restoring ${backups.length} document(s) to their state before ${migrationId} run ${runAt}`,
+    );
+
+    const warnings: string[] = [];
+    let changed = false;
+    for (const backup of backups) {
+      const result = await restoreDoc(ctx, backup);
+      if (result === "restored") changed = true;
+      if (result === "declined") {
+        warnings.push(
+          `${backup.docId} not restored: it was edited after the migration`,
+        );
+      }
+    }
+
+    if (!changed) return { changed: false, status: "no-change", warnings };
+    return { changed: true, status: ctx.dryRun ? "dry-run" : "ok", warnings };
+  },
+};
+
+async function restoreDoc(
+  ctx: MigrationContext,
+  backup: MigrationBackup,
+): Promise<"restored" | "unchanged" | "declined"> {
+  const path = `/${backup.db}/${backup.docId}`;
+  let current: Doc | undefined;
+  try {
+    current = await ctx.couchdb.get<Doc>(path);
+  } catch (error: unknown) {
+    if (!is404Error(error)) throw error;
+  }
+
+  // without a recorded write rev, the migration's write may have failed: then the doc should still be at the backed-up rev
+  const expectedRev =
+    backup.writtenRev ?? (backup.doc?._rev as string | undefined);
+  if (current?._rev !== expectedRev) {
+    const restoreAnyway = await ctx.confirm(
+      `${backup.docId} was edited after the migration (expected ${expectedRev ?? "no document"}, found ${current?._rev ?? "no document"}). Restoring discards those later edits. Restore anyway?`,
+      `overwrite-later-edits:${backup.docId}`,
+    );
+    if (!restoreAnyway) return "declined";
+  }
+
+  if (backup.doc === null) {
+    if (!current) return "unchanged";
+    ctx.log.info(`Deleting ${backup.docId}, which the migration created`);
+    await ctx.put(path, {
+      _id: backup.docId,
+      _rev: current._rev,
+      _deleted: true,
+    });
+    return "restored";
+  }
+
+  const { _rev: _backupRev, ...restored } = backup.doc as Doc;
+  if (current) {
+    const { _rev: _currentRev, ...currentContent } = current;
+    if (JSON.stringify(currentContent) === JSON.stringify(restored)) {
+      return "unchanged";
+    }
+  }
+  await ctx.put(path, current ? { ...restored, _rev: current._rev } : restored);
+  return "restored";
+}

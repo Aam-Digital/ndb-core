@@ -10,7 +10,7 @@ export interface MigrationLogger {
 }
 
 export interface MigrationContext {
-  /** Raw CouchDB accessor for reads. Do not call couchdb.put directly; use ctx.put instead. */
+  /** Raw CouchDB accessor for reads. Do not call couchdb.put directly; use ctx.put instead (which also backs up the previous version). */
   couchdb: Couchdb;
   org: SystemCredentials;
   dryRun: boolean;
@@ -28,8 +28,11 @@ export interface MigrationContext {
   /**
    * Ask the operator a yes/no question about this org, for decisions a migration cannot take on its own.
    * Asked once per org: the preview and the following apply run of the same org get the same answer.
+   * @param question shown to the operator (may include live details like doc counts)
+   * @param id stable key of the decision, identifying the same question in the preview and the apply run
+   *           even if live details in its text changed in between
    */
-  confirm(question: string): Promise<boolean>;
+  confirm(question: string, id: string): Promise<boolean>;
 }
 
 export interface MigrationResult {
