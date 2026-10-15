@@ -15,6 +15,7 @@ import { EntityConfigReadyService } from "../entity/entity-config-ready.service"
 import { environment } from "../../../environments/environment";
 import { hasRemoteSession } from "../session/session-type";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
+import { isConnectivityError } from "../../utils/connectivity-error";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -96,9 +97,16 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
       ) {
         return;
       }
-      Logging.warn("SiteSettingsService: anonymous fetch failed", {
-        status: response.status,
-      });
+      const failure = { status: response.status };
+      if (isConnectivityError(failure)) {
+        // a gateway error: the server could not be reached (e.g. during a deployment)
+        Logging.debug(
+          "SiteSettingsService: anonymous fetch failed (connectivity)",
+          failure,
+        );
+        return;
+      }
+      Logging.warn("SiteSettingsService: anonymous fetch failed", failure);
       return;
     }
 
