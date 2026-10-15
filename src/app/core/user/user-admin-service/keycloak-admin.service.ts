@@ -117,8 +117,7 @@ export class KeycloakAdminService extends UserAdminService {
         return of({ userDeleted: true });
       }),
       catchError((err) => {
-        const error = this.transformStandardError(err);
-        Logging.warn("failed to delete user account", error, err);
+        Logging.warn("failed to delete user account", err);
         return of({ userDeleted: false });
       }),
     );
@@ -142,8 +141,8 @@ export class KeycloakAdminService extends UserAdminService {
       ),
       map(() => ({ userUpdated: true })),
       catchError((err) => {
-        const error = this.transformStandardError(err);
-        Logging.warn("Failed to update user on server", error, err);
+        // the only report of this failure: callers just get `userUpdated: false`
+        Logging.warn("Failed to update user on server", err);
         return of({ userUpdated: false });
       }),
     );

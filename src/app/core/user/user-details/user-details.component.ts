@@ -465,7 +465,8 @@ export class UserDetailsComponent {
       this.userAdminService.updateUser(currentUser.id, update).pipe(
         map((result) => {
           if (!result.userUpdated) {
-            Logging.warn("User account not updated");
+            // already reported by the UserAdminService with its cause
+            Logging.debug("User account not updated");
             return null;
           }
 
