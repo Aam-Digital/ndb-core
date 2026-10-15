@@ -190,6 +190,9 @@ class AggregatingActionLog extends Entity {
   tags: ConfigurableEnumValue[];
 }
 
+const isIndexOfParentAction = ([, , field]: string[]) =>
+  field === "parentAction";
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -603,6 +606,44 @@ describe("AutomatedFieldUpdateConfigService", () => {
       await service.applyRulesToDependentEntities(subAction, subActionBefore);
     }
 
+    /**
+     * Save a sub-action that was moved from one parent to another, without changing its tags.
+     * @param from tags of the previous parent (undefined: was not linked before)
+     * @param to tags of the new parent (undefined: not linked anymore)
+     */
+    async function saveMovedSubAction(
+      from: string[] | undefined,
+      to: string[] | undefined,
+      tags: string[],
+      otherSubActionsOfPreviousParent: string[][] = [],
+    ) {
+      const previousParent = new AggregatingAction();
+      previousParent.tags = toTags(from);
+      const newParent = new AggregatingAction();
+      newParent.tags = toTags(to);
+      const subAction = createSubAction(previousParent, tags);
+      subAction._rev = "1-existing";
+      if (!from) subAction.parentAction = undefined;
+      const others = otherSubActionsOfPreviousParent.map((t) =>
+        createSubAction(previousParent, t),
+      );
+      entityMapper.addAll([previousParent, newParent, subAction, ...others]);
+
+      const subActionBefore = subAction.copy();
+      subAction.parentAction = to ? newParent.getId() : undefined;
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(subAction, subActionBefore);
+
+      return { previousParent, newParent };
+    }
+
+    const suggestions = () =>
+      mockDialog.open.mock.calls[0]?.[1].data.entities.map((e) => [
+        e.id,
+        e.newValue,
+      ]);
+
     it.each([
       [["health"], [], ["education"], [], ["health", "education"]],
       [undefined, [], ["education"], [], ["education"]],
@@ -690,7 +731,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
         expect(
           mockIndexing.generateIndexOnProperty.mock.calls.filter(
-            ([, , field]) => field === "parentAction",
+            isIndexOfParentAction,
           ),
         ).toEqual([
           [
@@ -842,44 +883,6 @@ describe("AutomatedFieldUpdateConfigService", () => {
     });
 
     describe("when the link to the parent changes", () => {
-      /**
-       * Save a sub-action that was moved from one parent to another, without changing its tags.
-       * @param from tags of the previous parent (undefined: was not linked before)
-       * @param to tags of the new parent (undefined: not linked anymore)
-       */
-      async function saveMovedSubAction(
-        from: string[] | undefined,
-        to: string[] | undefined,
-        tags: string[],
-        otherSubActionsOfPreviousParent: string[][] = [],
-      ) {
-        const previousParent = new AggregatingAction();
-        previousParent.tags = toTags(from);
-        const newParent = new AggregatingAction();
-        newParent.tags = toTags(to);
-        const subAction = createSubAction(previousParent, tags);
-        subAction._rev = "1-existing";
-        if (!from) subAction.parentAction = undefined;
-        const others = otherSubActionsOfPreviousParent.map((t) =>
-          createSubAction(previousParent, t),
-        );
-        entityMapper.addAll([previousParent, newParent, subAction, ...others]);
-
-        const subActionBefore = subAction.copy();
-        subAction.parentAction = to ? newParent.getId() : undefined;
-        mockDialog.open.mockClear();
-
-        await service.applyRulesToDependentEntities(subAction, subActionBefore);
-
-        return { previousParent, newParent };
-      }
-
-      const suggestions = () =>
-        mockDialog.open.mock.calls[0]?.[1].data.entities.map((e) => [
-          e.id,
-          e.newValue,
-        ]);
-
       it("adds the values of an existing sub-action to the parent it is newly linked to", async () => {
         const { newParent } = await saveMovedSubAction(
           undefined,
