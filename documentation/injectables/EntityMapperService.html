@@ -220,6 +220,12 @@ simply treat them as normal javascript class instances without worrying about da
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
+                                <a href="#findAllType" >findAllType</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#findType" >findType</a>
                             </li>
                             <li>
@@ -267,6 +273,11 @@ simply treat them as normal javascript class instances without worrying about da
                                     <span class="modifier">Protected</span>
                                 <a href="#setEntityMetadata" >setEntityMetadata</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#supportsFind" >supportsFind</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -307,8 +318,8 @@ simply treat them as normal javascript class instances without worrying about da
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:136</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="198"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:198</a></div>
                         </td>
                     </tr>
 
@@ -361,6 +372,126 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="findAllType"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>findAllType</b></span>
+                        <a href="#findAllType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAllType&lt;T&gt;(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>, filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="165"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:165</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Like <a href="findType">findType</a>, but follows the cursor until every matching record is loaded.</p>
+<p>CouchDB&#39;s <code>_find</code> returns only 25 documents when no limit is given, so the pages have
+to be requested explicitly. Only use this where the filter is expected to select a
+small share of the type - otherwise <a href="loadType">loadType</a> is a single request.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>class for which results should be returned</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>a valid Mango Query Syntax query</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>optional sort options</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="findType"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -380,8 +511,8 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="114"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:114</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="120"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:120</a></div>
                         </td>
                     </tr>
 
@@ -516,8 +647,8 @@ It is forward-only - there is no way to jump back to an earlier page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="71"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:71</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -618,8 +749,8 @@ It is forward-only - there is no way to jump back to an earlier page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="92"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:92</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="98"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:98</a></div>
                         </td>
                     </tr>
 
@@ -707,8 +838,8 @@ or the registered name of that class.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="171"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:171</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="233"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:233</a></div>
                         </td>
                     </tr>
 
@@ -801,8 +932,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="270"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:270</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="332"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:332</a></div>
                         </td>
                     </tr>
 
@@ -885,8 +1016,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="277"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:277</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="339"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:339</a></div>
                         </td>
                     </tr>
 
@@ -963,8 +1094,8 @@ doesn&#39;t allow strict type-checking and errors can only be discovered later</
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="199"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:199</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="261"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:261</a></div>
                         </td>
                     </tr>
 
@@ -1072,8 +1203,8 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="225"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:225</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="287"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:287</a></div>
                         </td>
                     </tr>
 
@@ -1175,8 +1306,8 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="309"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:309</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="371"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:371</a></div>
                         </td>
                     </tr>
 
@@ -1222,6 +1353,90 @@ if a conflict occurs without the forceUpdate flag being set, the save will fail,
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="supportsFind"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>supportsFind</b></span>
+                        <a href="#supportsFind"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>supportsFind&lt;T&gt;(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="147"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:147</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether this entity type&#39;s database can answer <a href="findType">findType</a> queries at all
+(see <a href="Database.supportsFind">Database.supportsFind</a>). Callers that only use a query as an optimisation
+check this and fall back to <a href="loadType">loadType</a>.</p>
+<p>Deliberately asks the database instance rather than the session type: a remote-only
+database (e.g. for audit records) serves queries in every session type, and the
+instance that will run the query is the only authority on whether it can.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
 
@@ -1256,6 +1471,12 @@ export interface EntityPage&lt;T extends Entity&gt; {
   records: T[];
   bookmark?: string;
 }
+
+/**
+ * Number of documents fetched per request when paging through a complete result set
+ * (see {@link EntityMapperService.findAllType}).
+ */
+export const FULL_LOAD_PAGE_SIZE &#x3D; 500;
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -1341,6 +1562,62 @@ export class EntityMapperService {
       ),
       bookmark: result.bookmark,
     };
+  }
+
+  /**
+   * Whether this entity type&#x27;s database can answer {@link findType} queries at all
+   * (see {@link Database.supportsFind}). Callers that only use a query as an optimisation
+   * check this and fall back to {@link loadType}.
+   *
+   * Deliberately asks the database instance rather than the session type: a remote-only
+   * database (e.g. for audit records) serves queries in every session type, and the
+   * instance that will run the query is the only authority on whether it can.
+   */
+  public supportsFind&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+  ): boolean {
+    const ctor &#x3D; this.resolveConstructor(entityType);
+    return this.dbResolver.getDatabase(ctor.DATABASE).supportsFind();
+  }
+
+  /**
+   * Like {@link findType}, but follows the cursor until every matching record is loaded.
+   *
+   * CouchDB&#x27;s &#x60;_find&#x60; returns only 25 documents when no limit is given, so the pages have
+   * to be requested explicitly. Only use this where the filter is expected to select a
+   * small share of the type - otherwise {@link loadType} is a single request.
+   *
+   * @param entityType class for which results should be returned
+   * @param filter a valid Mango Query Syntax query
+   * @param sort optional sort options
+   */
+  public async findAllType&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+    filter: DataFilter&lt;T&gt;,
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;T[]&gt; {
+    const records: T[] &#x3D; [];
+    let bookmark: string | undefined;
+    let page: T[];
+    do {
+      const previousBookmark &#x3D; bookmark;
+      const result &#x3D; await this.findType(
+        entityType,
+        filter,
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark },
+        sort,
+      );
+      page &#x3D; result.records;
+      bookmark &#x3D; result.bookmark;
+      records.push(...page);
+
+      // a cursor that does not advance would loop forever
+      if (!bookmark || bookmark &#x3D;&#x3D;&#x3D; previousBookmark) {
+        break;
+      }
+    } while (page.length &#x3D;&#x3D;&#x3D; FULL_LOAD_PAGE_SIZE);
+
+    return records;
   }
 
   /**

@@ -232,7 +232,7 @@ Can be a plain string (legacy) or an object with optional valueMapping config.</
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="434" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:434</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="445" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:445</a></div>
                                 </td>
                             </tr>
 
@@ -282,7 +282,7 @@ Can be a plain string (legacy) or an object with optional valueMapping config.</
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="436" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:436</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="447" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:447</a></div>
                                 </td>
                             </tr>
 
@@ -312,7 +312,9 @@ import {
   ColumnImportInput,
   ExportColumnMapping,
   ExportContext,
+  referenceIdConditions,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import {
   EXPORT_BATCH_SIZE,
   loadReadableEntityName,
@@ -341,6 +343,15 @@ export class EntityDatatype extends StringDatatype {
   override viewComponent &#x3D; &quot;DisplayEntity&quot;;
   override importConfigComponent &#x3D; &quot;EntityImportConfig&quot;;
   override importAllowsMultiMapping &#x3D; true;
+
+  /** Stored as the plain id string, or as an array of them when &#x60;isArray&#x60; is set. */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter&lt;any&gt;[] {
+    return referenceIdConditions(fieldId, referencedId);
+  }
 
   override getExportColumns(
     schemaField: EntitySchemaField,

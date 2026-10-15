@@ -296,6 +296,10 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getReferenceSelector" >getReferenceSelector</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#importMapFunction" >importMapFunction</a>
                             </li>
@@ -608,7 +612,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:136</a></code>
 </div>
                         </td>
                     </tr>
@@ -707,7 +711,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:103</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:121</a></code>
 </div>
                         </td>
                     </tr>
@@ -808,7 +812,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:349</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:367</a></code>
 </div>
                         </td>
                     </tr>
@@ -867,6 +871,119 @@ can add a human-readable name column alongside the ID column).</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getReferenceSelector"></a>
+                    <span class="name">
+                        <span ><b>getReferenceSelector</b></span>
+                        <a href="#getReferenceSelector"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:410</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mango conditions matching documents whose <code>fieldId</code> references the given entity id,
+used to query related entities instead of loading a whole entity type (see
+<a href="EntityRelationsService.loadAllLinkingToEntity">EntityRelationsService.loadAllLinkingToEntity</a>).</p>
+<p>The conditions are matched against the <em>database</em> format, so only the datatype that
+writes that format can build them - which is why this lives here rather than in the
+calling service. Return every shape the value may have been stored in rather than
+branching on <code>schemaField.isArray</code>: existing documents may have been written while the
+field had the other setting (see <a href="../injectables/FilterService.html">FilterService</a> and <a href="../classes/EntityFilter.html">EntityFilter</a>).</p>
+<p>The caller treats these as candidates only and still post-filters in memory, so
+matching too much is harmless - matching too little silently loses references.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">     cannot be expressed as a query, which makes the caller load the whole type.
+     Never return an empty array: `{$or: []}` matches nothing.
+</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>referencedId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>[] | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the conditions to OR together, or <code>undefined</code> if this datatype&#39;s stored format
+cannot be expressed as a query, which makes the caller load the whole type.
+Never return an empty array: <code>{$or: []}</code> matches nothing.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="importMapFunction"></a>
                     <span class="name">
                             <span class="modifier">Async</span>
@@ -891,7 +1008,7 @@ can add a human-readable name column alongside the ID column).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:207</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -1023,7 +1140,7 @@ to share information across processing of multiple columns and rows.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:231</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:249</a></code>
 </div>
                         </td>
                     </tr>
@@ -1143,7 +1260,7 @@ than one property) override this.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:334</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -1228,7 +1345,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:370</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:388</a></code>
 </div>
                         </td>
                     </tr>
@@ -1437,7 +1554,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:142</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:160</a></code>
 </div>
                         </td>
                     </tr>
@@ -1478,7 +1595,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:310</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:328</a></code>
 </div>
                         </td>
                     </tr>
@@ -1521,7 +1638,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:320</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:338</a></code>
 </div>
                         </td>
                     </tr>
@@ -1569,7 +1686,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:162</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:180</a></code>
 </div>
                         </td>
                     </tr>

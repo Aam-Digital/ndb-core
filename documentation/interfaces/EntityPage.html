@@ -317,6 +317,12 @@ export interface EntityPage&lt;T extends Entity&gt; {
 }
 
 /**
+ * Number of documents fetched per request when paging through a complete result set
+ * (see {@link EntityMapperService.findAllType}).
+ */
+export const FULL_LOAD_PAGE_SIZE &#x3D; 500;
+
+/**
  * Handles loading and saving of data for any higher-level feature module.
  * The EntityMapperService implicitly transforms objects from instances of Entity classes to the format to be written
  * to the database and back - ensuring they you always receive instances of {@link Entity} subclasses, that you can
@@ -400,6 +406,62 @@ export class EntityMapperService {
       ),
       bookmark: result.bookmark,
     };
+  }
+
+  /**
+   * Whether this entity type&#x27;s database can answer {@link findType} queries at all
+   * (see {@link Database.supportsFind}). Callers that only use a query as an optimisation
+   * check this and fall back to {@link loadType}.
+   *
+   * Deliberately asks the database instance rather than the session type: a remote-only
+   * database (e.g. for audit records) serves queries in every session type, and the
+   * instance that will run the query is the only authority on whether it can.
+   */
+  public supportsFind&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+  ): boolean {
+    const ctor &#x3D; this.resolveConstructor(entityType);
+    return this.dbResolver.getDatabase(ctor.DATABASE).supportsFind();
+  }
+
+  /**
+   * Like {@link findType}, but follows the cursor until every matching record is loaded.
+   *
+   * CouchDB&#x27;s &#x60;_find&#x60; returns only 25 documents when no limit is given, so the pages have
+   * to be requested explicitly. Only use this where the filter is expected to select a
+   * small share of the type - otherwise {@link loadType} is a single request.
+   *
+   * @param entityType class for which results should be returned
+   * @param filter a valid Mango Query Syntax query
+   * @param sort optional sort options
+   */
+  public async findAllType&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+    filter: DataFilter&lt;T&gt;,
+    sort?: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;T[]&gt; {
+    const records: T[] &#x3D; [];
+    let bookmark: string | undefined;
+    let page: T[];
+    do {
+      const previousBookmark &#x3D; bookmark;
+      const result &#x3D; await this.findType(
+        entityType,
+        filter,
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark },
+        sort,
+      );
+      page &#x3D; result.records;
+      bookmark &#x3D; result.bookmark;
+      records.push(...page);
+
+      // a cursor that does not advance would loop forever
+      if (!bookmark || bookmark &#x3D;&#x3D;&#x3D; previousBookmark) {
+        break;
+      }
+    } while (page.length &#x3D;&#x3D;&#x3D; FULL_LOAD_PAGE_SIZE);
+
+    return records;
   }
 
   /**

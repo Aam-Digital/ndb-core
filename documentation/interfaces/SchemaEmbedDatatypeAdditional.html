@@ -189,7 +189,7 @@ phoneNumber: { phoneNumber: string; type: string };</code></pre></div>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:50</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -200,9 +200,14 @@ phoneNumber: { phoneNumber: string; type: string };</code></pre></div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DefaultDatatype } from &quot;../../entity/default-datatype/default.datatype&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  DefaultDatatype,
+  referenceIdConditions,
+} from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { getInnerEntityReferenceFields } from &quot;../../entity/schema/entity-reference-fields&quot;;
+import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import {
   EntitySchema,
   SchemaEmbeddedType,
@@ -272,6 +277,38 @@ export class SchemaEmbedDatatype&lt;
     }
 
     return baseSchema;
+  }
+
+  /**
+   * The embedded object is stored as-is, so an inner reference is matched through the
+   * outer field - either inside an array of embedded objects or, where a single object
+   * is stored, through the dotted path to the inner property.
+   *
+   * The inner keys come from &#x60;additional&#x60; only (not from {@link getEffectiveSchema}),
+   * so they stay identical to the ones the in-memory post-filter inspects.
+   */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter&lt;any&gt;[] | undefined {
+    const innerKeys &#x3D; getInnerEntityReferenceFields(schemaField).map(
+      ([key]) &#x3D;&gt; key,
+    );
+    if (innerKeys.length &#x3D;&#x3D;&#x3D; 0) {
+      // nothing we could match on - let the caller load the whole type instead
+      return undefined;
+    }
+
+    return innerKeys.flatMap((key) &#x3D;&gt; [
+      { [fieldId]: { $elemMatch: { [key]: referencedId } } },
+      {
+        [fieldId]: {
+          $elemMatch: { [key]: { $elemMatch: { $eq: referencedId } } },
+        },
+      },
+      ...referenceIdConditions(&#x60;${fieldId}.${key}&#x60;, referencedId),
+    ]);
   }
 
   override transformToDatabaseFormat(

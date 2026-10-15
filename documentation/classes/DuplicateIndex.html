@@ -1,0 +1,819 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >DuplicateIndex</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/de-duplication/duplicate-detection.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Groups records by the values of the compared fields and keeps that grouping up to
+date as individual records change, so that no change requires a full rescan.</p>
+
+            </p>
+
+
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#apply" >apply</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#buildPairs" >buildPairs</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#init" >init</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(fields: string[])</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="104" class="link-to-prism">src/app/features/de-duplication/duplicate-detection.service.ts:104</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>fields</td>
+                                                  
+                                                        <td>
+                                                                    <code>string[]</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="apply"></a>
+                    <span class="name">
+                        <span ><b>apply</b></span>
+                        <a href="#apply"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>apply(update: <a href="../interfaces/UpdatedEntity.html" target="_self">UpdatedEntity&lt;Entity&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="130"
+                                    class="link-to-prism">src/app/features/de-duplication/duplicate-detection.service.ts:130</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>update</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UpdatedEntity.html" target="_self" >UpdatedEntity&lt;Entity&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="buildPairs"></a>
+                    <span class="name">
+                        <span ><b>buildPairs</b></span>
+                        <a href="#buildPairs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>buildPairs()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/app/features/de-duplication/duplicate-detection.service.ts:139</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/DuplicatePair.html" target="_self" >DuplicatePair[]</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="init"></a>
+                    <span class="name">
+                        <span ><b>init</b></span>
+                        <a href="#init"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>init(entities: <a href="../classes/Entity.html" target="_self">Entity[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/features/de-duplication/duplicate-detection.service.ts:121</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Observable } from &quot;rxjs&quot;;
+import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
+import { UpdatedEntity } from &quot;#src/app/core/entity/model/entity-update&quot;;
+import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
+
+export interface DuplicatePair {
+  record: Entity;
+  possibleDuplicate: Entity;
+}
+
+/**
+ * Datatypes whose value {@link normalizeValue} cannot reduce to a comparable string,
+ * so that selecting such a field could only ever produce zero matches.
+ */
+const UNMATCHABLE_DATATYPES &#x3D; new Set([
+  &quot;location&quot;,
+  &quot;time-interval&quot;,
+  &quot;event-attendance-map&quot;,
+  &quot;attendance&quot;,
+  &quot;schema-embed&quot;,
+]);
+
+/**
+ * Whether duplicates can be detected by comparing this field at all.
+ *
+ * Array values and objects without a plain &#x60;id&#x60; normalize to &quot;&quot;, which excludes the
+ * record from matching entirely - so offering such a field would silently return
+ * &quot;no duplicates found&quot; rather than no result for that field.
+ */
+export function isMatchableField(field: EntitySchemaField): boolean {
+  return !field.isArray &amp;&amp; !UNMATCHABLE_DATATYPES.has(field.dataType);
+}
+
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class DuplicateDetectionService {
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+
+  /**
+   * Records sharing the same values in all the given fields, as pairs to review.
+   *
+   * The analysis is kept up to date from the entity updates while subscribed, so that
+   * merging a pair (or any other change to the data) does not require a new scan of the
+   * whole entity type - which is what made resolving many duplicates in a row expensive.
+   * Unsubscribing stops the analysis.
+   */
+  watchDuplicates(
+    entityConstructor: EntityConstructor,
+    fields: string[],
+  ): Observable&lt;DuplicatePair[]&gt; {
+    return new Observable&lt;DuplicatePair[]&gt;((subscriber) &#x3D;&gt; {
+      if (fields.length &#x3D;&#x3D;&#x3D; 0) {
+        subscriber.next([]);
+        return;
+      }
+
+      const index &#x3D; new DuplicateIndex(fields);
+      const bufferedUpdates: UpdatedEntity&lt;Entity&gt;[] &#x3D; [];
+      let initialised &#x3D; false;
+      let cancelled &#x3D; false;
+
+      // subscribe before the initial load, so changes made while it is in flight are
+      // not lost; they are replayed afterwards (applying an update is idempotent)
+      const updates &#x3D; this.entityMapper
+        .receiveUpdates(entityConstructor)
+        .subscribe((update) &#x3D;&gt; {
+          if (!initialised) {
+            bufferedUpdates.push(update);
+            return;
+          }
+          index.apply(update);
+          subscriber.next(index.buildPairs());
+        });
+
+      this.entityMapper
+        .loadType(entityConstructor)
+        .then((entities) &#x3D;&gt; {
+          if (cancelled) return;
+          index.init(entities);
+          bufferedUpdates.forEach((update) &#x3D;&gt; index.apply(update));
+          bufferedUpdates.length &#x3D; 0;
+          initialised &#x3D; true;
+          subscriber.next(index.buildPairs());
+        })
+        .catch((error) &#x3D;&gt; {
+          if (!cancelled) subscriber.error(error);
+        });
+
+      return () &#x3D;&gt; {
+        cancelled &#x3D; true;
+        updates.unsubscribe();
+      };
+    });
+  }
+}
+
+/**
+ * Groups records by the values of the compared fields and keeps that grouping up to
+ * date as individual records change, so that no change requires a full rescan.
+ */
+class DuplicateIndex {
+  constructor(private readonly fields: string[]) {}
+
+  /** the latest known instance of each record that has a match key */
+  private readonly entityById &#x3D; new Map&lt;string, Entity&gt;();
+  /**
+   * the match key each record currently sits under.
+   *
+   * Required rather than merely convenient: a removal arrives as a tombstone without any
+   * field data, so the key it has to be removed from cannot be recomputed at that point.
+   */
+  private readonly keyById &#x3D; new Map&lt;string, string&gt;();
+  /** the records sharing a match key, in the order they were first seen */
+  private readonly idsByKey &#x3D; new Map&lt;string, Set&lt;string&gt;&gt;();
+  /** the pairs of each group, rebuilt only for the groups a change touched */
+  private readonly pairsByKey &#x3D; new Map&lt;string, DuplicatePair[]&gt;();
+
+  init(entities: Entity[]) {
+    for (const entity of entities) {
+      this.addToIndex(entity);
+    }
+    for (const key of this.idsByKey.keys()) {
+      this.rebuildPairs(key);
+    }
+  }
+
+  apply(update: UpdatedEntity&lt;Entity&gt;) {
+    if (update.type &#x3D;&#x3D;&#x3D; &quot;remove&quot;) {
+      this.removeFromIndex(update.entity.getId());
+      return;
+    }
+    // &quot;new&quot; and &quot;update&quot; are indistinguishable here and need the same handling
+    this.upsert(update.entity);
+  }
+
+  buildPairs(): DuplicatePair[] {
+    return [...this.idsByKey.keys()].flatMap(
+      (key) &#x3D;&gt; this.pairsByKey.get(key) ?? [],
+    );
+  }
+
+  private upsert(entity: Entity) {
+    const id &#x3D; entity.getId();
+    const newKey &#x3D; this.computeKey(entity);
+    const oldKey &#x3D; this.keyById.get(id);
+
+    if (oldKey !&#x3D;&#x3D; undefined &amp;&amp; oldKey !&#x3D;&#x3D; newKey) {
+      this.removeFromIndex(id);
+    }
+
+    if (newKey &#x3D;&#x3D;&#x3D; undefined) {
+      // the record no longer has a value in every compared field
+      return;
+    }
+
+    this.entityById.set(id, entity);
+    if (oldKey !&#x3D;&#x3D; newKey) {
+      this.keyById.set(id, newKey);
+      if (!this.idsByKey.has(newKey)) {
+        this.idsByKey.set(newKey, new Set());
+      }
+      this.idsByKey.get(newKey).add(id);
+    }
+    // also on an unchanged key, so the pairs hold the updated instance rather than a
+    // stale one, whose outdated _rev would make a later merge fail with a conflict
+    this.rebuildPairs(newKey);
+  }
+
+  private removeFromIndex(id: string) {
+    const key &#x3D; this.keyById.get(id);
+    this.keyById.delete(id);
+    this.entityById.delete(id);
+    if (key &#x3D;&#x3D;&#x3D; undefined) return;
+
+    const group &#x3D; this.idsByKey.get(key);
+    group?.delete(id);
+    if (!group || group.size &#x3D;&#x3D;&#x3D; 0) {
+      this.idsByKey.delete(key);
+      this.pairsByKey.delete(key);
+    } else {
+      this.rebuildPairs(key);
+    }
+  }
+
+  private addToIndex(entity: Entity) {
+    const key &#x3D; this.computeKey(entity);
+    if (key &#x3D;&#x3D;&#x3D; undefined) return;
+
+    const id &#x3D; entity.getId();
+    this.entityById.set(id, entity);
+    this.keyById.set(id, key);
+    if (!this.idsByKey.has(key)) {
+      this.idsByKey.set(key, new Set());
+    }
+    this.idsByKey.get(key).add(id);
+  }
+
+  /**
+   * Pair every other member of the group with the one seen first.
+   *
+   * Pairing each member with each other one would be quadratic in the group&#x27;s size,
+   * which a field with few distinct values (a category, a centre) turns into a list of
+   * millions. Anchoring keeps it at one row per additional member while still surfacing
+   * all of them - and a merge started from this list normally keeps the first record and
+   * removes the second, so the anchor stays put and the rows the user is working through
+   * do not reshuffle.
+   *
+   * The anchor can move, though: when only the second record has a linked user account,
+   * the merge keeps that one instead (see &#x60;BulkMergeRecordsComponent&#x60;), so the group is
+   * re-anchored on whichever member comes first afterwards. The remaining rows stay
+   * correct, they are only re-ordered.
+   */
+  private rebuildPairs(key: string) {
+    const ids &#x3D; [...(this.idsByKey.get(key) ?? [])];
+    if (ids.length &lt; 2) {
+      this.pairsByKey.delete(key);
+      return;
+    }
+
+    const anchor &#x3D; this.entityById.get(ids[0]);
+    this.pairsByKey.set(
+      key,
+      ids.slice(1).map((id) &#x3D;&gt; ({
+        record: anchor,
+        possibleDuplicate: this.entityById.get(id),
+      })),
+    );
+  }
+
+  /** The value identifying duplicates, or undefined if this record cannot match any other. */
+  private computeKey(entity: Entity): string | undefined {
+    const values: string[] &#x3D; [];
+    for (const field of this.fields) {
+      const value &#x3D; normalizeValue(entity[field]);
+      if (value &#x3D;&#x3D;&#x3D; &quot;&quot;) return undefined;
+      values.push(value);
+    }
+    // JSON rather than joining on a separator: the normalized values keep their
+    // punctuation, so any separator could also occur inside a value and make
+    // [&quot;a|b&quot;, &quot;c&quot;] collide with [&quot;a&quot;, &quot;b|c&quot;]
+    return JSON.stringify(values);
+  }
+}
+
+/** The comparable form of a field value, or &quot;&quot; where it cannot be compared. */
+function normalizeValue(value: unknown): string {
+  if (value &#x3D;&#x3D; null) return &quot;&quot;;
+  if (value instanceof Date) return value.toISOString().toLowerCase();
+  // Arrays are intentionally excluded in this first exact-match implementation.
+  // Selecting an array field will therefore not yield duplicate matches.
+  if (Array.isArray(value)) return &quot;&quot;;
+
+  if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+    const idValue &#x3D; (value as Record&lt;string, unknown&gt;)[&quot;id&quot;];
+    return typeof idValue &#x3D;&#x3D;&#x3D; &quot;string&quot; ||
+      typeof idValue &#x3D;&#x3D;&#x3D; &quot;number&quot; ||
+      typeof idValue &#x3D;&#x3D;&#x3D; &quot;boolean&quot;
+      ? String(idValue).normalize(&quot;NFKC&quot;).trim().toLowerCase()
+      : &quot;&quot;;
+  }
+
+  if (
+    typeof value !&#x3D;&#x3D; &quot;string&quot; &amp;&amp;
+    typeof value !&#x3D;&#x3D; &quot;number&quot; &amp;&amp;
+    typeof value !&#x3D;&#x3D; &quot;boolean&quot;
+  ) {
+    return &quot;&quot;;
+  }
+
+  return String(value)
+    .normalize(&quot;NFKC&quot;)
+    .replaceAll(/\s+/g, &quot; &quot;)
+    .trim()
+    .toLowerCase();
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'DuplicateIndex.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

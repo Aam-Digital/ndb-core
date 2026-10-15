@@ -503,7 +503,7 @@
                             <a href="#getInheritanceSourceReferenceFields" title="src/app/core/import/import-inheritance-warning.util.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getInheritanceSourceReferenceFields</b>&nbsp;&nbsp;&nbsp;(src/.../import-inheritance-warning.util.ts)</span></a>
                         </li>
                         <li>
-                            <a href="#getInnerEntityReferenceFields" title="src/app/core/entity/entity-mapper/entity-relations.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getInnerEntityReferenceFields</b>&nbsp;&nbsp;&nbsp;(src/.../entity-relations.service.ts)</span></a>
+                            <a href="#getInnerEntityReferenceFields" title="src/app/core/entity/schema/entity-reference-fields.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getInnerEntityReferenceFields</b>&nbsp;&nbsp;&nbsp;(src/.../entity-reference-fields.ts)</span></a>
                         </li>
                         <li>
                             <a href="#getKmDistance" title="src/app/features/location/map-utils.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>getKmDistance</b>&nbsp;&nbsp;&nbsp;(src/.../map-utils.ts)</span></a>
@@ -677,6 +677,9 @@
                             <a href="#isManualItemWithoutLink" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isManualItemWithoutLink</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isMatchableField" title="src/app/features/de-duplication/duplicate-detection.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isMatchableField</b>&nbsp;&nbsp;&nbsp;(src/.../duplicate-detection.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isOfflineNetworkError" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isOfflineNetworkError</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
@@ -833,6 +836,9 @@
                             <a href="#normalizeRoutePath" title="src/app/core/config/dynamic-routing/route-paths.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeRoutePath</b>&nbsp;&nbsp;&nbsp;(src/.../route-paths.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#normalizeValue" title="src/app/features/de-duplication/duplicate-detection.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeValue</b>&nbsp;&nbsp;&nbsp;(src/.../duplicate-detection.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#normalizeValue" title="src/app/core/basic-datatypes/entity/entity.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>normalizeValue</b>&nbsp;&nbsp;&nbsp;(src/.../entity.datatype.ts)</span></a>
                         </li>
                         <li>
@@ -888,6 +894,9 @@
                         </li>
                         <li>
                             <a href="#rebuildTree" title="src/app/utils/flat-tree/flat-tree.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>rebuildTree</b>&nbsp;&nbsp;&nbsp;(src/.../flat-tree.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#referenceIdConditions" title="src/app/core/entity/default-datatype/default.datatype.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>referenceIdConditions</b>&nbsp;&nbsp;&nbsp;(src/.../default.datatype.ts)</span></a>
                         </li>
                         <li>
                             <a href="#registerPWAInstallListener" title="src/bootstrap-pwa-install.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>registerPWAInstallListener</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-pwa-install.ts)</span></a>
@@ -13698,71 +13707,6 @@ If there is no such referenced ID, the array will be empty.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getInnerEntityReferenceFields"></a>
-                    <span class="name">
-                        <span ><b>getInnerEntityReferenceFields</b></span>
-                        <a href="#getInnerEntityReferenceFields"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>getInnerEntityReferenceFields(field?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>From a field&#39;s <code>additional</code> embedded schema, return the entries
-whose <code>dataType</code> is <code>&quot;entity&quot;</code> (i.e. inner entity-reference properties).</p>
-<p>Returns an empty array when the field has no embedded schema.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>field</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
-                                            </td>
-
-                                            <td>
-                                                    Yes
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>unknown[]</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="itemReferencesId"></a>
                     <span class="name">
                         <span ><b>itemReferencesId</b></span>
@@ -17265,6 +17209,78 @@ without duplicating schema-scanning logic.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/entity/schema/entity-reference-fields.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getInnerEntityReferenceFields"></a>
+                    <span class="name">
+                        <span ><b>getInnerEntityReferenceFields</b></span>
+                        <a href="#getInnerEntityReferenceFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getInnerEntityReferenceFields(field?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>From a field&#39;s <code>additional</code> embedded schema, return the entries
+whose <code>dataType</code> is <code>&quot;entity&quot;</code> (i.e. inner entity-reference properties).</p>
+<p>Returns an empty array when the field has no embedded schema.</p>
+<p>This is shared between the in-memory check which fields of a record reference an
+entity (see <a href="../injectables/EntityRelationsService.html">EntityRelationsService</a>) and the database query selecting
+candidate records (see <a href="DefaultDatatype.getReferenceSelector">DefaultDatatype.getReferenceSelector</a>), so that the
+two cannot disagree about which inner properties hold a reference.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard-index.service.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -19352,6 +19368,134 @@ indicate a misconfiguration and must keep being reported.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/de-duplication/duplicate-detection.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isMatchableField"></a>
+                    <span class="name">
+                        <span ><b>isMatchableField</b></span>
+                        <a href="#isMatchableField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isMatchableField(field: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether duplicates can be detected by comparing this field at all.</p>
+<p>Array values and objects without a plain <code>id</code> normalize to &quot;&quot;, which excludes the
+record from matching entirely - so offering such a field would silently return
+&quot;no duplicates found&quot; rather than no result for that field.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="normalizeValue"></a>
+                    <span class="name">
+                        <span ><b>normalizeValue</b></span>
+                        <a href="#normalizeValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>normalizeValue(value)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The comparable form of a field value, or &quot;&quot; where it cannot be compared.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">
@@ -21999,6 +22143,86 @@ that are randomized (in case there are many parallel requests to be spread out).
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>MonoTypeOperatorFunction&lt;T&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/entity/default-datatype/default.datatype.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="referenceIdConditions"></a>
+                    <span class="name">
+                        <span ><b>referenceIdConditions</b></span>
+                        <a href="#referenceIdConditions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>referenceIdConditions(path: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The Mango conditions matching the given document path against a reference id,
+covering both shapes it may have been stored in: the id itself or an array containing it.</p>
+<p>This is the same pair of conditions <a href="../classes/EntityFilter.html">EntityFilter</a> builds for list filters.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>path</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>referencedId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter[]</a></code>
 
                         </div>
                             <div class="io-description">

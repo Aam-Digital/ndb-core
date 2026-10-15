@@ -285,8 +285,19 @@ and loaded. This is not to be used to mock database/anything related to the Sche
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#supportsFind" >supportsFind</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                 <a href="#entityFromRawDoc" >entityFromRawDoc</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAllType" >findAllType</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -489,8 +500,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="252"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:252</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="262"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:262</a></div>
                         </td>
                     </tr>
 
@@ -677,7 +688,7 @@ and loaded. This is not to be used to mock database/anything related to the Sche
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:149</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:159</a></code>
 </div>
                         </td>
                     </tr>
@@ -962,8 +973,8 @@ and loaded. This is not to be used to mock database/anything related to the Sche
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="242"
-                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:242</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="252"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/mock-entity-mapper-service.ts:252</a></div>
                         </td>
                     </tr>
 
@@ -1191,7 +1202,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:227</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:237</a></code>
 </div>
                         </td>
                     </tr>
@@ -1274,7 +1285,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:222</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:232</a></code>
 </div>
                         </td>
                     </tr>
@@ -1358,7 +1369,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:211</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:221</a></code>
 </div>
                         </td>
                     </tr>
@@ -1460,7 +1471,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:218</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:228</a></code>
 </div>
                         </td>
                     </tr>
@@ -1511,6 +1522,56 @@ for testing and debugging.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="supportsFind"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>supportsFind</b></span>
+                        <a href="#supportsFind"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>supportsFind()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:155</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Always false, so code that only queries as an optimisation stays on the <code>loadType</code>
+path here: <a href="findType">findType</a> below evaluates selectors against deserialized entity
+instances, which is not what the real database does with the stored format.
+Spy on this where a spec means to exercise the query path.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="entityFromRawDoc"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -1535,7 +1596,7 @@ for testing and debugging.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:136</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:198</a></code>
 </div>
                         </td>
                     </tr>
@@ -1589,6 +1650,132 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="findAllType"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>findAllType</b></span>
+                        <a href="#findAllType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAllType&lt;T&gt;(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>, filter: <a href="../classes/Filter.html" target="_self">DataFilter&lt;T&gt;</a>, sort?: { prop?: string; dir?: "asc" | "desc" })</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:165</a></code>
+</div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Like <a href="findType">findType</a>, but follows the cursor until every matching record is loaded.</p>
+<p>CouchDB&#39;s <code>_find</code> returns only 25 documents when no limit is given, so the pages have
+to be requested explicitly. Only use this where the filter is expected to select a
+small share of the type - otherwise <a href="loadType">loadType</a> is a single request.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>class for which results should be returned</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/Filter.html" target="_self" >DataFilter&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>a valid Mango Query Syntax query</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sort</td>
+                                            <td>
+                                                        <code>{ prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; }</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>optional sort options</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="resolveConstructor"></a>
                     <span class="name">
                             <span class="modifier">Protected</span>
@@ -1613,7 +1800,7 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:277</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:339</a></code>
 </div>
                         </td>
                     </tr>
@@ -1696,7 +1883,7 @@ The entity type is detected from the <code>_id</code> prefix of the document.</p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:309</a></code>
+                                <div class="io-line">        <code><a href="../injectables/EntityMapperService.html#source" target="_self" >EntityMapperService:371</a></code>
 </div>
                         </td>
                     </tr>
@@ -1900,6 +2087,16 @@ export class MockEntityMapperService extends EntityMapperService {
   ): Promise&lt;T[]&gt; {
     let type &#x3D; this.getTypeViaRegistry(entityType);
     return this.getAll(type);
+  }
+
+  /**
+   * Always false, so code that only queries as an optimisation stays on the &#x60;loadType&#x60;
+   * path here: {@link findType} below evaluates selectors against deserialized entity
+   * instances, which is not what the real database does with the stored format.
+   * Spy on this where a spec means to exercise the query path.
+   */
+  override supportsFind(): boolean {
+    return false;
   }
 
   override async findType&lt;T extends Entity&gt;(

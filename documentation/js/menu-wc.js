@@ -1742,6 +1742,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/DuplicateEnumOptionException.html" data-type="entity-link" >DuplicateEnumOptionException</a>
                             </li>
                             <li class="link">
+                                <a href="classes/DuplicateIndex.html" data-type="entity-link" >DuplicateIndex</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/EmailTemplate.html" data-type="entity-link" >EmailTemplate</a>
                             </li>
                             <li class="link">

@@ -279,6 +279,11 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                <a href="#getReferenceSelector" >getReferenceSelector</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
                             </li>
                             <li>
@@ -345,6 +350,111 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getReferenceSelector"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getReferenceSelector</b></span>
+                        <a href="#getReferenceSelector"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:105</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The embedded object is stored as-is, so an inner reference is matched through the
+outer field - either inside an array of embedded objects or, where a single object
+is stored, through the dotted path to the inner property.</p>
+<p>The inner keys come from <code>additional</code> only (not from <a href="getEffectiveSchema">getEffectiveSchema</a>),
+so they stay identical to the ones the in-memory post-filter inspects.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>referencedId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>[] | undefined</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformToDatabaseFormat"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -369,7 +479,7 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:92</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:129</a></code>
 </div>
                         </td>
                     </tr>
@@ -456,7 +566,7 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:103</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:140</a></code>
 </div>
                         </td>
                     </tr>
@@ -543,7 +653,7 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:378</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:422</a></code>
 </div>
                         </td>
                     </tr>
@@ -653,7 +763,7 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:136</a></code>
 </div>
                         </td>
                     </tr>
@@ -752,7 +862,7 @@ allowing runtime config to extend or override a class&#39;s annotations.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:103</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:121</a></code>
 </div>
                         </td>
                     </tr>
@@ -853,7 +963,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:349</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:367</a></code>
 </div>
                         </td>
                     </tr>
@@ -936,7 +1046,7 @@ can add a human-readable name column alongside the ID column).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:207</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -1068,7 +1178,7 @@ to share information across processing of multiple columns and rows.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:231</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:249</a></code>
 </div>
                         </td>
                     </tr>
@@ -1188,7 +1298,7 @@ than one property) override this.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:334</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -1273,7 +1383,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:370</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:388</a></code>
 </div>
                         </td>
                     </tr>
@@ -1365,7 +1475,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:66</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:71</a></code>
 </div>
                         </td>
                     </tr>
@@ -1393,7 +1503,7 @@ raw value cannot be sorted meaningfully.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:68</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:73</a></div>
                         </td>
                     </tr>
 
@@ -1426,7 +1536,7 @@ raw value cannot be sorted meaningfully.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:70</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/basic-datatypes/schema-embed/schema-embed.datatype.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -1463,7 +1573,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:163</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:181</a></code>
 </div>
                         </td>
                     </tr>
@@ -1502,7 +1612,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:142</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:160</a></code>
 </div>
                         </td>
                     </tr>
@@ -1543,7 +1653,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:310</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:328</a></code>
 </div>
                         </td>
                     </tr>
@@ -1586,7 +1696,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:320</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:338</a></code>
 </div>
                         </td>
                     </tr>
@@ -1635,7 +1745,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:151</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:169</a></code>
 </div>
                         </td>
                     </tr>
@@ -1679,7 +1789,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:162</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:180</a></code>
 </div>
                         </td>
                     </tr>
@@ -1701,9 +1811,14 @@ decorator</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DefaultDatatype } from &quot;../../entity/default-datatype/default.datatype&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  DefaultDatatype,
+  referenceIdConditions,
+} from &quot;../../entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { getInnerEntityReferenceFields } from &quot;../../entity/schema/entity-reference-fields&quot;;
+import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import {
   EntitySchema,
   SchemaEmbeddedType,
@@ -1773,6 +1888,38 @@ export class SchemaEmbedDatatype&lt;
     }
 
     return baseSchema;
+  }
+
+  /**
+   * The embedded object is stored as-is, so an inner reference is matched through the
+   * outer field - either inside an array of embedded objects or, where a single object
+   * is stored, through the dotted path to the inner property.
+   *
+   * The inner keys come from &#x60;additional&#x60; only (not from {@link getEffectiveSchema}),
+   * so they stay identical to the ones the in-memory post-filter inspects.
+   */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter&lt;any&gt;[] | undefined {
+    const innerKeys &#x3D; getInnerEntityReferenceFields(schemaField).map(
+      ([key]) &#x3D;&gt; key,
+    );
+    if (innerKeys.length &#x3D;&#x3D;&#x3D; 0) {
+      // nothing we could match on - let the caller load the whole type instead
+      return undefined;
+    }
+
+    return innerKeys.flatMap((key) &#x3D;&gt; [
+      { [fieldId]: { $elemMatch: { [key]: referencedId } } },
+      {
+        [fieldId]: {
+          $elemMatch: { [key]: { $elemMatch: { $eq: referencedId } } },
+        },
+      },
+      ...referenceIdConditions(&#x60;${fieldId}.${key}&#x60;, referencedId),
+    ]);
   }
 
   override transformToDatabaseFormat(

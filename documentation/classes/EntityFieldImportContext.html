@@ -229,7 +229,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="472" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:472</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="483" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:483</a></div>
                             </td>
                         </tr>
 
@@ -305,8 +305,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="498"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:498</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="509"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:509</a></div>
                         </td>
                     </tr>
 
@@ -372,8 +372,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="502"
-                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:502</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="513"
+                                    class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:513</a></div>
                         </td>
                     </tr>
 
@@ -458,7 +458,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="482" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:482</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="493" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:493</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -492,7 +492,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="494" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:494</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="505" class="link-to-prism">src/app/core/basic-datatypes/entity/entity.datatype.ts:505</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -531,7 +531,9 @@ import {
   ColumnImportInput,
   ExportColumnMapping,
   ExportContext,
+  referenceIdConditions,
 } from &quot;../../entity/default-datatype/default.datatype&quot;;
+import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import {
   EXPORT_BATCH_SIZE,
   loadReadableEntityName,
@@ -560,6 +562,15 @@ export class EntityDatatype extends StringDatatype {
   override viewComponent &#x3D; &quot;DisplayEntity&quot;;
   override importConfigComponent &#x3D; &quot;EntityImportConfig&quot;;
   override importAllowsMultiMapping &#x3D; true;
+
+  /** Stored as the plain id string, or as an array of them when &#x60;isArray&#x60; is set. */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter&lt;any&gt;[] {
+    return referenceIdConditions(fieldId, referencedId);
+  }
 
   override getExportColumns(
     schemaField: EntitySchemaField,

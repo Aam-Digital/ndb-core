@@ -270,6 +270,11 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                <a href="#getReferenceSelector" >getReferenceSelector</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
                             </li>
                             <li>
@@ -336,6 +341,114 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getReferenceSelector"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getReferenceSelector</b></span>
+                        <a href="#getReferenceSelector"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getReferenceSelector(fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, referencedId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultDatatype.html" target="_self" >DefaultDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:38</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Unlike the embedded objects of the <code>attendance</code> datatype, this one stores each entry as a
+two-element tuple <code>[participantId, {status, remarks}]</code> (see <a href="transformToDatabaseFormat">transformToDatabaseFormat</a>),
+so the participant is matched by its <em>index</em> in that tuple rather than by a property name.</p>
+<p><code>{$elemMatch: {&quot;0&quot;: id}}</code> is the spelling that works on both query engines:
+CouchDB&#39;s <code>mango_doc:get_field</code> accepts an integer path segment into an array, and
+pouchdb-find resolves <code>tuple[&quot;0&quot;]</code> the same way. The nesting that looks more natural,
+<code>{$elemMatch: {$elemMatch: {$eq: id}}}</code>, silently matches nothing in pouchdb-find, which
+treats the inner <code>$elemMatch</code> as a field name.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>referencedId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Filter.html" target="_self" >DataFilter[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformToDatabaseFormat"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -360,7 +473,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:25</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -435,7 +548,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:49</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:70</a></code>
 </div>
                         </td>
                     </tr>
@@ -510,7 +623,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:378</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:422</a></code>
 </div>
                         </td>
                     </tr>
@@ -620,7 +733,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:118</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:136</a></code>
 </div>
                         </td>
                     </tr>
@@ -719,7 +832,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:103</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:121</a></code>
 </div>
                         </td>
                     </tr>
@@ -820,7 +933,7 @@ forwarding their own relevant datatype identifiers.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:349</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:367</a></code>
 </div>
                         </td>
                     </tr>
@@ -903,7 +1016,7 @@ can add a human-readable name column alongside the ID column).</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:207</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:225</a></code>
 </div>
                         </td>
                     </tr>
@@ -1035,7 +1148,7 @@ to share information across processing of multiple columns and rows.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:231</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:249</a></code>
 </div>
                         </td>
                     </tr>
@@ -1155,7 +1268,7 @@ than one property) override this.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:334</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:352</a></code>
 </div>
                         </td>
                     </tr>
@@ -1240,7 +1353,7 @@ allowing the datatype to normalize or fill in required settings.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:370</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:388</a></code>
 </div>
                         </td>
                     </tr>
@@ -1331,7 +1444,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:18</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:20</a></code>
 </div>
                         </td>
                     </tr>
@@ -1370,7 +1483,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:20</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:22</a></code>
 </div>
                         </td>
                     </tr>
@@ -1409,7 +1522,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:21</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:23</a></code>
 </div>
                         </td>
                     </tr>
@@ -1448,7 +1561,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:142</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:160</a></code>
 </div>
                         </td>
                     </tr>
@@ -1489,7 +1602,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:310</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:328</a></code>
 </div>
                         </td>
                     </tr>
@@ -1532,7 +1645,7 @@ during import.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:320</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:338</a></code>
 </div>
                         </td>
                     </tr>
@@ -1581,7 +1694,7 @@ so that the suggested settings are reviewed and confirmed rather than silently s
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:151</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:169</a></code>
 </div>
                         </td>
                     </tr>
@@ -1605,6 +1718,8 @@ so that the suggested settings are reviewed and confirmed rather than silently s
 import { AttendanceItem } from &quot;../model/attendance-item&quot;;
 import { DefaultDatatype } from &quot;#src/app/core/entity/default-datatype/default.datatype&quot;;
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
+import type { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 
 /**
  * Holds a full register of EventAttendance entries.
@@ -1624,6 +1739,25 @@ export class EventAttendanceMapDatatype extends DefaultDatatype&lt;
   override viewComponent &#x3D; &quot;DisplayAttendance&quot;;
 
   private readonly schemaService &#x3D; inject(EntitySchemaService);
+
+  /**
+   * Unlike the embedded objects of the &#x60;attendance&#x60; datatype, this one stores each entry as a
+   * two-element tuple &#x60;[participantId, {status, remarks}]&#x60; (see {@link transformToDatabaseFormat}),
+   * so the participant is matched by its *index* in that tuple rather than by a property name.
+   *
+   * &#x60;{$elemMatch: {&quot;0&quot;: id}}&#x60; is the spelling that works on both query engines:
+   * CouchDB&#x27;s &#x60;mango_doc:get_field&#x60; accepts an integer path segment into an array, and
+   * pouchdb-find resolves &#x60;tuple[&quot;0&quot;]&#x60; the same way. The nesting that looks more natural,
+   * &#x60;{$elemMatch: {$elemMatch: {$eq: id}}}&#x60;, silently matches nothing in pouchdb-find, which
+   * treats the inner &#x60;$elemMatch&#x60; as a field name.
+   */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter&lt;any&gt;[] {
+    return [{ [fieldId]: { $elemMatch: { &quot;0&quot;: referencedId } } }];
+  }
 
   override transformToDatabaseFormat(value: AttendanceItem[]) {
     if (!Array.isArray(value)) {

@@ -225,7 +225,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:39</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:41</a></div>
                                 </td>
                             </tr>
 
@@ -248,6 +248,8 @@ import { asArray } from &quot;../../../utils/asArray&quot;;
 import { splitArrayValue } from &quot;../../import/split-array-value&quot;;
 import type { ColumnMapping } from &quot;../../import/column-mapping&quot;;
 import type { ImportProcessingContext } from &quot;../../import/import-processing-context&quot;;
+// type-only: filters.ts pulls in ListFilterComponent, which must not be loaded here
+import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 
 /**
  * A single column mapped to a target field during import, with the raw cell
@@ -292,6 +294,22 @@ export interface ExportColumnMapping&lt;EntityType &#x3D; any&gt; {
     schemaField: EntitySchemaField,
     context?: ExportContext,
   ) &#x3D;&gt; Promise&lt;any&gt; | any;
+}
+
+/**
+ * The Mango conditions matching the given document path against a reference id,
+ * covering both shapes it may have been stored in: the id itself or an array containing it.
+ *
+ * This is the same pair of conditions {@link EntityFilter} builds for list filters.
+ */
+export function referenceIdConditions(
+  path: string,
+  referencedId: string,
+): DataFilter&lt;any&gt;[] {
+  return [
+    { [path]: referencedId },
+    { [path]: { $elemMatch: { $eq: referencedId } } },
+  ];
 }
 
 /**
@@ -595,6 +613,32 @@ export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
    * raw value cannot be sorted meaningfully.
    */
   sortValue(_fieldValue: EntityType): number | string | undefined {
+    return undefined;
+  }
+
+  /**
+   * Mango conditions matching documents whose &#x60;fieldId&#x60; references the given entity id,
+   * used to query related entities instead of loading a whole entity type (see
+   * {@link EntityRelationsService.loadAllLinkingToEntity}).
+   *
+   * The conditions are matched against the *database* format, so only the datatype that
+   * writes that format can build them - which is why this lives here rather than in the
+   * calling service. Return every shape the value may have been stored in rather than
+   * branching on &#x60;schemaField.isArray&#x60;: existing documents may have been written while the
+   * field had the other setting (see {@link FilterService} and {@link EntityFilter}).
+   *
+   * The caller treats these as candidates only and still post-filters in memory, so
+   * matching too much is harmless - matching too little silently loses references.
+   *
+   * @returns the conditions to OR together, or &#x60;undefined&#x60; if this datatype&#x27;s stored format
+   *          cannot be expressed as a query, which makes the caller load the whole type.
+   *          Never return an empty array: &#x60;{$or: []}&#x60; matches nothing.
+   */
+  getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter&lt;any&gt;[] | undefined {
     return undefined;
   }
 
