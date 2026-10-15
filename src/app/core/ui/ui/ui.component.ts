@@ -99,7 +99,7 @@ import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 export class UiComponent {
   private screenWidthObserver = inject(ScreenWidthObserver);
   private siteSettingsService = inject(SiteSettingsService);
-  private ability = inject(EntityAbility);
+  private readonly ability = inject(EntityAbility);
   private sessionManager = inject(SessionManagerService);
   private setupService = inject(SetupService);
   private router = inject(Router);
