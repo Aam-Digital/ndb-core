@@ -12,7 +12,7 @@ reviewers keep finding on top of that.
    `.subscribe()` that could be a `computed` or a writable signal. This is the single
    most repeated comment (#3950, #3954, #3970, #3991, #4040, #4061, #4077). The reverse
    bug also happens: an `input()` signal forwarded as the function itself instead of
-   called for its value (#4235).
+   called for its value (#4235). Also consider the use of `resource()`.
 2. **Null vs undefined vs empty.** A clear, reset or anonymize path must treat
    array-shaped and single-value fields the same way, and the diff should make clear
    which "empty" it means (#4319).
