@@ -62,6 +62,12 @@ export interface AffectedEntity {
 
   /** Whether the affected entity is no longer linked to the changed entity */
   unlinked?: boolean;
+
+  /** How many levels above the changed entity the affected entity is (1 = directly linked) */
+  level?: number;
+
+  /** Ids of the records this one is reached from (the changed entity, or affected entities of the level below) */
+  via?: string[];
 }
 
 /**

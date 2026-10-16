@@ -21,6 +21,7 @@ import {
   isEmptyValue,
 } from "../add-missing-values";
 import { getCommonValue } from "../get-common-value";
+import { addHigherLevels } from "./add-higher-levels";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -76,6 +77,24 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<void> {
     if (this.checkRefAlreadyProcessed(entity)) return;
 
+    const affectedEntities = await addHigherLevels(
+      await this.loadAffectedEntities(entity, entityBeforeChanges),
+      entity.getId(),
+      (affected) => this.loadAffectedEntitiesAbove(affected),
+    );
+
+    if (affectedEntities.length > 0) {
+      await this.confirmAndSaveAffectedEntities(affectedEntities);
+    }
+  }
+
+  /**
+   * Find the entities directly linked to the changed entity that the rules would update.
+   */
+  private async loadAffectedEntities(
+    entity: Entity,
+    entityBeforeChanges: Entity,
+  ): Promise<AffectedEntity[]> {
     const changedFields = this.getChangedFields(entity, entityBeforeChanges);
     const changedFieldIds = changedFields.map((f) => f.fieldId);
 
@@ -90,7 +109,7 @@ export class AutomatedFieldUpdateConfigService {
         entity.getConstructor(),
       ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
 
-    const affectedEntities: AffectedEntity[] = [
+    return [
       ...(
         await Promise.all(
           relevantDirectRules.map((rule) =>
@@ -111,10 +130,19 @@ export class AutomatedFieldUpdateConfigService {
         )
       ).flat(),
     ];
+  }
 
-    if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
-    }
+  /** Find the entities that would be updated next if the affected entity got its suggested value. */
+  private loadAffectedEntitiesAbove(
+    affected: AffectedEntity,
+  ): Promise<AffectedEntity[]> {
+    const updated = affected.affectedEntity.copy();
+    updated[affected.targetFieldId] =
+      this.entitySchemaService.valueToEntityFormat(
+        affected.newValue,
+        affected.selectedField,
+      );
+    return this.loadAffectedEntities(updated, affected.affectedEntity);
   }
 
   /**
@@ -139,13 +167,17 @@ export class AutomatedFieldUpdateConfigService {
     entity: Entity,
     fieldId: string,
   ): Promise<boolean> {
-    const affectedEntities = (
-      await Promise.all(
-        this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
-          (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
-        ),
-      )
-    ).flat();
+    const affectedEntities = await addHigherLevels(
+      (
+        await Promise.all(
+          this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
+            (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
+          ),
+        )
+      ).flat(),
+      entity.getId(),
+      (affected) => this.loadAffectedEntitiesAbove(affected),
+    );
 
     if (affectedEntities.length > 0) {
       await this.confirmAndSaveAffectedEntities(affectedEntities);
