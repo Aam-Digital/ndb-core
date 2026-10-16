@@ -351,6 +351,13 @@ Custom agents are defined in `.claude/agents/`. They support these key workflows
 3-implementation-executor →  implement the plan, commit per task, open PR
 ```
 
+### Skills
+
+Shared skills are in `.claude/skills/` and are picked up automatically by Claude Code:
+
+- **`feature-use-cases`** — write the "Planned scope: use cases" comment for a new feature on an issue (concrete examples, decisions to confirm, known limitations), before the plan in step 2 above.
+- **`review-pull-request`** — review a PR (`/review-pull-request <number or URL>`): checks the linked issue and the diff against the problems our reviews catch most often.
+
 ## MCP Servers
 
 The following MCP servers are available in `.vscode/mcp.json`:
