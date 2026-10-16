@@ -76,6 +76,7 @@ Rules for the use cases:
 - Say clearly what is new, what works already, and finish with **what stays as it is**
   when the feature touches existing behavior.
 - Usually 5 to 8 use cases. If there are more, group the small ones as sub-bullets.
+  Try to limit the number of cases and combine similar or related edge cases into one.
 - Leave out implementation: no class, function or file names, no tasks. The plan comes
   afterwards, see `/plan-implementation`.
 - Plain language and short sentences, written for an admin or project lead. Say "the
