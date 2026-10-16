@@ -13,6 +13,9 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   selector: "app-display-text",
   template: `{{ displayValue() }}`,
   standalone: true,
+  // dir: values with no strongly-typed character, like phone numbers, would
+  // otherwise be reordered by the bidi algorithm
+  host: { dir: "auto" },
 })
 export class DisplayTextComponent extends ViewDirective<unknown> {
   readonly displayValue = computed(() => format(this.value()));

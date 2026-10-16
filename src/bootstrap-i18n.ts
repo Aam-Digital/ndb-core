@@ -1,5 +1,6 @@
 import {
   DEFAULT_LANGUAGE,
+  isRtlLocale,
   isValidLocale,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./app/core/language/language-statics";
@@ -28,6 +29,11 @@ export async function initLanguage(locale?: string): Promise<void> {
     return;
   }
 
+  // deliberately before the fetch below: direction and locale data describe the
+  // language itself, so they still apply when its translations are unavailable
+  applyDocumentLanguage(locale);
+  await registerLocaleDataFor(locale);
+
   if (locale === DEFAULT_LANGUAGE) {
     return;
   }
@@ -40,13 +46,25 @@ export async function initLanguage(locale?: string): Promise<void> {
 
   loadTranslations(json);
   $localize.locale = locale;
-  // This is needed for locale-aware components & pipes to work.
-  // Add the required locales to `webpackInclude` to keep the bundle size small
+}
+
+/**
+ * Must run before Angular bootstraps: the CDK's `Directionality` reads `dir` once when
+ * constructed, and all Angular Material components take their direction from it.
+ */
+function applyDocumentLanguage(locale: string): void {
+  document.documentElement.lang = locale;
+  document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
+}
+
+async function registerLocaleDataFor(locale: string): Promise<void> {
   let localeModule;
   if (locale == "de") {
     localeModule = await import("@angular/common/locales/de");
   } else if (locale == "fr") {
     localeModule = await import("@angular/common/locales/fr");
+  } else if (locale == "ar") {
+    localeModule = await import("@angular/common/locales/ar");
   }
 
   if (localeModule) {

@@ -6,7 +6,7 @@
 </app-view-title>
 <div class="flex-row align-center relative-left margin-bottom-small">
   <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
-    <fa-icon icon="arrow-left"></fa-icon>
+    <fa-icon icon="arrow-left" class="mirror-in-rtl"></fa-icon>
   </button>
   @if (event(); as event) {
     <h2 class="remove-margin-bottom">{{ event.entity.toString() }}</h2>
@@ -45,7 +45,7 @@
           [disabled]="isFirst()"
           class="button-skip"
         >
-          <fa-icon icon="angle-double-left"></fa-icon>
+          <fa-icon icon="angle-double-left" class="mirror-in-rtl"></fa-icon>
         </button>
         <button
           mat-icon-button
@@ -53,7 +53,7 @@
           [disabled]="isFirst()"
           class="button-skip"
         >
-          <fa-icon icon="angle-left"></fa-icon>
+          <fa-icon icon="angle-left" class="mirror-in-rtl"></fa-icon>
         </button>
       </div>
       <div
@@ -71,7 +71,7 @@
           [disabled]="isFinished()"
           class="button-skip"
         >
-          <fa-icon icon="angle-right"></fa-icon>
+          <fa-icon icon="angle-right" class="mirror-in-rtl"></fa-icon>
         </button>
         <button
           mat-icon-button
@@ -79,7 +79,7 @@
           [disabled]="isFinished()"
           class="button-skip"
         >
-          <fa-icon icon="angle-double-right"></fa-icon>
+          <fa-icon icon="angle-double-right" class="mirror-in-rtl"></fa-icon>
         </button>
       </div>
       @if (inactiveParticipants().length > 0) {
