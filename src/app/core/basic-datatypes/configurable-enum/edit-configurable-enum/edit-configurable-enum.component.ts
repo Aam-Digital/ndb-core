@@ -24,7 +24,9 @@ import { OkButton } from "../../../common-components/confirmation-dialog/confirm
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { asArray } from "../../../../utils/asArray";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import {
   ConfigurableEnum,
@@ -66,6 +68,10 @@ export class EditConfigurableEnumComponent
   implements OnInit, EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
+
+  /** Whether to highlight the selected values that the entity does not have yet */
+  highlightAdded = input<boolean>(false);
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<
     ConfigurableEnumValue,
@@ -84,6 +90,11 @@ export class EditConfigurableEnumComponent
   >(undefined);
 
   readonly multi = computed(() => this.formFieldConfig()?.isArray ?? false);
+  readonly existingValues = computed(() =>
+    this.highlightAdded()
+      ? asArray(this.entity()?.[this.formFieldConfig()?.id] ?? [])
+      : undefined,
+  );
   readonly enumId = computed(() => this.formFieldConfig()?.additional);
   readonly enumEntity = computed<ConfigurableEnum | undefined>(() => {
     this.enumRefreshTick();

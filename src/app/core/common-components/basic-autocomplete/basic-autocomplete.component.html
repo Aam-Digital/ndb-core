@@ -35,6 +35,7 @@
           [cdkDragDisabled]="!reorder()"
           [editable]="enabled()"
           class="chip"
+          [class.added]="addedOptions().has(item)"
           [style.background-color]="item.asValue?.['color']"
         >
           <ng-template
@@ -145,6 +146,15 @@ Autocomplete
       <span class="drag-handle color-accent" cdkDragHandle>
         <app-fa-dynamic-icon icon="grip-vertical"></app-fa-dynamic-icon>
       </span>
+    }
+
+    @if (addedOptions().has(item)) {
+      <app-fa-dynamic-icon
+        class="added-icon"
+        icon="plus"
+        i18n-matTooltip="tooltip for chips of values that are newly added"
+        matTooltip="Added"
+      ></app-fa-dynamic-icon>
     }
 
     @if (!templateRef()) {

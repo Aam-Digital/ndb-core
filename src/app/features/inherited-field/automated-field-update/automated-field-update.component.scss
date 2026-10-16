@@ -5,6 +5,44 @@
   width: 100%;
 }
 
+.title {
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
+}
+
+// the change that opened the dialog
+.trigger {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: sizes.$small sizes.$regular;
+  margin-bottom: sizes.$regular;
+  padding: sizes.$small sizes.$regular;
+  border-radius: 4px;
+  background-color: colors.$background-secondary;
+
+  .trigger-label {
+    color: colors.$text-secondary;
+    font-size: 0.85em;
+  }
+
+  .trigger-change {
+    display: inline-flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
+}
+
+// records further up the hierarchy are indented, with a line along the way from the records they are reached from
+@for $level from 2 through 10 {
+  tr.level-#{$level} > td:first-child {
+    padding-left: calc(#{sizes.$large} * #{$level - 1});
+    border-left: 2px solid colors.$border-color;
+    margin-left: sizes.$small;
+  }
+}
+
 // keep a hint next to the field it explains (cancels the global bottom margin of mat-form-field)
 app-entity-field-edit + .hint-text {
   margin-top: calc(#{sizes.$small} - 22px);
@@ -14,8 +52,9 @@ app-entity-field-edit + .hint-text {
   margin-bottom: sizes.$regular;
 }
 
-// easy-to-overlook case where nothing is updated, so it should stand out
-.no-common-value-warning {
+// easy-to-overlook cases that should stand out
+.no-common-value-warning,
+.update-failed {
   display: flex;
   align-items: flex-start;
   gap: sizes.$small;

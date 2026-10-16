@@ -3,7 +3,10 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import type { AffectedEntity } from "./automated-field-update.component";
+import type {
+  AffectedEntity,
+  UpdateTrigger,
+} from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
 import {
   DefaultValueConfigInheritedField,
@@ -21,6 +24,7 @@ import {
   isEmptyValue,
 } from "../add-missing-values";
 import { getCommonValue } from "../get-common-value";
+import { addHigherLevels } from "./add-higher-levels";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -76,6 +80,28 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<void> {
     if (this.checkRefAlreadyProcessed(entity)) return;
 
+    const affectedEntities = await addHigherLevels(
+      await this.loadAffectedEntities(entity, entityBeforeChanges),
+      entity.getId(),
+      (affected, found) => this.loadAffectedEntitiesAbove(affected, found),
+    );
+
+    if (affectedEntities.length > 0) {
+      await this.confirmAndSaveAffectedEntities(affectedEntities, {
+        entity,
+        before: entityBeforeChanges,
+      });
+    }
+  }
+
+  /**
+   * Find the entities directly linked to the changed entity that the rules would update.
+   */
+  private async loadAffectedEntities(
+    entity: Entity,
+    entityBeforeChanges: Entity,
+    pendingEntities: Map<string, Entity> = new Map(),
+  ): Promise<AffectedEntity[]> {
     const changedFields = this.getChangedFields(entity, entityBeforeChanges);
     const changedFieldIds = changedFields.map((f) => f.fieldId);
 
@@ -90,7 +116,7 @@ export class AutomatedFieldUpdateConfigService {
         entity.getConstructor(),
       ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
 
-    const affectedEntities: AffectedEntity[] = [
+    return [
       ...(
         await Promise.all(
           relevantDirectRules.map((rule) =>
@@ -99,6 +125,7 @@ export class AutomatedFieldUpdateConfigService {
               entity,
               entityBeforeChanges,
               changedFieldIds.includes(rule.rule.sourceValueField),
+              pendingEntities,
             ),
           ),
         )
@@ -106,15 +133,59 @@ export class AutomatedFieldUpdateConfigService {
       ...(
         await Promise.all(
           relevantIndirectRules.map((rule) =>
-            this.loadAffectedEntitiesForInheritanceRule(rule, entity),
+            this.loadAffectedEntitiesForInheritanceRule(
+              rule,
+              entity,
+              pendingEntities,
+            ),
           ),
         )
       ).flat(),
     ];
+  }
 
-    if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
+  /**
+   * Find the entities that would be updated next if the affected entity got its suggested value.
+   * @param affected the entity with its suggested value
+   * @param found all entities with suggested values that are not saved yet, which have to be taken into account
+   *   where the values of several linked entities are combined
+   */
+  private loadAffectedEntitiesAbove(
+    affected: AffectedEntity,
+    found: AffectedEntity[],
+  ): Promise<AffectedEntity[]> {
+    return this.loadAffectedEntities(
+      this.applySuggestedValue(affected, affected.affectedEntity.copy()),
+      affected.affectedEntity,
+      this.getPendingEntities(found),
+    );
+  }
+
+  /** Copies of the affected entities that already have their suggested values, by entity id */
+  private getPendingEntities(found: AffectedEntity[]): Map<string, Entity> {
+    const pendingEntities = new Map<string, Entity>();
+    for (const affected of found) {
+      pendingEntities.set(
+        affected.id,
+        this.applySuggestedValue(
+          affected,
+          pendingEntities.get(affected.id) ?? affected.affectedEntity.copy(),
+        ),
+      );
     }
+    return pendingEntities;
+  }
+
+  private applySuggestedValue(
+    affected: AffectedEntity,
+    entity: Entity,
+  ): Entity {
+    entity[affected.targetFieldId] =
+      this.entitySchemaService.valueToEntityFormat(
+        affected.newValue,
+        affected.selectedField,
+      );
+    return entity;
   }
 
   /**
@@ -139,16 +210,23 @@ export class AutomatedFieldUpdateConfigService {
     entity: Entity,
     fieldId: string,
   ): Promise<boolean> {
-    const affectedEntities = (
-      await Promise.all(
-        this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
-          (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
-        ),
-      )
-    ).flat();
+    const affectedEntities = await addHigherLevels(
+      (
+        await Promise.all(
+          this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
+            (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
+          ),
+        )
+      ).flat(),
+      entity.getId(),
+      (affected, found) => this.loadAffectedEntitiesAbove(affected, found),
+    );
 
     if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
+      await this.confirmAndSaveAffectedEntities(affectedEntities, {
+        entity,
+        before: entity,
+      });
     }
     return affectedEntities.length > 0;
   }
@@ -245,6 +323,7 @@ export class AutomatedFieldUpdateConfigService {
     sourceEntity: Entity,
     sourceEntityBeforeChanges: Entity,
     valueChanged = true,
+    pendingEntities: Map<string, Entity> = new Map(),
   ): Promise<AffectedEntity[]> {
     const { rule, entityType } = affectedRule;
 
@@ -293,6 +372,7 @@ export class AutomatedFieldUpdateConfigService {
               : this.calculateNewValue(sourceEntityBeforeChanges, rule),
             this.calculateNewValue(sourceEntity, rule),
           ),
+          pendingEntities,
         ),
       ),
       ...(await this.loadAffectedEntitiesForUnlinkedEntities(
@@ -360,6 +440,7 @@ export class AutomatedFieldUpdateConfigService {
   private async loadAffectedEntitiesForInheritanceRule(
     affectedRule: AffectedRule,
     sourceEntity: Entity,
+    pendingEntities: Map<string, Entity> = new Map(),
   ): Promise<AffectedEntity[]> {
     const { rule, entityType } = affectedRule;
 
@@ -373,7 +454,12 @@ export class AutomatedFieldUpdateConfigService {
       await Promise.all(
         targetEntities.map(async (entity): Promise<[string, NewValue]> => [
           entity.getId(),
-          await this.loadNewValue(entity, affectedRule, sourceEntity),
+          await this.loadNewValue(
+            entity,
+            affectedRule,
+            sourceEntity,
+            pendingEntities,
+          ),
         ]),
       ),
     );
@@ -391,11 +477,13 @@ export class AutomatedFieldUpdateConfigService {
    * If the target links to several entities, it only inherits a value shared by all of them.
    * Without a shared value (different values or some linked entities cannot be loaded),
    * the target's current value is returned.
+   * @param pendingEntities entities with suggested values that are not saved yet, used instead of the saved ones
    */
   private async loadNewValue(
     targetEntity: Entity,
     { rule, fieldId }: AffectedRule,
     sourceEntity: Entity,
+    pendingEntities: Map<string, Entity>,
   ): Promise<NewValue> {
     const otherIds = asArray(targetEntity[rule.sourceReferenceField]).filter(
       (id) => id !== sourceEntity.getId(),
@@ -407,9 +495,9 @@ export class AutomatedFieldUpdateConfigService {
       };
     }
 
-    const otherEntities = await this.loadEntitiesByIds(
-      sourceEntity.getConstructor(),
-      otherIds,
+    const otherEntities = this.withPendingValues(
+      await this.loadEntitiesByIds(sourceEntity.getConstructor(), otherIds),
+      pendingEntities,
     );
     const sharedValue =
       otherEntities.length === otherIds.length
@@ -439,6 +527,7 @@ export class AutomatedFieldUpdateConfigService {
     targetEntities: Entity[],
     { rule, entityType, fieldId }: AffectedRule,
     removedValues: any[],
+    pendingEntities: Map<string, Entity> = new Map(),
   ): Promise<Map<string, any[]>> {
     if (
       removedValues.length === 0 ||
@@ -454,7 +543,11 @@ export class AutomatedFieldUpdateConfigService {
             target.getId(),
             differenceWith(
               removedValues,
-              await this.collectValuesOfLinkedRecords(target, rule),
+              await this.collectValuesOfLinkedRecords(
+                target,
+                rule,
+                pendingEntities,
+              ),
               isEqual,
             ),
           ]),
@@ -522,6 +615,7 @@ export class AutomatedFieldUpdateConfigService {
         affectedEntity: targetEntity,
         relatedReferenceField: rule.sourceReferenceField,
         relatedReferenceFieldEntityType,
+        sourceFieldId: rule.sourceValueField,
         addToExisting,
         hasNoCommonValue: showNoCommonValue,
       });
@@ -577,21 +671,36 @@ export class AutomatedFieldUpdateConfigService {
    * (e.g. the cities of all children linking to a school), skipping duplicates.
    * @param entity The record that the related records link to
    * @param rule The automation rule (with sourceReferenceEntity)
+   * @param pendingEntities records with suggested values that are not saved yet, used instead of the saved ones
    * @return the combined values in database format
    */
   public async collectValuesOfLinkedRecords(
     entity: Entity,
     rule: DefaultValueConfigInheritedField,
+    pendingEntities: Map<string, Entity> = new Map(),
   ): Promise<any[]> {
-    const linkedRecords = await this.loadRecordsLinkingTo(
-      rule.sourceReferenceEntity,
-      rule.sourceReferenceField,
-      entity.getId(),
+    const linkedRecords = this.withPendingValues(
+      await this.loadRecordsLinkingTo(
+        rule.sourceReferenceEntity,
+        rule.sourceReferenceField,
+        entity.getId(),
+      ),
+      pendingEntities,
     );
     return linkedRecords.reduce(
       (values, record) =>
         addMissingValues(values, this.calculateNewValue(record, rule)),
       [],
+    );
+  }
+
+  /** Replace the entities by their copy with the suggested values, if they have one. */
+  private withPendingValues(
+    entities: Entity[],
+    pendingEntities: Map<string, Entity>,
+  ): Entity[] {
+    return entities.map(
+      (entity) => pendingEntities.get(entity.getId()) ?? entity,
     );
   }
 
@@ -755,8 +864,12 @@ export class AutomatedFieldUpdateConfigService {
    */
   private async confirmAndSaveAffectedEntities(
     affectedEntities: AffectedEntity[],
+    trigger: UpdateTrigger,
   ): Promise<void> {
-    const userConfirmed = await this.showConfirmationDialog(affectedEntities);
+    const userConfirmed = await this.showConfirmationDialog(
+      affectedEntities,
+      trigger,
+    );
     if (!userConfirmed) return;
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
@@ -788,13 +901,19 @@ export class AutomatedFieldUpdateConfigService {
    */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
+    trigger: UpdateTrigger,
   ): Promise<AffectedEntity[] | null> {
     // loaded lazily to avoid a circular import (dialog -> field edit -> inherited value button -> this service)
     const { AutomatedFieldUpdateComponent } =
       await import("./automated-field-update.component");
     const dialogRef = this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: "90vh",
-      data: { entities: entitiesToUpdate },
+      data: {
+        entities: entitiesToUpdate,
+        trigger,
+        loadNextLevel: (affected: AffectedEntity, found: AffectedEntity[]) =>
+          this.loadAffectedEntitiesAbove(affected, found),
+      },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }

@@ -79,6 +79,16 @@ export class EditEntityComponent<
   implements OnInit, DoCheck, EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
+
+  /** Whether to highlight the selected entities that the entity does not have yet */
+  highlightAdded = input<boolean>(false);
+
+  readonly existingValues = computed(() =>
+    this.highlightAdded()
+      ? asArray(this.entity()?.[this.formFieldConfig()?.id] ?? [])
+      : undefined,
+  );
 
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<E, T>;
