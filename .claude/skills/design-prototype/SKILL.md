@@ -61,8 +61,9 @@ These come from the prototypes the team reviewed and liked.
   clear visual cue (for example a green "+" on a value that is added) over a sentence, and
   put explanations behind a small help (?) or tooltip. Leave out what the issue does not
   ask for.
+- **Show alternatives if applicable.** If there are multiple UI approaches that
+  are significantly different but similarly feasible, provide alternatives to test and compare.
 - **Mark assumptions.** Anything not decided in the issue goes into an **Open questions
-  for the team** section at the bottom, phrased so that people can answer yes or no. A
   revision starts with **What changed after the feedback**.
 - **Look right everywhere.** Light and dark theme, readable text contrast, and a layout
   that works at a narrow width. Use tokens only, no extra colors or fonts.
