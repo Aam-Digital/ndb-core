@@ -29,7 +29,8 @@ jobs:
       is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
   # PR images stay basic: linux/amd64 only, tagged `pr-<number>` and nothing else (so that the cleanup when the PR
-  # is closed can delete them). The image of the previous push is deleted as soon as this one replaces it.
+  # is closed can delete them). The images of earlier pushes, untagged by this one, are deleted by the cleanup when a
+  # PR is closed (pull-request-closed.yml).
   build:
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
