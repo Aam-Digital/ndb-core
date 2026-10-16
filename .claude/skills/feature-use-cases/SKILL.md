@@ -1,7 +1,7 @@
 ---
 name: feature-use-cases
-description: Write the "Planned scope: use cases" comment for a new feature on a GitHub issue, in plain language with concrete examples, so the team can agree on what the feature should do before anyone builds it. Use when someone says "I want use cases for this feature", "write the use cases for issue 1234", "describe the planned scope", or "what should this feature do for users". For new features and behavior changes only, not for bugs.
-argument-hint: <issue-url, issue-number or short feature description>
+description: Write the "Planned scope: use cases" comment for a new feature on a GitHub issue, in plain language with concrete examples, so the team can agree on what the feature should do before anyone builds it. Use when someone says "I want use cases for this feature", "write the use cases for issue 1234", "describe the planned scope", "what should this feature do", or "help me spec this out". For new features and behavior changes only, not for bugs.
+argument-hint: <issue-url, issue-number or short feature description> (optional)
 ---
 
 # Use cases for a feature
@@ -17,8 +17,9 @@ skill does not fit and stop: a bug needs steps to reproduce and the expected res
 
 ## Steps
 
-1. **Get the request.** The input is an issue (URL or number) or a short description.
-   For an issue, read it with its comments, because scope often changes there:
+1. **Get the request.** The input is an issue (URL or number) or a short description,
+   given as the argument or in the request itself. If there is neither, ask which feature
+   it is for. For an issue, read it with its comments, because scope often changes there:
    ```
    gh issue view <n> --repo Aam-Digital/ndb-core --json number,title,body,labels,comments
    ```

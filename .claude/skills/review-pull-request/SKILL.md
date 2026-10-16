@@ -1,7 +1,7 @@
 ---
 name: review-pull-request
-description: Review an ndb-core pull request before merge, given a PR URL or number. Checks what the linked issue asks for, reads the whole diff for bugs, and runs the checklist of problems our reviews catch again and again. Use when someone says "review this PR", "check PR 1234", "is this ready to merge", or wants a self-review of their own PR before asking for a human review.
-argument-hint: <pr-url-or-number>
+description: Review an ndb-core pull request before merge. Checks what the linked issue asks for, reads the whole diff for bugs, and runs the checklist of problems our reviews catch again and again. Use when someone says "review this PR", "can you do a code review", "check PR 1234", "look at my pull request", "is this ready to merge", or wants a self-review of their own PR before asking for a human review. Works with a PR URL or number, or with the PR of the current branch.
+argument-hint: <pr-url-or-number> (optional, defaults to the PR of the current branch)
 ---
 
 # Review a pull request
@@ -17,9 +17,11 @@ you can.
 
 ## Steps
 
-1. **Resolve the target.** Take the PR number from the argument (a URL such as
-   `https://github.com/Aam-Digital/ndb-core/pull/1234`, or a bare number). The repo is
-   `Aam-Digital/ndb-core` unless the URL names another one.
+1. **Resolve the target.** Take the PR number from the argument or from the request (a
+   URL such as `https://github.com/Aam-Digital/ndb-core/pull/1234`, or a bare number). The
+   repo is `Aam-Digital/ndb-core` unless the URL names another one. Without a number, use
+   the PR of the current branch (`gh pr view --json number,url`), and if there is none,
+   ask which PR to review.
 
 2. **Fetch the PR.**
 
