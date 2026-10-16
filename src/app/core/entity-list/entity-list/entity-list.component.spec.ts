@@ -96,6 +96,16 @@ describe("EntityListComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("should not fail if the configured title is not a string", () => {
+    createComponent();
+    initComponentInputs();
+    component.title.set(123 as any);
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    // @ts-ignore
+    expect(component.addNewAnalyticsAction()).toBe("123_add_new");
+  });
+
   it("should create columns from config", async () => {
     vi.useFakeTimers();
     try {
