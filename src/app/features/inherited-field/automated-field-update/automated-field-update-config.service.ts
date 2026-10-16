@@ -3,7 +3,10 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import type { AffectedEntity } from "./automated-field-update.component";
+import type {
+  AffectedEntity,
+  UpdateTrigger,
+} from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
 import {
   DefaultValueConfigInheritedField,
@@ -84,7 +87,10 @@ export class AutomatedFieldUpdateConfigService {
     );
 
     if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
+      await this.confirmAndSaveAffectedEntities(affectedEntities, {
+        entity,
+        before: entityBeforeChanges,
+      });
     }
   }
 
@@ -180,7 +186,10 @@ export class AutomatedFieldUpdateConfigService {
     );
 
     if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
+      await this.confirmAndSaveAffectedEntities(affectedEntities, {
+        entity,
+        before: entity,
+      });
     }
     return affectedEntities.length > 0;
   }
@@ -554,6 +563,7 @@ export class AutomatedFieldUpdateConfigService {
         affectedEntity: targetEntity,
         relatedReferenceField: rule.sourceReferenceField,
         relatedReferenceFieldEntityType,
+        sourceFieldId: rule.sourceValueField,
         addToExisting,
         hasNoCommonValue: showNoCommonValue,
       });
@@ -787,8 +797,12 @@ export class AutomatedFieldUpdateConfigService {
    */
   private async confirmAndSaveAffectedEntities(
     affectedEntities: AffectedEntity[],
+    trigger: UpdateTrigger,
   ): Promise<void> {
-    const userConfirmed = await this.showConfirmationDialog(affectedEntities);
+    const userConfirmed = await this.showConfirmationDialog(
+      affectedEntities,
+      trigger,
+    );
     if (!userConfirmed) return;
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
@@ -820,13 +834,14 @@ export class AutomatedFieldUpdateConfigService {
    */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
+    trigger: UpdateTrigger,
   ): Promise<AffectedEntity[] | null> {
     // loaded lazily to avoid a circular import (dialog -> field edit -> inherited value button -> this service)
     const { AutomatedFieldUpdateComponent } =
       await import("./automated-field-update.component");
     const dialogRef = this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: "90vh",
-      data: { entities: entitiesToUpdate },
+      data: { entities: entitiesToUpdate, trigger },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }

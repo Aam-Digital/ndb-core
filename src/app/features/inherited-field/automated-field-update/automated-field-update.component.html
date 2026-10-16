@@ -1,31 +1,55 @@
-<h2 mat-dialog-title i18n>Update related records</h2>
+<h2 mat-dialog-title class="title">
+  <span i18n>Update related records</span>
+  <app-help-button
+    i18n-text
+    text="Values of the changed record are added to the existing ones, existing values stay. A record takes a shared value only if all its linked records agree. You can change a suggested value before you confirm."
+  ></app-help-button>
+</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p i18n>
-    You have made changes to a field that is linked to other records and can
-    automatically update them.
-    @if (sharedLinkEntity) {
-      The following records are linked through the
-      <b>
-        "{{
-          sharedLinkEntity.relatedReferenceField
-            | entityFieldLabel
-              : sharedLinkEntity.relatedReferenceFieldEntityType
-        }}"
-      </b>
-      field.
-    }
-    Please review these affected records below. You can manually change the new
-    value if the automatically suggested value is not matching what you need.
-  </p>
+  @if (data.trigger) {
+    <div class="trigger">
+      <span class="trigger-label" i18n>Triggered by</span>
+      <app-entity-block
+        [entityId]="data.trigger.entity.getId()"
+      ></app-entity-block>
+      @for (change of triggerChanges; track change.field.id) {
+        <span class="trigger-change">
+          <app-entity-field-view
+            [field]="change.field"
+            [entity]="data.trigger.before"
+            showLabel="inline"
+          ></app-entity-field-view>
+          @if (change.isChanged) {
+            <fa-icon icon="arrow-right"></fa-icon>
+            <app-entity-field-view
+              [field]="change.field"
+              [entity]="data.trigger.entity"
+            ></app-entity-field-view>
+          }
+        </span>
+      }
+    </div>
+  }
 
   <table class="full-width">
     @for (entity of data.entities; track entity.id) {
-      <tr>
+      <tr [class]="'level-' + (entity.level ?? 1)">
         <td>
           <app-entity-block [entityId]="entity.id"></app-entity-block>
-          @if (!sharedLinkEntity) {
+          @if ((entity.level ?? 1) > 1) {
+            <div class="hint-text via">
+              <span i18n>via</span>
+              @for (viaId of entity.via; track viaId; let last = $last) {
+                <app-entity-block [entityId]="viaId"></app-entity-block>
+                @if (!last) {
+                  <span>, </span>
+                }
+              }
+            </div>
+          }
+          @if (!sharedLinkEntity && (entity.level ?? 1) === 1) {
             <div class="hint-text" i18n>
               Linked through "{{
                 entity.relatedReferenceField
@@ -44,23 +68,16 @@
           @if (entity.hasNoCommonValue) {
             <div class="hint-text no-common-value-warning">
               <fa-icon icon="warning"></fa-icon>
-              <span i18n>
-                The linked records have no value in common, so no new value is
-                suggested. The current value is kept unless you change it here.
-              </span>
+              <span i18n>No value in common, current value kept</span>
+              <fa-icon
+                icon="circle-info"
+                i18n-matTooltip
+                matTooltip="The linked records have no value in common, so no new value is suggested. The current value is kept unless you change it here."
+              ></fa-icon>
             </div>
           }
           @if (entity.unlinked) {
-            <div class="hint-text" i18n>
-              The record is no longer linked. Values that no other linked record
-              has are removed here.
-            </div>
-          } @else if (entity.addToExisting) {
-            <div class="hint-text" i18n>
-              The values of the linked record are added to the existing ones.
-              Values it just lost are removed here too, unless another linked
-              record still has them.
-            </div>
+            <div class="hint-text" i18n>No longer linked</div>
           }
         </td>
       </tr>

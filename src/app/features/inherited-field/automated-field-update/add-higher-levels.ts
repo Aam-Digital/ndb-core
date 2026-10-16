@@ -60,5 +60,5 @@ export async function addHigherLevels(
     currentLevel = uniq(nextLevel);
   }
 
-  return [...rows.values()];
+  return [...rows.values()].sort((a, b) => a.level - b.level);
 }
