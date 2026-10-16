@@ -232,7 +232,7 @@ The sync has already logged the failure: callers only need to tell the user.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="545" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:545</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="564" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:564</a></div>
                             </td>
                         </tr>
 
@@ -574,14 +574,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
     syncHandler.on(&quot;active&quot;, () &#x3D;&gt; armStallTimer());
     syncHandler.on(&quot;paused&quot;, () &#x3D;&gt; armStallTimer());
-    // per-doc rejections (e.g. 401/403 during push) that do not fail the
-    // overall sync and would otherwise leave a doc silently unsynced
-    syncHandler.on(&quot;denied&quot;, (err) &#x3D;&gt;
-      Logging.warn(
-        &quot;sync: server denied replication of a document&quot;,
-        { db: this.dbName },
-        err,
-      ),
+    // per-doc rejections (e.g. 401/403 during push) do not fail the overall
+    // sync, but leave the rejected change in the local database only
+    const deniedDocs: DeniedDoc[] &#x3D; [];
+    syncHandler.on(&quot;denied&quot;, (event: { doc?: DeniedDoc }) &#x3D;&gt;
+      deniedDocs.push(event?.doc ?? {}),
     );
     armStallTimer();
 
@@ -618,7 +615,26 @@ export class SyncedPouchDatabase extends PouchDatabase {
         if (isFirstSync) {
           this.remoteDatabase.trackLostPermissions &#x3D; true;
         }
+        this.logDeniedDocs(deniedDocs);
       });
+  }
+
+  /**
+   * Report the docs the server refused during one sync in a single warning,
+   * since a single push can be refused for hundreds of docs at once.
+   * Only counts and entity types, no document ids (see #4174).
+   */
+  private logDeniedDocs(deniedDocs: DeniedDoc[]) {
+    if (deniedDocs.length &#x3D;&#x3D;&#x3D; 0) {
+      return;
+    }
+    const ids &#x3D; deniedDocs.map((doc) &#x3D;&gt; doc.id).filter(Boolean);
+    Logging.warn(&quot;sync: server denied replication of documents&quot;, {
+      db: this.dbName,
+      denied: deniedDocs.length,
+      errors: [...new Set(deniedDocs.map((doc) &#x3D;&gt; doc.name))],
+      entityTypes: [...new Set(ids.map((id) &#x3D;&gt; id.split(&quot;:&quot;)[0]))],
+    });
   }
 
   /**
@@ -853,6 +869,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
 }
 
 type SyncResult &#x3D; PouchDB.Replication.SyncResultComplete&lt;any&gt;;
+
+/** The part of the error in a PouchDB &quot;denied&quot; event that is logged. */
+type DeniedDoc &#x3D; { id?: string; name?: string };
 
 /**
  * What of the last synced batch can be reported when a sync fails right after

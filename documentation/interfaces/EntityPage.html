@@ -238,7 +238,7 @@ paginated loader uses to mark its own position. Callers only pass it back.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:43</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:46</a></div>
                                 </td>
                             </tr>
 
@@ -277,7 +277,7 @@ paginated loader uses to mark its own position. Callers only pass it back.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:42</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:45</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,10 @@ import { filter, map } from &quot;rxjs/operators&quot;;
 import { UpdateMetadata } from &quot;../model/update-metadata&quot;;
 import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
 import { DatabaseResolverService } from &quot;../../database/database-resolver.service&quot;;
-import { DatabaseDocChange } from &quot;../../database/database&quot;;
+import {
+  DatabaseDocChange,
+  PartialBulkWriteError,
+} from &quot;../../database/database&quot;;
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { EntityPermissionError } from &quot;./entity-permission-error&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
@@ -584,17 +587,29 @@ export class EntityMapperService {
         );
         return this.dbResolver
           .getDatabase(databaseName)
-          .putAll(rawData, forceUpdate);
+          .putAll(rawData, forceUpdate)
+          .then(
+            (results) &#x3D;&gt; {
+              applyStoredRevisions(entitiesInDatabase, results);
+              return results;
+            },
+            (error) &#x3D;&gt; {
+              // putAll rejects as soon as any document failed, but the others
+              // are already stored (see Database.putAll). Without their new
+              // revisions, the next save of those entities would conflict
+              // with their own earlier write.
+              if (Array.isArray(error)) {
+                applyStoredRevisions(entitiesInDatabase, error);
+              } else if (error instanceof PartialBulkWriteError) {
+                applyStoredRevisions(entitiesInDatabase, error.storedResults);
+              }
+              throw error;
+            },
+          );
       },
     );
 
     const results &#x3D; (await Promise.all(savePromises)).flat();
-    results.forEach((res, idx) &#x3D;&gt; {
-      if (res.ok) {
-        const entity &#x3D; entities[idx];
-        entity._rev &#x3D; res.rev;
-      }
-    });
     return results;
   }
 
@@ -651,6 +666,24 @@ export class EntityMapperService {
       entity.created &#x3D; newMetadata;
     }
     entity.updated &#x3D; newMetadata;
+  }
+}
+
+/**
+ * Copy the revisions the database assigned back onto the saved entities.
+ *
+ * Matched by id rather than by position, so that a result missing from the
+ * response cannot shift revisions onto other entities.
+ */
+function applyStoredRevisions(entities: Entity[], results: any[]) {
+  const revisions &#x3D; new Map(
+    results.filter((r) &#x3D;&gt; r?.ok).map((r) &#x3D;&gt; [r.id, r.rev]),
+  );
+  for (const entity of entities) {
+    const rev &#x3D; revisions.get(entity.getId());
+    if (rev) {
+      entity._rev &#x3D; rev;
+    }
   }
 }
 </code></pre>

@@ -179,6 +179,9 @@
                             <a href="#applySortingRules" title="src/app/core/common-components/entities-table/entities-table-sort.store.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>applySortingRules</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-sort.store.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#applyStoredRevisions" title="src/app/core/entity/entity-mapper/entity-mapper.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>applyStoredRevisions</b>&nbsp;&nbsp;&nbsp;(src/.../entity-mapper.service.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#applyTextToCreatedEntity" title="src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>applyTextToCreatedEntity</b>&nbsp;&nbsp;&nbsp;(src/.../edit-entity.component.ts)</span></a>
                         </li>
                         <li>
@@ -5159,6 +5162,72 @@ The legacy <code>age</code> and <code>age_&lt;field&gt;</code> conventions remai
                         </div>
                             <div class="io-description">
                                 
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/entity/entity-mapper/entity-mapper.service.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyStoredRevisions"></a>
+                    <span class="name">
+                        <span ><b>applyStoredRevisions</b></span>
+                        <a href="#applyStoredRevisions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>applyStoredRevisions(entities, results)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Copy the revisions the database assigned back onto the saved entities.</p>
+<p>Matched by id rather than by position, so that a result missing from the
+response cannot shift revisions onto other entities.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>results</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                 </td>
             </tr>
