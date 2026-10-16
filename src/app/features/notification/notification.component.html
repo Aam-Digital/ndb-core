@@ -15,7 +15,7 @@
   </span>
 </button>
 
-<mat-menu #notificationList>
+<mat-menu #notificationList class="notification-menu">
   <div
     class="notification-panel flex-column"
     (click)="$event.stopPropagation()"
@@ -105,7 +105,7 @@
 </mat-menu>
 
 <!-- New mat-menu for ellipsis -->
-<mat-menu #settingsMenu>
+<mat-menu #settingsMenu class="notification-menu">
   <div
     class="notification-panel"
     (click)="closeOnlySubmenu(settingsMenuTrigger, $event)"
