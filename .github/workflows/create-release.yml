@@ -1,8 +1,7 @@
 name: Semantic Release
 # Creates a full release from master (manual release mode, see Aam-Digital/.github).
-# The shared workflow first deletes the `*-edge.*` (and former `*-master.*`) prereleases and their tags.
-# The Docker image, Sentry release and old prerelease image cleanup are handled by release-published.yml,
-# which is triggered when the release is published.
+# The Docker image, Sentry release, translations and the cleanup of old edge images are handled by
+# release-published.yml and i18n-publish-translations.yml, which are triggered when the release is published.
 on: workflow_dispatch
 
 permissions:
@@ -16,7 +15,6 @@ jobs:
     permissions:
       contents: read
     with:
-      type: release
       extra-plugins: |
         semantic-release-replace-plugin@1.2.6
         @semantic-release/git

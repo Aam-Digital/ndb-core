@@ -1,7 +1,7 @@
 name: Release Published - Publish a new build
-# CI flow for published releases and prereleases: build, Docker image, Sentry release and image cleanup.
-# Releases are created with the GH_TOKEN PAT (on-master-push.yml for prereleases X.Y.Z-edge.N,
-# create-release.yml for full releases); releases created with the GITHUB_TOKEN would not trigger this.
+# CI flow for published releases: build, Docker image, Sentry release and image cleanup.
+# Releases are created with the GH_TOKEN PAT (create-release.yml); releases created with the GITHUB_TOKEN would not
+# trigger this. Edge builds of master pushes create no GitHub release; on-master-push.yml builds their image.
 # Whether it is a full release is read from the release's prerelease flag, never from the version string.
 
 on:
@@ -21,16 +21,11 @@ jobs:
       packages: write
     with:
       build_name: ${{ github.event.release.tag_name }}
-      # Image tags:
-      # - always the version (the release's tag name)
-      # - full release: `stable` and `latest`
-      # - prerelease (X.Y.Z-edge.N): `edge`; during the transition from the former `-master.N` prereleases also
-      #   `master` (consumers still following `:master` must switch to `:edge`, then the `master` tag is dropped)
+      # Image tags: the version (the release's tag name), and `stable` and `latest` for a full release
       version: ${{ github.event.release.tag_name }}
       stable: ${{ !github.event.release.prerelease }}
-      tags: ${{ github.event.release.prerelease && 'edge,master' || '' }}
 
-  # After a full release, the prerelease images (`*-edge.*`, `*-master.*`) on ghcr.io are no longer needed.
+  # After a full release, the edge images (`*-edge.*`, formerly `*-master.*`) on ghcr.io are no longer needed.
   # Images still tagged `edge`, `master`, `stable` or `latest` are kept. Docker Hub is not covered.
   prune-prerelease-images:
     if: ${{ !github.event.release.prerelease }}

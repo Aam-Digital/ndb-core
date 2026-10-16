@@ -41,24 +41,43 @@ jobs:
           publish_dir: doc/compodoc
           destination_dir: documentation
 
-  # Creates the prerelease `X.Y.Z-edge.N` (manual release mode, see Aam-Digital/.github), once there is a
-  # releasable change since the last full release. The image is built by release-published.yml.
-  pre-release:
-    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+  # Edge build of every master push (see Aam-Digital/.github): version `X.Y.Z-edge.N` (the last release with the patch
+  # number bumped, plus the commits since), no tag and no GitHub release. Full releases: create-release.yml.
+  edge-version:
     needs:
       - qa
       - qa-e2e
-    uses: Aam-Digital/.github/.github/workflows/release.yml@feat/reusable-workflows # TODO switch to @v1
+    uses: Aam-Digital/.github/.github/workflows/edge-version.yml@feat/reusable-workflows # TODO switch to @v1
     permissions:
       contents: read
+
+  # Image `X.Y.Z-edge.N`, plus `edge` (and `master` until the transition from `:master` is done) if this is still the
+  # newest master commit. A newer push cancels an older edge build, so that `edge` never moves back.
+  edge-build:
+    needs: edge-version
+    concurrency:
+      group: edge-build
+      cancel-in-progress: true
+    uses: ./.github/workflows/_build.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
     with:
-      type: prerelease
-      # the same plugins as for full releases (create-release.yml): the configuration in .releaserc is loaded
-      extra-plugins: |
-        semantic-release-replace-plugin@1.2.6
-        @semantic-release/git
-        @semantic-release/github
-        semantic-release-slack-bot
-    secrets:
-      token: ${{ secrets.GH_TOKEN }}
-      slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+      build_name: ${{ needs.edge-version.outputs.version }}
+      version: ${{ needs.edge-version.outputs.version }}
+      tags: ${{ needs.edge-version.outputs.is-head == 'true' && 'edge,master' || '' }}
+
+  # Translations for the edge version (`locale/X.Y.Z-edge.N`), to check new texts before a release. They are removed
+  # again by the next full release. After compodoc, which also pushes to gh-pages.
+  edge-translations:
+    needs:
+      - edge-version
+      - create-and-deploy-compodoc
+    uses: ./.github/workflows/i18n-publish-translations.yml
+    secrets: inherit
+    permissions:
+      contents: write # push to gh-pages
+    with:
+      version: ${{ needs.edge-version.outputs.version }}
+      update-latest: false
