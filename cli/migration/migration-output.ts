@@ -4,6 +4,7 @@ import type {
   MigrationDefinition,
   MigrationOutcome,
   MigrationResult,
+  MigrationVerdict,
 } from "./migration-definition.js";
 
 export function printBanner(
@@ -34,7 +35,22 @@ const STATUS_COLORS: Record<
   failed: "red",
 };
 
-/** Prints a single org's outcome line (plus warnings/details), as each org is processed. */
+const VERDICT_STYLES: Record<
+  MigrationVerdict["kind"],
+  { symbol: string; color: Parameters<typeof color>[0] }
+> = {
+  add: { symbol: "+", color: "green" },
+  remove: { symbol: "-", color: "red" },
+  review: { symbol: "!", color: "yellow" },
+  none: { symbol: "=", color: "gray" },
+};
+
+function formatVerdict({ kind, text }: MigrationVerdict): string {
+  const style = VERDICT_STYLES[kind];
+  return color(style.color, `${style.symbol} ${text}`);
+}
+
+/** Prints a single org's outcome line (plus warnings/details and verdicts), as each org is processed. */
 export function printOutcome(
   { org, result: { result, writeStats } }: OrgOutcome<MigrationOutcome>,
   showWriteStats: boolean,
@@ -58,6 +74,9 @@ export function printOutcome(
       .split("\n")
       .forEach((line) => console.log(`    ${line}`));
   }
+  result.verdicts?.forEach((verdict) =>
+    console.log(`    ${formatVerdict(verdict)}`),
+  );
 }
 
 export function printSummary(
@@ -76,6 +95,23 @@ export function printSummary(
   counts.failed += unreachableCount;
 
   console.log("\n" + "─".repeat(60));
+  const withVerdicts = outcomes.filter(
+    ({ result: { result } }) => result.verdicts?.length,
+  );
+  if (withVerdicts.length > 0) {
+    console.log("Verdicts:");
+    for (const {
+      org,
+      result: { result },
+    } of withVerdicts) {
+      console.log(
+        `  ${color("bold", OrgRunner.orgLabel(org).padEnd(50))}${result
+          .verdicts!.map(formatVerdict)
+          .join(color("gray", " · "))}`,
+      );
+    }
+    console.log("─".repeat(60));
+  }
   console.log(
     "Summary: " +
       [

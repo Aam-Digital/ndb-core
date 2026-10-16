@@ -5,6 +5,7 @@ import {
   LoaderMethod,
 } from "./entity-special-loader.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import { NotesService } from "../../../child-dev-project/notes/notes.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
 import type { Mock } from "vitest";
@@ -13,6 +14,9 @@ import { AuditReferenceLoaderService } from "#src/app/features/change-history/au
 
 type ChildrenServiceMock = {
   getChildren: Mock;
+};
+
+type NotesServiceMock = {
   getNotesRelatedTo: Mock;
 };
 
@@ -24,6 +28,7 @@ describe("EntitySpecialLoaderService", () => {
   let service: EntitySpecialLoaderService;
 
   let mockChildrenService: ChildrenServiceMock;
+  let mockNotesService: NotesServiceMock;
   let mockHistoricalDataService: HistoricalDataServiceMock;
   let mockTodoService: Partial<TodoService>;
   let mockAuditReferenceLoader: Partial<AuditReferenceLoaderService>;
@@ -31,6 +36,8 @@ describe("EntitySpecialLoaderService", () => {
   beforeEach(() => {
     mockChildrenService = {
       getChildren: vi.fn(),
+    };
+    mockNotesService = {
       getNotesRelatedTo: vi.fn(),
     };
     mockHistoricalDataService = {
@@ -46,6 +53,7 @@ describe("EntitySpecialLoaderService", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: NotesService, useValue: mockNotesService },
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
         { provide: TodoService, useValue: mockTodoService },
         {
@@ -67,10 +75,10 @@ describe("EntitySpecialLoaderService", () => {
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
   });
 
-  it("should load notes related to an entity via ChildrenService", async () => {
+  it("should load notes related to an entity via NotesService", async () => {
     const entity = new TestEntity();
     const notes = [{ id: "note-1" }];
-    mockChildrenService.getNotesRelatedTo.mockResolvedValue(notes);
+    mockNotesService.getNotesRelatedTo.mockResolvedValue(notes);
 
     const actual = await service.loadDataFor(
       LoaderMethod.NotesRelatedToEntity,
@@ -78,7 +86,7 @@ describe("EntitySpecialLoaderService", () => {
     );
 
     expect(actual).toEqual(notes);
-    expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
+    expect(mockNotesService.getNotesRelatedTo).toHaveBeenCalledWith(
       entity.getId(),
     );
   });

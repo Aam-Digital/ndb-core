@@ -37,6 +37,11 @@ export class TrackedMigrationContext implements MigrationContext {
     readonly log: MigrationLogger,
     private readonly backupRun: BackupRun,
     readonly args: string[] = [],
+    /** defaults to declining, for non-interactive use */
+    readonly confirm: (
+      question: string,
+      id: string,
+    ) => Promise<boolean> = async () => false,
   ) {}
 
   validateJson(value: unknown): void {

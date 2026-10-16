@@ -6,9 +6,9 @@
 
 1. Don't get overwhelmed by the mass of config files in the root directory.
    Jump directly to the subfolder `src/app/` where the actually relevant code is located.
-2. The project is structured into several Modules, each in its own folder under src/app/core (general features) or src/app/child-ded-project (special user-facing features)
+2. The project is structured into several Modules, each in its own folder under src/app/core (general features) or src/app/features (specialized features)
 3. To extend upon the existing system, don't worry about the lower layer modules.
-   Focus on understanding the top level modules adding user features like the `SchoolModule` and the `ChildrenModule`.
+   Focus on understanding the some feature modules and the components you need.
 
 ---
 

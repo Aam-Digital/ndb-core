@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { ChildrenService } from "../../child-dev-project/children/children.service";
+import { NotesService } from "../../child-dev-project/notes/notes.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
@@ -18,7 +18,7 @@ import { TimePeriod } from "../entity-details/related-time-period-entities/time-
 })
 export class QueryService {
   private entityMapper = inject(EntityMapperService);
-  private childrenService = inject(ChildrenService);
+  private notesService = inject(NotesService);
   private attendanceService = inject(AttendanceService);
 
   private entities: { [type: string]: { [id: string]: Entity } } = {};
@@ -51,7 +51,7 @@ export class QueryService {
   } = {
     Note: {
       dataFunction: (from, to) =>
-        this.childrenService.getNotesInTimespan(from, to),
+        this.notesService.getNotesInTimespan(from, to),
     },
   };
 

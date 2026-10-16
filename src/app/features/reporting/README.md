@@ -200,40 +200,43 @@ JOIN School s ON s._id = c.schoolId
 
 ##### Unpack a multi-select (isArray) entity-reference field
 
-A field with `dataType: "entity"` and `isArray: true` stores a JSON array of ids (e.g. `Note.children`).
-Unpack it with `json_each()` and join to resolve each id to a name:
+A field with `dataType: "entity"` and `isArray: true` stores a JSON array of ids
+(e.g. `Note.relatedEntities`). Unpack it with `json_each()` and join to resolve each id to a name:
 
 ```sql
 SELECT n.subject AS note, c.name AS participant
-FROM Note n, json_each(n.children) p
+FROM Note n, json_each(n.relatedEntities) p
 JOIN Child c ON c._id = p.value
 ```
 
-##### Attendance status of individual participants from EventNote
+##### Attendance status of individual participants
 
-`childrenAttendance` stores one `[childId, {status, remarks}]` pair per participant as a JSON array,
+A field with `dataType: "attendance"` stores a JSON array of `{participant, status, remarks}` objects,
 which can be unpacked with [SQLite's `json_each()`](https://www.sqlite.org/json1.html#jeach):
 
 ```sql
-SELECT json_extract(value, '$[0]') AS participant_id,
-  json_extract(value, '$[1].status') AS status,
-  json_extract(e.schools, '$[0]') AS team_id
-FROM EventNote e, json_each(e.childrenAttendance)
+SELECT json_extract(value, '$.participant') AS participant_id,
+  json_extract(value, '$.status') AS status
+FROM Event e, json_each(e.attendance)
 JOIN Child AS c ON c._id = participant_id
-JOIN School AS s ON s._id = team_id
 ```
 
 The same pattern calculates an attendance percentage per participant, filtered by event category:
 
 ```sql
-SELECT json_extract(value, '$[0]') AS participant_id, e.category,
-  ROUND((SUM(CASE WHEN json_extract(value, '$[1].status') = 'PRESENT' THEN 1 ELSE 0 END) * 100.0
+SELECT json_extract(value, '$.participant') AS participant_id, e.category,
+  ROUND((SUM(CASE WHEN json_extract(value, '$.status') = 'PRESENT' THEN 1 ELSE 0 END) * 100.0
     / COUNT(e._id)), 2) AS attendance_percentage
-FROM EventNote e, json_each(e.childrenAttendance)
-JOIN Child c ON c._id = json_extract(value, '$[0]')
+FROM Event e, json_each(e.attendance)
+JOIN Child c ON c._id = json_extract(value, '$.participant')
 WHERE e.category IN ('LEARNING_GROUP', 'PIC') AND e.date BETWEEN $startDate AND $endDate
 GROUP BY c._id, e.category
 ```
+
+> **Legacy format:** the deprecated `event-attendance-map` datatype (`Note.childrenAttendance`, only
+> present in systems the `oneoff-20261008-note-legacy-child-school-fields` migration restored it for)
+> instead stores one `[participantId, {status, remarks}]` pair per participant, so it is unpacked with
+> `json_extract(value, '$[0]')` for the participant and `json_extract(value, '$[1].status')` for the status.
 
 ##### Group by each option of a multi-select dropdown
 

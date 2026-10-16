@@ -11,7 +11,7 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
 import { Note } from "../../child-dev-project/notes/model/note";
 import { AttendanceItem } from "#src/app/features/attendance/model/attendance-item";
 import { AttendanceStatusType } from "#src/app/features/attendance/model/attendance-status";
-import { ChildrenService } from "../../child-dev-project/children/children.service";
+import { NotesService } from "../../child-dev-project/notes/notes.service";
 import { AttendanceService } from "#src/app/features/attendance/attendance.service";
 import { EventWithAttendance } from "#src/app/features/attendance/model/event-with-attendance";
 import { EntityRegistry } from "../entity/database-entity.decorator";
@@ -26,7 +26,7 @@ import { defaultAttendanceStatusTypes } from "../config/default-config/default-a
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import type { Mock } from "vitest";
 
-type ChildrenServiceMock = {
+type NotesServiceMock = {
   getNotesInTimespan: Mock;
 };
 
@@ -44,7 +44,7 @@ type AttendanceServiceMock = {
 describe("QueryService", () => {
   let service: QueryService;
   let mockEntityMapper: MockEntityMapperService;
-  let mockChildrenService: ChildrenServiceMock;
+  let mockNotesService: NotesServiceMock;
   let mockAttendanceService: AttendanceServiceMock;
   let mockEntityRegistry: EntityRegistry;
 
@@ -59,12 +59,10 @@ describe("QueryService", () => {
   );
 
   beforeEach(() => {
-    mockChildrenService = {
-      getNotesInTimespan: vi
-        .fn()
-        .mockName("ChildrenService.getNotesInTimespan"),
+    mockNotesService = {
+      getNotesInTimespan: vi.fn().mockName("NotesService.getNotesInTimespan"),
     };
-    mockChildrenService.getNotesInTimespan.mockReturnValue(Promise.resolve([]));
+    mockNotesService.getNotesInTimespan.mockReturnValue(Promise.resolve([]));
 
     mockAttendanceService = {
       getEventsOnDate: vi.fn().mockName("AttendanceService.getEventsOnDate"),
@@ -94,7 +92,7 @@ describe("QueryService", () => {
       providers: [
         QueryService,
         mockEntityMapperProvider([]),
-        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: NotesService, useValue: mockNotesService },
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: EntityRegistry, useValue: mockEntityRegistry },
         { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
@@ -147,13 +145,13 @@ describe("QueryService", () => {
   describe("cacheRequiredData", () => {
     it("should load Note entities using dataFunction", async () => {
       const note = Note.create(new Date());
-      mockChildrenService.getNotesInTimespan.mockResolvedValue([note]);
+      mockNotesService.getNotesInTimespan.mockResolvedValue([note]);
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
       await service.cacheRequiredData("Note:toArray", from, to);
 
-      expect(mockChildrenService.getNotesInTimespan).toHaveBeenCalledWith(
+      expect(mockNotesService.getNotesInTimespan).toHaveBeenCalledWith(
         from,
         to,
       );
@@ -179,31 +177,31 @@ describe("QueryService", () => {
     });
 
     it("should not reload entities when requested range is within cached range", async () => {
-      mockChildrenService.getNotesInTimespan.mockResolvedValue([]);
+      mockNotesService.getNotesInTimespan.mockResolvedValue([]);
 
       const from = moment().subtract(2, "weeks").toDate();
       const to = new Date();
       await service.cacheRequiredData("Note:toArray", from, to);
-      expect(mockChildrenService.getNotesInTimespan).toHaveBeenCalledTimes(1);
+      expect(mockNotesService.getNotesInTimespan).toHaveBeenCalledTimes(1);
 
       const narrowFrom = moment().subtract(1, "week").toDate();
       await service.cacheRequiredData("Note:toArray", narrowFrom, to);
 
-      expect(mockChildrenService.getNotesInTimespan).toHaveBeenCalledTimes(1);
+      expect(mockNotesService.getNotesInTimespan).toHaveBeenCalledTimes(1);
     });
 
     it("should reload entities when requested range extends beyond cached range", async () => {
-      mockChildrenService.getNotesInTimespan.mockResolvedValue([]);
+      mockNotesService.getNotesInTimespan.mockResolvedValue([]);
 
       const from = moment().subtract(1, "week").toDate();
       const to = new Date();
       await service.cacheRequiredData("Note:toArray", from, to);
-      expect(mockChildrenService.getNotesInTimespan).toHaveBeenCalledTimes(1);
+      expect(mockNotesService.getNotesInTimespan).toHaveBeenCalledTimes(1);
 
       const extendedFrom = moment().subtract(2, "weeks").toDate();
       await service.cacheRequiredData("Note:toArray", extendedFrom, to);
 
-      expect(mockChildrenService.getNotesInTimespan).toHaveBeenCalledTimes(2);
+      expect(mockNotesService.getNotesInTimespan).toHaveBeenCalledTimes(2);
     });
 
     it("should remove entity from cache when receiveUpdates emits remove event", async () => {
