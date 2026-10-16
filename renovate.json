@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "`Final Review` replaces the shared preset's `dependencies` label, in `labels` and in `vulnerabilityAlerts.labels`: label-triggered-review.yml fires on it, so dependency PRs get an Argos visual review. Keep it in both places, otherwise one kind of Renovate PR silently skips that review.",
   "extends": [
     "local>Aam-Digital/.github//renovate/default",
     "local>Aam-Digital/.github//renovate/node",
