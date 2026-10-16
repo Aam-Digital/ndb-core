@@ -59,7 +59,9 @@ jobs:
       group: edge-build
       cancel-in-progress: true
     uses: ./.github/workflows/_build.yaml
-    secrets: inherit
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     permissions:
       contents: read
       packages: write
@@ -75,7 +77,9 @@ jobs:
       - edge-version
       - create-and-deploy-compodoc
     uses: ./.github/workflows/i18n-publish-translations.yml
-    secrets: inherit
+    secrets:
+      POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+      POEDITOR_PROJECT_ID: ${{ secrets.POEDITOR_PROJECT_ID }}
     permissions:
       contents: write # push to gh-pages
     with:

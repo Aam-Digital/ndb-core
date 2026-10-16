@@ -21,6 +21,11 @@ on:
         required: false
         default: true
         description: Also publish them as `locale/latest`
+    secrets:
+      POEDITOR_API_TOKEN:
+        required: true
+      POEDITOR_PROJECT_ID:
+        required: true
 
 permissions:
   contents: write

@@ -40,6 +40,13 @@ on:
         required: false
         default: true
         description: Push the image. If false (e.g. for fork PRs), the image is only built.
+    secrets:
+      DOCKER_USERNAME:
+        required: false
+        description: Docker Hub user for `aamdigital/ndb-server` (not available to fork PRs)
+      DOCKER_PASSWORD:
+        required: false
+        description: Docker Hub token of DOCKER_USERNAME
 
 permissions:
   contents: read
