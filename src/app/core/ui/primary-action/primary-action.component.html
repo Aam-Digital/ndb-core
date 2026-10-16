@@ -2,6 +2,9 @@
   <button
     mat-fab
     class="primary-action"
+    [attr.aria-label]="actionLabel"
+    [matTooltip]="actionLabel"
+    matTooltipPosition="before"
     (click)="primaryAction()"
     angulartics2On="click"
     angularticsCategory="Navigation"

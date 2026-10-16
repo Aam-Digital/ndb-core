@@ -12,6 +12,7 @@ import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { PrimaryActionConfig } from "../../admin/admin-primary-action/primary-action-config";
@@ -34,6 +35,7 @@ import { PrimaryActionService } from "../../admin/admin-primary-action/primary-a
     DisableEntityOperationDirective,
     FontAwesomeModule,
     FaDynamicIconComponent,
+    MatTooltipModule,
   ],
 })
 export class PrimaryActionComponent implements OnDestroy {
@@ -59,6 +61,18 @@ export class PrimaryActionComponent implements OnDestroy {
     return this.primaryActionService.getEntityConstructor(
       this.config.entityType,
     );
+  }
+
+  /**
+   * Accessible name and tooltip of the icon-only button, saying what it does.
+   */
+  get actionLabel(): string {
+    const entityLabel =
+      this.config.actionType === "createEntity" &&
+      this.entityConstructor?.label;
+    return entityLabel
+      ? $localize`Add new ${entityLabel}`
+      : $localize`Quick action`;
   }
 
   /**
