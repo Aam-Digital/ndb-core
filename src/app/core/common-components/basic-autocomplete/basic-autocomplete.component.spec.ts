@@ -174,6 +174,27 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.autocomplete()!.panelOpen).toBe(true);
   });
 
+  it("should highlight the chips of selected values that are not among the existing values", () => {
+    fixture.componentRef.setInput("options", [0, 1, 2]);
+    fixture.componentRef.setInput("multi", true);
+    fixture.componentRef.setInput("display", "chips");
+    component.value = [0, 1];
+    const chips = () =>
+      Array.from<HTMLElement>(
+        fixture.nativeElement.querySelectorAll("mat-chip-row"),
+      );
+    const isHighlighted = (chip: HTMLElement) =>
+      chip.classList.contains("added") && !!chip.querySelector(".added-icon");
+
+    fixture.componentRef.setInput("existingValues", [0]);
+    fixture.detectChanges();
+    expect(chips().map(isHighlighted)).toEqual([false, true]);
+
+    fixture.componentRef.setInput("existingValues", undefined);
+    fixture.detectChanges();
+    expect(chips().map(isHighlighted)).toEqual([false, false]);
+  });
+
   it("should keep the keyboard navigation on the selected option in multi select mode", async () => {
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
     fixture.componentRef.setInput("options", ["one", "two", "three"]);

@@ -9,4 +9,5 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 export interface EditComponent {
   formFieldConfig?: InputSignal<FormFieldConfig | undefined>;
   entity?: InputSignal<Entity | undefined>;
+  highlightAdded?: InputSignal<boolean>;
 }

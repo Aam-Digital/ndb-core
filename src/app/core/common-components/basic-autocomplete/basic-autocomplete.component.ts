@@ -42,6 +42,7 @@ import {
   MatChipRow,
 } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
+import { isEqual } from "lodash-es";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -291,6 +292,25 @@ export class BasicAutocompleteComponent<O, V = O>
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions = signal<SelectableOption<O, V>[]>([]);
+
+  /**
+   * The values that existed before the user selected anything (multi select only).
+   * If given, selected values that are not among them are highlighted as added.
+   */
+  existingValues = input<V[]>();
+
+  /** The selected options that are not among the `existingValues` */
+  readonly addedOptions = computed(() => {
+    const existingValues = this.existingValues();
+    return new Set(
+      existingValues
+        ? this._selectedOptions().filter(
+            (option) =>
+              !existingValues.some((value) => isEqual(value, option.asValue)),
+          )
+        : [],
+    );
+  });
 
   /**
    * Keep the search value to help users quickly multi-select multiple related options without having to type filter text again

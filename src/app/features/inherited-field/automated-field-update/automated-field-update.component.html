@@ -64,6 +64,7 @@
             [entity]="entity.affectedEntity"
             [form]="entity.form"
             [hideInheritButton]="true"
+            [highlightAdded]="entity.addToExisting"
           ></app-entity-field-edit>
           @if (entity.hasNoCommonValue) {
             <div class="hint-text no-common-value-warning">
