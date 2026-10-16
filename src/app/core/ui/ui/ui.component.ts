@@ -24,6 +24,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -98,6 +99,7 @@ import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
 export class UiComponent {
   private screenWidthObserver = inject(ScreenWidthObserver);
   private siteSettingsService = inject(SiteSettingsService);
+  private readonly ability = inject(EntityAbility);
   private sessionManager = inject(SessionManagerService);
   private setupService = inject(SetupService);
   private router = inject(Router);
@@ -113,6 +115,7 @@ export class UiComponent {
 
   /** latest version of the site settings*/
   siteSettings = signal<SiteSettings>(new SiteSettings());
+
   isDesktop = false;
   isLoggedIn: Signal<boolean> = toSignal(
     this.loginState.pipe(
@@ -189,5 +192,11 @@ export class UiComponent {
   navigateToProfile(): void {
     this.closeSidenavOnMobile();
     this.router.navigate(["user-account"]);
+  }
+
+  /** admins see a hint if the configured logo file is missing, so they can upload it again */
+  canEditSiteSettings(): boolean {
+    // not a signal: permission rules may be (re)loaded at any time
+    return this.ability.can("update", this.siteSettings());
   }
 }

@@ -25,6 +25,23 @@ export type DynamicValidator =
   | "pattern";
 
 /**
+ * All validator names supported in a {@link FormValidatorConfig}
+ * (used to validate the config when an admin saves it).
+ */
+export const DYNAMIC_VALIDATORS: readonly DynamicValidator[] = [
+  "min",
+  "max",
+  "minDate",
+  "maxDate",
+  "minAge",
+  "maxAge",
+  "required",
+  "uniqueId",
+  "readonlyAfterSet",
+  "pattern",
+];
+
+/**
  * the validators config. This is an object where the key
  * must be one of the `DynamicValidators`. The value to that key
  * is specific to that validator.
