@@ -841,7 +841,12 @@ export class AutomatedFieldUpdateConfigService {
       await import("./automated-field-update.component");
     const dialogRef = this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: "90vh",
-      data: { entities: entitiesToUpdate, trigger },
+      data: {
+        entities: entitiesToUpdate,
+        trigger,
+        loadNextLevel: (affected: AffectedEntity) =>
+          this.loadAffectedEntitiesAbove(affected),
+      },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }

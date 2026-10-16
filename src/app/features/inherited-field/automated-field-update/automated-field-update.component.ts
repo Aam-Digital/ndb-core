@@ -8,7 +8,9 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
 import {
@@ -24,7 +26,9 @@ import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
-import { uniq } from "lodash-es";
+import { isEqual, uniq } from "lodash-es";
+import { concatMap, debounceTime, Subject, switchMap } from "rxjs";
+import { addHigherLevels } from "./add-higher-levels";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
 /**
@@ -75,6 +79,12 @@ export interface AffectedEntity {
 
   /** Ids of the records this one is reached from (the changed entity, or affected entities of the level below) */
   via?: string[];
+
+  /** Whether the user changed the suggested value */
+  edited?: boolean;
+
+  /** Whether the suggestion changed after the user had changed the value (the value of the user is kept) */
+  suggestionChanged?: boolean;
 }
 
 /** The change that opened the update dialog */
@@ -84,6 +94,13 @@ export interface UpdateTrigger {
 
   /** The changed entity before the change (the same as entity if there is no change) */
   before: Entity;
+}
+
+/** How long to wait for further changes of the user before the entities above are updated */
+const RECALCULATION_DELAY_MS = 300;
+
+function isSameRow(a: AffectedEntity, b: AffectedEntity): boolean {
+  return a.id === b.id && a.targetFieldId === b.targetFieldId;
 }
 
 /**
@@ -115,6 +132,8 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   data = inject<{
     entities: AffectedEntity[];
     trigger?: UpdateTrigger;
+    /** Finds the entities that would be updated next if the given affected entity had its suggested value */
+    loadNextLevel?: (affected: AffectedEntity) => Promise<AffectedEntity[]>;
   }>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
@@ -124,6 +143,18 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   entityConstructor: EntityConstructor;
+
+  /** The affected entities that are shown, the ones above the first level are updated when a value is changed */
+  readonly rows = signal<AffectedEntity[]>(this.data.entities);
+
+  /** Whether the entities above are being updated after a change, which has to finish before saving */
+  readonly recalculating = signal(false);
+
+  private readonly firstLevel = this.data.entities
+    .filter((entity) => (entity.level ?? 1) === 1)
+    .map((entity) => ({ ...entity }));
+  private readonly valueChanged = new Subject<void>();
+  private changeCount = 0;
 
   /** The fields of the changed entity that caused the update, to show what changed */
   readonly triggerChanges = this.getTriggerChanges();
@@ -180,40 +211,157 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.recalculateOnChange();
     for (const entity of this.data.entities) {
-      const fieldId = entity.targetFieldId;
-      const entityConstructor = entity.targetEntityType;
-
-      entity.selectedField = this.entityFormService.extendFormFieldConfig(
-        fieldId,
-        entityConstructor,
-      );
-
-      const entityForm = await this.entityFormService.createEntityForm(
-        [fieldId],
-        entity.affectedEntity,
-        this.destroyRef,
-      );
-
-      entity.form = entityForm;
-
-      const formattedValue = this.entitySchemaService.valueToEntityFormat(
-        entity.newValue,
-        entity.selectedField,
-      );
-      entity.form.formGroup.controls[fieldId].setValue(formattedValue);
+      await this.initRow(entity);
     }
     this.cdr.markForCheck();
   }
 
+  private async initRow(entity: AffectedEntity): Promise<void> {
+    const fieldId = entity.targetFieldId;
+
+    entity.selectedField = this.entityFormService.extendFormFieldConfig(
+      fieldId,
+      entity.targetEntityType,
+    );
+
+    entity.form = await this.entityFormService.createEntityForm(
+      [fieldId],
+      entity.affectedEntity,
+      this.destroyRef,
+    );
+
+    const control = entity.form.formGroup.controls[fieldId];
+    control.setValue(
+      this.entitySchemaService.valueToEntityFormat(
+        entity.newValue,
+        entity.selectedField,
+      ),
+    );
+    control.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.onValueChange(entity));
+  }
+
+  private onValueChange(entity: AffectedEntity): void {
+    entity.edited = !isEqual(this.getDatabaseValue(entity), entity.newValue);
+    entity.suggestionChanged = entity.edited && entity.suggestionChanged;
+    this.changeCount++;
+    this.recalculating.set(true);
+    this.valueChanged.next();
+  }
+
+  /** The current value of the form field, in the format of the suggested value */
+  private getDatabaseValue(entity: AffectedEntity) {
+    return this.entitySchemaService.valueToDatabaseFormat(
+      entity.form.formGroup.controls[entity.targetFieldId].value,
+      entity.selectedField,
+      entity.affectedEntity,
+    );
+  }
+
+  /** Suggest the values of the entities above again whenever a value is changed, as they are based on it */
+  private recalculateOnChange(): void {
+    if (!this.data.loadNextLevel || !this.data.trigger) return;
+
+    this.valueChanged
+      .pipe(
+        debounceTime(RECALCULATION_DELAY_MS),
+        switchMap(async () => {
+          const changes = this.changeCount;
+          return { changes, higherLevels: await this.loadHigherLevels() };
+        }),
+        concatMap(async ({ changes, higherLevels }) => {
+          await this.showRows(higherLevels);
+          return changes;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((changes) => {
+        if (changes === this.changeCount) {
+          this.recalculating.set(false);
+        }
+      });
+  }
+
+  private loadHigherLevels(): Promise<AffectedEntity[]> {
+    return addHigherLevels(
+      this.firstLevel,
+      this.data.trigger.entity.getId(),
+      (source) => {
+        // what the user entered is the base for the entities above
+        const row = this.rows().find((r) => isSameRow(r, source));
+        return this.data.loadNextLevel(
+          row?.edited
+            ? { ...source, newValue: this.getDatabaseValue(row) }
+            : source,
+        );
+      },
+    );
+  }
+
+  /** Show the given entities, keeping the form (and so the changes of the user) of the ones that are shown already */
+  private async showRows(entities: AffectedEntity[]): Promise<void> {
+    const rows: AffectedEntity[] = [];
+    for (const next of entities) {
+      const row = this.rows().find((r) => isSameRow(r, next));
+      if (!row) {
+        await this.initRow(next);
+        rows.push(next);
+        continue;
+      }
+
+      row.suggestionChanged =
+        row.edited &&
+        (row.suggestionChanged || !isEqual(row.newValue, next.newValue));
+      Object.assign(row, {
+        newValue: next.newValue,
+        level: next.level,
+        via: next.via,
+        hasNoCommonValue: next.hasNoCommonValue,
+        unlinked: next.unlinked,
+      });
+      if (!row.edited) {
+        this.setFormValue(row);
+      }
+      rows.push(row);
+    }
+
+    this.rows.set(rows);
+    this.cdr.markForCheck();
+  }
+
+  /** Replace the value that the user entered with the suggested value */
+  useSuggestion(entity: AffectedEntity): void {
+    entity.edited = false;
+    entity.suggestionChanged = false;
+    this.setFormValue(entity);
+    this.changeCount++;
+    this.recalculating.set(true);
+    this.valueChanged.next();
+  }
+
+  private setFormValue(entity: AffectedEntity): void {
+    // without notifying the form, as it is not a change of the user
+    entity.form.formGroup.controls[entity.targetFieldId].setValue(
+      this.entitySchemaService.valueToEntityFormat(
+        entity.newValue,
+        entity.selectedField,
+      ),
+      { emitEvent: false },
+    );
+  }
+
   onConfirm(): void {
-    for (const entity of this.data.entities) {
+    const rows = this.rows();
+    for (const entity of rows) {
       const fieldId = entity.targetFieldId;
       const formControl = entity.form?.formGroup.controls[fieldId];
       if (formControl) {
         entity.newValue = formControl.value;
       }
     }
-    this.dialogRef.close(this.data.entities);
+    this.dialogRef.close(rows);
   }
 }

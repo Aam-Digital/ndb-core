@@ -34,7 +34,7 @@
   }
 
   <table class="full-width">
-    @for (entity of data.entities; track entity.id) {
+    @for (entity of rows(); track entity.id) {
       <tr [class]="'level-' + (entity.level ?? 1)">
         <td>
           <app-entity-block [entityId]="entity.id"></app-entity-block>
@@ -79,6 +79,19 @@
           @if (entity.unlinked) {
             <div class="hint-text" i18n>No longer linked</div>
           }
+          @if (entity.suggestionChanged) {
+            <div class="hint-text suggestion-changed">
+              <span i18n>The suggestion changed, your value is kept.</span>
+              <button
+                type="button"
+                mat-button
+                (click)="useSuggestion(entity)"
+                i18n
+              >
+                Use suggestion
+              </button>
+            </div>
+          }
         </td>
       </tr>
     }
@@ -86,6 +99,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="onConfirm()" i18n>Update related records</button>
+  <button mat-button [disabled]="recalculating()" (click)="onConfirm()" i18n>
+    Update related records
+  </button>
   <button mat-button mat-dialog-close i18n>Do not update</button>
 </mat-dialog-actions>
