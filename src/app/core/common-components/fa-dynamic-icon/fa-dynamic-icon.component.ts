@@ -41,7 +41,7 @@ export class FaDynamicIconComponent {
     let definition = resolveIconDefinition(icon, this.iconLibrary);
     if (!definition) {
       definition = FaDynamicIconComponent.fallbackIcon;
-      Logging.warn(
+      Logging.debug(
         "Tried to set icon but it does not exist as a font awesome regular item nor is it registered as an alias.",
         icon,
       );

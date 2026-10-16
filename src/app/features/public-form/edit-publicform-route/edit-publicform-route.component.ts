@@ -1,3 +1,4 @@
+import { Logging } from "#src/app/core/logging/logging.service";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -83,8 +84,17 @@ export class EditPublicformRouteComponent
 
   copyToClipboard(): void {
     const fullUrl = this.fullPrefixUrl + (this.formControl.value || "");
-    navigator.clipboard.writeText(fullUrl).then(() => {
-      this.alertService.addInfo("Link copied: " + fullUrl);
-    });
+    navigator.clipboard
+      .writeText(fullUrl)
+      .then(() => {
+        this.alertService.addInfo("Link copied: " + fullUrl);
+      })
+      .catch((err) => {
+        // e.g. Safari or the user denied clipboard access
+        Logging.debug("Could not copy link to clipboard", err);
+        this.alertService.addWarning(
+          $localize`Could not copy the link automatically. Please copy it manually: ${fullUrl}`,
+        );
+      });
   }
 }
