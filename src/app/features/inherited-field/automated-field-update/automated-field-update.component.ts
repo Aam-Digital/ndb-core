@@ -27,7 +27,17 @@ import { HelpButtonComponent } from "#src/app/core/common-components/help-button
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
 import { isEqual, uniq } from "lodash-es";
-import { concatMap, debounceTime, Subject, switchMap } from "rxjs";
+import {
+  catchError,
+  concatMap,
+  debounceTime,
+  EMPTY,
+  from,
+  map,
+  Subject,
+  switchMap,
+} from "rxjs";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { addHigherLevels } from "./add-higher-levels";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 
@@ -156,6 +166,9 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   /** Whether the entities above are being updated after a change, which has to finish before saving */
   readonly recalculating = signal(false);
 
+  /** Whether the last update of the entities above failed, so that it has to be tried again with a change */
+  readonly recalculationFailed = signal(false);
+
   private readonly firstLevel = this.data.entities
     .filter((entity) => (entity.level ?? 1) === 1)
     .map((entity) => ({ ...entity }));
@@ -255,6 +268,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
     entity.suggestionChanged = entity.edited && entity.suggestionChanged;
     this.changeCount++;
     this.recalculating.set(true);
+    this.recalculationFailed.set(false);
     this.valueChanged.next();
   }
 
@@ -274,14 +288,19 @@ export class AutomatedFieldUpdateComponent implements OnInit {
     this.valueChanged
       .pipe(
         debounceTime(RECALCULATION_DELAY_MS),
-        switchMap(async () => {
+        switchMap(() => {
           const changes = this.changeCount;
-          return { changes, higherLevels: await this.loadHigherLevels() };
+          return from(this.loadHigherLevels()).pipe(
+            map((higherLevels) => ({ changes, higherLevels })),
+            catchError((error) => this.onRecalculationFailed(error)),
+          );
         }),
-        concatMap(async ({ changes, higherLevels }) => {
-          await this.showRows(higherLevels);
-          return changes;
-        }),
+        concatMap(({ changes, higherLevels }) =>
+          from(this.showRows(higherLevels)).pipe(
+            map(() => changes),
+            catchError((error) => this.onRecalculationFailed(error)),
+          ),
+        ),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((changes) => {
@@ -289,6 +308,19 @@ export class AutomatedFieldUpdateComponent implements OnInit {
           this.recalculating.set(false);
         }
       });
+  }
+
+  /**
+   * Keep listening for changes, so that a later change tries again. Until an update succeeds,
+   * saving stays disabled, because the entities above could be based on an outdated value.
+   */
+  private onRecalculationFailed(error: unknown) {
+    Logging.warn(
+      "AutomatedFieldUpdate: Could not update the suggestions for the entities above",
+      error,
+    );
+    this.recalculationFailed.set(true);
+    return EMPTY;
   }
 
   private loadHigherLevels(): Promise<AffectedEntity[]> {

@@ -169,6 +169,25 @@ describe("AutomatedFieldUpdateComponent", () => {
     expect(second.suggestionChanged).toBe(false);
   });
 
+  it("should try again on the next change if updating the suggestions above failed", async () => {
+    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+    const [first, second] = component.rows();
+    loadNextLevel.mockRejectedValueOnce(new Error("could not load"));
+
+    edit(first, ["x"]);
+    await waitForUpdate();
+    // saving stays disabled, as the entities above may not match the entered value
+    expect(component.recalculating()).toBe(true);
+    expect(component.recalculationFailed()).toBe(true);
+
+    edit(first, ["y"]);
+    await waitForUpdate();
+
+    expect(valueOf(second)).toEqual(["y"]);
+    expect(component.recalculating()).toBe(false);
+    expect(component.recalculationFailed()).toBe(false);
+  });
+
   it("should not count the suggested value as a change of the user", async () => {
     await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
     const [, second] = component.rows();

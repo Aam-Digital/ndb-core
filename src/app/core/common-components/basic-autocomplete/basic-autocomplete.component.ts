@@ -42,7 +42,6 @@ import {
   MatChipRow,
 } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
-import { isEqual } from "lodash-es";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -306,7 +305,9 @@ export class BasicAutocompleteComponent<O, V = O>
       existingValues
         ? this._selectedOptions().filter(
             (option) =>
-              !existingValues.some((value) => isEqual(value, option.asValue)),
+              !existingValues.some((value) =>
+                this.compareEnumValues(value, option.asValue),
+              ),
           )
         : [],
     );

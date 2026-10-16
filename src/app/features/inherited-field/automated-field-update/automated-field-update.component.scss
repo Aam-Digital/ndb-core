@@ -52,8 +52,9 @@ app-entity-field-edit + .hint-text {
   margin-bottom: sizes.$regular;
 }
 
-// easy-to-overlook case where nothing is updated, so it should stand out
-.no-common-value-warning {
+// easy-to-overlook cases that should stand out
+.no-common-value-warning,
+.update-failed {
   display: flex;
   align-items: flex-start;
   gap: sizes.$small;

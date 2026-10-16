@@ -97,6 +97,16 @@
       </tr>
     }
   </table>
+
+  @if (recalculationFailed()) {
+    <div class="hint-text update-failed">
+      <fa-icon icon="warning"></fa-icon>
+      <span i18n
+        >The suggestions for the records above could not be updated. Change a
+        value to try again.</span
+      >
+    </div>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
