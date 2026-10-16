@@ -1,5 +1,6 @@
 ---
 applyTo: "**/*.spec.ts"
+paths: "**/*.spec.ts"
 ---
 
 # Unit Testing Patterns (Vitest)

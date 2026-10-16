@@ -22,14 +22,16 @@ instead of exploring the code from scratch:
   List all of them with `git ls-files '*README.md'`.
 
 - **Patterns per file type:** before creating or editing one of these files, read the matching
-  instructions file (GitHub Copilot attaches them automatically, other agents have to read them):
+  instructions file. GitHub Copilot attaches them automatically (`applyTo`), Claude Code loads them
+  through the symlinks in `.claude/rules/` (`paths`), other agents have to read them:
 
-  | Files                                          | Instructions                                                                                    |
-  | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-  | `*.component.ts`                               | [`angular-components.instructions.md`](.github/instructions/angular-components.instructions.md) |
-  | `*.entity.ts`, `*.datatype.ts`, `**/entity/**` | [`entity-model.instructions.md`](.github/instructions/entity-model.instructions.md)             |
-  | `*.spec.ts`                                    | [`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md)                 |
-  | `e2e/**`                                       | [`e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md)                   |
+  | Files            | Instructions                                                                                    |
+  | ---------------- | ----------------------------------------------------------------------------------------------- |
+  | `*.component.ts` | [`angular-components.instructions.md`](.github/instructions/angular-components.instructions.md) |
+  | `*.spec.ts`      | [`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md)                 |
+
+  Only add such a file for conventions that apply across modules; documentation of a module goes into
+  its README. When you change the `applyTo` glob of a file, change its `paths` glob too.
 
 - **Guides and concepts:** `doc/compodoc_sources/` (how-to guides, architecture, i18n, security, UX guidelines),
   published as the [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html).
@@ -125,8 +127,13 @@ Code examples for these rules are in
 
 ### Entity Architecture
 
-Read [`src/app/core/entity/README.md`](src/app/core/entity/README.md) and
-[`entity-model.instructions.md`](.github/instructions/entity-model.instructions.md) before changing entities or datatypes.
+Before changing entity types, their schema or datatypes (also in `*.entity.ts` / `*.datatype.ts` files outside `core/entity/`), read:
+
+- [Entity System](src/app/core/entity/README.md) — loading, saving and deleting entities
+- [Entity Schema](src/app/core/entity/schema/README.md) — `@DatabaseEntity`, `@DatabaseField` and its options
+- [How to create a new Entity Type](doc/compodoc_sources/how-to-guides/create-new-entity-type.md) — entity class example and file naming
+- [How to create a new Datatype](src/app/core/basic-datatypes/README.md) — extending `DefaultDatatype`, edit/display components
+- [Permissions](src/app/core/permissions/README.md) — checking permissions in code and templates
 
 - All data models extend the base `Entity` class (from `src/app/core/entity/model/entity.ts`)
 - Register entities with the `@DatabaseEntity("TypeName")` decorator
@@ -316,10 +323,8 @@ Practical rules:
 
 ### End-to-End Testing (Playwright)
 
-Read [`e2e/README.md`](e2e/README.md) and [`e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) before writing e2e tests.
-
-- Keep the number of stand-alone e2e tests to a minimum: the initial `loadApp()` is expensive,
-  so prefer integrating a new check as an additional step into an existing scenario.
+Read [`e2e/README.md`](e2e/README.md) before writing e2e tests. In particular, keep the number of
+stand-alone e2e tests to a minimum and prefer adding a step to an existing scenario.
 
 ### Working with Test Results
 

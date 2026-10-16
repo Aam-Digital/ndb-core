@@ -1,5 +1,6 @@
 ---
 applyTo: "**/*.component.ts"
+paths: "**/*.component.ts"
 ---
 
 # Angular Component Patterns
