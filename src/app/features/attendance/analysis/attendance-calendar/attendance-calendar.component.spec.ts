@@ -18,6 +18,8 @@ import { EventWithAttendance } from "../../model/event-with-attendance";
 import { Angulartics2Module } from "angulartics2";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { faCaretDown, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { AttendanceStatusType } from "../../model/attendance-status";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -179,6 +181,51 @@ describe("AttendanceCalendarComponent", () => {
     expect(
       classes["attendance-calendar-date-has-participants-with-unknown-status"],
     ).toBeFalsy();
+  });
+
+  it("colors a day with the color configured for a custom attendance status", () => {
+    const onlineStatus: AttendanceStatusType = {
+      id: "ONLINE",
+      label: "Online",
+      shortName: "O",
+      countAs: "PRESENT",
+      color: "#123456",
+    } as AttendanceStatusType;
+    vi.spyOn(
+      TestBed.inject(ConfigurableEnumService),
+      "getEnumValues",
+    ).mockReturnValue([onlineStatus]);
+    const testDate = new Date("2020-06-15");
+    const child = new TestEntity("child_online");
+    const event = Object.assign(TestEventEntity.create(testDate), {
+      attendance: [new AttendanceItem(onlineStatus, "", child.getId())],
+    });
+    const calendarFixture = TestBed.createComponent(
+      AttendanceCalendarComponent,
+    );
+    calendarFixture.componentRef.setInput("records", [
+      new EventWithAttendance(
+        event,
+        "attendance",
+        "date",
+        "relatesTo",
+        "authors",
+        undefined,
+      ),
+    ]);
+    calendarFixture.componentRef.setInput("highlightForChild", child.getId());
+
+    const dayClasses = Object.entries(
+      calendarFixture.componentInstance.highlightDate(testDate),
+    )
+      .filter(([, active]) => active)
+      .map(([cssClass]) => cssClass);
+    const day = document.createElement("div");
+    day.classList.add(...dayClasses);
+    document.body.appendChild(day);
+
+    expect(getComputedStyle(day).backgroundColor).toBe("rgb(18, 52, 86)");
+    day.remove();
   });
 
   it("should mark day with no-data class when no participant has any status (NaN% attendance)", () => {

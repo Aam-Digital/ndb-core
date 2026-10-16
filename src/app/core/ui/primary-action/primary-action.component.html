@@ -12,5 +12,13 @@
     }"
   >
     <app-fa-dynamic-icon [icon]="config.icon"></app-fa-dynamic-icon>
+    <!-- accessible name of the icon-only button -->
+    <span class="visually-hidden">
+      @if (config.actionType === "createEntity" && entityConstructor?.label) {
+        <ng-container i18n>Add new {{ entityConstructor.label }}</ng-container>
+      } @else {
+        <ng-container i18n>Quick action</ng-container>
+      }
+    </span>
   </button>
 }
