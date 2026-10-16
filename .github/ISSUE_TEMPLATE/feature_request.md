@@ -56,7 +56,12 @@ Claude skill to assist creating and discussing these: /feature-use-cases
 - Values of multi-select source fields are compared exactly, so `[a, b]` and `[b, a]` count as different.
 - Moving a child to another group, with an unchanged city, does not trigger an update for either group.
 
-### Open Questions & Decisions to confirm
+### Open Questions & Decisions
+
+<!--
+list both decisions that have been taken (with short rationale)
+as well as open questions or decision still to make
+-->
 
 - Empty values are ignored (use case 4). The alternative would be to treat "no city" like a different value, so Ravi + Kiran would leave the field empty.
 - If the linked records differ, the field is left alone rather than cleared.
