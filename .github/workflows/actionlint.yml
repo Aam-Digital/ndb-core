@@ -1,0 +1,18 @@
+name: actionlint
+# Lints the GitHub Actions workflows of this repository (with shellcheck on `run:` scripts).
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  # Check name: `actionlint / actionlint`
+  actionlint:
+    uses: Aam-Digital/.github/.github/workflows/actionlint.yml@feat/reusable-workflows # TODO switch to @v1
+    permissions:
+      contents: read

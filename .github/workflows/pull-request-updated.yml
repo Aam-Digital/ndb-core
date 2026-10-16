@@ -13,9 +13,6 @@ permissions:
   id-token: write # required for _qa-unit.yaml (QLTY code coverage)
   packages: write # required for pushing to ghcr.io
 
-env:
-  BUILD_NAME: pr-${{ github.event.number }}
-
 jobs:
   qa:
     uses: ./.github/workflows/_qa-unit.yaml
@@ -31,13 +28,22 @@ jobs:
     with:
       is-fork: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
+  # PR images stay basic: linux/amd64 only, tagged `pr-<number>` and nothing else (so that the cleanup when the PR
+  # is closed can delete them). The images of earlier pushes, untagged by this one, are deleted by the cleanup when a
+  # PR is closed (pull-request-closed.yml).
   build:
     uses: ./.github/workflows/_build.yaml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
     with:
       build_name: pr-${{ github.event.number }}
-      docker_tags: type=ref,event=pr
-      skip-image: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+      tags: pr-${{ github.event.number }}
+      labels: org.opencontainers.image.version=pr-${{ github.event.number }}
+      platforms: linux/amd64
+      # PRs from forks cannot push; their image is only built
+      push: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
   deploy:
     runs-on: ubuntu-latest

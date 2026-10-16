@@ -1,0 +1,84 @@
+name: Release Published - Publish a new build
+# CI flow for published releases: build, Docker image, Sentry release and image cleanup.
+# Releases are created with the GH_TOKEN PAT (create-release.yml); releases created with the GITHUB_TOKEN would not
+# trigger this. Edge builds of master pushes create no GitHub release; on-master-push.yml builds their image.
+# Whether it is a full release is read from the release's prerelease flag, never from the version string.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write # required for pushing to ghcr.io
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+    with:
+      build_name: ${{ github.event.release.tag_name }}
+      # Image tags: the version (the release's tag name), and `stable` and `latest` for a full release
+      version: ${{ github.event.release.tag_name }}
+      stable: ${{ !github.event.release.prerelease }}
+
+  # After a full release, the edge images (`*-edge.*`, formerly `*-master.*`) on ghcr.io are no longer needed.
+  # Images still tagged `edge`, `master`, `stable` or `latest` are kept. Docker Hub is not covered.
+  prune-prerelease-images:
+    if: ${{ !github.event.release.prerelease }}
+    needs: build
+    uses: Aam-Digital/.github/.github/workflows/image-prune.yml@feat/reusable-workflows # TODO switch to @v1
+    permissions:
+      packages: write
+
+  sentry-upload-sourcemaps:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    env:
+      BUILD_NAME: ${{ github.event.release.tag_name }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+    steps:
+      - name: Download webapp files
+        uses: actions/download-artifact@v8
+        with:
+          name: webapp-files
+          path: dist
+
+      - name: Upload Sourcemaps
+        # skipped for prereleases (e.g. -edge.n)
+        if: ${{ !github.event.release.prerelease }}
+        run: |
+          npm install -g @sentry/cli
+          sentry-cli sourcemaps upload --release="ndb-core@$BUILD_NAME" ./dist
+
+  sentry-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - sentry-upload-sourcemaps
+    env:
+      BUILD_NAME: ${{ github.event.release.tag_name }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Set up npm (packageManager in package.json)
+        run: npm install --global "npm@$(jq -r '.packageManager | sub("^npm@"; "") | sub("\\+.*$"; "")' package.json)"
+      - name: Create Release
+        # skipped for prereleases (e.g. -edge.n)
+        if: ${{ !github.event.release.prerelease }}
+        run: |
+          npm install -g @sentry/cli
+          sentry-cli releases new "ndb-core@$BUILD_NAME"
