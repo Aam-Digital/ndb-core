@@ -243,7 +243,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="359" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:359</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="361" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:361</a></div>
                                 </td>
                             </tr>
 
@@ -293,7 +293,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="366" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:366</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="368" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:368</a></div>
                                 </td>
                             </tr>
 
@@ -343,7 +343,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="362" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:362</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="364" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:364</a></div>
                                 </td>
                             </tr>
 
@@ -393,7 +393,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="363" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:363</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="365" class="link-to-prism">src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts:365</a></div>
                                 </td>
                             </tr>
 
@@ -658,13 +658,15 @@ export class ParsedFileInputComponent&lt;T &#x3D; any&gt; {
   ): ParsedData&lt;T&gt; {
     const papaConfig: {
       header: boolean;
-      dynamicTyping: boolean;
       skipEmptyLines: boolean;
+      transform: (value: string) &#x3D;&gt; string | null;
       delimiter?: string;
     } &#x3D; {
       header: true,
-      dynamicTyping: true,
       skipEmptyLines: true,
+      // keep cells as exact strings (e.g. &quot;00000&quot; must not become 0);
+      // the target field&#x27;s datatype converts them during import
+      transform: (value) &#x3D;&gt; (value &#x3D;&#x3D;&#x3D; &quot;&quot; ? null : value),
     };
     if (explicitDelimiter !&#x3D;&#x3D; undefined) {
       papaConfig.delimiter &#x3D; explicitDelimiter;
