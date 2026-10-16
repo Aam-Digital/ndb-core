@@ -69,7 +69,7 @@
           (deleteClick)="deleteNotification(notification)"
           (readStatusChange)="updateReadStatus([notification], $event)"
           (notificationClick)="
-            notificationClicked(notification, notificationListTrigger, $event)
+            notificationClicked(notification, notificationListTrigger)
           "
         ></app-notification-item>
       } @empty {
