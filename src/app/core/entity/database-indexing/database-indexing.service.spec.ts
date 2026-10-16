@@ -221,7 +221,7 @@ describe("DatabaseIndexingService", () => {
         views: {
           by_relatedEntities: {
             map: `(doc) => {
-            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}")) return;
+            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}:")) return;
             if (!Array.isArray(doc.relatedEntities)) return;
             doc.relatedEntities.forEach((relatedEntity) => {
               emit(relatedEntity);
@@ -242,11 +242,26 @@ describe("DatabaseIndexingService", () => {
       cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map),
     ).toEqual(
       cleanedUpStringify(`(doc) => {
-            if (!doc._id.startsWith("Note")) return;
+            if (!doc._id.startsWith("Note:")) return;
 
             emit(doc.category);
           }`),
     );
+  });
+
+  it("should only index records of exactly the entity type, not of types whose name starts with the same text", async () => {
+    const call = vi.spyOn(service, "createIndex");
+    await service.generateIndexOnProperty("testIndex", Note, "category");
+
+    const emitted: any[] = [];
+    const map = new Function(
+      "emit",
+      "return " + vi.mocked(call).mock.calls[0][0].views.by_category.map,
+    )((value: any) => emitted.push(value));
+    map({ _id: "Note:1", category: "a" });
+    map({ _id: "NoteTemplate:1", category: "b" });
+
+    expect(emitted).toEqual(["a"]);
   });
 
   it("should generate index for entity property with secondary index", async () => {
@@ -263,7 +278,7 @@ describe("DatabaseIndexingService", () => {
       cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map),
     ).toEqual(
       cleanedUpStringify(`(doc) => {
-            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}")) return;
+            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}:")) return;
             if (!Array.isArray(doc.relatedEntities)) return;
 
             doc.relatedEntities.forEach((relatedEntity) => {

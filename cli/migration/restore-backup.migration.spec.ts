@@ -16,8 +16,6 @@ function context(
   migrationId: string,
   runAt: string,
   args: string[] = [],
-  confirm: (question: string, id: string) => Promise<boolean> = async () =>
-    true,
 ) {
   return new TrackedMigrationContext(
     buildRevTrackingCouchdb(store),
@@ -26,7 +24,6 @@ function context(
     silentLogger,
     { migrationId, runAt },
     args,
-    confirm,
   );
 }
 
@@ -36,18 +33,8 @@ async function migrateConfig(store: RevStore, runAt: string, data: unknown) {
   await ctx.put(CONFIG_PATH, { ...store[CONFIG], data });
 }
 
-function restore(
-  store: RevStore,
-  args: string[],
-  confirm?: (question: string, id: string) => Promise<boolean>,
-) {
-  const ctx = context(
-    store,
-    "restore-backup",
-    "20261016T000000Z",
-    args,
-    confirm,
-  );
+function restore(store: RevStore, args: string[]) {
+  const ctx = context(store, "restore-backup", "20261016T000000Z", args);
   return restoreBackup.run(ctx);
 }
 
@@ -72,11 +59,13 @@ describe("restoreBackup migration", () => {
   it("restores the given run", async () => {
     const store = seed();
     await migrateConfig(store, "20261015T090000Z", "first");
-    await migrateConfig(store, "20261015T100000Z", "second");
+    const laterRun = context(store, "some-migration", "20261015T100000Z");
+    await laterRun.put("/app/Other:1", { data: "created later" });
 
     await restore(store, ["some-migration", "20261015T090000Z"]);
 
     expect(store[CONFIG].data).toBe("original");
+    expect(store["app/Other:1"]._deleted).toBeUndefined();
   });
 
   it("deletes a doc the migration created", async () => {
@@ -89,34 +78,57 @@ describe("restoreBackup migration", () => {
     expect(store["app/ConfigurableEnum:new"]._deleted).toBe(true);
   });
 
-  it("asks before discarding edits made after the migration", async () => {
+  it("skips a doc edited after the migration, keeping those edits", async () => {
     const store = seed();
     await migrateConfig(store, "20261015T090000Z", "migrated");
     store[CONFIG] = { ...store[CONFIG], _rev: "3-later", data: "edited" };
-    const confirm = vi.fn(async () => false);
 
-    const result = await restore(store, ["some-migration"], confirm);
+    const result = await restore(store, ["some-migration"]);
 
-    expect(confirm).toHaveBeenCalledWith(
-      expect.stringContaining("edited after the migration"),
-      "overwrite-later-edits:Config:CONFIG_ENTITY",
-    );
     expect(store[CONFIG].data).toBe("edited");
     expect(result.changed).toBe(false);
+    expect(result.warnings).toEqual([
+      expect.stringContaining("edited after the migration"),
+    ]);
+  });
+
+  it("skips a doc whose current version is unknown to the backup if the migration's write was not recorded", async () => {
+    const store = seed();
+    await migrateConfig(store, "20261015T090000Z", "migrated");
+    const backupKey = Object.keys(store).find((k) => k.includes("_local/"));
+    delete store[backupKey].writtenRev;
+
+    const result = await restore(store, ["some-migration"]);
+
+    expect(store[CONFIG].data).toBe("migrated");
     expect(result.warnings).toHaveLength(1);
   });
 
-  it("asks before discarding edits if the migration's write was not recorded", async () => {
+  it("recreates a doc the migration deleted", async () => {
     const store = seed();
-    await migrateConfig(store, "20261015T090000Z", "migrated");
-    const backupKey = Object.keys(store).find((k) => k.includes("_local/"))!;
-    delete store[backupKey].writtenRev;
-    const confirm = vi.fn(async () => false);
+    const ctx = context(store, "some-migration", "20261015T090000Z");
+    await ctx.put(CONFIG_PATH, { _rev: "1-a", _deleted: true });
 
-    await restore(store, ["some-migration"], confirm);
+    await restore(store, ["some-migration"]);
 
-    expect(confirm).toHaveBeenCalled();
-    expect(store[CONFIG].data).toBe("migrated");
+    expect(store[CONFIG]._deleted).toBeUndefined();
+    expect(store[CONFIG].data).toBe("original");
+  });
+
+  it("can roll back a restore that deleted a doc", async () => {
+    const store: RevStore = {};
+    const ctx = context(store, "some-migration", "20261015T090000Z");
+    await ctx.put("/app/ConfigurableEnum:new", { values: [] });
+    await restore(store, ["some-migration"]);
+
+    const undo = context(store, "restore-backup", "20261017T000000Z", [
+      "restore-backup",
+    ]);
+    const result = await restoreBackup.run(undo);
+
+    expect(result.warnings).toEqual([]);
+    expect(store["app/ConfigurableEnum:new"]._deleted).toBeUndefined();
+    expect(store["app/ConfigurableEnum:new"].values).toEqual([]);
   });
 
   it("can itself be rolled back", async () => {

@@ -101,9 +101,9 @@ describe("TrackedMigrationContext backups", () => {
   it("does not write the doc if its backup fails", async () => {
     const store = seed();
     const { couchdb, ctx } = setup(store);
-    const put = couchdb.put as ReturnType<typeof vi.fn>;
+    const put = vi.mocked(couchdb.put);
     const realPut = put.getMockImplementation()!;
-    put.mockImplementation(async (path: string, ...rest: unknown[]) => {
+    put.mockImplementation(async (path, ...rest) => {
       if (path.includes("/_local/")) throw new Error("HTTP 500");
       return realPut(path, ...rest);
     });

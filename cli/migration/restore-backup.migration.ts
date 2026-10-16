@@ -21,7 +21,7 @@ type Doc = Record<string, unknown> & { _id?: string; _rev?: string };
  * Restores the latest run of the given migration on each org, or the run with the given timestamp
  * (printed at the end of a run, and part of the backups' `_local/migration-backup:<migration-id>:<run-timestamp>:<doc-id>` ids).
  * A document created by the migration is deleted again.
- * If a document was edited again after the migration, the operator is asked before those later changes are overwritten.
+ * A document edited again after the migration is skipped with a warning, rather than discarding those later edits.
  *
  * The restore itself goes through the same backed-up writes, so it can be undone with
  * `migrate run restore-backup restore-backup`.
@@ -45,9 +45,8 @@ export const restoreBackup: MigrationDefinition = {
       requestedRun,
     );
     if (allBackups.length === 0) {
-      ctx.log.info(
-        `No backups of ${migrationId}${requestedRun ? ` run ${requestedRun}` : ""}`,
-      );
+      const run = requestedRun ? " run " + requestedRun : "";
+      ctx.log.info(`No backups of ${migrationId}${run}`);
       return { changed: false, status: "no-change" };
     }
     const runAt = allBackups[allBackups.length - 1].runAt;
@@ -59,13 +58,7 @@ export const restoreBackup: MigrationDefinition = {
     const warnings: string[] = [];
     let changed = false;
     for (const backup of backups) {
-      const result = await restoreDoc(ctx, backup);
-      if (result === "restored") changed = true;
-      if (result === "declined") {
-        warnings.push(
-          `${backup.docId} not restored: it was edited after the migration`,
-        );
-      }
+      if (await restoreDoc(ctx, backup, warnings)) changed = true;
     }
 
     if (!changed) return { changed: false, status: "no-change", warnings };
@@ -73,10 +66,12 @@ export const restoreBackup: MigrationDefinition = {
   },
 };
 
+/** @return whether the doc was (or in a dry run: would be) restored */
 async function restoreDoc(
   ctx: MigrationContext,
   backup: MigrationBackup,
-): Promise<"restored" | "unchanged" | "declined"> {
+  warnings: string[],
+): Promise<boolean> {
   const path = `/${backup.db}/${backup.docId}`;
   let current: Doc | undefined;
   try {
@@ -85,35 +80,51 @@ async function restoreDoc(
     if (!is404Error(error)) throw error;
   }
 
+  const currentRev = current?._rev ?? (await deletedRev(ctx, backup));
   // without a recorded write rev, the migration's write may have failed: then the doc should still be at the backed-up rev
   const expectedRev =
     backup.writtenRev ?? (backup.doc?._rev as string | undefined);
-  if (current?._rev !== expectedRev) {
-    const restoreAnyway = await ctx.confirm(
-      `${backup.docId} was edited after the migration (expected ${expectedRev ?? "no document"}, found ${current?._rev ?? "no document"}). Restoring discards those later edits. Restore anyway?`,
-      `overwrite-later-edits:${backup.docId}`,
+  if (currentRev !== expectedRev) {
+    warnings.push(
+      `${backup.docId} not restored: it was edited after the migration (expected ${expectedRev ?? "no document"}, found ${currentRev ?? "no document"}). Compare it to its backup and restore it manually if needed.`,
     );
-    if (!restoreAnyway) return "declined";
+    return false;
   }
 
   if (backup.doc === null) {
-    if (!current) return "unchanged";
+    if (!current) return false;
     ctx.log.info(`Deleting ${backup.docId}, which the migration created`);
     await ctx.put(path, {
       _id: backup.docId,
       _rev: current._rev,
       _deleted: true,
     });
-    return "restored";
+    return true;
   }
 
   const { _rev: _backupRev, ...restored } = backup.doc as Doc;
   if (current) {
     const { _rev: _currentRev, ...currentContent } = current;
     if (JSON.stringify(currentContent) === JSON.stringify(restored)) {
-      return "unchanged";
+      return false;
     }
   }
+  // a deleted doc is recreated without a rev
   await ctx.put(path, current ? { ...restored, _rev: current._rev } : restored);
-  return "restored";
+  return true;
+}
+
+/**
+ * The rev of the deletion, if the doc is deleted (a GET only answers 404 then),
+ * e.g. because the migration (or an earlier restore) deleted it.
+ */
+async function deletedRev(
+  ctx: MigrationContext,
+  backup: MigrationBackup,
+): Promise<string | undefined> {
+  const result = (await ctx.couchdb.post(`/${backup.db}/_all_docs`, {
+    keys: [backup.docId],
+  })) as { rows?: { value?: { rev: string; deleted?: boolean } }[] };
+  const value = result?.rows?.[0]?.value;
+  return value?.deleted ? value.rev : undefined;
 }
