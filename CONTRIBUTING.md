@@ -89,6 +89,24 @@ If you participate in the development, either by fixing a bug or implementing a 
   This can be done with a git rebase on your feature branch (please **never** rebase the master branch).
   Further information can be found in the [Git Book](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History).
 
+### Working on several branches with git worktrees
+
+A [git worktree](https://git-scm.com/docs/git-worktree) gives you a second checkout of the repository
+for another branch, so you can work on it without stashing or switching. Claude Code creates its
+worktrees under `.claude/worktrees/`, which is in `.gitignore` and must never be committed.
+
+```bash
+git worktree add .claude/worktrees/<branch-name> <branch-name>
+```
+
+A worktree shares the git history but not `node_modules`. Run `npm ci` inside it, or, if the branch has
+the same dependencies, symlink the folder of the main checkout:
+`ln -s "$(git rev-parse --show-toplevel)/node_modules" .claude/worktrees/<branch-name>/node_modules`.
+
+If you create a worktree outside `.claude/worktrees/`, stage files by name: `git add .` would stage the
+worktree folder as a phantom submodule (a gitlink), which breaks the CI. Remove such an entry with
+`git rm --cached <path>`.
+
 ---
 
 ## Copyright

@@ -44,6 +44,10 @@ markup.
   expensive, so prefer adding a new check as an additional step to an existing
   scenario.
 
+- A new larger feature (a new user flow, not a small change to an existing one) gets an
+  e2e scenario for its main path. Keep the number of scenarios and screenshots small: every
+  one adds to the run time and to the visual review, so cover the edge cases in unit tests.
+
 - Import from `#e2e/fixtures.js` instead of `@playwright/test` (enforced by ESLint):
 
   ```typescript
