@@ -5,6 +5,9 @@ on:
     types: [published]
   workflow_dispatch:
     inputs:
+      # Only selects which version's translations are re-published (validated in "Determine version"); it does not
+      # affect any build output.
+      # qlty-ignore: checkov:CKV_GHA_7
       version:
         description: "Version tag to publish translations for (defaults to latest release)"
         required: false
