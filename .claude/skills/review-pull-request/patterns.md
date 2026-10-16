@@ -32,6 +32,7 @@ reviewers keep finding on top of that.
    drop detail (for example an HTTP status) that another branch reads (#4160).
 9. **Sentry groups by stack, not message.** Flattening an error message does not flatten
    the Sentry grouping unless the stack trace is normalized too (#4311).
+   Check the [logging/README](src/app/core/logging/README.md) for details.
 10. **i18n wrapping breaks tokens.** An icon tag, or a literal config keyword such as
     the value of `aria-live`, inside an `i18n`-marked block can be broken or silenced
     by a translation (#4225).

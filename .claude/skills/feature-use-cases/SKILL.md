@@ -1,6 +1,6 @@
 ---
 name: feature-use-cases
-description: Write the use cases for a new feature on a GitHub issue, in plain language with concrete examples, so the team can agree on what the feature should do before anyone builds it. Use when someone says "I want use cases for this feature", "write the use cases for issue 1234", "describe the planned scope", "what should this feature do", or "help me spec this out". For new features and behavior changes only, not for bugs.
+description: Write the use cases for a new feature, in plain language with concrete examples, so the team can agree on what the feature should do before anyone builds it. Use when someone says "I want use cases for this feature", "write the use cases for issue 1234", "describe the planned scope", "what should this feature do", or "help me spec this out". For new features and behavior changes only, not for bugs.
 argument-hint: <issue-url, issue-number or short feature description> (optional)
 ---
 
@@ -39,7 +39,8 @@ skill does not fit and stop: a bug needs steps to reproduce and the expected res
    (names, cities, statuses) and keep them the same through the whole text.
 4. **Write the section** in the format below and check it against the list at the end.
 5. **Show the draft in a fenced markdown block** so it can be copied, and ask whether to
-   change anything. The user pastes it into the issue description or posts it as a comment.
+   change anything. Lead a discussion with the developer about intended behavior.
+6. The user pastes it into the issue description or posts it as a comment.
    Post it to GitHub yourself only if the user explicitly asks for that.
 
 ## Format
