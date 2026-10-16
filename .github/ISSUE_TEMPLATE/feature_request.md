@@ -30,7 +30,7 @@ Add any other context or screenshots about the feature request here.
 <!--
 numbered use cases, updated during the discussion here
 
-AI skill (assist creating & discussing): TODO @Abhinegi2
+Claude skill to assist creating and discussing these: /feature-use-cases
 -->
 
 <!-- TEMPLATE / EXAMLE:
@@ -76,5 +76,9 @@ Do not create a detailed step-by-step plan.
 Highlight architectural decisions and show different alternatives:
 - code to reuse, what new modules/classes are needed
 - risks, challenges or open questions
+
+Once the objective above is agreed, the detailed plan is posted as ONE comment on this issue
+(Context / Decisions / Changes / Open questions), self-contained and edited in place when
+decisions change. Claude skill to write it: /plan-implementation
 
 -->

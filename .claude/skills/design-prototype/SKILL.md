@@ -11,8 +11,8 @@ the idea on made-up example data. It is meant for discussion on an issue: it sho
 easy to read, easy to change after feedback, and it must not promise behavior nobody has
 agreed on.
 
-For final screen designs in Figma, follow the Figma section in `CLAUDE.md` instead. This
-skill is for the quick, interactive proposal.
+For designs that are built in Figma, use `/figma-mockups` instead. This skill is for the quick,
+interactive proposal.
 
 ## Steps
 

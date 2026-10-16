@@ -113,18 +113,18 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 | **Claude Code** (CLI)        | Interactive coding assistant — reads `AGENTS.md` (do not add a `CLAUDE.md`, it would replace `AGENTS.md`)                                           |
 | **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
-## Agents
+## Skills
 
-Custom agents are defined in `.claude/agents/` and can be invoked from Copilot chat or Claude Code:
+Shared skills are defined in `.claude/skills/` and can be called from Claude Code by name or in plain words
+(how to use them: [`.claude/skills/README.md`](.claude/skills/README.md)):
 
-| Agent                     | Purpose                                               | Recommended Tool                       |
-| ------------------------- | ----------------------------------------------------- | -------------------------------------- |
-| `business-analyst`        | Refine requirements into structured, testable docs    | Copilot chat or Claude Code            |
-| `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
-| `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
-| `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
-| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (on-demand) + manual prompt |
-| `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
+| Skill                 | Purpose                                                        |
+| --------------------- | -------------------------------------------------------------- |
+| `feature-use-cases`   | Write the use cases for a new feature                          |
+| `plan-implementation` | Write the implementation plan comment for an issue             |
+| `review-pull-request` | Review a pull request                                          |
+| `design-prototype`    | Build a clickable prototype with the Aam Digital design system |
+| `figma-mockups`       | Design screens in the Aam Digital Figma design system file     |
 
 ## MCP Servers
 

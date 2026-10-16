@@ -66,7 +66,7 @@ the same PR. New module documentation goes into a `README.md` next to the code a
 - `doc/` - Documentation and API reference
 - `build/` - Build configuration and scripts
 - `.github/instructions/` - Patterns per file type (see [Where to find documentation](#where-to-find-documentation))
-- `.claude/agents/` - Custom Claude Code agents for key workflows (these can be selected from GitHub Copilot)
+- `.claude/skills/` - Shared Claude Code skills (see [Skills](#skills))
 - Follow the existing module structure with entity-based organization
 
 ---
@@ -178,32 +178,7 @@ When developing new functionality:
   instead of creating new custom styles
 - If custom styles are necessary, create a class with a meaningful name in the component-specific scss file and avoid inline styles
 
-### Creating Figma mockups
-
-When asked to design mockups, screens, or UI variants in Figma, build them in the
-**Aam Digital — Design System** file so they reuse the real components and tokens.
-
-- **File key:** ask user to provide
-- **Always load the `figma-use` and `figma-generate-design` skills before any `use_figma` call.**
-- **Where to build:** add a dedicated, clearly-labelled new page (e.g. `📋 <Feature> — Mockups (#<issue>)`).
-  **Never edit the canonical `📄 Screens` page** — it holds the reference screens (Dashboard,
-  Entity List, Entity Details). Confirm with the user before writing into this shared file.
-- **Use the design system, don't hardcode.** Tokens are **local variables** in this file
-  (collections: `Color / Semantic`, `Color / Status (w-levels)`, `Spacing`, `Radius`). Bind colors
-  with `setBoundVariableForPaint` and spacing/radius with `setBoundVariable`. Discover IDs via
-  `getLocalVariableCollectionsAsync` / by inspecting an existing screen's bound variables —
-  `search_design_system` returns empty for this file. Core components live on the
-  `🧩 Components — Core (Material)` page.
-- **App-screen conventions:** 1440×900 frame; 280px cream sidebar (`background/secondary`) with an
-  orange (`primary`) logo bar and active nav item; white content; orange accent links; font **Inter**
-  (Regular / Medium / Semi Bold / Bold).
-- **Gotcha:** a paint object returned by `setBoundVariableForPaint` can **lose its variable binding
-  when reused across many `node.fills` assignments** (the base color shows instead). Create a fresh
-  bound paint per text node and set its base color to the resolved fallback so contrast survives either way.
-- Validate each section with `get_screenshot` as you go.
-
-These mockups are not confirmed as a published/importable library, so building in a _separate_ Figma
-file may not be able to import the tokens by key — building in-file (on a new page) keeps full fidelity.
+Mockups in Figma: use the `figma-mockups` skill.
 
 ## Internationalization (i18n)
 
@@ -349,24 +324,15 @@ internal tools (e.g. Sentry issues) are acceptable.
 
 ---
 
-## Agent Workflows
+## Skills
 
-Custom agents are defined in `.claude/agents/`. They support these key workflows (in logical order):
+Shared skills in `.claude/skills/` are picked up by Claude Code (how to use them:
+[`.claude/skills/README.md`](.claude/skills/README.md)). A feature usually goes through them in this order:
 
-1. **Fleshing out requirements** — Refine rough feature requests into structured, testable requirement documents. See `.claude/agents/1-business-analyst.md`.
-2. **Planning implementation** — Create detailed technical breakdowns with phased tasks, posted as GitHub issue comments. See `.claude/agents/2-implementation-planner.md`.
-3. **Implementing changes** — Execute an implementation plan task by task, committing after each, and opening a PR. See `.claude/agents/3-implementation-executor.md`.
-4. **Troubleshooting** — Debug issues using Sentry, devtools, stack traces, and codebase analysis. See `.claude/agents/1b-troubleshooter.md`.
-5. **Analyzing & refactoring** — Identify code smells, check convention adherence, suggest specific refactorings. See `.claude/agents/4-refactorer.md`.
-6. **Generating e2e tests** — Write Playwright tests with fixtures, accessibility locators, and visual regression snapshots. See `.claude/agents/5-e2e-test-writer.md`.
-
-### Typical workflow
-
-```
-1-business-analyst        →  refine rough requirements into a clear requirement doc
-2-implementation-planner  →  create a technical plan posted on the GitHub issue
-3-implementation-executor →  implement the plan, commit per task, open PR
-```
+- `feature-use-cases` — the use cases of a new feature, for the "Use Cases" section of the issue
+- `design-prototype` / `figma-mockups` — a clickable prototype, or screens in Figma
+- `plan-implementation` — the implementation plan, as one comment on the issue
+- `review-pull-request` — a review of a pull request against its issue and our usual review findings
 
 ## Git Worktrees
 

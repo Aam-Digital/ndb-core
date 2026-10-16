@@ -4,11 +4,16 @@ Skills are ready-made instructions for Claude Code. Each one does a recurring jo
 way for everyone on the team. They are used from Claude Code (terminal, desktop app or IDE)
 opened in this repository.
 
-| Skill                 | Use it to                                                                 | Call it with                 |
-| --------------------- | ------------------------------------------------------------------------- | ---------------------------- |
-| `feature-use-cases`   | Write the "Planned scope: use cases" comment for a new feature            | `/feature-use-cases <issue>` |
-| `review-pull-request` | Review a pull request before merge                                        | `/review-pull-request <PR>`  |
-| `design-prototype`    | Build a clickable prototype of a feature in the Aam Digital design system | `/design-prototype <issue>`  |
+| Skill                 | Use it to                                                                 | Call it with                   |
+| --------------------- | ------------------------------------------------------------------------- | ------------------------------ |
+| `feature-use-cases`   | Write the use cases for a new feature                                     | `/feature-use-cases <issue>`   |
+| `plan-implementation` | Write the implementation plan comment for an issue                        | `/plan-implementation <issue>` |
+| `review-pull-request` | Review a pull request before merge                                        | `/review-pull-request <PR>`    |
+| `design-prototype`    | Build a clickable prototype of a feature in the Aam Digital design system | `/design-prototype <issue>`    |
+| `figma-mockups`       | Design screens in the Aam Digital Figma design system file                | `/figma-mockups <issue>`       |
+
+A feature usually goes through them in this order: use cases, prototype, plan, then the code,
+then the pull request review.
 
 ## Two ways to use a skill
 
@@ -18,7 +23,7 @@ opened in this repository.
    use cases for issue 4493". Claude picks the matching skill. If it does not, use the name.
 
 Without a number or link, Claude uses the current branch's PR (review) or asks you which
-feature or screen you mean (the other two).
+feature or screen you mean (the other skills).
 
 ## One-time setup
 
@@ -27,19 +32,29 @@ feature or screen you mean (the other two).
 - For `design-prototype`: Claude Code with the Artifact tool (log in with your Claude
   account), and view access to the **Aam Digital** design system. If it is missing from the
   list, ask a maintainer to share it with you.
+- For `figma-mockups`: the Figma connector, and the key of the design system file.
 
 ## feature-use-cases
 
 1. Open Claude Code in the repo and write `/feature-use-cases 1234`, or describe the
    feature in your own words.
 2. Claude reads the issue and its comments and checks the code for what already works.
-3. It shows the draft comment in a code block: planned scope, example setup, numbered use
-   cases, decisions to confirm, known limitations.
+3. It shows the draft in a code block: example setup, numbered use cases, known limitations,
+   open questions. This is the "Use Cases" section of the feature issue template.
 4. Tell it what to change ("merge use cases 2 and 3", "add the case where no value is set").
-5. Copy the final text into the issue yourself. The skill never posts anything.
+5. Paste the final text into the issue yourself. The skill never posts anything.
 
 Only for new features and behavior changes. For a bug, describe the steps to reproduce
 instead.
+
+## plan-implementation
+
+1. Use it once the use cases and the open decisions of the issue are agreed.
+2. Write `/plan-implementation 1234`, or ask "write the implementation plan for issue 1234".
+3. Claude reads the issue and the code and shows one plan: **Context**, **Decisions**,
+   **Changes**, **Open questions**.
+4. Tell it what to change. When decisions change later, the plan is edited, not extended.
+5. Post it as one comment on the issue yourself, and link it in the issue description.
 
 ## review-pull-request
 
@@ -64,6 +79,14 @@ Also useful for a self-review before you ask someone else to look at your PR.
 4. Open it, click through it, then ask for changes ("remove the hint text", "also show the
    case with no value"). Claude lists what changed at the top.
 5. When the team can see it, post the link or a screenshot on the issue yourself.
+
+## figma-mockups
+
+1. Write `/figma-mockups 1234` or describe the screens, and give it the key of the design
+   system file when asked.
+2. Claude builds the mockups on a new page of that file, with the real components and tokens,
+   and never changes the reference screens.
+3. Check the result in Figma and ask for changes.
 
 ## Tips
 
