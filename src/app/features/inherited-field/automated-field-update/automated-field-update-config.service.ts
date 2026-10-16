@@ -20,6 +20,7 @@ import {
   getRemovedValues,
   isEmptyValue,
 } from "../add-missing-values";
+import { getCommonValue } from "../get-common-value";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -33,6 +34,14 @@ interface AffectedRule {
   rule: DefaultValueConfigInheritedField;
   entityType: EntityConstructor;
   fieldId: string;
+}
+
+/**
+ * The new value of a target entity, which is its current value if the linked entities have no value in common.
+ */
+interface NewValue {
+  value: any;
+  hasNoCommonValue: boolean;
 }
 
 /**
@@ -259,12 +268,22 @@ export class AutomatedFieldUpdateConfigService {
     const previouslyLinkedTargets = targetEntities.filter((target) =>
       previousIds.includes(target.getId()),
     );
+    const newValue: NewValue = {
+      value: this.calculateNewValue(sourceEntity, rule),
+      hasNoCommonValue: false,
+    };
 
     return [
       ...this.processTargetEntities(
         targetEntities,
         affectedRule,
         sourceEntity,
+        new Map(
+          targetEntities.map((entity): [string, NewValue] => [
+            entity.getId(),
+            newValue,
+          ]),
+        ),
         await this.loadRemovedValues(
           previouslyLinkedTargets,
           affectedRule,
@@ -317,6 +336,12 @@ export class AutomatedFieldUpdateConfigService {
       unlinkedTargets,
       affectedRule,
       sourceEntityBeforeChanges,
+      new Map(
+        unlinkedTargets.map((target): [string, NewValue] => [
+          target.getId(),
+          { value: [], hasNoCommonValue: false },
+        ]),
+      ),
       await this.loadRemovedValues(
         unlinkedTargets,
         affectedRule,
@@ -325,7 +350,6 @@ export class AutomatedFieldUpdateConfigService {
           [],
         ),
       ),
-      [],
     ).map((affectedEntity) => ({ ...affectedEntity, unlinked: true }));
   }
 
@@ -339,22 +363,70 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<AffectedEntity[]> {
     const { rule, entityType } = affectedRule;
 
-    // a list of references (see the rule for several parents) is not supported yet, only a single reference
-    const targetEntities = (
-      await this.loadRecordsLinkingTo(
-        entityType,
-        rule.sourceReferenceField,
-        sourceEntity.getId(),
-      )
-    ).filter(
-      (entity) => entity[rule.sourceReferenceField] === sourceEntity.getId(),
+    const targetEntities = await this.loadRecordsLinkingTo(
+      entityType,
+      rule.sourceReferenceField,
+      sourceEntity.getId(),
+    );
+
+    const newValues = new Map<string, NewValue>(
+      await Promise.all(
+        targetEntities.map(async (entity): Promise<[string, NewValue]> => [
+          entity.getId(),
+          await this.loadNewValue(entity, affectedRule, sourceEntity),
+        ]),
+      ),
     );
 
     return this.processTargetEntities(
       targetEntities,
       affectedRule,
       sourceEntity,
+      newValues,
     );
+  }
+
+  /**
+   * Get the new value for a target entity linking to the (already updated) source entity.
+   * If the target links to several entities, it only inherits a value shared by all of them.
+   * Without a shared value (different values or some linked entities cannot be loaded),
+   * the target's current value is returned.
+   */
+  private async loadNewValue(
+    targetEntity: Entity,
+    { rule, fieldId }: AffectedRule,
+    sourceEntity: Entity,
+  ): Promise<NewValue> {
+    const otherIds = asArray(targetEntity[rule.sourceReferenceField]).filter(
+      (id) => id !== sourceEntity.getId(),
+    );
+    if (otherIds.length === 0) {
+      return {
+        value: this.calculateNewValue(sourceEntity, rule),
+        hasNoCommonValue: false,
+      };
+    }
+
+    const otherEntities = await this.loadEntitiesByIds(
+      sourceEntity.getConstructor(),
+      otherIds,
+    );
+    const sharedValue =
+      otherEntities.length === otherIds.length
+        ? this.calculateCommonValue([sourceEntity, ...otherEntities], rule)
+        : undefined;
+
+    return {
+      value:
+        sharedValue ??
+        this.transformSourceValueToDatabaseFormat(
+          targetEntity[fieldId],
+          targetEntity,
+          fieldId,
+          this.entitySchemaService,
+        ),
+      hasNoCommonValue: sharedValue === undefined,
+    };
   }
 
   /**
@@ -409,8 +481,8 @@ export class AutomatedFieldUpdateConfigService {
       fieldId: targetFieldId,
     }: AffectedRule,
     sourceEntity: Entity,
+    newValues: Map<string, NewValue>,
     removedValues: Map<string, any[]> = new Map(),
-    valuesToAdd: any = this.calculateNewValue(sourceEntity, rule),
   ): AffectedEntity[] {
     const affectedEntities: AffectedEntity[] = [];
     const sourceEntityType = sourceEntity.getConstructor();
@@ -431,12 +503,15 @@ export class AutomatedFieldUpdateConfigService {
         targetFieldId,
         this.entitySchemaService,
       );
+      const { value, hasNoCommonValue } = newValues.get(targetEntity.getId());
       const newValue = combineWithCurrentValue(
         currentValue,
-        valuesToAdd,
+        value,
         removedValues.get(targetEntity.getId()),
       );
-      if (isEqual(currentValue, newValue)) continue;
+      // an existing value is kept, but the user is informed that there is nothing to suggest
+      const showNoCommonValue = hasNoCommonValue && !isEmptyValue(currentValue);
+      if (isEqual(currentValue, newValue) && !showNoCommonValue) continue;
 
       affectedEntities.push({
         id: targetEntity.getId(),
@@ -448,6 +523,7 @@ export class AutomatedFieldUpdateConfigService {
         relatedReferenceField: rule.sourceReferenceField,
         relatedReferenceFieldEntityType,
         addToExisting,
+        hasNoCommonValue: showNoCommonValue,
       });
     }
 
@@ -480,6 +556,20 @@ export class AutomatedFieldUpdateConfigService {
     return Array.isArray(sourceValue)
       ? [...new Set(sourceValue.flatMap(mapValue))]
       : mapValue(sourceValue);
+  }
+
+  /**
+   * Calculate the new value that all given source entities have in common
+   * (see {@link calculateNewValue}), ignoring empty values.
+   * @return the shared value or undefined if the values differ
+   */
+  public calculateCommonValue(
+    sourceEntities: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): any {
+    return getCommonValue(
+      sourceEntities.map((entity) => this.calculateNewValue(entity, rule)),
+    );
   }
 
   /**

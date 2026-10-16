@@ -9,6 +9,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from "@angular/core";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -56,6 +57,9 @@ export interface AffectedEntity {
   /** Whether the new value is merged into the existing values instead of replacing them completely */
   addToExisting?: boolean;
 
+  /** Whether the entities linked to the affected entity have no value in common, so the current value is kept */
+  hasNoCommonValue?: boolean;
+
   /** Whether the affected entity is no longer linked to the changed entity */
   unlinked?: boolean;
 }
@@ -75,6 +79,7 @@ export interface AffectedEntity {
     EntityFieldEditComponent,
     EntityBlockComponent,
     EntityFieldLabelPipe,
+    FontAwesomeModule,
     MatButton,
     MatDialogModule,
   ],
@@ -93,6 +98,21 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   entityConstructor: EntityConstructor;
+
+  /**
+   * The first affected entity, if all affected entities are linked through the same field
+   * (otherwise each entity shows how it is linked).
+   */
+  readonly sharedLinkEntity: AffectedEntity | undefined =
+    this.data.entities.every(
+      (entity) =>
+        entity.relatedReferenceField ===
+          this.data.entities[0].relatedReferenceField &&
+        entity.relatedReferenceFieldEntityType ===
+          this.data.entities[0].relatedReferenceFieldEntityType,
+    )
+      ? this.data.entities[0]
+      : undefined;
 
   async ngOnInit(): Promise<void> {
     for (const entity of this.data.entities) {
