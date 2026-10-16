@@ -61,7 +61,8 @@ What is still undecided and how it gets settled. Leave out when there are none.
 
 Think about these and add a step to **Changes** where they apply:
 
-- **Texts:** every new user-facing string is translatable.
+- **Clean Code:** Generic modules that are reusable.
+  Avoid code duplication and consider generalizing existing logic to reuse.
 - **Permissions:** who may see or do this, and how the existing permission checks apply.
 - **Offline and sync:** the app works offline; consider records changed on two devices.
 - **Config:** whether the config format changes and existing configs need a migration.
@@ -72,4 +73,4 @@ Think about these and add a step to **Changes** where they apply:
 - **Other repos:** if the feature needs backend changes (`aam-services`,
   `replication-backend`), list them per repository in **Changes** and link the issues.
 
-Keep the plan as short as the change allows. Do not plan what the code makes obvious.
+Keep the plan high-level and as short as possible. Do not include what is already obvious or implementation step details.
