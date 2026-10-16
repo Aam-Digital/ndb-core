@@ -16,11 +16,14 @@ ones.
 
 1. **Get the issue.** Take the number or URL from the argument or the request, or ask for
    it. Read it with its comments:
+
    ```
    gh issue view <n> --repo Aam-Digital/ndb-core --json number,title,body,labels,comments
    ```
+
    The objective has to be agreed first. If the use cases are missing or decisions are
    still open, say so and suggest `/feature-use-cases` before planning.
+
 2. **Understand the code.** Read the module READMEs for the folders you will touch (see
    `AGENTS.md`), then the real code paths. Everything in **Context** is verified against
    the code, and whatever you could not verify is marked as an assumption.

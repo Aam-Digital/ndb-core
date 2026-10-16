@@ -19,15 +19,18 @@ interactive proposal.
 1. **Understand the ask.** The ask is an issue or a description, given as the argument or
    in the request itself. If there is neither, ask which screen or feature it is for. For
    an issue, read it with its comments:
+
    ```
    gh issue view <n> --repo Aam-Digital/ndb-core --json number,title,body,labels,comments
    ```
+
    Then look at the screen or dialog that is being changed: find its template and texts
    in `src/app` so the prototype can use the real labels, fields and buttons. Start the
    app in demo mode if you need to see it.
+
 2. **Use the design system "Aam Digital".** Start with the Artifact tool's `quickstart`
    with `intent: "design"` and pick the design system titled **Aam Digital** from the
-   list it returns (https://claude.ai/artifact/Pao3w632NxQkwzZG1ddnU6; if you already have
+   list it returns (<https://claude.ai/artifact/Pao3w632NxQkwzZG1ddnU6>; if you already have
    the link, pass `design_systems: false` and read it directly). Read its
    `project/README.md`, its `project/tokens.json` and the README of every component you
    use, and build only from those colors, type styles, spacing and components. If the

@@ -23,9 +23,11 @@ skill does not fit and stop: a bug needs steps to reproduce and the expected res
 1. **Get the request.** The input is an issue (URL or number) or a short description,
    given as the argument or in the request itself. If there is neither, ask which feature
    it is for. For an issue, read it with its comments, because scope often changes there:
+
    ```
    gh issue view <n> --repo Aam-Digital/ndb-core --json number,title,body,labels,comments
    ```
+
 2. **Find out what already works.** Read the code and the specs around the feature before
    writing a single use case. For every situation you are about to list, know whether
    today's app already handles it, so you can mark it correctly. Never guess: a wrong
