@@ -59,6 +59,7 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { asArray } from "app/utils/asArray";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -149,6 +150,12 @@ export class AdminEntityFieldComponent implements OnInit {
   private static readonly MULTI_VALUE_DATATYPES: string[] = [
     ConfigurableEnumDatatype.dataType,
     EntityDatatype.dataType,
+  ];
+
+  /** edit components of entity fields that apply a `selectionCondition` (all based on EditEntity) */
+  private static readonly SELECTION_CONDITION_EDIT_COMPONENTS: string[] = [
+    "EditEntity",
+    "EditLegacyAttendance",
   ];
 
   ngOnInit() {
@@ -251,6 +258,7 @@ export class AdminEntityFieldComponent implements OnInit {
       generateIndex: [this.data.entitySchemaField.generateIndex],
       validators: [this.data.entitySchemaField.validators],
       displayCondition: [this.data.entitySchemaField.displayCondition],
+      selectionCondition: [this.data.entitySchemaField.selectionCondition],
     });
     this.form = this.fb.group({
       id: this.fieldIdForm,
@@ -352,6 +360,29 @@ export class AdminEntityFieldComponent implements OnInit {
         label: d.label,
         value: d.dataType,
       }));
+  }
+
+  /**
+   * The record type this field references,
+   * if a `selectionCondition` can be applied to the field:
+   * It must reference exactly one type and use an edit component based on the entity dropdown (which applies the condition).
+   */
+  getSelectionConditionTargetType(): EntityConstructor | undefined {
+    const editComponent = this.schemaFieldsForm.get("editComponent").value;
+    if (
+      editComponent &&
+      !AdminEntityFieldComponent.SELECTION_CONDITION_EDIT_COMPONENTS.includes(
+        editComponent,
+      )
+    ) {
+      return undefined;
+    }
+
+    const types = asArray(this.additionalForm.value ?? []);
+    if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
+      return undefined;
+    }
+    return this.entityRegistry.get(types[0]);
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;

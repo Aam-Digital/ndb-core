@@ -27,6 +27,18 @@ class ConditionsEditorTestEntity extends Entity {
   genderSingle: string;
 }
 
+@DatabaseEntity("ConditionsEditorRecordTestEntity")
+class ConditionsEditorRecordTestEntity extends Entity {
+  @DatabaseField({ label: "Record name" })
+  recordName: string;
+  @DatabaseField({
+    label: "Record gender",
+    dataType: "configurable-enum",
+    additional: "genders",
+  })
+  recordGender: string;
+}
+
 describe("ConditionsEditorComponent", () => {
   let component: ConditionsEditorComponent;
   let fixture: ComponentFixture<ConditionsEditorComponent>;
@@ -363,6 +375,109 @@ describe("ConditionsEditorComponent", () => {
       component.onConditionFieldChange(0, "genderSingle");
 
       expect(component.isNegated(0)).toBe(false);
+      expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
+    });
+  });
+
+  it("treats a placeholder as plain value if no current record type is given", () => {
+    component.conditions = { $or: [{ name: "$current_record.recordName" }] };
+    component.ngOnInit();
+
+    expect(component.isReferenceRow(0)).toBe(false);
+  });
+
+  describe("comparing with a field of the current record", () => {
+    beforeEach(() => {
+      fixture.componentRef.setInput(
+        "currentRecordType",
+        ConditionsEditorRecordTestEntity,
+      );
+    });
+
+    function compareRowWithRecordField(field: string, recordField: string) {
+      component.conditions = { $or: [{ [field]: null }] };
+      component.ngOnInit();
+      component.setReferenceRow(0, true);
+      component.onReferencedFieldChange(0, recordField);
+    }
+
+    it.each([
+      [
+        "a text field as plain value",
+        "name",
+        { name: "$current_record.recordName" },
+      ],
+      [
+        "a dropdown field in an $in list",
+        "genderSingle",
+        { genderSingle: { $in: ["$current_record.recordGender"] } },
+      ],
+      [
+        "a multi-value field in an $elemMatch.$in list",
+        "gender",
+        { gender: { $elemMatch: { $in: ["$current_record.recordGender"] } } },
+      ],
+    ])("saves the comparison of %s", (_, field, expected) => {
+      const recordField = field === "name" ? "recordName" : "recordGender";
+
+      compareRowWithRecordField(field, recordField);
+
+      expect(component.conditionsArray()[0]).toEqual(expected);
+      expect(component.getReferencedField(0)).toBe(recordField);
+    });
+
+    it("keeps 'is not' when the compared record field changes", () => {
+      compareRowWithRecordField("genderSingle", "recordGender");
+      component.setNegated(0, true);
+
+      component.onReferencedFieldChange(0, "otherGender");
+
+      expect(component.conditionsArray()[0]).toEqual({
+        genderSingle: { $not: { $in: ["$current_record.otherGender"] } },
+      });
+    });
+
+    it("recognizes a saved comparison without loading the placeholder as a value", () => {
+      component.conditions = {
+        $or: [
+          { genderSingle: { $not: { $in: ["$current_record.recordGender"] } } },
+        ],
+      };
+      component.ngOnInit();
+
+      expect(component.isReferenceRow(0)).toBe(true);
+      expect(component.getReferencedField(0)).toBe("recordGender");
+      expect(component.isNegated(0)).toBe(true);
+      expect(
+        mockEntitySchemaService.valueToEntityFormat,
+      ).not.toHaveBeenCalledWith(
+        ["$current_record.recordGender"],
+        expect.anything(),
+      );
+    });
+
+    it.each([
+      ["the same dropdown options", "configurable-enum", "genders", false],
+      ["other dropdown options", "configurable-enum", "other-enum", true],
+      ["another data type", "string", undefined, true],
+    ])(
+      "offers only record fields with matching values for comparison (%s)",
+      (_, dataType, additional, expectedHidden) => {
+        compareRowWithRecordField("genderSingle", "recordGender");
+        const hideOption = component.referenceFieldFilters.get("0");
+
+        expect(hideOption({ id: "x", dataType, additional })).toBe(
+          expectedHidden,
+        );
+      },
+    );
+
+    it("clears the comparison when switching back to a fixed value", () => {
+      compareRowWithRecordField("genderSingle", "recordGender");
+
+      component.setReferenceRow(0, false);
+
+      expect(component.isReferenceRow(0)).toBe(false);
       expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
     });
   });

@@ -23,15 +23,31 @@
       }
     </ng-template>
 
-    @if (currentlyMatchingInactive() > 0) {
-      <ng-container autocompleteFooter>
-        <mat-slide-toggle
-          [checked]="includeInactive()"
-          (toggleChange)="toggleIncludeInactive()"
-          i18n="Label for checkbox|e.g. include inactive children"
-          >Also show {{ currentlyMatchingInactive() }} inactive
-        </mat-slide-toggle>
-      </ng-container>
+    @if (currentlyMatchingInactive() > 0 || currentlyMatchingIneligible() > 0) {
+      <div autocompleteFooter class="flex-row flex-wrap gap-regular">
+        @if (currentlyMatchingInactive() > 0) {
+          <mat-slide-toggle
+            [checked]="includeInactive()"
+            (toggleChange)="toggleIncludeInactive()"
+            i18n="Label for checkbox|e.g. include inactive children"
+            >Also show {{ currentlyMatchingInactive() }} inactive
+          </mat-slide-toggle>
+        }
+        @if (currentlyMatchingIneligible() > 0) {
+          <mat-slide-toggle
+            [checked]="includeIneligible()"
+            (toggleChange)="toggleIncludeIneligible()"
+            matTooltip="These records do not match the conditions configured for this field. Select them only as an exception (or update the record)."
+            i18n-matTooltip
+            i18n="
+              Label for checkbox|e.g. include records not matching the selection
+              filter of a field
+            "
+            >Also show {{ currentlyMatchingIneligible() }} not matching the
+            filter
+          </mat-slide-toggle>
+        }
+      </div>
     }
   </app-basic-autocomplete>
 

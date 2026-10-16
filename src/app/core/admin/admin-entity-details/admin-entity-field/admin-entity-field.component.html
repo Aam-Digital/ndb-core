@@ -204,6 +204,20 @@
                   </mat-slide-toggle>
                 </mat-hint>
               </mat-form-field>
+
+              @if (getSelectionConditionTargetType(); as referencedEntityType) {
+                <app-admin-display-condition-button
+                  class="margin-top-regular"
+                  target="selectionOptions"
+                  [showLabel]="true"
+                  [entityType]="referencedEntityType"
+                  [currentRecordType]="data.entityType"
+                  [condition]="schemaFieldsForm.get('selectionCondition').value"
+                  (conditionChange)="
+                    schemaFieldsForm.get('selectionCondition').setValue($event)
+                  "
+                ></app-admin-display-condition-button>
+              }
             }
 
             <!-- "additional" for attendance datatype -->

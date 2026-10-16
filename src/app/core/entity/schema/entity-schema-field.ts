@@ -167,6 +167,20 @@ export interface EntitySchemaField {
    * from validation (e.g. a "required" validator is skipped while hidden).
    */
   displayCondition?: DataFilter<any>;
+
+  /**
+   * (Optional) For fields referencing another entity type:
+   * A Mango/MongoDB style query condition that the referenced records have to match
+   * to be offered for selection in this field.
+   *
+   * Condition values can refer to fields of the record being edited
+   * through a placeholder like `"$current_record.location"`.
+   * If such a referenced field is empty, the condition is not applied.
+   *
+   * Records that do not match can still be shown by the user on request,
+   * and already selected records are kept even if they do not match (anymore).
+   */
+  selectionCondition?: DataFilter<any>;
 }
 
 /**

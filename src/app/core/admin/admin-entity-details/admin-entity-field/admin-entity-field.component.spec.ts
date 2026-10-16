@@ -24,6 +24,9 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { MatButtonHarness } from "@angular/material/button/testing";
+import { By } from "@angular/platform-browser";
+import { AdminDisplayConditionButtonComponent } from "../../building-blocks/admin-display-condition-button/admin-display-condition-button.component";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -547,5 +550,88 @@ describe("AdminEntityFieldComponent", () => {
     component.fieldIdForm.setValue("valid_id");
     await fixture.whenStable();
     expect(component.fieldIdForm.errors).toBeNull();
+  });
+
+  describe("selection filter", () => {
+    const findSelectionFilterButton = () =>
+      loader.getHarnessOrNull(
+        MatButtonHarness.with({ text: /Selection Filter/ }),
+      );
+
+    const entityRef: EntitySchemaField = {
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    };
+
+    it.each<[string, EntitySchemaField, boolean]>([
+      ["a single record type", entityRef, true],
+      [
+        "a list of one record type",
+        { ...entityRef, additional: [TestEntity.ENTITY_TYPE] },
+        true,
+      ],
+      [
+        "the entity dropdown set explicitly",
+        { ...entityRef, editComponent: "EditEntity" },
+        true,
+      ],
+      [
+        "multiple record types",
+        {
+          ...entityRef,
+          additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+        },
+        false,
+      ],
+      [
+        "the legacy attendance editor (based on the entity dropdown)",
+        { ...entityRef, editComponent: "EditLegacyAttendance" },
+        true,
+      ],
+      [
+        "a custom edit component not applying the filter",
+        { ...entityRef, editComponent: "EditAttendance" },
+        false,
+      ],
+      [
+        "no record type (text field)",
+        { dataType: StringDatatype.dataType },
+        false,
+      ],
+    ])(
+      "offers the selection filter only for an entity dropdown of exactly one record type (%s)",
+      async (_, field, expectedOffered) => {
+        await recreateComponentWithData({ label: "ref", ...field });
+
+        expect(!!(await findSelectionFilterButton())).toBe(expectedOffered);
+      },
+    );
+
+    it("filters the referenced records, comparing with fields of the record being edited", async () => {
+      await recreateComponentWithData(
+        {
+          label: "ref",
+          dataType: EntityDatatype.dataType,
+          additional: TestEntity.ENTITY_TYPE,
+        } as EntitySchemaField,
+        Note,
+      );
+      const button = fixture.debugElement
+        .queryAll(By.directive(AdminDisplayConditionButtonComponent))
+        .map(
+          (el) => el.componentInstance as AdminDisplayConditionButtonComponent,
+        )
+        .find((b) => b.target() === "selectionOptions");
+
+      expect(button.entityType()).toBe(TestEntity);
+      expect(button.currentRecordType()).toBe(Note);
+
+      const condition = { other: { $in: ["$current_record.other"] } };
+      button.conditionChange.emit(condition);
+
+      expect(dialogData.entitySchemaField.selectionCondition).toEqual(
+        condition,
+      );
+    });
   });
 });

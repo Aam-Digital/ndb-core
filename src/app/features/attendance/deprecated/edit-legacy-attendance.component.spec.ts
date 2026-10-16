@@ -11,6 +11,7 @@ import { InteractionType } from "#src/app/child-dev-project/notes/model/interact
 import { Note } from "#src/app/child-dev-project/notes/model/note";
 import { EditLegacyAttendanceComponent } from "./edit-legacy-attendance.component";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
+import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
 
 describe("EditLegacyAttendanceComponent", () => {
   let component: EditLegacyAttendanceComponent;
@@ -49,6 +50,18 @@ describe("EditLegacyAttendanceComponent", () => {
     fixture.componentRef.setInput("formFieldConfig", { id: "children" });
     fixture.componentRef.setInput("entity", new Note());
     fixture.detectChanges();
+  });
+
+  it("lets the participants dropdown compare with the note being edited", () => {
+    const note = new Note();
+    fixture.componentRef.setInput("entity", note);
+    fixture.detectChanges();
+
+    const dropdown: EditEntityComponent = fixture.debugElement.query(
+      By.directive(EditEntityComponent),
+    ).componentInstance;
+
+    expect(dropdown.entity()).toBe(note);
   });
 
   it("should show the child meeting note attendance component when the event is a meeting", () => {
