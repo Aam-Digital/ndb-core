@@ -110,7 +110,7 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 | Tool                         | Usage                                                                                                                                               |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                           |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                      |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `AGENTS.md` (do not add a `CLAUDE.md`, it would replace `AGENTS.md`)                                           |
 | **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
 ## Agents

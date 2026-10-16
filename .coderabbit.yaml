@@ -3,10 +3,8 @@ reviews:
   # "@coderabbitai review" on a pull request.
   auto_review:
     enabled: false
+  # Coding and testing conventions are not repeated here: CodeRabbit reads AGENTS.md and
+  # .github/instructions/*.instructions.md as code guidelines by default.
   path_instructions:
     - path: "src/app/core/entity/**"
       instructions: "Core entity system — extra scrutiny for schema changes, backward compatibility"
-    - path: "**/*.spec.ts"
-      instructions: "Unit tests should mock dependencies with jasmine.createSpyObj, use MockedTestingModule.withState()"
-    - path: "e2e/**"
-      instructions: "E2E tests must import from #e2e/fixtures.js, use accessibility-based locators, include argosScreenshot()"

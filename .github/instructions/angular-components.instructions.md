@@ -4,7 +4,7 @@ applyTo: "**/*.component.ts"
 
 # Angular Component Patterns
 
-> **Legacy code note:** Some existing code may not implement these guidelines yet. For new components, always follow these instructions. For existing components, analyse the status and refactor only after confirmation. Separate refactoring changes into their own commits and PRs.
+Examples for the component rules in `AGENTS.md` (which also covers templates, styling, i18n and legacy code).
 
 ## Change Detection
 
@@ -128,23 +128,3 @@ export class ExampleComponent {
   });
 }
 ```
-
-## Component Guidelines
-
-- Keep components small and focused on single responsibility
-- Prefer inline templates for small components
-- Prefer Reactive forms over Template-driven forms
-- Use class bindings instead of `ngClass`
-- Use style bindings instead of `ngStyle`
-- Use `async` pipe for observables
-- Use `customDate` pipe for date formatting with "shortDate" or "mediumDate" format
-- Use `$localize` or i18n markers for all user-facing strings
-  - Do not add context labels unless the purpose of the i18n string is truly ambiguous without it
-- Use `Logging` (from `#src/app/core/logging/logging.service`) — never `console.log`
-- Use `<app-fa-dynamic-icon>` for icons — never `<fa-icon>` directly
-
-## SCSS Styling
-
-- Use global variables from `src/styles/` (e.g. `@use "variables/colors"; colors.$primary`)
-- Prefer global utility classes (`flex-row`, `margin-regular`) from `src/styles/globals/`
-- If custom styles are needed, use meaningful class names in the component SCSS file

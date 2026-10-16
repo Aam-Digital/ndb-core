@@ -4,25 +4,8 @@ applyTo: "**/*.spec.ts"
 
 # Unit Testing Patterns (Vitest)
 
-## What to test, and how much
-
-Before adding a spec file, check that it is the right shape of test:
-
-- **Test behaviour, not existence.** Cover logic that can be wrong: branches,
-  transformations, error paths, edge cases. `expect(component).toBeTruthy()` asserts only
-  that Angular can construct a class — the production build and the e2e suite already
-  establish that, and `src/app/component-smoke.spec.ts` sweeps every registered component
-  for it in a single file. Add a component to that sweep's list instead of writing a new
-  spec file whose only assertion is construction.
-- **A spec file must earn its environment.** Each one costs a fresh jsdom (~1.3s of CI
-  whether it holds one test or thirty) and a reviewer's attention. Prefer adding a case to
-  an existing spec over creating a new file.
-- **Three or more tests sharing a body shape become one `it.each` table** (see below).
-- **Name the invariant, not the scenario.** If a test name needs "and", it is two tests or
-  one table.
-- **Drive the subject through its public API.** No `(component as any).privateMethod()`.
-- **Assert what the user sees** — roles and visible text, never framework-internal class
-  names such as `mat-mdc-checkbox-checked`.
+Examples for the unit-testing rules in `AGENTS.md` ("Testing Guidelines"): what to test and how
+much, and how to avoid shared state between spec files. Read those rules before adding a spec file.
 
 ## Test Module Setup
 
@@ -230,17 +213,4 @@ describe("MyComponent", () => {
     // Assert
   });
 });
-```
-
-## Running Tests
-
-```bash
-# Run specific test file
-npm run test -- --watch=false --include='**/my-component.spec.ts'
-
-# Run CI-style suite with coverage
-npm run test-ci
-
-# Run all tests
-npm run test -- --watch=false
 ```

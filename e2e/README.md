@@ -3,13 +3,19 @@
 End-to-end tests run the app in the browser using browser-local database. We use
 [Playwright][] as the testing framework.
 
-Before you run the tests you need to start a local development server with `npm
-start`. You can use the `playwright` CLI to run the tests from the terminal or
-start the [Playwright UI].
+The tests expect the app on `http://localhost:4200`. Serve a build there, as CI
+does, rather than the `npm start` dev server:
 
 ```bash
-npx playwright test
-npx playwright test --ui
+npx ng build --configuration=development
+npx serve dist -p 4200 --single
+```
+
+Then run the tests from the terminal or start the [Playwright UI]:
+
+```bash
+npm run e2e
+npm run e2e -- --ui
 ```
 
 To debug test runs you can use Playwright’s [Trace Viewer]. On CI traces for
@@ -34,10 +40,10 @@ markup.
 - Review [Best Practices](https://playwright.dev/docs/best-practices) from the
   Playwright documentation.
 
-- Import `test` and `expect`, `#e2e/fixtures.ts` instead of `@playwright/test`:
+- Import `test` and `expect` from `#e2e/fixtures.js` instead of `@playwright/test`:
 
   ```typescript
-  import { expect, test } from "#e2e/fixtures.ts";
+  import { expect, test } from "#e2e/fixtures.js";
   ```
 
   This prepares the application properly and loads it in the browser.
@@ -96,31 +102,7 @@ option](https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options)
 in `argosScreenshot()`. Set a default threshold with `argos upload
 --threshold=...`
 
-## AI-Assisted Test Development
-
-You can use [Claude Code][] to write tests based on Gherkin-style scenario steps.
-This requires a Claude account (the "Free" plan may be sufficient for occasional use).
-
-Start by adding the steps to a test file, e.g. `e2e/tests/attendance-tests.spec.ts`:
-
-```typescript
-/*
-TODO: Add a child
-When I navigate to "Children"
-And I click on "Add New"
-Then the heading "Adding new child" is displayed
-When I fill in "<NAME>" in the field "Name"
-And then I click on "Save".
-Then the heading changes to "<NAME>"
-*/
-```
-
-Then, start `claude` and run the command `/write-e2e-tests
-e2e/tests/attendance-test.spec.ts`. This will create a new test case "Add a
-child". You can then work with the initial draft and fix it until it passes.
-
 [aria-busy]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
 [Trace Viewer]: https://playwright.dev/docs/trace-viewer
-[Claude Code]: https://docs.anthropic.com/en/docs/claude-code/common-workflows#create-custom-slash-commands

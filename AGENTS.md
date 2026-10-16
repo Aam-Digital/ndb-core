@@ -1,93 +1,91 @@
 # AI Agent instructions
 
-You are an expert Angular and TypeScript developer working on Aam Digital, a case management software for social organizations. Follow these project-specific guidelines and best practices.
+You are an expert Angular and TypeScript developer working on Aam Digital, a case management software for social organizations, designed to improve effectiveness and transparency in work with beneficiaries. Follow these project-specific guidelines and best practices.
 
-## Project Context
+This is a social impact application helping organizations work with beneficiaries. Code quality, accessibility, and reliability are paramount for the mission-critical nature of this software.
 
-Aam Digital is a comprehensive case management software for social organizations, designed to improve effectiveness and transparency in work with beneficiaries. It's built with latest Angular (see `package.json` for current version) and uses TypeScript, Material Design, and various modern web technologies.
+## Where to find documentation
 
-### Architecture & Tech Stack
+This file holds the rules that apply everywhere. Details live next to the code — read them
+instead of exploring the code from scratch:
 
-- **Frontend**: Latest Angular (see `package.json`), TypeScript, Angular Material
-- **State Management**: RxJS, Entity system with PouchDB
+- **Module READMEs:** before working on files in a folder under `src/app/`, `e2e/`, `build/` or
+  `cli/`, read the `README.md` in that folder and in its parent folders, if they exist. They describe
+  the architecture, key files and patterns of that module. For example:
+  - [`src/app/core/entity/README.md`](src/app/core/entity/README.md) — entity base class, schema, load/save, lifecycle actions
+  - [`src/app/core/config/README.md`](src/app/core/config/README.md) — how the JSON config drives views, menus and entities
+  - [`src/app/core/permissions/README.md`](src/app/core/permissions/README.md) — CASL-based role/permission enforcement
+  - [`src/app/core/logging/README.md`](src/app/core/logging/README.md) — logging and Sentry reporting
+  - [`src/app/core/database/README.md`](src/app/core/database/README.md) — PouchDB databases and sync
+  - [`e2e/README.md`](e2e/README.md) — running and writing Playwright tests
+
+  List all of them with `git ls-files '*README.md'`.
+
+- **Patterns per file type:** before creating or editing one of these files, read the matching
+  instructions file (GitHub Copilot attaches them automatically, other agents have to read them):
+
+  | Files                                          | Instructions                                                                                    |
+  | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+  | `*.component.ts`                               | [`angular-components.instructions.md`](.github/instructions/angular-components.instructions.md) |
+  | `*.entity.ts`, `*.datatype.ts`, `**/entity/**` | [`entity-model.instructions.md`](.github/instructions/entity-model.instructions.md)             |
+  | `*.spec.ts`                                    | [`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md)                 |
+  | `e2e/**`                                       | [`e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md)                   |
+
+- **Guides and concepts:** `doc/compodoc_sources/` (how-to guides, architecture, i18n, security, UX guidelines),
+  published as the [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html).
+
+**Keep the docs current:** when you change behaviour that a README or guide describes, update it in
+the same PR. New module documentation goes into a `README.md` next to the code and is registered in
+`doc/compodoc_sources/summary.json` (see `doc/compodoc_sources/concepts/documentation-structure.md`).
+
+---
+
+## Tech Stack
+
+- **Frontend**: Latest Angular (see `package.json`), TypeScript, Angular Material, FontAwesome icons
+- **State Management**: Signals, RxJS, Entity system with PouchDB
 - **Authentication**: Keycloak integration
+- **Permissions**: CASL
 - **Database**: PouchDB (CouchDB compatible) with offline-first approach
-- **Testing**: Vitest for unit tests; Playwright for E2E
+- **Dates**: Moment.js
+- **Testing**: Vitest for unit tests; Playwright for E2E; `@faker-js/faker` for test and demo data
 - **Documentation**: Compodoc for API docs
 - **Build & Deploy**: Angular CLI, Docker
 - **Path Aliases**: `#src/` maps to `src/` (used in imports, e.g. `import { Logging } from "#src/app/core/logging/logging.service"`)
+- **Utilities**: check `src/app/utils/` (e.g. `asArray`) before writing a new helper
+- **Angular reference**: for comprehensive Angular guidance, see the official [Angular llms.txt file](https://angular.dev/context/llm-files/llms-full.txt)
 
-### Key Features
+### Project & File Structure
 
-- Entity-based data modeling system
-- Offline-first architecture with sync capabilities
-- Multi-language support (i18n) via POEditor
-- Flexible configuration system
-- Dashboard widgets and reporting
-- Import/export functionality
-- Permission-based access control
-- Demo data generation for testing
+- `src/app/core/` - Core system modules and services
+  - Shared components go in `src/app/core/common-components/`
+- `src/app/features/` - Feature-specific modules
+- `e2e/` - End-to-end tests with Playwright
+- `doc/` - Documentation and API reference
+- `build/` - Build configuration and scripts
+- `.github/instructions/` - Patterns per file type (see [Where to find documentation](#where-to-find-documentation))
+- `.claude/agents/` - Custom Claude Code agents for key workflows (these can be selected from GitHub Copilot)
+- Follow the existing module structure with entity-based organization
 
 ---
 
 ## Angular Development Patterns
 
-### Component Architecture
+Code examples for these rules are in
+[`angular-components.instructions.md`](.github/instructions/angular-components.instructions.md).
+
+### Components
 
 - Use standalone components (default behavior, do NOT set `standalone: true`)
-- Prefer `input()` and `output()` functions over decorators
-- Use signals for reactive state management with `computed()` for derived state
 - Set `changeDetection: ChangeDetectionStrategy.OnPush` for all components
-- Use `inject()` function instead of constructor injection
-- Implement lazy loading for feature routes
-- Use native control flow (`@if`, `@for`, `@switch`) instead of structural directives
-
-### Component Structure Example
-
-```typescript
-@Component({
-  selector: "app-example",
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    // Use host object instead of @HostBinding/@HostListener
-  },
-})
-export class ExampleComponent {
-  // Use input() and output() functions
-  data = input.required<EntityType>();
-  change = output<EntityType>();
-
-  // Use inject() for dependencies
-  private entityService = inject(EntityService);
-
-  // Use signals for reactive state
-  filteredData = computed(() => this.data().filter((item) => item.isActive));
-}
-```
-
-### Component Guidelines
-
-- Keep components small and focused on single responsibility
+- Prefer `input()` and `output()` functions over decorators
+- Use the `inject()` function instead of constructor injection
+- Do NOT use the `@HostBinding` and `@HostListener` decorators.
+  Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
+- Keep components small and focused on a single responsibility
 - Prefer inline templates for small components
 - Prefer Reactive forms over Template-driven forms
-- Use class bindings instead of `ngClass`
-- Use style bindings instead of `ngStyle`
-- Use `NgOptimizedImage` for static images (not base64)
-
-### Template Best Practices
-
-- Keep templates simple, avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use `async` pipe for observables
-- Use `customDate` pipe for date formating with "shortDate" or "mediumDate" format
-
-### Service Patterns
-
-- Use `providedIn: 'root'` for singleton services
-- Design services around single responsibility
-- Use the `inject()` function instead of constructor injection
-- Implement proper error handling and logging (see [Error Handling & Remote Logging](#error-handling--remote-logging-sentry))
-- Use dependency injection for testability
+- Implement lazy loading for feature routes
 
 ### State Management
 
@@ -96,39 +94,39 @@ export class ExampleComponent {
 - Keep state transformations pure and predictable
 - Do NOT use `mutate` on signals, use `update` or `set` instead
 
-### Host Bindings
+### Templates
 
-- Do NOT use the `@HostBinding` and `@HostListener` decorators
-- Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
+- Keep templates simple, avoid complex logic
+- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
+- Use class bindings instead of `ngClass`, and style bindings instead of `ngStyle`
+- Use `async` pipe for observables
+- Use `customDate` pipe for date formatting with "shortDate" or "mediumDate" format
+- Use `<app-fa-dynamic-icon>` for icons — never `<fa-icon>` directly
+- Use `NgOptimizedImage` for static images (not base64)
+
+### Services
+
+- Use `providedIn: 'root'` for singleton services
+- Design services around single responsibility
+- Implement proper error handling and logging (see [Error Handling & Remote Logging](#error-handling--remote-logging-sentry))
 
 ## TypeScript Development Standards
-
-### Type Safety
 
 - Use strict type checking (already configured)
 - Prefer type inference when obvious
 - Avoid `any` type - use `unknown` when type is uncertain
 - Use proper generics for entity types
 - Implement proper error handling with typed exceptions
-
-### Code Quality
-
-- Keep components small and focused on a single responsibility
-- Prefer inline templates for small components
-- Write maintainable, performant, and accessible code
-- Use _ESLint_ for linting (`npm run lint`)
-- Use _prettier_ for code formatting
-- Maintain a comprehensive test suite with Vitest and Playwright
-
-### Additional Resources
-
-- **Angular Framework Reference**: For comprehensive Angular guidance and best practices, see the official Angular llms.txt file: <https://angular.dev/context/llm-files/llms-full.txt>
+- Use _ESLint_ for linting (`npm run lint`) and _prettier_ for code formatting
 
 ---
 
 ## Aam Digital specific patterns
 
 ### Entity Architecture
+
+Read [`src/app/core/entity/README.md`](src/app/core/entity/README.md) and
+[`entity-model.instructions.md`](.github/instructions/entity-model.instructions.md) before changing entities or datatypes.
 
 - All data models extend the base `Entity` class (from `src/app/core/entity/model/entity.ts`)
 - Register entities with the `@DatabaseEntity("TypeName")` decorator
@@ -138,12 +136,12 @@ export class ExampleComponent {
 - Implement proper permissions checking via CASL integration.
   Components and buttons can use `EntityAbility` and `DisableEntityOperationDirective` to check and enforce permissions.
 - Implement specific datatypes (Date, ConfigurableEnum, etc.) extending the `DefaultDatatype` class. Implement "edit" and "display" components for a datatype's customized UI.
-- Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`) for generic entity tests. If a test needs custom fields, define a dedicated entity class for that test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`) instead of mutating the shared `TestEntity` (or other shared entity) schema. The unit-test runner is non-isolated, so mutating a shared entity's schema without restoring it leaks into other specs and causes order-dependent flaky failures
-- See `doc/compodoc_sources/how-to-guides/` for detailed guides on entities, datatypes, and more
+- Provide demo data generators for new entities (see [`src/app/core/demo-data/README.md`](src/app/core/demo-data/README.md))
 
 ### Configuration System
 
-The platform is highly configurable through JSON configuration files, allowing customization without code changes. This includes:
+The platform is highly configurable through JSON configuration files, allowing customization without code changes
+(see [`src/app/core/config/README.md`](src/app/core/config/README.md)). This includes:
 
 - Entity definitions and field configurations
 - Dashboard layouts and widgets
@@ -157,22 +155,10 @@ When developing new functionality:
 - Create interfaces for configuration objects and let component classes implement them
 - Validate configurations properly
 
-### Project & File Structure
-
-- `src/app/core/` - Core system modules and services
-  - Shared components go in `src/app/core/common-components/`
-- `src/app/features/` - Feature-specific modules
-- `e2e/` - End-to-end tests with Playwright
-- `doc/` - Documentation and API reference
-  - `doc/compodoc_sources/how-to-guides/` - Detailed developer guides (entities, datatypes, testing, etc.)
-- `build/` - Build configuration and scripts
-- `.github/instructions/` - Auto-attached Copilot instructions per file type (detailed patterns and examples)
-- `.claude/agents/` - Custom Claude Code agents for key workflows (these can be selected from GitHub Copilot)
-- Follow the existing module structure with entity-based organization
-
 ### Refactoring & Legacy Code
 
-- Some existing code may not follow current conventions. For existing code, analyse the status and refactor only after confirmation.
+- Some existing code may not follow current conventions. For new code, always follow these instructions.
+  For existing code, analyse the status and refactor only after confirmation.
 - Always separate refactoring changes into their own commits and PRs — do not mix refactoring with feature work.
 
 ## UX and Styling
@@ -185,21 +171,49 @@ When developing new functionality:
   instead of creating new custom styles
 - If custom styles are necessary, create a class with a meaningful name in the component-specific scss file and avoid inline styles
 
+### Creating Figma mockups
+
+When asked to design mockups, screens, or UI variants in Figma, build them in the
+**Aam Digital — Design System** file so they reuse the real components and tokens.
+
+- **File key:** ask user to provide
+- **Always load the `figma-use` and `figma-generate-design` skills before any `use_figma` call.**
+- **Where to build:** add a dedicated, clearly-labelled new page (e.g. `📋 <Feature> — Mockups (#<issue>)`).
+  **Never edit the canonical `📄 Screens` page** — it holds the reference screens (Dashboard,
+  Entity List, Entity Details). Confirm with the user before writing into this shared file.
+- **Use the design system, don't hardcode.** Tokens are **local variables** in this file
+  (collections: `Color / Semantic`, `Color / Status (w-levels)`, `Spacing`, `Radius`). Bind colors
+  with `setBoundVariableForPaint` and spacing/radius with `setBoundVariable`. Discover IDs via
+  `getLocalVariableCollectionsAsync` / by inspecting an existing screen's bound variables —
+  `search_design_system` returns empty for this file. Core components live on the
+  `🧩 Components — Core (Material)` page.
+- **App-screen conventions:** 1440×900 frame; 280px cream sidebar (`background/secondary`) with an
+  orange (`primary`) logo bar and active nav item; white content; orange accent links; font **Inter**
+  (Regular / Medium / Semi Bold / Bold).
+- **Gotcha:** a paint object returned by `setBoundVariableForPaint` can **lose its variable binding
+  when reused across many `node.fills` assignments** (the base color shows instead). Create a fresh
+  bound paint per text node and set its base color to the resolved fallback so contrast survives either way.
+- Validate each section with `get_screenshot` as you go.
+
+These mockups are not confirmed as a published/importable library, so building in a _separate_ Figma
+file may not be able to import the tokens by key — building in-file (on a new page) keeps full fidelity.
+
 ## Internationalization (i18n)
 
 - All user-facing strings must be translatable
 - Use Angular i18n markers or `$localize` for strings
-- Follow existing translation key patterns
+  - Do not add context labels unless the purpose of the i18n string is truly ambiguous without it
+- Follow existing translation key patterns (see `doc/compodoc_sources/concepts/i18n.md`)
 
 ## Performance & Accessibility
 
-- Implement OnPush change detection strategy
-- Use trackBy functions for lists
 - Follow WCAG guidelines for accessibility
-- Optimize bundle size with lazy loading
 - Use Angular Material accessibility features
+- Optimize bundle size with lazy loading
 
 ## Error Handling & Remote Logging (Sentry)
+
+Use `Logging` (from `#src/app/core/logging/logging.service`) — never `console.log`.
 
 `Logging.warn()` / `Logging.error()` and every unhandled error are reported to Sentry. How messages
 are worded, grouped and filtered there is documented in
@@ -245,6 +259,9 @@ When investigating Sentry issues, see "Investigating issues in Sentry" in the lo
 
 ### Unit Testing (Vitest)
 
+Code examples and shared test helpers are in
+[`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md).
+
 - **Test behaviour, not existence.** Write unit tests for logic that can be wrong: branches,
   transformations, error paths, edge cases. A component or service with no branching logic
   does not need a spec — `expect(component).toBeTruthy()` asserts only that Angular can
@@ -272,9 +289,6 @@ default role only covers single record types")` beats a name that restates the s
   variable, adjusting a log string) unless the change also alters behavior. A test that
   only pins down exact wording breaks on the next copy edit and adds no protection against
   real regressions.
-- Run tests: `npm run test -- --watch=false --include='**/relevant-file.spec.ts'`
-- Run the full CI-style unit test suite with coverage: `npm run test-ci`
-- See [`.github/instructions/unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md) for detailed patterns and examples
 
 #### Shared state between spec files
 
@@ -290,6 +304,10 @@ Practical rules:
   an object owned by the worker process, so even `isolate: true` would not undo it. Inject
   a fake instead — for storage, provide [`LOCAL_STORAGE_TOKEN`](src/app/utils/di-tokens.ts)
   with [`createFakeStorage()`](src/app/utils/test-utils/fake-storage.ts).
+- **Never mutate a shared entity schema.** Use `TestEntity` (from `src/app/utils/test-utils/TestEntity.ts`)
+  for generic entity tests. If a test needs custom fields, define a dedicated entity class for that
+  test (e.g. `@DatabaseEntity("MyTest") class MyTest extends Entity {}` then `MyTest.schema.set(...)`)
+  instead of changing the schema of `TestEntity` or another shared entity.
 - **Restore from a hook, not the end of a test body**, so the restore still runs when an
   assertion fails partway through.
 - **Register every entity type a spec relies on** by importing the model (the
@@ -298,10 +316,10 @@ Practical rules:
 
 ### End-to-End Testing (Playwright)
 
-- Run tests: `npm run e2e`
+Read [`e2e/README.md`](e2e/README.md) and [`e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) before writing e2e tests.
+
 - Keep the number of stand-alone e2e tests to a minimum: the initial `loadApp()` is expensive,
   so prefer integrating a new check as an additional step into an existing scenario.
-- See [`.github/instructions/e2e-tests.instructions.md`](.github/instructions/e2e-tests.instructions.md) for detailed patterns and examples
 
 ### Working with Test Results
 
@@ -311,13 +329,7 @@ To avoid re-running tests for further analysis, pipe console output to a file:
 npm run test -- --watch=false --include='**/relevant-file.spec.ts' 2>&1 | tee test-results/test-output.log
 ```
 
-For CI-style runs with coverage, results are written to `coverage/` (lcov format).
-
-### Demo Data & Development
-
-- Provide demo data generators for new entities
-- Use `@faker-js/faker` for realistic test data
-- Follow existing demo data patterns in `core/demo-data/`
+For CI-style runs with coverage (`npm run test-ci`), results are written to `coverage/` (lcov format).
 
 ---
 
@@ -350,17 +362,6 @@ Custom agents are defined in `.claude/agents/`. They support these key workflows
 2-implementation-planner  →  create a technical plan posted on the GitHub issue
 3-implementation-executor →  implement the plan, commit per task, open PR
 ```
-
-## MCP Servers
-
-The following MCP servers are available in `.vscode/mcp.json`:
-
-| Server            | Purpose                                                  |
-| ----------------- | -------------------------------------------------------- |
-| `angular-cli`     | Angular CLI operations, schematics, component generation |
-| `chrome-devtools` | Runtime debugging, DOM inspection, console access        |
-| `sentry`          | Production error data, issue investigation               |
-| `github`          | Issues, PRs, comments, diffs, repository context         |
 
 ## Git Worktrees
 
@@ -403,19 +404,7 @@ by name and remove any gitlink entries with `git rm --cached <path>`.
 
 - `npm run start` - Development server
 - `npm run test -- --watch=false --include='**/relevant-file.spec.ts'` - Unit tests
+- `npm run test-ci` - Full CI-style unit test suite with coverage
 - `npm run e2e` - End-to-end tests
 - `npm run build` - Production build
 - `npm run lint:fix` - Linting (including automatic fixes)
-
-## Key Dependencies to Leverage
-
-- Angular Material for UI components
-- FontAwesome for icons
-- CASL for permissions
-- PouchDB for offline-first data storage
-- Moment.js for date handling
-- RxJS for reactive programming
-- `@faker-js/faker` for test data generation
-- Utility functions like `asArray` from "src/app/utils/" folder
-
-Remember: This is a social impact application helping organizations work with beneficiaries. Code quality, accessibility, and reliability are paramount for the mission-critical nature of this software.
