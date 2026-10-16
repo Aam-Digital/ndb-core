@@ -132,8 +132,14 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   data = inject<{
     entities: AffectedEntity[];
     trigger?: UpdateTrigger;
-    /** Finds the entities that would be updated next if the given affected entity had its suggested value */
-    loadNextLevel?: (affected: AffectedEntity) => Promise<AffectedEntity[]>;
+    /**
+     * Finds the entities that would be updated next if the given affected entity had its suggested value,
+     * taking into account all given affected entities with their suggested values
+     */
+    loadNextLevel?: (
+      affected: AffectedEntity,
+      found: AffectedEntity[],
+    ) => Promise<AffectedEntity[]>;
   }>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
@@ -289,16 +295,20 @@ export class AutomatedFieldUpdateComponent implements OnInit {
     return addHigherLevels(
       this.firstLevel,
       this.data.trigger.entity.getId(),
-      (source) => {
-        // what the user entered is the base for the entities above
-        const row = this.rows().find((r) => isSameRow(r, source));
-        return this.data.loadNextLevel(
-          row?.edited
-            ? { ...source, newValue: this.getDatabaseValue(row) }
-            : source,
-        );
-      },
+      (source, found) =>
+        this.data.loadNextLevel(
+          this.withEnteredValue(source),
+          found.map((row) => this.withEnteredValue(row)),
+        ),
     );
+  }
+
+  /** What the user entered is the base for the entities above, instead of the suggestion */
+  private withEnteredValue(suggestion: AffectedEntity): AffectedEntity {
+    const row = this.rows().find((r) => isSameRow(r, suggestion));
+    return row?.edited
+      ? { ...suggestion, newValue: this.getDatabaseValue(row) }
+      : suggestion;
   }
 
   /** Show the given entities, keeping the form (and so the changes of the user) of the ones that are shown already */

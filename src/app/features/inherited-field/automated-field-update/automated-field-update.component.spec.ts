@@ -122,6 +122,7 @@ describe("AutomatedFieldUpdateComponent", () => {
 
     expect(loadNextLevel).toHaveBeenCalledWith(
       expect.objectContaining({ id: FIRST, newValue: ["x"] }),
+      [expect.objectContaining({ id: FIRST, newValue: ["x"] })],
     );
     expect(component.rows()).toEqual([first, second]);
     expect(valueOf(second)).toEqual(["x"]);

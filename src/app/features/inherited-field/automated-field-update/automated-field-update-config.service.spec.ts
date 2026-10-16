@@ -222,6 +222,30 @@ class HierarchyAction extends Entity {
   tags: ConfigurableEnumValue[];
 }
 
+/** a record that takes the tags that all its member records have in common */
+@DatabaseEntity("HierarchyGroup")
+class HierarchyGroup extends Entity {
+  @DatabaseField({
+    dataType: "entity",
+    additional: "HierarchyAction",
+    isArray: true,
+  })
+  members: string[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "members",
+        sourceValueField: "tags",
+      },
+    },
+  })
+  tags: ConfigurableEnumValue[];
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -269,6 +293,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentorship", Mentorship);
     entityRegistry.set("AggregatingAction", AggregatingAction);
     entityRegistry.set("HierarchyAction", HierarchyAction);
+    entityRegistry.set("HierarchyGroup", HierarchyGroup);
     entityRegistry.set("CommonValueGroup", CommonValueGroup);
 
     mockIndexing = {
@@ -1220,6 +1245,66 @@ describe("AutomatedFieldUpdateConfigService", () => {
       const suggestions = await changeTags(child, ["education"]);
 
       expect(suggestions.map(([id]) => id)).toEqual([parent.getId()]);
+    });
+
+    it("removes a value from the parent of the parent if no record below it keeps the value", async () => {
+      const project = createAction(["education"]);
+      const workPackage = createAction(["education"], project);
+      const activity = createAction(["education"], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+
+      const suggestions = await changeTags(activity, []);
+
+      expect(suggestions).toEqual([
+        [workPackage.getId(), [], 1, [activity.getId()]],
+        [project.getId(), [], 2, [workPackage.getId()]],
+      ]);
+    });
+
+    it("keeps a value of the parent of the parent that another record below it still has", async () => {
+      const project = createAction(["education"]);
+      const workPackage1 = createAction(["education"], project);
+      const workPackage2 = createAction(["education"], project);
+      const activity = createAction(["education"], workPackage1);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+
+      const suggestions = await changeTags(activity, []);
+
+      expect(suggestions.map(([id]) => id)).toEqual([workPackage1.getId()]);
+    });
+
+    it("removes a value from the parent of the parent once all records below it that had it are updated", async () => {
+      const project = createAction(["education"]);
+      const workPackage1 = createAction(["education"], project);
+      const workPackage2 = createAction(["education"], project);
+      const activity = createAction(["education"], workPackage1, workPackage2);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+
+      const suggestions = await changeTags(activity, []);
+
+      expect(suggestions.map(([id, value]) => [id, value])).toEqual([
+        [workPackage1.getId(), []],
+        [workPackage2.getId(), []],
+        [project.getId(), []],
+      ]);
+    });
+
+    it("suggests the shared value to a record linking to several updated parents", async () => {
+      const workPackage1 = createAction(["health"]);
+      const workPackage2 = createAction(["health"]);
+      const activity = createAction([], workPackage1, workPackage2);
+      const group = new HierarchyGroup();
+      group.members = [workPackage1.getId(), workPackage2.getId()];
+      group.tags = toTags(["health"]);
+      entityMapper.addAll([workPackage1, workPackage2, activity, group]);
+
+      await changeTags(activity, ["education"]);
+
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.id === group.getId(),
+      );
+      expect(suggestion.newValue).toEqual(["health", "education"]);
+      expect(suggestion.hasNoCommonValue).toBe(false);
     });
 
     it("also covers the levels above when updating the linked records from the field button", async () => {

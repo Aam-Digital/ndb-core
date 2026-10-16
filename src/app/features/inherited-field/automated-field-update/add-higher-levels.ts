@@ -12,13 +12,17 @@ export const MAX_HIERARCHY_LEVELS = 10;
  *
  * @param firstLevel the entities directly linked to the changed entity
  * @param changedEntityId the id of the entity whose change started the update (never offered for an update itself)
- * @param loadNextLevel finds the entities that would be updated if the given affected entity had its suggested value
+ * @param loadNextLevel finds the entities that would be updated if the given affected entity had its suggested value,
+ *   given all affected entities found so far (whose suggested values are not saved yet)
  * @return all affected entities, ordered by level
  */
 export async function addHigherLevels(
   firstLevel: AffectedEntity[],
   changedEntityId: string,
-  loadNextLevel: (affected: AffectedEntity) => Promise<AffectedEntity[]>,
+  loadNextLevel: (
+    affected: AffectedEntity,
+    found: AffectedEntity[],
+  ) => Promise<AffectedEntity[]>,
 ): Promise<AffectedEntity[]> {
   const rows = new Map<string, AffectedEntity>();
 
@@ -51,7 +55,7 @@ export async function addHigherLevels(
   ) {
     const nextLevel: AffectedEntity[] = [];
     for (const source of currentLevel) {
-      (await loadNextLevel(source))
+      (await loadNextLevel(source, [...rows.values()]))
         .filter((row) => row.id !== changedEntityId)
         .map((row) => addRow(row, source.id, level))
         .filter((row) => !!row)
