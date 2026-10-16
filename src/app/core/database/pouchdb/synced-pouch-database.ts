@@ -292,6 +292,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   /**
    * Report the docs the server refused during one sync in a single warning,
    * since a single push can be refused for hundreds of docs at once.
+   * Only counts and entity types, no document ids (see #4174).
    */
   private logDeniedDocs(deniedDocs: DeniedDoc[]) {
     if (deniedDocs.length === 0) {
@@ -303,7 +304,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       denied: deniedDocs.length,
       errors: [...new Set(deniedDocs.map((doc) => doc.name))],
       entityTypes: [...new Set(ids.map((id) => id.split(":")[0]))],
-      sampleIds: ids.slice(0, this.SAMPLE_IDS_LOGGED),
     });
   }
 

@@ -465,6 +465,7 @@ describe("SyncedPouchDatabase", () => {
         entityTypes: ["Note", "Child"],
       }),
     );
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toContain("Note:1");
   });
 
   describe("purgeDocsWithLostPermissions", () => {
