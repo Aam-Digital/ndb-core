@@ -66,4 +66,27 @@ describe("DisplayImgComponent", () => {
 
     expect(mockFileService.loadFile).toHaveBeenCalled();
   });
+
+  it("should show a hint if enabled and the referenced file could not be loaded", async () => {
+    // FileService returns an empty url if the file could not be loaded (e.g. 404)
+    mockFileService.loadFile.mockReturnValue(of(""));
+    const entity = new TestEntity();
+    entity["photo"] = "missing-file.png";
+    fixture.componentRef.setInput("entity", entity);
+    fixture.componentRef.setInput("imgProperty", "photo");
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.fileMissing()).toBe(true);
+    expect(
+      fixture.nativeElement.querySelector(".missing-file-hint"),
+    ).toBeNull();
+
+    fixture.componentRef.setInput("showMissingFileHint", true);
+    fixture.detectChanges();
+    expect(
+      fixture.nativeElement.querySelector(".missing-file-hint"),
+    ).not.toBeNull();
+  });
 });

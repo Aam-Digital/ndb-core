@@ -265,6 +265,38 @@ describe("EntityMapperService", () => {
     ]);
   });
 
+  it.each<[string, (results: any[]) => Promise<any[]>]>([
+    [
+      "has no result",
+      async (results) => results.filter((r) => r.id !== "EntityA:2"),
+    ],
+    [
+      "was refused",
+      (results) =>
+        Promise.reject(
+          results.map((r) =>
+            r.id === "EntityA:2" ? { id: r.id, error: "forbidden" } : r,
+          ),
+        ),
+    ],
+  ])(
+    "takes over the stored revisions by id when one document %s",
+    async (_case, respond) => {
+      const entities = ["1", "2", "3"].map((id) => new MockEntityA(id));
+      vi.spyOn(testDatabase, "putAll").mockImplementation((docs) =>
+        respond(docs.map((d) => ({ ok: true, id: d._id, rev: `2-${d._id}` }))),
+      );
+
+      await entityMapper.saveAll(entities).catch(() => undefined);
+
+      expect(entities.map((e) => e._rev)).toEqual([
+        "2-EntityA:1",
+        undefined,
+        "2-EntityA:3",
+      ]);
+    },
+  );
+
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     vi.useFakeTimers();
     const currentUser = new Entity(TEST_USER);

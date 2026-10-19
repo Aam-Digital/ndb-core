@@ -28,7 +28,9 @@ import {
   ColumnImportInput,
   ExportColumnMapping,
   ExportContext,
+  referenceIdConditions,
 } from "../../entity/default-datatype/default.datatype";
+import type { DataFilter } from "../../filter/filters/filters";
 import {
   EXPORT_BATCH_SIZE,
   loadReadableEntityName,
@@ -57,6 +59,15 @@ export class EntityDatatype extends StringDatatype {
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
   override importAllowsMultiMapping = true;
+
+  /** Stored as the plain id string, or as an array of them when `isArray` is set. */
+  override getReferenceSelector(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+    referencedId: string,
+  ): DataFilter<any>[] {
+    return referenceIdConditions(fieldId, referencedId);
+  }
 
   override getExportColumns(
     schemaField: EntitySchemaField,

@@ -21,6 +21,7 @@ import { FormsModule } from "@angular/forms";
 import { environment } from "#src/environments/environment";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-setup.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * UI for initial system setup and use case selection,
@@ -36,6 +37,7 @@ import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-set
     MatCheckbox,
     FormsModule,
     UserProfileSetupComponent,
+    FaIconComponent,
   ],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
@@ -46,7 +48,7 @@ export class SystemInitAssistantComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
-  private readonly setupService = inject(SetupService);
+  protected readonly setupService = inject(SetupService);
 
   /** exposed for the template to branch copy that only applies to the public in-memory demo */
   protected readonly environment = environment;

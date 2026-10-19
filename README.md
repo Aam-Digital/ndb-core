@@ -110,21 +110,27 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 | Tool                         | Usage                                                                                                                                               |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                           |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                      |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `AGENTS.md` (do not add a `CLAUDE.md`, it would replace `AGENTS.md`)                                           |
 | **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
-## Agents
+## Skills
 
-Custom agents are defined in `.claude/agents/` and can be invoked from Copilot chat or Claude Code:
+Shared skills are defined in `.claude/skills/`. Claude Code picks the matching one from what you ask
+(e.g. "can you do a code review of PR 4526"), or you call it by name (e.g. `/review-pull-request 4526`).
+A feature usually goes through them in this order: use cases, prototype, plan, then the code, then the review.
 
-| Agent                     | Purpose                                               | Recommended Tool                       |
-| ------------------------- | ----------------------------------------------------- | -------------------------------------- |
-| `business-analyst`        | Refine requirements into structured, testable docs    | Copilot chat or Claude Code            |
-| `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
-| `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
-| `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
-| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (on-demand) + manual prompt |
-| `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
+| Skill                 | Purpose                                                        |
+| --------------------- | -------------------------------------------------------------- |
+| `feature-use-cases`   | Write the use cases for a new feature                          |
+| `design-prototype`    | Build a clickable prototype with the Aam Digital design system |
+| `figma-mockups`       | Design screens in the Aam Digital Figma design system file     |
+| `plan-implementation` | Write the implementation plan for an issue                     |
+| `review-pull-request` | Review a pull request                                          |
+
+Set up once: open Claude Code in this repository and trust the folder, and log in to the GitHub CLI
+(`gh auth login`). `design-prototype` needs the Artifact tool (log in with your Claude account) and view access
+to the **Aam Digital** design system, `figma-mockups` the Figma connector. The skills write drafts and never
+post to GitHub, you paste the result yourself.
 
 ## MCP Servers
 

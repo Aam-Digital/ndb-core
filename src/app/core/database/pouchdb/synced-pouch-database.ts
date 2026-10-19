@@ -1,5 +1,6 @@
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../../logging/logging.service";
+import { NamedError } from "../../logging/reported-errors";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { NgZone } from "@angular/core";
 import { RemotePouchDatabase } from "./remote-pouch-database";
@@ -179,10 +180,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
       return {};
     }
 
-    const localDb = await this.getPouchDBOnceReady();
-
-    const localInfo = await localDb.info();
-    const isFirstSync = localInfo.doc_count === 0;
+    let localDb: PouchDB.Database;
+    let isFirstSync: boolean;
+    try {
+      localDb = await this.getPouchDBOnceReady();
+      isFirstSync = (await localDb.info()).doc_count === 0;
+    } catch (err) {
+      // e.g. a broken IndexedDB: logged like any failed sync (see ensureSynced)
+      this.handleSyncFailure(err, []);
+      throw err;
+    }
     if (isFirstSync) {
       // On first sync there are no local docs, so skip lost-permission tracking & purge
       this.remoteDatabase.trackLostPermissions = false;
@@ -237,14 +244,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
     });
     syncHandler.on("active", () => armStallTimer());
     syncHandler.on("paused", () => armStallTimer());
-    // per-doc rejections (e.g. 401/403 during push) that do not fail the
-    // overall sync and would otherwise leave a doc silently unsynced
-    syncHandler.on("denied", (err) =>
-      Logging.warn(
-        "sync: server denied replication of a document",
-        { db: this.dbName },
-        err,
-      ),
+    // per-doc rejections (e.g. 401/403 during push) do not fail the overall
+    // sync, but leave the rejected change in the local database only
+    const deniedDocs: DeniedDoc[] = [];
+    syncHandler.on("denied", (event: { doc?: DeniedDoc }) =>
+      deniedDocs.push(event?.doc ?? {}),
     );
     armStallTimer();
 
@@ -273,30 +277,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
           return {};
         }
 
-        if (this.isDocumentWriteError(err)) {
-          Logging.warn(
-            `sync failed: document write error (possible oversized document)`,
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-            err,
-          );
-        } else if (isKnownMultiTabDatabaseCorruption(err)) {
-          this.corruptionRecovery?.handleKnownMultiTabCorruption(
-            err,
-            "sync failed: likely multi-tab IndexedDB corruption",
-            { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
-          );
-        } else if (
-          this.isSyncConnectivityError(err) ||
-          err instanceof SyncStalledError
-        ) {
-          Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-        } else if (err?.status === 401 || err?.statusCode === 401) {
-          // expired session; the fetch layer already triggers re-login
-          Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
-        } else {
-          Logging.warn(`sync failed`, { db: this.dbName }, err);
-        }
-        this.syncState.next(SyncState.FAILED);
+        this.handleSyncFailure(err, lastSyncedDocIds);
         throw err;
       })
       .finally(() => {
@@ -304,7 +285,57 @@ export class SyncedPouchDatabase extends PouchDatabase {
         if (isFirstSync) {
           this.remoteDatabase.trackLostPermissions = true;
         }
+        this.logDeniedDocs(deniedDocs);
       });
+  }
+
+  /**
+   * Report the docs the server refused during one sync in a single warning,
+   * since a single push can be refused for hundreds of docs at once.
+   * Only counts and entity types, no document ids (see #4174).
+   */
+  private logDeniedDocs(deniedDocs: DeniedDoc[]) {
+    if (deniedDocs.length === 0) {
+      return;
+    }
+    const ids = deniedDocs.map((doc) => doc.id).filter(Boolean);
+    Logging.warn("sync: server denied replication of documents", {
+      db: this.dbName,
+      denied: deniedDocs.length,
+      errors: [...new Set(deniedDocs.map((doc) => doc.name))],
+      entityTypes: [...new Set(ids.map((id) => id.split(":")[0]))],
+    });
+  }
+
+  /**
+   * Log a failed sync according to its cause (only once: callers like
+   * {@link ensureSynced} rely on this) and mark the sync state as failed.
+   */
+  private handleSyncFailure(err: any, lastSyncedDocIds: string[]) {
+    if (this.isDocumentWriteError(err)) {
+      Logging.warn(
+        `sync failed: document write error (possible oversized document)`,
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+        err,
+      );
+    } else if (isKnownMultiTabDatabaseCorruption(err)) {
+      this.corruptionRecovery?.handleKnownMultiTabCorruption(
+        err,
+        "sync failed: likely multi-tab IndexedDB corruption",
+        { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
+      );
+    } else if (
+      this.isSyncConnectivityError(err) ||
+      err instanceof SyncStalledError
+    ) {
+      Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
+    } else if (err?.status === 401 || err?.statusCode === 401) {
+      // expired session; the fetch layer already triggers re-login
+      Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
+    } else {
+      Logging.warn(`sync failed`, { db: this.dbName }, err);
+    }
+    this.syncState.next(SyncState.FAILED);
   }
 
   override async put(object: any, forceOverwrite = false): Promise<any> {
@@ -444,7 +475,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   /**
    * Ensure the database is synced with the remote server.
-   * Throws {@link NotAvailableOfflineError} if offline.
+   * Throws {@link NotAvailableOfflineError} if offline, or a {@link SyncFailedError}
+   * if the sync failed (which `sync()` has already logged).
    * Otherwise triggers a one-time sync and resolves when complete.
    */
   async ensureSynced(): Promise<void> {
@@ -454,7 +486,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
       );
     }
 
-    await this.sync();
+    try {
+      await this.sync();
+    } catch (err) {
+      throw new SyncFailedError(err);
+    }
 
     if (this.syncState.value === SyncState.UNSYNCED) {
       throw new NotAvailableOfflineError(
@@ -504,6 +540,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
 type SyncResult = PouchDB.Replication.SyncResultComplete<any>;
 
+/** The part of the error in a PouchDB "denied" event that is logged. */
+type DeniedDoc = { id?: string; name?: string };
+
 /**
  * What of the last synced batch can be reported when a sync fails right after
  * it: how much was in flight and which record types, but never the document
@@ -518,13 +557,19 @@ function lastSyncedBatchContext(docIds: string[]): Record<string, unknown> {
   };
 }
 
+/**
+ * Thrown by {@link SyncedPouchDatabase.ensureSynced} when the sync failed.
+ * The sync has already logged the failure: callers only need to tell the user.
+ */
+export class SyncFailedError extends NamedError {
+  constructor(cause: unknown) {
+    super("SyncFailedError", "Could not sync with the server", { cause });
+  }
+}
+
 /** Thrown internally when a sync is cancelled for making no progress. */
-class SyncStalledError extends Error {
+class SyncStalledError extends NamedError {
   constructor() {
-    super("Sync cancelled after making no progress");
-    // set explicitly: an Error subclass inherits the name "Error", and the class
-    // name is minified in production - remote monitoring would report this as
-    // "Error: No error message" (see logging module README)
-    this.name = "SyncStalledError";
+    super("SyncStalledError", "Sync cancelled after making no progress");
   }
 }

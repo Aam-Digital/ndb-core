@@ -7,6 +7,7 @@ import { OrgRunner, type OrgOutcome } from "../lib/org-runner.js";
 import { askYesNo, createPromptSession } from "../lib/prompt.js";
 import { withTimeout } from "../lib/timeout.js";
 import { ConsoleLogger } from "../migration/console-logger.js";
+import { backupRunTimestamp } from "../migration/migration-backup.js";
 import {
   failedMigrationResult,
   type MigrationOutcome,
@@ -63,6 +64,11 @@ export function registerMigrateCommand(program: Command): void {
       const { orgs } = creds;
       const runner = new OrgRunner();
       const logger = new ConsoleLogger(!!opts.verbose);
+      // one id for all orgs' backups of this run, so the whole run can be restored together
+      const backupRun = {
+        migrationId: migration.id,
+        runAt: backupRunTimestamp(),
+      };
 
       const connectivity = await runner.checkConnectivity(orgs);
       printConnectivity(connectivity);
@@ -86,6 +92,7 @@ export function registerMigrateCommand(program: Command): void {
           org,
           dryRun,
           logger,
+          backupRun,
           args,
         );
         try {
@@ -154,6 +161,13 @@ export function registerMigrateCommand(program: Command): void {
       }
       if (skippedCount > 0) {
         console.log(`${skippedCount} org(s) skipped (declined) — not applied.`);
+      }
+
+      if (outcomes.some((o) => o.result.writeStats.succeeded > 0)) {
+        console.log(
+          `Previous versions of changed documents are backed up (_local/migration-backup:${backupRun.migrationId}:${backupRun.runAt}:…).\n` +
+            `To roll back: migrate run restore-backup ${backupRun.migrationId} ${backupRun.runAt}`,
+        );
       }
 
       printSummary(outcomes, unreachableCount);

@@ -171,6 +171,8 @@ describe("SetupService", () => {
     const result = await promise;
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("local");
+    // so the setup wizard can show a hint
+    expect(service.unavailableSources()).toEqual([externalUrl]);
   });
 
   it("should prefer local config over external on id conflict", async () => {

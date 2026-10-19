@@ -252,13 +252,15 @@ export class ParsedFileInputComponent<T = any> {
   ): ParsedData<T> {
     const papaConfig: {
       header: boolean;
-      dynamicTyping: boolean;
       skipEmptyLines: boolean;
+      transform: (value: string) => string | null;
       delimiter?: string;
     } = {
       header: true,
-      dynamicTyping: true,
       skipEmptyLines: true,
+      // keep cells as exact strings (e.g. "00000" must not become 0);
+      // the target field's datatype converts them during import
+      transform: (value) => (value === "" ? null : value),
     };
     if (explicitDelimiter !== undefined) {
       papaConfig.delimiter = explicitDelimiter;

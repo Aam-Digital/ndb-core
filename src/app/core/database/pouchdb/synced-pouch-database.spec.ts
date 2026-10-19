@@ -8,7 +8,7 @@ import {
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { Subject } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
-import { SyncedPouchDatabase } from "./synced-pouch-database";
+import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { Logging } from "../../logging/logging.service";
 
@@ -400,6 +400,33 @@ describe("SyncedPouchDatabase", () => {
     expect(syncSpy).toHaveBeenCalled();
   });
 
+  it("ensureSynced should throw a SyncFailedError when the sync fails (already logged by the sync)", async () => {
+    const failure = new Error("sync failed");
+    vi.spyOn(service, "sync").mockRejectedValue(failure);
+    mockNavigator.onLine = true;
+
+    const result = service.ensureSynced();
+
+    await expect(result).rejects.toBeInstanceOf(SyncFailedError);
+    await expect(result).rejects.toMatchObject({ cause: failure });
+  });
+
+  it("should log a failure of the local database before syncing, as ensureSynced callers rely on", async () => {
+    const { mockLocalDb } = mockPouchDatabaseService();
+    const failure = new Error("local database broken");
+    mockLocalDb.info.mockRejectedValue(failure);
+    const warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+
+    await expect(service.sync()).rejects.toBe(failure);
+
+    expect(warn).toHaveBeenCalledWith(
+      "sync failed",
+      expect.anything(),
+      failure,
+    );
+    warn.mockRestore();
+  });
+
   it("ensureSynced should throw NotAvailableOfflineError when sync ends UNSYNCED", async () => {
     const syncSpy = vi.spyOn(service, "sync").mockImplementation(async () => {
       service["syncState"].next(SyncState.UNSYNCED);
@@ -411,6 +438,34 @@ describe("SyncedPouchDatabase", () => {
       NotAvailableOfflineError,
     );
     expect(syncSpy).toHaveBeenCalled();
+  });
+
+  it("reports the docs the server denied during one sync in a single warning", async () => {
+    const { mockLocalDb } = mockPouchDatabaseService();
+    const handler = mockSyncHandler();
+    handler.on.mockImplementation((event: string, listener) => {
+      if (event === "denied") {
+        for (const id of ["Note:1", "Note:2", "Child:3"]) {
+          listener({ direction: "push", doc: { id, name: "forbidden" } });
+        }
+      }
+      return handler;
+    });
+    mockLocalDb.sync.mockReturnValue(handler);
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    warnSpy.mockClear();
+
+    await service.sync();
+
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+      expect.stringContaining("denied"),
+      expect.objectContaining({
+        denied: 3,
+        errors: ["forbidden"],
+        entityTypes: ["Note", "Child"],
+      }),
+    );
+    expect(JSON.stringify(warnSpy.mock.calls)).not.toContain("Note:1");
   });
 
   describe("purgeDocsWithLostPermissions", () => {

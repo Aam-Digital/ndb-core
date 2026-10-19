@@ -153,6 +153,23 @@ describe("LocalPermissionEnforcerService", () => {
     }
   });
 
+  it.each([
+    ["indexeddb", true],
+    ["idb", false],
+  ])(
+    "keeps the rules unenforced when the re-sync fails, so that the next check retries (%s adapter)",
+    async (_, isIndexedDb) => {
+      isIndexedDbAdapterSpy.mockReturnValue(isIndexedDb);
+      resetSyncSpy.mockRejectedValue(new Error("sync failed"));
+
+      await expect(
+        service.enforcePermissionsOnLocalData(userRules),
+      ).resolves.toBeUndefined();
+
+      expect(service.getLastEnforcedRules()).not.toEqual(userRules);
+    },
+  );
+
   describe("indexeddb adapter (purge supported)", () => {
     // isIndexedDbAdapterSpy defaults to true from beforeEach
 

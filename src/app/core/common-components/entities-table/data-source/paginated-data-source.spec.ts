@@ -1,12 +1,12 @@
 import { TestBed } from "@angular/core/testing";
-import {
-  FULL_LOAD_PAGE_SIZE,
-  PaginatedDataSource,
-} from "./paginated-data-source";
+import { PaginatedDataSource } from "./paginated-data-source";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import {
+  EntityMapperService,
+  FULL_LOAD_PAGE_SIZE,
+} from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSnackBar } from "@angular/material/snack-bar";

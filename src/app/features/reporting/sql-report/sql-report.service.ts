@@ -91,35 +91,51 @@ export class SqlReportService {
     to: Date,
     forceCalculation = false,
   ): Promise<ReportData> {
-    if (forceCalculation) {
-      return firstValueFrom(
-        this.createReportCalculation(report.getId(), from, to),
+    if (!forceCalculation) {
+      const cachedData = await this.fetchCachedReportData(
+        report.getId(),
+        from,
+        to,
       );
+      if (cachedData) {
+        return cachedData;
+      }
     }
 
+    // A failed new calculation (request rejected or calculation finished with an error) is not
+    // retried: it would fail the same way and only run the report's queries on the server again.
     return firstValueFrom(
-      this.http
-        .get<ReportCalculation[]>(
-          `${SqlReportService.API_URL}/report-calculation/report/${report.getId()}`,
-        )
-        .pipe(
-          switchMap((reportDetails) => {
-            let lastReports = this.getLastReports(reportDetails, from, to);
+      this.createReportCalculation(report.getId(), from, to),
+    );
+  }
 
-            if (lastReports.length === 0) {
-              return this.createReportCalculation(report.getId(), from, to);
-            } else {
-              return this.fetchReportCalculationData(lastReports[0].id);
-            }
-          }),
+  /**
+   * The data of the latest successful calculation of the report for the given period.
+   * Resolves `undefined` instead of failing if there is no usable calculation,
+   * so the caller falls back to creating a new calculation.
+   */
+  private async fetchCachedReportData(
+    reportId: string,
+    from: Date,
+    to: Date,
+  ): Promise<ReportData | undefined> {
+    try {
+      const calculations = await firstValueFrom(
+        this.http.get<ReportCalculation[]>(
+          `${SqlReportService.API_URL}/report-calculation/report/${reportId}`,
         ),
-    ).catch((error) => {
-      if (!forceCalculation) {
-        return this.query(report, from, to, true);
-      } else {
-        throw error;
+      );
+      const lastCalculation = this.getLastReports(calculations, from, to)[0];
+      if (!lastCalculation) {
+        return undefined;
       }
-    });
+      return await firstValueFrom(
+        this.fetchReportCalculationData(lastCalculation.id),
+      );
+    } catch (error) {
+      Logging.debug("Could not load cached report calculation", error);
+      return undefined;
+    }
   }
 
   /**
@@ -243,7 +259,11 @@ export class SqlReportService {
   ) {
     return reportDetails
       .filter((value) => {
-        return this.filterFromToDates(value, from, to);
+        // pending or failed calculations have no data to show
+        return (
+          value.status === "FINISHED_SUCCESS" &&
+          this.filterFromToDates(value, from, to)
+        );
       })
       .sort((a: ReportCalculation, b: ReportCalculation) =>
         this.sortByEndDate(a, b),

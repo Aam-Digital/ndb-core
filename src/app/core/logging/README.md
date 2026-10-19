@@ -20,9 +20,47 @@ someFun() {
 The `LoggingService` has multiple log levels (`debug`, `info`, `warn`, `error`)
 that control whether log messages are sent to the remote monitoring and how they are treated there.
 
+## Deciding what to report
+
+A Sentry issue should mean "a developer has something to fix". Before adding a log call, decide
+who has to act on the failure:
+
+- **Bug in our code** (e.g. a `TypeError` in a template, an id built with the wrong entity type):
+  report it with `Logging.error`, or let it throw.
+- **Server or infrastructure fault** (e.g. an unexpected `400`/`5xx` from our own backend):
+  report it with `Logging.warn`, including the response, and tell the user the action failed.
+- **User or device environment** (e.g. offline or flaky connection, expired session, a record the
+  user may not read, a browser permission the user denied such as clipboard or notifications):
+  do not report it (`Logging.debug`); tell the user what happened and what they can do.
+- **Instance configuration or data** (e.g. an unknown `dataType`, icon or validator in the config;
+  a permission rule variable for an account without a linked profile; a file field pointing to a
+  missing file; an optional feature not set up for the instance): do not report it
+  (`Logging.debug`); make it visible to admins in the UI, and validate the config when it is saved.
+
+Rules that keep one root cause in one Sentry issue (see also "Log an error together with a message"
+and "Log a failure once" below):
+
+- **Never leave a promise floating.** An `async` call inside `subscribe()`, an effect or an event
+  handler needs `await` or `.catch()`. Otherwise an expected failure reaches Angular's
+  `ErrorHandler` and is reported as a separate, unhandled issue.
+- **Classify failures with the shared helpers**, not with ad-hoc status checks per component:
+  `isConnectivityError()` (`src/app/utils/connectivity-error.ts`) and `isExpiredSessionError()`
+  (`src/app/utils/expired-session-error.ts`). A component that only treats `404` as expected
+  logs every dropped connection as a warning of its own, and cannot tell the user what happened.
+- **Check whether an optional feature is configured before using it** (e.g. push notifications
+  without a Firebase config) instead of logging its failure on every page load.
+- **A known limitation is not an event.** If something fails on every sync or render for a known
+  reason (e.g. `purge()` on the legacy `idb` adapter), check the capability up front.
+- **Expect config values of the wrong type.** The config is plain JSON edited by admins; a template
+  or `computed()` must not crash because a value is not of the type its interface declares.
+
 ## Remote Logging
 
 Higher log levels (`warn` and `error`) are forwarded to our remote monitoring service, [Sentry](https://sentry.io/).
+
+Events are filed under the Sentry `environment` "production" for every production build. Deployments
+that are not used in production (internal test instances, demos, PR previews) should set
+`remoteLoggingEnvironment` in their `config.json`, so that their events can be filtered out of triage.
 
 ### Keep message strings static
 
@@ -40,7 +78,7 @@ Logging.warn("Config references an unknown entity type", {
 ```
 
 For thrown `Error`s, which reach the monitoring through Angular's `ErrorHandler`, whether the message
-affects grouping depends on whether the error type is fingerprinted — see below. Either way it is the
+affects grouping depends on whether it is one of our named errors — see below. Either way it is the
 issue title, so the readability rule always applies. Never interpolate `this.constructor.name` into
 one: it is minified in production, and because the message is built when the error is created, source
 maps cannot repair it the way they repair a stack trace. Such a report permanently reads
@@ -64,136 +102,110 @@ the original as its `cause`. Sentry links a `cause` into the reported exception 
 error and its stack trace are still in the event — but the title and the grouping now come from the
 message, which is stable across releases and identical for every call site logging that same problem.
 
+`Logging.warn(message, err)` is reported the same way, only at level `warning`. As a plain message
+event, the error would only be extra data that none of the processing below looks at: a failed request
+would not count as a connectivity failure, an expired session would not be filtered, and the status
+would not be reported. Only a warning without any error is reported as a plain message, grouped by its
+message. Angular's `HttpErrorResponse` is not an `Error` and counts as "no error" here: whether a
+failed response is exceptional is for the code that made the request to decide.
+
+So do not drop the error before logging (a `catchError(() => of(null))` followed by a log call
+without it leaves the report impossible to diagnose), and do not pass the same error object twice.
+
+### Log a failure once
+
+Either handle a failure where it is caught (log it, recover, tell the user) or rethrow it — not both.
+When the rethrown error reaches a caller that does not catch it either, it is reported a second time as
+an unhandled error, under its own and usually less telling title. Likewise, when a service has logged
+a failure and only returns a result flag, the component receiving it must not log it again.
+
+### Our own errors: `NamedError`
+
+Extend `NamedError` (or create one) for an error whose name and message identify the problem on their
+own, no matter which component ran into it — e.g. `ConfigLoadError`, `SyncStalledError`,
+`DatabaseException`, `RegistryLookupError`. Remote monitoring groups these by name, message and root
+cause instead of by stack trace, which otherwise opens one issue per call site (and per build, as
+releases without source maps report minified frames).
+
+- Pass the name as a literal: the class name is minified in production builds.
+- Keep the message free of ids and other variable data, and pass them as `details` instead: they are
+  reported as extra data, without splitting the issue.
+- Do not use it for generic errors (`TypeError`, ...): for those, the stack trace is the only thing
+  telling two unrelated bugs apart.
+- A failure that is only logged, not thrown, needs no name: `Logging.error(message, err)` is grouped
+  the same way. Name it only where a network failure must keep an issue of its own instead of going
+  into the shared network issue, because the app cannot continue (`ConfigLoadError`,
+  `AppBootstrapError`).
+
 ### How events are grouped
 
-Sentry groups errors **by their stack trace** whenever one is available — the exception message is not
-part of the grouping key then. (You can confirm this on any issue that holds events with several
-different `error.value`s.) So for a thrown error, rewording the message changes the issue title but
-never splits or merges issues; only a fingerprint does.
+Sentry groups errors by their stack trace whenever one is available, so rewording an error's message
+changes the issue title, but never splits or merges issues; only a fingerprint does. The `beforeSend`
+hook (`processSentryEvent`) therefore sets one where the stack is the wrong key:
 
-`processSentryEvent` (the `beforeSend` hook) therefore sets an explicit `fingerprint` where the stack
-is the wrong key. It checks the cases most-specific first, in `groupSentryEvent`:
+1. **Our errors** — a `NamedError` or a logged message (`LoggedError`) is grouped by its name and
+   message plus the root cause of its `cause` chain. The root cause is appended to the title, so that
+   issues split by it can be told apart, e.g. "ConfigLoadError: Failed to load configuration. (caused
+   by DatabaseException: Unknown kid)". A framework wrapper that only repeats the message of one of our
+   errors (Angular does that for an error raised in a `resource()` loader) is grouped like the error it
+   wraps.
+2. **Network failures** — a request that never reached the server goes into a single `network-error`
+   issue, at level `warning`: a failed `DatabaseException`, a logged message whose direct cause is a
+   failed request (whichever component logged it — the message is kept as the `logged_message` tag),
+   and any other error with a connectivity failure in its chain or a gateway status (0, 502, 503,
+   504). A chunk that fails to load counts as well (offline, or a deployment replaced it). Every
+   browser words these differently, so the title is replaced by a stable one and the original kept as
+   the `network_error` tag. A named error caused by a network failure (`ConfigLoadError`,
+   `AppBootstrapError`) keeps its own issue: it says what failed.
+3. **Exceptions without a stack** (e.g. an `HttpErrorResponse`) and **message events** are grouped by
+   their normalized message — Sentry would otherwise group them by the raw message, one issue per id.
+   An exception is also reported under the normalized message, so that the issue list does not show
+   one row per id (or a whole HTML error page quoted into a message).
 
-1. **By error chain** — for the error types listed in `CAUSE_GROUPED_ERROR_TYPES` and for
-   `LoggedError` (see above), the fingerprint is built from the thrown error plus its root cause
-   instead of the stack. These are thrown from one central place but reached from many components and
-   routes, so stack-based grouping scatters one problem across a dozen issues — and archiving one of
-   them does not silence the others. The route stays available as the `transaction` tag, so failures
-   can still be filtered by where they happened.
+Everything else keeps Sentry's grouping by stack trace.
 
-   Because the root cause is part of the key, it is also appended to the reported message
-   (`Failed to load configuration. (caused by DatabaseException: Unknown kid)`): several issues would
-   otherwise share one title and could only be told apart by opening each of them.
+Messages are normalized for grouping (`fingerprintKey`): ids, URLs and numbers are masked, punctuation
+and casing dropped, as libraries are inconsistent about them (PouchDB reports both `Unauthorized` and
+`unauthorized`). Changing the grouping does not re-group events already in Sentry: archive the issues
+it replaces once the release carrying it is rolled out.
 
-   This also applies when a framework re-throws such an error as a generic one — Angular does that
-   for anything raised inside a `resource()` loader, wrapping it in an error that copies the message
-   and reports the `"Error"` name a subclass inherits. A wrapper that only repeats its cause's
-   message contributes nothing but its own stack trace, so the event is grouped by the recognized
-   error underneath it (`rewrappedCauseGroupedError`) and lands in the same issue as the unwrapped
-   one. A wrapper with a message of its own (`Failed to load configuration from the database.`) says
-   more about the failure than its cause does, and stays what the event is grouped by.
+### What is not reported
 
-   Where the event is grouped by an error further down the chain like this, the thrown error takes
-   on that error's type and reported message, as Sentry titles an event by its thrown error: the
-   issue would otherwise hold the same problem under two titles.
+`processSentryEvent` drops events nobody can act on:
 
-2. **Network failures** — anything whose chain contains a connectivity error (see
-   `isConnectivityErrorMessage`) is collected into the single `network-error` issue. The browser
-   raises these at whatever point a request happened to be made, so by stack trace they are an
-   open-ended stream of near-identical issues with the same (non-)answer. They are still reported
-   rather than dropped, because a server outage surfaces exactly this way — as one issue, whose
-   number of affected sessions and deployments is the signal (not its event count, see the cap
-   below).
-   The browsers' differing wordings would make the merged issue's title flip-flop, so it is
-   replaced by a stable one and kept as the searchable `network_error` tag.
+- connectivity failures while the device is offline;
+- a rejected write with an outdated revision (409, "Document update conflict"): normal for an
+  offline-first app, the user is told and it is counted in usage analytics;
+- an expired session that could not be renewed (also when wrapped): the user is told, and the code
+  waiting for the data is not at fault. Other `401` reasons are still reported.
 
-   The status counts as well as the message: an event whose error carries a gateway status
-   (`0`/`502`/`503`/`504`) is a request that never reached the backend, whatever the message says.
-   That status is read from `err.status` or, where a library hands on the whole `fetch` Response
-   instead of lifting the status out of it, from `err.response.status` — which is how `keycloak-js`
-   reports every rejected response, all of them worded `Server responded with an invalid status.`
-
-   A chunk that fails to load counts as one of these: a lazily loaded part of the app not arriving
-   means either that the device is offline or that a deployment replaced the chunk the running app
-   asks for, and the error says neither which of the two it was nor anything actionable about the
-   chunk. Without this they arrive as one issue per browser wording (Chrome's "Failed to fetch
-   dynamically imported module", Firefox's "error loading …", Safari's "Importing a module script
-   failed") and per chunk URL.
-
-   This runs _after_ case 1 on purpose: a `ConfigLoadError` caused by a failed request is about the
-   config load, not about the network, and keeps its own issue.
-
-3. **Exceptions reported without a stack** (e.g. an `HttpErrorResponse`) — Sentry falls back to
-   grouping those by message, so an id or url interpolated into it opens a new issue every time.
-   They are fingerprinted by type and normalized message instead, and _reported_ under that same
-   normalized message (`reportNormalized`). Otherwise the issue list still shows the raw one: a row
-   per document id, or — where a library quotes a response body into the message, as PouchDB does
-   for a proxy error — a whole HTML error page pushing every other row off the screen. The raw
-   message stays available as the event's `originalError`.
-
-4. **Message-only events** (`Logging.warn(...)`) group by their normalized message, which enforces the
-   "keep message strings static" rule above: a message that does interpolate variable data still
-   produces one issue instead of one per value.
-
-Otherwise the event keeps Sentry's default grouping: for a generic error (`Error`, `TypeError`, ...)
-with a stack, that stack is the only thing telling two unrelated bugs apart.
+The `status`, `reason`, `entityId` etc. of the error, or of the failed request in its `cause` chain, are
+reported as extra data, as are the `details` of a `NamedError`.
 
 ### One report per issue per session
 
-An error thrown on every change detection cycle would otherwise send thousands of identical events,
-so `isExcessiveRepeat` caps each issue at `MAX_REPEATED_SENTRY_EVENTS` per page load — keyed on the
-fingerprint, which is why grouping runs before the cap. Budgeting more coarsely than per issue
-starves issues that merely share a cause: while a device is on a flaky connection, one connectivity
-failure is the root cause of the config load, the permission rules, the sync and every file download
-alike, and whichever of them failed first would silence all the others.
+An error thrown on every change detection cycle would send thousands of identical events, so each issue
+is capped at `MAX_REPEATED_SENTRY_EVENTS` per page load. An issue's **event count is therefore not a
+measure of how often a problem occurs**: weigh how many sessions, deployments (the `url` tag) and
+releases it affects instead. Not the number of affected _users_, which Sentry shows as 0: events
+deliberately carry no user identity, as data minimization under the GDPR.
 
-An issue's **event count is therefore not a measure of how often a problem occurs.** What to weigh
-instead is how many sessions it affects, how many deployments and releases it spans (the `url` and
-`release` tags), and whether it is still recurring.
+### Investigating issues in Sentry
 
-Not the number of affected _users_, which Sentry shows as 0 for every issue: reported events
-deliberately carry no user identity, as data minimization under the GDPR. Sentry's own session
-counting is anonymous and stays on, so "how many sessions" remains available; "how many users" is a
-question this project has chosen not to be able to answer.
-
-Values that go into a fingerprint are normalized (`fingerprintKey`): ids, URLs and numbers are masked,
-and punctuation and casing are dropped, so that occurrences of the same problem match even where a
-library is inconsistent about them (PouchDB reports both `Unauthorized` and `unauthorized`).
-
-A link of the chain that is itself a connectivity failure is replaced by `network failure`
-altogether, in the fingerprint and in the title: every browser words it differently
-(`Failed to fetch` / `Load failed` / ...), so a `DatabaseException` would otherwise be one issue per
-browser. For the same reason a network failure wrapping a network failure is treated as one link —
-which of the two the chain happens to include says nothing about the problem.
-
-When adding a new error type, add its name to `CAUSE_GROUPED_ERROR_TYPES`. What Sentry reports as the
-exception type is `error.name || error.constructor.name`, so the name has to be set explicitly and to
-a literal — an `Error` subclass otherwise inherits `"Error"` from `Error.prototype` and would silently
-fall out of this list, and the constructor name is minified. Both the dedicated classes
-(`RegistryLookupError`) and the plain errors that just set `error.name` (`ConfigLoadError`) do this.
-An `Error` subclass with neither a name nor a message is reported as `Error: No error message`.
-An exception that reaches Sentry with no type at all is listed as `<unknown>`, which says nothing in
-a list of issues and hides the message that would — so `enrichSentryEvent` falls back to the generic
-`"Error"` for those.
-
-Fingerprinting inverts the message rule stated above: once an error is fingerprinted its message _is_
-part of the grouping key, so whatever stays in it becomes a deliberate grouping dimension. Interpolate
-a value there only when both hold:
-
-- its cardinality is **bounded** — a component name or entity type, not a user id, URL or document revision;
-- each distinct value is a **separately actionable bug**, so a separate issue is what you want.
-
-`RegistryLookupError` and `RegistryDuplicateError` keep the registry name and the requested key in
-their message on exactly that basis: a missing `Event` component and a missing `Child` entity are
-separate problems to fix, while everything they had in common — which component, pipe or route
-happened to trigger the lookup — is what the fingerprint now collapses. Note that values are still
-normalized, so keys differing only in digits would collide.
-
-Note that changing a fingerprint does not re-group events already in Sentry: existing issues stay as they
-are and the new grouping applies to events reported from then on. To see the effect of a change, the
-issues it replaces have to be archived once the release carrying it is rolled out.
+- Issues from one browser session (same `trace` id in the event's context) usually share one root
+  cause even when their titles differ: compare trace ids before treating them separately.
+- The `environment` tag reads `production` for every production build, including internal test
+  instances and PR preview builds, unless their `config.json` sets `remoteLoggingEnvironment` (see
+  above). Check the `url` and `release` tags (`pr-…`, `…-master.N`) before treating an issue as
+  customer-facing.
+- Grouping and filtering run in the client, so a change to them only applies to events from clients
+  that loaded the new release: cached older app versions keep reporting under the old titles. Check
+  the `release` tag before investigating an issue that a change should already have handled.
 
 ## Key files
 
-- `logging.service.ts` — `LoggingService` and the `Logging` singleton (`export const Logging = new LoggingService()`); implements the log levels, Sentry forwarding and the `beforeSend` filtering/grouping
+- `logging.service.ts` — `LoggingService` and the `Logging` singleton; the log levels and how a log call is reported
+- `reported-errors.ts` — `NamedError` and `LoggedError`, the errors remote monitoring groups by message
+- `sentry-event-processing.ts` — the `beforeSend` hook: details, filters and the repeat cap
+- `sentry-grouping.ts` — the grouping rules and message normalization
 - `log-level.ts` — the `LogLevel` definitions
