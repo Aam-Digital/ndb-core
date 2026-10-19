@@ -1,16 +1,15 @@
 ---
 name: plan-implementation
-description: Write the implementation plan for a GitHub issue once its objective is agreed, as one self-contained comment (Context, Decisions, Changes, Open questions) that a developer or an AI agent can implement from. Use when someone says "plan this issue", "write the implementation plan", "how should we build this", "break this down into tasks", or "what needs to change for issue 1234".
+description: Plan the high-level architectural approach to implement a functionality once its objective is agreed. This is discussed in the development team before the actual implementation and detailed step-by-step tasks are prepared. Use when someone says "plan this issue", "write the implementation plan", "how should we build this", or "what needs to change for issue 1234".
 argument-hint: <issue-url or issue-number> (optional)
 ---
 
-# Plan the implementation of an issue
+# Plan the technical approach for a functionality
 
-The issue description says **what** and **why** for reviewers. The plan says **how** for
-whoever implements it. It is **one comment** on the issue that is complete on its own:
-someone who reads only that comment and the code can build the change without the rest of
-the discussion. When decisions change, the comment is edited in place, not followed by new
-ones.
+The issue description says **what** and **why** for reviewers, use cases define the user-perspective and behavior. The high-level plan says **how** for
+whoever implements it.
+Edited to be part of the GitHub **issue description section**. When decisions change, the description is edited in place, not keeping previous versions.
+Comments on the issue may be useful for discussion and documenting changed details.
 
 ## Steps
 
