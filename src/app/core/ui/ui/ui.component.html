@@ -82,7 +82,7 @@
           <app-display-img
             [entity]="siteSettings()"
             imgProperty="logo"
-            [showMissingFileHint]="canEditSiteSettings()"
+            [showMissingFileHint]="'update' | able: siteSettings()"
             class="site-logo"
           ></app-display-img>
         }
