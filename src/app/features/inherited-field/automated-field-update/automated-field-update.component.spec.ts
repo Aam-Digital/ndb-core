@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import { isEqual } from "lodash-es";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
@@ -37,7 +38,8 @@ describe("AutomatedFieldUpdateComponent", () => {
 
   /** The entity above the first one is suggested the value of the first one, if that is not "none" */
   function suggestAbove(source: AffectedEntity): Promise<AffectedEntity[]> {
-    const suggestion = source.id === FIRST && source.newValue[0] !== "none";
+    const suggestion =
+      source.id === FIRST && !isEqual(source.newValue, ["none"]);
     return Promise.resolve(
       suggestion ? [affected(SECOND, source.newValue as any, 2)] : [],
     );
