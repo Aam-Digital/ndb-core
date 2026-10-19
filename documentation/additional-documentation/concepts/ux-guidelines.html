@@ -137,6 +137,16 @@ Until then, our UX &quot;policy&quot; is loosely documented below:</p>
 <li>Views/Forms are by default not editable and have to be enabled through an &quot;Edit&quot; button.</li>
 <li>Changes in forms are not saved automatically and have to be confirmed through a &quot;Save&quot; button.</li>
 </ul>
+<h2>Styling</h2>
+<ul>
+<li>Use Angular Material components and follow the Material Design guidelines, for a consistent look.</li>
+<li>Use SCSS. Take colors and sizes from the global variables and mixins in <code>src/styles/</code>
+(e.g. <code>@use &quot;variables/colors&quot;;</code> and <code>colors.$primary</code>).</li>
+<li>Use the global style classes in <code>src/styles/globals/</code> (e.g. <code>flex-row</code>, <code>margin-regular</code>) before
+creating new styles.</li>
+<li>If a custom style is needed, create a class with a meaningful name in the component&#39;s scss file
+and avoid inline styles.</li>
+</ul>
 
                    </div><div class="search-results">
     <div class="has-results">

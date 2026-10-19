@@ -130,10 +130,12 @@
 <h1>End-to-end tests</h1>
 <p>End-to-end tests run the app in the browser using browser-local database. We use
 <a href="https://playwright.dev/">Playwright</a> as the testing framework.</p>
-<p>Before you run the tests you need to start a local development server with <code>npm start</code>. You can use the <code>playwright</code> CLI to run the tests from the terminal or
-start the <a href="https://playwright.dev/docs/test-ui-mode">Playwright UI</a>.</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">npx playwright test
-npx playwright test --ui</code></pre></div><p>To debug test runs you can use Playwright’s <a href="https://playwright.dev/docs/trace-viewer">Trace Viewer</a>. On CI traces for
+<p>The tests expect the app on <code>http://localhost:4200</code>. Serve a build there, as CI
+does, rather than the <code>npm start</code> dev server:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">npx ng build --configuration=development
+npx serve dist -p 4200 --single</code></pre></div><p>Then run the tests from the terminal or start the <a href="https://playwright.dev/docs/test-ui-mode">Playwright UI</a>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">npm run e2e
+npm run e2e -- --ui</code></pre></div><p>To debug test runs you can use Playwright’s <a href="https://playwright.dev/docs/trace-viewer">Trace Viewer</a>. On CI traces for
 all test runs are uploaded as artifacts. On the page of a workflow run you can
 find them in “Artifacts” section.</p>
 <h2>Accessibility</h2>
@@ -148,8 +150,18 @@ markup.</p>
 <li><p>Review <a href="https://playwright.dev/docs/best-practices">Best Practices</a> from the
 Playwright documentation.</p>
 </li>
-<li><p>Import <code>test</code> and <code>expect</code>, <code>#e2e/fixtures.ts</code> instead of <code>@playwright/test</code>:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { expect, test } from &quot;#e2e/fixtures.ts&quot;;</code></pre></div><p>This prepares the application properly and loads it in the browser.</p>
+<li><p>Keep the number of stand-alone tests to a minimum: the initial <code>loadApp()</code> is
+expensive, so prefer adding a new check as an additional step to an existing
+scenario.</p>
+</li>
+<li><p>A new larger feature (a new user flow, not a small change to an existing one) gets an
+e2e scenario for its main path. Keep the number of scenarios and screenshots small: every
+one adds to the run time and to the visual review, so cover the edge cases in unit tests.</p>
+</li>
+<li><p>Import from <code>#e2e/fixtures.js</code> instead of <code>@playwright/test</code> (enforced by ESLint):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { argosScreenshot, expect, loadApp, test } from &quot;#e2e/fixtures.js&quot;;</code></pre></div><p>This prepares the application properly and loads it in the browser. The file
+also provides helpers such as <code>selectFilterOption()</code> (entity list filters),
+<code>readCsvRows()</code> (downloaded exports) and <code>waitForDashboardWidgetsToLoad()</code>.</p>
 </li>
 <li><p>Prefer actions over expectations. Instead of the following</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">const someButton = page.getByLabel(&quot;...&quot;);
@@ -158,17 +170,75 @@ await someButton.click();</code></pre></div><p>write</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await page.getByLabel(&quot;...&quot;).click();</code></pre></div></li>
 <li><p>Use accessibility-based locators, in descending preference</p>
 <ul>
-<li><a href="https://playwright.dev/docs/locators#locate-by-label"><code>getByLabel()</code></a></li>
-<li><a href="https://playwright.dev/docs/locators#locate-by-title"><code>getByTitle()</code></a></li>
-<li><a href="https://playwright.dev/docs/locators#locate-by-placeholder"><code>getByPlaceholder()</code></a></li>
-<li><a href="https://playwright.dev/docs/locators#locate-by-role"><code>getByRole()</code></a></li>
-<li><a href="https://playwright.dev/docs/locators#locate-by-text"><code>getByText()</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-label"><code>getByLabel(&quot;Name&quot;)</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-title"><code>getByTitle(&quot;Edit&quot;)</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-placeholder"><code>getByPlaceholder(&quot;Search...&quot;)</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-role"><code>getByRole(&quot;button&quot;, { name: &quot;Save&quot; })</code></a></li>
+<li><a href="https://playwright.dev/docs/locators#locate-by-text"><code>getByText(&quot;Dashboard&quot;)</code></a></li>
 </ul>
 <p>Avoid CSS-based locators. If necessary, adjust the accessibility properties in
-HTML templates so that the desired elements can be located.</p>
+HTML templates so that the desired elements can be located.
+Exception: Angular Material form fields, see below.</p>
 </li>
 <li><p>Avoid navigation with <code>page.goto()</code>. Instead, click on the links that lead you
 to the desired page. This avoids reloading the app which is slow.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await page.getByRole(&quot;navigation&quot;).getByText(&quot;Dashboard&quot;).click();</code></pre></div></li>
+</ul>
+<h3>Test data</h3>
+<p><code>loadApp(page, entities?)</code> loads the app with the given entities in its
+database, or with the default demo data if you omit them. Create the entities
+with the standalone <code>generate*()</code> functions of the demo data generators (e.g.
+<code>generateUsers()</code>, <code>generateChild()</code>, <code>generateNote()</code>, <code>generateTodo()</code>,
+<code>generateActivity()</code>) and use <code>faker</code> (from <code>#src/app/core/demo-data/faker.js</code>)
+for randomized fields.</p>
+<p>The clock is mocked to a fixed date. Use <code>E2E_REF_DATE</code> from
+<code>#e2e/fixtures.js</code> (<code>&quot;2025-01-23&quot;</code>) for date-dependent logic. Dates are
+displayed as <code>dd.MM.yyyy</code>.</p>
+<p>Give fixtures semantic names (<code>childToAdd</code>, <code>childToKeep</code>, <code>childToRemove</code>,
+<code>userToAssign</code>) and use titles in angle brackets (e.g. <code>&quot;&lt;COACHING CLASS&gt;&quot;</code>)
+to tell them apart from demo data.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { range } from &quot;lodash-es&quot;;
+import { argosScreenshot, expect, loadApp, test } from &quot;#e2e/fixtures.js&quot;;
+import { faker } from &quot;#src/app/core/demo-data/faker.js&quot;;
+import { generateUsers } from &quot;#src/app/core/user/demo-user-generator.service.js&quot;;
+import { generateChild } from &quot;#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js&quot;;
+import { generateNote } from &quot;#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js&quot;;
+
+test(&quot;Dashboard shows correct counts&quot;, async ({ page }) =&gt; {
+  const users = generateUsers();
+  const children = range(5).map(() =&gt; generateChild());
+  const notes = range(3).map(() =&gt;
+    generateNote({
+      child: faker.helpers.arrayElement(children),
+      author: faker.helpers.arrayElement(users),
+      date: faker.date.recent({ days: 10 }),
+    }),
+  );
+
+  await loadApp(page, [...users, ...children, ...notes]);
+
+  await page.getByRole(&quot;navigation&quot;).getByText(&quot;Dashboard&quot;).click();
+  await expect(page.getByText(&quot;5 Children&quot;)).toBeVisible();
+});</code></pre></div><h3>Angular Material quirks</h3>
+<ul>
+<li><p><strong>Form fields:</strong> floating labels are <em>not</em> found by <code>getByLabel()</code>, because
+Playwright does not resolve their <code>aria-labelledby</code> wiring. Use the
+<code>mat-form-field</code>&#39;s id instead, which is always <code>entity-field__&lt;fieldId&gt;</code>
+(the field&#39;s schema key):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await page.locator(&quot;#entity-field__subject&quot;).getByRole(&quot;textbox&quot;).fill(&quot;My Task&quot;);
+await page.locator(&quot;#entity-field__relatedEntities&quot;).locator(&quot;.fa-caret-down&quot;).click();</code></pre></div></li>
+<li><p><strong>Options with checkboxes</strong> (multi-select): check them with
+<code>{ checked: true }</code>, not <code>{ selected: true }</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">await page.getByRole(&quot;option&quot;, { name: child.name }).getByRole(&quot;checkbox&quot;, { checked: true });</code></pre></div></li>
+<li><p><strong>Dialogs:</strong> records open in a popup when <code>clickMode: &quot;popup-details&quot;</code> is
+configured. Scope locators to <code>page.getByRole(&quot;dialog&quot;)</code> and close it with
+<code>page.locator(&quot;button.overlay-close-button&quot;)</code>. The list behind an open dialog
+is <code>aria-hidden</code>, so close the dialog before querying table rows or cells.
+Dialogs also close automatically when the router navigates (e.g. a click on
+a side-nav item).</p>
+</li>
+<li><p><strong>Buttons inside a <code>mat-form-field</code></strong> (e.g. &quot;Complete Task&quot;) can have their
+clicks intercepted by the form field wrapper. Use <code>click({ force: true })</code>.</p>
 </li>
 </ul>
 <h2>Visual regression screenshots</h2>
@@ -182,25 +252,12 @@ await expect(page.getByText(&quot;Content created&quot;)).toBeVisible();
 await argosScreenshot(page, &quot;content-created&quot;);</code></pre></div><p>This approach captures the app in a stable state rather than during transitions.</p>
 <p>The <code>argosScreenshot()</code> function waits for page stabilization before capturing.
 Use <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy"><code>aria-busy=true</code></a> on loading elements to help ensure screenshots
-are taken only when the UI is ready.</p>
+are taken only when the UI is ready. On the dashboard, call
+<code>await waitForDashboardWidgetsToLoad(page)</code> before taking a screenshot.</p>
 <p>Visual differences between test runs may occur even when no actual changes
 exist. Adjust sensitivity to minor variations using the <a href="https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options"><code>threshold</code>
 option</a>
 in <code>argosScreenshot()</code>. Set a default threshold with <code>argos upload --threshold=...</code></p>
-<h2>AI-Assisted Test Development</h2>
-<p>You can use <a href="https://docs.anthropic.com/en/docs/claude-code/common-workflows#create-custom-slash-commands">Claude Code</a> to write tests based on Gherkin-style scenario steps.
-This requires a Claude account (the &quot;Free&quot; plan may be sufficient for occasional use).</p>
-<p>Start by adding the steps to a test file, e.g. <code>e2e/tests/attendance-tests.spec.ts</code>:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">/*
-TODO: Add a child
-When I navigate to &quot;Children&quot;
-And I click on &quot;Add New&quot;
-Then the heading &quot;Adding new child&quot; is displayed
-When I fill in &quot;&lt;NAME&gt;&quot; in the field &quot;Name&quot;
-And then I click on &quot;Save&quot;.
-Then the heading changes to &quot;&lt;NAME&gt;&quot;
-*/</code></pre></div><p>Then, start <code>claude</code> and run the command <code>/write-e2e-tests e2e/tests/attendance-test.spec.ts</code>. This will create a new test case &quot;Add a
-child&quot;. You can then work with the initial draft and fix it until it passes.</p>
 
                    </div><div class="search-results">
     <div class="has-results">

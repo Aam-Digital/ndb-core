@@ -158,7 +158,15 @@ Also see <a href="../../basic-datatypes/README.md">Create a New Datatype</a>.</p
 The <code>EntitySchemaField</code> interface (<code>entity-schema-field.ts</code>) shows all configuration options.
 If the <code>editComponent</code> and the <code>viewComponent</code> are not set, the default components of this property&#39;s datatype will be used.
 The <code>description</code> field allows adding further explanation which will be displayed as a tooltip.</p>
-<h2>Generic Entity functionalities</h2>
+<p>The most common options:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">&#64;DatabaseField({
+  label: &quot;Field Label&quot;,          // display label (translatable)
+  dataType: &quot;configurable-enum&quot;, // dataType identifier (default: inferred from the TypeScript type)
+  additional: &quot;genders&quot;,         // extra config of the dataType (e.g. enum id, entity type)
+  isArray: true,                 // array of values
+  description: &quot;Tooltip text&quot;,   // help text
+  anonymize: &quot;retain&quot;,           // kept when anonymizing: &quot;retain&quot; | &quot;retain-anonymized&quot;
+})</code></pre></div><h2>Generic Entity functionalities</h2>
 <h3>Metadata (created, updated)</h3>
 <p>Each record automatically holds basic data of timestamp and user who created and last updated the record
 (see the <code>Entity</code> base class in <code>../model/entity.ts</code>).</p>

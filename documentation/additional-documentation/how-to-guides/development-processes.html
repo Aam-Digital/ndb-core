@@ -127,7 +127,7 @@
 
 
 
-<h1>Welcome!</h1>
+<h1>Welcome</h1>
 <p><em>Aam Digital</em> is open source because we believe in building things together
 and letting people benefit from and adapt things rather than everybody reinventing their own wheel.</p>
 <p>In order to build great software for small social impact organisations
@@ -204,7 +204,7 @@ Any reviews, feedback and discussions about your code will take place in this PR
 <ul>
 <li>each PR and each commit on <code>master</code> branch also are available as a docker image (<code>pr-&lt;pr_number&gt;</code>, e.g. pr-101; <code>&lt;version&gt;-master.&lt;built&gt;</code>, e.g. 3.52.0-master.1) that can be deployed for testing or as a hotfix, if necessary</li>
 </ul>
-<ol start="9">
+<ol>
 <li>A core team member will merge the PR onto the <code>master</code> branch after review.</li>
 <li>After merging, the branch is automatically deleted and the corresponding issue(s) are closed.</li>
 </ol>
@@ -216,6 +216,16 @@ Any reviews, feedback and discussions about your code will take place in this PR
 This can be done with a git rebase on your feature branch (please <strong>never</strong> rebase the master branch).
 Further information can be found in the <a href="https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History">Git Book</a>.</li>
 </ul>
+<h3>Working on several branches with git worktrees</h3>
+<p>A <a href="https://git-scm.com/docs/git-worktree">git worktree</a> gives you a second checkout of the repository
+for another branch, so you can work on it without stashing or switching. Claude Code creates its
+worktrees under <code>.claude/worktrees/</code>, which is in <code>.gitignore</code> and must never be committed.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">git worktree add .claude/worktrees/&lt;branch-name&gt; &lt;branch-name&gt;</code></pre></div><p>A worktree shares the git history but not <code>node_modules</code>. Run <code>npm ci</code> inside it, or, if the branch has
+the same dependencies, symlink the folder of the main checkout:
+<code>ln -s &quot;$(git rev-parse --show-toplevel)/node_modules&quot; .claude/worktrees/&lt;branch-name&gt;/node_modules</code>.</p>
+<p>If you create a worktree outside <code>.claude/worktrees/</code>, stage files by name: <code>git add .</code> would stage the
+worktree folder as a phantom submodule (a gitlink), which breaks the CI. Remove such an entry with
+<code>git rm --cached &lt;path&gt;</code>.</p>
 <hr>
 <h2>Copyright</h2>
 <p>Our project is licensed under GPL 3.0.

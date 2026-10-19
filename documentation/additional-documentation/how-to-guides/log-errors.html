@@ -140,6 +140,39 @@ This way, all logging is done in a consistent manner and can be transferred to t
   Logging.error(&#39;some error information&#39;);
 }</code></pre></div><p>The <code>LoggingService</code> has multiple log levels (<code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>)
 that control whether log messages are sent to the remote monitoring and how they are treated there.</p>
+<h2>Deciding what to report</h2>
+<p>A Sentry issue should mean &quot;a developer has something to fix&quot;. Before adding a log call, decide
+who has to act on the failure:</p>
+<ul>
+<li><strong>Bug in our code</strong> (e.g. a <code>TypeError</code> in a template, an id built with the wrong entity type):
+report it with <code>Logging.error</code>, or let it throw.</li>
+<li><strong>Server or infrastructure fault</strong> (e.g. an unexpected <code>400</code>/<code>5xx</code> from our own backend):
+report it with <code>Logging.warn</code>, including the response, and tell the user the action failed.</li>
+<li><strong>User or device environment</strong> (e.g. offline or flaky connection, expired session, a record the
+user may not read, a browser permission the user denied such as clipboard or notifications):
+do not report it (<code>Logging.debug</code>); tell the user what happened and what they can do.</li>
+<li><strong>Instance configuration or data</strong> (e.g. an unknown <code>dataType</code>, icon or validator in the config;
+a permission rule variable for an account without a linked profile; a file field pointing to a
+missing file; an optional feature not set up for the instance): do not report it
+(<code>Logging.debug</code>); make it visible to admins in the UI, and validate the config when it is saved.</li>
+</ul>
+<p>Rules that keep one root cause in one Sentry issue (see also &quot;Log an error together with a message&quot;
+and &quot;Log a failure once&quot; below):</p>
+<ul>
+<li><strong>Never leave a promise floating.</strong> An <code>async</code> call inside <code>subscribe()</code>, an effect or an event
+handler needs <code>await</code> or <code>.catch()</code>. Otherwise an expected failure reaches Angular&#39;s
+<code>ErrorHandler</code> and is reported as a separate, unhandled issue.</li>
+<li><strong>Classify failures with the shared helpers</strong>, not with ad-hoc status checks per component:
+<code>isConnectivityError()</code> (<code>src/app/utils/connectivity-error.ts</code>) and <code>isExpiredSessionError()</code>
+(<code>src/app/utils/expired-session-error.ts</code>). A component that only treats <code>404</code> as expected
+logs every dropped connection as a warning of its own, and cannot tell the user what happened.</li>
+<li><strong>Check whether an optional feature is configured before using it</strong> (e.g. push notifications
+without a Firebase config) instead of logging its failure on every page load.</li>
+<li><strong>A known limitation is not an event.</strong> If something fails on every sync or render for a known
+reason (e.g. <code>purge()</code> on the legacy <code>idb</code> adapter), check the capability up front.</li>
+<li><strong>Expect config values of the wrong type.</strong> The config is plain JSON edited by admins; a template
+or <code>computed()</code> must not crash because a value is not of the type its interface declares.</li>
+</ul>
 <h2>Remote Logging</h2>
 <p>Higher log levels (<code>warn</code> and <code>error</code>) are forwarded to our remote monitoring service, <a href="https://sentry.io/">Sentry</a>.</p>
 <p>Events are filed under the Sentry <code>environment</code> &quot;production&quot; for every production build. Deployments

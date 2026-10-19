@@ -185,25 +185,30 @@ For more information about Docker, please refer to <a href="https://docs.docker.
 </thead>
 <tbody>
 <tr><td><strong>GitHub Copilot</strong> (VS Code)</td><td>Code generation, chat, agent mode — reads <code>AGENTS.md</code>. Use <strong>Plan mode</strong> for architecture planning before implementation.</td></tr>
-<tr><td><strong>Claude Code</strong> (CLI)</td><td>Interactive coding assistant — reads <code>CLAUDE.md</code> → <code>AGENTS.md</code></td></tr>
+<tr><td><strong>Claude Code</strong> (CLI)</td><td>Interactive coding assistant — reads <code>AGENTS.md</code> (do not add a <code>CLAUDE.md</code>, it would replace <code>AGENTS.md</code>)</td></tr>
 <tr><td><strong>CodeRabbit</strong> (GitHub)</td><td>On-demand PR reviews — configured via <code>.coderabbit.yaml</code>. Comment <strong>&quot;@coderabbitai review&quot;</strong> on a PR to trigger a review (auto-review is disabled).</td></tr>
 </tbody>
 </table>
-<h2>Agents</h2>
-<p>Custom agents are defined in <code>.claude/agents/</code> and can be invoked from Copilot chat or Claude Code:</p>
+<h2>Skills</h2>
+<p>Shared skills are defined in <code>.claude/skills/</code>. Claude Code picks the matching one from what you ask
+(e.g. &quot;can you do a code review of PR 4526&quot;), or you call it by name (e.g. <code>/review-pull-request 4526</code>).
+A feature usually goes through them in this order: use cases, prototype, plan, then the code, then the review.</p>
 <table class="table table-bordered compodoc-table">
 <thead>
-<tr><th>Agent</th><th>Purpose</th><th>Recommended Tool</th></tr>
+<tr><th>Skill</th><th>Purpose</th></tr>
 </thead>
 <tbody>
-<tr><td><code>business-analyst</code></td><td>Refine requirements into structured, testable docs</td><td>Copilot chat or Claude Code</td></tr>
-<tr><td><code>troubleshooter</code></td><td>Debug issues using Sentry, devtools, and stack traces</td><td>Copilot/Claude Code with Sentry MCP</td></tr>
-<tr><td><code>implementation-planner</code></td><td>Design technical approach and architecture</td><td>Copilot <strong>Plan mode</strong> or Claude Code</td></tr>
-<tr><td><code>implementation-executor</code></td><td>Full implementation workflow with tests</td><td>Copilot agent mode or Claude Code</td></tr>
-<tr><td><code>refactorer</code></td><td>Code analysis and refactoring suggestions</td><td>CodeRabbit (on-demand) + manual prompt</td></tr>
-<tr><td><code>e2e-test-writer</code></td><td>Generate Playwright e2e tests</td><td>Copilot agent mode or Claude Code</td></tr>
+<tr><td><code>feature-use-cases</code></td><td>Write the use cases for a new feature</td></tr>
+<tr><td><code>design-prototype</code></td><td>Build a clickable prototype with the Aam Digital design system</td></tr>
+<tr><td><code>figma-mockups</code></td><td>Design screens in the Aam Digital Figma design system file</td></tr>
+<tr><td><code>plan-implementation</code></td><td>Write the implementation plan for an issue</td></tr>
+<tr><td><code>review-pull-request</code></td><td>Review a pull request</td></tr>
 </tbody>
 </table>
+<p>Set up once: open Claude Code in this repository and trust the folder, and log in to the GitHub CLI
+(<code>gh auth login</code>). <code>design-prototype</code> needs the Artifact tool (log in with your Claude account) and view access
+to the <strong>Aam Digital</strong> design system, <code>figma-mockups</code> the Figma connector. The skills write drafts and never
+post to GitHub, you paste the result yourself.</p>
 <h2>MCP Servers</h2>
 <p>MCP servers are configured in <code>.vscode/mcp.json</code>:</p>
 <ul>
