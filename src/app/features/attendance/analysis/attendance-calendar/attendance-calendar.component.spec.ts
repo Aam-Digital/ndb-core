@@ -6,7 +6,10 @@ import { TestEventEntity } from "#src/app/utils/test-utils/TestEventEntity";
 import moment from "moment";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 import { AttendanceItem } from "../../model/attendance-item";
-import { NullAttendanceStatusType } from "../../model/attendance-status";
+import {
+  AttendanceStatusType,
+  NullAttendanceStatusType,
+} from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
@@ -19,7 +22,6 @@ import { Angulartics2Module } from "angulartics2";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { faCaretDown, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { AttendanceStatusType } from "../../model/attendance-status";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;

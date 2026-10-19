@@ -31,7 +31,7 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
-import { PercentPipe } from "@angular/common";
+import { DOCUMENT, PercentPipe } from "@angular/common";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
@@ -44,7 +44,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { DOCUMENT } from "@angular/common";
 import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
 
 /** CSS class of a calendar day on which the highlighted participant had this attendance status */
