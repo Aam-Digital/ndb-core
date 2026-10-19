@@ -292,6 +292,46 @@ describe("InheritedValueService", () => {
     },
   );
 
+  it.each([[["A"]], [["A", "B"]]])(
+    "should apply the value mapping before comparing the values of the linked parents %j of a new record",
+    async (parentValues) => {
+      vi.useFakeTimers();
+      try {
+        const form = getDefaultInheritedForm({
+          field: {
+            defaultValue: {
+              mode: "inherited-field",
+              config: {
+                sourceValueField: "foo",
+                sourceReferenceField: "reference-1",
+                valueMapping: { A: "X", B: "X" },
+              },
+            },
+          },
+        });
+        mockEntityMapperService.load.mockImplementation((_type, id) => {
+          const parent = new Entity(id);
+          parent["foo"] = parentValues[Number(id.split(":")[1])];
+          return Promise.resolve(parent);
+        });
+
+        defaultValueService.handleEntityForm(form, form.entity);
+        await vi.advanceTimersByTimeAsync(0);
+        form.formGroup
+          .get("reference-1")
+          .setValue(parentValues.map((_, i) => `Entity:${i}`));
+        await vi.advanceTimersByTimeAsync(10);
+
+        expect(form.formGroup.get("field").value).toBe("X");
+        expect(
+          defaultValueService.getDefaultValueUiHint(form, "field").isInSync,
+        ).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
+
   it("should reset FormControl, if parent (array) field got cleared", async () => {
     vi.useFakeTimers();
     try {
