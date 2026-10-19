@@ -145,7 +145,7 @@
     "vitest": "^5.0.5"
   },
   "overrides": {
-    "@angular-devkit/build-angular": "^22.2.2",
+    "@angular-devkit/build-angular": "^22.2.3",
     "madge": {
       "typescript": "$typescript"
     },
