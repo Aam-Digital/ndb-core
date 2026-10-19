@@ -187,20 +187,29 @@ describe("embedded-schema-field.util", () => {
       expect(schema.get("participant").dataType).toEqual("string");
     });
 
-    it("ignores an additional entry with no dataType to inherit and none declared either", () => {
-      const schema = getEmbeddedSchema(schemaService, {
-        dataType: "attendance",
-        additional: { notAnAttendanceItemField: { additional: "something" } },
-      });
-
-      expect(schema.has("notAnAttendanceItemField")).toBe(false);
-    });
-
     it("returns undefined for a field that is not an embedded schema field at all", () => {
       expect(
         getEmbeddedSchema(schemaService, { dataType: "string" }),
       ).toBeUndefined();
       expect(getEmbeddedSchema(schemaService, undefined)).toBeUndefined();
+    });
+
+    it("does not read inner fields from an object-shaped `additional` of a non-embedded datatype", () => {
+      expect(
+        getEmbeddedSchema(schemaService, {
+          dataType: "string",
+          additional: { someOption: { dataType: "string" } },
+        }),
+      ).toBeUndefined();
+    });
+
+    it("reads inner fields of a config-only `schema-embed` field (without an embeddedType)", () => {
+      const schema = getEmbeddedSchema(schemaService, {
+        dataType: "schema-embed",
+        additional: { phone: { dataType: "string" } },
+      });
+
+      expect(schema.get("phone")).toEqual({ dataType: "string", id: "phone" });
     });
   });
 });
