@@ -21,6 +21,7 @@ import {
   isEmptyValue,
 } from "../add-missing-values";
 import { CommonValue, getCommonValue } from "../get-common-value";
+import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -41,7 +42,7 @@ interface AffectedRule {
  */
 interface NewValue {
   value: any;
-  hasNoCommonValue: boolean;
+  noCommonValue?: NoCommonValueReason;
 }
 
 /**
@@ -270,7 +271,6 @@ export class AutomatedFieldUpdateConfigService {
     );
     const newValue: NewValue = {
       value: this.calculateNewValue(sourceEntity, rule),
-      hasNoCommonValue: false,
     };
 
     return [
@@ -339,7 +339,7 @@ export class AutomatedFieldUpdateConfigService {
       new Map(
         unlinkedTargets.map((target): [string, NewValue] => [
           target.getId(),
-          { value: [], hasNoCommonValue: false },
+          { value: [] },
         ]),
       ),
       await this.loadRemovedValues(
@@ -402,10 +402,7 @@ export class AutomatedFieldUpdateConfigService {
       (id) => id !== sourceEntity.getId(),
     );
     if (otherIds.length === 0) {
-      return {
-        value: this.calculateNewValue(sourceEntity, rule),
-        hasNoCommonValue: false,
-      };
+      return { value: this.calculateNewValue(sourceEntity, rule) };
     }
 
     const otherEntities = await this.loadEntitiesByIds(
@@ -425,10 +422,10 @@ export class AutomatedFieldUpdateConfigService {
           fieldId,
           this.entitySchemaService,
         ),
-        hasNoCommonValue: true,
+        noCommonValue: commonValue ? "conflict" : "unavailable",
       };
     }
-    return { value: commonValue.value, hasNoCommonValue: false };
+    return { value: commonValue.value };
   }
 
   /**
@@ -505,15 +502,17 @@ export class AutomatedFieldUpdateConfigService {
         targetFieldId,
         this.entitySchemaService,
       );
-      const { value, hasNoCommonValue } = newValues.get(targetEntity.getId());
+      const { value, noCommonValue } = newValues.get(targetEntity.getId());
       const newValue = combineWithCurrentValue(
         currentValue,
         value,
         removedValues.get(targetEntity.getId()),
       );
       // an existing value is kept, but the user is informed that there is nothing to suggest
-      const showNoCommonValue = hasNoCommonValue && !isEmptyValue(currentValue);
-      if (isEqual(currentValue, newValue) && !showNoCommonValue) continue;
+      const shownNoCommonValue = isEmptyValue(currentValue)
+        ? undefined
+        : noCommonValue;
+      if (isEqual(currentValue, newValue) && !shownNoCommonValue) continue;
 
       affectedEntities.push({
         id: targetEntity.getId(),
@@ -525,7 +524,7 @@ export class AutomatedFieldUpdateConfigService {
         relatedReferenceField: rule.sourceReferenceField,
         relatedReferenceFieldEntityType,
         addToExisting,
-        hasNoCommonValue: showNoCommonValue,
+        noCommonValue: shownNoCommonValue,
       });
     }
 

@@ -1127,7 +1127,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
           (e) => e.targetEntityType === CommonValueGroup,
         );
         expect(suggestion.newValue).toBe(expected);
-        expect(suggestion.hasNoCommonValue).toBe(false);
+        expect(suggestion.noCommonValue).toBeUndefined();
       },
     );
 
@@ -1139,7 +1139,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         (e) => e.targetEntityType === CommonValueGroup,
       );
       expect(suggestion.newValue).toBeUndefined();
-      expect(suggestion.hasNoCommonValue).toBe(false);
+      expect(suggestion.noCommonValue).toBeUndefined();
     });
 
     it("keeps the current value of the group and notes that the schools have no category in common", async () => {
@@ -1150,7 +1150,26 @@ describe("AutomatedFieldUpdateConfigService", () => {
         (e) => e.targetEntityType === CommonValueGroup,
       );
       expect(suggestion.newValue).toBe("secondary");
-      expect(suggestion.hasNoCommonValue).toBe(true);
+      expect(suggestion.noCommonValue).toBe("conflict");
+    });
+
+    it("keeps the current value of the group and notes that some of its schools could not be loaded", async () => {
+      const school = createSchool("secondary");
+      const group = new CommonValueGroup();
+      group.members = [school.getId(), "School:not-accessible"];
+      group.category = "secondary";
+      entityMapper.addAll([school, group]);
+      const schoolBefore = school.copy();
+      school.category = TEST_SCHOOL_ENUM.find((e) => e.id === "primary");
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(school, schoolBefore);
+
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+      expect(suggestion.newValue).toBe("secondary");
+      expect(suggestion.noCommonValue).toBe("unavailable");
     });
 
     it("does not save the group again if the dialog is confirmed without a change of its value", async () => {

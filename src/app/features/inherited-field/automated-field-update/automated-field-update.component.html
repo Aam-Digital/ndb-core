@@ -41,13 +41,22 @@
             [form]="entity.form"
             [hideInheritButton]="true"
           ></app-entity-field-edit>
-          @if (entity.hasNoCommonValue) {
+          @if (entity.noCommonValue) {
             <div class="hint-text no-common-value-warning">
               <fa-icon icon="warning"></fa-icon>
-              <span i18n>
-                The linked records have no value in common, so no new value is
-                suggested. The current value is kept unless you change it here.
-              </span>
+              @if (entity.noCommonValue === "unavailable") {
+                <span i18n>
+                  Some linked records could not be loaded (e.g. because you have
+                  no access to them), so no new value is suggested. The current
+                  value is kept unless you change it here.
+                </span>
+              } @else {
+                <span i18n>
+                  The linked records have no value in common, so no new value is
+                  suggested. The current value is kept unless you change it
+                  here.
+                </span>
+              }
             </div>
           }
           @if (entity.unlinked) {

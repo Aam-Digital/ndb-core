@@ -22,6 +22,7 @@ import { EntityFormService } from "#src/app/core/common-components/entity-form/e
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 
 /**
  * Represents an entity that will be affected by a status update.
@@ -57,8 +58,8 @@ export interface AffectedEntity {
   /** Whether the new value is merged into the existing values instead of replacing them completely */
   addToExisting?: boolean;
 
-  /** Whether the entities linked to the affected entity have no value in common, so the current value is kept */
-  hasNoCommonValue?: boolean;
+  /** Why the entities linked to the affected entity provide no value in common, so the current value is kept */
+  noCommonValue?: NoCommonValueReason;
 
   /** Whether the affected entity is no longer linked to the changed entity */
   unlinked?: boolean;

@@ -118,6 +118,13 @@ export class DefaultValueService {
 export type DefaultValueHint = FullDefaultValueHint | EmptyDefaultValueHint;
 
 /**
+ * Why linked records provide no value to inherit:
+ * - "conflict": they have different values
+ * - "unavailable": some of them could not be loaded (e.g. no permission to read them)
+ */
+export type NoCommonValueReason = "conflict" | "unavailable";
+
+/**
  * Details of the source for an "inherited" default value in a field,
  * used to display context to the user about this.
  */
@@ -135,7 +142,7 @@ export interface FullDefaultValueHint {
    */
   isCollectedFromLinkedRecords?: boolean;
 
-  hasNoCommonValue?: false;
+  noCommonValue?: undefined;
 
   isEmpty?: undefined | false;
 }
@@ -148,9 +155,9 @@ export interface EmptyDefaultValueHint {
   isEmpty: true;
 
   /**
-   * Several parent records are linked but they have no value in common to inherit.
+   * Parent records are linked but they provide no value in common to inherit.
    */
-  hasNoCommonValue?: boolean;
+  noCommonValue?: NoCommonValueReason;
 
   isInSync?: undefined;
   inheritedFromType?: undefined;

@@ -841,13 +841,23 @@ describe("InheritedValueService", () => {
     [
       string,
       string[],
-      { isInSync?: boolean; isEmpty?: boolean; hasNoCommonValue?: boolean },
+      { isInSync?: boolean; isEmpty?: boolean; noCommonValue?: string },
     ]
   >([
     ["Delhi", ["Delhi", "Delhi"], { isInSync: true }],
     ["Mumbai", ["Delhi", "Delhi"], { isInSync: false }],
-    ["Delhi", ["Delhi", "Mumbai"], { isEmpty: true, hasNoCommonValue: true }],
-    ["Delhi", [], { isEmpty: true, hasNoCommonValue: false }],
+    [
+      "Delhi",
+      ["Delhi", "Mumbai"],
+      { isEmpty: true, noCommonValue: "conflict" },
+    ],
+    ["Delhi", [], { isEmpty: true }],
+    [
+      "Delhi",
+      ["Delhi", "missing"],
+      { isEmpty: true, noCommonValue: "unavailable" },
+    ],
+    ["Delhi", ["missing"], { isEmpty: true, noCommonValue: "unavailable" }],
     // like a single parent without value: the field can be reset to empty
     ["Delhi", [undefined, undefined], { isInSync: false }],
   ])(
@@ -870,8 +880,12 @@ describe("InheritedValueService", () => {
         form.entity["reference-1"] = parentValues.map((_, i) => `Entity:${i}`);
         form.formGroup.get("field").setValue(currentValue);
         mockEntityMapperService.load.mockImplementation((_type, id) => {
+          const value = parentValues[Number(id.split(":")[1])];
+          if (value === "missing") {
+            return Promise.reject({ status: 403 });
+          }
           const parent = new Entity(id);
-          parent["foo"] = parentValues[Number(id.split(":")[1])];
+          parent["foo"] = value;
           return Promise.resolve(parent);
         });
 
@@ -881,7 +895,7 @@ describe("InheritedValueService", () => {
         const hint = defaultValueService.getDefaultValueUiHint(form, "field");
 
         expect(hint).toMatchObject(expected);
-        expect(hint.hasNoCommonValue).toBe(expected.hasNoCommonValue);
+        expect(hint.noCommonValue).toBe(expected.noCommonValue);
         if (expected.isInSync === false) {
           hint.syncFromParentField();
           expect(form.formGroup.get("field").value).toBe(parentValues[0]);

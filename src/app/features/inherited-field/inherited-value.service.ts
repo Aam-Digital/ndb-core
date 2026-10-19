@@ -8,7 +8,10 @@ import {
   DefaultValueStrategy,
 } from "../../core/default-values/default-value-strategy.interface";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { DefaultValueHint } from "../../core/default-values/default-value-service/default-value.service";
+import {
+  DefaultValueHint,
+  NoCommonValueReason,
+} from "../../core/default-values/default-value-service/default-value.service";
 import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
 import {
@@ -27,8 +30,8 @@ import { CommonValue } from "./get-common-value";
 interface LoadedParents {
   parentIds: string[];
 
-  /** whether the parent records have different values, so there is no value in common to inherit */
-  hasNoCommonValue?: boolean;
+  /** why the parent records provide no value in common to inherit, if they don't */
+  noCommonValue?: NoCommonValueReason;
 }
 
 /**
@@ -248,14 +251,15 @@ export class InheritedValueService extends DefaultValueStrategy {
     }
 
     const parentRefIds = this.getParentRefIds(form, defaultConfig);
-    const hasNoCommonValue =
-      parentRefIds.length > 0 &&
-      !!this.loadedParents.get(form)?.get(field.id)?.hasNoCommonValue;
-    if (parentRefIds.length === 0 || hasNoCommonValue) {
+    const noCommonValue =
+      parentRefIds.length > 0
+        ? this.loadedParents.get(form)?.get(field.id)?.noCommonValue
+        : undefined;
+    if (parentRefIds.length === 0 || noCommonValue) {
       return {
         inheritedFromField: defaultConfig.sourceReferenceField,
         isEmpty: true,
-        hasNoCommonValue,
+        noCommonValue,
       };
     }
 
@@ -366,9 +370,11 @@ export class InheritedValueService extends DefaultValueStrategy {
         continue;
       }
 
-      loadedParents.hasNoCommonValue = commonValue
-        ? commonValue.isConflict
-        : parentEntityIds.length > 1;
+      if (!commonValue) {
+        loadedParents.noCommonValue = "unavailable";
+      } else if (commonValue.isConflict) {
+        loadedParents.noCommonValue = "conflict";
+      }
       form.inheritedParentValues.set(fieldId, commonValue?.value);
     }
   }
