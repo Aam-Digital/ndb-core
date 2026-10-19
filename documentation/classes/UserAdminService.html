@@ -1119,7 +1119,7 @@ Users currently having the role lose it.</p>
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Observable&lt;{ userUpdated: boolean }&gt;</code>
+                            <b>Returns : </b>        <code><a href="../classes/UserAdminApiError.html" target="_self" >Observable&lt;{ userUpdated: boolean; error?: UserAdminApiError }&gt;</a></code>
 
                         </div>
                             <div class="io-description">
@@ -1198,7 +1198,7 @@ export abstract class UserAdminService {
   abstract updateUser(
     userAccountId: string,
     updatedUser: Partial&lt;UserAccount&gt;,
-  ): Observable&lt;{ userUpdated: boolean }&gt;;
+  ): Observable&lt;{ userUpdated: boolean; error?: UserAdminApiError }&gt;;
 
   /**
    * Delete a user with the given id

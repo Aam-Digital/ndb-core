@@ -291,8 +291,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="386"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:386</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="405"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:405</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +360,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="422"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:422</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="441"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:441</a></div>
                         </td>
                     </tr>
 
@@ -402,8 +402,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="429"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:429</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="448"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:448</a></div>
                         </td>
                     </tr>
 
@@ -441,8 +441,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="412"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:412</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="431"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:431</a></div>
                         </td>
                     </tr>
 
@@ -480,8 +480,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="437"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:437</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="456"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:456</a></div>
                         </td>
                     </tr>
 
@@ -519,8 +519,8 @@ Only works with internet connection.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="403"
-                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:403</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="422"
+                                    class="link-to-prism">src/app/core/session/auth/keycloak/keycloak-auth.service.ts:422</a></div>
                         </td>
                     </tr>
 
@@ -983,20 +983,22 @@ export class KeycloakAuthService {
 
   private initKeycloak &#x3D; memoize(async () &#x3D;&gt; {
     try {
-      await firstValueFrom(
-        defer(() &#x3D;&gt;
-          this.keycloak.init({
-            config: window.location.origin + &quot;/assets/keycloak.json&quot;,
-            initOptions: {
-              onLoad: &quot;check-sso&quot;,
-              silentCheckSsoRedirectUri:
-                window.location.origin + &quot;/assets/silent-check-sso.html&quot;,
-            },
-            // GitHub API rejects if non GitHub bearer token is present
-            shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
-          }),
-        ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
-      );
+      await this.runKeycloakInit().catch(async (err) &#x3D;&gt; {
+        const context &#x3D; await keycloakFailureContext(err);
+        if (context[&quot;responseError&quot;] !&#x3D;&#x3D; &quot;invalid_grant&quot;) {
+          throw err;
+        }
+        // The login code from the redirect was already used or has expired (e.g. the page
+        // was reloaded or opened via the back button right after logging in).
+        // keycloak-js has already removed it from the URL, so a fresh init restarts the
+        // login (check-sso) instead of failing.
+        Logging.debug(
+          &quot;Keycloak login code no longer valid, restarting login&quot;,
+          err,
+          context,
+        );
+        await this.runKeycloakInit();
+      });
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
         Logging.debug(
@@ -1039,6 +1041,23 @@ export class KeycloakAuthService {
       },
     );
   });
+
+  private runKeycloakInit(): Promise&lt;unknown&gt; {
+    return firstValueFrom(
+      defer(() &#x3D;&gt;
+        this.keycloak.init({
+          config: window.location.origin + &quot;/assets/keycloak.json&quot;,
+          initOptions: {
+            onLoad: &quot;check-sso&quot;,
+            silentCheckSsoRedirectUri:
+              window.location.origin + &quot;/assets/silent-check-sso.html&quot;,
+          },
+          // GitHub API rejects if non GitHub bearer token is present
+          shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
+        }),
+      ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
+    );
+  }
 
   /**
    * Silently refresh the Keycloak access token if it expires within

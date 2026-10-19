@@ -865,10 +865,18 @@ export class AbilityService extends LatestEntityLoader&lt;Config&lt;DatabaseRule
       }
 
       if (!has(dynamicPlaceholders, name)) {
-        // log instead of silent failure
-        Logging.warn(&quot;Rule variable is not defined for user&quot;, {
-          variable: name,
-        });
+        if (name &#x3D;&#x3D;&#x3D; &quot;user.entityId&quot;) {
+          // account without a linked profile (shown to admins in User Management):
+          // rules using the variable simply match nothing for this user
+          Logging.debug(&quot;Rule variable for user without linked profile&quot;, {
+            variable: name,
+          });
+        } else {
+          // log instead of silent failure
+          Logging.warn(&quot;Rule variable is not defined for user&quot;, {
+            variable: name,
+          });
+        }
         return AbilityService.USER_PROPERTY_UNDEFINED;
       }
 

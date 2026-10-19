@@ -620,8 +620,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="595"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:595</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="604"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:604</a></div>
                         </td>
                     </tr>
 
@@ -657,8 +657,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="620"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:620</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="629"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:629</a></div>
                         </td>
                     </tr>
 
@@ -696,8 +696,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="498"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:498</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="507"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:507</a></div>
                         </td>
                     </tr>
 
@@ -733,8 +733,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="591"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:591</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="600"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:600</a></div>
                         </td>
                     </tr>
 
@@ -772,8 +772,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="539"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:539</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="548"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:548</a></div>
                         </td>
                     </tr>
 
@@ -839,8 +839,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="612"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:612</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="621"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:621</a></div>
                         </td>
                     </tr>
 
@@ -918,8 +918,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="616"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:616</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="625"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:625</a></div>
                         </td>
                     </tr>
 
@@ -957,8 +957,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="566"
-                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:566</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="575"
+                                    class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:575</a></div>
                         </td>
                     </tr>
 
@@ -1304,7 +1304,7 @@ the invitation email (verified email + set initial password).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="564" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:564</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="573" class="link-to-prism">src/app/core/user/user-details/user-details.component.ts:573</a></div>
                         </td>
                     </tr>
 
@@ -1788,7 +1788,12 @@ export class UserDetailsComponent {
       $localize&#x60;:Snackbar message:Successfully updated user&#x60;,
     );
 
-    if (result &amp;&amp; isOwnAccountRelink) {
+    if (!result) {
+      // keep the dialog open: the admin has been told why the update failed
+      return;
+    }
+
+    if (isOwnAccountRelink) {
       this.alertService.addWarning(
         $localize&#x60;:own account relink notice:Your account is now linked to a different profile. You need to log out and log back in for this to take effect in your current session.&#x60;,
       );
@@ -1858,8 +1863,12 @@ export class UserDetailsComponent {
       this.userAdminService.updateUser(currentUser.id, update).pipe(
         map((result) &#x3D;&gt; {
           if (!result.userUpdated) {
-            // already reported by the UserAdminService with its cause
+            // already logged by the UserAdminService with its cause
             Logging.debug(&quot;User account not updated&quot;);
+            this.alertService.addDanger(
+              result.error?.message ||
+                $localize&#x60;:Error message:Failed to update user account&#x60;,
+            );
             return null;
           }
 

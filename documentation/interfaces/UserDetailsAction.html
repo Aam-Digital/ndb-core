@@ -683,7 +683,12 @@ export class UserDetailsComponent {
       $localize&#x60;:Snackbar message:Successfully updated user&#x60;,
     );
 
-    if (result &amp;&amp; isOwnAccountRelink) {
+    if (!result) {
+      // keep the dialog open: the admin has been told why the update failed
+      return;
+    }
+
+    if (isOwnAccountRelink) {
       this.alertService.addWarning(
         $localize&#x60;:own account relink notice:Your account is now linked to a different profile. You need to log out and log back in for this to take effect in your current session.&#x60;,
       );
@@ -753,8 +758,12 @@ export class UserDetailsComponent {
       this.userAdminService.updateUser(currentUser.id, update).pipe(
         map((result) &#x3D;&gt; {
           if (!result.userUpdated) {
-            // already reported by the UserAdminService with its cause
+            // already logged by the UserAdminService with its cause
             Logging.debug(&quot;User account not updated&quot;);
+            this.alertService.addDanger(
+              result.error?.message ||
+                $localize&#x60;:Error message:Failed to update user account&#x60;,
+            );
             return null;
           }
 

@@ -710,6 +710,9 @@
                             <a href="#isMatchableField" title="src/app/features/de-duplication/duplicate-detection.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isMatchableField</b>&nbsp;&nbsp;&nbsp;(src/.../duplicate-detection.service.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isNotPermittedError" title="src/app/utils/not-permitted-error.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isNotPermittedError</b>&nbsp;&nbsp;&nbsp;(src/.../not-permitted-error.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isPublicFormRoute" title="src/bootstrap-environment.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isPublicFormRoute</b>&nbsp;&nbsp;&nbsp;(src/.../bootstrap-environment.ts)</span></a>
                         </li>
                         <li>
@@ -20023,6 +20026,81 @@ record from matching entirely - so offering such a field would silently return
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/utils/not-permitted-error.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isNotPermittedError"></a>
+                    <span class="name">
+                        <span ><b>isNotPermittedError</b></span>
+                        <a href="#isNotPermittedError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isNotPermittedError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check whether a server error means the current user may not read or change the requested
+record or type (e.g. a remote-only session loading a record the permission rules exclude).</p>
+<p>This is a user / permission-configuration state, not an application error:
+do not report it to remote monitoring; tell the user they don&#39;t have access instead.</p>
+<ul>
+<li><code>403</code> is always &quot;not permitted&quot;.</li>
+<li><code>401</code> only counts when the server says so explicitly (&quot;User is not permitted&quot;).
+An expired session (see <a href="../miscellaneous/functions.html#isExpiredSessionError">isExpiredSessionError</a>) and other <code>401</code> reasons
+(e.g. an invalid token signature) indicate other problems and must keep being reported.</li>
+</ul>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                             <div class="io-description">
