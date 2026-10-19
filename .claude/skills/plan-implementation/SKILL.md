@@ -23,13 +23,17 @@ Comments on the issue may be useful for discussion and documenting changed detai
    The objective has to be agreed first. If the use cases are missing or decisions are
    still open, say so and suggest `/feature-use-cases` before planning.
 
-2. **Understand the code.** Read the module READMEs for the folders you will touch (see
-   `AGENTS.md`), then the real code paths. Everything in **Context** is verified against
+2. **Understand the code.** Search the code base for parts that may be related.
+   Read the module READMEs for the folders you will touch (see `AGENTS.md`), 
+   then the real code paths. Everything in **Context** is verified against
    the code, and whatever you could not verify is marked as an assumption.
 3. **Write the plan** in the structure below.
-4. **Show the draft in a fenced markdown block** and ask what to change. Post it only when
-   the user asks for that, as one comment (`gh issue comment <n> --body-file <file>`), and
-   link it in the issue description under "Implementation plan:".
+   Consider alternative approaches and explain their pros and cons.
+   Ask follow up questions and lead a discussion about the high-level approach.
+   Do _not_ create a detailed step-by-step implementation plan or list exact files to change.
+   The plan should be very high-level, to discuss foundational decisions only.
+5. **Show the draft in a fenced markdown block** and ask what to change.
+6. Update the GitHub issue it only when the user asks for that,    editing the description and/or as comment.
 
 ## Structure
 
