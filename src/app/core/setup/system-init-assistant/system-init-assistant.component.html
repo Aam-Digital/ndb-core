@@ -16,6 +16,20 @@
       devices, even when offline.
     </p>
 
+    @if (setupService.unavailableSources().length > 0) {
+      <p class="unavailable-sources-hint">
+        <fa-icon
+          icon="triangle-exclamation"
+          class="standard-icon-with-text"
+        ></fa-icon>
+        <span i18n="setup wizard: hint that some template sources failed"
+          >Some templates could not be loaded, so not all options may be listed.
+          Please check that these template sources are reachable:</span
+        >
+        {{ setupService.unavailableSources().join(", ") }}
+      </p>
+    }
+
     <app-choose-use-case
       [useCases]="availableUseCases()"
       (selectionChanged)="onUseCaseSelected($event)"

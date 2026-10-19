@@ -37,7 +37,19 @@
           @if (user.userEntityId) {
             <app-entity-block [entityId]="user.userEntityId"></app-entity-block>
           } @else {
-            <span>-</span>
+            <span
+              class="no-profile-hint"
+              matTooltip="This account is not linked to a profile record. Permission rules based on the user's profile do not apply to this account."
+              i18n-matTooltip="user list: tooltip for account without profile"
+            >
+              <fa-icon
+                icon="triangle-exclamation"
+                class="standard-icon-with-text"
+              ></fa-icon>
+              <span i18n="user list: account without profile"
+                >No profile linked</span
+              >
+            </span>
           }
         </td>
       </ng-container>

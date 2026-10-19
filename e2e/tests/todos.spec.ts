@@ -24,7 +24,7 @@ test("Add a new task record to the list", async ({ page }) => {
   await page.getByRole("navigation").getByText("Tasks").click();
 
   // And I click on "Add New"
-  await page.getByRole("button", { name: "Add New" }).click();
+  await page.getByRole("button", { name: "Add New", exact: true }).click();
 
   const dialog = page.getByRole("dialog");
 

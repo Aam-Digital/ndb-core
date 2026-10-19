@@ -8,6 +8,7 @@ import {
   input,
   signal,
   untracked,
+  Renderer2,
   ViewEncapsulation,
   viewChild,
 } from "@angular/core";
@@ -30,7 +31,7 @@ import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-m
 import { FormDialogService } from "#src/app/core/form-dialog/form-dialog.service";
 import { AttendanceService } from "../../attendance.service";
 import { AnalyticsService } from "#src/app/core/analytics/analytics.service";
-import { PercentPipe } from "@angular/common";
+import { DOCUMENT, PercentPipe } from "@angular/common";
 import { CustomDatePipe } from "#src/app/core/basic-datatypes/date/custom-date.pipe";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
@@ -42,6 +43,13 @@ import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EventWithAttendance } from "../../model/event-with-attendance";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { defaultAttendanceStatusTypes } from "#src/app/core/config/default-config/default-attendance-status-types";
+
+/** CSS class of a calendar day on which the highlighted participant had this attendance status */
+function statusClass(statusId: string): string {
+  return "attendance-status-" + statusId.replace(/[^A-Za-z0-9_-]/g, "_");
+}
 
 /**
  * Displays a calendar view of attendance events for a given activity,
@@ -79,6 +87,9 @@ export class AttendanceCalendarComponent {
   private analyticsService = inject(AnalyticsService);
   private attendanceService = inject(AttendanceService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly enumService = inject(ConfigurableEnumService);
+  private readonly renderer = inject(Renderer2);
+  private readonly document = inject(DOCUMENT);
 
   records = input<EventWithAttendance[]>([]);
   highlightForChild = input<string>();
@@ -123,6 +134,8 @@ export class AttendanceCalendarComponent {
   };
 
   constructor() {
+    this.addStatusColorStyles();
+
     // Update calendar's visible month when date range changes
     effect(() => {
       const maxDate = this.maxDate();
@@ -169,6 +182,36 @@ export class AttendanceCalendarComponent {
       });
   }
 
+  /**
+   * mat-calendar can only give day cells CSS classes, so the background color configured for each
+   * attendance status is written into a stylesheet rule for that status's class.
+   * Statuses saved without a color (older configs) keep the default color of their id.
+   */
+  private addStatusColorStyles() {
+    const configured = this.enumService.getEnumValues<AttendanceStatusType>(
+      ATTENDANCE_STATUS_CONFIG_ID,
+    );
+    const statuses =
+      configured.length > 0 ? configured : defaultAttendanceStatusTypes;
+    const rules = statuses
+      .map((status) => ({
+        id: status.id,
+        color:
+          status.color ??
+          defaultAttendanceStatusTypes.find((d) => d.id === status.id)?.color,
+      }))
+      // a color is config data that ends up in CSS: skip anything that is not a plain value
+      .filter(({ color }) => color && !/[;{}<>\\]/.test(color))
+      .map(
+        ({ id, color }) =>
+          `.${statusClass(id)} { background-color: ${color} !important; }`,
+      );
+    const style: HTMLStyleElement = this.renderer.createElement("style");
+    style.textContent = rules.join("\n");
+    this.renderer.appendChild(this.document.head, style);
+    this.destroyRef.onDestroy(() => style.remove());
+  }
+
   private ensureParticipantInAttendance(
     event: EventWithAttendance,
     participantId: string,
@@ -210,7 +253,7 @@ export class AttendanceCalendarComponent {
           "attendance-calendar-date-has-participants-with-unknown-status"
         ] = true;
       } else {
-        classes["attendance-status-" + eventAttendance.status.id] = true;
+        classes[statusClass(eventAttendance.status.id)] = true;
       }
 
       classes["attendance-calendar-date-has-remarks"] =

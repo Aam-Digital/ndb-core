@@ -126,7 +126,7 @@ export class KeycloakAdminService extends UserAdminService {
   override updateUser(
     userAccountId: string,
     updatedUser: Partial<UserAccount>,
-  ): Observable<{ userUpdated: boolean }> {
+  ): Observable<{ userUpdated: boolean; error?: UserAdminApiError }> {
     if (!this.canManageAccounts()) {
       return throwError(() => new UserAdminApiError(403));
     }
@@ -141,6 +141,11 @@ export class KeycloakAdminService extends UserAdminService {
       ),
       map(() => ({ userUpdated: true })),
       catchError((err) => {
+        if (err?.status === 403) {
+          // the admin's own Keycloak account lacks this permission (instance configuration)
+          Logging.debug("Not permitted to update user on server", err);
+          return of({ userUpdated: false, error: new UserAdminApiError(403) });
+        }
         // the only report of this failure: callers just get `userUpdated: false`
         Logging.warn("Failed to update user on server", err);
         return of({ userUpdated: false });

@@ -19,6 +19,7 @@ import {
   throwError,
 } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
+import { Logging } from "../../core/logging/logging.service";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -213,6 +214,30 @@ describe("CouchdbFileService", () => {
         expect.anything(),
       );
     });
+  });
+
+  it("should log a missing file (404) only at debug level and return empty url", async () => {
+    mockHttp.get.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 404 })),
+    );
+    vi.spyOn(Logging, "debug").mockImplementation(() => undefined);
+    vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+
+    await firstValueFrom(service.loadFile(new Entity("missing"), "logo"));
+
+    expect(Logging.debug).toHaveBeenCalled();
+    expect(Logging.warn).not.toHaveBeenCalled();
+  });
+
+  it("should warn if loading a file fails for other reasons", async () => {
+    mockHttp.get.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
+    vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+
+    await firstValueFrom(service.loadFile(new Entity("broken"), "logo"));
+
+    expect(Logging.warn).toHaveBeenCalled();
   });
 
   it("should forward any other errors", async () => {
