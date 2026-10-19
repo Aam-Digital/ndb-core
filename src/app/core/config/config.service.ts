@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -8,6 +8,7 @@ import { NamedError } from "../logging/reported-errors";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
+import { ConfigValidationService } from "./config-validation/config-validation.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -32,6 +33,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
     DefaultConfigMigrationRegistryService,
   );
 
+  // resolved lazily: the validation checks services that themselves depend on the ConfigService
+  private readonly injector = inject(Injector);
+
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
   constructor(
@@ -53,8 +57,13 @@ export class ConfigService extends LatestEntityLoader<Config> {
         return;
       }
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
+      const previousConfig = this.currentConfig;
       this.currentConfig = this.applyMigrations(config);
       this.logConfigRev();
+      if (previousConfig && previousConfig._rev !== this.currentConfig._rev) {
+        // the config was just saved (by this or another admin)
+        this.warnAboutConfigProblems();
+      }
     });
 
     this.startLoading();
@@ -109,6 +118,17 @@ export class ConfigService extends LatestEntityLoader<Config> {
       String(attempts + 1),
     );
     return true;
+  }
+
+  private warnAboutConfigProblems() {
+    try {
+      this.injector
+        .get(ConfigValidationService)
+        .warnAdminAboutProblems(this.currentConfig.data);
+    } catch (err) {
+      // a bug in the validation must never break loading the config
+      Logging.warn("Could not validate config", err);
+    }
   }
 
   private logConfigRev() {

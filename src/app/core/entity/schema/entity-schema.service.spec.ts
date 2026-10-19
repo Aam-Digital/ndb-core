@@ -132,8 +132,9 @@ describe("EntitySchemaService", () => {
     expect(dataType).toBeInstanceOf(DefaultDatatype);
   });
 
-  it("should fall back to the default datatype/component (not throw) for an unresolvable dataType, warning only once across all call sites", () => {
-    vi.spyOn(Logging, "warn").mockImplementation(() => {});
+  it("should fall back to the default datatype/component (not throw) for an unresolvable dataType, logging only once across all call sites", () => {
+    const debugSpy = vi.spyOn(Logging, "debug").mockImplementation(() => {});
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
     try {
       class TestEntity extends Entity {
         @DatabaseField({ dataType: "invalidDataType" })
@@ -161,8 +162,14 @@ describe("EntitySchemaService", () => {
         expect(entity.aField).toEqual("value" + i);
       }
 
-      // repeated occurrences of the same unresolvable dataType are deduped to a single warning
-      expect(Logging.warn).toHaveBeenCalledTimes(1);
+      // a config problem (admins are warned when saving the config), not reported remotely;
+      // repeated occurrences of the same unresolvable dataType are deduped to a single log
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(
+        debugSpy.mock.calls.filter(([msg]) =>
+          String(msg).startsWith("Unknown dataType"),
+        ),
+      ).toHaveLength(1);
     } finally {
       vi.restoreAllMocks();
     }
