@@ -228,7 +228,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:21</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:28</a></div>
                                 </td>
                             </tr>
 
@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:29</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:20</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:27</a></div>
                                 </td>
                             </tr>
 
@@ -317,7 +317,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, inject, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  Signal,
+} from &quot;@angular/core&quot;;
+import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
+import { map } from &quot;rxjs/operators&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -366,6 +373,8 @@ export interface AdminWidgetDialogData {
 export class AdminWidgetDialogComponent {
   settingsComponentConfig: DynamicComponentConfig;
   widgetConfigForm: FormControl;
+  /** tracked as a signal, because the settings component may change validity after this view was checked */
+  widgetConfigInvalid: Signal&lt;boolean&gt;;
 
   commonConfig &#x3D; {
     subtitle: &quot;&quot;,
@@ -381,6 +390,12 @@ export class AdminWidgetDialogComponent {
       this.data.widgetConfig.config?.explanation ?? &quot;&quot;;
 
     this.widgetConfigForm &#x3D; new FormControl(this.data.widgetConfig.config);
+    this.widgetConfigInvalid &#x3D; toSignal(
+      this.widgetConfigForm.statusChanges.pipe(
+        map((status) &#x3D;&gt; status &#x3D;&#x3D;&#x3D; &quot;INVALID&quot;),
+      ),
+      { initialValue: this.widgetConfigForm.invalid },
+    );
     this.settingsComponentConfig &#x3D; {
       component: this.data.settingsComponent,
       config: {
