@@ -17,45 +17,21 @@ you can.
 
 ## Steps
 
-1. **Resolve the target.** Take the PR number from the argument or from the request (a
-   URL such as `https://github.com/Aam-Digital/ndb-core/pull/1234`, or a bare number). The
-   repo is `Aam-Digital/ndb-core` unless the URL names another one. Without a number, use
-   the PR of the current branch (`gh pr view --json number,url`), and if there is none,
-   ask which PR to review.
-
-2. **Fetch the PR.**
-
-   ```
-   gh pr view <num> --repo <owner>/<repo> --json number,title,body,url,author,baseRefName,headRefName,additions,deletions,files,state
-   gh pr diff <num> --repo <owner>/<repo>
-   ```
-
-3. **Find and read the linked issue.** Look in the PR body for `closes #`, `fixes #`,
-   `resolves #` (any case) or an issue number in the title, then:
-
-   ```
-   gh issue view <issue-num> --repo <owner>/<repo> --json number,title,body,labels,comments
-   ```
-
-   Summarize in 2-3 sentences what the issue really asks for (the reported bug or the
-   requested behavior). Read the comments too, scope often changes there. If there is no
-   linked issue, say so and do not invent one.
-
-4. **Check coverage.** Compare the ask with what the diff changes and state one of:
-   fully addressed / partially addressed (name the gap) / diff does not obviously match
-   the issue / no linked issue.
-
-5. **Read the diff.** Every hunk, plus the whole function around each hunk: a bug in an
+1. **Find the PR and its issue.** Use the PR from the argument or the request (URL or
+   number), or the PR of the current branch if there is none, and ask if there is no PR
+   either. Read the PR and its diff with `gh`, and the linked issue (`closes #`, `fixes #`,
+   or a number in the title) with its comments, because scope often changes there. If
+   there is no linked issue, say so and do not invent one.
+2. **Check coverage.** Compare the ask with what the diff changes and state one of: fully
+   addressed / partially addressed (name the gap) / diff does not obviously match the
+   issue / no linked issue.
+3. **Read the diff.** Every hunk, plus the whole function around each hunk: a bug in an
    unchanged line of a touched function is in scope when the PR exposes it or fails to
-   fix it. For each hunk ask what input, state or timing makes the line wrong. Typical
-   findings are an inverted condition, an off-by-one, a missing `await`, a copy-paste
-   with the wrong variable, a swallowed error, or a missing null/undefined guard.
-
-6. **Run the checklist in [patterns.md](patterns.md)** against the changed files. Check
+   fix it. For each hunk ask what input, state or timing makes the line wrong.
+4. **Run the checklist in [patterns.md](patterns.md)** against the changed files. Check
    each pattern on purpose, and do not skip one because it "looks irrelevant" before
    you have looked.
-
-7. **Report** in the format below and nothing else. Do not post anything to GitHub
+5. **Report** in the format below and nothing else. Do not post anything to GitHub
    unless the user explicitly asks for that.
 
 ## Output format

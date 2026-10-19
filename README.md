@@ -115,16 +115,22 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 
 ## Skills
 
-Shared skills are defined in `.claude/skills/` and can be called from Claude Code by name or in plain words
-(how to use them: [`.claude/skills/README.md`](.claude/skills/README.md)):
+Shared skills are defined in `.claude/skills/`. Claude Code picks the matching one from what you ask
+(e.g. "can you do a code review of PR 4526"), or you call it by name (e.g. `/review-pull-request 4526`).
+A feature usually goes through them in this order: use cases, prototype, plan, then the code, then the review.
 
 | Skill                 | Purpose                                                        |
 | --------------------- | -------------------------------------------------------------- |
 | `feature-use-cases`   | Write the use cases for a new feature                          |
-| `plan-implementation` | Write the implementation plan comment for an issue             |
-| `review-pull-request` | Review a pull request                                          |
 | `design-prototype`    | Build a clickable prototype with the Aam Digital design system |
 | `figma-mockups`       | Design screens in the Aam Digital Figma design system file     |
+| `plan-implementation` | Write the implementation plan for an issue                     |
+| `review-pull-request` | Review a pull request                                          |
+
+Set up once: open Claude Code in this repository and trust the folder, and log in to the GitHub CLI
+(`gh auth login`). `design-prototype` needs the Artifact tool (log in with your Claude account) and view access
+to the **Aam Digital** design system, `figma-mockups` the Figma connector. The skills write drafts and never
+post to GitHub, you paste the result yourself.
 
 ## MCP Servers
 

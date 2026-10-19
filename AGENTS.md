@@ -66,12 +66,7 @@ This repository is public. Never include customer/project-identifying informatio
 
 ## Skills
 
-Shared skills in `.claude/skills/` are picked up by Claude Code (how to use them: [`.claude/skills/README.md`](.claude/skills/README.md)). A feature usually goes through them in this order:
-
-- `feature-use-cases` — the use cases of a new feature, for the "Use Cases" section of the issue
-- `design-prototype` / `figma-mockups` — a clickable prototype, or screens in Figma
-- `plan-implementation` — the implementation plan, as one comment on the issue
-- `review-pull-request` — a review of a pull request against its issue and our usual review findings
+Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`.
 
 ## Common commands
 
