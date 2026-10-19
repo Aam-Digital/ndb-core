@@ -124,10 +124,15 @@ export class AutomatedFieldUpdateComponent implements OnInit {
         entityConstructor,
       );
 
+      // without default value handling: for existing records it only loads linked records
+      // for the inherit button, which is not shown here (one query per row)
       const entityForm = await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
         this.destroyRef,
+        false,
+        true,
+        false,
       );
 
       entity.form = entityForm;
