@@ -5,3 +5,12 @@
 } @else if (!imgSrc.value() && !defaultImage() && defaultIcon()) {
   <app-fa-dynamic-icon [icon]="defaultIcon()"></app-fa-dynamic-icon>
 }
+@if (showMissingFileHint() && fileMissing()) {
+  <p class="missing-file-hint">
+    <app-fa-dynamic-icon icon="triangle-exclamation"></app-fa-dynamic-icon>
+    <span i18n="hint for admins if an image file is missing"
+      >The image file could not be loaded. If it is missing, please upload it
+      again.</span
+    >
+  </p>
+}

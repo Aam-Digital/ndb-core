@@ -15,7 +15,9 @@ export async function initEnvironmentConfig() {
   // Initialize remote logging (after the environment is set up)
   Logging.initRemoteLogging({
     dsn: environment.remoteLoggingDsn,
-    environment: environment.production ? "production" : "development",
+    environment:
+      environment.remoteLoggingEnvironment ??
+      (environment.production ? "production" : "development"),
   });
 
   // Public-form routes must run in online-only mode. Apply this regardless

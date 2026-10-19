@@ -1,28 +1,35 @@
 /**
+ * All validator names supported in a {@link FormValidatorConfig}
+ * (also used to validate the config when an admin saves it).
+ */
+export const DYNAMIC_VALIDATORS = [
+  /** type: number */
+  "min",
+  /** type: number */
+  "max",
+  /** type: string/date */
+  "minDate",
+  /** type: string/date */
+  "maxDate",
+  /** type: number */
+  "minAge",
+  /** type: number */
+  "maxAge",
+  /** type: boolean */
+  "required",
+  /** type: boolean; validate field value is unique among entities of same type */
+  "uniqueId",
+  /** type: boolean */
+  "readonlyAfterSet",
+  /** type: string or regex */
+  "pattern",
+] as const;
+
+/**
  * Available validators that can be used to display errors to the user
  * when a form is invalid
  */
-export type DynamicValidator =
-  /** type: number */
-  | "min"
-  /** type: number */
-  | "max"
-  /** type: string/date */
-  | "minDate"
-  /** type: string/date */
-  | "maxDate"
-  /** type: number */
-  | "minAge"
-  /** type: number */
-  | "maxAge"
-  /** type: boolean */
-  | "required"
-  /** type: boolean; validate field value is unique among entities of same type */
-  | "uniqueId"
-  /** type: boolean */
-  | "readonlyAfterSet"
-  /** type: string or regex */
-  | "pattern";
+export type DynamicValidator = (typeof DYNAMIC_VALIDATORS)[number];
 
 /**
  * the validators config. This is an object where the key

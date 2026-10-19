@@ -24,6 +24,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AblePipe } from "../../permissions/permission-pipe/able.pipe";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -93,6 +94,7 @@ import { ADMIN_APP_ROLE } from "../../permissions/permission-types";
     AssistantButtonComponent,
     PoweredByComponent,
     AsyncPipe,
+    AblePipe,
   ],
 })
 export class UiComponent {
@@ -113,6 +115,7 @@ export class UiComponent {
 
   /** latest version of the site settings*/
   siteSettings = signal<SiteSettings>(new SiteSettings());
+
   isDesktop = false;
   isLoggedIn: Signal<boolean> = toSignal(
     this.loginState.pipe(

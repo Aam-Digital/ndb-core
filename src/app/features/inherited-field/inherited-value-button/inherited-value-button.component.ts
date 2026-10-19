@@ -18,6 +18,9 @@ import {
 import { EntityFieldLabelComponent } from "../../../core/entity/entity-field-label/entity-field-label.component";
 import { Entity } from "../../../core/entity/model/entity";
 import { debounceTime } from "rxjs/operators";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { Logging } from "../../../core/logging/logging.service";
+import { AutomatedFieldUpdateConfigService } from "../automated-field-update/automated-field-update-config.service";
 
 /**
  * Display an indicator for form fields explaining the status of the inherited-value config of that field
@@ -37,12 +40,22 @@ import { debounceTime } from "rxjs/operators";
 })
 export class InheritedValueButtonComponent {
   private readonly defaultValueService = inject(DefaultValueService);
+  private readonly automatedFieldUpdateConfigService = inject(
+    AutomatedFieldUpdateConfigService,
+  );
+  private readonly alertService = inject(AlertService);
 
   form = input<EntityForm<any>>();
   field = input<FormFieldConfig>();
   entity = input<Entity>();
 
   defaultValueHint = signal<DefaultValueHint | undefined>(undefined);
+
+  /** Whether this field's value is passed on to linked records, which can be updated through this button */
+  canUpdateLinkedRecords = signal(false);
+
+  /** Whether the linked records are being loaded or are being reviewed in the dialog */
+  isUpdatingLinkedRecords = signal(false);
 
   constructor() {
     effect((onCleanup) => {
@@ -65,6 +78,13 @@ export class InheritedValueButtonComponent {
         this.defaultValueHint.set(
           this.defaultValueService.getDefaultValueUiHint(form, field.id),
         );
+        this.canUpdateLinkedRecords.set(
+          !!form.entity &&
+            this.automatedFieldUpdateConfigService.hasLinkedRecordsToUpdate(
+              form.entity,
+              field.id,
+            ),
+        );
       };
       updateHint();
 
@@ -82,5 +102,31 @@ export class InheritedValueButtonComponent {
         }
       });
     });
+  }
+
+  async updateLinkedRecords() {
+    this.isUpdatingLinkedRecords.set(true);
+    try {
+      const wereUpdated =
+        await this.automatedFieldUpdateConfigService.updateLinkedRecords(
+          this.form().entity,
+          this.field().id,
+        );
+      if (!wereUpdated) {
+        this.alertService.addInfo(
+          $localize`The linked records are up to date.`,
+        );
+      }
+    } catch (error) {
+      Logging.error(
+        "InheritedValueButton could not update the linked records",
+        error,
+      );
+      this.alertService.addDanger(
+        $localize`The linked records could not be updated.`,
+      );
+    } finally {
+      this.isUpdatingLinkedRecords.set(false);
+    }
   }
 }
