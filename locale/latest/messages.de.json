@@ -1866,5 +1866,22 @@
   "8573738767206372632": " (manually changed): click to replace with the values of all linked records {$START_BLOCK_IF} (requires the form to be in \"Edit\" mode) {$CLOSE_BLOCK_IF}",
   "4679020173464919644": " The value of this field is automatically passed on to linked records. ",
   "2888132684647253568": " Click to review and update them now {$START_BLOCK_IF} (not available while editing) {$CLOSE_BLOCK_IF}",
-  "7352627178056298273": "The linked records are up to date."
+  "7352627178056298273": "The linked records are up to date.",
+  "4109222169664664593": "Could not copy the link automatically. Please copy it manually: {$PH}",
+  "9118166340683034398": "Could not load the list because you don't have access to these records.",
+  "5492148544749651249": "The configuration has problems that should be fixed:",
+  "5237789646422060143": "Unknown icon \"{$icon}\". A default icon is shown instead.",
+  "7536871245512875882": "Unknown data type \"{$dataType}\". To link to records of this type, use data type \"entity\" and select \"{$dataType}\" as the linked record type.",
+  "7338049678907478799": "Unknown data type \"{$dataType}\". The field is treated as plain text.",
+  "1802765077348556684": "Unknown validator \"regex\", it is ignored. Use \"pattern\" instead.",
+  "2061459733396856903": "Unknown validator \"{$validator}\", it is ignored.",
+  "5003574488034459848": "The default value has no valid mode (\"{$mode}\"), so it is not applied.",
+  "7447881761901072331": "The default value has no mode, so it is not applied.",
+  "4676191352325480404": "Unknown icon \"{$icon}\" for menu item \"{$label}\". A default icon is shown instead.",
+  "9119705911964832415": "The data stored on this device was deleted by your browser (e.g. to free up storage space) and is now downloaded from the server again. Changes made on this device after {$lastSyncTime} that were not synced yet may have been lost.",
+  "7760505704605727577": "You don't have access to this record.",
+  "2528468095291533175": "Some templates could not be loaded, so not all options may be listed. Please check that these template sources are reachable:",
+  "8516554781482806707": "This account is not linked to a profile record. Permission rules based on the user's profile do not apply to this account.",
+  "4345582695512975006": "No profile linked",
+  "1081958621531238550": "The image file could not be loaded. If it is missing, please upload it again."
 }
