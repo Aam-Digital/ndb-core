@@ -23,6 +23,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { AlertService } from "../../alerts/alert.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +35,7 @@ import { AlertService } from "../../alerts/alert.service";
     FaIconComponent,
     EntityBlockComponent,
     ListPaginatorComponent,
+    MatTooltipModule,
   ],
 
   templateUrl: "./user-list.component.html",

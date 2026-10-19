@@ -236,20 +236,22 @@ export class KeycloakAuthService {
 
   private initKeycloak = memoize(async () => {
     try {
-      await firstValueFrom(
-        defer(() =>
-          this.keycloak.init({
-            config: window.location.origin + "/assets/keycloak.json",
-            initOptions: {
-              onLoad: "check-sso",
-              silentCheckSsoRedirectUri:
-                window.location.origin + "/assets/silent-check-sso.html",
-            },
-            // GitHub API rejects if non GitHub bearer token is present
-            shouldAddToken: ({ url }) => !url.includes("api.github.com"),
-          }),
-        ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
-      );
+      await this.runKeycloakInit().catch(async (err) => {
+        const context = await keycloakFailureContext(err);
+        if (context["responseError"] !== "invalid_grant") {
+          throw err;
+        }
+        // The login code from the redirect was already used or has expired (e.g. the page
+        // was reloaded or opened via the back button right after logging in).
+        // keycloak-js has already removed it from the URL, so a fresh init restarts the
+        // login (check-sso) instead of failing.
+        Logging.debug(
+          "Keycloak login code no longer valid, restarting login",
+          err,
+          context,
+        );
+        await this.runKeycloakInit();
+      });
     } catch (err) {
       if (this.isOfflineOrUnavailableError(err)) {
         Logging.debug(
@@ -292,6 +294,23 @@ export class KeycloakAuthService {
       },
     );
   });
+
+  private runKeycloakInit(): Promise<unknown> {
+    return firstValueFrom(
+      defer(() =>
+        this.keycloak.init({
+          config: window.location.origin + "/assets/keycloak.json",
+          initOptions: {
+            onLoad: "check-sso",
+            silentCheckSsoRedirectUri:
+              window.location.origin + "/assets/silent-check-sso.html",
+          },
+          // GitHub API rejects if non GitHub bearer token is present
+          shouldAddToken: ({ url }) => !url.includes("api.github.com"),
+        }),
+      ).pipe(timeout({ each: KEYCLOAK_OPERATION_TIMEOUT_MS })),
+    );
+  }
 
   /**
    * Silently refresh the Keycloak access token if it expires within

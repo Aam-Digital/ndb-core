@@ -361,6 +361,41 @@ describe("AbilityService", () => {
     }
   });
 
+  it("should not report a rule using ${user.entityId} for an account without linked profile", async () => {
+    vi.useFakeTimers();
+    try {
+      // the session of an account without profile has no `entityId` property at all
+      TestBed.inject(SessionSubject).next({
+        name: "user-without-entity",
+        id: "1",
+        roles: ["user_app"],
+      });
+      TestBed.inject(CurrentUserSubject).next(null);
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      const warnSpy = vi.spyOn(Logging, "warn");
+
+      entityUpdates.next({
+        entity: new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+          user_app: [
+            {
+              subject: "TestEntity",
+              action: "manage",
+              conditions: { _id: "${user.entityId}" },
+            },
+          ],
+        }),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(ability.cannot("manage", new TestEntity(TEST_USER))).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should allow to check conditions with complex data types", async () => {
     vi.useFakeTimers();
     try {
