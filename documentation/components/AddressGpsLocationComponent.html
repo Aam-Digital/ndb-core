@@ -492,7 +492,7 @@ export class AddressGpsLocationComponent {
         );
         this.locationSelected.emit(geoResult);
         this.alertService.addInfo(
-          &#x60;Selected address based on GPS coordinate lookup as ${geoResult?.display_name}&#x60;,
+          $localize&#x60;Selected address based on GPS coordinate lookup as ${geoResult?.display_name}&#x60;,
         );
       }
     } catch (error) {
