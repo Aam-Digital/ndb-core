@@ -40,25 +40,22 @@ Comments on the issue may be useful for discussion and documenting changed detai
 ```markdown
 ## Implementation plan
 
-### Context
-
-The current state, verified against the code: file paths and how it behaves today.
-Assumptions that were not verified are marked as such.
-
-### Decisions
-
-Each decision with its reason and the alternative that was rejected, including how the
-risks are handled.
+One paragraph summary of the overall approach and what modules are affected.
 
 ### Changes
 
-Concrete steps: files, config keys, snippets where precision matters. Then the tests and
-documentation to add or change.
+Very high-level steps:
+Which modules (and major components / services) have to be edited or created.
+Refactoring that is needed.
+Phases of implementation for large tasks.
 
-### Open questions
+This should never list the exact files to change or detailed tasks.
+Keep at a very high-level overview only.
+
+### Open questions & Decisions
 
 What is still undecided and how it gets settled. Leave out when there are none.
-```
+Also include each decision here with its reason and the alternative that was rejected, including how the risks are handled.
 
 ## What to check for every plan
 
