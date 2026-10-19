@@ -20,7 +20,7 @@ import {
   getRemovedValues,
   isEmptyValue,
 } from "../add-missing-values";
-import { getCommonValue } from "../get-common-value";
+import { CommonValue, getCommonValue } from "../get-common-value";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -389,8 +389,9 @@ export class AutomatedFieldUpdateConfigService {
   /**
    * Get the new value for a target entity linking to the (already updated) source entity.
    * If the target links to several entities, it only inherits a value shared by all of them.
-   * Without a shared value (different values or some linked entities cannot be loaded),
+   * If they have different values or some linked entities cannot be loaded,
    * the target's current value is returned.
+   * If none of them has a value, the value is cleared like for a single linked entity.
    */
   private async loadNewValue(
     targetEntity: Entity,
@@ -411,22 +412,23 @@ export class AutomatedFieldUpdateConfigService {
       sourceEntity.getConstructor(),
       otherIds,
     );
-    const sharedValue =
+    const commonValue: CommonValue | undefined =
       otherEntities.length === otherIds.length
         ? this.calculateCommonValue([sourceEntity, ...otherEntities], rule)
         : undefined;
 
-    return {
-      value:
-        sharedValue ??
-        this.transformSourceValueToDatabaseFormat(
+    if (!commonValue || commonValue.isConflict) {
+      return {
+        value: this.transformSourceValueToDatabaseFormat(
           targetEntity[fieldId],
           targetEntity,
           fieldId,
           this.entitySchemaService,
         ),
-      hasNoCommonValue: sharedValue === undefined,
-    };
+        hasNoCommonValue: true,
+      };
+    }
+    return { value: commonValue.value, hasNoCommonValue: false };
   }
 
   /**
@@ -561,12 +563,11 @@ export class AutomatedFieldUpdateConfigService {
   /**
    * Calculate the new value that all given source entities have in common
    * (see {@link calculateNewValue}), ignoring empty values.
-   * @return the shared value or undefined if the values differ
    */
   public calculateCommonValue(
     sourceEntities: Entity[],
     rule: DefaultValueConfigInheritedField,
-  ): any {
+  ): CommonValue {
     return getCommonValue(
       sourceEntities.map((entity) => this.calculateNewValue(entity, rule)),
     );

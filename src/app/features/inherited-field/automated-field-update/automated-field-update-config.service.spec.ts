@@ -1095,10 +1095,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
   describe("group linking several schools", () => {
     async function saveSchoolCategory(
       otherSchoolCategories: string[],
-      newCategory: string,
+      newCategory: string | undefined,
       groupCategory: string | undefined,
+      previousCategory?: string,
     ) {
-      const school = new School();
+      const school = createSchool(previousCategory);
       const otherSchools = otherSchoolCategories.map(createSchool);
       const group = new CommonValueGroup();
       group.members = [school, ...otherSchools].map((s) => s.getId());
@@ -1129,6 +1130,17 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(suggestion.hasNoCommonValue).toBe(false);
       },
     );
+
+    it("suggests clearing the value of the group if none of its schools has a category anymore", async () => {
+      await saveSchoolCategory([undefined], undefined, "primary", "primary");
+
+      expect(mockDialog.open).toHaveBeenCalledTimes(1);
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+      expect(suggestion.newValue).toBeUndefined();
+      expect(suggestion.hasNoCommonValue).toBe(false);
+    });
 
     it("keeps the current value of the group and notes that the schools have no category in common", async () => {
       await saveSchoolCategory(["secondary"], "primary", "secondary");

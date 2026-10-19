@@ -19,6 +19,17 @@ import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
 import { Logging } from "../../core/logging/logging.service";
+import { CommonValue } from "./get-common-value";
+
+/**
+ * The parent records that the inherited value of a field was loaded for.
+ */
+interface LoadedParents {
+  parentIds: string[];
+
+  /** whether the parent records have different values, so there is no value in common to inherit */
+  hasNoCommonValue?: boolean;
+}
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -39,12 +50,12 @@ export class InheritedValueService extends DefaultValueStrategy {
   );
 
   /**
-   * The ids of the parent records that the inherited values of each form were loaded for (by field id),
+   * The parent records that the inherited values of each form were loaded for (by field id),
    * to load them again only if the linked records change instead of on every change of the form.
    */
-  private readonly loadedParentIds = new WeakMap<
+  private readonly loadedParents = new WeakMap<
     EntityForm<any>,
-    Map<string, string[]>
+    Map<string, LoadedParents>
   >();
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
@@ -183,10 +194,9 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
-    const commonValue = await this.loadCommonParentValue(
-      parentIds,
-      defaultConfig,
-    );
+    const commonValue = (
+      await this.loadCommonParentValue(parentIds, defaultConfig)
+    )?.value;
     if (commonValue === undefined) {
       targetFormControl.setValue(undefined);
       return;
@@ -239,8 +249,8 @@ export class InheritedValueService extends DefaultValueStrategy {
 
     const parentRefIds = this.getParentRefIds(form, defaultConfig);
     const hasNoCommonValue =
-      parentRefIds.length > 1 &&
-      form.inheritedParentValues.get(field.id) === undefined;
+      parentRefIds.length > 0 &&
+      !!this.loadedParents.get(form)?.get(field.id)?.hasNoCommonValue;
     if (parentRefIds.length === 0 || hasNoCommonValue) {
       return {
         inheritedFromField: defaultConfig.sourceReferenceField,
@@ -332,40 +342,46 @@ export class InheritedValueService extends DefaultValueStrategy {
       form,
     );
 
-    let loadedParentIds = this.loadedParentIds.get(form);
-    if (!loadedParentIds) {
-      loadedParentIds = new Map();
-      this.loadedParentIds.set(form, loadedParentIds);
+    let loadedParentsOfForm = this.loadedParents.get(form);
+    if (!loadedParentsOfForm) {
+      loadedParentsOfForm = new Map();
+      this.loadedParents.set(form, loadedParentsOfForm);
     }
 
     for (const [fieldId, parentEntityIds] of linkedEntityRefs) {
-      if (isEqual(loadedParentIds.get(fieldId), parentEntityIds)) {
+      if (
+        isEqual(loadedParentsOfForm.get(fieldId)?.parentIds, parentEntityIds)
+      ) {
         continue;
       }
-      loadedParentIds.set(fieldId, parentEntityIds);
+      const loadedParents: LoadedParents = { parentIds: parentEntityIds };
+      loadedParentsOfForm.set(fieldId, loadedParents);
 
       const commonValue = await this.loadCommonParentValue(
         parentEntityIds,
         inheritedConfigs.get(fieldId),
       );
-      if (!isEqual(loadedParentIds.get(fieldId), parentEntityIds)) {
+      if (loadedParentsOfForm.get(fieldId) !== loadedParents) {
         // the linked records changed again while loading, the newer call sets the value
         continue;
       }
 
-      form.inheritedParentValues.set(fieldId, commonValue);
+      loadedParents.hasNoCommonValue = commonValue
+        ? commonValue.isConflict
+        : parentEntityIds.length > 1;
+      form.inheritedParentValues.set(fieldId, commonValue?.value);
     }
   }
 
   /**
    * Load the linked parent entities and get the value they all have in common
    * (in database format, with the value mapping of the rule applied).
-   * @return the common value, or undefined if the parents have none or not all of them could be loaded
+   * @return the common value, or undefined if not all parents could be loaded
    */
   private async loadCommonParentValue(
     parentIds: string[],
     config: DefaultValueConfigInheritedField,
-  ): Promise<any> {
+  ): Promise<CommonValue | undefined> {
     const parentEntities = await Promise.all(
       parentIds.map((id) => this.loadEntity(id)),
     );
