@@ -189,6 +189,26 @@ describe("AutomatedFieldUpdateComponent", () => {
     expect(component.recalculationFailed()).toBe(false);
   });
 
+  it("should clear the failure hint once a later update succeeds, also if it was started with the suggestion", async () => {
+    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+    const [first, second] = component.rows();
+    edit(second, ["mine"]);
+    await waitForUpdate();
+    edit(first, ["y"]);
+    await waitForUpdate();
+    expect(second.suggestionChanged).toBe(true);
+    loadNextLevel.mockRejectedValueOnce(new Error("could not load"));
+    edit(first, ["z"]);
+    await waitForUpdate();
+    expect(component.recalculationFailed()).toBe(true);
+
+    component.useSuggestion(second);
+    await waitForUpdate();
+
+    expect(component.recalculationFailed()).toBe(false);
+    expect(component.recalculating()).toBe(false);
+  });
+
   it("should create the forms without default value handling, which only queries linked records for the hidden inherit button", async () => {
     await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
 

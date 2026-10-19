@@ -311,6 +311,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       .subscribe((changes) => {
         if (changes === this.changeCount) {
           this.recalculating.set(false);
+          this.recalculationFailed.set(false);
         }
       });
   }

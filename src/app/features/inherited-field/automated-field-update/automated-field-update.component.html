@@ -2,7 +2,7 @@
   <span i18n>Update related records</span>
   <app-help-button
     i18n-text
-    text="Values of the changed record are added to the existing ones, existing values stay. A record takes a shared value only if all its linked records agree. You can change a suggested value before you confirm."
+    text="The suggested values come from the changed record. Fields that collect values get them added to the existing ones, and lose values that no linked record has any more; other fields take the suggested value. A record takes a shared value only if all its linked records agree. You can change a suggested value before you confirm."
   ></app-help-button>
 </h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
@@ -34,7 +34,7 @@
   }
 
   <table class="full-width">
-    @for (entity of rows(); track entity.id) {
+    @for (entity of rows(); track entity.id + "|" + entity.targetFieldId) {
       <tr [class]="'level-' + (entity.level ?? 1)">
         <td>
           <app-entity-block [entityId]="entity.id"></app-entity-block>
