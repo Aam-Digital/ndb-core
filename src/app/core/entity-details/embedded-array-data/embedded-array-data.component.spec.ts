@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatDialog } from "@angular/material/dialog";
-import { of } from "rxjs";
+import { By } from "@angular/platform-browser";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EmbeddedArrayDataComponent } from "./embedded-array-data.component";
-import {
-  EmbeddedArrayEntryDialogComponent,
-  EmbeddedArrayEntryDialogData,
-} from "./embedded-array-entry-dialog/embedded-array-entry-dialog.component";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { SchemaEmbedArrayTableComponent } from "#src/app/core/basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
 
 @DatabaseEntity("EmbeddedArrayDataTest")
 class EmbeddedArrayDataTest extends Entity {}
@@ -24,19 +22,9 @@ EmbeddedArrayDataTest.schema.set("documents", {
 describe("EmbeddedArrayDataComponent", () => {
   let fixture: ComponentFixture<EmbeddedArrayDataComponent>;
   let entity: EmbeddedArrayDataTest;
-  let mockDialog: { open: ReturnType<typeof vi.fn> };
-  /** the result the (mocked) popup closes with */
-  let dialogResult: Entity | undefined;
-
   beforeEach(async () => {
-    dialogResult = undefined;
-    mockDialog = {
-      open: vi.fn(() => ({ afterClosed: () => of(dialogResult) })),
-    };
-
     await TestBed.configureTestingModule({
       imports: [EmbeddedArrayDataComponent, MockedTestingModule.withState()],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
 
     entity = new EmbeddedArrayDataTest();
@@ -86,10 +74,6 @@ describe("EmbeddedArrayDataComponent", () => {
     );
   }
 
-  function lastDialogData(): EmbeddedArrayEntryDialogData {
-    return mockDialog.open.mock.lastCall[1].data;
-  }
-
   it.each<[string, unknown[], string[]]>([
     ["all inner fields", [], ["Document Type", "Document Number"]],
     ["the configured subset", ["documentNumber"], ["Document Number"]],
@@ -114,57 +98,52 @@ describe("EmbeddedArrayDataComponent", () => {
     ]);
   });
 
-  it("opens the popup for the clicked entry with all inner fields", async () => {
+  function table(): SchemaEmbedArrayTableComponent {
+    return fixture.debugElement.query(
+      By.directive(SchemaEmbedArrayTableComponent),
+    ).componentInstance;
+  }
+
+  it("lets the popup edit all inner fields, also if not displayed", async () => {
     fixture.componentRef.setInput("columns", ["documentNumber"]);
     await render();
 
-    rows()[1].click();
-
-    expect(mockDialog.open.mock.lastCall[0]).toBe(
-      EmbeddedArrayEntryDialogComponent,
-    );
-    const data = lastDialogData();
-    expect(data.entity).toBe(entity);
-    expect(data.property).toBe("documents");
-    expect(data.index).toBe(1);
-    expect(data.columns.map((c) => c.id)).toEqual([
-      "documentType",
-      "documentNumber",
-    ]);
-  });
-
-  it("opens the popup for a new entry when clicking the add button", async () => {
-    await render();
-
-    fixture.nativeElement.querySelector("th button").click();
-
-    expect(lastDialogData().index).toBeUndefined();
+    expect(
+      table()
+        .editColumns()
+        .map((c) => c.id),
+    ).toEqual(["documentType", "documentNumber"]);
+    expect(table().entity()).toBe(entity);
   });
 
   it.each([
     [true, false],
     [false, true],
-  ])(
-    "opens the popup read-only if editable=%s is false",
-    async (editable, expectReadonly) => {
-      fixture.componentRef.setInput("editable", editable);
-      await render();
-
-      rows()[0].click();
-
-      expect(lastDialogData().readonly).toBe(expectReadonly);
-    },
-  );
-
-  it("displays the saved entries after the popup saved the entity", async () => {
-    const saved = new EmbeddedArrayDataTest(entity.getId());
-    saved["documents"] = [{ documentType: "Visa", documentNumber: "C3" }];
-    dialogResult = saved;
+  ])("is read-only if editable=%s is false", async (editable, expected) => {
+    fixture.componentRef.setInput("editable", editable);
     await render();
 
-    rows()[0].click();
+    expect(table().readonly()).toBe(expected);
+  });
+
+  it("is read-only if the user lacks permission to update the entity", async () => {
+    vi.spyOn(TestBed.inject(EntityAbility), "cannot").mockReturnValue(true);
     await render();
 
+    expect(table().readonly()).toBe(true);
+  });
+
+  it("saves the entity with the changed entries and displays them", async () => {
+    const saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
+    await render();
+
+    await table().applyChange()([
+      { documentType: "Visa", documentNumber: "C3" },
+    ]);
+
+    expect(saveSpy.mock.lastCall[0]["documents"]).toEqual([
+      { documentType: "Visa", documentNumber: "C3" },
+    ]);
     await waitForRowTexts([["Visa", "C3"]]);
   });
 });

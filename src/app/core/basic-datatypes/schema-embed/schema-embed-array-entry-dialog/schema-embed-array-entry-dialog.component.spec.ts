@@ -4,23 +4,16 @@ import { Subject } from "rxjs";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import {
-  EmbeddedArrayEntryDialogComponent,
-  EmbeddedArrayEntryDialogData,
-} from "./embedded-array-entry-dialog.component";
+  SchemaEmbedArrayEntryDialogComponent,
+  SchemaEmbedArrayEntryDialogData,
+} from "./schema-embed-array-entry-dialog.component";
 
-@DatabaseEntity("EmbeddedArrayEntryDialogTest")
-class EmbeddedArrayEntryDialogTest extends Entity {}
-EmbeddedArrayEntryDialogTest.schema.set("documents", {
-  dataType: "schema-embed-array",
-  additional: {
-    documentType: { dataType: "string", label: "Document Type" },
-    documentNumber: { dataType: "string", label: "Document Number" },
-  },
-});
+@DatabaseEntity("SchemaEmbedArrayEntryDialogTest")
+class SchemaEmbedArrayEntryDialogTest extends Entity {}
 
 const columns: FormFieldConfig[] = [
   {
@@ -32,10 +25,10 @@ const columns: FormFieldConfig[] = [
   { id: "documentNumber", dataType: "string", label: "Document Number" },
 ];
 
-describe("EmbeddedArrayEntryDialogComponent", () => {
-  let fixture: ComponentFixture<EmbeddedArrayEntryDialogComponent>;
-  let component: EmbeddedArrayEntryDialogComponent;
-  let entity: EmbeddedArrayEntryDialogTest;
+describe("SchemaEmbedArrayEntryDialogComponent", () => {
+  let fixture: ComponentFixture<SchemaEmbedArrayEntryDialogComponent>;
+  let component: SchemaEmbedArrayEntryDialogComponent;
+  let entity: SchemaEmbedArrayEntryDialogTest;
   let mockDialogRef: {
     disableClose: boolean;
     backdropClick: () => Subject<MouseEvent>;
@@ -46,33 +39,33 @@ describe("EmbeddedArrayEntryDialogComponent", () => {
     getConfirmation: ReturnType<typeof vi.fn>;
     getDiscardConfirmation: ReturnType<typeof vi.fn>;
   };
-  let saveSpy: ReturnType<typeof vi.spyOn>;
+  let entries: Record<string, any>[];
+  let applyChange: ReturnType<typeof vi.fn>;
 
-  async function createDialog(data: Partial<EmbeddedArrayEntryDialogData>) {
+  async function createDialog(data: Partial<SchemaEmbedArrayEntryDialogData>) {
     await TestBed.configureTestingModule({
       imports: [
-        EmbeddedArrayEntryDialogComponent,
+        SchemaEmbedArrayEntryDialogComponent,
         MockedTestingModule.withState(),
       ],
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { entity, property: "documents", columns, ...data },
+          useValue: { entries, entity, columns, applyChange, ...data },
         },
         { provide: MatDialogRef, useValue: mockDialogRef },
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
       ],
     }).compileComponents();
 
-    saveSpy = vi.spyOn(TestBed.inject(EntityMapperService), "save");
-    fixture = TestBed.createComponent(EmbeddedArrayEntryDialogComponent);
+    fixture = TestBed.createComponent(SchemaEmbedArrayEntryDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
   }
 
-  function savedEntries(): Record<string, any>[] {
-    return saveSpy.mock.lastCall[0]["documents"];
+  function appliedEntries(): Record<string, any>[] {
+    return applyChange.mock.lastCall[0];
   }
 
   function buttonTexts(): string[] {
@@ -93,11 +86,12 @@ describe("EmbeddedArrayEntryDialogComponent", () => {
       getDiscardConfirmation: vi.fn().mockResolvedValue(true),
     };
 
-    entity = new EmbeddedArrayEntryDialogTest();
-    entity["documents"] = [
+    entity = new SchemaEmbedArrayEntryDialogTest();
+    entries = [
       { documentType: "Passport", documentNumber: "A1" },
       { documentType: "ID Card", documentNumber: "B2" },
     ];
+    applyChange = vi.fn().mockResolvedValue(undefined);
   });
 
   it.each<[string, number | undefined, Record<string, any>[]]>([
@@ -119,15 +113,16 @@ describe("EmbeddedArrayEntryDialogComponent", () => {
       ],
     ],
   ])(
-    "%s when saving and closes with the saved entity",
+    "%s when saving and closes with the changed entries",
     async (_, index, expected) => {
       await createDialog({ index });
 
       component.form.setValue({ documentType: "Visa", documentNumber: "C3" });
       await component.save();
 
-      expect(savedEntries()).toEqual(expected);
-      expect(mockDialogRef.close).toHaveBeenCalledWith(entity);
+      expect(appliedEntries()).toEqual(expected);
+      expect(mockDialogRef.close).toHaveBeenCalledWith(expected);
+      expect(entries).toHaveLength(2); // the given entries are not mutated
     },
   );
 
@@ -146,7 +141,18 @@ describe("EmbeddedArrayEntryDialogComponent", () => {
     component.form.setValue({ documentType: null, documentNumber: "C3" });
     await component.save();
 
-    expect(saveSpy).not.toHaveBeenCalled();
+    expect(applyChange).not.toHaveBeenCalled();
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
+  });
+
+  it("stays open and shows the error if applying the change fails", async () => {
+    applyChange.mockRejectedValue(new Error("save failed"));
+    await createDialog({ index: 0 });
+    const alertSpy = vi.spyOn(TestBed.inject(AlertService), "addDanger");
+
+    await component.save();
+
+    expect(alertSpy).toHaveBeenCalledWith("save failed");
     expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
@@ -162,14 +168,14 @@ describe("EmbeddedArrayEntryDialogComponent", () => {
       await component.delete();
 
       if (expected) {
-        expect(savedEntries()).toEqual(expected);
+        expect(appliedEntries()).toEqual(expected);
       } else {
-        expect(saveSpy).not.toHaveBeenCalled();
+        expect(applyChange).not.toHaveBeenCalled();
       }
     },
   );
 
-  it.each<[string, Partial<EmbeddedArrayEntryDialogData>, string[]]>([
+  it.each<[string, Partial<SchemaEmbedArrayEntryDialogData>, string[]]>([
     ["an existing entry", { index: 0 }, ["Save", "Cancel", ""]],
     [
       "a new entry (nothing to delete)",

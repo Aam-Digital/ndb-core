@@ -1,29 +1,20 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
   inject,
   signal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
-import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
-import { DynamicValidatorsService } from "#src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
 import { Entity } from "#src/app/core/entity/model/entity";
-import { buildSchemaEmbedEntryForm } from "../../schema-embed-entry-form";
+import { SchemaEmbedArrayTableComponent } from "../../schema-embed-array-table/schema-embed-array-table.component";
+import { SchemaEmbedArrayApplyChange } from "../../schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component";
 
 export interface SchemaEmbedArrayDialogData {
-  /** The field's FormControl - read once for the dialog's initial rows, written once on close. */
+  /** The field's FormControl, holding the entries and receiving their changes. */
   formControl: FormControl<Record<string, any>[]>;
   /** The inner fields (table columns), resolved from the field's schema-embed configuration. */
   columns: FormFieldConfig[];
@@ -34,97 +25,37 @@ export interface SchemaEmbedArrayDialogData {
 }
 
 /**
- * Popup for editing a `schema-embed-array` field: a full table of all entries,
- * with add/remove-row actions and one generic {@link EntityFieldEditComponent} per cell.
+ * Popup listing all entries of a `schema-embed-array` form field in a table
+ * (see {@link SchemaEmbedArrayTableComponent}), where single entries can be added, edited or deleted.
  *
- * The dialog is modal, so nothing outside it can observe or change the field's FormControl
- * while it's open - edits accumulate purely locally (on `rows`) for the dialog's whole
- * lifetime, and are written back to the FormControl in one shot right before the dialog
- * closes. There is no separate save/cancel step here, the outer entity form's own Save/Cancel
- * still governs persisting or discarding.
+ * Changed entries are written to the field's FormControl only;
+ * the outer entity form's own Save/Cancel still governs persisting or discarding them.
+ * While the field is disabled (i.e. the form is not in edit mode), entries can only be viewed.
  */
 @Component({
   selector: "app-schema-embed-array-dialog",
   imports: [
-    ReactiveFormsModule,
-    EntityFieldEditComponent,
     MatButtonModule,
     MatDialogModule,
     DialogCloseComponent,
-    FontAwesomeModule,
-    MatTooltipModule,
+    SchemaEmbedArrayTableComponent,
   ],
   templateUrl: "./schema-embed-array-dialog.component.html",
-  styleUrls: ["./schema-embed-array-dialog.component.scss"],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchemaEmbedArrayDialogComponent {
   protected readonly data = inject<SchemaEmbedArrayDialogData>(MAT_DIALOG_DATA);
-  private readonly dialogRef =
-    inject<MatDialogRef<SchemaEmbedArrayDialogComponent>>(MatDialogRef);
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly dynamicValidators = inject(DynamicValidatorsService);
 
-  private readonly formControl = this.data.formControl;
-  protected readonly columns = this.data.columns;
+  /** The field's disabled state as of when the dialog opened (read once, not tracked live). */
+  protected readonly readonly = this.data.formControl.disabled;
 
-  /**
-   * The field's disabled state as of when the dialog opened (read once, not tracked live).
-   * The dialog is also opened while the surrounding form is in view mode and is read-only then.
-   */
-  protected readonly isDisabled = this.formControl.disabled;
-
-  /**
-   * Reactive view of the current state of the data.
-   */
-  rows = signal<FormGroup[]>(
-    (this.formControl.value ?? []).map((value) =>
-      this.buildRowFormGroup(value),
-    ),
+  readonly rows = signal<Record<string, any>[]>(
+    this.data.formControl.value ?? [],
   );
 
-  constructor() {
-    // write the accumulated edits back to the field's FormControl in one shot, right before the
-    // dialog closes (however it closes - the Close button, the X, or Esc). Skipped entirely if
-    // nothing was actually added/removed/edited, so opening and closing without touching
-    // anything doesn't spuriously dirty the outer entity form.
-    this.dialogRef
-      .beforeClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        if (
-          this.rows().length !== this.formControl.value?.length ||
-          this.rows().some((g) => g.dirty)
-        ) {
-          const rawData = this.rows().map((g) => g.getRawValue());
-          this.formControl.setValue(rawData);
-          this.formControl.markAsDirty();
-        }
-      });
-  }
-
-  addRow() {
-    const fg = this.buildRowFormGroup({});
-    fg.markAsDirty();
-    this.rows.set([...this.rows(), fg]);
-  }
-
-  removeRow(index: number) {
-    const updated = [...this.rows()];
-    updated.splice(index, 1);
-    this.rows.set(updated);
-  }
-
-  private buildRowFormGroup(value: Record<string, any>): FormGroup {
-    const formGroup = buildSchemaEmbedEntryForm(
-      this.columns,
-      value,
-      this.dynamicValidators,
-      this.data.entity,
-    );
-    if (this.isDisabled) {
-      formGroup.disable({ emitEvent: false });
-    }
-    return formGroup;
-  }
+  readonly applyChange: SchemaEmbedArrayApplyChange = async (entries) => {
+    this.data.formControl.setValue(entries);
+    this.data.formControl.markAsDirty();
+    this.rows.set(entries);
+  };
 }

@@ -3,7 +3,7 @@
 
 /* same form layout as the EntityFormComponent used in the popup of related entities
    (not encapsulated to reach the nested mat-form-fields, therefore scoped to this component's element) */
-app-embedded-array-entry-dialog {
+app-schema-embed-array-entry-dialog {
   .entry-form {
     @include grid-layout.adaptive(
       $min-block-width: sizes.$form-group-min-width,

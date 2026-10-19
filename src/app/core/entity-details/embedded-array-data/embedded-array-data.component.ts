@@ -2,35 +2,23 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   input,
   linkedSignal,
 } from "@angular/core";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialog } from "@angular/material/dialog";
-import { MatTableModule } from "@angular/material/table";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { Entity } from "../../entity/model/entity";
 import {
   ColumnConfig,
   FormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { getSchemaEmbedArrayColumns } from "../../basic-datatypes/schema-embed/schema-embed-array-columns";
-import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import {
-  EmbeddedArrayEntryDialogComponent,
-  EmbeddedArrayEntryDialogData,
-} from "./embedded-array-entry-dialog/embedded-array-entry-dialog.component";
-import {
-  getVisibleColumnIds,
-  injectCurrentScreenSize,
-} from "../../../utils/media/visible-columns";
+import { SchemaEmbedArrayTableComponent } from "../../basic-datatypes/schema-embed/schema-embed-array-table/schema-embed-array-table.component";
+import { SchemaEmbedArrayApplyChange } from "../../basic-datatypes/schema-embed/schema-embed-array-entry-dialog/schema-embed-array-entry-dialog.component";
 
 /**
  * Config format that the EmbeddedArrayDataComponent handles.
@@ -54,27 +42,20 @@ export interface EmbeddedArrayDataConfig {
  * looking like the {@link RelatedEntitiesComponent} list of related records.
  *
  * Clicking an entry opens a popup to view, edit or delete that single entry
- * (see {@link EmbeddedArrayEntryDialogComponent}), saving the entity directly from there.
+ * (see {@link SchemaEmbedArrayTableComponent}), saving the entity directly from there.
  */
 @DynamicComponent("EmbeddedArrayData")
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-embedded-array-data",
   templateUrl: "./embedded-array-data.component.html",
-  styleUrl: "./embedded-array-data.component.scss",
-  imports: [
-    MatTableModule,
-    MatButtonModule,
-    MatTooltipModule,
-    DynamicComponentDirective,
-    DisableEntityOperationDirective,
-    FaDynamicIconComponent,
-  ],
+  imports: [SchemaEmbedArrayTableComponent],
 })
 export class EmbeddedArrayDataComponent {
   private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly entityFormService = inject(EntityFormService);
   private readonly ability = inject(EntityAbility);
-  private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** currently viewed/main entity holding the embedded entries */
   entity = input<Entity>();
@@ -88,15 +69,13 @@ export class EmbeddedArrayDataComponent {
   /** @see EmbeddedArrayDataConfig.editable */
   editable = input<boolean>(true);
 
-  readonly ACTIONCOLUMN_EDIT = "__edit";
-
   private readonly fieldConfig = computed<FormFieldConfig | undefined>(() => {
     const field = this.entity()?.getSchema().get(this.property());
     return field ? { ...field, id: this.property() } : undefined;
   });
 
   /** All inner fields of the embedded entries, which can be edited in the popup. */
-  private readonly allColumns = computed(() =>
+  readonly allColumns = computed(() =>
     getSchemaEmbedArrayColumns(this.fieldConfig(), this.entitySchemaService),
   );
 
@@ -109,52 +88,39 @@ export class EmbeddedArrayDataComponent {
     ),
   );
 
-  private readonly currentScreenSize = injectCurrentScreenSize();
-
-  readonly columnsToDisplay = computed(() => {
-    const columns = getVisibleColumnIds(
-      this._columns(),
-      this.currentScreenSize(),
-    );
-    return this.editable() ? [this.ACTIONCOLUMN_EDIT, ...columns] : columns;
-  });
-
   /** The embedded entries, updated locally after a save, until a new entity is given. */
   readonly rows = linkedSignal<Record<string, any>[]>(
     () => this.entity()?.[this.property()] ?? [],
   );
 
+  /** Entries can only be viewed if this component is not editable or the user lacks permissions. */
+  readonly readonly = computed(() => {
+    const entity = this.entity();
+    return (
+      !this.editable() ||
+      !entity ||
+      this.ability.cannot("update", entity, this.property())
+    );
+  });
+
   /**
-   * Open the popup for a single entry, displaying the saved entries once the popup saved the entity.
-   * The popup is read-only if this component is not editable or the user lacks permissions.
-   * @param index position of the entry to open; a new entry is created if not given
+   * Save the entity with the given entries through the standard entity form logic
+   * (including validation and permission checks), displaying the saved entries.
    */
-  openDialog(index?: number) {
+  readonly applyChange: SchemaEmbedArrayApplyChange = async (entries) => {
     const entity = this.entity();
     const property = this.property();
-    if (!entity || !this.fieldConfig()) {
-      return;
-    }
+    const entityForm = await this.entityFormService.createEntityForm(
+      [property],
+      entity,
+      this.destroyRef,
+      false,
+      true,
+      false,
+    );
+    entityForm.formGroup.get(property).setValue(entries);
 
-    const dialogRef = this.dialog.open<
-      EmbeddedArrayEntryDialogComponent,
-      EmbeddedArrayEntryDialogData,
-      Entity
-    >(EmbeddedArrayEntryDialogComponent, {
-      ...FormDialogService.dialogSettings,
-      data: {
-        entity,
-        property,
-        index,
-        columns: this.allColumns(),
-        readonly:
-          !this.editable() || this.ability.cannot("update", entity, property),
-      },
-    });
-    dialogRef.afterClosed().subscribe((saved) => {
-      if (saved) {
-        this.rows.set(saved[property] ?? []);
-      }
-    });
-  }
+    const saved = await this.entityFormService.saveChanges(entityForm, entity);
+    this.rows.set(saved[property] ?? []);
+  };
 }

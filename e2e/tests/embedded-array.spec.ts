@@ -130,15 +130,26 @@ test("Embedded array form field: manage entries in a dialog", async ({
   await expect(field).toContainText("no entries");
   await manageButton.click();
 
-  const dialog = page.getByRole("dialog");
-  await dialog.getByRole("button", { name: "Add entry" }).click();
-  const firstRow = dialog.getByRole("row").nth(1);
-  const cells = firstRow.getByRole("textbox");
-  await cells.nth(0).fill(PASSPORT.type);
-  await cells.nth(1).fill(PASSPORT.number);
+  // The dialog lists the entries; single entries are edited in a nested popup
+  const fieldDialog = page.locator("app-schema-embed-array-dialog");
+  const entryDialog = page.locator("app-schema-embed-array-entry-dialog");
+  await fieldDialog.getByRole("button", { name: "add entry" }).click();
+  await entryDialog
+    .locator("#entity-field__documentType")
+    .getByRole("textbox")
+    .fill(PASSPORT.type);
+  await entryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox")
+    .fill(PASSPORT.number);
+  await entryDialog.getByRole("button", { name: "Save" }).click();
+  await expect(entryDialog).not.toBeVisible();
+  await expect(
+    fieldDialog.getByRole("cell", { name: PASSPORT.number }),
+  ).toBeVisible();
   await argosScreenshot(page, "embedded-array-field-dialog");
-  await dialog.getByRole("button", { name: "Close" }).click();
-  await expect(dialog).not.toBeVisible();
+  await fieldDialog.getByRole("button", { name: "Close" }).click();
+  await expect(fieldDialog).not.toBeVisible();
 
   // Entries only get persisted by saving the whole form
   await expect(field).toContainText(PASSPORT.type);
@@ -149,10 +160,16 @@ test("Embedded array form field: manage entries in a dialog", async ({
   await page.getByRole("navigation").getByText("Children").click();
   await page.getByRole("cell", { name: CHILD_NAME }).click();
   await field.getByText(PASSPORT.type).click();
-  await expect(dialog.getByRole("textbox").first()).toHaveValue(PASSPORT.type);
-  await expect(dialog.getByRole("textbox").nth(1)).toHaveValue(PASSPORT.number);
-  await expect(dialog.getByRole("textbox").first()).toBeDisabled();
   await expect(
-    dialog.getByRole("button", { name: "Add entry" }),
+    fieldDialog.getByRole("button", { name: "add entry" }),
+  ).not.toBeVisible();
+  await fieldDialog.getByRole("cell", { name: PASSPORT.number }).click();
+  const numberField = entryDialog
+    .locator("#entity-field__documentNumber")
+    .getByRole("textbox");
+  await expect(numberField).toHaveValue(PASSPORT.number);
+  await expect(numberField).toBeDisabled();
+  await expect(
+    entryDialog.getByRole("button", { name: "Save" }),
   ).not.toBeVisible();
 });
