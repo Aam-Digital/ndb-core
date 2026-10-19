@@ -12,6 +12,7 @@ import {
 describe("AutomatedFieldUpdateComponent", () => {
   let component: AutomatedFieldUpdateComponent;
   let loadNextLevel: ReturnType<typeof vi.fn>;
+  let createEntityForm: ReturnType<typeof vi.fn>;
   let dialogRef: { close: ReturnType<typeof vi.fn> };
 
   const FIRST = "Entity:first";
@@ -71,12 +72,7 @@ describe("AutomatedFieldUpdateComponent", () => {
           provide: EntityFormService,
           useValue: {
             extendFormFieldConfig: (id: string) => ({ id }),
-            createEntityForm: (fieldIds: string[]) =>
-              Promise.resolve({
-                formGroup: new FormGroup({
-                  [fieldIds[0]]: new FormControl(),
-                }),
-              }),
+            createEntityForm,
           },
         },
         {
@@ -105,6 +101,11 @@ describe("AutomatedFieldUpdateComponent", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     loadNextLevel = vi.fn(suggestAbove);
+    createEntityForm = vi.fn((fieldIds: string[]) =>
+      Promise.resolve({
+        formGroup: new FormGroup({ [fieldIds[0]]: new FormControl() }),
+      }),
+    );
     dialogRef = { close: vi.fn() };
   });
 
@@ -186,6 +187,16 @@ describe("AutomatedFieldUpdateComponent", () => {
     expect(valueOf(second)).toEqual(["y"]);
     expect(component.recalculating()).toBe(false);
     expect(component.recalculationFailed()).toBe(false);
+  });
+
+  it("should create the forms without default value handling, which only queries linked records for the hidden inherit button", async () => {
+    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+
+    expect(createEntityForm).toHaveBeenCalledTimes(2);
+    for (const call of createEntityForm.mock.calls) {
+      // forTable, withPermissionCheck, withDefaultValues
+      expect(call.slice(3)).toEqual([false, true, false]);
+    }
   });
 
   it("should not count the suggested value as a change of the user", async () => {
