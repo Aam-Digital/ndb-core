@@ -74,6 +74,8 @@ describe("ConfigValidationService", () => {
     });
 
     expect(problems).toEqual([expect.objectContaining({ field: "status" })]);
+    // an empty mode is not printed literally
+    expect(problems[0].message).not.toMatch(/null|undefined/);
   });
 
   it("should report unknown icons of entity types and menu items", () => {
@@ -107,5 +109,21 @@ describe("ConfigValidationService", () => {
     expect(alertService.addWarning).toHaveBeenCalledWith(
       expect.stringContaining("doesNotExist"),
     );
+  });
+
+  it("should list all problems in the warning", () => {
+    const alertService = TestBed.inject(AlertService);
+    vi.spyOn(alertService, "addWarning");
+    vi.spyOn(TestBed.inject(EntityAbility), "cannot").mockReturnValue(false);
+    const attributes = Object.fromEntries(
+      [1, 2, 3, 4, 5].map((i) => [`field${i}`, { dataType: `unknown${i}` }]),
+    );
+
+    service.warnAdminAboutProblems({ "entity:TestEntity": { attributes } });
+
+    const message = vi.mocked(alertService.addWarning).mock.calls[0][0];
+    for (const i of [1, 2, 3, 4, 5]) {
+      expect(message).toContain(`unknown${i}`);
+    }
   });
 });

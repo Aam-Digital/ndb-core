@@ -27,8 +27,6 @@ export interface ConfigProblem {
 }
 
 const ENTITY_CONFIG_PREFIX = "entity:";
-/** Number of problems listed in the alert shown to admins, the rest is only counted. */
-const MAX_PROBLEMS_IN_ALERT = 3;
 const NAVIGATION_MENU_CONFIG_ID = "navigationMenu";
 
 /**
@@ -60,13 +58,7 @@ export class ConfigValidationService {
     }
 
     Logging.debug("Saved config has problems", problems);
-    const listed = problems
-      .slice(0, MAX_PROBLEMS_IN_ALERT)
-      .map((p) => `• ${formatProblem(p)}`);
-    const more = problems.length - listed.length;
-    if (more > 0) {
-      listed.push($localize`:config validation:… and ${more}:count: more`);
-    }
+    const listed = problems.map((p) => `• ${formatProblem(p)}`);
     this.injector
       .get(AlertService)
       .addWarning(
@@ -156,7 +148,9 @@ export class ConfigValidationService {
 
     if (schema.defaultValue && !this.isKnownDefaultValueMode(schema)) {
       problems.push(
-        $localize`:config validation:The default value has no valid mode ("${schema.defaultValue.mode}:mode:"), so it is not applied.`,
+        schema.defaultValue.mode
+          ? $localize`:config validation:The default value has no valid mode ("${schema.defaultValue.mode}:mode:"), so it is not applied.`
+          : $localize`:config validation:The default value has no mode, so it is not applied.`,
       );
     }
 
