@@ -427,7 +427,7 @@ for example through the config.</p>
     let definition &#x3D; resolveIconDefinition(icon, this.iconLibrary);
     if (!definition) {
       definition &#x3D; FaDynamicIconComponent.fallbackIcon;
-      Logging.warn(
+      Logging.debug(
         &quot;Tried to set icon but it does not exist as a font awesome regular item nor is it registered as an alias.&quot;,
         icon,
       );
@@ -532,7 +532,7 @@ export class FaDynamicIconComponent {
     let definition &#x3D; resolveIconDefinition(icon, this.iconLibrary);
     if (!definition) {
       definition &#x3D; FaDynamicIconComponent.fallbackIcon;
-      Logging.warn(
+      Logging.debug(
         &quot;Tried to set icon but it does not exist as a font awesome regular item nor is it registered as an alias.&quot;,
         icon,
       );
