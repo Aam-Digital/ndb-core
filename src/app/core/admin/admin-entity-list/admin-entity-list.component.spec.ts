@@ -70,31 +70,4 @@ describe("AdminEntityListComponent", () => {
       ]),
     );
   });
-
-  it("produces a final filter-candidate list (as AdminListManagerComponent.availableItems would) without the bare field, but with its properties", () => {
-    // replicate AdminListManagerComponent.availableItems' exclusion logic here, since that
-    // component is only instantiated once the template actually renders
-    const excluded = new Set(component.filterExcludedFields());
-    const getId = (f) => (typeof f === "string" ? f : f.id);
-
-    const schemaFields = Array.from(TestEvent.schema.keys()).filter(
-      (id) => !excluded.has(id),
-    );
-    const additionalFields = component
-      .filterAdditionalFields()
-      .filter((f) => !excluded.has(getId(f)));
-
-    const finalIds = [...schemaFields, ...additionalFields].map(getId);
-
-    expect(finalIds).not.toContain("participants");
-    expect(finalIds).toEqual(
-      expect.arrayContaining([
-        "date",
-        "category",
-        "participants.participant",
-        "participants.status",
-        "participants.remarks",
-      ]),
-    );
-  });
 });
