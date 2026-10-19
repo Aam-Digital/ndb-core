@@ -850,6 +850,46 @@ describe("InheritedValueService", () => {
     },
   );
 
+  it("should load the linked parents again only when the linked records change, not on every change of the form", async () => {
+    vi.useFakeTimers();
+    try {
+      const form = getDefaultInheritedForm({
+        field: {
+          defaultValue: {
+            mode: "inherited-field",
+            config: {
+              sourceValueField: "foo",
+              sourceReferenceField: "reference-1",
+            },
+          },
+        },
+      });
+      form.entity._rev = "1-existing";
+      form.entity["reference-1"] = ["Entity:0", "Entity:1"];
+      mockEntityMapperService.load.mockImplementation((_type, id) => {
+        const parent = new Entity(id);
+        parent["foo"] = "Delhi";
+        return Promise.resolve(parent);
+      });
+
+      await defaultValueService.handleEntityForm(form, form.entity);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(2);
+
+      form.formGroup.get("field2").setValue("typing");
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(2);
+
+      form.formGroup
+        .get("reference-1")
+        .setValue(["Entity:0", "Entity:1", "Entity:2"]);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(5);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   describe("field collecting the values of all linked records", () => {
     async function initCollectingForm(
       currentValue: string[],

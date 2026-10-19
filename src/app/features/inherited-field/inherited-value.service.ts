@@ -39,6 +39,15 @@ export class InheritedValueService extends DefaultValueStrategy {
     AutomatedFieldUpdateConfigService,
   );
 
+  /**
+   * The ids of the parent records that the inherited values of each form were loaded for (by field id),
+   * to load them again only if the linked records change instead of on every change of the form.
+   */
+  private readonly loadedParentIds = new WeakMap<
+    EntityForm<any>,
+    Map<string, string[]>
+  >();
+
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
       await import("./admin-inherited-field/admin-inherited-field.component").then(
@@ -334,10 +343,25 @@ export class InheritedValueService extends DefaultValueStrategy {
       form,
     );
 
+    let loadedParentIds = this.loadedParentIds.get(form);
+    if (!loadedParentIds) {
+      loadedParentIds = new Map();
+      this.loadedParentIds.set(form, loadedParentIds);
+    }
+
     for (const [fieldId, parentEntityIds] of linkedEntityRefs) {
+      if (isEqual(loadedParentIds.get(fieldId), parentEntityIds)) {
+        continue;
+      }
+      loadedParentIds.set(fieldId, parentEntityIds);
+
       const parentEntities = await Promise.all(
         parentEntityIds.map((id) => this.loadEntity(id)),
       );
+      if (!isEqual(loadedParentIds.get(fieldId), parentEntityIds)) {
+        // the linked records changed again while loading, the newer call sets the value
+        continue;
+      }
 
       form.inheritedParentValues.set(
         fieldId,
