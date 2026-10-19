@@ -38,7 +38,7 @@
       [value]="(currentIndex() / participants().length) * 100"
     ></mat-progress-bar>
     <div class="progress-nav flex-row">
-      <div style="margin-left: -10px">
+      <div class="progress-nav-start">
         <button
           mat-icon-button
           (click)="goToParticipantWithIndex(0)"
@@ -83,7 +83,7 @@
         </button>
       </div>
       @if (inactiveParticipants().length > 0) {
-        <div style="margin-right: -10px">
+        <div class="progress-nav-end">
           <button
             mat-icon-button
             (click)="includeInactive()"

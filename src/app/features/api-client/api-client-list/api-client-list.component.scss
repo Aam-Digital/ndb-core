@@ -1,0 +1,4 @@
+@use "mixins/list-table";
+
+// same table styling as the other admin lists (user accounts, roles)
+@include list-table.container-and-table;

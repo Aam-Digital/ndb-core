@@ -6,11 +6,16 @@ import {
 } from "../data-transformation-service/export-column-config";
 import { Papa } from "ngx-papaparse";
 import { EntityConstructor } from "app/core/entity/model/entity";
-import { ExportColumnMapping } from "app/core/entity/default-datatype/default.datatype";
+import {
+  ExportColumnMapping,
+  ExportContext,
+} from "app/core/entity/default-datatype/default.datatype";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { Workbook } from "exceljs";
 import moment from "moment";
+import { mapInBatches } from "app/utils/utils";
+import { EXPORT_BATCH_SIZE } from "../readable-entity-name";
 
 export interface ExportColumnResolver {
   sourceFieldId: string;
@@ -267,15 +272,24 @@ export class DownloadService {
       columnResolvers.set(columnId, resolver);
     }
 
-    const exportEntities = await Promise.all(
-      data.map((item) => this.mapEntityToExportRow(item, columnResolvers)),
-    );
-
     // Keep selected columns that have no schema resolver (e.g. runtime-attached
     // fields like a Child's `schoolId`, or configured query-expression columns)
     // and read their value directly from the entity, so they are not silently
     // dropped from the export.
     const columnKeys = selectedKeys ?? Array.from(columnLabels.keys());
+
+    // Only resolve the selected columns: resolving a column can require loading
+    // referenced entities, which is wasted effort for columns that are not exported.
+    const selectedResolvers = new Map(
+      columnKeys
+        .filter((key) => columnResolvers.has(key))
+        .map((key) => [key, columnResolvers.get(key)]),
+    );
+    const exportContext: ExportContext = { entityNameCache: new Map() };
+    const exportEntities = await mapInBatches(data, EXPORT_BATCH_SIZE, (item) =>
+      this.mapEntityToExportRow(item, selectedResolvers, exportContext),
+    );
+
     const headers = columnKeys.map(
       (key) => labelOverrides.get(key) ?? columnLabels.get(key) ?? key,
     );
@@ -294,6 +308,7 @@ export class DownloadService {
   private async mapEntityToExportRow(
     item: any,
     columnResolvers: Map<string, ExportColumnResolver>,
+    exportContext: ExportContext,
   ): Promise<Object> {
     const newItem = {};
 
@@ -301,6 +316,7 @@ export class DownloadService {
       const formattedValue = await resolver.column.resolveValue(
         item[resolver.sourceFieldId],
         resolver.schemaField,
+        exportContext,
       );
       newItem[columnId] = this.ensureCsvFriendlyValue(formattedValue);
     }

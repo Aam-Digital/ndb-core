@@ -13,7 +13,7 @@
 
 /* Actions area on the right (edit & remove) */
 .menu-actions {
-  margin-left: auto; /* Push actions to far right */
+  margin-inline-start: auto; /* Push actions to far right */
 }
 
 /* Drag handle (left) */
@@ -22,7 +22,7 @@
   color: colors.$accent;
   display: flex;
   align-items: center;
-  margin-right: 12px;
+  margin-inline-end: 12px;
   opacity: 0.5;
   transition: opacity 0.2s;
 }

@@ -8,20 +8,23 @@ import { SessionSubject } from "../../session/auth/session-info";
  */
 @Injectable()
 export class UserRoleGuard extends AbstractPermissionGuard {
-  private sessionInfo = inject(SessionSubject);
+  private readonly sessionInfo = inject(SessionSubject);
 
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {
     const permittedRoles = routeData?.permittedUserRoles;
-    const user = this.sessionInfo.value;
+    const requiredRoles = routeData?.allRequiredUserRoles ?? [];
+    const userRoles = this.sessionInfo.value?.roles ?? [];
 
-    if (permittedRoles?.length > 0) {
-      // Check if user has a role which is in the list of permitted roles
-      return permittedRoles.some((role) => user.roles.includes(role));
-    } else {
-      // No config set => all users are allowed
-      return true;
-    }
+    // No config set => all users are allowed
+    const hasPermittedRole =
+      !permittedRoles?.length ||
+      permittedRoles.some((role) => userRoles.includes(role));
+    const hasRequiredRoles = requiredRoles.every((role) =>
+      userRoles.includes(role),
+    );
+
+    return hasPermittedRole && hasRequiredRoles;
   }
 }

@@ -9,7 +9,7 @@
 }
 
 .back-button {
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 
 ::ng-deep app-dashboard-widget {
@@ -91,7 +91,7 @@
 .drag-handle {
   position: absolute;
   top: 50%;
-  left: -8px;
+  inset-inline-start: -8px;
   color: colors.$accent;
   cursor: move;
   z-index: 20;
@@ -103,7 +103,7 @@
 .widget-remove-icon {
   position: absolute;
   top: -8px;
-  right: -8px;
+  inset-inline-end: -8px;
   color: black;
   font-size: 20px;
   z-index: 20;
@@ -124,6 +124,9 @@
 
   position: absolute;
   top: 50%;
+  // physical `left` on purpose: this centers the element geometrically together with the
+  // transform below, so it must not mirror - `inset-inline-start` would offset it by its
+  // own width in RTL, because the transform pulls towards the same edge in both directions.
   left: 50%;
   transform: translate(-50%, -50%);
 
