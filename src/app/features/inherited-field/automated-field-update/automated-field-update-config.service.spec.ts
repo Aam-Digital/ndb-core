@@ -1153,6 +1153,17 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(suggestion.hasNoCommonValue).toBe(true);
     });
 
+    it("does not save the group again if the dialog is confirmed without a change of its value", async () => {
+      const saveSpy = vi.spyOn(entityMapper, "save");
+
+      await saveSchoolCategory(["secondary"], "primary", "secondary");
+
+      expect(mockDialog.open).toHaveBeenCalledTimes(1);
+      expect(
+        saveSpy.mock.calls.some(([e]) => e instanceof CommonValueGroup),
+      ).toBe(false);
+    });
+
     it.each([
       [["secondary"], "primary", undefined],
       [["primary"], "primary", "primary"],

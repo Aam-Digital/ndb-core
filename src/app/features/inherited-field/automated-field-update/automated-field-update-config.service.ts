@@ -779,8 +779,12 @@ export class AutomatedFieldUpdateConfigService {
     const savePromises: Promise<any>[] = [];
     updatesByEntityId.forEach((updates) => {
       const entity = updates[0].affectedEntity;
-      if (entity) {
-        updates.forEach((update) => {
+      // e.g. records only listed to note that their linked records have no value in common
+      const changes = updates.filter(
+        (update) => entity && !this.isCurrentValue(entity, update),
+      );
+      if (changes.length > 0) {
+        changes.forEach((update) => {
           entity[update.targetFieldId] = update.newValue;
         });
         savePromises.push(this.entityMapper.save(entity));
@@ -788,6 +792,23 @@ export class AutomatedFieldUpdateConfigService {
     });
 
     await Promise.all(savePromises);
+  }
+
+  /**
+   * Whether the confirmed new value is the value that the entity already has (compared in database format).
+   */
+  private isCurrentValue(entity: Entity, update: AffectedEntity): boolean {
+    const toDatabaseFormat = (value: any) =>
+      this.transformSourceValueToDatabaseFormat(
+        value,
+        entity,
+        update.targetFieldId,
+        this.entitySchemaService,
+      );
+    return isEqual(
+      toDatabaseFormat(update.newValue),
+      toDatabaseFormat(entity[update.targetFieldId]),
+    );
   }
 
   /**
