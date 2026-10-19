@@ -130,7 +130,6 @@
   "4834247353465426071": "Sélectionnez un ensemble d’options existant à partager entre plusieurs champs ou créez une nouvelle liste indépendante d’options déroulantes.",
   "5855341483124183158": "Sélectionnez le type d'enregistrements que l'utilisateur peut sélectionner et lier à ce champ.",
   "8799362079868541767": "Anonymiser",
-  "6451965707375612570": "En option, cela supprimera toutes les informations personnelles (PII) liées de manière permanente à ce champ.",
   "2086294539661962129": "Supprimez complètement la valeur de l’enregistrement lors de l’anonymisation.",
   "4814285799071780083": "Retirer",
   "59296737012024335": "Conservez la valeur d'origine sans aucune anonymisation.",
@@ -1883,5 +1882,9 @@
   "2528468095291533175": "Some templates could not be loaded, so not all options may be listed. Please check that these template sources are reachable:",
   "8516554781482806707": "This account is not linked to a profile record. Permission rules based on the user's profile do not apply to this account.",
   "4345582695512975006": "No profile linked",
-  "1081958621531238550": "The image file could not be loaded. If it is missing, please upload it again."
+  "1081958621531238550": "The image file could not be loaded. If it is missing, please upload it again.",
+  "158603405278168077": "Optionally, this will permanently remove all personal information (PII) related to this field.",
+  "7469886915497676853": "Add new {$INTERPOLATION}",
+  "2471532361382262679": "Quick action",
+  "2747465693995624246": "Selected address based on GPS coordinate lookup as {$PH}"
 }
