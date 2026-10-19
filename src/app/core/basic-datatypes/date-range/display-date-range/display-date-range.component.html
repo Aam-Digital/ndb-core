@@ -1,0 +1,14 @@
+@if (value(); as range) {
+  @if (range.start && range.end) {
+    {{ range.start | customDate: "shortDate" }} -
+    {{ range.end | customDate: "shortDate" }}
+  } @else if (range.start) {
+    <ng-container i18n
+      >from {{ range.start | customDate: "shortDate" }}</ng-container
+    >
+  } @else if (range.end) {
+    <ng-container i18n
+      >until {{ range.end | customDate: "shortDate" }}</ng-container
+    >
+  }
+}

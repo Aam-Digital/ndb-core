@@ -1,0 +1,22 @@
+<div class="flex-row">
+  <mat-date-range-input [rangePicker]="rangePicker" [formGroup]="range">
+    <input
+      matStartDate
+      formControlName="start"
+      placeholder="Start date"
+      i18n-placeholder
+    />
+    <input
+      matEndDate
+      formControlName="end"
+      placeholder="End date"
+      i18n-placeholder
+    />
+  </mat-date-range-input>
+
+  <mat-datepicker-toggle
+    [for]="rangePicker"
+    class="input-action-button"
+  ></mat-datepicker-toggle>
+  <mat-date-range-picker #rangePicker></mat-date-range-picker>
+</div>

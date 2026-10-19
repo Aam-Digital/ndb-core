@@ -73,6 +73,14 @@ export class MyCustomDatatype extends DefaultDatatype<SpecialObject, string> {
 
 Please also refer to the extensive JsDoc code comments in the `DefaultDatatype` class.
 
+## Datatypes for combined values
+
+A datatype can store several values together in one field. The `date-range` type is an example: it holds a
+start and an end date as one object (`{ start: "2026-03-01", end: "2026-05-31" }` in the database), either of which
+can be missing. Its datatype class reuses the `date-only` conversion for both dates, and it contributes its own edit
+component (a range picker), display component, sorting (by start date), export (one column per date) and
+anonymization. See [`date-range`](date-range/date-range.datatype.ts).
+
 ## Customizing how values are sorted in tables
 
 By default, table columns are sorted on the readable value of the field.
