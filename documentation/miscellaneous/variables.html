@@ -368,6 +368,9 @@
                             <a href="#dropoutTypes" title="src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>dropoutTypes</b>&nbsp;&nbsp;&nbsp;(src/.../dropout-types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#DYNAMIC_VALIDATORS" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>DYNAMIC_VALIDATORS</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#DynamicComponent" title="src/app/core/config/dynamic-components/dynamic-component.decorator.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>DynamicComponent</b>&nbsp;&nbsp;&nbsp;(src/.../dynamic-component.decorator.ts)</span></a>
                         </li>
                         <li>
@@ -393,6 +396,9 @@
                         </li>
                         <li>
                             <a href="#emptyModel" title="src/app/core/admin/admin-role-permissions/role-details/admin-role-details.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>emptyModel</b>&nbsp;&nbsp;&nbsp;(src/.../admin-role-details.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#ENTITY_CONFIG_PREFIX" title="src/app/core/config/config-validation/config-validation.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ENTITY_CONFIG_PREFIX</b>&nbsp;&nbsp;&nbsp;(src/.../config-validation.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#ENTITY_NOT_FOUND_PLACEHOLDER" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>ENTITY_NOT_FOUND_PLACEHOLDER</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
@@ -657,6 +663,9 @@
                         </li>
                         <li>
                             <a href="#MY_FORMATS" title="src/app/core/basic-datatypes/month/edit-month/edit-month.component.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>MY_FORMATS</b>&nbsp;&nbsp;&nbsp;(src/.../edit-month.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#NAVIGATION_MENU_CONFIG_ID" title="src/app/core/config/config-validation/config-validation.service.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>NAVIGATION_MENU_CONFIG_ID</b>&nbsp;&nbsp;&nbsp;(src/.../config-validation.service.ts)</span></a>
                         </li>
                         <li>
                             <a href="#NAVIGATOR_TOKEN" title="src/app/utils/di-tokens.ts" class="reference-link "><span class="reference-badge reference-badge--variable" aria-hidden="true">V</span><span class="reference-link-label"><b>NAVIGATOR_TOKEN</b>&nbsp;&nbsp;&nbsp;(src/.../di-tokens.ts)</span></a>
@@ -6703,6 +6712,63 @@ Add further providers to your modules or the AppModule to extend.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DYNAMIC_VALIDATORS"></a>
+                    <span class="name">
+                        <span ><b>DYNAMIC_VALIDATORS</b></span>
+                        <a href="#DYNAMIC_VALIDATORS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[
+  /** type: number */
+  &quot;min&quot;,
+  /** type: number */
+  &quot;max&quot;,
+  /** type: string/date */
+  &quot;minDate&quot;,
+  /** type: string/date */
+  &quot;maxDate&quot;,
+  /** type: number */
+  &quot;minAge&quot;,
+  /** type: number */
+  &quot;maxAge&quot;,
+  /** type: boolean */
+  &quot;required&quot;,
+  /** type: boolean; validate field value is unique among entities of same type */
+  &quot;uniqueId&quot;,
+  /** type: boolean */
+  &quot;readonlyAfterSet&quot;,
+  /** type: string or regex */
+  &quot;pattern&quot;,
+] as const</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>All validator names supported in a <a href="../miscellaneous/typealiases.html#FormValidatorConfig">FormValidatorConfig</a>
+(also used to validate the config when an admin saves it).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/config/dynamic-components/dynamic-component.decorator.ts</h3>
     <section data-compodoc="block-properties">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -7329,6 +7395,61 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
 </div>
                 </td>
             </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/config/config-validation/config-validation.service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ENTITY_CONFIG_PREFIX"></a>
+                    <span class="name">
+                        <span ><b>ENTITY_CONFIG_PREFIX</b></span>
+                        <a href="#ENTITY_CONFIG_PREFIX"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;entity:&quot;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="NAVIGATION_MENU_CONFIG_ID"></a>
+                    <span class="name">
+                        <span ><b>NAVIGATION_MENU_CONFIG_ID</b></span>
+                        <a href="#NAVIGATION_MENU_CONFIG_ID"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;navigationMenu&quot;</code>
+                    </td>
+                </tr>
+
 
         </tbody>
     </table>

@@ -253,7 +253,7 @@ used to display context to the user about this.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:126</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="127" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:127</a></div>
                                 </td>
                             </tr>
 
@@ -292,7 +292,7 @@ used to display context to the user about this.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:125</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="126" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:126</a></div>
                                 </td>
                             </tr>
 
@@ -336,7 +336,7 @@ used to display context to the user about this.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="135" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:135</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="136" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:136</a></div>
                                 </td>
                             </tr>
 
@@ -388,7 +388,7 @@ that link to this record in their inheritedFromField
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="137" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:137</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:138</a></div>
                                 </td>
                             </tr>
 
@@ -427,7 +427,7 @@ that link to this record in their inheritedFromField
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="124" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:124</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="125" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:125</a></div>
                                 </td>
                             </tr>
 
@@ -466,7 +466,7 @@ that link to this record in their inheritedFromField
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="128" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:128</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:129</a></div>
                                 </td>
                             </tr>
 
@@ -531,10 +531,11 @@ export class DefaultValueService {
       if (strategy) {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
-        Logging.warn(
-          &quot;DefaultValue strategy not found&quot;,
-          fieldConfig.defaultValue?.mode,
-        );
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug(&quot;DefaultValue strategy not found&quot;, {
+          field: fieldConfig.id,
+          mode: fieldConfig.defaultValue?.mode,
+        });
       }
     }
   }

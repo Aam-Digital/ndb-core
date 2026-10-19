@@ -231,8 +231,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="100"
-                                    class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:100</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="101"
+                                    class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:101</a></div>
                         </td>
                     </tr>
 
@@ -448,10 +448,11 @@ export class DefaultValueService {
       if (strategy) {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
-        Logging.warn(
-          &quot;DefaultValue strategy not found&quot;,
-          fieldConfig.defaultValue?.mode,
-        );
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug(&quot;DefaultValue strategy not found&quot;, {
+          field: fieldConfig.id,
+          mode: fieldConfig.defaultValue?.mode,
+        });
       }
     }
   }

@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="144"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:144</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts:145</a></div>
                         </td>
                     </tr>
 
@@ -442,7 +442,8 @@ export class DynamicValidatorsService {
       case &quot;readonlyAfterSet&quot;:
         return value ? buildReadonlyValidator(entity) : null;
       default:
-        Logging.warn(&quot;Trying to generate a validator that does not exist&quot;, {
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug(&quot;Trying to generate a validator that does not exist&quot;, {
           validator: key,
         });
         return null;

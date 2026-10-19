@@ -1,0 +1,676 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ConfigValidationService</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/config/config-validation/config-validation.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Checks the config for problems that would otherwise only show up at runtime
+(as a silently ignored setting), so that admins can be told about them when saving.</p>
+<p>Problems are not reported to remote monitoring: they are instance configuration,
+not bugs in our code (see &quot;Error Handling &amp; Remote Logging&quot; in AGENTS.md).</p>
+
+            </p>
+
+
+        <section data-compodoc="block-metadata">
+            <h3>Metadata</h3>
+            <table class="table table-sm table-hover metadata">
+                <tbody>
+                    <tr>
+                        <td class="col-md-3">providedIn</td>
+                        <td class="col-md-9"><code>root</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#validate" >validate</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#warnAdminAboutProblems" >warnAdminAboutProblems</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validate"></a>
+                    <span class="name">
+                        <span ><b>validate</b></span>
+                        <a href="#validate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>validate(config: Record<string | any> | undefined | null)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:75</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check the given config data (the full config document&#39;s <code>data</code>).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                        <code>Record&lt;string | any&gt; | undefined | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/ConfigProblem.html" target="_self" >ConfigProblem[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>the problems found, empty if the config is fine</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="warnAdminAboutProblems"></a>
+                    <span class="name">
+                        <span ><b>warnAdminAboutProblems</b></span>
+                        <a href="#warnAdminAboutProblems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>warnAdminAboutProblems(config: Record<string, any>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Tell the current user about problems in the given (just saved) config,
+if they are allowed to edit the config.
+Saving is not blocked: problems are only shown as a warning.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>config</td>
+                                            <td>
+                                                        <code>Record&lt;string, any&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Injector } from &quot;@angular/core&quot;;
+import { FaIconLibrary } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
+import { EntityConfig } from &quot;../../entity/entity-config&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
+import { DefaultValueStrategy } from &quot;../../default-values/default-value-strategy.interface&quot;;
+import { DYNAMIC_VALIDATORS } from &quot;../../common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
+import { resolveIconDefinition } from &quot;../../common-components/fa-dynamic-icon/fa-icon-utils&quot;;
+import { MenuItem } from &quot;../../ui/navigation/menu-item&quot;;
+import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
+import { AlertService } from &quot;../../alerts/alert.service&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import { Config } from &quot;../config&quot;;
+
+/**
+ * A problem in the config that the app can work around at runtime
+ * (e.g. by falling back to a default), but which an admin should fix.
+ */
+export interface ConfigProblem {
+  /** id of the config item, e.g. &quot;entity:Child&quot; */
+  configId: string;
+  /** the field of an entity type the problem is in, if any */
+  field?: string;
+  /** human-readable description of the problem, including a hint how to fix it */
+  message: string;
+}
+
+const ENTITY_CONFIG_PREFIX &#x3D; &quot;entity:&quot;;
+const NAVIGATION_MENU_CONFIG_ID &#x3D; &quot;navigationMenu&quot;;
+
+/**
+ * Checks the config for problems that would otherwise only show up at runtime
+ * (as a silently ignored setting), so that admins can be told about them when saving.
+ *
+ * Problems are not reported to remote monitoring: they are instance configuration,
+ * not bugs in our code (see &quot;Error Handling &amp; Remote Logging&quot; in AGENTS.md).
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class ConfigValidationService {
+  // resolved lazily: the checked services (e.g. datatypes, default value strategies) may depend on the ConfigService
+  private readonly injector &#x3D; inject(Injector);
+
+  /**
+   * Tell the current user about problems in the given (just saved) config,
+   * if they are allowed to edit the config.
+   * Saving is not blocked: problems are only shown as a warning.
+   */
+  warnAdminAboutProblems(config: Record&lt;string, any&gt;): void {
+    if (this.injector.get(EntityAbility).cannot(&quot;update&quot;, Config)) {
+      return;
+    }
+    const problems &#x3D; this.validate(config);
+    if (problems.length &#x3D;&#x3D;&#x3D; 0) {
+      return;
+    }
+
+    Logging.debug(&quot;Saved config has problems&quot;, problems);
+    const listed &#x3D; problems.map((p) &#x3D;&gt; &#x60;• ${formatProblem(p)}&#x60;);
+    this.injector
+      .get(AlertService)
+      .addWarning(
+        $localize&#x60;:config validation:The configuration has problems that should be fixed:&#x60; +
+          &quot;\n&quot; +
+          listed.join(&quot;\n&quot;),
+      );
+  }
+
+  /**
+   * Check the given config data (the full config document&#x27;s &#x60;data&#x60;).
+   * @returns the problems found, empty if the config is fine
+   */
+  validate(config: Record&lt;string, any&gt; | undefined | null): ConfigProblem[] {
+    if (!config || typeof config !&#x3D;&#x3D; &quot;object&quot;) {
+      return [];
+    }
+
+    const problems: ConfigProblem[] &#x3D; [];
+    for (const [configId, value] of Object.entries(config)) {
+      if (configId.startsWith(ENTITY_CONFIG_PREFIX)) {
+        problems.push(...this.validateEntityConfig(configId, value, config));
+      } else if (configId &#x3D;&#x3D;&#x3D; NAVIGATION_MENU_CONFIG_ID) {
+        problems.push(...this.validateMenuItems(configId, value?.items));
+      }
+    }
+    return problems;
+  }
+
+  private validateEntityConfig(
+    configId: string,
+    entityConfig: EntityConfig,
+    config: Record&lt;string, any&gt;,
+  ): ConfigProblem[] {
+    const problems: ConfigProblem[] &#x3D; [];
+    if (entityConfig?.icon &amp;&amp; !this.isKnownIcon(entityConfig.icon)) {
+      problems.push({
+        configId,
+        message: $localize&#x60;:config validation:Unknown icon &quot;${entityConfig.icon}:icon:&quot;. A default icon is shown instead.&#x60;,
+      });
+    }
+
+    for (const [field, schema] of Object.entries(
+      entityConfig?.attributes ?? {},
+    )) {
+      problems.push(
+        ...this.validateField(schema, config).map((message) &#x3D;&gt; ({
+          configId,
+          field,
+          message,
+        })),
+      );
+    }
+    return problems;
+  }
+
+  private validateField(
+    schema: EntitySchemaField,
+    config: Record&lt;string, any&gt;,
+  ): string[] {
+    if (!schema || typeof schema !&#x3D;&#x3D; &quot;object&quot;) {
+      return [];
+    }
+    const problems: string[] &#x3D; [];
+
+    if (schema.dataType &amp;&amp; !this.isKnownDataType(schema.dataType)) {
+      // e.g. &#x60;dataType: &quot;School&quot;&#x60; where a link to &quot;School&quot; records was intended
+      const isEntityType &#x3D;
+        this.injector.get(EntityRegistry).has(schema.dataType) ||
+        !!config[ENTITY_CONFIG_PREFIX + schema.dataType];
+      problems.push(
+        isEntityType
+          ? $localize&#x60;:config validation:Unknown data type &quot;${schema.dataType}:dataType:&quot;. To link to records of this type, use data type &quot;entity&quot; and select &quot;${schema.dataType}:dataType:&quot; as the linked record type.&#x60;
+          : $localize&#x60;:config validation:Unknown data type &quot;${schema.dataType}:dataType:&quot;. The field is treated as plain text.&#x60;,
+      );
+    }
+
+    for (const validator of Object.keys(schema.validators ?? {})) {
+      if (!(DYNAMIC_VALIDATORS as readonly string[]).includes(validator)) {
+        problems.push(
+          validator &#x3D;&#x3D;&#x3D; &quot;regex&quot;
+            ? $localize&#x60;:config validation:Unknown validator &quot;regex&quot;, it is ignored. Use &quot;pattern&quot; instead.&#x60;
+            : $localize&#x60;:config validation:Unknown validator &quot;${validator}:validator:&quot;, it is ignored.&#x60;,
+        );
+      }
+    }
+
+    if (schema.defaultValue &amp;&amp; !this.isKnownDefaultValueMode(schema)) {
+      problems.push(
+        schema.defaultValue.mode
+          ? $localize&#x60;:config validation:The default value has no valid mode (&quot;${schema.defaultValue.mode}:mode:&quot;), so it is not applied.&#x60;
+          : $localize&#x60;:config validation:The default value has no mode, so it is not applied.&#x60;,
+      );
+    }
+
+    return problems;
+  }
+
+  private validateMenuItems(
+    configId: string,
+    items: MenuItem[] | undefined,
+  ): ConfigProblem[] {
+    if (!Array.isArray(items)) {
+      return [];
+    }
+    return items.flatMap((item) &#x3D;&gt; [
+      ...(item?.icon &amp;&amp; !this.isKnownIcon(item.icon)
+        ? [
+            {
+              configId,
+              message: $localize&#x60;:config validation:Unknown icon &quot;${item.icon}:icon:&quot; for menu item &quot;${item.label}:label:&quot;. A default icon is shown instead.&#x60;,
+            },
+          ]
+        : []),
+      ...this.validateMenuItems(configId, item?.subMenu),
+    ]);
+  }
+
+  private isKnownDataType(dataType: string): boolean {
+    try {
+      this.injector
+        .get(EntitySchemaService)
+        .getDatatypeOrDefault(dataType, false);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private isKnownDefaultValueMode(schema: EntitySchemaField): boolean {
+    const strategies &#x3D; this.injector.get(
+      DefaultValueStrategy,
+    ) as unknown as DefaultValueStrategy[];
+    return strategies.some((s) &#x3D;&gt; s.mode &#x3D;&#x3D;&#x3D; schema.defaultValue?.mode);
+  }
+
+  private isKnownIcon(icon: string): boolean {
+    return !!resolveIconDefinition(icon, this.injector.get(FaIconLibrary));
+  }
+}
+
+function formatProblem(problem: ConfigProblem): string {
+  const location &#x3D; problem.field
+    ? &#x60;${problem.configId} → ${problem.field}&#x60;
+    : problem.configId;
+  return &#x60;${location}: ${problem.message}&#x60;;
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ConfigValidationService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

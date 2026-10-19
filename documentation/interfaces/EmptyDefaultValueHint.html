@@ -254,7 +254,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:144</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="145" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:145</a></div>
                                 </td>
                             </tr>
 
@@ -298,7 +298,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="148" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:148</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="149" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:149</a></div>
                                 </td>
                             </tr>
 
@@ -342,7 +342,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:150</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:151</a></div>
                                 </td>
                             </tr>
 
@@ -381,7 +381,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="145" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:145</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:146</a></div>
                                 </td>
                             </tr>
 
@@ -425,7 +425,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="147" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:147</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="148" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:148</a></div>
                                 </td>
                             </tr>
 
@@ -469,7 +469,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="149" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:149</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:150</a></div>
                                 </td>
                             </tr>
 
@@ -534,10 +534,11 @@ export class DefaultValueService {
       if (strategy) {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
-        Logging.warn(
-          &quot;DefaultValue strategy not found&quot;,
-          fieldConfig.defaultValue?.mode,
-        );
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug(&quot;DefaultValue strategy not found&quot;, {
+          field: fieldConfig.id,
+          mode: fieldConfig.defaultValue?.mode,
+        });
       }
     }
   }
