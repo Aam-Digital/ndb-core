@@ -268,5 +268,40 @@ describe("Schema data type: schema-embed", () => {
       ).toBe(true);
       expect(loadedEntity.embeddedArray[1].value2).toEqual(2);
     });
+
+    describe("getColumns", () => {
+      const field = ConfigTestEntity.schema.get("embedded");
+      const datatype = () =>
+        entitySchemaService.getDatatypeOrDefault(
+          "schema-embed",
+        ) as SchemaEmbedDatatype;
+
+      it("returns all inner fields with their view components", () => {
+        const columns = datatype().getColumns(field);
+
+        expect(columns.map((c) => c.id)).toEqual(["value", "value2"]);
+        expect(columns[1].viewComponent).toBe(
+          entitySchemaService.getComponent({ dataType: "number" }, "view"),
+        );
+      });
+
+      it("returns the selected inner fields in the given order, with overrides", () => {
+        const columns = datatype().getColumns(field, [
+          { id: "value2", label: "Custom" },
+          "value",
+        ]);
+
+        expect(columns.map((c) => [c.id, c.label, c.dataType])).toEqual([
+          ["value2", "Custom", "number"],
+          ["value", undefined, "month"],
+        ]);
+      });
+
+      it("skips selected columns that are not inner fields", () => {
+        const columns = datatype().getColumns(field, ["unknown", "value"]);
+
+        expect(columns.map((c) => c.id)).toEqual(["value"]);
+      });
+    });
   });
 });

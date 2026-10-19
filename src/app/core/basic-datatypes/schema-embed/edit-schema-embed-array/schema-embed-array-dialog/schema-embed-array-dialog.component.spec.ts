@@ -6,6 +6,7 @@ import { Subject } from "rxjs";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { EditTextComponent } from "#src/app/core/basic-datatypes/string/edit-text/edit-text.component";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import {
   SchemaEmbedArrayDialogComponent,
   SchemaEmbedArrayDialogData,
@@ -39,6 +40,7 @@ describe("SchemaEmbedArrayDialogComponent", () => {
         { id: "documentType", dataType: "string", label: "Document Type" },
         { id: "documentNumber", dataType: "string", label: "Document Number" },
       ],
+      entity: new TestEntity(),
       label: "Identification Documents",
       ...data,
     };
@@ -173,6 +175,24 @@ describe("SchemaEmbedArrayDialogComponent", () => {
 
     expect(formControl.value).toBe(originalValue);
     expect(formControl.dirty).toBe(false);
+  });
+
+  it("applies the inner fields' configured validators to each row", async () => {
+    await setup({
+      columns: [
+        {
+          id: "documentType",
+          dataType: "string",
+          label: "Document Type",
+          validators: { required: true },
+        },
+      ],
+    });
+
+    const row = component.rows()[0];
+    expect(row.valid).toBe(true);
+    row.get("documentType").setValue("");
+    expect(row.get("documentType").hasError("required")).toBe(true);
   });
 
   it("disables all cells and hides add/remove buttons when the field starts disabled", async () => {

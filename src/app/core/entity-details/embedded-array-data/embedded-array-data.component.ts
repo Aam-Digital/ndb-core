@@ -14,14 +14,12 @@ import { Entity } from "../../entity/model/entity";
 import {
   ColumnConfig,
   FormFieldConfig,
-  toFormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { Logging } from "../../logging/logging.service";
 import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { getSchemaEmbedArrayColumns } from "../../basic-datatypes/schema-embed/schema-embed-array-columns";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
@@ -103,29 +101,13 @@ export class EmbeddedArrayDataComponent {
   );
 
   /** The configured columns, extended with the inner field details (falling back to all inner fields). */
-  readonly _columns = computed<FormFieldConfig[]>(() => {
-    const allColumns = this.allColumns();
-    const configured = this.columns();
-    if (!configured?.length) {
-      return allColumns;
-    }
-
-    const columns: FormFieldConfig[] = [];
-    for (const column of configured) {
-      const config = toFormFieldConfig(column);
-      const innerField = allColumns.find((c) => c.id === config?.id);
-      if (!innerField) {
-        // a dangling column id must not block the rest of the table from rendering
-        Logging.error("Could not display an unknown embedded table column", {
-          column,
-          property: this.property(),
-        });
-        continue;
-      }
-      columns.push({ ...innerField, ...config });
-    }
-    return columns;
-  });
+  readonly _columns = computed<FormFieldConfig[]>(() =>
+    getSchemaEmbedArrayColumns(
+      this.fieldConfig(),
+      this.entitySchemaService,
+      this.columns(),
+    ),
+  );
 
   private readonly currentScreenSize = injectCurrentScreenSize();
 

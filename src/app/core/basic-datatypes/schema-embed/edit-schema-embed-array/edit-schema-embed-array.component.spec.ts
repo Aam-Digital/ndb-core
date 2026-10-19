@@ -104,6 +104,7 @@ describe("EditSchemaEmbedArrayComponent", () => {
               viewComponent: "DisplayText",
             }),
           ],
+          entity: undefined,
           label: "Identification Documents",
         },
       }),

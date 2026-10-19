@@ -14,6 +14,7 @@ import { CustomFormControlDirective } from "#src/app/core/common-components/basi
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
 import { SchemaEmbedArrayDialogComponent } from "./schema-embed-array-dialog/schema-embed-array-dialog.component";
@@ -56,6 +57,7 @@ export class EditSchemaEmbedArrayComponent
   implements EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dialog = inject(MatDialog);
@@ -86,6 +88,7 @@ export class EditSchemaEmbedArrayComponent
       data: {
         formControl: this.formControl,
         columns: this.columns(),
+        entity: this.entity(),
         label: this.formFieldConfig()?.label,
       },
     });

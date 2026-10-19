@@ -6,7 +6,7 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -25,6 +25,7 @@ import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-ic
 import { EntityFieldEditComponent } from "../../../entity/entity-field-edit/entity-field-edit.component";
 import { Entity } from "../../../entity/model/entity";
 import { UnsavedChangesService } from "../../form/unsaved-changes.service";
+import { buildSchemaEmbedEntryForm } from "../../../basic-datatypes/schema-embed/schema-embed-entry-form";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -111,18 +112,12 @@ export class EmbeddedArrayEntryDialogComponent {
 
   private buildForm(): FormGroup {
     const entry = this.isNew ? {} : this.getEntries()[this.data.index];
-    const controls: Record<string, FormControl> = {};
-    for (const column of this.data.columns) {
-      const options = column.validators
-        ? this.dynamicValidators.buildValidators(
-            column.validators,
-            this.data.entity,
-            column.id,
-          )
-        : {};
-      controls[column.id] = new FormControl(entry?.[column.id], options);
-    }
-    return new FormGroup(controls);
+    return buildSchemaEmbedEntryForm(
+      this.data.columns,
+      entry,
+      this.dynamicValidators,
+      this.data.entity,
+    );
   }
 
   private getEntries(): Record<string, any>[] {

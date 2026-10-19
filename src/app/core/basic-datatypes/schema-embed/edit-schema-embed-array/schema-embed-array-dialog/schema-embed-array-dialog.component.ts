@@ -18,12 +18,17 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit/entity-field-edit.component";
+import { DynamicValidatorsService } from "#src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service";
+import { Entity } from "#src/app/core/entity/model/entity";
+import { buildSchemaEmbedEntryForm } from "../../schema-embed-entry-form";
 
 export interface SchemaEmbedArrayDialogData {
   /** The field's FormControl - read once for the dialog's initial rows, written once on close. */
   formControl: FormControl<Record<string, any>[]>;
   /** The inner fields (table columns), resolved from the field's schema-embed configuration. */
   columns: FormFieldConfig[];
+  /** The entity holding the field (context for the inner fields' validators). */
+  entity: Entity;
   /** Dialog title, typically the field's own label. */
   label?: string;
 }
@@ -58,6 +63,7 @@ export class SchemaEmbedArrayDialogComponent {
   private readonly dialogRef =
     inject<MatDialogRef<SchemaEmbedArrayDialogComponent>>(MatDialogRef);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dynamicValidators = inject(DynamicValidatorsService);
 
   private readonly formControl = this.data.formControl;
   protected readonly columns = this.data.columns;
@@ -110,11 +116,12 @@ export class SchemaEmbedArrayDialogComponent {
   }
 
   private buildRowFormGroup(value: Record<string, any>): FormGroup {
-    const controls: Record<string, FormControl> = {};
-    for (const column of this.columns) {
-      controls[column.id] = new FormControl(value?.[column.id]);
-    }
-    const formGroup = new FormGroup(controls);
+    const formGroup = buildSchemaEmbedEntryForm(
+      this.columns,
+      value,
+      this.dynamicValidators,
+      this.data.entity,
+    );
     if (this.isDisabled) {
       formGroup.disable({ emitEvent: false });
     }
