@@ -84,13 +84,15 @@ export class EditPublicformRouteComponent
 
   copyToClipboard(): void {
     const fullUrl = this.fullPrefixUrl + (this.formControl.value || "");
-    navigator.clipboard
-      .writeText(fullUrl)
+    // starting from a promise so that a missing clipboard API (e.g. page opened over plain http,
+    // where `navigator.clipboard` is undefined) is handled by the same `catch`
+    Promise.resolve()
+      .then(() => navigator.clipboard.writeText(fullUrl))
       .then(() => {
         this.alertService.addInfo("Link copied: " + fullUrl);
       })
       .catch((err) => {
-        // e.g. Safari or the user denied clipboard access
+        // e.g. Safari or the user denied clipboard access, or no clipboard API available
         Logging.debug("Could not copy link to clipboard", err);
         this.alertService.addWarning(
           $localize`Could not copy the link automatically. Please copy it manually: ${fullUrl}`,

@@ -67,4 +67,19 @@ describe("EditPublicformRouteComponent", () => {
       vi.unstubAllGlobals();
     }
   });
+
+  it("should show a hint to copy manually if the clipboard API is not available", async () => {
+    const alertService = TestBed.inject(AlertService);
+    vi.spyOn(alertService, "addWarning").mockImplementation(() => undefined);
+    vi.stubGlobal("navigator", {});
+
+    try {
+      expect(() => component.copyToClipboard()).not.toThrow();
+      await vi.waitFor(() =>
+        expect(alertService.addWarning).toHaveBeenCalled(),
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });
