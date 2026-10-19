@@ -45,28 +45,7 @@ skill does not fit and stop: a bug needs steps to reproduce and the expected res
 
 ## Format
 
-```markdown
-### Example setup
-
-- <The smallest setup that shows the feature, in the labels of the app, e.g. the admin
-  steps and the example records.>
-
-### Use cases
-
-1. **<The situation in a few words> (works already | new)**
-   <Concrete example with the example records, then the result. When behavior changes,
-   add "Before: ..." for the old behavior.>
-
-2. ...
-
-### Known limitations
-
-- <What the feature does not cover, in terms a user would notice.>
-
-### Open Questions & Decisions to confirm
-
-- <A real open choice, with the alternative named, so people can say yes or no.>
-```
+Use the format provided in the [GitHub issue template](.github/ISSUE_TEMPLATE/feature_request.md)'s "Use Cases" section.
 
 Rules for the use cases:
 
