@@ -39,7 +39,8 @@
   color: colors.$inactive;
 }
 
-::ng-deep .mat-mdc-menu-panel {
+/* only for the notification menus (marked with this panel class), not all menus of the app */
+::ng-deep .mat-mdc-menu-panel.notification-menu {
   min-width: 310px !important;
 
   .mat-mdc-menu-item-text {
