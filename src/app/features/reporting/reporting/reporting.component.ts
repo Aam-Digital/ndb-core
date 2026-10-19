@@ -285,7 +285,13 @@ export class ReportingComponent {
       this.data.set(reportData.data);
       this.reportCalculation.set(calculation);
     } catch (reason) {
-      Logging.warn("Background report refresh failed", reason);
+      if (reason instanceof ReportCalculationError) {
+        // the calculation itself failed (e.g. a problem in the report definition),
+        // which the user is shown when they calculate the report explicitly
+        Logging.debug("Background report refresh failed", reason);
+      } else {
+        Logging.warn("Background report refresh failed", reason);
+      }
       // keep showing the stale data + warning
     } finally {
       if (token === this.refreshToken) this.isRefreshing.set(false);

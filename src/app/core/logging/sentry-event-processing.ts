@@ -22,6 +22,7 @@ export function processSentryEvent(
   if (
     (!navigator.onLine && isConnectivityFailure(event)) ||
     isDocumentUpdateConflict(event) ||
+    isUnhandledErrorInPageScript(event) ||
     causeChain(hint?.originalException).some(isExpiredSessionError)
   ) {
     return null;
@@ -43,6 +44,27 @@ function isDocumentUpdateConflict(event: Sentry.ErrorEvent): boolean {
     [event.message, ...(event.exception?.values?.map((v) => v.value) ?? [])]
       .filter(Boolean)
       .some((msg) => fingerprintKey(msg).includes("document update conflict"))
+  );
+}
+
+/**
+ * An unhandled error raised only by code inlined into the HTML page itself, not by any of our
+ * script files: e.g. a script injected by an in-app browser (seen from the iOS Google app).
+ * Our own code is always loaded from `.js` files, so nobody here can act on such an error.
+ */
+function isUnhandledErrorInPageScript(event: Sentry.ErrorEvent): boolean {
+  const exception = event.exception?.values?.at(-1);
+  if (exception?.mechanism?.handled !== false) {
+    return false;
+  }
+  const frames = exception.stacktrace?.frames ?? [];
+  return (
+    frames.length > 0 &&
+    frames.every(
+      (frame) =>
+        /^(https?:\/\/[^/]+)?\//.test(frame.filename ?? "") &&
+        !/\.m?js([?#]|$)/.test(frame.filename),
+    )
   );
 }
 
