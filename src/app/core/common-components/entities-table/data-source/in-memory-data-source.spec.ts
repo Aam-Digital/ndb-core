@@ -161,7 +161,7 @@ describe("InMemoryDataSource", () => {
 
       expect(snackBarOpen).toHaveBeenCalledWith(
         expect.stringContaining("don't have access"),
-        expect.anything(),
+        "×", // no "Retry": it cannot help for a permission problem
         expect.anything(),
       );
       expect(errorSpy).not.toHaveBeenCalled();

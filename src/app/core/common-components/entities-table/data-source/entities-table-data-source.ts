@@ -206,7 +206,7 @@ export abstract class EntitiesTableDataSource<
   }
 
   /**
-   * Notify the user that the list could not be loaded and offer a manual retry.
+   * Notify the user that the list could not be loaded and (unless not permitted) offer a manual retry.
    * The retry routes through {@link setRecords} so it reuses the normal
    * (debounced, `isLoading`-tracked) reload path.
    *
@@ -221,15 +221,19 @@ export abstract class EntitiesTableDataSource<
       connection: $localize`:Table data loading failed:Could not load the list. Please check your internet connection.`,
     };
     const message = messages[cause];
+    // retrying cannot help if the user is not permitted: only offer to dismiss the message
+    const canRetry = cause !== "notPermitted";
     this.loadErrorSnackBarRef = this.snackBar.open(
       message,
-      $localize`:Retry loading table data:Retry`,
+      canRetry ? $localize`:Retry loading table data:Retry` : "×",
       { duration: 3600000 },
     );
-    this.loadErrorSnackBarRef
-      .onAction()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.setRecords());
+    if (canRetry) {
+      this.loadErrorSnackBarRef
+        .onAction()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.setRecords());
+    }
   }
 
   /** Actually (re)load the records. Implemented by the concrete data source. */
