@@ -298,8 +298,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="107"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:107</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -335,8 +335,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="88"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:88</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -406,8 +406,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="294"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:294</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="299"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:299</a></div>
                         </td>
                     </tr>
 
@@ -445,8 +445,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="151"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:151</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="153"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:153</a></div>
                         </td>
                     </tr>
 
@@ -518,8 +518,8 @@ i.e. configuring the access for that account after login
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="270"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:270</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="275"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:275</a></div>
                         </td>
                     </tr>
 
@@ -589,8 +589,8 @@ to avoid flooding to console with errors.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="127"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:127</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="129"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:129</a></div>
                         </td>
                     </tr>
 
@@ -633,8 +633,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="97"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:97</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -672,8 +672,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="138"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:138</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:140</a></div>
                         </td>
                     </tr>
 
@@ -717,7 +717,7 @@ SyncedPouchDatabase, so they have no checkpoints to clear.</p>
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/database/database-resolver.service.ts:52</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/database/database-resolver.service.ts:54</a></div>
                                 </td>
                             </tr>
                     <tr>
@@ -758,6 +758,7 @@ import { environment } from &quot;../../../environments/environment&quot;;
 import { SessionType } from &quot;../session/session-type&quot;;
 import { isRemoteOnlyDatabase } from &quot;./remote-only-databases&quot;;
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from &quot;#src/app/utils/di-tokens&quot;;
+import { AlertService } from &quot;../alerts/alert.service&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
 import { LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
 import {
@@ -776,6 +777,7 @@ export class DatabaseResolverService {
   private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private readonly databaseFactory &#x3D; inject(DatabaseFactoryService);
   private readonly migrationService &#x3D; inject(IndexeddbMigrationService);
+  private readonly alertService &#x3D; inject(AlertService);
   private readonly window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN, { optional: true });
   private readonly navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN, {
     optional: true,
@@ -942,6 +944,9 @@ export class DatabaseResolverService {
             lastSyncCompleted: lastSyncTime,
             existingDbs: existingDbs.map((db) &#x3D;&gt; db.name),
           },
+        );
+        this.alertService.addWarning(
+          $localize&#x60;:local database was evicted by the browser:The data stored on this device was deleted by your browser (e.g. to free up storage space) and is now downloaded from the server again. Changes made on this device after ${new Date(lastSyncTime).toLocaleString()}:lastSyncTime: that were not synced yet may have been lost.&#x60;,
         );
       }
     } catch (err) {

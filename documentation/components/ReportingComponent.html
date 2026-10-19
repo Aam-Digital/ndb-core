@@ -563,8 +563,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="368"
-                                    class="link-to-prism">src/app/features/reporting/reporting/reporting.component.ts:368</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="374"
+                                    class="link-to-prism">src/app/features/reporting/reporting/reporting.component.ts:374</a></div>
                         </td>
                     </tr>
 
@@ -1523,7 +1523,13 @@ export class ReportingComponent {
       this.data.set(reportData.data);
       this.reportCalculation.set(calculation);
     } catch (reason) {
-      Logging.warn(&quot;Background report refresh failed&quot;, reason);
+      if (reason instanceof ReportCalculationError) {
+        // the calculation itself failed (e.g. a problem in the report definition),
+        // which the user is shown when they calculate the report explicitly
+        Logging.debug(&quot;Background report refresh failed&quot;, reason);
+      } else {
+        Logging.warn(&quot;Background report refresh failed&quot;, reason);
+      }
       // keep showing the stale data + warning
     } finally {
       if (token &#x3D;&#x3D;&#x3D; this.refreshToken) this.isRefreshing.set(false);

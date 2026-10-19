@@ -731,6 +731,9 @@
                             <a href="#isSupported" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isSupported</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isUnhandledErrorInPageScript" title="src/app/core/logging/sentry-event-processing.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isUnhandledErrorInPageScript</b>&nbsp;&nbsp;&nbsp;(src/.../sentry-event-processing.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isUnresolvableReferenceError" title="src/app/core/export/readable-entity-name.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isUnresolvableReferenceError</b>&nbsp;&nbsp;&nbsp;(src/.../readable-entity-name.ts)</span></a>
                         </li>
                         <li>
@@ -7301,6 +7304,67 @@ The status is not always preserved, so PouchDB&#39;s wording counts as well.</p>
 
             <tr>
                 <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isUnhandledErrorInPageScript"></a>
+                    <span class="name">
+                        <span ><b>isUnhandledErrorInPageScript</b></span>
+                        <a href="#isUnhandledErrorInPageScript"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isUnhandledErrorInPageScript(event)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>An unhandled error raised only by code inlined into the HTML page itself, not by any of our
+script files: e.g. a script injected by an in-app browser (seen from the iOS Google app).
+Our own code is always loaded from <code>.js</code> files, so nobody here can act on such an error.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
