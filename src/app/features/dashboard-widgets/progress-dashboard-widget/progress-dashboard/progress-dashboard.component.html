@@ -29,7 +29,9 @@
         </ng-container>
         <ng-container matColumnDef="progress-value">
           <td *matCellDef="let entry" class="progress-cell">
-            {{ entry.currentValue }} / {{ entry.targetValue }}
+            <bdi dir="ltr"
+              >{{ entry.currentValue }} / {{ entry.targetValue }}</bdi
+            >
           </td>
         </ng-container>
 
