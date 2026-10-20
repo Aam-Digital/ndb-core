@@ -144,7 +144,7 @@ export interface FullDefaultValueHint {
 
   noCommonValue?: undefined;
 
-  isEmpty?: undefined | false;
+  isEmpty?: false;
 }
 
 /**
