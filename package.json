@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "GPL-3.0",
   "type": "module",
+  "packageManager": "npm@12.2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",

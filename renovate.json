@@ -1,116 +1,31 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "`Final Review` replaces the shared preset's `dependencies` label, in `labels` and in `vulnerabilityAlerts.labels`: label-triggered-review.yml fires on it, so dependency PRs get an Argos visual review. Keep it in both places, otherwise one kind of Renovate PR silently skips that review.",
   "extends": [
-    "config:recommended",
-    "group:allNonMajor",
-    ":maintainLockFilesMonthly"
+    "local>Aam-Digital/.github//renovate/default",
+    "local>Aam-Digital/.github//renovate/node",
+    "local>Aam-Digital/.github//renovate/docker"
   ],
   "enabledManagers": [
     "npm",
+    "nvm",
     "dockerfile",
-    "github-actions",
-    "custom.regex"
+    "github-actions"
   ],
-  "timezone": "Etc/UTC",
-  "schedule": [
-    "* * * * 0"
-  ],
-  "dependencyDashboard": false,
-  "prConcurrentLimit": 5,
-  "prHourlyLimit": 2,
   "labels": [
     "Final Review"
   ],
   "vulnerabilityAlerts": {
-    "schedule": [
-      "at any time"
-    ],
     "labels": [
       "Final Review"
     ]
   },
-  "reviewers": [
-    "sleidig",
+  "additionalReviewers": [
     "Abhinegi2"
   ],
-  "rangeStrategy": "bump",
   "ignoreDeps": [
     "zone.js",
     "moment",
     "jsdom"
-  ],
-  "constraints": {
-    "npm": ">=11.0.0"
-  },
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Node.js and npm versions pinned for CI in _node-toolchain.yml, annotated with a '# renovate:' comment. No manager reads these, so without this they silently go stale.",
-      "managerFilePatterns": [
-        "/^\\.github/workflows/_node-toolchain\\.yml$/"
-      ],
-      "matchStrings": [
-        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+?)(?:\\s+versioning=(?<versioning>\\S+?))?\\s*\\n\\s*echo\\s+\"[a-z-]+=(?<currentValue>[^\"]+)\""
-      ]
-    }
-  ],
-  "packageRules": [
-    {
-      "matchManagers": [
-        "npm"
-      ],
-      "rangeStrategy": "bump"
-    },
-    {
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "draftPR": true,
-      "labels": [
-        "Final Review"
-      ]
-    },
-    {
-      "matchDepTypes": [
-        "dependencies",
-        "devDependencies"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "groupName": "weekly-non-major-updates",
-      "automerge": false
-    },
-    {
-      "matchManagers": [
-        "dockerfile"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "groupName": "docker-base-image",
-      "automerge": false
-    },
-    {
-      "matchManagers": [
-        "github-actions"
-      ],
-      "groupName": "github-actions",
-      "draftPR": false,
-      "automerge": false
-    },
-    {
-      "matchManagers": [
-        "custom.regex"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "groupName": "ci-toolchain",
-      "automerge": false
-    }
   ]
 }
