@@ -5,9 +5,30 @@ on:
     types: [published]
   workflow_dispatch:
     inputs:
+      # Only selects which version's translations are re-published (validated in "Determine version"); it does not
+      # affect any build output.
+      # qlty-ignore: checkov:CKV_GHA_7
       version:
         description: "Version tag to publish translations for (defaults to latest release)"
         required: false
+  # Edge builds (on-master-push.yml): translations for `locale/<edge version>`, so that new texts can be checked on edge
+  # before a release. They leave `locale/latest` alone, the fallback for versions without their own folder.
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: Version (folder name) to publish the translations for
+      update-latest:
+        type: boolean
+        required: false
+        default: true
+        description: Also publish them as `locale/latest`
+    secrets:
+      POEDITOR_API_TOKEN:
+        required: true
+      POEDITOR_PROJECT_ID:
+        required: true
 
 permissions:
   contents: write
@@ -21,20 +42,28 @@ jobs:
     steps:
       - name: Determine version
         id: version
+        # `inputs.version` is set for workflow_dispatch and workflow_call; when called, `github.event_name` is the
+        # caller's event (`push`), so the input has to be checked first.
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
-          elif [ -n "${{ github.event.inputs.version }}" ]; then
-            echo "tag=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          if [ -n "$INPUT_VERSION" ]; then
+            tag="$INPUT_VERSION"
+          elif [ "$GITHUB_EVENT_NAME" = "release" ]; then
+            tag="$RELEASE_TAG"
           else
-            tag=$(gh release view --repo "${{ github.repository }}" --json tagName -q .tagName) || {
+            tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName) || {
               echo "Error: No releases found and no version specified"
               exit 1
             }
-            echo "tag=$tag" >> "$GITHUB_OUTPUT"
           fi
+          if ! [[ "$tag" =~ ^[0-9A-Za-z._-]+$ ]]; then
+            echo "::error::Invalid version '$tag'"
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_VERSION: ${{ inputs.version }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
 
       - name: Export translations from POEditor
         env:
@@ -83,6 +112,7 @@ jobs:
           destination_dir: locale/${{ steps.version.outputs.tag }}
 
       - name: Deploy latest translations to GitHub Pages
+        if: inputs.update-latest != false
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

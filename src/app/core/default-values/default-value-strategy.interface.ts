@@ -34,14 +34,12 @@ export abstract class DefaultValueStrategy {
     form: EntityForm<any>,
   ): void;
 
-  async onFormValueChanges<T extends Entity>(
-    form: EntityForm<T>,
-  ): Promise<void> {}
-
   async initEntityForm<T extends Entity>(form: EntityForm<T>): Promise<void> {}
 
   /**
    * Get details about the status and context of a default value field to display to the user.
+   * This may read signals of details that are loaded asynchronously,
+   * so call it in a reactive context (e.g. a `computed`) to get updates once they are loaded.
    * @param form
    * @param field
    */

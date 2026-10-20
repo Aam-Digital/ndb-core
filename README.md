@@ -42,7 +42,7 @@ The overall architecture and tech stack including backend services looks like th
 
 ## Setup
 
-1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed.
+1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed. The Node.js version used in CI is in [`.nvmrc`](./.nvmrc) (with [nvm](https://github.com/nvm-sh/nvm): `nvm use`); CI uses the npm that comes with it.
 2. `git clone` this repository to get all the code with its configuration and requirements.
 3. `npm install` the dependencies (external libraries and packages)
 4. `npm run start` to run your local dev server and get started.

@@ -1,24 +1,37 @@
 name: Pull Request - Clean Up
 
 on:
-  pull_request_target:
+  # pull_request_target so that the secrets (SSH, Docker Hub) are available. Safe here: no PR code is checked out.
+  pull_request_target: # zizmor: ignore[dangerous-triggers] never checks out PR code
     types: [closed]
 
-permissions:
-  contents: read
-  actions: write  # required for deleting GitHub Actions caches
-  packages: write  # required for deleting GHCR images
-
-env:
-  GH_TOKEN: ${{ github.token }}
+permissions: {} # each job grants what it needs
 
 jobs:
-  remove-deployment:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository files
-        uses: actions/checkout@v7
+  # Cancels the PR build (pull-request-updated.yml) if it is still running and waits until it has stopped, then
+  # deletes the `pr-<number>` image from ghcr.io (and the untagged images older than 2 days). A PR build that still
+  # runs when the PR is closed would otherwise push the image and redeploy the PR instance after the cleanup.
+  cleanup-image:
+    # PRs from forks have no image (and their builds don't push)
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    uses: Aam-Digital/.github/.github/workflows/image-cleanup.yml@v1
+    permissions:
+      actions: write
+      packages: write
+    with:
+      build-workflows: pull-request-updated.yml
 
+  # Runs after cleanup-image (so that no PR build can redeploy afterwards), also if that failed or was skipped.
+  remove-deployment:
+    needs: cleanup-image
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write # delete GitHub Actions caches
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_NUMBER: ${{ github.event.number }}
+    steps:
       - name: Stop container and remove folder
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         continue-on-error: true
@@ -33,37 +46,33 @@ jobs:
             rm -r pr-${{ github.event.number }}
 
       - name: Delete Docker Hub tag
-        continue-on-error: true
+        if: ${{ !cancelled() }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          TAG: pr-${{ github.event.number }}
         run: |
-          token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
-          token=${token#*\"token\":\"}
-          token=${token%%\"*}
-          curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/pr-${{ github.event.number }}" -H "Authorization: Bearer $token"
-
-      - name: Delete GHCR image
-        continue-on-error: true
-        run: |
-          PACKAGE_NAME="${{ github.event.repository.name }}"
-          TAG="pr-${{ github.event.number }}"
-          
-          # Get the version ID for the specific tag
-          VERSION_ID=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            "/orgs/${{ github.repository_owner }}/packages/container/${PACKAGE_NAME}/versions" \
-            --jq ".[] | select(.metadata.container.tags[] == \"${TAG}\") | .id")
-          
-          if [ -n "$VERSION_ID" ]; then
-            echo "Deleting GHCR image version $VERSION_ID with tag $TAG"
-            gh api \
-              --method DELETE \
-              -H "Accept: application/vnd.github+json" \
-              "/orgs/${{ github.repository_owner }}/packages/container/${PACKAGE_NAME}/versions/${VERSION_ID}"
-          else
-            echo "No GHCR image found with tag $TAG"
+          set -euo pipefail
+          token=$(jq -n --arg u "$DOCKER_USERNAME" --arg p "$DOCKER_PASSWORD" '{identifier: $u, secret: $p}' \
+            | curl -fsS -X POST 'https://hub.docker.com/v2/auth/token' -H 'Content-Type: application/json' --data @- \
+            | jq -r '.access_token // empty')
+          if [ -z "$token" ]; then
+            echo "::error::Docker Hub login returned no access token"
+            exit 1
           fi
 
+          status=$(curl -sS -o "$RUNNER_TEMP/response.txt" -w '%{http_code}' -X DELETE \
+            "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/$TAG" \
+            -H "Authorization: Bearer $token")
+          case "$status" in
+            2??) echo "Deleted Docker Hub tag $TAG" ;;
+            404) echo "No Docker Hub tag $TAG found, nothing to delete" ;;
+            *) echo "::error::Deleting Docker Hub tag $TAG failed with HTTP $status"; cat "$RUNNER_TEMP/response.txt"; exit 1 ;;
+          esac
+
       - name: Delete github caches for current branch
+        if: ${{ !cancelled() }}
         run: |
-          gh cache list -L 200 --ref "refs/pull/${{ github.event.number }}/merge" --json id --jq '.[] | .id' | while read -r id; do
-            gh cache delete "$id"
+          gh cache list -R "$GITHUB_REPOSITORY" -L 200 --ref "refs/pull/$PR_NUMBER/merge" --json id --jq '.[] | .id' | while read -r id; do
+            gh cache delete -R "$GITHUB_REPOSITORY" "$id"
           done

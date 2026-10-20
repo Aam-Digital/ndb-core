@@ -204,6 +204,22 @@ class AggregatingAction extends Entity {
   mainTags: ConfigurableEnumValue[];
 }
 
+@DatabaseEntity("CommonValueGroup")
+class CommonValueGroup extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "School", isArray: true })
+  members: string[];
+  @DatabaseField({
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceField: "members",
+        sourceValueField: "category",
+      },
+    },
+  })
+  category: string;
+}
+
 const isIndexOfParentAction = ([, , field]: string[]) =>
   field === "parentAction";
 
@@ -221,6 +237,12 @@ describe("AutomatedFieldUpdateConfigService", () => {
     { id: "primary", label: "Primary" },
     { id: "secondary", label: "Secondary" },
   ];
+
+  function createSchool(categoryId?: string): School {
+    const school = new School();
+    school.category = TEST_SCHOOL_ENUM.find((e) => e.id === categoryId);
+    return school;
+  }
 
   /** Like the real indexing service this finds the records of a type by a reference property. */
   let mockIndexing: {
@@ -248,6 +270,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("Mentorship", Mentorship);
     entityRegistry.set("Assignment", Assignment);
     entityRegistry.set("AggregatingAction", AggregatingAction);
+    entityRegistry.set("CommonValueGroup", CommonValueGroup);
 
     mockIndexing = {
       generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
@@ -1053,6 +1076,13 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ["health"],
         ["health", "water"],
       ],
+      [
+        "tags",
+        "inheritedTags",
+        ["water", "health"],
+        ["health"],
+        ["health", "water"],
+      ],
       ["category", "category", "water", "health", "water"],
     ])(
       "%s -> %s: sub-action %j + parent changed from %j to %j opens no dialog",
@@ -1066,6 +1096,127 @@ describe("AutomatedFieldUpdateConfigService", () => {
         );
 
         expect(mockDialog.open).not.toHaveBeenCalled();
+      },
+    );
+  });
+
+  describe("record linking several parents", () => {
+    function categoryOf(id: string | undefined) {
+      return TEST_SCHOOL_ENUM.find((e) => e.id === id);
+    }
+
+    /** the suggestion for the group in the dialog that was opened */
+    function suggestionForGroup() {
+      return mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+    }
+
+    /** let loading the record with the given id fail with the given error */
+    function failLoadingOf(id: string, error: unknown) {
+      const load = entityMapper.load.bind(entityMapper);
+      vi.spyOn(entityMapper, "load").mockImplementation((type, entityId) =>
+        entityId === id ? Promise.reject(error) : load(type, entityId),
+      );
+    }
+
+    async function saveSchoolCategory(
+      otherSchoolCategories: string[],
+      newCategory: string | undefined,
+      groupCategory: string | undefined,
+      previousCategory?: string,
+      otherMemberIds: string[] = [],
+    ) {
+      const school = createSchool(previousCategory);
+      const otherSchools = otherSchoolCategories.map(createSchool);
+      const group = new CommonValueGroup();
+      group.members = [school, ...otherSchools]
+        .map((s) => s.getId())
+        .concat(otherMemberIds);
+      group.category = groupCategory;
+      entityMapper.addAll([school, ...otherSchools, group]);
+
+      const schoolBefore = school.copy();
+      school.category = categoryOf(newCategory);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(school, schoolBefore);
+    }
+
+    it.each([
+      // other parents, changed parent, record before, suggested value, note, changed parent before
+      [["primary", "primary"], "primary", "secondary", "primary", undefined],
+      [[undefined], "primary", undefined, "primary", undefined],
+      [[undefined], undefined, "primary", undefined, undefined, "primary"],
+      [["secondary"], "primary", "secondary", "secondary", "conflict"],
+    ])(
+      "suggests the value that all parents have in common to the record (others %j, changed %s, record %s): %s, note %s",
+      async (others, changed, current, expected, note, previous) => {
+        await saveSchoolCategory(others, changed, current, previous);
+
+        expect(mockDialog.open).toHaveBeenCalledTimes(1);
+        const suggestion = suggestionForGroup();
+        expect(suggestion.newValue).toBe(expected);
+        expect(suggestion.noCommonValue).toBe(note);
+      },
+    );
+
+    describe("when some of the parents cannot be loaded", () => {
+      let warn: MockInstance;
+
+      beforeEach(() => {
+        warn = vi.spyOn(Logging, "warn").mockReturnValue(undefined);
+      });
+
+      afterEach(() => {
+        warn.mockRestore();
+      });
+
+      it.each([
+        ["the user may not read it", { status: 403 }, false],
+        ["it is missing", { status: 404 }, true],
+      ])(
+        "keeps the current value of the record if a parent cannot be loaded because %s, reporting only unexpected failures",
+        async (_, loadError, reported) => {
+          failLoadingOf("School:not-accessible", loadError);
+
+          await saveSchoolCategory([], "primary", "secondary", "secondary", [
+            "School:not-accessible",
+          ]);
+
+          const suggestion = suggestionForGroup();
+          expect(suggestion.newValue).toBe("secondary");
+          expect(suggestion.noCommonValue).toBe("unavailable");
+          expect(warn).toHaveBeenCalledTimes(reported ? 1 : 0);
+        },
+      );
+    });
+
+    it("does not save the record again if the dialog is confirmed without a change of its value", async () => {
+      const saveSpy = vi.spyOn(entityMapper, "save");
+
+      await saveSchoolCategory(["secondary"], "primary", "secondary");
+
+      expect(mockDialog.open).toHaveBeenCalledTimes(1);
+      expect(
+        saveSpy.mock.calls.some(([e]) => e instanceof CommonValueGroup),
+      ).toBe(false);
+    });
+
+    it.each([
+      [["secondary"], "primary", undefined],
+      [["primary"], "primary", "primary"],
+    ])(
+      "does not offer an update of the record if there is no value to suggest or keep, or it has the common value already (others %j, changed %s, record %s)",
+      async (others, changed, current) => {
+        await saveSchoolCategory(others, changed, current);
+
+        const updatedEntities = mockDialog.open.mock.calls.flatMap(
+          (call) => call[1].data.entities,
+        );
+        expect(
+          updatedEntities.some((e) => e.targetEntityType === CommonValueGroup),
+        ).toBe(false);
       },
     );
   });
