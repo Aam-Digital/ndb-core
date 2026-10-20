@@ -76,7 +76,15 @@ describe("ParsedFileInputComponent", () => {
 
     expect(component.parsedData.detectedDelimiter).toBe(";");
     expect(component.parsedData.fields).toEqual(["name", "age"]);
-    expect(component.parsedData.data).toEqual([{ name: "Alice", age: 30 }]);
+    expect(component.parsedData.data).toEqual([{ name: "Alice", age: "30" }]);
+  });
+
+  it("keeps numeric-looking CSV cells as exact strings and empty cells as null", async () => {
+    mockFileReader('name,phone,note\nJohn,"00000",');
+    await component.loadFile(mockFileEvent({ name: "file.csv" }));
+    expect(component.parsedData.data).toEqual([
+      { name: "John", phone: "00000", note: null },
+    ]);
   });
 
   it("should ignore reparse before any file has been loaded", () => {

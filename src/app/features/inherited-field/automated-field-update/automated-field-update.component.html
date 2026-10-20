@@ -83,15 +83,27 @@
                 ></app-entity-field-view>
               </div>
             }
-            @if (entity.hasNoCommonValue) {
+            @if (entity.noCommonValue) {
               <div class="hint-text no-common-value-warning">
                 <fa-icon icon="warning"></fa-icon>
-                <span i18n>No value in common, current value kept</span>
-                <fa-icon
-                  icon="circle-info"
-                  i18n-matTooltip
-                  matTooltip="The linked records have no value in common, so no new value is suggested. The current value is kept unless you change it here."
-                ></fa-icon>
+                @if (entity.noCommonValue === "unavailable") {
+                  <span i18n
+                    >Some linked records could not be loaded, current value
+                    kept</span
+                  >
+                  <fa-icon
+                    icon="circle-info"
+                    i18n-matTooltip
+                    matTooltip="Some linked records could not be loaded (e.g. because you have no access to them), so no new value is suggested. The current value is kept unless you change it here."
+                  ></fa-icon>
+                } @else {
+                  <span i18n>No value in common, current value kept</span>
+                  <fa-icon
+                    icon="circle-info"
+                    i18n-matTooltip
+                    matTooltip="The linked records have no value in common, so no new value is suggested. The current value is kept unless you change it here."
+                  ></fa-icon>
+                }
               </div>
             }
             @if (entity.unlinked) {

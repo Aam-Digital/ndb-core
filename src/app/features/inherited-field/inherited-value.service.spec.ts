@@ -292,6 +292,46 @@ describe("InheritedValueService", () => {
     },
   );
 
+  it.each([[["A"]], [["A", "B"]]])(
+    "should apply the value mapping before comparing the values of the linked parents %j of a new record",
+    async (parentValues) => {
+      vi.useFakeTimers();
+      try {
+        const form = getDefaultInheritedForm({
+          field: {
+            defaultValue: {
+              mode: "inherited-field",
+              config: {
+                sourceValueField: "foo",
+                sourceReferenceField: "reference-1",
+                valueMapping: { A: "X", B: "X" },
+              },
+            },
+          },
+        });
+        mockEntityMapperService.load.mockImplementation((_type, id) => {
+          const parent = new Entity(id);
+          parent["foo"] = parentValues[Number(id.split(":")[1])];
+          return Promise.resolve(parent);
+        });
+
+        defaultValueService.handleEntityForm(form, form.entity);
+        await vi.advanceTimersByTimeAsync(0);
+        form.formGroup
+          .get("reference-1")
+          .setValue(parentValues.map((_, i) => `Entity:${i}`));
+        await vi.advanceTimersByTimeAsync(10);
+
+        expect(form.formGroup.get("field").value).toBe("X");
+        expect(
+          defaultValueService.getDefaultValueUiHint(form, "field").isInSync,
+        ).toBe(true);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
+
   it("should reset FormControl, if parent (array) field got cleared", async () => {
     vi.useFakeTimers();
     try {
@@ -801,13 +841,25 @@ describe("InheritedValueService", () => {
     [
       string,
       string[],
-      { isInSync?: boolean; isEmpty?: boolean; hasNoCommonValue?: boolean },
+      { isInSync?: boolean; isEmpty?: boolean; noCommonValue?: string },
     ]
   >([
     ["Delhi", ["Delhi", "Delhi"], { isInSync: true }],
     ["Mumbai", ["Delhi", "Delhi"], { isInSync: false }],
-    ["Delhi", ["Delhi", "Mumbai"], { isEmpty: true, hasNoCommonValue: true }],
-    ["Delhi", [], { isEmpty: true, hasNoCommonValue: false }],
+    [
+      "Delhi",
+      ["Delhi", "Mumbai"],
+      { isEmpty: true, noCommonValue: "conflict" },
+    ],
+    ["Delhi", [], { isEmpty: true }],
+    [
+      "Delhi",
+      ["Delhi", "missing"],
+      { isEmpty: true, noCommonValue: "unavailable" },
+    ],
+    ["Delhi", ["missing"], { isEmpty: true, noCommonValue: "unavailable" }],
+    // like a single parent without value: the field can be reset to empty
+    ["Delhi", [undefined, undefined], { isInSync: false }],
   ])(
     "should compare field value %j with the common value of several linked parents %j",
     async (currentValue, parentValues, expected) => {
@@ -828,8 +880,12 @@ describe("InheritedValueService", () => {
         form.entity["reference-1"] = parentValues.map((_, i) => `Entity:${i}`);
         form.formGroup.get("field").setValue(currentValue);
         mockEntityMapperService.load.mockImplementation((_type, id) => {
+          const value = parentValues[Number(id.split(":")[1])];
+          if (value === "missing") {
+            return Promise.reject({ status: 403 });
+          }
           const parent = new Entity(id);
-          parent["foo"] = parentValues[Number(id.split(":")[1])];
+          parent["foo"] = value;
           return Promise.resolve(parent);
         });
 
@@ -839,16 +895,56 @@ describe("InheritedValueService", () => {
         const hint = defaultValueService.getDefaultValueUiHint(form, "field");
 
         expect(hint).toMatchObject(expected);
-        expect(hint.hasNoCommonValue).toBe(expected.hasNoCommonValue);
+        expect(hint.noCommonValue).toBe(expected.noCommonValue);
         if (expected.isInSync === false) {
           hint.syncFromParentField();
-          expect(form.formGroup.get("field").value).toBe("Delhi");
+          expect(form.formGroup.get("field").value).toBe(parentValues[0]);
         }
       } finally {
         vi.useRealTimers();
       }
     },
   );
+
+  it("should load the linked parents again only when the linked records change, not on every change of the form", async () => {
+    vi.useFakeTimers();
+    try {
+      const form = getDefaultInheritedForm({
+        field: {
+          defaultValue: {
+            mode: "inherited-field",
+            config: {
+              sourceValueField: "foo",
+              sourceReferenceField: "reference-1",
+            },
+          },
+        },
+      });
+      form.entity._rev = "1-existing";
+      form.entity["reference-1"] = ["Entity:0", "Entity:1"];
+      mockEntityMapperService.load.mockImplementation((_type, id) => {
+        const parent = new Entity(id);
+        parent["foo"] = "Delhi";
+        return Promise.resolve(parent);
+      });
+
+      await defaultValueService.handleEntityForm(form, form.entity);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(2);
+
+      form.formGroup.get("field2").setValue("typing");
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(2);
+
+      form.formGroup
+        .get("reference-1")
+        .setValue(["Entity:0", "Entity:1", "Entity:2"]);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(mockEntityMapperService.load).toHaveBeenCalledTimes(5);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
   describe("field collecting the values of all linked records", () => {
     async function initCollectingForm(

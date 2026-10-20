@@ -56,7 +56,7 @@ export abstract class UserAdminService {
   abstract updateUser(
     userAccountId: string,
     updatedUser: Partial<UserAccount>,
-  ): Observable<{ userUpdated: boolean }>;
+  ): Observable<{ userUpdated: boolean; error?: UserAdminApiError }>;
 
   /**
    * Delete a user with the given id

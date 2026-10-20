@@ -42,6 +42,7 @@ import {
 import { Logging } from "#src/app/core/logging/logging.service";
 import { addHigherLevels } from "./add-higher-levels";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 
 /**
  * Represents an entity that will be affected by a status update.
@@ -77,8 +78,8 @@ export interface AffectedEntity {
   /** Whether the new value is merged into the existing values instead of replacing them completely */
   addToExisting?: boolean;
 
-  /** Whether the entities linked to the affected entity have no value in common, so the current value is kept */
-  hasNoCommonValue?: boolean;
+  /** Why the entities linked to the affected entity provide no value in common, so the current value is kept */
+  noCommonValue?: NoCommonValueReason;
 
   /** Whether the affected entity is no longer linked to the changed entity */
   unlinked?: boolean;
@@ -447,7 +448,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
         newValue: next.newValue,
         level: next.level,
         via: next.via,
-        hasNoCommonValue: next.hasNoCommonValue,
+        noCommonValue: next.noCommonValue,
         unlinked: next.unlinked,
       });
       if (!row.edited) {

@@ -47,7 +47,7 @@ export class AddressGpsLocationComponent {
         );
         this.locationSelected.emit(geoResult);
         this.alertService.addInfo(
-          `Selected address based on GPS coordinate lookup as ${geoResult?.display_name}`,
+          $localize`Selected address based on GPS coordinate lookup as ${geoResult?.display_name}`,
         );
       }
     } catch (error) {

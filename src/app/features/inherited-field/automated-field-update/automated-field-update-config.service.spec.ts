@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import type { MockInstance } from "vitest";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update-config.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
@@ -14,6 +15,7 @@ import {
 } from "#src/app/core/entity/database-entity.decorator";
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { Logging } from "#src/app/core/logging/logging.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
 import { of } from "rxjs";
@@ -34,6 +36,15 @@ const mockAutomationConfig = {
       active: "in-mentorship",
       finished: "open for mentorship",
     },
+  },
+};
+
+const mockMultiTypeAutomationConfig = {
+  mode: "inherited-field" as DefaultValueMode,
+  config: {
+    sourceReferenceEntity: "Assignment",
+    sourceValueField: "title",
+    sourceReferenceField: "relatedEntities",
   },
 };
 
@@ -89,6 +100,22 @@ class Mentee extends Entity {
     defaultValue: mockAutomationConfig,
   })
   status: string;
+  @DatabaseField({
+    defaultValue: mockMultiTypeAutomationConfig,
+  })
+  latestAssignment: string;
+}
+
+@DatabaseEntity("Assignment")
+class Assignment extends Entity {
+  @DatabaseField()
+  title: string;
+  @DatabaseField({
+    dataType: "entity",
+    isArray: true,
+    additional: ["Mentee", "School"],
+  })
+  relatedEntities: string[] = [];
 }
 
 @DatabaseEntity("Mentorship")
@@ -291,6 +318,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("School", School);
     entityRegistry.set("Mentee", Mentee);
     entityRegistry.set("Mentorship", Mentorship);
+    entityRegistry.set("Assignment", Assignment);
     entityRegistry.set("AggregatingAction", AggregatingAction);
     entityRegistry.set("HierarchyAction", HierarchyAction);
     entityRegistry.set("HierarchyGroup", HierarchyGroup);
@@ -417,6 +445,52 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const originalMentee = await entityMapper.load(Mentee, mentee.getId());
     expect(originalMentee.status).toBe("open for mentorship");
+  });
+
+  describe("source reference field that can hold several entity types", () => {
+    let warn: MockInstance;
+
+    beforeEach(() => {
+      warn = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      warn.mockRestore();
+    });
+
+    it.each([
+      [
+        "ids of other entity types",
+        (mentee: Mentee) => ["School:s1", mentee.getId()],
+      ],
+      [
+        "an id without type prefix",
+        (mentee: Mentee) => [Entity.extractEntityIdFromId(mentee.getId())],
+      ],
+    ])(
+      "should update the mentee and not try to load %s as a mentee",
+      async (_, relatedIdsOf) => {
+        const mentee = new Mentee();
+        mentee.name = "Mentee A";
+        mentee.getSchema();
+
+        const assignment = new Assignment();
+        assignment.relatedEntities = relatedIdsOf(mentee);
+        entityMapper.addAll([mentee, assignment]);
+
+        const originalAssignment = assignment.copy();
+        assignment.title = "interview scheduled";
+
+        await service.applyRulesToDependentEntities(
+          assignment,
+          originalAssignment,
+        );
+
+        const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
+        expect(updatedMentee.latestAssignment).toBe("interview scheduled");
+        expect(warn).not.toHaveBeenCalled();
+      },
+    );
   });
 
   it("should apply automation value mapping correctly", async () => {
@@ -1073,10 +1147,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
   describe("group linking several schools", () => {
     async function saveSchoolCategory(
       otherSchoolCategories: string[],
-      newCategory: string,
+      newCategory: string | undefined,
       groupCategory: string | undefined,
+      previousCategory?: string,
     ) {
-      const school = new School();
+      const school = createSchool(previousCategory);
       const otherSchools = otherSchoolCategories.map(createSchool);
       const group = new CommonValueGroup();
       group.members = [school, ...otherSchools].map((s) => s.getId());
@@ -1104,9 +1179,20 @@ describe("AutomatedFieldUpdateConfigService", () => {
           (e) => e.targetEntityType === CommonValueGroup,
         );
         expect(suggestion.newValue).toBe(expected);
-        expect(suggestion.hasNoCommonValue).toBe(false);
+        expect(suggestion.noCommonValue).toBeUndefined();
       },
     );
+
+    it("suggests clearing the value of the group if none of its schools has a category anymore", async () => {
+      await saveSchoolCategory([undefined], undefined, "primary", "primary");
+
+      expect(mockDialog.open).toHaveBeenCalledTimes(1);
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+      expect(suggestion.newValue).toBeUndefined();
+      expect(suggestion.noCommonValue).toBeUndefined();
+    });
 
     it("keeps the current value of the group and notes that the schools have no category in common", async () => {
       await saveSchoolCategory(["secondary"], "primary", "secondary");
@@ -1116,7 +1202,37 @@ describe("AutomatedFieldUpdateConfigService", () => {
         (e) => e.targetEntityType === CommonValueGroup,
       );
       expect(suggestion.newValue).toBe("secondary");
-      expect(suggestion.hasNoCommonValue).toBe(true);
+      expect(suggestion.noCommonValue).toBe("conflict");
+    });
+
+    it("keeps the current value of the group and notes that some of its schools could not be loaded", async () => {
+      const school = createSchool("secondary");
+      const group = new CommonValueGroup();
+      group.members = [school.getId(), "School:not-accessible"];
+      group.category = "secondary";
+      entityMapper.addAll([school, group]);
+      const schoolBefore = school.copy();
+      school.category = TEST_SCHOOL_ENUM.find((e) => e.id === "primary");
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(school, schoolBefore);
+
+      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+      expect(suggestion.newValue).toBe("secondary");
+      expect(suggestion.noCommonValue).toBe("unavailable");
+    });
+
+    it("does not save the group again if the dialog is confirmed without a change of its value", async () => {
+      const saveSpy = vi.spyOn(entityMapper, "save");
+
+      await saveSchoolCategory(["secondary"], "primary", "secondary");
+
+      expect(mockDialog.open).toHaveBeenCalledTimes(1);
+      expect(
+        saveSpy.mock.calls.some(([e]) => e instanceof CommonValueGroup),
+      ).toBe(false);
     });
 
     it.each([
@@ -1304,7 +1420,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         (e) => e.id === group.getId(),
       );
       expect(suggestion.newValue).toEqual(["health", "education"]);
-      expect(suggestion.hasNoCommonValue).toBe(false);
+      expect(suggestion.noCommonValue).toBeUndefined();
     });
 
     it("also covers the levels above when updating the linked records from the field button", async () => {
