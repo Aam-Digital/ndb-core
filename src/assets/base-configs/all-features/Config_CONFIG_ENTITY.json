@@ -1509,6 +1509,11 @@
           "label": "Date Field",
           "dataType": "date"
         },
+        "dateRangeField": {
+          "id": "dateRangeField",
+          "label": "Date Range Field",
+          "dataType": "date-range"
+        },
         "entityField": {
           "id": "entityField",
           "label": "Entity Field",
@@ -1601,11 +1606,15 @@
             "id": "DisplayParticipantsCount",
             "viewComponent": "DisplayParticipantsCount",
             "label": "Participants"
-          }
+          },
+          "dateRangeField"
         ],
         "filters": [
           {
             "id": "checkboxField"
+          },
+          {
+            "id": "dateRangeField"
           }
         ]
       }
@@ -1638,7 +1647,8 @@
                         "longTextField",
                         "percentageField",
                         "emailField",
-                        "website"
+                        "website",
+                        "dateRangeField"
                       ]
                     },
                     {
