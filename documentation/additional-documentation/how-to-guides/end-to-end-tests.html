@@ -219,7 +219,26 @@ test(&quot;Dashboard shows correct counts&quot;, async ({ page }) =&gt; {
 
   await page.getByRole(&quot;navigation&quot;).getByText(&quot;Dashboard&quot;).click();
   await expect(page.getByText(&quot;5 Children&quot;)).toBeVisible();
-});</code></pre></div><h3>Angular Material quirks</h3>
+});</code></pre></div><h3>Console errors</h3>
+<p>A test fails if the app logs an error to the browser console (<code>console.error</code>,
+e.g. through <code>Logging.error()</code>) or throws an uncaught exception, even if all of
+its assertions pass. Many regressions only show up as such logged errors. The
+failure message lists the errors.</p>
+<ul>
+<li><p>Errors expected in every run are allowed in <code>KNOWN_CONSOLE_ERRORS</code> in
+<code>e2e/fixtures.ts</code>. Keep that list short, add a comment with the reason (and an
+issue link) to each entry.</p>
+</li>
+<li><p>If a test triggers an error deliberately, allow it for the tests of that file
+or <code>describe</code> block with a pattern:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">test.use({ allowedConsoleErrors: [/Could not load the file/] });</code></pre></div></li>
+</ul>
+<p>Images from external hosts (e.g. map tiles) are replaced by an empty image, so
+the tests don&#39;t depend on these servers. A route that a test registers itself
+with <code>page.route()</code> takes precedence.</p>
+<p>The mocked clock replaces <code>Date</code>; the fixture makes sure that subclasses like
+<code>DateWithAge</code> still create instances of the subclass.</p>
+<h3>Angular Material quirks</h3>
 <ul>
 <li><p><strong>Form fields:</strong> floating labels are <em>not</em> found by <code>getByLabel()</code>, because
 Playwright does not resolve their <code>aria-labelledby</code> wiring. Use the

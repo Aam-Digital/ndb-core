@@ -140,6 +140,12 @@ This way, all logging is done in a consistent manner and can be transferred to t
   Logging.error(&#39;some error information&#39;);
 }</code></pre></div><p>The <code>LoggingService</code> has multiple log levels (<code>debug</code>, <code>info</code>, <code>warn</code>, <code>error</code>)
 that control whether log messages are sent to the remote monitoring and how they are treated there.</p>
+<p>The browser console links every message to the line in <code>logging.service.ts</code>
+that writes it. To see the code that called <code>Logging</code> instead, add
+<code>logging\.service\.ts$</code> as a custom pattern to the ignore list of the
+browser&#39;s developer tools (Chrome: DevTools Settings &gt; Ignore list &gt;
+Add pattern; Firefox: &quot;Ignore source&quot; in the Debugger).
+The expandable stack trace of the message also shows the caller.</p>
 <h2>Deciding what to report</h2>
 <p>A Sentry issue should mean &quot;a developer has something to fix&quot;. Before adding a log call, decide
 who has to act on the failure:</p>
