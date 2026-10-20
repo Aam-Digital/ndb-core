@@ -161,12 +161,6 @@ export class AdminEntityFieldComponent implements OnInit {
     EntityDatatype.dataType,
   ];
 
-  /** edit components of entity fields that apply a `selectionCondition` (all based on EditEntity) */
-  private static readonly SELECTION_CONDITION_EDIT_COMPONENTS: string[] = [
-    "EditEntity",
-    "EditLegacyAttendance",
-  ];
-
   ngOnInit() {
     this.entityType = this.data.entityType;
     this.initSettings();
@@ -400,32 +394,28 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   /**
-   * The record type this field references,
-   * if a `selectionCondition` can be applied to the field:
-   * It must reference exactly one type and use an edit component based on the entity dropdown (which applies the condition).
+   * The record type this field references (for an attendance field: its participants),
+   * if it is exactly one, as required for a `selectionCondition`.
    */
   private getSelectionConditionTargetType(): EntityConstructor | undefined {
-    if (
-      this.schemaFieldsForm.get("dataType").value !== EntityDatatype.dataType
-    ) {
-      return undefined;
+    const additional = this.additionalForm.value;
+    let referencedTypes: unknown;
+    switch (this.schemaFieldsForm.get("dataType").value) {
+      case EntityDatatype.dataType:
+        referencedTypes = additional;
+        break;
+      case AttendanceDatatype.dataType:
+        referencedTypes = additional?.participant?.additional;
+        break;
+      default:
+        return undefined;
     }
 
-    const editComponent = this.schemaFieldsForm.get("editComponent").value;
-    if (
-      editComponent &&
-      !AdminEntityFieldComponent.SELECTION_CONDITION_EDIT_COMPONENTS.includes(
-        editComponent,
-      )
-    ) {
+    const types = asArray(referencedTypes ?? []);
+    if (types.length !== 1 || !this.entityRegistry.has(types[0] as string)) {
       return undefined;
     }
-
-    const types = asArray(this.additionalForm.value ?? []);
-    if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
-      return undefined;
-    }
-    return this.entityRegistry.get(types[0]);
+    return this.entityRegistry.get(types[0] as string);
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;

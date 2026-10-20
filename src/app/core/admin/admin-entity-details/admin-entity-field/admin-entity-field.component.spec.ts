@@ -563,16 +563,16 @@ describe("AdminEntityFieldComponent", () => {
       additional: TestEntity.ENTITY_TYPE,
     };
 
+    const attendance = (types: string[]): EntitySchemaField => ({
+      dataType: AttendanceDatatype.dataType,
+      additional: { participant: { dataType: "entity", additional: types } },
+    });
+
     it.each<[string, EntitySchemaField, boolean]>([
       ["a single record type", entityRef, true],
       [
         "a list of one record type",
         { ...entityRef, additional: [TestEntity.ENTITY_TYPE] },
-        true,
-      ],
-      [
-        "the entity dropdown set explicitly",
-        { ...entityRef, editComponent: "EditEntity" },
         true,
       ],
       [
@@ -584,13 +584,18 @@ describe("AdminEntityFieldComponent", () => {
         false,
       ],
       [
-        "the legacy attendance editor (based on the entity dropdown)",
+        "one record type, whatever its edit component",
         { ...entityRef, editComponent: "EditLegacyAttendance" },
         true,
       ],
       [
-        "a custom edit component not applying the filter",
-        { ...entityRef, editComponent: "EditAttendance" },
+        "one participant type of an attendance field",
+        attendance([TestEntity.ENTITY_TYPE]),
+        true,
+      ],
+      [
+        "several participant types of an attendance field",
+        attendance([TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE]),
         false,
       ],
       [
@@ -599,13 +604,34 @@ describe("AdminEntityFieldComponent", () => {
         false,
       ],
     ])(
-      "offers the selection filter only for an entity dropdown of exactly one record type (%s)",
+      "offers the selection filter only for fields referencing exactly one record type (%s)",
       async (_, field, expectedOffered) => {
         await recreateComponentWithData({ label: "ref", ...field });
+        await new Promise((resolve) => setTimeout(resolve)); // attendance types are set asynchronously
 
         expect(!!(await findSelectionFilterButton())).toBe(expectedOffered);
       },
     );
+
+    it("clears the condition when the participant type of an attendance field changes", async () => {
+      const condition = { other: { $in: ["X"] } };
+      await recreateComponentWithData({
+        label: "attendance",
+        ...attendance([TestEntity.ENTITY_TYPE]),
+        selectionCondition: condition,
+      } as EntitySchemaField);
+      await new Promise((resolve) => setTimeout(resolve)); // attendance types are set asynchronously
+      await fixture.whenStable();
+      expect(dialogData.entitySchemaField.selectionCondition).toEqual(
+        condition,
+      );
+
+      component.attendanceParticipantTypesForm.setValue([Note.ENTITY_TYPE]);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(dialogData.entitySchemaField.selectionCondition).toBeUndefined();
+    });
 
     describe("when the target of the field changes", () => {
       const condition = { other: { $in: ["X"] } };
@@ -690,7 +716,7 @@ describe("AdminEntityFieldComponent", () => {
         .map(
           (el) => el.componentInstance as AdminDisplayConditionButtonComponent,
         )
-        .find((b) => b.target() === "selectionOptions");
+        .find((b) => !!b.currentRecordType());
 
       expect(button.entityType()).toBe(TestEntity);
       expect(button.currentRecordType()).toBe(Note);

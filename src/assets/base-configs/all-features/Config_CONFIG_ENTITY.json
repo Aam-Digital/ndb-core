@@ -214,20 +214,7 @@
           "isArray": true,
           "additional": "Child",
           "entityReferenceRole": "composite",
-          "anonymize": "retain",
-          "selectionCondition": {
-            "center": {
-              "$in": [
-                "$current_record.center"
-              ]
-            }
-          }
-        },
-        "center": {
-          "label": "Center",
-          "description": "Only children of this center are offered as participants.",
-          "dataType": "configurable-enum",
-          "additional": "center"
+          "anonymize": "retain"
         },
         "date": {
           "label": "Date",
@@ -414,7 +401,6 @@
           "warningLevel",
           "category",
           "authors",
-          "center",
           "attachment"
         ]
       },
@@ -1211,6 +1197,7 @@
           "dataType": "entity",
           "isArray": true,
           "additional": "Child",
+          "description": "Filtered to show only participants from the same center",
           "selectionCondition": {
             "center": {
               "$in": [

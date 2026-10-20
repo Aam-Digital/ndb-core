@@ -480,6 +480,28 @@ describe("ConditionsEditorComponent", () => {
       expect(component.isReferenceRow(0)).toBe(false);
       expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
     });
+
+    it("keeps 'is not' when switching between a fixed value and a field of the edited record", () => {
+      component.conditions = {
+        $or: [{ genderSingle: { $not: { $in: ["M"] } } }],
+      };
+      component.ngOnInit();
+      const emit = vi.spyOn(component.conditionsChange, "emit");
+
+      component.setReferenceRow(0, true);
+
+      expect(component.isNegated(0)).toBe(true);
+      // the row is not complete yet, so it must not be stored (as "is not empty")
+      expect(emit).toHaveBeenLastCalledWith({});
+
+      component.onReferencedFieldChange(0, "recordGender");
+      expect(component.conditionsArray()[0]).toEqual({
+        genderSingle: { $not: { $in: ["$current_record.recordGender"] } },
+      });
+
+      component.setReferenceRow(0, false);
+      expect(component.isNegated(0)).toBe(true);
+    });
   });
 
   describe("combinator", () => {

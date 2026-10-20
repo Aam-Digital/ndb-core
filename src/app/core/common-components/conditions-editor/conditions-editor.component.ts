@@ -192,7 +192,8 @@ export class ConditionsEditorComponent implements OnInit {
     } else {
       this.referenceRows.delete(condition);
     }
-    condition[fieldKey] = null;
+    // the value does not fit the new mode, an "is not" the admin chose still applies
+    condition[fieldKey] = withSameNegation(condition[fieldKey], null);
     this.createFormConfigForCondition(conditionIndex, fieldKey);
 
     this.conditionsSignal.set({ ...this.working });

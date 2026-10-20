@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FormControl } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { By } from "@angular/platform-browser";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
@@ -9,6 +9,7 @@ import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 import { EditAttendanceComponent } from "./edit-attendance.component";
 import { AttendanceItem } from "../model/attendance-item";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
+import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
@@ -19,6 +20,8 @@ describe("EditAttendanceComponent", () => {
 
   beforeEach(async () => {
     childrenEntities = [new TestEntity("child1"), new TestEntity("child2")];
+    childrenEntities[0]["other"] = "BERLIN";
+    childrenEntities[1]["other"] = "HAMBURG";
 
     await TestBed.configureTestingModule({
       imports: [
@@ -136,5 +139,40 @@ describe("EditAttendanceComponent", () => {
     fixture.detectChanges();
 
     expect(component.participantFilter()(newEntity)).toBe(false);
+  });
+
+  it("offers only participants matching the field's selectionCondition, compared with the current values of the record", async () => {
+    const recordForm = new FormGroup({
+      attendance: attendanceForm,
+      other: new FormControl("BERLIN"),
+    });
+    attendanceForm.setValue([]);
+    fixture.componentRef.setInput("entity", new TestEntity());
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "attendance",
+      additional: {
+        participant: { dataType: "entity", additional: "TestEntity" },
+      },
+      selectionCondition: { other: { $in: ["$current_record.other"] } },
+    });
+    const addParticipantDropdown: EditEntityComponent =
+      fixture.debugElement.query(
+        By.directive(EditEntityComponent),
+      ).componentInstance;
+    const expectOffered = (ids: string[]) =>
+      vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(
+          addParticipantDropdown.availableEntitiesResource
+            .value()
+            .map((e) => e.getId()),
+        ).toEqual(ids);
+      });
+
+    await expectOffered([childrenEntities[0].getId()]);
+
+    recordForm.get("other").setValue("HAMBURG");
+
+    await expectOffered([childrenEntities[1].getId()]);
   });
 });

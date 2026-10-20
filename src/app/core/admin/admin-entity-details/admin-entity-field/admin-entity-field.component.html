@@ -204,20 +204,6 @@
                   </mat-slide-toggle>
                 </mat-hint>
               </mat-form-field>
-
-              @if (selectionConditionTargetType(); as referencedEntityType) {
-                <app-admin-display-condition-button
-                  class="margin-top-regular"
-                  target="selectionOptions"
-                  [showLabel]="true"
-                  [entityType]="referencedEntityType"
-                  [currentRecordType]="data.entityType"
-                  [condition]="schemaFieldsForm.get('selectionCondition').value"
-                  (conditionChange)="
-                    schemaFieldsForm.get('selectionCondition').setValue($event)
-                  "
-                ></app-admin-display-condition-button>
-              }
             }
 
             <!-- "additional" for attendance datatype -->
@@ -236,6 +222,28 @@
                   [multi]="true"
                 ></app-entity-type-select>
               </mat-form-field>
+            }
+
+            @if (selectionConditionTargetType(); as referencedEntityType) {
+              <app-admin-display-condition-button
+                class="margin-top-regular"
+                target="field"
+                [showLabel]="true"
+                [entityType]="referencedEntityType"
+                [currentRecordType]="data.entityType"
+                createLabel="Create Selection Filter"
+                i18n-createLabel
+                editLabel="Edit Selection Filter"
+                i18n-editLabel
+                tooltip="Only offer records matching a condition for selection in this field, e.g. based on the values of the record being edited."
+                i18n-tooltip
+                explanation="Only those records are offered for selection in this field that match... (users can still choose to see all records)"
+                i18n-explanation
+                [condition]="schemaFieldsForm.get('selectionCondition').value"
+                (conditionChange)="
+                  schemaFieldsForm.get('selectionCondition').setValue($event)
+                "
+              ></app-admin-display-condition-button>
             }
           </div>
         </div>

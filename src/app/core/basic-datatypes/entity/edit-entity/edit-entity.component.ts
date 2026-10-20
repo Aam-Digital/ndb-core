@@ -15,7 +15,12 @@ import {
   ViewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {
+  AbstractControl,
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
@@ -201,13 +206,20 @@ export class EditEntityComponent<
   });
 
   /**
-   * Current (possibly unsaved) values of the form this field is part of,
-   * to resolve placeholders in the `selectionCondition` referring to the record being edited.
+   * (Optional) the form of the record being edited, if the form control of this field is not part of it
+   * (e.g. the dropdown to add participants to an attendance field).
+   */
+  recordForm = input<AbstractControl | null>();
+
+  /**
+   * Current (possibly unsaved) values of the form of the record being edited,
+   * to resolve placeholders in the `selectionCondition` referring to that record.
    */
   private readonly recordFormValues: Signal<Record<string, unknown>> = toSignal(
-    toObservable(this.control).pipe(
-      switchMap((control) => {
-        const form = control.parent;
+    toObservable(
+      computed(() => this.recordForm() ?? this.control().parent),
+    ).pipe(
+      switchMap((form) => {
         if (!form) {
           return of({});
         }

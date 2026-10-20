@@ -68,6 +68,7 @@ export class EditAttendanceComponent
   implements OnInit, EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -116,6 +117,7 @@ export class EditAttendanceComponent
     label: $localize`:Placeholder for adding a participant:Select additional participant`,
     dataType: "entity",
     additional: this.formFieldConfig()?.additional?.participant?.additional,
+    selectionCondition: this.formFieldConfig()?.selectionCondition,
   }));
 
   /** Per-participant FormControls used by EditConfigurableEnumComponent */

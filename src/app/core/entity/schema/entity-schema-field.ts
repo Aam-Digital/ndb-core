@@ -169,7 +169,7 @@ export interface EntitySchemaField {
   displayCondition?: DataFilter<any>;
 
   /**
-   * (Optional) For fields referencing another entity type:
+   * (Optional) For fields referencing another entity type (and for the participants of an `attendance` field):
    * A Mango/MongoDB style query condition that the referenced records have to match
    * to be offered for selection in this field.
    *
@@ -178,7 +178,7 @@ export interface EntitySchemaField {
    * If such a referenced field is empty, the rows of the condition referencing it are not applied.
    *
    * Only applies to a field referencing a single record type and edited with the entity dropdown
-   * (or an edit component based on it), not if a form layout sets another `editComponent`.
+   * (or an edit component using it), not if a form layout sets another `editComponent`.
    *
    * Records that do not match can still be shown by the user on request,
    * and already selected records are kept even if they do not match (anymore).
