@@ -48,12 +48,33 @@ describe("EditDateRangeComponent", () => {
     },
   );
 
-  it("should not reset an input that is still being typed when the value is set from the picker", () => {
-    component.range.controls.start.setValue(start);
-    // a half-typed end date is not a valid date yet, so it stays empty
-    component.range.controls.end.setValue(null);
+  function typeInto(selector: string, text: string): HTMLInputElement {
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector(selector);
+    input.value = text;
+    input.dispatchEvent(new Event("input"));
+    fixture.detectChanges();
+    return input;
+  }
 
-    expect(component.range.value).toEqual({ start, end: null });
+  it("should keep a text that is typed and cannot be read as a date, and mark the field as invalid", () => {
+    typeInto("input[matStartDate]", "3/1/2026");
+    const endInput = typeInto("input[matEndDate]", "not a date");
+
+    expect(endInput.value).toBe("not a date");
+    expect(component.formControl.value).toEqual({ start });
+    expect(
+      component.formControl.errors?.dateRangeInput.errorMessage,
+    ).toBeTruthy();
+  });
+
+  it("should accept the field again once the typed text is a date", () => {
+    typeInto("input[matStartDate]", "3/1/2026");
+    typeInto("input[matEndDate]", "not a date");
+    typeInto("input[matEndDate]", "5/31/2026");
+
+    expect(component.formControl.valid).toBe(true);
+    expect(component.formControl.value).toEqual({ start, end });
   });
 
   it("should mark the field as invalid if the end date is before the start date", () => {

@@ -80,14 +80,34 @@ export class EditDateRangeComponent
     });
   }
 
+  /**
+   * A text that cannot be read as a date stays as an error of its own input in the picker and is not part of the value,
+   * so the field would be valid and the text would be lost when saving.
+   */
+  private readonly pickerInputsReadable = (): ValidationErrors | null =>
+    this.range.controls.start.hasError("matDatepickerParse") ||
+    this.range.controls.end.hasError("matDatepickerParse")
+      ? {
+          dateRangeInput: {
+            errorMessage: $localize`Please enter a valid date.`,
+          },
+        }
+      : null;
+
   ngOnInit() {
-    this.formControl.addValidators(endNotBeforeStart);
+    this.formControl.addValidators([
+      endNotBeforeStart,
+      this.pickerInputsReadable,
+    ]);
     this.formControl.updateValueAndValidity({ emitEvent: false });
 
     this.showValue(this.formControl.value);
     this.formControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.showValue(value));
+    this.range.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.formControl.updateValueAndValidity());
     this.range.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ start, end }) => {
