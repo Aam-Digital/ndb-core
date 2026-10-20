@@ -190,6 +190,15 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   title = model<string>("");
   columns = input<(FormFieldConfig | string)[]>([]);
+
+  /** Analytics event name for the "Add New" button; `title` comes from config and may not be a string. */
+  protected addNewAnalyticsAction = computed(
+    () =>
+      String(this.title() ?? "")
+        .toLowerCase()
+        .replace(" ", "_") + "_add_new",
+  );
+
   columnGroups = input<ColumnGroupsConfig>();
   groups: GroupConfig[] = [];
   defaultColumnGroup = "";
@@ -428,7 +437,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),
-        filename: (this.title() ?? "").replaceAll(" ", ""),
+        filename: String(this.title() ?? "").replaceAll(" ", ""),
       },
     });
   }
