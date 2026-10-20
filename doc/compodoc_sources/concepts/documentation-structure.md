@@ -50,3 +50,8 @@ The documentation is regenerated and published from `master` automatically via C
   also register it in `doc/compodoc_sources/summary.json`.
 - **To preview locally**, run `npm run compodoc` (see `package.json`). The online documentation
   is usually the more convenient reference, though.
+- **Document a module in a `README.md` next to its code.** This is what developers and AI agents read
+  before they change the module, so keep it short and current: what the module is for, the key files
+  and how they work together, the patterns to follow, and the pitfalls that are not obvious from the
+  code. Link to the other documents instead of repeating them, and update the README in the same pull
+  request that changes the behavior it describes.

@@ -130,7 +130,7 @@ export class DatabaseIndexingService {
       views: {
         [`by_${referenceProperty}`]: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
+            if (!doc._id.startsWith("${entity.ENTITY_TYPE}:")) return;
 
             ${
               entity.schema.get(referenceProperty).isArray

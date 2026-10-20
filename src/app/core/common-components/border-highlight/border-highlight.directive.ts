@@ -16,7 +16,7 @@ import { Directive, HostBinding, Input } from "@angular/core";
   standalone: true,
 })
 export class BorderHighlightDirective {
-  readonly CLASS_NAME = "border-left-highlight";
+  readonly CLASS_NAME = "border-start-highlight";
 
   @HostBinding("class")
   elementClass = this.CLASS_NAME;

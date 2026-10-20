@@ -10,7 +10,7 @@ export interface MigrationLogger {
 }
 
 export interface MigrationContext {
-  /** Raw CouchDB accessor for reads. Do not call couchdb.put directly; use ctx.put instead. */
+  /** Raw CouchDB accessor for reads. Do not call couchdb.put directly; use ctx.put instead (which also backs up the previous version). */
   couchdb: Couchdb;
   org: SystemCredentials;
   dryRun: boolean;

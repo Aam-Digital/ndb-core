@@ -2,20 +2,6 @@
 @use "functions/gradient-helpers";
 @use "variables/sizes";
 
-/* Per-status calendar cell background colors (referenced via highlightDate in the component) */
-.attendance-status-PRESENT {
-  background-color: #c8e6c9 !important;
-}
-.attendance-status-ABSENT {
-  background-color: #ff8a65 !important;
-}
-.attendance-status-LATE {
-  background-color: #ffecb3 !important;
-}
-.attendance-status-EXCUSED {
-  background-color: #d7ccc8 !important;
-}
-
 mat-calendar {
   min-width: 200px;
   max-width: 300px;
@@ -33,15 +19,15 @@ mat-calendar {
   }
 
   &.attendance-calendar-date-has-remarks {
-    background: gradient-helpers.top-right-triangle(#5f5f5f);
+    background: gradient-helpers.top-inline-end-triangle(#5f5f5f);
   }
 
   &.attendance-calendar-date-no-data {
-    background: gradient-helpers.top-right-triangle(grey);
+    background: gradient-helpers.top-inline-end-triangle(grey);
   }
 
   &.attendance-calendar-date-has-participants-with-unknown-status {
-    background: gradient-helpers.top-right-triangle(red);
+    background: gradient-helpers.top-inline-end-triangle(red);
   }
 }
 

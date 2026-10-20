@@ -58,6 +58,12 @@
   text-align: end;
 }
 
+/* Floats to the end of the reading direction: right in LTR, left in RTL.
+ * Only has an effect in a block container - `float` is ignored inside a flex one. */
+.float-inline-end {
+  float: inline-end;
+}
+
 .position-relative {
   position: relative;
 }

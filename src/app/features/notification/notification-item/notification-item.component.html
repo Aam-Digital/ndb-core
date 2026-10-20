@@ -42,7 +42,7 @@
     }
   </span>
 
-  <mat-menu #actionsMenu="matMenu">
+  <mat-menu #actionsMenu="matMenu" class="notification-menu">
     <div (click)="closeOnlySubmenu(actionsMenuTrigger, $event)">
       @if (!notification().readStatus) {
         <button mat-menu-item (click)="updateReadStatus(true)">

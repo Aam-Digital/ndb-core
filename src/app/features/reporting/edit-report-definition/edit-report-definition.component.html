@@ -12,7 +12,8 @@
         <div
           class="report-row"
           [class.group-row]="row.isGroup"
-          [style.margin-left.px]="row.level * indentPerLevel"
+          [class.invalid-row]="errorState && row.error"
+          [style.marginInlineStart.px]="row.level * indentPerLevel"
           cdkDrag
           [cdkDragData]="row"
         >
@@ -88,6 +89,10 @@
               </button>
             }
           </div>
+          <!-- like a mat-error, only shown once the user tried to save -->
+          @if (errorState && row.error) {
+            <div class="row-error color-error">{{ row.error }}</div>
+          }
         </div>
       }
     </div>

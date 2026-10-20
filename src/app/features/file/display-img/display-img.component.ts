@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   ChangeDetectionStrategy,
+  computed,
   input,
   resource,
 } from "@angular/core";
@@ -26,6 +27,12 @@ export class DisplayImgComponent {
   entity = input<Entity>();
   imgProperty = input<string>();
 
+  /**
+   * Show a hint if the field references a file that could not be loaded (usually: it is missing).
+   * Only enable this for users who can upload the file again.
+   */
+  showMissingFileHint = input<boolean>(false);
+
   imgSrc = resource({
     params: () => {
       const entity = this.entity();
@@ -48,4 +55,12 @@ export class DisplayImgComponent {
   private isRemoteUrl(value: string): boolean {
     return value.startsWith("https://");
   }
+
+  /** whether the field references a file, but loading it failed (e.g. the file is missing) */
+  readonly fileMissing = computed(
+    () =>
+      !!this.entity()?.[this.imgProperty()] &&
+      this.imgSrc.status() === "resolved" &&
+      !this.imgSrc.value(),
+  );
 }

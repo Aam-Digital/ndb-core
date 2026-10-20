@@ -25,7 +25,10 @@ import { filter, map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { DatabaseDocChange } from "../../database/database";
+import {
+  DatabaseDocChange,
+  PartialBulkWriteError,
+} from "../../database/database";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityPermissionError } from "./entity-permission-error";
 import { Logging } from "../../logging/logging.service";
@@ -42,6 +45,12 @@ export interface EntityPage<T extends Entity> {
   records: T[];
   bookmark?: string;
 }
+
+/**
+ * Number of documents fetched per request when paging through a complete result set
+ * (see {@link EntityMapperService.findAllType}).
+ */
+export const FULL_LOAD_PAGE_SIZE = 500;
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -127,6 +136,62 @@ export class EntityMapperService {
       ),
       bookmark: result.bookmark,
     };
+  }
+
+  /**
+   * Whether this entity type's database can answer {@link findType} queries at all
+   * (see {@link Database.supportsFind}). Callers that only use a query as an optimisation
+   * check this and fall back to {@link loadType}.
+   *
+   * Deliberately asks the database instance rather than the session type: a remote-only
+   * database (e.g. for audit records) serves queries in every session type, and the
+   * instance that will run the query is the only authority on whether it can.
+   */
+  public supportsFind<T extends Entity>(
+    entityType: EntityConstructor<T> | string,
+  ): boolean {
+    const ctor = this.resolveConstructor(entityType);
+    return this.dbResolver.getDatabase(ctor.DATABASE).supportsFind();
+  }
+
+  /**
+   * Like {@link findType}, but follows the cursor until every matching record is loaded.
+   *
+   * CouchDB's `_find` returns only 25 documents when no limit is given, so the pages have
+   * to be requested explicitly. Only use this where the filter is expected to select a
+   * small share of the type - otherwise {@link loadType} is a single request.
+   *
+   * @param entityType class for which results should be returned
+   * @param filter a valid Mango Query Syntax query
+   * @param sort optional sort options
+   */
+  public async findAllType<T extends Entity>(
+    entityType: EntityConstructor<T> | string,
+    filter: DataFilter<T>,
+    sort?: { prop?: string; dir?: "asc" | "desc" },
+  ): Promise<T[]> {
+    const records: T[] = [];
+    let bookmark: string | undefined;
+    let page: T[];
+    do {
+      const previousBookmark = bookmark;
+      const result = await this.findType(
+        entityType,
+        filter,
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark },
+        sort,
+      );
+      page = result.records;
+      bookmark = result.bookmark;
+      records.push(...page);
+
+      // a cursor that does not advance would loop forever
+      if (!bookmark || bookmark === previousBookmark) {
+        break;
+      }
+    } while (page.length === FULL_LOAD_PAGE_SIZE);
+
+    return records;
   }
 
   /**
@@ -249,17 +314,29 @@ export class EntityMapperService {
         );
         return this.dbResolver
           .getDatabase(databaseName)
-          .putAll(rawData, forceUpdate);
+          .putAll(rawData, forceUpdate)
+          .then(
+            (results) => {
+              applyStoredRevisions(entitiesInDatabase, results);
+              return results;
+            },
+            (error) => {
+              // putAll rejects as soon as any document failed, but the others
+              // are already stored (see Database.putAll). Without their new
+              // revisions, the next save of those entities would conflict
+              // with their own earlier write.
+              if (Array.isArray(error)) {
+                applyStoredRevisions(entitiesInDatabase, error);
+              } else if (error instanceof PartialBulkWriteError) {
+                applyStoredRevisions(entitiesInDatabase, error.storedResults);
+              }
+              throw error;
+            },
+          );
       },
     );
 
     const results = (await Promise.all(savePromises)).flat();
-    results.forEach((res, idx) => {
-      if (res.ok) {
-        const entity = entities[idx];
-        entity._rev = res.rev;
-      }
-    });
     return results;
   }
 
@@ -316,5 +393,23 @@ export class EntityMapperService {
       entity.created = newMetadata;
     }
     entity.updated = newMetadata;
+  }
+}
+
+/**
+ * Copy the revisions the database assigned back onto the saved entities.
+ *
+ * Matched by id rather than by position, so that a result missing from the
+ * response cannot shift revisions onto other entities.
+ */
+function applyStoredRevisions(entities: Entity[], results: any[]) {
+  const revisions = new Map(
+    results.filter((r) => r?.ok).map((r) => [r.id, r.rev]),
+  );
+  for (const entity of entities) {
+    const rev = revisions.get(entity.getId());
+    if (rev) {
+      entity._rev = rev;
+    }
   }
 }

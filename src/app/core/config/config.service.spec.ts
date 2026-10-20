@@ -8,10 +8,14 @@ import { HttpStatusCode } from "@angular/common/http";
 import { Config } from "./config";
 import { ConfigService } from "./config.service";
 import { Logging } from "../logging/logging.service";
+import { ConfigValidationService } from "./config-validation/config-validation.service";
 
 describe("ConfigService", () => {
   let service: ConfigService;
   let entityMapper: any;
+  let mockConfigValidation: {
+    warnAdminAboutProblems: ReturnType<typeof vi.fn>;
+  };
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
@@ -24,8 +28,12 @@ describe("ConfigService", () => {
     entityMapper.receiveUpdates.mockReturnValue(updateSubject);
     entityMapper.load.mockRejectedValue();
     entityMapper.save.mockResolvedValue([]);
+    mockConfigValidation = { warnAdminAboutProblems: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [
+        { provide: EntityMapperService, useValue: entityMapper },
+        { provide: ConfigValidationService, useValue: mockConfigValidation },
+      ],
     });
     service = TestBed.inject(ConfigService);
   });
@@ -94,6 +102,33 @@ describe("ConfigService", () => {
 
       expect(service.getConfig("testKey")).toBe("testValue");
       return expect(configLoaded).resolves.toEqual(testConfig);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should warn about config problems when the config is saved, but not on the initial load", async () => {
+    vi.useFakeTimers();
+    try {
+      const initialConfig = new Config();
+      initialConfig.data = { testKey: "initial" };
+      initialConfig._rev = "1-a";
+      entityMapper.load.mockResolvedValue(initialConfig);
+      service.loadOnce();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(
+        mockConfigValidation.warnAdminAboutProblems,
+      ).not.toHaveBeenCalled();
+
+      const savedConfig = new Config();
+      savedConfig.data = { testKey: "saved" };
+      savedConfig._rev = "2-b";
+      updateSubject.next({ type: "update", entity: savedConfig });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(mockConfigValidation.warnAdminAboutProblems).toHaveBeenCalledWith(
+        expect.objectContaining({ testKey: "saved" }),
+      );
     } finally {
       vi.useRealTimers();
     }

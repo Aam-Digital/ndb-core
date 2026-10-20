@@ -1,4 +1,4 @@
-# Welcome!
+# Welcome
 
 _Aam Digital_ is open source because we believe in building things together
 and letting people benefit from and adapt things rather than everybody reinventing their own wheel.
@@ -77,7 +77,7 @@ If you participate in the development, either by fixing a bug or implementing a 
    Any reviews, feedback and discussions about your code will take place in this PR on GitHub. Please follow it and explain or adapt your code if necessary.
 7. A **different developer will review** your PR and provide feedback or approve it.
 8. PRs have an automatic test system (the CI adds a comment with the link) where others can test the changes.
-  - each PR and each commit on `master` branch also are available as a docker image (`pr-<pr_number>`, e.g. pr-101; `<last release, patch + 1>-edge.<commits since>`, e.g. 3.52.1-edge.4; the newest one is also tagged `edge`) that can be deployed for testing or as a hotfix, if necessary
+   - each PR and each commit on `master` branch also are available as a docker image (`pr-<pr_number>`, e.g. pr-101; `<last release, patch + 1>-edge.<commits since>`, e.g. 3.52.1-edge.4; the newest one is also tagged `edge`) that can be deployed for testing or as a hotfix, if necessary
 9. A core team member will merge the PR onto the `master` branch after review.
 10. After merging, the branch is automatically deleted and the corresponding issue(s) are closed.
 
@@ -89,8 +89,27 @@ If you participate in the development, either by fixing a bug or implementing a 
   This can be done with a git rebase on your feature branch (please **never** rebase the master branch).
   Further information can be found in the [Git Book](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History).
 
+### Working on several branches with git worktrees
+
+A [git worktree](https://git-scm.com/docs/git-worktree) gives you a second checkout of the repository
+for another branch, so you can work on it without stashing or switching. Claude Code creates its
+worktrees under `.claude/worktrees/`, which is in `.gitignore` and must never be committed.
+
+```bash
+git worktree add .claude/worktrees/<branch-name> <branch-name>
+```
+
+A worktree shares the git history but not `node_modules`. Run `npm ci` inside it, or, if the branch has
+the same dependencies, symlink the folder of the main checkout:
+`ln -s "$(git rev-parse --show-toplevel)/node_modules" .claude/worktrees/<branch-name>/node_modules`.
+
+If you create a worktree outside `.claude/worktrees/`, stage files by name: `git add .` would stage the
+worktree folder as a phantom submodule (a gitlink), which breaks the CI. Remove such an entry with
+`git rm --cached <path>`.
+
 ---
 
 ## Copyright
+
 Our project is licensed under GPL 3.0.
 Please note that by contributing, you also make your work available to the public for further use under the terms of that license (see [LICENSE.md](./LICENSE.md)).

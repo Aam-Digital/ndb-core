@@ -1,0 +1,90 @@
+<h2 mat-dialog-title i18n>New API client</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    Create credentials for an external system, so that it can access data of
+    this system through the API.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="create()" class="flex-column">
+    <mat-form-field>
+      <mat-label i18n>Name</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        [maxlength]="MAX_NAME_LENGTH"
+        cdkFocusInitial
+      />
+      <mat-hint i18n>e.g. the name of the external system</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n>Client ID (optional)</mat-label>
+      <input matInput formControlName="clientId" />
+      @if (chosenClientId(); as clientId) {
+        <mat-hint i18n
+          >The client ID will be "{{ CLIENT_ID_PREFIX
+          }}{{ clientId }}".</mat-hint
+        >
+      } @else {
+        <mat-hint i18n>
+          If the external system expects a certain client ID. Leave empty to
+          generate one from the name.
+        </mat-hint>
+      }
+      @if (form.controls.clientId.hasError("pattern")) {
+        <mat-error i18n>
+          Only letters, digits, ".", "_" and "-" (starting with a letter or
+          digit, 60 characters at most)
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <h3 i18n>Access</h3>
+    @if (scopes.hasValue()) {
+      @let offeredScopes = scopes.value();
+      <mat-selection-list
+        formControlName="scopes"
+        aria-label="Access"
+        i18n-aria-label
+      >
+        @for (scope of offeredScopes; track scope.name) {
+          <mat-list-option [value]="scope.name">
+            <span matListItemTitle>{{ scope.label }}</span>
+          </mat-list-option>
+        }
+      </mat-selection-list>
+    } @else if (scopes.isLoading()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    @if (singleSignOnSelected()) {
+      <app-hint-box type="warning" class="margin-top-small">
+        <span i18n>
+          With single sign-on, the external system can sign in to this system as
+          any of its users, including administrators, without their password.
+          Only give this access to systems you fully trust.
+        </span>
+      </app-hint-box>
+    }
+
+    @if (error(); as error) {
+      <p class="color-error" role="alert">{{ error }}</p>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    type="button"
+    (click)="create()"
+    [disabled]="form.invalid || saving()"
+    i18n="Button label"
+  >
+    Create
+  </button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+</mat-dialog-actions>
