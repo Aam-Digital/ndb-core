@@ -430,6 +430,26 @@ describe("EditEntityComponent", () => {
         { other: null },
         ["Aba", "Abc", "Abd", "Bcd"],
       ],
+      [
+        "a fixed condition next to a condition referring to an empty field (only the latter is not applied)",
+        {
+          other: { $in: ["BERLIN"] },
+          category: { $in: ["$current_record.category"] },
+        },
+        { category: null },
+        ["Abc", "Abd"],
+      ],
+      [
+        "an alternative referring to an empty field (only that alternative is not applied)",
+        {
+          $or: [
+            { other: { $in: ["BERLIN"] } },
+            { category: { $in: ["$current_record.category"] } },
+          ],
+        },
+        { category: null },
+        ["Abc", "Abd"],
+      ],
     ])(
       "offers the records matching %s",
       async (_, condition, recordValues, expectedNames) => {
@@ -487,6 +507,37 @@ describe("EditEntityComponent", () => {
       await expectOfferedNames(["Aba", "Abc"]);
       expect(component.currentlyMatchingInactive()).toBe(2);
       expect(component.currentlyMatchingIneligible()).toBe(1);
+    });
+
+    it("does not count selected records, which are shown anyway", async () => {
+      test1Entities[2].inactive = true; // Abd: matching, inactive
+      formControl.setValue([
+        test1Entities[1].getId(), // Bcd: not matching
+        test1Entities[2].getId(),
+      ]);
+      editRecordWithCondition({ other: { $in: ["BERLIN"] } });
+      await expectOfferedNames(["Abc", "Abd", "Bcd"]);
+
+      expect(component.currentlyMatchingIneligible()).toBe(1); // only Aba
+      expect(component.currentlyMatchingInactive()).toBe(0);
+    });
+
+    it("keeps an invalid condition out of remote monitoring and its record values out of the logs", async () => {
+      const warnSpy = vi.spyOn(Logging, "warn");
+      const debugSpy = vi.spyOn(Logging, "debug");
+
+      editRecordWithCondition(
+        { other: { $in: "$current_record.other" } }, // resolves to a string, but $in needs a list
+        { other: "SECRET-VALUE" },
+      );
+
+      await expectOfferedNames(["Aba", "Abc", "Abd", "Bcd"]);
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalledWith(
+        expect.stringContaining("selectionCondition"),
+        expect.anything(),
+      );
+      expect(JSON.stringify(debugSpy.mock.calls)).not.toContain("SECRET-VALUE");
     });
 
     it("pre-fills a new record so that it matches the condition", async () => {

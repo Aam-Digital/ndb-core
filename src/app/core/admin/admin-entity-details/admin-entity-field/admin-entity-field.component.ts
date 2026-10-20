@@ -2,7 +2,9 @@ import {
   Component,
   DestroyRef,
   inject,
+  Injector,
   OnInit,
+  Signal,
   signal,
   viewChild,
   WritableSignal,
@@ -45,8 +47,14 @@ import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurab
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
-import { filter } from "rxjs/operators";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  pairwise,
+  startWith,
+} from "rxjs/operators";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { uniquePropertyValidator } from "app/core/common-components/entity-form/unique-property-validator/unique-property-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
@@ -124,6 +132,7 @@ export class AdminEntityFieldComponent implements OnInit {
   private dialog = inject(MatDialog);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   private readonly validatorConfig = viewChild(
     ConfigureEntityFieldValidatorComponent,
@@ -300,6 +309,34 @@ export class AdminEntityFieldComponent implements OnInit {
         this.resetIsArrayIfUnsupported(v);
       });
     this.updateForNewOrExistingField();
+    this.initSelectionConditionTarget();
+  }
+
+  /**
+   * The record type this field references, if a `selectionCondition` can be applied to the field
+   * (and the admin can therefore configure one).
+   */
+  selectionConditionTargetType: Signal<EntityConstructor | undefined>;
+
+  private initSelectionConditionTarget() {
+    const targetType$ = merge(
+      this.additionalForm.valueChanges,
+      this.schemaFieldsForm.get("dataType").valueChanges,
+    ).pipe(
+      startWith(null),
+      map(() => this.getSelectionConditionTargetType()),
+      distinctUntilChanged(),
+    );
+    this.selectionConditionTargetType = toSignal(targetType$, {
+      injector: this.injector,
+    });
+
+    // a condition refers to fields of the previous target and would otherwise stay (invisible) in the config
+    targetType$
+      .pipe(pairwise(), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() =>
+        this.schemaFieldsForm.get("selectionCondition").setValue(null),
+      );
   }
 
   private updateSchemaFieldFromForm(formValues) {
@@ -367,7 +404,13 @@ export class AdminEntityFieldComponent implements OnInit {
    * if a `selectionCondition` can be applied to the field:
    * It must reference exactly one type and use an edit component based on the entity dropdown (which applies the condition).
    */
-  getSelectionConditionTargetType(): EntityConstructor | undefined {
+  private getSelectionConditionTargetType(): EntityConstructor | undefined {
+    if (
+      this.schemaFieldsForm.get("dataType").value !== EntityDatatype.dataType
+    ) {
+      return undefined;
+    }
+
     const editComponent = this.schemaFieldsForm.get("editComponent").value;
     if (
       editComponent &&

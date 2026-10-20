@@ -211,20 +211,19 @@ export class ConditionsEditorComponent implements OnInit {
     const fieldConfig = this.entityConstructor.schema.get(fieldKey);
     if (!actualRecordFieldId || !fieldConfig) return;
 
-    // same format as for a fixed value selected in the field's dropdown (see onFormValueChange)
     const placeholder = CURRENT_RECORD_PLACEHOLDER_PREFIX + actualRecordFieldId;
-    const editComponent = this.entitySchemaService.getComponent(
+    const conditionFieldConfig = {
+      ...fieldConfig,
+      isArray: this.shouldUseMultiSelectCondition(
+        fieldConfig,
+        this.entitySchemaService.getComponent(fieldConfig, "edit"),
+      ),
+    };
+    const positive = this.wrapConditionValue(
       fieldConfig,
-      "edit",
+      conditionFieldConfig,
+      conditionFieldConfig.isArray ? [placeholder] : placeholder,
     );
-    let positive: any;
-    if (fieldConfig.isArray) {
-      positive = { $elemMatch: { $in: [placeholder] } };
-    } else if (this.shouldUseMultiSelectCondition(fieldConfig, editComponent)) {
-      positive = { $in: [placeholder] };
-    } else {
-      positive = placeholder;
-    }
     condition[fieldKey] = withSameNegation(condition[fieldKey], positive);
 
     this.conditionsSignal.set({ ...this.working });
@@ -409,25 +408,30 @@ export class ConditionsEditorComponent implements OnInit {
       conditionFieldConfig,
     );
 
-    let positive: any;
-    if (fieldConfig.isArray && Array.isArray(dbValue) && dbValue.length > 0) {
-      // For array fields, wrap in $elemMatch with $in for proper array matching
-      positive = { $elemMatch: { $in: dbValue } };
-    } else if (
-      !fieldConfig.isArray &&
-      conditionFieldConfig.isArray &&
-      Array.isArray(dbValue) &&
-      dbValue.length > 0
-    ) {
-      // For non-array dropdown fields, wrap multi selection in $in
-      positive = { $in: dbValue };
-    } else {
-      positive = dbValue;
-    }
-
-    condition[fieldKey] = withSameNegation(previous, positive);
+    condition[fieldKey] = withSameNegation(
+      previous,
+      this.wrapConditionValue(fieldConfig, conditionFieldConfig, dbValue),
+    );
 
     this.emitConditions();
+  }
+
+  /**
+   * The stored form of a row's value (in database format), depending on its field:
+   * array fields match with `$elemMatch`, other dropdown fields offering multiple options with `$in`.
+   */
+  private wrapConditionValue(
+    fieldConfig: EntitySchemaField,
+    conditionFieldConfig: EntitySchemaField,
+    value: any,
+  ): any {
+    if (!Array.isArray(value) || value.length === 0) {
+      return value;
+    }
+    if (fieldConfig.isArray) {
+      return { $elemMatch: { $in: value } };
+    }
+    return conditionFieldConfig.isArray ? { $in: value } : value;
   }
 
   private shouldUseMultiSelectCondition(

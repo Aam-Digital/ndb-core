@@ -239,18 +239,22 @@ export class EditEntityComponent<
 
         const record = this.entity();
         const formValues = this.recordFormValues();
-        return resolveCurrentRecordPlaceholders(condition, (fieldId) => {
-          const value =
-            fieldId in formValues ? formValues[fieldId] : record?.[fieldId];
-          const schemaField = record?.getSchema().get(fieldId);
-          if (value === undefined || value === null || !schemaField) {
-            return value;
-          }
-          return this.entitySchemaService.valueToDatabaseFormat(
-            value,
-            schemaField,
-          );
-        });
+        const resolved = resolveCurrentRecordPlaceholders(
+          condition,
+          (fieldId) => {
+            const value =
+              fieldId in formValues ? formValues[fieldId] : record?.[fieldId];
+            const schemaField = record?.getSchema().get(fieldId);
+            if (value === undefined || value === null || !schemaField) {
+              return value;
+            }
+            return this.entitySchemaService.valueToDatabaseFormat(
+              value,
+              schemaField,
+            );
+          },
+        );
+        return Object.keys(resolved).length > 0 ? resolved : undefined;
       },
       // only notify of an actual change, not of every change of other fields in the form
       { equal: (a, b) => JSON.stringify(a) === JSON.stringify(b) },
@@ -264,7 +268,8 @@ export class EditEntityComponent<
     try {
       return this.filterService.getFilterPredicate(filter);
     } catch (err) {
-      Logging.warn("[ENTITY_SELECT] Invalid selectionCondition.", filter, err);
+      // an instance config problem and the resolved condition contains record data: not for remote monitoring
+      Logging.debug("[ENTITY_SELECT] Invalid selectionCondition.", err);
       return () => true;
     }
   });
@@ -274,11 +279,13 @@ export class EditEntityComponent<
    */
   currentlyMatchingInactive: Signal<number> = computed(() => {
     const isEligible = this.isEligible();
+    const selected = this.values();
     return this.allEntities
       .value()
       .filter(
         (e) =>
           e.inactive &&
+          !selected.includes(e.getId()) &&
           (this.includeIneligible() || isEligible(e)) &&
           this.autocompleteFilter()(e),
       ).length;
@@ -290,11 +297,13 @@ export class EditEntityComponent<
    */
   currentlyMatchingIneligible: Signal<number> = computed(() => {
     const isEligible = this.isEligible();
+    const selected = this.values();
     return this.allEntities
       .value()
       .filter(
         (e) =>
           !isEligible(e) &&
+          !selected.includes(e.getId()) &&
           (this.includeInactive() || !e.inactive) &&
           this.autocompleteFilter()(e),
       ).length;

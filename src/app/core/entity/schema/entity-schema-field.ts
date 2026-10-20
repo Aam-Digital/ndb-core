@@ -175,7 +175,10 @@ export interface EntitySchemaField {
    *
    * Condition values can refer to fields of the record being edited
    * through a placeholder like `"$current_record.location"`.
-   * If such a referenced field is empty, the condition is not applied.
+   * If such a referenced field is empty, the rows of the condition referencing it are not applied.
+   *
+   * Only applies to a field referencing a single record type and edited with the entity dropdown
+   * (or an edit component based on it), not if a form layout sets another `editComponent`.
    *
    * Records that do not match can still be shown by the user on request,
    * and already selected records are kept even if they do not match (anymore).

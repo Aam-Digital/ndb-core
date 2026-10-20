@@ -607,6 +607,75 @@ describe("AdminEntityFieldComponent", () => {
       },
     );
 
+    describe("when the target of the field changes", () => {
+      const condition = { other: { $in: ["X"] } };
+
+      beforeEach(async () => {
+        await recreateComponentWithData({
+          label: "ref",
+          dataType: EntityDatatype.dataType,
+          additional: TestEntity.ENTITY_TYPE,
+          selectionCondition: condition,
+        } as EntitySchemaField);
+      });
+
+      async function settle() {
+        fixture.detectChanges();
+        await fixture.whenStable();
+      }
+
+      it("keeps the condition when the form is opened", () => {
+        expect(dialogData.entitySchemaField.selectionCondition).toEqual(
+          condition,
+        );
+      });
+
+      it.each<[string, (c: AdminEntityFieldComponent) => void]>([
+        [
+          "to another record type",
+          (c) => c.additionalForm.setValue(Note.ENTITY_TYPE),
+        ],
+        [
+          "to several record types",
+          (c) =>
+            c.additionalForm.setValue([
+              TestEntity.ENTITY_TYPE,
+              Note.ENTITY_TYPE,
+            ]),
+        ],
+        [
+          "to a data type without records",
+          (c) =>
+            c.schemaFieldsForm
+              .get("dataType")
+              .setValue(StringDatatype.dataType),
+        ],
+      ])("clears the condition when switching %s", async (_, change) => {
+        change(component);
+        await settle();
+
+        expect(
+          component.schemaFieldsForm.get("selectionCondition").value,
+        ).toBeNull();
+        expect(dialogData.entitySchemaField.selectionCondition).toBeUndefined();
+      });
+
+      it("keeps the condition when only switching between single and multi mode of the same record type", async () => {
+        await component.onEntityAdditionalSelectionModeChange({
+          checked: true,
+          source: { checked: true },
+        } as any);
+        await settle();
+
+        expect(component.additionalForm.value).toEqual([
+          TestEntity.ENTITY_TYPE,
+        ]);
+        expect(dialogData.entitySchemaField.selectionCondition).toEqual(
+          condition,
+        );
+      });
+    });
+
     it("filters the referenced records, comparing with fields of the record being edited", async () => {
       await recreateComponentWithData(
         {

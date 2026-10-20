@@ -229,7 +229,7 @@ describe("Filters", () => {
     });
 
     it.each([[undefined], [null], [""], [[]]])(
-      "cannot resolve a condition referencing an empty field (%j)",
+      "leaves out the row referencing an empty field (%j)",
       (emptyValue) => {
         const condition = {
           level: { $in: ["COUNTRY"] },
@@ -238,8 +238,53 @@ describe("Filters", () => {
 
         expect(
           resolveCurrentRecordPlaceholders(condition, () => emptyValue),
-        ).toBeUndefined();
+        ).toEqual({ level: { $in: ["COUNTRY"] } });
       },
     );
+
+    it.each([
+      [
+        "a row among the alternatives",
+        {
+          $or: [{ level: "COUNTRY" }, { location: "$current_record.location" }],
+        },
+        { $or: [{ level: "COUNTRY" }] },
+      ],
+      [
+        "only the unresolved part of an alternative",
+        {
+          $or: [
+            { level: "COUNTRY", location: "$current_record.location" },
+            { name: "A" },
+          ],
+        },
+        { $or: [{ level: "COUNTRY" }, { name: "A" }] },
+      ],
+      [
+        "all alternatives, together with the list of alternatives",
+        {
+          level: "COUNTRY",
+          $or: [{ location: "$current_record.location" }],
+        },
+        { level: "COUNTRY" },
+      ],
+      [
+        "a placeholder nested anywhere in a row's value",
+        {
+          level: "COUNTRY",
+          location: { $not: { $in: ["OTHER", "$current_record.location"] } },
+        },
+        { level: "COUNTRY" },
+      ],
+      [
+        "every row (nothing is left to apply)",
+        { location: "$current_record.location" },
+        {},
+      ],
+    ])("leaves out %s", (_, condition, expected) => {
+      expect(
+        resolveCurrentRecordPlaceholders(condition, () => undefined),
+      ).toEqual(expected);
+    });
   });
 });
