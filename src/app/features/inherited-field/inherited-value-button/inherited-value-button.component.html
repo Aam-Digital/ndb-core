@@ -68,16 +68,8 @@
       }
     } @else if (defaultValueHint()?.isLoading) {
       <div i18n>Loading the linked records ...</div>
-    } @else if (defaultValueHint()?.noCommonValue === "unavailable") {
-      <div i18n>
-        Some linked records could not be loaded (e.g. because you have no access
-        to them), so nothing is inherited. The field keeps its current value.
-      </div>
-    } @else if (defaultValueHint()?.noCommonValue === "conflict") {
-      <div i18n>
-        The linked records have no value in common, so nothing is inherited. The
-        field keeps its current value.
-      </div>
+    } @else if (defaultValueHint()?.noCommonValue; as reason) {
+      <div><app-no-common-value-hint [reason]="reason" /></div>
     } @else if (defaultValueHint()?.isEmpty) {
       <div i18n>
         Select one or more records in the parent field to automatically inherit

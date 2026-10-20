@@ -43,19 +43,7 @@
           ></app-entity-field-edit>
           @if (entity.noCommonValue) {
             <app-hint-box type="warning">
-              @if (entity.noCommonValue === "unavailable") {
-                <span i18n>
-                  Some linked records could not be loaded (e.g. because you have
-                  no access to them), so no new value is suggested. The current
-                  value is kept unless you change it here.
-                </span>
-              } @else {
-                <span i18n>
-                  The linked records have no value in common, so no new value is
-                  suggested. The current value is kept unless you change it
-                  here.
-                </span>
-              }
+              <app-no-common-value-hint [reason]="entity.noCommonValue" />
             </app-hint-box>
           }
           @if (entity.unlinked) {

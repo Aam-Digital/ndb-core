@@ -10,6 +10,7 @@ import {
   ChangeDetectorRef,
 } from "@angular/core";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { NoCommonValueHintComponent } from "../no-common-value-hint/no-common-value-hint.component";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -83,6 +84,7 @@ export interface AffectedEntity {
     HintBoxComponent,
     MatButton,
     MatDialogModule,
+    NoCommonValueHintComponent,
   ],
   templateUrl: "./automated-field-update.component.html",
   styleUrl: "./automated-field-update.component.scss",

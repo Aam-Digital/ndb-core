@@ -22,6 +22,7 @@ import { debounceTime } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { Logging } from "../../../core/logging/logging.service";
 import { AutomatedFieldUpdateConfigService } from "../automated-field-update/automated-field-update-config.service";
+import { NoCommonValueHintComponent } from "../no-common-value-hint/no-common-value-hint.component";
 
 /**
  * Display an indicator for form fields explaining the status of the inherited-value config of that field
@@ -33,6 +34,7 @@ import { AutomatedFieldUpdateConfigService } from "../automated-field-update/aut
   imports: [
     EntityFieldLabelComponent,
     FaIconComponent,
+    NoCommonValueHintComponent,
     TemplateTooltipDirective,
     MatIconButton,
   ],
