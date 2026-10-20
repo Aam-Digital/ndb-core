@@ -1076,6 +1076,13 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ["health"],
         ["health", "water"],
       ],
+      [
+        "tags",
+        "inheritedTags",
+        ["water", "health"],
+        ["health"],
+        ["health", "water"],
+      ],
       ["category", "category", "water", "health", "water"],
     ])(
       "%s -> %s: sub-action %j + parent changed from %j to %j opens no dialog",

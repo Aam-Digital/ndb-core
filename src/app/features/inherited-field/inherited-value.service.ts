@@ -22,7 +22,7 @@ import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
 import { Logging } from "../../core/logging/logging.service";
-import { CommonValue } from "./get-common-value";
+import { CommonValue, isSameValue } from "./get-common-value";
 
 /**
  * The parent records that the inherited value of a field was loaded for.
@@ -266,9 +266,10 @@ export class InheritedValueService extends DefaultValueStrategy {
     return {
       inheritedFromField: defaultConfig.sourceReferenceField,
       inheritedFromType: Entity.extractTypeFromId(parentRefIds[0]),
-      isInSync:
-        JSON.stringify(form.inheritedParentValues.get(field.id)) ===
-        JSON.stringify(this.getCurrentDatabaseValue(form, field)),
+      isInSync: isSameValue(
+        form.inheritedParentValues.get(field.id),
+        this.getCurrentDatabaseValue(form, field),
+      ),
       syncFromParentField: () =>
         this.setDatabaseValueToForm(
           form,

@@ -247,12 +247,19 @@ describe("InheritedValueService", () => {
     }
   });
 
-  it.each([
+  it.each<[(string | string[])[], string | string[]]>([
     [["Delhi", "Delhi"], "Delhi"],
     [["Delhi", "Mumbai"], undefined],
     [["Delhi", undefined, "Delhi"], "Delhi"],
     [[undefined, undefined], undefined],
     [["Delhi", "missing"], undefined],
+    [
+      [
+        ["x", "y"],
+        ["y", "x"],
+      ],
+      ["x", "y"],
+    ],
   ])(
     "should inherit only the common value of several linked parents with values %j: %s",
     async (parentValues, expected) => {
@@ -839,12 +846,13 @@ describe("InheritedValueService", () => {
 
   it.each<
     [
-      string,
-      string[],
+      string | string[],
+      (string | string[])[],
       { isInSync?: boolean; isEmpty?: boolean; noCommonValue?: string },
     ]
   >([
     ["Delhi", ["Delhi", "Delhi"], { isInSync: true }],
+    [["x", "y"], [["y", "x"]], { isInSync: true }],
     ["Mumbai", ["Delhi", "Delhi"], { isInSync: false }],
     [
       "Delhi",

@@ -20,7 +20,7 @@ import {
   getRemovedValues,
   isEmptyValue,
 } from "../add-missing-values";
-import { CommonValue, getCommonValue } from "../get-common-value";
+import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 
 /** the property of an entity that a reference index can be created for */
@@ -512,7 +512,7 @@ export class AutomatedFieldUpdateConfigService {
       const shownNoCommonValue = isEmptyValue(currentValue)
         ? undefined
         : noCommonValue;
-      if (isEqual(currentValue, newValue) && !shownNoCommonValue) continue;
+      if (isSameValue(currentValue, newValue) && !shownNoCommonValue) continue;
 
       affectedEntities.push({
         id: targetEntity.getId(),
@@ -804,7 +804,7 @@ export class AutomatedFieldUpdateConfigService {
         update.targetFieldId,
         this.entitySchemaService,
       );
-    return isEqual(
+    return isSameValue(
       toDatabaseFormat(update.newValue),
       toDatabaseFormat(entity[update.targetFieldId]),
     );
