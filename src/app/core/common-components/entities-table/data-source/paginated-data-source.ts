@@ -14,6 +14,10 @@ import {
   EntityPage,
   FULL_LOAD_PAGE_SIZE,
 } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
+import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
+import { getEmbeddedSchema } from "#src/app/core/entity/schema/embedded-schema-field.util";
 
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
@@ -22,6 +26,7 @@ export class PaginatedDataSource<
   T extends Entity,
 > extends EntitiesTableDataSource<T> {
   private readonly specialLoader = inject(EntitySpecialLoaderService);
+  private readonly schemaService = inject(EntitySchemaService);
 
   private sortRef: MatSort;
   private sortState: { prop?: string; dir?: "asc" | "desc" } = {};
@@ -201,21 +206,146 @@ export class PaginatedDataSource<
   private processFilterForDB(filter: DataFilter<T>): EntityFilter<T> {
     // Mango queries need `$options: "i"` while CouchDB only supports `$regex: "(?i)..."`
     filter = convertToCouchRegex(filter);
-    const filterString = JSON.stringify(filter);
-    const schema = this.loadRecordConfig()?.entityCtr?.schema;
-    // replace e.g. "gender.id" with "gender": enum and entity references are
-    // stored as the plain id. Only for fields that are actually stored that
-    // way, though - on any other field ".id" is a real path into an object
-    // value, and rewriting it silently matches nothing.
-    const updatedString = filterString.replace(
-      /"(\w+)\.id(?=":)/g,
-      (match, field) =>
-        STORED_BY_ID_DATATYPES.includes(schema?.get(field)?.dataType)
-          ? `"${field}`
-          : match,
-    );
-    return JSON.parse(updatedString);
+    return this.toDbSelector(filter, {
+      schema: this.loadRecordConfig()?.entityCtr?.schema,
+    });
   }
+
+  /**
+   * Rewrite a query on the entity format into one on the database format.
+   * The schema is walked alongside the query, so that fields nested inside
+   * embedded fields (in `$elemMatch` or as dotted paths) are resolved as well.
+   */
+  private toDbSelector(query: unknown, ctx: SchemaContext): any {
+    if (Array.isArray(query)) {
+      return query.map((q) => this.toDbSelector(q, ctx));
+    }
+    if (!query || typeof query !== "object") {
+      return query;
+    }
+
+    const result = {};
+    for (const [key, value] of Object.entries(query)) {
+      if (key.startsWith("$")) {
+        result[key] = this.toDbSelector(value, ctx);
+        continue;
+      }
+      const { dbPath, field } = this.toDbPath(key, ctx);
+      const condition = this.toDbCondition(value, field);
+      // pouchdb-find skips implicit equality with a falsy value (e.g. `{status: ""}`)
+      // inside `$elemMatch` and matches every entry, an explicit `$eq` works on both engines
+      result[dbPath] =
+        ctx.inElemMatch && !isOperatorObject(condition)
+          ? { $eq: condition }
+          : condition;
+    }
+    return result;
+  }
+
+  /**
+   * Translate a (dotted) field path into its path in the database format:
+   * enum and entity references are stored as the plain id, so e.g.
+   * "gender.id" becomes "gender" and "phoneNumber.type.id" becomes "phoneNumber.type".
+   * Only for fields that are actually stored that way, though - on any other
+   * field ".id" is a real path into an object value.
+   */
+  private toDbPath(
+    key: string,
+    ctx: SchemaContext,
+  ): { dbPath: string; field?: EntitySchemaField } {
+    const dbSegments: string[] = [];
+    let current = ctx;
+    let field: EntitySchemaField | undefined;
+    for (const segment of key.split(".")) {
+      if (
+        segment === "id" &&
+        STORED_BY_ID_DATATYPES.includes(field?.dataType)
+      ) {
+        continue;
+      }
+      dbSegments.push(
+        current.isLegacyAttendanceEntry
+          ? toLegacyAttendanceEntryPath(segment)
+          : segment,
+      );
+      field = current.schema?.get(segment);
+      current = this.getEmbeddedContext(field);
+    }
+    return { dbPath: dbSegments.join("."), field };
+  }
+
+  private toDbCondition(
+    condition: unknown,
+    field: EntitySchemaField | undefined,
+  ): unknown {
+    if (condition === undefined) {
+      // `undefined` cannot be sent in a Mango query, and dropping the key
+      // would leave an empty selector that matches every document
+      return { $exists: false };
+    }
+    if (!isOperatorObject(condition)) {
+      return condition;
+    }
+
+    const result = {};
+    for (const [operator, value] of Object.entries(condition)) {
+      if (operator === "$elemMatch") {
+        result[operator] = this.toDbSelector(value, {
+          ...this.getEmbeddedContext(field),
+          inElemMatch: true,
+        });
+      } else if (operator === "$not") {
+        result[operator] = this.toDbCondition(value, field);
+      } else {
+        result[operator] = value;
+      }
+    }
+    return result;
+  }
+
+  private getEmbeddedContext(
+    field: EntitySchemaField | undefined,
+  ): SchemaContext {
+    return {
+      schema: getEmbeddedSchema(this.schemaService, field),
+      isLegacyAttendanceEntry: field?.dataType === LEGACY_ATTENDANCE_DATATYPE,
+    };
+  }
+}
+
+/** The schema that the keys of a (nested) query object refer to. */
+interface SchemaContext {
+  schema?: EntitySchema;
+  /**
+   * Whether the keys refer to an entry of the deprecated "event-attendance-map" datatype,
+   * which is stored as a tuple `[participantId, {status, remarks}]` instead of an object.
+   */
+  isLegacyAttendanceEntry?: boolean;
+  /** Whether the keys are the conditions on an array entry inside `$elemMatch`. */
+  inElemMatch?: boolean;
+}
+
+function isOperatorObject(condition: unknown): condition is object {
+  return (
+    !!condition && typeof condition === "object" && !Array.isArray(condition)
+  );
+}
+
+/**
+ * The deprecated `EventAttendanceMapDatatype`, which stores its entries as a tuple.
+ *
+ * @deprecated remove together with EventAttendanceMapDatatype
+ */
+const LEGACY_ATTENDANCE_DATATYPE = "event-attendance-map";
+
+/**
+ * Path of an `AttendanceItem` property within the tuple
+ * `[participantId, {status, remarks}]` stored by the deprecated `EventAttendanceMapDatatype`.
+ *
+ * @deprecated remove together with EventAttendanceMapDatatype
+ */
+function toLegacyAttendanceEntryPath(innerProp: string): string {
+  return innerProp === "participant" ? "0" : `1.${innerProp}`;
 }
 
 /**

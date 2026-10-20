@@ -10,6 +10,10 @@ import {
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
+import { createEmptyValueFilter } from "#src/app/core/filter/filters/filters";
+import { MemoryPouchDatabase } from "#src/app/core/database/pouchdb/memory-pouch-database";
+import { SyncStateSubject } from "#src/app/core/session/session-type";
 
 /**
  * A minimal fake MatPaginator: PaginatedDataSource only reads `pageSize`/
@@ -119,6 +123,128 @@ describe("PaginatedDataSource", () => {
           { category: { $elemMatch: { $eq: "SCHOOL" } } },
         ],
       });
+    });
+
+    describe("on fields nested inside embedded fields", () => {
+      @DatabaseEntity("PaginatedEmbedTest")
+      class EmbedTest extends Entity {}
+      EmbedTest.schema.set("category", {
+        dataType: "configurable-enum",
+        additional: "categories",
+      });
+      EmbedTest.schema.set("attendance", {
+        dataType: "attendance",
+        isArray: true,
+      });
+      EmbedTest.schema.set("childrenAttendance", {
+        dataType: "event-attendance-map",
+      });
+      EmbedTest.schema.set("phone", {
+        dataType: "schema-embed",
+        additional: {
+          type: { dataType: "configurable-enum", additional: "phone-types" },
+        },
+      });
+
+      // documents as stored in the database, not as loaded entities
+      const docs = [
+        {
+          _id: "PaginatedEmbedTest:a",
+          category: "SCHOOL",
+          attendance: [{ participant: "Child:a", status: "PRESENT" }],
+          childrenAttendance: [["Child:a", { status: "PRESENT" }]],
+          phone: { type: "mobile" },
+        },
+        {
+          _id: "PaginatedEmbedTest:b",
+          attendance: [{ participant: "Child:b" }],
+          childrenAttendance: [["Child:b", { remarks: "" }]],
+          phone: { type: "landline" },
+        },
+      ];
+
+      /** the "not defined" filter as FilterGeneratorService builds it for an embedded array */
+      function notDefinedInArray(outerProp: string, innerProp: string) {
+        const inner = createEmptyValueFilter(innerProp, true) as {
+          $or: object[];
+        };
+        return {
+          $or: [
+            { [outerProp]: { $exists: false } },
+            { [outerProp]: { $size: 0 } },
+            ...inner.$or.map((c) => ({ [outerProp]: { $elemMatch: c } })),
+          ],
+        };
+      }
+
+      let database: MemoryPouchDatabase;
+
+      beforeEach(async () => {
+        database = new MemoryPouchDatabase(
+          "paginated-embed-test",
+          new SyncStateSubject(),
+        );
+        database.init();
+        await database.putAll(docs);
+        dataSource.loadRecordConfig.set({ entityCtr: EmbedTest });
+      });
+
+      afterEach(() => database.destroy());
+
+      it.each([
+        [
+          "top-level enum not defined",
+          createEmptyValueFilter("category", true),
+          ["b"],
+        ],
+        [
+          "enum in embedded array",
+          { attendance: { $elemMatch: { "status.id": "PRESENT" } } },
+          ["a"],
+        ],
+        [
+          "entity in embedded array",
+          { attendance: { $elemMatch: { participant: "Child:b" } } },
+          ["b"],
+        ],
+        [
+          "enum not defined in embedded array",
+          notDefinedInArray("attendance", "status"),
+          ["b"],
+        ],
+        [
+          "participant in legacy attendance tuple",
+          { childrenAttendance: { $elemMatch: { participant: "Child:a" } } },
+          ["a"],
+        ],
+        [
+          "enum in legacy attendance tuple",
+          { childrenAttendance: { $elemMatch: { "status.id": "PRESENT" } } },
+          ["a"],
+        ],
+        [
+          "enum not defined in legacy attendance tuple",
+          notDefinedInArray("childrenAttendance", "status"),
+          ["b"],
+        ],
+        [
+          "enum in single embedded object",
+          { "phone.type.id": "mobile" },
+          ["a"],
+        ],
+      ])(
+        "matches the stored documents for: %s",
+        async (_, filter, expected) => {
+          const result = await database.find(
+            "PaginatedEmbedTest",
+            processFilter(filter),
+          );
+
+          expect(result.docs.map((d) => d._id)).toEqual(
+            expected.map((id) => `PaginatedEmbedTest:${id}`),
+          );
+        },
+      );
     });
   });
 
