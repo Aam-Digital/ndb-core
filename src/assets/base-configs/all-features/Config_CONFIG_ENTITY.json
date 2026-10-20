@@ -1482,9 +1482,42 @@
         "enumMulti": {
           "id": "enumMulti",
           "label": "enum multi",
+          "description": "Collects the Centers of all children linked to this school",
           "dataType": "configurable-enum",
           "isArray": true,
-          "additional": "center"
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceEntity": "Child",
+              "sourceReferenceField": "schoolId",
+              "sourceValueField": "center",
+              "aggregation": "add"
+            }
+          }
+        },
+        "parentSchool": {
+          "id": "parentSchool",
+          "label": "Parent school",
+          "dataType": "entity",
+          "additional": "School"
+        },
+        "allCenters": {
+          "id": "allCenters",
+          "label": "All centers",
+          "description": "Collects the values of \"enum multi\" of all schools that have this school as Parent school",
+          "dataType": "configurable-enum",
+          "isArray": true,
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceEntity": "School",
+              "sourceReferenceField": "parentSchool",
+              "sourceValueField": "enumMulti",
+              "aggregation": "add"
+            }
+          }
         },
         "numberField": {
           "id": "numberField",
@@ -1649,6 +1682,8 @@
                         "enumDropdown",
                         "enumMulti",
                         "childrenCenter",
+                        "parentSchool",
+                        "allCenters",
                         "numberField",
                         "longTextField",
                         "percentageField",
