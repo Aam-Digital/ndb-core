@@ -8,9 +8,7 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read
-  packages: write # required for pushing to ghcr.io
+permissions: {} # each job grants what it needs
 
 jobs:
   build:
@@ -26,7 +24,8 @@ jobs:
       stable: ${{ !github.event.release.prerelease }}
 
   # After a full release, the edge images (`*-edge.*`, formerly `*-master.*`) on ghcr.io are no longer needed.
-  # Images still tagged `edge`, `master`, `stable` or `latest` are kept. Docker Hub is not covered.
+  # Images still tagged `edge`, `stable` or `latest` are kept (and `master`, the former prerelease tag). Docker Hub is
+  # not covered.
   prune-prerelease-images:
     if: ${{ !github.event.release.prerelease }}
     needs: build
@@ -39,6 +38,8 @@ jobs:
 
   sentry-upload-sourcemaps:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs:
       - build
     env:
@@ -62,6 +63,8 @@ jobs:
 
   sentry-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # checkout
     needs:
       - build
       - sentry-upload-sourcemaps

@@ -25,7 +25,7 @@ on:
         type: string
         required: false
         default: ""
-        description: Extra image tags, comma-separated (e.g. "edge,master" or "pr-123")
+        description: Extra image tags, comma-separated (e.g. "edge" or "pr-123")
       platforms:
         type: string
         required: false

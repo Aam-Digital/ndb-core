@@ -5,15 +5,12 @@ on:
   pull_request_target: # zizmor: ignore[dangerous-triggers] never checks out PR code
     types: [closed]
 
-permissions:
-  contents: read
-  actions: write # required for cancelling PR builds and deleting GitHub Actions caches
-  packages: write # required for deleting GHCR images
+permissions: {} # each job grants what it needs
 
 jobs:
   # Cancels the PR build (pull-request-updated.yml) if it is still running and waits until it has stopped, then
-  # deletes the `pr-<number>` image from ghcr.io (and the untagged images older than 2 days). A PR build that still runs when the PR is closed would otherwise
-  # push the image and redeploy the PR instance after the cleanup.
+  # deletes the `pr-<number>` image from ghcr.io (and the untagged images older than 2 days). A PR build that still
+  # runs when the PR is closed would otherwise push the image and redeploy the PR instance after the cleanup.
   cleanup-image:
     # PRs from forks have no image (and their builds don't push)
     if: github.event.pull_request.head.repo.full_name == github.repository

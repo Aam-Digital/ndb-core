@@ -58,7 +58,7 @@ We use [semantic-release](https://github.com/semantic-release/semantic-release) 
 The release workflows are shared by all Aam Digital repositories (see [Aam-Digital/.github](https://github.com/Aam-Digital/.github/tree/main/.github/workflows)); this repository uses the "manual" release mode:
 
 1. Every commit on `master` is built as an **edge** version `X.Y.Z-edge.N`: the last release with the patch number bumped, plus the number of commits since that release (e.g. `3.93.1-edge.39`). There is no git tag or GitHub release for it (`on-master-push.yml`).
-   Its Docker image is tagged with the version and `edge` (and, during the transition from the former `-master.N` versions, also `master`), and its translations are published for that version, so new texts can be checked before a release.
+   Its Docker image is tagged with the version and `edge`, and its translations are published for that version, so new texts can be checked before a release.
 2. To create a stable release, a core team member manually triggers the release GitHub Action (`create-release.yml` workflow dispatch). semantic-release creates the next version from the Conventional Commit messages since the last release.
    When the release is published (`release-published.yml`), its Docker image is built and tagged with the version, `stable` and `latest`, and the old edge images are deleted from ghcr.io.
 
