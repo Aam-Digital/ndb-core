@@ -20,10 +20,11 @@ someFun() {
 The `LoggingService` has multiple log levels (`debug`, `info`, `warn`, `error`)
 that control whether log messages are sent to the remote monitoring and how they are treated there.
 
-The browser console links every message to the line in `logging.service.ts` that writes it.
-To see the code that called `Logging` instead, add `logging\.service\.ts$` as a custom pattern
-to the ignore list of the browser's developer tools
-(Chrome: DevTools Settings > Ignore list > Add pattern; Firefox: "Ignore source" in the Debugger).
+The browser console links every message to the line in `logging.service.ts`
+that writes it. To see the code that called `Logging` instead, add
+`logging\.service\.ts$` as a custom pattern to the ignore list of the
+browser's developer tools (Chrome: DevTools Settings > Ignore list >
+Add pattern; Firefox: "Ignore source" in the Debugger).
 The expandable stack trace of the message also shows the caller.
 
 ## Deciding what to report
