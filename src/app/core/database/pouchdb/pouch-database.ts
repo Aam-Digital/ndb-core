@@ -273,7 +273,11 @@ export class PouchDatabase extends Database {
       }
     }
 
-    if (results.some((r) => r instanceof Error)) {
+    // a document the server rejected (e.g. "forbidden") comes back from a
+    // remote database as a plain result object with an `error`, not an Error
+    if (
+      results.some((r) => r instanceof Error || (r as PouchDB.Core.Error).error)
+    ) {
       return Promise.reject(results);
     }
     return results;

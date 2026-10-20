@@ -23,7 +23,7 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
   await loadApp(page, generateUsers());
 
   await page.getByRole("navigation").getByText("Children").click();
-  await page.getByRole("button", { name: "Add New" }).click();
+  await page.getByRole("button", { name: "Add New", exact: true }).click();
 
   // The entity-details page opens in "Adding new Child" mode (full page,
   // not a popup — Child uses navigate clickMode).
@@ -716,7 +716,7 @@ test("Display conditions show a single field and a whole field group only while 
   await expect(conditionDialog).not.toBeVisible();
 
   await page.getByRole("button", { name: "Cancel" }).click();
-  await page.getByRole("button", { name: "Add New" }).click();
+  await page.getByRole("button", { name: "Add New", exact: true }).click();
 
   const conditionalField = page.locator("#entity-field__numberField");
   const fieldOfConditionalGroup = page.locator("#entity-field__dateOnlyField");

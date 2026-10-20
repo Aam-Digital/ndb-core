@@ -74,24 +74,34 @@ The following components are related to display an Entity sub-type and currently
 
 ### Example: Creating a new Entity sub-type
 
-```
-import { Entity } from '../entity/entity';
-import { Gender} from './Gender';
+Entity class files are named `*.entity.ts` (e.g. `school.entity.ts`).
 
-@DatabaseEntity('Child')
-export class Child extends Entity {
-  @DatabaseField() name: string;
-  @DatabaseField({dataType: 'string'}) gender: Gender;
-  @DatabaseField() dateOfBirth: Date;
-  @DatabaseField() marks: [];
+```ts
+import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
+import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { Entity } from "#src/app/core/entity/model/entity";
 
-  age(): number {
-     // calculate from this.dateOfBirth
-  }
+@DatabaseEntity("School") // sets the ENTITY_TYPE, also used as database prefix
+export class School extends Entity {
+  static override label = "School";
+  static override labelPlural = "Schools";
+  static override icon: IconName = "university";
+  static override route = "school";
+  static override toStringAttributes = ["name"]; // human-readable summary of a record
 
-  // Override this to define a human-readable, textual summary of the instance
-  toString(): string {
-    return this.name + ' (' + this.age() + ')';
-  }
+  @DatabaseField({ label: "Name" })
+  name: string;
+
+  @DatabaseField({ label: "Founded", dataType: "date-only" })
+  founded: Date;
+
+  @DatabaseField({ label: "Type", dataType: "configurable-enum", additional: "school-types" })
+  type: ConfigurableEnumValue;
+
+  @DatabaseField({ label: "Principal", dataType: "entity", additional: "User" })
+  principal: string; // id of the linked record
 }
 ```
+
+For all field options, see [Entity Schema](../../../src/app/core/entity/schema/README.md#schema-options).
+Also provide a demo data generator for the new type (see [demo data](../../../src/app/core/demo-data/README.md)).

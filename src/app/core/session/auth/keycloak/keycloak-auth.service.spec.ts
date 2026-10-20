@@ -410,6 +410,34 @@ describe("KeycloakAuthService", () => {
     },
   );
 
+  it("should restart the login (without reporting it) if the login code from the redirect was already used", async () => {
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+    const usedCode = Object.assign(
+      new Error("Server responded with an invalid status."),
+      {
+        response: new Response(
+          JSON.stringify({
+            error: "invalid_grant",
+            error_description: "Code not valid",
+          }),
+          { status: 400 },
+        ),
+      },
+    );
+    mockKeycloak.init
+      .mockRejectedValueOnce(usedCode)
+      .mockResolvedValueOnce(undefined);
+
+    try {
+      await expect(service.checkSession()).resolves.toBeDefined();
+
+      expect(mockKeycloak.init).toHaveBeenCalledTimes(2);
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+    }
+  });
+
   it("should NOT retry login on a 4xx error", async () => {
     const authError = { status: 401 } as any;
     mockKeycloak.init.mockRejectedValue(authError);

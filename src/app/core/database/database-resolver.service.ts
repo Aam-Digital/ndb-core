@@ -16,6 +16,7 @@ import { environment } from "../../../environments/environment";
 import { SessionType } from "../session/session-type";
 import { isRemoteOnlyDatabase } from "./remote-only-databases";
 import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "#src/app/utils/di-tokens";
+import { AlertService } from "../alerts/alert.service";
 import { Logging } from "../logging/logging.service";
 import { LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 import {
@@ -34,6 +35,7 @@ export class DatabaseResolverService {
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private readonly databaseFactory = inject(DatabaseFactoryService);
   private readonly migrationService = inject(IndexeddbMigrationService);
+  private readonly alertService = inject(AlertService);
   private readonly window = inject<Window>(WINDOW_TOKEN, { optional: true });
   private readonly navigator = inject<Navigator>(NAVIGATOR_TOKEN, {
     optional: true,
@@ -200,6 +202,9 @@ export class DatabaseResolverService {
             lastSyncCompleted: lastSyncTime,
             existingDbs: existingDbs.map((db) => db.name),
           },
+        );
+        this.alertService.addWarning(
+          $localize`:local database was evicted by the browser:The data stored on this device was deleted by your browser (e.g. to free up storage space) and is now downloaded from the server again. Changes made on this device after ${new Date(lastSyncTime).toLocaleString()}:lastSyncTime: that were not synced yet may have been lost.`,
         );
       }
     } catch (err) {

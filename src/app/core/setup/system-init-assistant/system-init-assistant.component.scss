@@ -1,0 +1,5 @@
+@use "variables/colors";
+
+.unavailable-sources-hint {
+  color: colors.$warn;
+}

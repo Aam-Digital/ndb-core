@@ -22,6 +22,7 @@
       (ngModelChange)="selectedFields.set($event)"
       [multi]="true"
       [disabled]="!selectedEntityType()"
+      [hideOption]="hideUnmatchableField"
     ></app-entity-field-select>
   </mat-form-field>
 
@@ -56,7 +57,7 @@
   <div class="mat-elevation-z1">
     <table
       mat-table
-      [dataSource]="paginatedPairs()"
+      [dataSource]="dataSource"
       class="full-width"
       aria-label="List of possible duplicate records"
       i18n-aria-label
@@ -102,12 +103,9 @@
       ></tr>
     </table>
 
-    <mat-paginator
-      [length]="pairs().length"
-      [pageSize]="pageSize()"
-      [pageSizeOptions]="[5, 10, 20]"
-      (page)="onPageChange($event)"
-      showFirstLastButtons
-    ></mat-paginator>
+    <app-list-paginator
+      [dataSource]="dataSource"
+      [idForSavingPagination]="'review-duplicates'"
+    ></app-list-paginator>
   </div>
 }
