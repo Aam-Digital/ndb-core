@@ -22,6 +22,7 @@ import { defaultDateFilters } from "../../basic-datatypes/date/date-range-filter
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { DateRangeDatatype } from "../../basic-datatypes/date-range/date-range.datatype";
 import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
 import { DateFilter } from "../filters/dateFilter";
@@ -134,14 +135,12 @@ export class FilterGeneratorService {
           filterConfig.label ?? label,
           filterConfig.singleSelectOnly,
         );
-      } else if (
-        this.schemaService.getDatatypeOrDefault(type, true) instanceof
-        DateDatatype
-      ) {
+      } else if (this.getDateDatatype(type)) {
         filter = new DateFilter(
           filterConfig.id,
           label,
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
+          this.getDateDatatype(type) instanceof DateRangeDatatype,
         );
       } else if (this.isFreeTextField(type, schema)) {
         filter = new StringFilter(filterConfig.id, label);
@@ -218,6 +217,17 @@ export class FilterGeneratorService {
         includeEmptyArray,
       ),
     };
+  }
+
+  /** The datatype if it holds a date or a period (start and end date), which are filtered by dates. */
+  private getDateDatatype(
+    type: string,
+  ): DateDatatype | DateRangeDatatype | undefined {
+    const datatype = this.schemaService.getDatatypeOrDefault(type, true);
+    return datatype instanceof DateDatatype ||
+      datatype instanceof DateRangeDatatype
+      ? datatype
+      : undefined;
   }
 
   /**

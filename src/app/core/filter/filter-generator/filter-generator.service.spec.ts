@@ -33,6 +33,7 @@ import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype"
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
+import { DateRangeDatatype } from "../../basic-datatypes/date-range/date-range.datatype";
 import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
 import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
@@ -82,6 +83,7 @@ describe("FilterGeneratorService", () => {
         { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
         { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
         { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateRangeDatatype, multi: true },
         { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
         { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
         { provide: DefaultDatatype, useClass: EmailDatatype, multi: true },
@@ -322,6 +324,73 @@ describe("FilterGeneratorService", () => {
   it("should create a date range filter", async () => {
     let generatedFilter = await service.generate([{ id: "date" }], Note, []);
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
+  });
+
+  describe("filter for a period field (date-range)", () => {
+    @DatabaseEntity("PeriodFilterTestEntity")
+    class PeriodFilterTestEntity extends Entity {}
+    PeriodFilterTestEntity.schema.set("period", {
+      dataType: "date-range",
+      label: "Period",
+    });
+
+    const day = (month: number, date: number) =>
+      new Date(2026, month - 1, date);
+
+    async function generatePeriodFilter(selectedDates: string[]) {
+      const filter = (
+        await service.generate([{ id: "period" }], PeriodFilterTestEntity, [])
+      )[0] as DateFilter<PeriodFilterTestEntity>;
+      filter.selectedOptionValues = selectedDates;
+      return filterService.getFilterPredicate(filter.getFilter());
+    }
+
+    function entityWith(period?: { start?: Date; end?: Date }) {
+      return Object.assign(new PeriodFilterTestEntity(), { period });
+    }
+
+    it.each([
+      ["lies inside the dates", { start: day(3, 12), end: day(3, 15) }, true],
+      ["covers the dates", { start: day(2, 1), end: day(6, 30) }, true],
+      ["ends on the first date", { start: day(2, 1), end: day(3, 10) }, true],
+      ["starts on the last date", { start: day(3, 20), end: day(4, 30) }, true],
+      ["has no end date and started before", { start: day(3, 1) }, true],
+      ["has no start date and ends within", { end: day(3, 12) }, true],
+      ["ended before the dates", { start: day(1, 1), end: day(3, 9) }, false],
+      ["starts after the dates", { start: day(3, 21), end: day(4, 1) }, false],
+      ["has no end date and starts after", { start: day(3, 21) }, false],
+      ["has no start date and ended before", { end: day(3, 5) }, false],
+      ["is not set", undefined, false],
+    ])(
+      "should match a period that %s only if it overlaps",
+      async (_, period, expected) => {
+        const matches = await generatePeriodFilter([
+          "2026-03-10",
+          "2026-03-20",
+        ]);
+
+        expect(matches(entityWith(period))).toBe(expected);
+      },
+    );
+
+    it("should match only the periods that end after the first date if there is no last date", async () => {
+      const matches = await generatePeriodFilter(["2026-03-10", ""]);
+
+      expect(matches(entityWith({ start: day(1, 1), end: day(3, 9) }))).toBe(
+        false,
+      );
+      expect(matches(entityWith({ start: day(1, 1), end: day(3, 10) }))).toBe(
+        true,
+      );
+      expect(matches(entityWith({ start: day(8, 1) }))).toBe(true);
+    });
+
+    it("should match only the records without a period with the empty option", async () => {
+      const matches = await generatePeriodFilter([EMPTY_FILTER_OPTION_KEY]);
+
+      expect(matches(entityWith(undefined))).toBe(true);
+      expect(matches(entityWith({ start: day(3, 1) }))).toBe(false);
+    });
   });
 
   it("should create a string filter for 'string' fields with default text edit component", async () => {
