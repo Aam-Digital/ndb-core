@@ -1,0 +1,1003 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  InheritedValueState</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/features/inherited-field/inherited-value.service.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>The value to inherit from the parent records currently linked in a form.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../interfaces/CommonValueOfParents.html" target="_self" >CommonValueOfParents</a></code>
+            </p>
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <p class="comment"><i>No results matching.</i></p>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../interfaces/CommonValueOfParents.html" target="_self" >CommonValueOfParents</a></code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#isLoading" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">isLoading</span>
+                                </a>
+                        </li>
+                        <li>
+                                <a href="#parentIds" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">parentIds</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#noCommonValue" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">noCommonValue</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#value" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">value</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="isLoading"></a>
+                                <span class="name "><b>isLoading</b>
+                                    <a href="#isLoading">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>isLoading:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/features/inherited-field/inherited-value.service.ts:45</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>whether the parent records are still being loaded (and the other properties are not set yet)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="parentIds"></a>
+                                <span class="name "><b>parentIds</b>
+                                    <a href="#parentIds">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>parentIds:     <code>string[]</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>string[]</code>
+
+                                </td>
+                            </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/features/inherited-field/inherited-value.service.ts:42</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="noCommonValue"></a>
+                                <span class="name "><b>noCommonValue</b>
+                                    <a href="#noCommonValue">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>noCommonValue:         <code><a href="../miscellaneous/typealiases.html#NoCommonValueReason" target="_self" >NoCommonValueReason</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#NoCommonValueReason" target="_self" >NoCommonValueReason</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/features/inherited-field/inherited-value.service.ts:56</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>why the parent records provide no value in common, if they don&#39;t</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="value"></a>
+                                <span class="name "><b>value</b>
+                                    <a href="#value">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>value:     <code>unknown</code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>    <code>unknown</code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/features/inherited-field/inherited-value.service.ts:53</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>the value the parent records have in common (in database format)</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Signal, signal } from &quot;@angular/core&quot;;
+import { AbstractControl } from &quot;@angular/forms&quot;;
+import { EntitySchemaField } from &quot;../../core/entity/schema/entity-schema-field&quot;;
+import { EntityForm } from &quot;../../core/common-components/entity-form/entity-form&quot;;
+import { Entity } from &quot;../../core/entity/model/entity&quot;;
+import {
+  AdminDefaultValueContext,
+  DefaultValueStrategy,
+} from &quot;../../core/default-values/default-value-strategy.interface&quot;;
+import { DefaultValueHint } from &quot;../../core/default-values/default-value-service/default-value.service&quot;;
+import { asArray } from &quot;../../utils/asArray&quot;;
+import { FormFieldConfig } from &quot;../../core/common-components/entity-form/FormConfig&quot;;
+import {
+  DefaultValueConfigInheritedField,
+  isCollectingFromLinkedRecords,
+  isInheritingFromParent,
+} from &quot;./inherited-field-config&quot;;
+import { isEqual, xorWith } from &quot;lodash-es&quot;;
+import { EntitySchemaService } from &quot;../../core/entity/schema/entity-schema.service&quot;;
+import {
+  AutomatedFieldUpdateConfigService,
+  CommonValueOfParents,
+} from &quot;./automated-field-update/automated-field-update-config.service&quot;;
+import { Logging } from &quot;../../core/logging/logging.service&quot;;
+import { isSameValue } from &quot;./get-common-value&quot;;
+import {
+  distinctUntilChanged,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  startWith,
+  switchMap,
+  tap,
+} from &quot;rxjs&quot;;
+
+/**
+ * The value to inherit from the parent records currently linked in a form.
+ */
+interface InheritedValueState extends CommonValueOfParents {
+  parentIds: string[];
+
+  /** whether the parent records are still being loaded (and the other properties are not set yet) */
+  isLoading?: boolean;
+}
+
+/**
+ * The inherited value of a field in a form, loaded again whenever the linked parent records change.
+ */
+interface WatchedInheritedValue {
+  /** the latest state, to display it reactively */
+  state: Signal&lt;InheritedValueState&gt;;
+
+  /** emits the loaded value for every change of the linked parent records, while it is subscribed to */
+  loaded$: Observable&lt;InheritedValueState&gt;;
+}
+
+/**
+ * An advanced default-value strategy that sets values based on the value in a referenced related entity.
+ *
+ * This allows to configure hierarchies and inherited fields,
+ * e.g. setting the category field based on the category field in a linked &quot;parent entity&quot;.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class InheritedValueService extends DefaultValueStrategy {
+  override readonly mode &#x3D; &quot;inherited-field&quot;;
+
+  private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
+  private readonly automatedFieldUpdateConfigService &#x3D; inject(
+    AutomatedFieldUpdateConfigService,
+  );
+
+  /**
+   * Values inherited from the parent records that this record links to
+   * (e.g. a child inheriting the category of its school), by form and field id.
+   * Loaded again whenever the linked parents in the form change.
+   */
+  private readonly valuesFromParents &#x3D; new WeakMap&lt;
+    EntityForm&lt;any&gt;,
+    Map&lt;string, WatchedInheritedValue&gt;
+  &gt;();
+
+  /**
+   * Values collected from all records that link to this record
+   * (e.g. a school collecting the cities of all its children), by form and field id.
+   * Loaded once when the form is created (in database format).
+   */
+  private readonly valuesFromLinkingRecords &#x3D; new WeakMap&lt;
+    EntityForm&lt;any&gt;,
+    Map&lt;string, unknown[] | undefined&gt;
+  &gt;();
+
+  override async getAdminUI(): Promise&lt;AdminDefaultValueContext&gt; {
+    const component &#x3D;
+      await import(&quot;./admin-inherited-field/admin-inherited-field.component&quot;).then(
+        (c) &#x3D;&gt; c.AdminInheritedFieldComponent,
+      );
+
+    return {
+      mode: this.mode,
+      component,
+      icon: &quot;circle-nodes&quot;,
+      description: $localize&#x60;value inherited or auto-updated from related records&#x60;,
+    };
+  }
+
+  override async initEntityForm&lt;T extends Entity&gt;(form: EntityForm&lt;T&gt;) {
+    await this.watchInheritedValues(form);
+    await this.collectValuesOfLinkedRecords(form);
+  }
+
+  /**
+   * For fields collecting the values of all records that link to this entity,
+   * load these records once to be able to compare and sync the field&#x27;s value.
+   */
+  private async collectValuesOfLinkedRecords&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+  ) {
+    if (form.entity.isNew) {
+      return;
+    }
+
+    const collectingFields &#x3D; form.fieldConfigs.filter(
+      isCollectingFromLinkedRecords,
+    );
+    const collectedValuesOfForm &#x3D; new Map&lt;string, unknown[] | undefined&gt;();
+    this.valuesFromLinkingRecords.set(form, collectedValuesOfForm);
+    await Promise.all(
+      collectingFields.map(async (field) &#x3D;&gt;
+        collectedValuesOfForm.set(
+          field.id,
+          await this.automatedFieldUpdateConfigService
+            .collectValuesOfLinkedRecords(
+              form.entity,
+              field.defaultValue.config,
+            )
+            .catch((error) &#x3D;&gt; {
+              Logging.warn(
+                &quot;InheritedValueService could not load linked records for collected field&quot;,
+                { field: field.id },
+                error,
+              );
+              return undefined;
+            }),
+        ),
+      ),
+    );
+  }
+
+  /**
+   * Set up the inheritance value for a field, triggering an initial inheritance
+   * and watching future changes of the source (parent) field for automatic updates.
+   * @param targetFormControl
+   * @param fieldConfig
+   * @param form
+   */
+  override async setDefaultValue(
+    targetFormControl: AbstractControl&lt;any, any&gt;,
+    fieldConfig: EntitySchemaField,
+    form: EntityForm&lt;any&gt;,
+  ) {
+    // automation rules are handled by the AutomatedFieldUpdateConfigService instead
+    if (!isInheritingFromParent(fieldConfig)) {
+      return;
+    }
+    const config: DefaultValueConfigInheritedField &#x3D;
+      fieldConfig.defaultValue.config;
+
+    const { loaded$ } &#x3D; this.getInheritedValue(form, fieldConfig.id, config);
+    // inherit the value initially and whenever the linked parents change
+    form.watcher.set(
+      &quot;inheritIntoNewRecord_&quot; + fieldConfig.id,
+      loaded$.subscribe((inherited) &#x3D;&gt;
+        this.inheritIntoNewRecord(
+          form,
+          targetFormControl,
+          fieldConfig,
+          inherited,
+        ),
+      ),
+    );
+    await firstValueFrom(loaded$);
+  }
+
+  /**
+   * Set the inherited value to the target field of a new record,
+   * unless the user has entered a value there.
+   * @param form
+   * @param targetFormControl
+   * @param fieldConfig
+   * @param inherited The value loaded from the currently linked parents.
+   * @private
+   */
+  private inheritIntoNewRecord(
+    form: EntityForm&lt;any&gt;,
+    targetFormControl: AbstractControl&lt;any, any&gt;,
+    fieldConfig: EntitySchemaField,
+    inherited: InheritedValueState,
+  ) {
+    if (
+      form.formGroup.disabled ||
+      !form.entity.isNew ||
+      (targetFormControl.dirty &amp;&amp; !!targetFormControl.value)
+    ) {
+      return;
+    }
+
+    if (inherited.value &#x3D;&#x3D;&#x3D; undefined) {
+      targetFormControl.setValue(undefined);
+      return;
+    }
+
+    // always wrap a single source value in an array if the target field holds several values
+    targetFormControl.setValue(
+      this.entitySchemaService.valueToEntityFormat(
+        fieldConfig.isArray ? asArray(inherited.value) : inherited.value,
+        fieldConfig,
+      ),
+    );
+
+    targetFormControl.markAsUntouched();
+    targetFormControl.markAsPristine();
+  }
+
+  /**
+   * Get details about the status and context of an inherited value field
+   * to display to the user.
+   * @param form
+   * @param field
+   */
+  override getDefaultValueUiHint&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+  ): DefaultValueHint | undefined {
+    const defaultConfig: DefaultValueConfigInheritedField &#x3D;
+      field?.defaultValue?.config;
+    if (!defaultConfig) {
+      return;
+    }
+
+    if (isCollectingFromLinkedRecords(field)) {
+      return this.getCollectedValuesUiHint(form, field, defaultConfig);
+    }
+
+    // only watched for inheritance configs (not automation rules)
+    // in forms initialized with default values (not e.g. when merging records)
+    const watchedValue &#x3D; this.valuesFromParents.get(form)?.get(field.id);
+    if (!watchedValue) {
+      return;
+    }
+
+    // reading the signal lets reactive callers update the hint once the linked parents are loaded
+    const inherited &#x3D; watchedValue.state();
+    if (inherited.parentIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return {
+        inheritedFromField: defaultConfig.sourceReferenceField,
+        isEmpty: true,
+      };
+    }
+
+    if (inherited.isLoading || inherited.noCommonValue) {
+      return {
+        inheritedFromField: defaultConfig.sourceReferenceField,
+        isEmpty: true,
+        isLoading: inherited.isLoading,
+        noCommonValue: inherited.noCommonValue,
+      };
+    }
+
+    return {
+      inheritedFromField: defaultConfig.sourceReferenceField,
+      inheritedFromType: Entity.extractTypeFromId(inherited.parentIds[0]),
+      isInSync: isSameValue(
+        inherited.value,
+        this.getCurrentDatabaseValue(form, field),
+      ),
+      syncFromParentField: () &#x3D;&gt;
+        this.setDatabaseValueToForm(form, field, inherited.value),
+    };
+  }
+
+  /**
+   * Hint for a field collecting the values of all records that link to this entity.
+   * No hint is shown as long as there are no values of linked records to sync from.
+   */
+  private getCollectedValuesUiHint&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+    config: DefaultValueConfigInheritedField,
+  ): DefaultValueHint | undefined {
+    const collectedValues &#x3D; this.valuesFromLinkingRecords
+      .get(form)
+      ?.get(field.id);
+    if (!collectedValues?.length) {
+      return;
+    }
+
+    return {
+      inheritedFromField: config.sourceReferenceField,
+      inheritedFromType: config.sourceReferenceEntity,
+      isCollectedFromLinkedRecords: true,
+      // the order of values does not matter here
+      isInSync:
+        xorWith(
+          collectedValues,
+          asArray(this.getCurrentDatabaseValue(form, field) ?? []),
+          isEqual,
+        ).length &#x3D;&#x3D;&#x3D; 0,
+      syncFromParentField: () &#x3D;&gt;
+        this.setDatabaseValueToForm(form, field, collectedValues),
+    };
+  }
+
+  /**
+   * The collected values and rule results are in database format (e.g. the id of a dropdown value),
+   * whereas the form holds the entity format (e.g. the full dropdown value object).
+   * Comparing and merging both in database format avoids false mismatches and objects saved instead of ids.
+   */
+  private getCurrentDatabaseValue&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+  ) {
+    return this.automatedFieldUpdateConfigService.transformSourceValueToDatabaseFormat(
+      form.formGroup.get(field.id)?.value,
+      form.entity,
+      field.id,
+      this.entitySchemaService,
+    );
+  }
+
+  private setDatabaseValueToForm&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    field: FormFieldConfig,
+    databaseValue: any,
+  ) {
+    form.formGroup
+      .get(field.id)
+      .setValue(
+        this.entitySchemaService.valueToEntityFormat(databaseValue, field),
+      );
+  }
+
+  /**
+   * Keep the inherited value of each field up to date with the parent records linked in the form
+   * (also for existing records, to compare the field&#x27;s value with it).
+   * @return resolves once the inherited values of the initially linked parents are loaded
+   */
+  private async watchInheritedValues&lt;T extends Entity&gt;(form: EntityForm&lt;T&gt;) {
+    const inheritedConfigs &#x3D; getConfigsForInheritedMode(form.fieldConfigs);
+    await Promise.all(
+      [...inheritedConfigs].map(([fieldId, config]) &#x3D;&gt; {
+        const { loaded$ } &#x3D; this.getInheritedValue(form, fieldId, config);
+        form.watcher.set(&quot;inheritedValue_&quot; + fieldId, loaded$.subscribe());
+        return firstValueFrom(loaded$);
+      }),
+    );
+  }
+
+  /**
+   * Get the inherited value of a field in the form,
+   * setting it up to be loaded again whenever the linked parents change, if not done yet.
+   * Loading only starts when subscribing to its &#x60;loaded$&#x60;.
+   */
+  private getInheritedValue&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    fieldId: string,
+    config: DefaultValueConfigInheritedField,
+  ): WatchedInheritedValue {
+    const existing &#x3D; this.valuesFromParents.get(form)?.get(fieldId);
+    if (existing) {
+      return existing;
+    }
+
+    const state &#x3D; signal&lt;InheritedValueState&gt;({
+      parentIds: this.getParentRefIds(form, config),
+      isLoading: true,
+    });
+    const sourceFormControl &#x3D; form.formGroup?.get(config.sourceReferenceField);
+    const loaded$ &#x3D; (sourceFormControl?.valueChanges ?? of()).pipe(
+      startWith(undefined),
+      map(() &#x3D;&gt; this.getParentRefIds(form, config)),
+      distinctUntilChanged(isEqual),
+      tap((parentIds) &#x3D;&gt; state.set({ parentIds, isLoading: true })),
+      // a newer change of the linked parents discards the result of a load still in progress
+      switchMap((parentIds) &#x3D;&gt;
+        // without linked parents, the field is reset right away
+        parentIds.length &#x3D;&#x3D;&#x3D; 0
+          ? of({ parentIds })
+          : this.loadInheritedValue(parentIds, config, fieldId),
+      ),
+      tap((inherited) &#x3D;&gt; state.set(inherited)),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+
+    const watchedValue &#x3D; { state: state.asReadonly(), loaded$ };
+    this.valuesFromParents.set(
+      form,
+      (this.valuesFromParents.get(form) ?? new Map()).set(
+        fieldId,
+        watchedValue,
+      ),
+    );
+    return watchedValue;
+  }
+
+  /**
+   * Load the linked parent entities and get the value they all have in common
+   * (in database format, with the value mapping of the rule applied).
+   */
+  private async loadInheritedValue(
+    parentIds: string[],
+    config: DefaultValueConfigInheritedField,
+    fieldId: string,
+  ): Promise&lt;InheritedValueState&gt; {
+    try {
+      return {
+        parentIds,
+        ...(await this.automatedFieldUpdateConfigService.loadCommonValue(
+          parentIds,
+          config,
+        )),
+      };
+    } catch (error) {
+      // a bug, but later changes of the linked parents are still watched
+      Logging.error(
+        &quot;InheritedValueService could not determine the inherited value&quot;,
+        { field: fieldId },
+        error,
+      );
+      return { parentIds, noCommonValue: &quot;unavailable&quot; };
+    }
+  }
+
+  /**
+   * Get the ids of the linked parent entities from the form or entity.
+   * @param form
+   * @param defaultConfig
+   * @return the ids of all linked parent entities (empty if none are linked)
+   * @private
+   */
+  private getParentRefIds&lt;T extends Entity&gt;(
+    form: EntityForm&lt;T&gt;,
+    defaultConfig: DefaultValueConfigInheritedField,
+  ): string[] {
+    const sourceFormControl &#x3D; form.formGroup?.get(
+      defaultConfig.sourceReferenceField,
+    );
+    // if the field is in the form, its value counts even when the user cleared it
+    const linkedFieldValue &#x3D; sourceFormControl
+      ? sourceFormControl.value
+      : form.entity?.[defaultConfig.sourceReferenceField];
+
+    return asArray(linkedFieldValue ?? []).filter((id) &#x3D;&gt; !!id);
+  }
+}
+
+/**
+ * Get the default value configs filtered for the given mode,
+ * excluding automation rules (with sourceReferenceEntity), which are handled by the AutomatedFieldUpdateConfigService.
+ * @param fieldConfigs
+ */
+export function getConfigsForInheritedMode(
+  fieldConfigs: FormFieldConfig[],
+): Map&lt;string, DefaultValueConfigInheritedField&gt; {
+  return new Map(
+    fieldConfigs
+      .filter(isInheritingFromParent)
+      .map((field) &#x3D;&gt; [field.id, field.defaultValue.config]),
+  );
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'InheritedValueState.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -183,11 +183,6 @@ export interface EntityForm&lt;T extends Entity&gt; {
     EntityFormSavedEvent | EntityFormCancelledEvent
   &gt;;
 
-  /**
-   * map of field ids to the current value to be inherited from the referenced parent entities&#x27; field
-   */
-  inheritedParentValues: Map&lt;string, any&gt;;
-
   watcher: Map&lt;string, Subscription&gt;;
 }
 

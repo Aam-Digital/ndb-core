@@ -252,11 +252,6 @@
                                     <span class="modifier">Async</span>
                                 <a href="#initEntityForm" >initEntityForm</a>
                             </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#onFormValueChanges" >onFormValueChanges</a>
-                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -509,7 +504,7 @@
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:48</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -525,7 +520,9 @@
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Get details about the status and context of a default value field to display to the user.</p>
+                        <div class="io-description"><p>Get details about the status and context of a default value field to display to the user.
+This may read signals of details that are loaded asynchronously,
+so call it in a reactive context (e.g. a <code>computed</code>) to get updates once they are loaded.</p>
 </div>
 
                             <div class="io-description">
@@ -594,89 +591,6 @@
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
                     <code>initEntityForm&lt;T&gt;(form: <a href="../interfaces/EntityForm.html" target="_self">EntityForm&lt;T&gt;</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Inherited from         <code><a href="../classes/DefaultValueStrategy.html" target="_self" >DefaultValueStrategy</a></code>
-</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultValueStrategy.html#source" target="_self" >DefaultValueStrategy:41</a></code>
-</div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="col-md-4">
-                            <b>Type parameters :</b>
-                            <ul class="type-parameters">
-                                    <li>T</li>
-                            </ul>
-                        </td>
-                    </tr>
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>form</td>
-                                            <td>
-                                                            <code><a href="../interfaces/EntityForm.html" target="_self" >EntityForm&lt;T&gt;</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="onFormValueChanges"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>onFormValueChanges</b></span>
-                        <a href="#onFormValueChanges"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>onFormValueChanges&lt;T&gt;(form: <a href="../interfaces/EntityForm.html" target="_self">EntityForm&lt;T&gt;</a>)</code>
                 </td>
             </tr>
 

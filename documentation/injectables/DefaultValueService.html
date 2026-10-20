@@ -231,8 +231,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="101"
-                                    class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:101</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="91"
+                                    class="link-to-prism">src/app/core/default-values/default-value-service/default-value.service.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -424,7 +424,6 @@ export class DefaultValueService {
     for (const strategy of this.defaultValueStrategies) {
       await strategy.initEntityForm(form);
     }
-    this.enableChangeListener(form);
 
     for (const fieldConfig of form.fieldConfigs) {
       if (!fieldConfig.defaultValue) {
@@ -485,15 +484,6 @@ export class DefaultValueService {
     return true;
   }
 
-  private enableChangeListener&lt;T extends Entity&gt;(form: EntityForm&lt;T&gt;) {
-    form.watcher.set(
-      &quot;formGroupValueChanges&quot;,
-      form.formGroup.valueChanges.subscribe(async (change) &#x3D;&gt;
-        this.defaultValueStrategies.forEach((s) &#x3D;&gt; s.onFormValueChanges(form)),
-      ),
-    );
-  }
-
   getDefaultValueUiHint&lt;T extends Entity&gt;(
     form: EntityForm&lt;T&gt;,
     fieldId: string,
@@ -514,6 +504,13 @@ export class DefaultValueService {
 export type DefaultValueHint &#x3D; FullDefaultValueHint | EmptyDefaultValueHint;
 
 /**
+ * Why linked records provide no value to inherit:
+ * - &quot;conflict&quot;: they have different values
+ * - &quot;unavailable&quot;: some of them could not be loaded (e.g. no permission to read them)
+ */
+export type NoCommonValueReason &#x3D; &quot;conflict&quot; | &quot;unavailable&quot;;
+
+/**
  * Details of the source for an &quot;inherited&quot; default value in a field,
  * used to display context to the user about this.
  */
@@ -531,7 +528,10 @@ export interface FullDefaultValueHint {
    */
   isCollectedFromLinkedRecords?: boolean;
 
-  isEmpty?: undefined | false;
+  noCommonValue?: undefined;
+
+  isEmpty?: false;
+  isLoading?: false;
 }
 
 /**
@@ -540,6 +540,16 @@ export interface FullDefaultValueHint {
 export interface EmptyDefaultValueHint {
   inheritedFromField: string;
   isEmpty: true;
+
+  /**
+   * Parent records are linked but they provide no value in common to inherit.
+   */
+  noCommonValue?: NoCommonValueReason;
+
+  /**
+   * Parent records are linked but still being loaded.
+   */
+  isLoading?: boolean;
 
   isInSync?: undefined;
   inheritedFromType?: undefined;

@@ -1389,6 +1389,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/NavigationComponent.html" data-type="entity-link" >NavigationComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/NoCommonValueHintComponent.html" data-type="entity-link" >NoCommonValueHintComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/NoteDetailsComponent.html" data-type="entity-link" >NoteDetailsComponent</a>
                             </li>
                             <li class="link">
@@ -2514,6 +2517,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/ColumnMapping.html" data-type="entity-link" >ColumnMapping</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/CommonValue.html" data-type="entity-link" >CommonValue</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/CommonValueOfParents.html" data-type="entity-link" >CommonValueOfParents</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/ConditionEditorDialogData.html" data-type="entity-link" >ConditionEditorDialogData</a>
                             </li>
                             <li class="link">
@@ -2844,6 +2853,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/InheritanceOption.html" data-type="entity-link" >InheritanceOption</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/InheritedValueState.html" data-type="entity-link" >InheritedValueState</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/InteractionType.html" data-type="entity-link" >InteractionType</a>
                             </li>
                             <li class="link">
@@ -2908,6 +2920,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/NewMatchAction.html" data-type="entity-link" >NewMatchAction</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/NewValue.html" data-type="entity-link" >NewValue</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/NoteDetailsConfig.html" data-type="entity-link" >NoteDetailsConfig</a>
@@ -3100,6 +3115,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ViewResponse.html" data-type="entity-link" >ViewResponse</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/WatchedInheritedValue.html" data-type="entity-link" >WatchedInheritedValue</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/WidgetOption.html" data-type="entity-link" >WidgetOption</a>
