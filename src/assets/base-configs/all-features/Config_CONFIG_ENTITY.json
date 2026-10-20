@@ -1465,6 +1465,20 @@
           "dataType": "configurable-enum",
           "additional": "center"
         },
+        "childrenCenter": {
+          "id": "childrenCenter",
+          "label": "Center of Children",
+          "description": "Inherited automatically if all children linked in \"Entity Multi Field\" share the same Center",
+          "dataType": "configurable-enum",
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceField": "entityMultiField",
+              "sourceValueField": "center"
+            }
+          }
+        },
         "enumMulti": {
           "id": "enumMulti",
           "label": "enum multi",
@@ -1634,6 +1648,7 @@
                         "remarks",
                         "enumDropdown",
                         "enumMulti",
+                        "childrenCenter",
                         "numberField",
                         "longTextField",
                         "percentageField",
