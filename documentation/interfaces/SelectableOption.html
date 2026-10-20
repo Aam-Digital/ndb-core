@@ -1029,9 +1029,9 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     );
     if (filterText) {
       this.autocompleteFilterFunction &#x3D; (option) &#x3D;&gt;
-        this.optionToString()(option)
-          ?.toLowerCase()
-          ?.includes(filterText.toLowerCase());
+        this.optionAsString(option)
+          .toLowerCase()
+          .includes(filterText.toLowerCase());
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
 
       filteredOptions &#x3D; filteredOptions.filter((o) &#x3D;&gt;
@@ -1252,11 +1252,19 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     queueMicrotask(() &#x3D;&gt; keyManager?.setActiveItem(event.source));
   }
 
+  /**
+   * Get the display text of an option, always as a string.
+   * &#x60;optionToString&#x60; may return a non-string (e.g. a numeric &#x60;_label&#x60; from config).
+   */
+  private optionAsString(opt: O): string {
+    return String(this.optionToString()(opt) ?? &quot;&quot;);
+  }
+
   private toSelectableOption(opt: O): SelectableOption&lt;O, V&gt; {
     return {
       initial: opt,
       asValue: this.valueMapper()(opt),
-      asString: this.optionToString()(opt),
+      asString: this.optionAsString(opt),
       selected: false,
       isHidden: (opt as SelectableOption&lt;O, V&gt;)?.isHidden ?? false,
       isInvalid: (opt as SelectableOption&lt;O, V&gt;)?.isInvalid ?? false,

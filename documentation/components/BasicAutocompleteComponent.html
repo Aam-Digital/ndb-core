@@ -1883,7 +1883,7 @@ are updated as soon as the selection changes.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:792</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:800</a></code>
 </div>
                         </td>
                     </tr>
@@ -1952,8 +1952,8 @@ are updated as soon as the selection changes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="778"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts:778</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="786"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts:786</a></div>
                         </td>
                     </tr>
 
@@ -1992,8 +1992,8 @@ are updated as soon as the selection changes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="760"
-                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts:760</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="768"
+                                    class="link-to-prism">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts:768</a></div>
                         </td>
                     </tr>
 
@@ -2466,7 +2466,7 @@ to keep it visible, causing minor misalignment. This is expected and ensures acc
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:803</a></code>
+                                <div class="io-line">        <code><a href="../directives/CustomFormControlDirective.html#source" target="_self" >CustomFormControlDirective:811</a></code>
 </div>
                         </td>
                     </tr>
@@ -4595,9 +4595,9 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     );
     if (filterText) {
       this.autocompleteFilterFunction &#x3D; (option) &#x3D;&gt;
-        this.optionToString()(option)
-          ?.toLowerCase()
-          ?.includes(filterText.toLowerCase());
+        this.optionAsString(option)
+          .toLowerCase()
+          .includes(filterText.toLowerCase());
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
 
       filteredOptions &#x3D; filteredOptions.filter((o) &#x3D;&gt;
@@ -4818,11 +4818,19 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
     queueMicrotask(() &#x3D;&gt; keyManager?.setActiveItem(event.source));
   }
 
+  /**
+   * Get the display text of an option, always as a string.
+   * &#x60;optionToString&#x60; may return a non-string (e.g. a numeric &#x60;_label&#x60; from config).
+   */
+  private optionAsString(opt: O): string {
+    return String(this.optionToString()(opt) ?? &quot;&quot;);
+  }
+
   private toSelectableOption(opt: O): SelectableOption&lt;O, V&gt; {
     return {
       initial: opt,
       asValue: this.valueMapper()(opt),
-      asString: this.optionToString()(opt),
+      asString: this.optionAsString(opt),
       selected: false,
       isHidden: (opt as SelectableOption&lt;O, V&gt;)?.isHidden ?? false,
       isInvalid: (opt as SelectableOption&lt;O, V&gt;)?.isInvalid ?? false,
