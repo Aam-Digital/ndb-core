@@ -28,7 +28,6 @@ export class DefaultValueService {
     for (const strategy of this.defaultValueStrategies) {
       await strategy.initEntityForm(form);
     }
-    this.enableChangeListener(form);
 
     for (const fieldConfig of form.fieldConfigs) {
       if (!fieldConfig.defaultValue) {
@@ -87,15 +86,6 @@ export class DefaultValueService {
     }
 
     return true;
-  }
-
-  private enableChangeListener<T extends Entity>(form: EntityForm<T>) {
-    form.watcher.set(
-      "formGroupValueChanges",
-      form.formGroup.valueChanges.subscribe(async (change) =>
-        this.defaultValueStrategies.forEach((s) => s.onFormValueChanges(form)),
-      ),
-    );
   }
 
   getDefaultValueUiHint<T extends Entity>(

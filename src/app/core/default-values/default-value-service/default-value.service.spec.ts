@@ -93,7 +93,6 @@ describe("DefaultValueService", () => {
     mockInheritedValueService = {
       setDefaultValue: vi.fn(),
       initEntityForm: vi.fn(),
-      onFormValueChanges: vi.fn(),
     };
     // @ts-ignore
     mockInheritedValueService["mode"] = "inherited-field";

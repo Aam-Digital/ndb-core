@@ -34,10 +34,6 @@ export abstract class DefaultValueStrategy {
     form: EntityForm<any>,
   ): void;
 
-  async onFormValueChanges<T extends Entity>(
-    form: EntityForm<T>,
-  ): Promise<void> {}
-
   async initEntityForm<T extends Entity>(form: EntityForm<T>): Promise<void> {}
 
   /**
