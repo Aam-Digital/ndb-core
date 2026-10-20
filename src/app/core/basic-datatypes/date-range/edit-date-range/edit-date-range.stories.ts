@@ -2,8 +2,8 @@ import { StoryFn } from "@storybook/angular";
 import { generateFormFieldStory } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-story-utils";
 
 const formFieldStory = generateFormFieldStory("EditDateRange", {
-  start: new Date("2026-03-01"),
-  end: new Date("2026-05-31"),
+  start: new Date(2026, 2, 1),
+  end: new Date(2026, 4, 31),
 });
 
 export default {

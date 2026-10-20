@@ -21,7 +21,7 @@ export const Basic = {
   render: Template,
 
   args: {
-    value: { start: new Date("2026-03-01"), end: new Date("2026-05-31") },
+    value: { start: new Date(2026, 2, 1), end: new Date(2026, 4, 31) },
   },
 };
 
@@ -29,7 +29,7 @@ export const OnlyStart = {
   render: Template,
 
   args: {
-    value: { start: new Date("2026-03-01") },
+    value: { start: new Date(2026, 2, 1) },
   },
 };
 
