@@ -7,11 +7,7 @@ import {
   AdminDefaultValueContext,
   DefaultValueStrategy,
 } from "../../core/default-values/default-value-strategy.interface";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import {
-  DefaultValueHint,
-  NoCommonValueReason,
-} from "../../core/default-values/default-value-service/default-value.service";
+import { DefaultValueHint } from "../../core/default-values/default-value-service/default-value.service";
 import { asArray } from "../../utils/asArray";
 import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
 import {
@@ -21,7 +17,10 @@ import {
 } from "./inherited-field-config";
 import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
+import {
+  AutomatedFieldUpdateConfigService,
+  CommonValueOfParents,
+} from "./automated-field-update/automated-field-update-config.service";
 import { Logging } from "../../core/logging/logging.service";
 import { isSameValue } from "./get-common-value";
 import {
@@ -39,17 +38,11 @@ import {
 /**
  * The value to inherit from the parent records currently linked in a form.
  */
-interface InheritedValueState {
+interface InheritedValueState extends CommonValueOfParents {
   parentIds: string[];
 
   /** whether the parent records are still being loaded (and the other properties are not set yet) */
   isLoading?: boolean;
-
-  /** the value the parent records have in common (in database format) */
-  value?: unknown;
-
-  /** why the parent records provide no value in common to inherit, if they don't */
-  noCommonValue?: NoCommonValueReason;
 }
 
 /**
@@ -75,7 +68,6 @@ interface WatchedInheritedValue {
 export class InheritedValueService extends DefaultValueStrategy {
   override readonly mode = "inherited-field";
 
-  private readonly entityMapper = inject(EntityMapperService);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly automatedFieldUpdateConfigService = inject(
     AutomatedFieldUpdateConfigService,
@@ -424,23 +416,12 @@ export class InheritedValueService extends DefaultValueStrategy {
     fieldId: string,
   ): Promise<InheritedValueState> {
     try {
-      const parentEntities = await Promise.all(
-        parentIds.map((id) => this.loadEntity(id)),
-      );
-      // without all linked parents available, no shared value can be determined
-      if (!parentEntities.every((parent) => !!parent)) {
-        return { parentIds, noCommonValue: "unavailable" };
-      }
-
-      const commonValue =
-        this.automatedFieldUpdateConfigService.calculateCommonValue(
-          parentEntities,
-          config,
-        );
       return {
         parentIds,
-        value: commonValue.value,
-        noCommonValue: commonValue.isConflict ? "conflict" : undefined,
+        ...(await this.automatedFieldUpdateConfigService.loadCommonValue(
+          parentIds,
+          config,
+        )),
       };
     } catch (error) {
       // a bug, but later changes of the linked parents are still watched
@@ -473,32 +454,6 @@ export class InheritedValueService extends DefaultValueStrategy {
       : form.entity?.[defaultConfig.sourceReferenceField];
 
     return asArray(linkedFieldValue ?? []).filter((id) => !!id);
-  }
-
-  private async loadEntity(entityId: string): Promise<Entity | undefined> {
-    try {
-      return await this.entityMapper.load(
-        Entity.extractTypeFromId(entityId),
-        entityId,
-      );
-    } catch (error) {
-      const status = error?.["status"] ?? error?.["statusCode"];
-      if (status === 401 || status === 403) {
-        // the user simply has no read access to the linked entity - expected for some roles
-        Logging.debug(
-          "InheritedValueService could not load source entity for inherited field (no permission)",
-          { entityId },
-          error,
-        );
-      } else {
-        Logging.warn(
-          "InheritedValueService could not load source entity for inherited field",
-          { entityId },
-          error,
-        );
-      }
-      return undefined;
-    }
   }
 }
 
