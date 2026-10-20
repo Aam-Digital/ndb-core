@@ -153,7 +153,7 @@ Example:
 
 #### List components
 
-List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects `"title"`, `"columns"`, `"columnGroup"` (optional) and `"filters"` (optional).
+List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects `"title"`, `"columns"`, `"columnGroups"` (optional) and `"filters"` (optional).
 (These are implemented by the `EntityListComponent`.)
 
 The `"title"` is the text shown in the heading of the component.
@@ -179,19 +179,22 @@ Example:
 ...
 ```
 
-The `"columnGroup"` object holds the three properties `"default"`, `"mobile"` and `"groups"`.
-`"default"` and `"mobile"` hold the names of the group of columns being displayed by default or on a mobile device.
-If the `"columnGroup"` property is not defined, all columns will be displayed.
-If `"default"` or `"mobile"` is not defined, the first entry of `"groups"` will be used.
-`"groups"` consists of an array of groups of columns, where every entry has a `"name"` and an array of column ids within `"columns"`.
+The optional `"columnGroups"` object holds the property `"groups"`, an array of groups of columns, where every entry has a `"name"` and an array of column ids within `"columns"`.
+The groups are shown as tabs above the table, so users can switch between them.
+If the `"columnGroups"` property is not defined, all columns will be displayed.
 Properties that are listed in any of the `groups` arrays and don't require further configurations, can be omitted from the `columns` array, the `EntityListComponent` will automatically add them.
+
+Which group is selected when the list opens follows fixed rules:
+
+- On a desktop screen, the first group is selected. Put the group users need most first.
+- On a small (mobile) screen, the group with the fewest columns is selected (the first of them if several groups have the same number of columns).
+
+Older configs may still contain `"default"` and `"mobile"` properties in `"columnGroups"`. These are ignored.
 
 Example:
 
 ```json
-"columnGroup": {
-"default": "School Info",
-"mobile": "Mobile",
+"columnGroups": {
 "groups": [
 {
 "name": "Basic Info",
@@ -203,11 +206,10 @@ Example:
 ]
 },
 {
-"name": "School Info",
+"name": "Mobile",
 "columns": [
 "projectNumber",
-"name",
-...
+"name"
 ]
 },
 
