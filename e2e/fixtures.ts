@@ -52,7 +52,11 @@ faker.setDefaultRefDate(E2E_REF_DATE);
  * Keep this list short and document the reason for each entry.
  * To allow errors that a single test triggers deliberately, use the `allowedConsoleErrors` option instead.
  */
-const KNOWN_CONSOLE_ERRORS: RegExp[] = [];
+const KNOWN_CONSOLE_ERRORS: RegExp[] = [
+  // The app first requests the translations of its own version, which don't
+  // exist for the e2e build (version 0.0.0), and then falls back to the latest.
+  /^Failed to load resource: .*404.*\/locale\/0\.0\.0\/messages\.\w+\.json/,
+];
 
 /** Options that tests can override with `test.use({ ... })`. */
 export interface E2eOptions {
