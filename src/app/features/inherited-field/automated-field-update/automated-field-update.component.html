@@ -42,8 +42,7 @@
             [hideInheritButton]="true"
           ></app-entity-field-edit>
           @if (entity.noCommonValue) {
-            <div class="hint-text no-common-value-warning">
-              <fa-icon icon="warning"></fa-icon>
+            <app-hint-box type="warning">
               @if (entity.noCommonValue === "unavailable") {
                 <span i18n>
                   Some linked records could not be loaded (e.g. because you have
@@ -57,7 +56,7 @@
                   here.
                 </span>
               }
-            </div>
+            </app-hint-box>
           }
           @if (entity.unlinked) {
             <div class="hint-text" i18n>
