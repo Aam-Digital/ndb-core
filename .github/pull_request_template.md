@@ -3,7 +3,8 @@
 ## Manual Testing Steps
 
 <!-- For changes that are visible in the app: how a reviewer can try the change in the PR deployment, with the expected result of each step.
-Needs a special config (fields, rules, features)? Add it to the all-features config in this PR and write "demo mode All Features" below instead of admin-UI setup steps. -->
+Needs a special config (fields, rules, features)? Add it to the all-features config in this PR and write "demo mode All Features". Add a brief list in the "Setup" section below with a remark that this is already set up.
+-->
 
 **Setup** (if needed)
 
