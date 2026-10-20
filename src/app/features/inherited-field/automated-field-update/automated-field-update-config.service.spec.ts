@@ -1100,6 +1100,25 @@ describe("AutomatedFieldUpdateConfigService", () => {
     );
   });
   describe("group linking several schools", () => {
+    function categoryOf(id: string | undefined) {
+      return TEST_SCHOOL_ENUM.find((e) => e.id === id);
+    }
+
+    /** the suggestion for the group in the dialog that was opened */
+    function suggestionForGroup() {
+      return mockDialog.open.mock.calls[0][1].data.entities.find(
+        (e) => e.targetEntityType === CommonValueGroup,
+      );
+    }
+
+    /** let loading the record with the given id fail with the given error */
+    function failLoadingOf(id: string, error: unknown) {
+      const load = entityMapper.load.bind(entityMapper);
+      vi.spyOn(entityMapper, "load").mockImplementation((type, entityId) =>
+        entityId === id ? Promise.reject(error) : load(type, entityId),
+      );
+    }
+
     async function saveSchoolCategory(
       otherSchoolCategories: string[],
       newCategory: string | undefined,
@@ -1114,7 +1133,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       entityMapper.addAll([school, ...otherSchools, group]);
 
       const schoolBefore = school.copy();
-      school.category = TEST_SCHOOL_ENUM.find((e) => e.id === newCategory);
+      school.category = categoryOf(newCategory);
       mockDialog.open.mockClear();
 
       await service.applyRulesToDependentEntities(school, schoolBefore);
@@ -1130,9 +1149,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         await saveSchoolCategory(others, newCategory, groupCategory);
 
         expect(mockDialog.open).toHaveBeenCalledTimes(1);
-        const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
-          (e) => e.targetEntityType === CommonValueGroup,
-        );
+        const suggestion = suggestionForGroup();
         expect(suggestion.newValue).toBe(expected);
         expect(suggestion.noCommonValue).toBeUndefined();
       },
@@ -1142,9 +1159,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       await saveSchoolCategory([undefined], undefined, "primary", "primary");
 
       expect(mockDialog.open).toHaveBeenCalledTimes(1);
-      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
-        (e) => e.targetEntityType === CommonValueGroup,
-      );
+      const suggestion = suggestionForGroup();
       expect(suggestion.newValue).toBeUndefined();
       expect(suggestion.noCommonValue).toBeUndefined();
     });
@@ -1153,30 +1168,46 @@ describe("AutomatedFieldUpdateConfigService", () => {
       await saveSchoolCategory(["secondary"], "primary", "secondary");
 
       expect(mockDialog.open).toHaveBeenCalledTimes(1);
-      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
-        (e) => e.targetEntityType === CommonValueGroup,
-      );
+      const suggestion = suggestionForGroup();
       expect(suggestion.newValue).toBe("secondary");
       expect(suggestion.noCommonValue).toBe("conflict");
     });
 
-    it("keeps the current value of the group and notes that some of its schools could not be loaded", async () => {
-      const school = createSchool("secondary");
-      const group = new CommonValueGroup();
-      group.members = [school.getId(), "School:not-accessible"];
-      group.category = "secondary";
-      entityMapper.addAll([school, group]);
-      const schoolBefore = school.copy();
-      school.category = TEST_SCHOOL_ENUM.find((e) => e.id === "primary");
-      mockDialog.open.mockClear();
+    describe("when some of its schools cannot be loaded", () => {
+      let warn: MockInstance;
 
-      await service.applyRulesToDependentEntities(school, schoolBefore);
+      beforeEach(() => {
+        warn = vi.spyOn(Logging, "warn").mockReturnValue(undefined);
+      });
 
-      const suggestion = mockDialog.open.mock.calls[0][1].data.entities.find(
-        (e) => e.targetEntityType === CommonValueGroup,
+      afterEach(() => {
+        warn.mockRestore();
+      });
+
+      it.each([
+        ["the user may not read it", { status: 403 }, false],
+        ["it is missing", { status: 404 }, true],
+      ])(
+        "keeps the current value of the group if a school cannot be loaded because %s, reporting only unexpected failures",
+        async (_, loadError, reported) => {
+          const school = createSchool("secondary");
+          const group = new CommonValueGroup();
+          group.members = [school.getId(), "School:not-accessible"];
+          group.category = "secondary";
+          entityMapper.addAll([school, group]);
+          failLoadingOf("School:not-accessible", loadError);
+          const schoolBefore = school.copy();
+          school.category = categoryOf("primary");
+          mockDialog.open.mockClear();
+
+          await service.applyRulesToDependentEntities(school, schoolBefore);
+
+          const suggestion = suggestionForGroup();
+          expect(suggestion.newValue).toBe("secondary");
+          expect(suggestion.noCommonValue).toBe("unavailable");
+          expect(warn).toHaveBeenCalledTimes(reported ? 1 : 0);
+        },
       );
-      expect(suggestion.newValue).toBe("secondary");
-      expect(suggestion.noCommonValue).toBe("unavailable");
     });
 
     it("does not save the group again if the dialog is confirmed without a change of its value", async () => {
