@@ -1,7 +1,8 @@
 name: Build
 # Builds the web app and, from it, the Docker image `aamdigital/ndb-server` (Docker Hub) and
 # `ghcr.io/aam-digital/ndb-core`, with the shared docker-image workflow (see Aam-Digital/.github).
-# Check names: `<caller job> / build-webapp`, `<caller job> / build-image / build`.
+# Check names: `<caller job> / build-webapp`, `<caller job> / build-image / build (<platform>)`,
+# `<caller job> / build-image / merge`.
 
 on:
   workflow_call:
@@ -25,11 +26,6 @@ on:
         required: false
         default: ""
         description: Extra image tags, comma-separated (e.g. "edge,master" or "pr-123")
-      labels:
-        type: string
-        required: false
-        default: ""
-        description: Extra OCI labels (`key=value`, one per line)
       platforms:
         type: string
         required: false
@@ -95,7 +91,7 @@ jobs:
           retention-days: 1
 
   # Not skipped for fork PRs (`push: false` only builds the image): a skipped job would not report the nested
-  # check `<caller job> / build-image / build`, which is a required status check.
+  # check `<caller job> / build-image / build (linux/amd64)`, which is a required status check.
   build-image:
     needs:
       - build-webapp
@@ -116,7 +112,6 @@ jobs:
       version: ${{ inputs.version }}
       stable: ${{ inputs.stable }}
       tags: ${{ inputs.tags }}
-      labels: ${{ inputs.labels }}
       platforms: ${{ inputs.platforms }}
       push: ${{ inputs.push }}
       # reproducible image timestamps (buildx reads SOURCE_DATE_EPOCH as a build argument, too)

@@ -40,7 +40,6 @@ jobs:
     with:
       build_name: pr-${{ github.event.number }}
       tags: pr-${{ github.event.number }}
-      labels: org.opencontainers.image.version=pr-${{ github.event.number }}
       platforms: linux/amd64
       # PRs from forks cannot push; their image is only built
       push: ${{ github.event.pull_request.head.repo.full_name == github.repository }}

@@ -30,9 +30,12 @@ jobs:
   prune-prerelease-images:
     if: ${{ !github.event.release.prerelease }}
     needs: build
-    uses: Aam-Digital/.github/.github/workflows/image-prune.yml@feat/reusable-workflows # TODO switch to @v1
+    uses: Aam-Digital/.github/.github/workflows/image-cleanup.yml@feat/reusable-workflows # TODO switch to @v1
     permissions:
+      actions: write
       packages: write
+    with:
+      tags: "*-edge.*,*-master.*"
 
   sentry-upload-sourcemaps:
     runs-on: ubuntu-latest
