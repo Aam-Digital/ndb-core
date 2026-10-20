@@ -1099,7 +1099,8 @@ describe("AutomatedFieldUpdateConfigService", () => {
       },
     );
   });
-  describe("group linking several schools", () => {
+
+  describe("record linking several parents", () => {
     function categoryOf(id: string | undefined) {
       return TEST_SCHOOL_ENUM.find((e) => e.id === id);
     }
@@ -1124,11 +1125,14 @@ describe("AutomatedFieldUpdateConfigService", () => {
       newCategory: string | undefined,
       groupCategory: string | undefined,
       previousCategory?: string,
+      otherMemberIds: string[] = [],
     ) {
       const school = createSchool(previousCategory);
       const otherSchools = otherSchoolCategories.map(createSchool);
       const group = new CommonValueGroup();
-      group.members = [school, ...otherSchools].map((s) => s.getId());
+      group.members = [school, ...otherSchools]
+        .map((s) => s.getId())
+        .concat(otherMemberIds);
       group.category = groupCategory;
       entityMapper.addAll([school, ...otherSchools, group]);
 
@@ -1140,40 +1144,24 @@ describe("AutomatedFieldUpdateConfigService", () => {
     }
 
     it.each([
-      [["primary"], "primary", undefined, "primary"],
-      [["primary", "primary"], "primary", "secondary", "primary"],
-      [[undefined], "primary", undefined, "primary"],
+      // other parents, changed parent, record before, suggested value, note, changed parent before
+      [["primary", "primary"], "primary", "secondary", "primary", undefined],
+      [[undefined], "primary", undefined, "primary", undefined],
+      [[undefined], undefined, "primary", undefined, undefined, "primary"],
+      [["secondary"], "primary", "secondary", "secondary", "conflict"],
     ])(
-      "other schools %j + saved school changed to %s (group has %s) suggests %s",
-      async (others, newCategory, groupCategory, expected) => {
-        await saveSchoolCategory(others, newCategory, groupCategory);
+      "suggests the value that all parents have in common to the record (others %j, changed %s, record %s): %s, note %s",
+      async (others, changed, current, expected, note, previous) => {
+        await saveSchoolCategory(others, changed, current, previous);
 
         expect(mockDialog.open).toHaveBeenCalledTimes(1);
         const suggestion = suggestionForGroup();
         expect(suggestion.newValue).toBe(expected);
-        expect(suggestion.noCommonValue).toBeUndefined();
+        expect(suggestion.noCommonValue).toBe(note);
       },
     );
 
-    it("suggests clearing the value of the group if none of its schools has a category anymore", async () => {
-      await saveSchoolCategory([undefined], undefined, "primary", "primary");
-
-      expect(mockDialog.open).toHaveBeenCalledTimes(1);
-      const suggestion = suggestionForGroup();
-      expect(suggestion.newValue).toBeUndefined();
-      expect(suggestion.noCommonValue).toBeUndefined();
-    });
-
-    it("keeps the current value of the group and notes that the schools have no category in common", async () => {
-      await saveSchoolCategory(["secondary"], "primary", "secondary");
-
-      expect(mockDialog.open).toHaveBeenCalledTimes(1);
-      const suggestion = suggestionForGroup();
-      expect(suggestion.newValue).toBe("secondary");
-      expect(suggestion.noCommonValue).toBe("conflict");
-    });
-
-    describe("when some of its schools cannot be loaded", () => {
+    describe("when some of the parents cannot be loaded", () => {
       let warn: MockInstance;
 
       beforeEach(() => {
@@ -1188,19 +1176,13 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ["the user may not read it", { status: 403 }, false],
         ["it is missing", { status: 404 }, true],
       ])(
-        "keeps the current value of the group if a school cannot be loaded because %s, reporting only unexpected failures",
+        "keeps the current value of the record if a parent cannot be loaded because %s, reporting only unexpected failures",
         async (_, loadError, reported) => {
-          const school = createSchool("secondary");
-          const group = new CommonValueGroup();
-          group.members = [school.getId(), "School:not-accessible"];
-          group.category = "secondary";
-          entityMapper.addAll([school, group]);
           failLoadingOf("School:not-accessible", loadError);
-          const schoolBefore = school.copy();
-          school.category = categoryOf("primary");
-          mockDialog.open.mockClear();
 
-          await service.applyRulesToDependentEntities(school, schoolBefore);
+          await saveSchoolCategory([], "primary", "secondary", "secondary", [
+            "School:not-accessible",
+          ]);
 
           const suggestion = suggestionForGroup();
           expect(suggestion.newValue).toBe("secondary");
@@ -1210,7 +1192,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       );
     });
 
-    it("does not save the group again if the dialog is confirmed without a change of its value", async () => {
+    it("does not save the record again if the dialog is confirmed without a change of its value", async () => {
       const saveSpy = vi.spyOn(entityMapper, "save");
 
       await saveSchoolCategory(["secondary"], "primary", "secondary");
@@ -1225,9 +1207,9 @@ describe("AutomatedFieldUpdateConfigService", () => {
       [["secondary"], "primary", undefined],
       [["primary"], "primary", "primary"],
     ])(
-      "other schools %j + saved school changed to %s (group has %s) does not update the group",
-      async (others, newCategory, groupCategory) => {
-        await saveSchoolCategory(others, newCategory, groupCategory);
+      "does not offer an update of the record if there is no value to suggest or keep, or it has the common value already (others %j, changed %s, record %s)",
+      async (others, changed, current) => {
+        await saveSchoolCategory(others, changed, current);
 
         const updatedEntities = mockDialog.open.mock.calls.flatMap(
           (call) => call[1].data.entities,
