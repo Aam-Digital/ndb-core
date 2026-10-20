@@ -199,12 +199,10 @@ All problems must be resolved before your contribution can be accepted.</li>
 <li>Once you have finished your work or want some feedback/discussion about it, open a new <a href="https://github.com/Aam-Digital/ndb-core/pulls">pull request (PR) on GitHub</a>.
 Any reviews, feedback and discussions about your code will take place in this PR on GitHub. Please follow it and explain or adapt your code if necessary.</li>
 <li>A <strong>different developer will review</strong> your PR and provide feedback or approve it.</li>
-<li>PRs have an automatic test system (the CI adds a comment with the link) where others can test the changes.</li>
-</ol>
-<ul>
-<li>each PR and each commit on <code>master</code> branch also are available as a docker image (<code>pr-&lt;pr_number&gt;</code>, e.g. pr-101; <code>&lt;version&gt;-master.&lt;built&gt;</code>, e.g. 3.52.0-master.1) that can be deployed for testing or as a hotfix, if necessary</li>
+<li>PRs have an automatic test system (the CI adds a comment with the link) where others can test the changes.<ul>
+<li>each PR and each commit on <code>master</code> branch also are available as a docker image (<code>pr-&lt;pr_number&gt;</code>, e.g. pr-101; <code>&lt;last release, patch + 1&gt;-edge.&lt;commits since&gt;</code>, e.g. 3.52.1-edge.4; the newest one is also tagged <code>edge</code>) that can be deployed for testing or as a hotfix, if necessary</li>
 </ul>
-<ol>
+</li>
 <li>A core team member will merge the PR onto the <code>master</code> branch after review.</li>
 <li>After merging, the branch is automatically deleted and the corresponding issue(s) are closed.</li>
 </ol>
