@@ -77,7 +77,7 @@ jobs:
 
       - run: npx ng build --configuration production
 
-      - name: Inject sentry token in sourcemaps
+      - name: Inject Sentry debug IDs into the sourcemaps
         run: |
           npx sentry-cli sourcemaps inject ./dist
           npx ngsw-config dist ngsw-config.json

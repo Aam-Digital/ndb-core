@@ -36,10 +36,14 @@ jobs:
     with:
       tags: "*-edge.*,*-master.*"
 
-  sentry-upload-sourcemaps:
+  # Sentry release with the sourcemaps of the build (full releases only). A job-level `if`, so that a skipped upload
+  # never shows as a green job. The build already injected the debug IDs (`sentry-cli sourcemaps inject` in
+  # _build.yaml); the same @sentry/cli version from package-lock.json uploads them here.
+  sentry-release:
+    if: ${{ !github.event.release.prerelease }}
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read # checkout of package-lock.json
     needs:
       - build
     env:
@@ -48,43 +52,27 @@ jobs:
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
+      - name: Checkout package-lock.json
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          sparse-checkout: package-lock.json
+          sparse-checkout-cone-mode: false
+
       - name: Download webapp files
         uses: actions/download-artifact@v8
         with:
           name: webapp-files
           path: dist
 
-      - name: Upload Sourcemaps
-        # skipped for prereleases (e.g. -edge.n)
-        if: ${{ !github.event.release.prerelease }}
+      - name: Install sentry-cli
+        # The exact version the build used; --ignore-scripts: the binary comes from a platform-specific dependency
         run: |
-          npm install -g @sentry/cli
-          sentry-cli sourcemaps upload --release="ndb-core@$BUILD_NAME" ./dist
+          version=$(jq -er '.packages["node_modules/@sentry/cli"].version' package-lock.json)
+          npm install --global --ignore-scripts "@sentry/cli@$version"
+          sentry-cli --version
 
-  sentry-release:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read # checkout
-    needs:
-      - build
-      - sentry-upload-sourcemaps
-    env:
-      BUILD_NAME: ${{ github.event.release.tag_name }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
-      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - name: Set up npm (packageManager in package.json)
-        run: npm install --global "npm@$(jq -r '.packageManager | sub("^npm@"; "") | sub("\\+.*$"; "")' package.json)"
-      - name: Create Release
-        # skipped for prereleases (e.g. -edge.n)
-        if: ${{ !github.event.release.prerelease }}
+      - name: Create release and upload sourcemaps
         run: |
-          npm install -g @sentry/cli
           sentry-cli releases new "ndb-core@$BUILD_NAME"
+          sentry-cli sourcemaps upload --release="ndb-core@$BUILD_NAME" ./dist
