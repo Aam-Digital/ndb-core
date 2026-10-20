@@ -46,3 +46,6 @@ reviewers keep finding on top of that.
     have caught the bug. If it does not, ask for one (#4116).
 14. **Clean Code.** Any unnecessary complexity must be removed. 
    Check pre-existing code and other files for similar code that could be reused or generalized also.
+15. **Test setup missing from the PR.** A change that needs a special config to try
+    (fields, rules, features) should add it to the all-features config in the PR, so
+    the manual testing steps need no admin-UI setup (#4526).
