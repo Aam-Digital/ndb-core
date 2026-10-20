@@ -60,8 +60,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - name: Set up npm (packageManager in package.json)
-        run: npm install --global "npm@$(jq -r '.packageManager | sub("^npm@"; "") | sub("\\+.*$"; "")' package.json)"
 
       - run: echo "building app for BUILD_NAME $BUILD_NAME"
       - run: npm ci
