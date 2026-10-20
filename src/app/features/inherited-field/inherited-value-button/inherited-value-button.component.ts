@@ -3,6 +3,7 @@ import {
   Component,
   inject,
   ChangeDetectionStrategy,
+  computed,
   effect,
   input,
   signal,
@@ -49,10 +50,35 @@ export class InheritedValueButtonComponent {
   field = input<FormFieldConfig>();
   entity = input<Entity>();
 
-  defaultValueHint = signal<DefaultValueHint | undefined>(undefined);
+  /** changes whenever a value in the form changes, because form values are not signals */
+  private readonly formValueChange = signal(0);
+
+  /** also updates on its own when asynchronously loaded details used by the hint are ready */
+  defaultValueHint = computed<DefaultValueHint | undefined>(() => {
+    this.formValueChange();
+    const form = this.form();
+    const field = this.field();
+    if (!form || !field) {
+      return undefined;
+    }
+
+    return this.defaultValueService.getDefaultValueUiHint(form, field.id);
+  });
 
   /** Whether this field's value is passed on to linked records, which can be updated through this button */
-  canUpdateLinkedRecords = signal(false);
+  canUpdateLinkedRecords = computed(() => {
+    this.formValueChange();
+    const form = this.form();
+    const field = this.field();
+    return (
+      !!form?.entity &&
+      !!field &&
+      this.automatedFieldUpdateConfigService.hasLinkedRecordsToUpdate(
+        form.entity,
+        field.id,
+      )
+    );
+  });
 
   /** Whether the linked records are being loaded or are being reviewed in the dialog */
   isUpdatingLinkedRecords = signal(false);
@@ -60,47 +86,14 @@ export class InheritedValueButtonComponent {
   constructor() {
     effect((onCleanup) => {
       const form = this.form();
-      const field = this.field();
-      if (!form || !field) {
-        this.defaultValueHint.set(undefined);
+      if (!form) {
         return;
       }
 
-      if (
-        field.defaultValue?.mode == "inherited-field" &&
-        !field.defaultValue?.config?.sourceReferenceField
-      ) {
-        this.defaultValueHint.set(undefined);
-        return;
-      }
-
-      const updateHint = () => {
-        this.defaultValueHint.set(
-          this.defaultValueService.getDefaultValueUiHint(form, field.id),
-        );
-        this.canUpdateLinkedRecords.set(
-          !!form.entity &&
-            this.automatedFieldUpdateConfigService.hasLinkedRecordsToUpdate(
-              form.entity,
-              field.id,
-            ),
-        );
-      };
-      updateHint();
-
-      let pendingTimeout: ReturnType<typeof setTimeout> | undefined;
       const sub = form.formGroup.valueChanges
         .pipe(debounceTime(50))
-        .subscribe(() => {
-          // ensure this is only called after the other changes handlers
-          pendingTimeout = setTimeout(updateHint);
-        });
-      onCleanup(() => {
-        sub.unsubscribe();
-        if (pendingTimeout) {
-          clearTimeout(pendingTimeout);
-        }
-      });
+        .subscribe(() => this.formValueChange.update((count) => count + 1));
+      onCleanup(() => sub.unsubscribe());
     });
   }
 

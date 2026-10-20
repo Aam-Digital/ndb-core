@@ -43,7 +43,6 @@ export function getDefaultInheritedForm(
     fieldConfigs: Array.from(entity.getSchema().entries()).map(
       ([key, fieldConfig]) => ({ id: key, ...fieldConfig }),
     ),
-    inheritedParentValues: new Map(),
     watcher: new Map(),
     onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
     formGroup: new FormBuilder().group<any>({

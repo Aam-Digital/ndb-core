@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, Signal, signal } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 import { EntityForm } from "../../core/common-components/entity-form/entity-form";
@@ -17,21 +17,50 @@ import { FormFieldConfig } from "../../core/common-components/entity-form/FormCo
 import {
   DefaultValueConfigInheritedField,
   isCollectingFromLinkedRecords,
+  isInheritingFromParent,
 } from "./inherited-field-config";
 import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
 import { Logging } from "../../core/logging/logging.service";
-import { CommonValue, isSameValue } from "./get-common-value";
+import { isSameValue } from "./get-common-value";
+import {
+  distinctUntilChanged,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  startWith,
+  switchMap,
+  tap,
+} from "rxjs";
 
 /**
- * The parent records that the inherited value of a field was loaded for.
+ * The value to inherit from the parent records currently linked in a form.
  */
-interface LoadedParents {
+interface InheritedValueState {
   parentIds: string[];
+
+  /** whether the parent records are still being loaded (and the other properties are not set yet) */
+  isLoading?: boolean;
+
+  /** the value the parent records have in common (in database format) */
+  value?: unknown;
 
   /** why the parent records provide no value in common to inherit, if they don't */
   noCommonValue?: NoCommonValueReason;
+}
+
+/**
+ * The inherited value of a field in a form, loaded again whenever the linked parent records change.
+ */
+interface WatchedInheritedValue {
+  /** the latest state, to display it reactively */
+  state: Signal<InheritedValueState>;
+
+  /** emits the loaded value for every change of the linked parent records, while it is subscribed to */
+  loaded$: Observable<InheritedValueState>;
 }
 
 /**
@@ -53,12 +82,23 @@ export class InheritedValueService extends DefaultValueStrategy {
   );
 
   /**
-   * The parent records that the inherited values of each form were loaded for (by field id),
-   * to load them again only if the linked records change instead of on every change of the form.
+   * Values inherited from the parent records that this record links to
+   * (e.g. a child inheriting the category of its school), by form and field id.
+   * Loaded again whenever the linked parents in the form change.
    */
-  private readonly loadedParents = new WeakMap<
+  private readonly valuesFromParents = new WeakMap<
     EntityForm<any>,
-    Map<string, LoadedParents>
+    Map<string, WatchedInheritedValue>
+  >();
+
+  /**
+   * Values collected from all records that link to this record
+   * (e.g. a school collecting the cities of all its children), by form and field id.
+   * Loaded once when the form is created (in database format).
+   */
+  private readonly valuesFromLinkingRecords = new WeakMap<
+    EntityForm<any>,
+    Map<string, unknown[] | undefined>
   >();
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
@@ -76,7 +116,7 @@ export class InheritedValueService extends DefaultValueStrategy {
   }
 
   override async initEntityForm<T extends Entity>(form: EntityForm<T>) {
-    await this.updateLinkedEntities(form);
+    await this.watchInheritedValues(form);
     await this.collectValuesOfLinkedRecords(form);
   }
 
@@ -94,22 +134,25 @@ export class InheritedValueService extends DefaultValueStrategy {
     const collectingFields = form.fieldConfigs.filter(
       isCollectingFromLinkedRecords,
     );
+    const collectedValuesOfForm = new Map<string, unknown[] | undefined>();
+    this.valuesFromLinkingRecords.set(form, collectedValuesOfForm);
     await Promise.all(
       collectingFields.map(async (field) =>
-        form.inheritedParentValues.set(
+        collectedValuesOfForm.set(
           field.id,
           await this.automatedFieldUpdateConfigService
             .collectValuesOfLinkedRecords(
               form.entity,
               field.defaultValue.config,
             )
-            .catch((error) =>
+            .catch((error) => {
               Logging.warn(
                 "InheritedValueService could not load linked records for collected field",
                 { field: field.id },
                 error,
-              ),
-            ),
+              );
+              return undefined;
+            }),
         ),
       ),
     );
@@ -127,63 +170,45 @@ export class InheritedValueService extends DefaultValueStrategy {
     fieldConfig: EntitySchemaField,
     form: EntityForm<any>,
   ) {
+    // automation rules are handled by the AutomatedFieldUpdateConfigService instead
+    if (!isInheritingFromParent(fieldConfig)) {
+      return;
+    }
     const config: DefaultValueConfigInheritedField =
-      fieldConfig.defaultValue?.config;
-    if (!config) {
-      return;
-    }
+      fieldConfig.defaultValue.config;
 
-    // Only handle inheritance configs (not automation configs)
-    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
-    if (!config.sourceReferenceField || config.sourceReferenceEntity) {
-      return;
-    }
-
-    // load inherited from initial entity
-    await this.onSourceValueChange(
-      form,
-      targetFormControl,
-      fieldConfig,
-      this.getParentRefIds(form, config),
-    );
-
-    // subscribe to update inherited whenever source field changes
-    let sourceFormControl: AbstractControl<any, any> | null =
-      form.formGroup.get(config.sourceReferenceField);
-    if (sourceFormControl && targetFormControl) {
-      form.watcher.set(
-        "sourceFormControlValueChanges_" + config.sourceReferenceField,
-        sourceFormControl.valueChanges.subscribe(
-          async (change) =>
-            await this.onSourceValueChange(
-              form,
-              targetFormControl,
-              fieldConfig,
-              change,
-            ),
+    const { loaded$ } = this.getInheritedValue(form, fieldConfig.id, config);
+    // inherit the value initially and whenever the linked parents change
+    form.watcher.set(
+      "inheritIntoNewRecord_" + fieldConfig.id,
+      loaded$.subscribe((inherited) =>
+        this.inheritIntoNewRecord(
+          form,
+          targetFormControl,
+          fieldConfig,
+          inherited,
         ),
-      );
-    }
+      ),
+    );
+    await firstValueFrom(loaded$);
   }
 
   /**
-   * Update the inherited (target field) value based on the change of the source field (parent reference) change.
+   * Set the inherited value to the target field of a new record,
+   * unless the user has entered a value there.
    * @param form
    * @param targetFormControl
    * @param fieldConfig
-   * @param change The new entity ID value(s) of the source (parent ref) field.
+   * @param inherited The value loaded from the currently linked parents.
    * @private
    */
-  private async onSourceValueChange(
+  private inheritIntoNewRecord(
     form: EntityForm<any>,
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
-    change,
+    inherited: InheritedValueState,
   ) {
-    const defaultConfig: DefaultValueConfigInheritedField =
-      fieldConfig.defaultValue?.config;
     if (
-      !defaultConfig ||
       form.formGroup.disabled ||
       !form.entity.isNew ||
       (targetFormControl.dirty && !!targetFormControl.value)
@@ -191,16 +216,7 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
-    const parentIds = asArray(change ?? []).filter((id) => !!id);
-    if (parentIds.length === 0) {
-      targetFormControl.setValue(undefined);
-      return;
-    }
-
-    const commonValue = (
-      await this.loadCommonParentValue(parentIds, defaultConfig)
-    )?.value;
-    if (commonValue === undefined) {
+    if (inherited.value === undefined) {
       targetFormControl.setValue(undefined);
       return;
     }
@@ -208,17 +224,13 @@ export class InheritedValueService extends DefaultValueStrategy {
     // always wrap a single source value in an array if the target field holds several values
     targetFormControl.setValue(
       this.entitySchemaService.valueToEntityFormat(
-        fieldConfig.isArray ? asArray(commonValue) : commonValue,
+        fieldConfig.isArray ? asArray(inherited.value) : inherited.value,
         fieldConfig,
       ),
     );
 
     targetFormControl.markAsUntouched();
     targetFormControl.markAsPristine();
-  }
-
-  override async onFormValueChanges<T extends Entity>(form: EntityForm<T>) {
-    await this.updateLinkedEntities(form);
   }
 
   /**
@@ -241,41 +253,40 @@ export class InheritedValueService extends DefaultValueStrategy {
       return this.getCollectedValuesUiHint(form, field, defaultConfig);
     }
 
-    // Only show the inheritance UI hint for actual inheritance configs (not automation)
-    // Inheritance has sourceReferenceField but NO sourceReferenceEntity
-    if (
-      !defaultConfig.sourceReferenceField ||
-      defaultConfig.sourceReferenceEntity
-    ) {
+    // only watched for inheritance configs (not automation rules)
+    // in forms initialized with default values (not e.g. when merging records)
+    const watchedValue = this.valuesFromParents.get(form)?.get(field.id);
+    if (!watchedValue) {
       return;
     }
 
-    const parentRefIds = this.getParentRefIds(form, defaultConfig);
-    const noCommonValue =
-      parentRefIds.length > 0
-        ? this.loadedParents.get(form)?.get(field.id)?.noCommonValue
-        : undefined;
-    if (parentRefIds.length === 0 || noCommonValue) {
+    // reading the signal lets reactive callers update the hint once the linked parents are loaded
+    const inherited = watchedValue.state();
+    if (inherited.parentIds.length === 0) {
       return {
         inheritedFromField: defaultConfig.sourceReferenceField,
         isEmpty: true,
-        noCommonValue,
+      };
+    }
+
+    if (inherited.isLoading || inherited.noCommonValue) {
+      return {
+        inheritedFromField: defaultConfig.sourceReferenceField,
+        isEmpty: true,
+        isLoading: inherited.isLoading,
+        noCommonValue: inherited.noCommonValue,
       };
     }
 
     return {
       inheritedFromField: defaultConfig.sourceReferenceField,
-      inheritedFromType: Entity.extractTypeFromId(parentRefIds[0]),
+      inheritedFromType: Entity.extractTypeFromId(inherited.parentIds[0]),
       isInSync: isSameValue(
-        form.inheritedParentValues.get(field.id),
+        inherited.value,
         this.getCurrentDatabaseValue(form, field),
       ),
       syncFromParentField: () =>
-        this.setDatabaseValueToForm(
-          form,
-          field,
-          form.inheritedParentValues.get(field.id),
-        ),
+        this.setDatabaseValueToForm(form, field, inherited.value),
     };
   }
 
@@ -288,7 +299,9 @@ export class InheritedValueService extends DefaultValueStrategy {
     field: FormFieldConfig,
     config: DefaultValueConfigInheritedField,
   ): DefaultValueHint | undefined {
-    const collectedValues: any[] = form.inheritedParentValues.get(field.id);
+    const collectedValues = this.valuesFromLinkingRecords
+      .get(form)
+      ?.get(field.id);
     if (!collectedValues?.length) {
       return;
     }
@@ -338,92 +351,106 @@ export class InheritedValueService extends DefaultValueStrategy {
       );
   }
 
-  private async updateLinkedEntities<T extends Entity>(form: EntityForm<T>) {
-    let inheritedConfigs: Map<string, DefaultValueConfigInheritedField> =
-      getConfigsForInheritedMode(form.fieldConfigs);
+  /**
+   * Keep the inherited value of each field up to date with the parent records linked in the form
+   * (also for existing records, to compare the field's value with it).
+   * @return resolves once the inherited values of the initially linked parents are loaded
+   */
+  private async watchInheritedValues<T extends Entity>(form: EntityForm<T>) {
+    const inheritedConfigs = getConfigsForInheritedMode(form.fieldConfigs);
+    await Promise.all(
+      [...inheritedConfigs].map(([fieldId, config]) => {
+        const { loaded$ } = this.getInheritedValue(form, fieldId, config);
+        form.watcher.set("inheritedValue_" + fieldId, loaded$.subscribe());
+        return firstValueFrom(loaded$);
+      }),
+    );
+  }
 
-    const linkedEntityRefs: Map<string, string[]> = this.getLinkedEntityRefs(
-      inheritedConfigs,
-      form,
+  /**
+   * Get the inherited value of a field in the form,
+   * setting it up to be loaded again whenever the linked parents change, if not done yet.
+   * Loading only starts when subscribing to its `loaded$`.
+   */
+  private getInheritedValue<T extends Entity>(
+    form: EntityForm<T>,
+    fieldId: string,
+    config: DefaultValueConfigInheritedField,
+  ): WatchedInheritedValue {
+    const existing = this.valuesFromParents.get(form)?.get(fieldId);
+    if (existing) {
+      return existing;
+    }
+
+    const state = signal<InheritedValueState>({
+      parentIds: this.getParentRefIds(form, config),
+      isLoading: true,
+    });
+    const sourceFormControl = form.formGroup?.get(config.sourceReferenceField);
+    const loaded$ = (sourceFormControl?.valueChanges ?? of()).pipe(
+      startWith(undefined),
+      map(() => this.getParentRefIds(form, config)),
+      distinctUntilChanged(isEqual),
+      tap((parentIds) => state.set({ parentIds, isLoading: true })),
+      // a newer change of the linked parents discards the result of a load still in progress
+      switchMap((parentIds) =>
+        // without linked parents, the field is reset right away
+        parentIds.length === 0
+          ? of({ parentIds })
+          : this.loadInheritedValue(parentIds, config, fieldId),
+      ),
+      tap((inherited) => state.set(inherited)),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
 
-    let loadedParentsOfForm = this.loadedParents.get(form);
-    if (!loadedParentsOfForm) {
-      loadedParentsOfForm = new Map();
-      this.loadedParents.set(form, loadedParentsOfForm);
-    }
-
-    for (const [fieldId, parentEntityIds] of linkedEntityRefs) {
-      if (
-        isEqual(loadedParentsOfForm.get(fieldId)?.parentIds, parentEntityIds)
-      ) {
-        continue;
-      }
-      const loadedParents: LoadedParents = { parentIds: parentEntityIds };
-      loadedParentsOfForm.set(fieldId, loadedParents);
-
-      const commonValue = await this.loadCommonParentValue(
-        parentEntityIds,
-        inheritedConfigs.get(fieldId),
-      );
-      if (loadedParentsOfForm.get(fieldId) !== loadedParents) {
-        // the linked records changed again while loading, the newer call sets the value
-        continue;
-      }
-
-      if (!commonValue) {
-        loadedParents.noCommonValue = "unavailable";
-      } else if (commonValue.isConflict) {
-        loadedParents.noCommonValue = "conflict";
-      }
-      form.inheritedParentValues.set(fieldId, commonValue?.value);
-    }
+    const watchedValue = { state: state.asReadonly(), loaded$ };
+    this.valuesFromParents.set(
+      form,
+      (this.valuesFromParents.get(form) ?? new Map()).set(
+        fieldId,
+        watchedValue,
+      ),
+    );
+    return watchedValue;
   }
 
   /**
    * Load the linked parent entities and get the value they all have in common
    * (in database format, with the value mapping of the rule applied).
-   * @return the common value, or undefined if not all parents could be loaded
    */
-  private async loadCommonParentValue(
+  private async loadInheritedValue(
     parentIds: string[],
     config: DefaultValueConfigInheritedField,
-  ): Promise<CommonValue | undefined> {
-    const parentEntities = await Promise.all(
-      parentIds.map((id) => this.loadEntity(id)),
-    );
-    // without all linked parents available, no shared value can be determined
-    if (!parentEntities.every((parent) => !!parent)) {
-      return undefined;
-    }
-
-    return this.automatedFieldUpdateConfigService.calculateCommonValue(
-      parentEntities,
-      config,
-    );
-  }
-
-  /**
-   * Get the linked entity references from the form.
-   * @param inheritedConfigs
-   * @param form
-   * @return Entity ids of the linked parent entities (always wrapped as an array)
-   * @private
-   */
-  private getLinkedEntityRefs<T extends Entity>(
-    inheritedConfigs: Map<string, DefaultValueConfigInheritedField>,
-    form: EntityForm<T>,
-  ): Map<string, string[]> {
-    const linkedEntityRefs: Map<string, string[]> = new Map();
-
-    for (const [key, defaultValueConfig] of inheritedConfigs) {
-      const parentRefIds = this.getParentRefIds(form, defaultValueConfig);
-      if (parentRefIds.length > 0) {
-        linkedEntityRefs.set(key, parentRefIds);
+    fieldId: string,
+  ): Promise<InheritedValueState> {
+    try {
+      const parentEntities = await Promise.all(
+        parentIds.map((id) => this.loadEntity(id)),
+      );
+      // without all linked parents available, no shared value can be determined
+      if (!parentEntities.every((parent) => !!parent)) {
+        return { parentIds, noCommonValue: "unavailable" };
       }
-    }
 
-    return linkedEntityRefs;
+      const commonValue =
+        this.automatedFieldUpdateConfigService.calculateCommonValue(
+          parentEntities,
+          config,
+        );
+      return {
+        parentIds,
+        value: commonValue.value,
+        noCommonValue: commonValue.isConflict ? "conflict" : undefined,
+      };
+    } catch (error) {
+      // a bug, but later changes of the linked parents are still watched
+      Logging.error(
+        "InheritedValueService could not determine the inherited value",
+        { field: fieldId },
+        error,
+      );
+      return { parentIds, noCommonValue: "unavailable" };
+    }
   }
 
   /**
@@ -437,9 +464,13 @@ export class InheritedValueService extends DefaultValueStrategy {
     form: EntityForm<T>,
     defaultConfig: DefaultValueConfigInheritedField,
   ): string[] {
-    const linkedFieldValue =
-      form.formGroup?.get(defaultConfig.sourceReferenceField)?.value ??
-      form.entity?.[defaultConfig.sourceReferenceField];
+    const sourceFormControl = form.formGroup?.get(
+      defaultConfig.sourceReferenceField,
+    );
+    // if the field is in the form, its value counts even when the user cleared it
+    const linkedFieldValue = sourceFormControl
+      ? sourceFormControl.value
+      : form.entity?.[defaultConfig.sourceReferenceField];
 
     return asArray(linkedFieldValue ?? []).filter((id) => !!id);
   }
@@ -481,11 +512,7 @@ export function getConfigsForInheritedMode(
 ): Map<string, DefaultValueConfigInheritedField> {
   return new Map(
     fieldConfigs
-      .filter(
-        (field) =>
-          field.defaultValue?.mode === "inherited-field" &&
-          !field.defaultValue.config?.sourceReferenceEntity,
-      )
+      .filter(isInheritingFromParent)
       .map((field) => [field.id, field.defaultValue.config]),
   );
 }

@@ -42,6 +42,8 @@ export abstract class DefaultValueStrategy {
 
   /**
    * Get details about the status and context of a default value field to display to the user.
+   * This may read signals of details that are loaded asynchronously,
+   * so call it in a reactive context (e.g. a `computed`) to get updates once they are loaded.
    * @param form
    * @param field
    */

@@ -66,6 +66,8 @@
           }
         </div>
       }
+    } @else if (defaultValueHint()?.isLoading) {
+      <div i18n>Loading the linked records ...</div>
     } @else if (defaultValueHint()?.noCommonValue === "unavailable") {
       <div i18n>
         Some linked records could not be loaded (e.g. because you have no access

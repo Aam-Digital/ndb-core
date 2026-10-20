@@ -145,6 +145,7 @@ export interface FullDefaultValueHint {
   noCommonValue?: undefined;
 
   isEmpty?: false;
+  isLoading?: false;
 }
 
 /**
@@ -158,6 +159,11 @@ export interface EmptyDefaultValueHint {
    * Parent records are linked but they provide no value in common to inherit.
    */
   noCommonValue?: NoCommonValueReason;
+
+  /**
+   * Parent records are linked but still being loaded.
+   */
+  isLoading?: boolean;
 
   isInSync?: undefined;
   inheritedFromType?: undefined;
