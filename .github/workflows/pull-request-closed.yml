@@ -17,7 +17,7 @@ jobs:
   cleanup-image:
     # PRs from forks have no image (and their builds don't push)
     if: github.event.pull_request.head.repo.full_name == github.repository
-    uses: Aam-Digital/.github/.github/workflows/image-cleanup.yml@feat/reusable-workflows # TODO switch to @v1
+    uses: Aam-Digital/.github/.github/workflows/image-cleanup.yml@v1
     permissions:
       actions: write
       packages: write

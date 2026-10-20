@@ -47,7 +47,7 @@ jobs:
     needs:
       - qa
       - qa-e2e
-    uses: Aam-Digital/.github/.github/workflows/edge-version.yml@feat/reusable-workflows # TODO switch to @v1
+    uses: Aam-Digital/.github/.github/workflows/edge-version.yml@v1
     permissions:
       contents: read
 

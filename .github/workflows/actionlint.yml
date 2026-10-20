@@ -13,6 +13,6 @@ permissions:
 jobs:
   # Check name: `actionlint / actionlint`
   actionlint:
-    uses: Aam-Digital/.github/.github/workflows/actionlint.yml@feat/reusable-workflows # TODO switch to @v1
+    uses: Aam-Digital/.github/.github/workflows/actionlint.yml@v1
     permissions:
       contents: read

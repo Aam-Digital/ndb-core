@@ -95,7 +95,7 @@ jobs:
   build-image:
     needs:
       - build-webapp
-    uses: Aam-Digital/.github/.github/workflows/docker-image.yml@feat/reusable-workflows # TODO switch to @v1
+    uses: Aam-Digital/.github/.github/workflows/docker-image.yml@v1
     permissions:
       contents: read
       packages: write
