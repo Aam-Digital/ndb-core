@@ -1,24 +1,11 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { EntityConstructor } from "../model/entity";
 import { EntitySchema, SchemaEmbeddedType } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { EntitySchemaService } from "./entity-schema.service";
+import {
+  mergeEmbeddedSchema,
+  SchemaEmbedDatatype,
+} from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 
 /**
  * Separator used to build an id referencing a property nested inside an embedded field,
@@ -67,13 +54,11 @@ function isEmbeddedArrayField(field: EntitySchemaField): boolean {
 
 /**
  * Build the map of inner schema fields of an embedded field
- * (e.g. `dataType: "schema-embed"`, `"schema-embed-array"`, `"attendance"`
- * or the deprecated `"event-attendance-map"`).
+ * (e.g. `dataType: "schema-embed"`, `"attendance"` or the deprecated `"event-attendance-map"`),
+ * the same way the datatype itself (de)serializes them (see {@link mergeEmbeddedSchema}).
  *
- * This merges the datatype's own `embeddedType` class schema (if the datatype declares one,
- * e.g. {@link AttendanceDatatype}) with the field's `additional` config
- * (a `{ [fieldId]: EntitySchemaField }` map), the latter taking precedence -
- * mirroring how `SchemaEmbedDatatype.getEffectiveSchema` merges these two sources.
+ * A field counts as embedded if its datatype is a {@link SchemaEmbedDatatype}
+ * or declares an `embeddedType` (like the deprecated `EventAttendanceMapDatatype`).
  *
  * Returns `undefined` if the field is not an embedded schema field (i.e. has no inner fields).
  */
@@ -85,34 +70,16 @@ export function getEmbeddedSchema(
     return undefined;
   }
 
-  const datatype = schemaService.getDatatypeOrDefault(field.dataType, true);
-  const embeddedType: SchemaEmbeddedType | undefined = (datatype as any)
-    ?.embeddedType;
-  const innerSchema: EntitySchema = new Map(embeddedType?.schema ?? []);
-
-  const additional = field.additional;
-  if (
-    additional &&
-    typeof additional === "object" &&
-    !Array.isArray(additional)
-  ) {
-    for (const [key, value] of Object.entries<EntitySchemaField>(additional)) {
-      if (!value || typeof value !== "object") {
-        continue;
-      }
-      const merged = { ...innerSchema.get(key), ...value, id: key };
-      // only recognize this as a field override if we can resolve a dataType for it
-      // (either from the override itself, or inherited from the base/embeddedType schema) -
-      // this is what tells apart an embedded-schema `additional` map from the many other,
-      // unrelated shapes `additional` is used for elsewhere (e.g. a single entity-type
-      // string, or a plain config object for some other datatype).
-      if (typeof merged.dataType !== "string") {
-        continue;
-      }
-      innerSchema.set(key, merged);
-    }
+  const datatype = schemaService.getDatatypeOrDefault(field.dataType, true) as
+    { embeddedType?: SchemaEmbeddedType } | undefined;
+  if (!(datatype instanceof SchemaEmbedDatatype) && !datatype?.embeddedType) {
+    return undefined;
   }
 
+  const innerSchema = mergeEmbeddedSchema(
+    datatype.embeddedType?.schema,
+    field.additional,
+  );
   return innerSchema.size > 0 ? innerSchema : undefined;
 }
 

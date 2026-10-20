@@ -52,6 +52,40 @@ export interface SchemaEmbedDatatypeAdditional {
 }
 
 /**
+ * Build the inner schema of an embedded field from the embedded type's own schema
+ * and the field's `additional` config (a {@link SchemaEmbedDatatypeAdditional} map).
+ *
+ * An entry in `additional` only overrides what it states explicitly (e.g. restricting the
+ * allowed entity types of a reference), everything else (`dataType`, `label`, ...)
+ * is inherited from the embedded type's field of the same id.
+ *
+ * @param baseSchema schema of the embedded type (e.g. `embeddedType.schema`), not mutated
+ * @param additional the `additional` config of the field holding the embedded object(s)
+ */
+export function mergeEmbeddedSchema(
+  baseSchema: EntitySchema | undefined,
+  additional: unknown,
+): EntitySchema {
+  const schema: EntitySchema = new Map(baseSchema ?? []);
+  if (
+    !additional ||
+    typeof additional !== "object" ||
+    Array.isArray(additional)
+  ) {
+    return schema;
+  }
+
+  for (const [key, value] of Object.entries(
+    additional as SchemaEmbedDatatypeAdditional,
+  )) {
+    if (value && typeof value === "object") {
+      schema.set(key, { ...schema.get(key), ...value, id: key });
+    }
+  }
+  return schema;
+}
+
+/**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
  *
  * Can be used in two ways:
@@ -79,19 +113,10 @@ export class SchemaEmbedDatatype<
    * and/or the `additional` config.
    */
   private getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
-    // Clone the base schema to avoid mutating the original class schema
-    const baseSchema: EntitySchema = new Map(
-      this.embeddedType?.schema ?? new Map(),
+    return mergeEmbeddedSchema(
+      this.embeddedType?.schema,
+      schemaField?.additional,
     );
-    const additional: SchemaEmbedDatatypeAdditional =
-      schemaField?.additional ?? {};
-
-    // Add schema from additional config, taking precedence over baseSchema if present
-    for (const [key, value] of Object.entries(additional)) {
-      baseSchema.set(key, { ...baseSchema.get(key), ...value, id: key });
-    }
-
-    return baseSchema;
   }
 
   /**

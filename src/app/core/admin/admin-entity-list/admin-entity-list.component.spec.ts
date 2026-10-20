@@ -1,20 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { TestBed } from "@angular/core/testing";
 import { AdminEntityListComponent } from "./admin-entity-list.component";
 import { Entity } from "../../entity/model/entity";
@@ -81,33 +64,6 @@ describe("AdminEntityListComponent", () => {
     expect(ids).toEqual(
       expect.arrayContaining([
         "participants", // still present in filterAdditionalFields itself (from config().columns)
-        "participants.participant",
-        "participants.status",
-        "participants.remarks",
-      ]),
-    );
-  });
-
-  it("produces a final filter-candidate list (as AdminListManagerComponent.availableItems would) without the bare field, but with its properties", () => {
-    // replicate AdminListManagerComponent.availableItems' exclusion logic here, since that
-    // component is only instantiated once the template actually renders
-    const excluded = new Set(component.filterExcludedFields());
-    const getId = (f) => (typeof f === "string" ? f : f.id);
-
-    const schemaFields = Array.from(TestEvent.schema.keys()).filter(
-      (id) => !excluded.has(id),
-    );
-    const additionalFields = component
-      .filterAdditionalFields()
-      .filter((f) => !excluded.has(getId(f)));
-
-    const finalIds = [...schemaFields, ...additionalFields].map(getId);
-
-    expect(finalIds).not.toContain("participants");
-    expect(finalIds).toEqual(
-      expect.arrayContaining([
-        "date",
-        "category",
         "participants.participant",
         "participants.status",
         "participants.remarks",

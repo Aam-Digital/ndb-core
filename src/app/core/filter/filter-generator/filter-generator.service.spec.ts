@@ -259,6 +259,39 @@ describe("FilterGeneratorService", () => {
     }
   });
 
+  it("creates an entity filter offering all entity types a reference field allows", async () => {
+    @DatabaseEntity("FilterGeneratorMultiTypeRefTest")
+    class MultiTypeRefEntity extends Entity {}
+    MultiTypeRefEntity.schema.set("ref", {
+      dataType: "entity",
+      additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+    });
+
+    const testEntity = TestEntity.create("Referenced TestEntity");
+    const note = Note.create(new Date(), "Referenced Note");
+    await TestBed.inject(EntityMapperService).saveAll([testEntity, note]);
+    const refToTestEntity = Object.assign(new MultiTypeRefEntity(), {
+      ref: testEntity.getId(),
+    });
+    const refToNote = Object.assign(new MultiTypeRefEntity(), {
+      ref: note.getId(),
+    });
+
+    const [entityFilter] = await service.generate(
+      [{ id: "ref" }],
+      MultiTypeRefEntity,
+      [],
+    );
+
+    expect(entityFilter).toBeInstanceOf(EntityFilter);
+    const options = (entityFilter as EntityFilter<Entity>).options;
+    const noteOption = options.find((o) => o.key === note.getId());
+    expect(options.map((o) => o.key)).toContain(testEntity.getId());
+    expect(filter([refToTestEntity, refToNote], noteOption)).toEqual([
+      refToNote,
+    ]);
+  });
+
   it("should create filters with all possible options on default", async () => {
     const fieldSchema = TestEntity.schema.get("rating");
 

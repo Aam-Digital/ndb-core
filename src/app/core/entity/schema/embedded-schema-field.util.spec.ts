@@ -1,20 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Injectable } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Entity } from "../model/entity";
@@ -204,20 +187,29 @@ describe("embedded-schema-field.util", () => {
       expect(schema.get("participant").dataType).toEqual("string");
     });
 
-    it("ignores an additional entry with no dataType to inherit and none declared either", () => {
-      const schema = getEmbeddedSchema(schemaService, {
-        dataType: "attendance",
-        additional: { notAnAttendanceItemField: { additional: "something" } },
-      });
-
-      expect(schema.has("notAnAttendanceItemField")).toBe(false);
-    });
-
     it("returns undefined for a field that is not an embedded schema field at all", () => {
       expect(
         getEmbeddedSchema(schemaService, { dataType: "string" }),
       ).toBeUndefined();
       expect(getEmbeddedSchema(schemaService, undefined)).toBeUndefined();
+    });
+
+    it("does not read inner fields from an object-shaped `additional` of a non-embedded datatype", () => {
+      expect(
+        getEmbeddedSchema(schemaService, {
+          dataType: "string",
+          additional: { someOption: { dataType: "string" } },
+        }),
+      ).toBeUndefined();
+    });
+
+    it("reads inner fields of a config-only `schema-embed` field (without an embeddedType)", () => {
+      const schema = getEmbeddedSchema(schemaService, {
+        dataType: "schema-embed",
+        additional: { phone: { dataType: "string" } },
+      });
+
+      expect(schema.get("phone")).toEqual({ dataType: "string", id: "phone" });
     });
   });
 });

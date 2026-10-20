@@ -43,7 +43,7 @@ import {
   styleUrls: ["./admin-entity-list.component.scss"],
 })
 export class AdminEntityListComponent {
-  private schemaService = inject(EntitySchemaService);
+  private readonly schemaService = inject(EntitySchemaService);
 
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
@@ -64,7 +64,7 @@ export class AdminEntityListComponent {
       },
   );
 
-  private allEmbeddedFieldRefs = computed<EmbeddedFieldRef[]>(() =>
+  private readonly allEmbeddedFieldRefs = computed<EmbeddedFieldRef[]>(() =>
     getEmbeddedFieldRefs(this.schemaService, this.entityConstructor()),
   );
 
@@ -75,7 +75,7 @@ export class AdminEntityListComponent {
    * is only offered as a filter option once it has been added as a column (see
    * `filterAdditionalFields`).
    */
-  private embeddedFilterFields = computed<ColumnConfig[]>(() => {
+  private readonly embeddedFilterFields = computed<ColumnConfig[]>(() => {
     const displayedColumnIds = new Set(
       this.columnGroups().groups.flatMap((g) => g.columns),
     );
