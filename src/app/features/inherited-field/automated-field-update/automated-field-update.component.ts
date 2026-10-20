@@ -3,6 +3,7 @@ import { EntityFieldEditComponent } from "#src/app/core/entity/entity-field-edit
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -26,7 +27,8 @@ import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
-import { isEqual, uniq } from "lodash-es";
+import { differenceWith, isEqual, uniq } from "lodash-es";
+import { asArray } from "#src/app/utils/asArray";
 import {
   catchError,
   concatMap,
@@ -90,6 +92,12 @@ export interface AffectedEntity {
   /** Ids of the records this one is reached from (the changed entity, or affected entities of the level below) */
   via?: string[];
 
+  /**
+   * A copy of the affected entity that only has the values of the field that the shown value removes
+   * (for fields that add to the existing values), to display them.
+   */
+  removedEntity?: Entity;
+
   /** Whether the user changed the suggested value */
   edited?: boolean;
 
@@ -104,6 +112,19 @@ export interface UpdateTrigger {
 
   /** The changed entity before the change (the same as entity if there is no change) */
   before: Entity;
+}
+
+/** A field of the changed entity that caused an update, and whether its value was changed */
+interface TriggerChange {
+  field: FormFieldConfig;
+  isChanged: boolean;
+}
+
+/** The affected entities that are based on the same field of the changed entity */
+interface UpdateGroup {
+  sourceFieldId: string;
+  changes: TriggerChange[];
+  rows: AffectedEntity[];
 }
 
 /** How long to wait for further changes of the user before the entities above are updated */
@@ -175,8 +196,8 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   private readonly valueChanged = new Subject<void>();
   private changeCount = 0;
 
-  /** The fields of the changed entity that caused the update, to show what changed */
-  readonly triggerChanges = this.getTriggerChanges();
+  /** The affected entities, grouped by the field of the changed entity that the update is based on */
+  readonly groups = computed(() => this.groupByTriggerField(this.rows()));
 
   /**
    * The first entity directly linked to the changed entity, if all of them are linked through the same field
@@ -199,10 +220,43 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       : undefined;
   }
 
-  private getTriggerChanges(): {
-    field: FormFieldConfig;
-    isChanged: boolean;
-  }[] {
+  private groupByTriggerField(rows: AffectedEntity[]): UpdateGroup[] {
+    const groups = new Map<string, AffectedEntity[]>();
+    for (const row of rows) {
+      const fieldId = this.getTriggerFieldId(row, rows);
+      groups.set(fieldId, [...(groups.get(fieldId) ?? []), row]);
+    }
+    return [...groups].map(([fieldId, groupRows]) => ({
+      sourceFieldId: fieldId,
+      changes: this.getTriggerChanges(fieldId, groupRows),
+      rows: groupRows,
+    }));
+  }
+
+  /** The field of the changed entity that the update of the given entity is based on, over all levels */
+  private getTriggerFieldId(
+    row: AffectedEntity,
+    rows: AffectedEntity[],
+  ): string {
+    let current = row;
+    while ((current.level ?? 1) > 1) {
+      const below = rows.find(
+        (r) =>
+          (r.level ?? 1) < current.level &&
+          current.via?.includes(r.id) &&
+          r.targetFieldId === current.sourceFieldId,
+      );
+      if (!below) break;
+      current = below;
+    }
+    return current.sourceFieldId;
+  }
+
+  /** The fields of the changed entity that caused the update of the given rows, to show what changed */
+  private getTriggerChanges(
+    sourceFieldId: string,
+    groupRows: AffectedEntity[],
+  ): TriggerChange[] {
     const trigger = this.data.trigger;
     if (!trigger) return [];
 
@@ -210,12 +264,10 @@ export class AutomatedFieldUpdateComponent implements OnInit {
     const isChanged = (fieldId: string) =>
       JSON.stringify(trigger.before[fieldId]) !==
       JSON.stringify(trigger.entity[fieldId]);
-    const firstLevel = this.data.entities.filter(
-      (entity) => (entity.level ?? 1) === 1,
-    );
+    const firstLevel = groupRows.filter((entity) => (entity.level ?? 1) === 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds = uniq([
-      ...firstLevel.map((entity) => entity.sourceFieldId),
+      sourceFieldId,
       ...firstLevel
         .filter(
           (entity) => entity.relatedReferenceFieldEntityType === entityType,
@@ -263,12 +315,40 @@ export class AutomatedFieldUpdateComponent implements OnInit {
         entity.selectedField,
       ),
     );
+    this.updateRemovedEntity(entity);
     control.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.onValueChange(entity));
   }
 
+  /** Remember which of the current values are not part of the shown value any more, as they are removed by it */
+  private updateRemovedEntity(entity: AffectedEntity): void {
+    const current = entity.affectedEntity?.[entity.targetFieldId];
+    if (!entity.addToExisting || !Array.isArray(current)) {
+      entity.removedEntity = undefined;
+      return;
+    }
+
+    // values like configurable enums are objects that are the same value if they have the same id
+    type Value = { id?: unknown } | undefined;
+    const shown = asArray<Value>(
+      entity.form.formGroup.controls[entity.targetFieldId].value ?? [],
+    );
+    const removed = differenceWith(
+      current as Value[],
+      shown,
+      (a, b) => isEqual(a, b) || (a?.id !== undefined && a.id === b?.id),
+    );
+    if (removed.length === 0) {
+      entity.removedEntity = undefined;
+      return;
+    }
+    entity.removedEntity = entity.affectedEntity.copy();
+    entity.removedEntity[entity.targetFieldId] = removed;
+  }
+
   private onValueChange(entity: AffectedEntity): void {
+    this.updateRemovedEntity(entity);
     entity.edited = !isEqual(this.getDatabaseValue(entity), entity.newValue);
     entity.suggestionChanged = entity.edited && entity.suggestionChanged;
     this.changeCount++;
@@ -399,6 +479,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
       ),
       { emitEvent: false },
     );
+    this.updateRemovedEntity(entity);
   }
 
   onConfirm(): void {

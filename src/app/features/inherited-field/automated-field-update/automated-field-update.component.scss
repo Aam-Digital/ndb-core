@@ -34,6 +34,11 @@
   }
 }
 
+// a further group is set apart from the table of the group above
+table + .trigger {
+  margin-top: sizes.$large;
+}
+
 // records further up the hierarchy are indented, with a line along the way from the records they are reached from
 @for $level from 2 through 10 {
   tr.level-#{$level} > td:first-child {
@@ -50,6 +55,18 @@ app-entity-field-edit + .hint-text {
 
 .hint-text {
   margin-bottom: sizes.$regular;
+}
+
+// values that the suggestion removes, as counterpart of the highlight of the added ones
+.removed-values {
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
+  color: colors.$error;
+
+  app-entity-field-view {
+    text-decoration: line-through;
+  }
 }
 
 // easy-to-overlook cases that should stand out

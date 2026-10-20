@@ -8,95 +8,113 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  @if (data.trigger) {
-    <div class="trigger">
-      <span class="trigger-label" i18n>Triggered by</span>
-      <app-entity-block
-        [entityId]="data.trigger.entity.getId()"
-      ></app-entity-block>
-      @for (change of triggerChanges; track change.field.id) {
-        <span class="trigger-change">
-          <app-entity-field-view
-            [field]="change.field"
-            [entity]="data.trigger.before"
-            showLabel="inline"
-          ></app-entity-field-view>
-          @if (change.isChanged) {
-            <fa-icon icon="arrow-right"></fa-icon>
+  @for (group of groups(); track group.sourceFieldId) {
+    @if (data.trigger) {
+      <div class="trigger">
+        <span class="trigger-label" i18n>Triggered by</span>
+        <app-entity-block
+          [entityId]="data.trigger.entity.getId()"
+        ></app-entity-block>
+        @for (change of group.changes; track change.field.id) {
+          <span class="trigger-change">
+            <span class="trigger-label">{{ change.field.label }}:</span>
             <app-entity-field-view
               [field]="change.field"
-              [entity]="data.trigger.entity"
+              [entity]="data.trigger.before"
             ></app-entity-field-view>
-          }
-        </span>
-      }
-    </div>
-  }
-
-  <table class="full-width">
-    @for (entity of rows(); track entity.id + "|" + entity.targetFieldId) {
-      <tr [class]="'level-' + (entity.level ?? 1)">
-        <td>
-          <app-entity-block [entityId]="entity.id"></app-entity-block>
-          @if ((entity.level ?? 1) > 1) {
-            <div class="hint-text via">
-              <span i18n>via</span>
-              @for (viaId of entity.via; track viaId; let last = $last) {
-                <app-entity-block [entityId]="viaId"></app-entity-block>
-                @if (!last) {
-                  <span>, </span>
-                }
-              }
-            </div>
-          }
-          @if (!sharedLinkEntity && (entity.level ?? 1) === 1) {
-            <div class="hint-text" i18n>
-              Linked through "{{
-                entity.relatedReferenceField
-                  | entityFieldLabel: entity.relatedReferenceFieldEntityType
-              }}"
-            </div>
-          }
-        </td>
-        <td>
-          <app-entity-field-edit
-            [field]="entity.selectedField"
-            [entity]="entity.affectedEntity"
-            [form]="entity.form"
-            [hideInheritButton]="true"
-            [highlightAdded]="entity.addToExisting"
-          ></app-entity-field-edit>
-          @if (entity.hasNoCommonValue) {
-            <div class="hint-text no-common-value-warning">
-              <fa-icon icon="warning"></fa-icon>
-              <span i18n>No value in common, current value kept</span>
-              <fa-icon
-                icon="circle-info"
-                i18n-matTooltip
-                matTooltip="The linked records have no value in common, so no new value is suggested. The current value is kept unless you change it here."
-              ></fa-icon>
-            </div>
-          }
-          @if (entity.unlinked) {
-            <div class="hint-text" i18n>No longer linked</div>
-          }
-          @if (entity.suggestionChanged) {
-            <div class="hint-text suggestion-changed">
-              <span i18n>The suggestion changed, your value is kept.</span>
-              <button
-                type="button"
-                mat-button
-                (click)="useSuggestion(entity)"
-                i18n
-              >
-                Use suggestion
-              </button>
-            </div>
-          }
-        </td>
-      </tr>
+            @if (change.isChanged) {
+              <fa-icon icon="arrow-right"></fa-icon>
+              <app-entity-field-view
+                [field]="change.field"
+                [entity]="data.trigger.entity"
+              ></app-entity-field-view>
+            }
+          </span>
+        }
+      </div>
     }
-  </table>
+
+    <table class="full-width">
+      @for (
+        entity of group.rows;
+        track entity.id + "|" + entity.targetFieldId
+      ) {
+        <tr [class]="'level-' + (entity.level ?? 1)">
+          <td>
+            <app-entity-block [entityId]="entity.id"></app-entity-block>
+            @if ((entity.level ?? 1) > 1) {
+              <div class="hint-text via">
+                <span i18n>via</span>
+                @for (viaId of entity.via; track viaId; let last = $last) {
+                  <app-entity-block [entityId]="viaId"></app-entity-block>
+                  @if (!last) {
+                    <span>, </span>
+                  }
+                }
+              </div>
+            }
+            @if (!sharedLinkEntity && (entity.level ?? 1) === 1) {
+              <div class="hint-text" i18n>
+                Linked through "{{
+                  entity.relatedReferenceField
+                    | entityFieldLabel: entity.relatedReferenceFieldEntityType
+                }}"
+              </div>
+            }
+          </td>
+          <td>
+            <app-entity-field-edit
+              [field]="entity.selectedField"
+              [entity]="entity.affectedEntity"
+              [form]="entity.form"
+              [hideInheritButton]="true"
+              [highlightAdded]="entity.addToExisting"
+            ></app-entity-field-edit>
+            @if (entity.removedEntity) {
+              <div class="hint-text removed-values">
+                <fa-icon
+                  icon="minus"
+                  i18n-matTooltip="tooltip for values that are removed"
+                  matTooltip="Removed"
+                ></fa-icon>
+                <app-entity-field-view
+                  [field]="entity.selectedField"
+                  [entity]="entity.removedEntity"
+                ></app-entity-field-view>
+              </div>
+            }
+            @if (entity.hasNoCommonValue) {
+              <div class="hint-text no-common-value-warning">
+                <fa-icon icon="warning"></fa-icon>
+                <span i18n>No value in common, current value kept</span>
+                <fa-icon
+                  icon="circle-info"
+                  i18n-matTooltip
+                  matTooltip="The linked records have no value in common, so no new value is suggested. The current value is kept unless you change it here."
+                ></fa-icon>
+              </div>
+            }
+            @if (entity.unlinked) {
+              <div class="hint-text" i18n>No longer linked</div>
+            }
+            @if (entity.suggestionChanged) {
+              <div class="hint-text suggestion-changed">
+                <span i18n>The suggestion changed, your value is kept.</span>
+                <button
+                  type="button"
+                  mat-button
+                  (click)="useSuggestion(entity)"
+                  i18n
+                >
+                  Use suggestion
+                </button>
+              </div>
+            }
+          </td>
+        </tr>
+      }
+    </table>
+  }
 
   @if (recalculationFailed()) {
     <div class="hint-text update-failed">
