@@ -280,6 +280,27 @@ describe("KeycloakAdminService", () => {
     );
   });
 
+  it("should return a 'not permitted' error (and not report it) if Keycloak refuses the update", async () => {
+    const warnSpy = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+    let result: any;
+    service
+      .updateUser("test-id", { email: "new@example.com" })
+      .subscribe((r) => (result = r));
+
+    httpTestingController
+      .expectOne(`${BASE_URL}/users/test-id`)
+      .flush({ id: "test-id" });
+    httpTestingController
+      .expectOne(`${BASE_URL}/users/test-id`)
+      .flush({}, { status: 403, statusText: "Forbidden" });
+
+    expect(result.userUpdated).toBe(false);
+    expect(result.error).toBeInstanceOf(UserAdminApiError);
+    expect(result.error.status).toBe(403);
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
   it("should get all roles and filter non-technical roles", async () => {
     // given
     const mockRoles: Role[] = [

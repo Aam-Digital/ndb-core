@@ -1,4 +1,10 @@
-import { signal, WritableSignal } from "@angular/core";
+import {
+  Component,
+  model,
+  output,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
   MatSlideToggle,
@@ -6,6 +12,7 @@ import {
 } from "@angular/material/slide-toggle";
 import { By } from "@angular/platform-browser";
 import { NotificationSettingsComponent } from "./notification-settings.component";
+import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
 import {
   EntityRegistry,
   entityRegistry,
@@ -34,6 +41,10 @@ import { ConfirmationDialogService } from "../../../core/common-components/confi
 import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import type { Mock } from "vitest";
 import { ConfirmationDialogMock } from "#src/app/utils/test-utils/dialog-mocks";
+import { AlertService } from "#src/app/core/alerts/alert.service";
+import { Config } from "#src/app/core/config/config";
+import { PLACEHOLDERS } from "#src/app/core/entity/schema/entity-schema-field";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 type NotificationServiceMock = Pick<
   NotificationService,
@@ -57,6 +68,12 @@ type NotificationServiceMock = Pick<
   unregisterDevice: Mock;
   testNotification: Mock;
 };
+
+@Component({ selector: "app-notification-rule", template: "" })
+class NotificationRuleStubComponent {
+  value = model<NotificationRule>();
+  removeNotificationRule = output<void>();
+}
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
@@ -116,13 +133,19 @@ describe("NotificationSettingComponent", () => {
           useValue: new BehaviorSubject(undefined),
         },
         { provide: NotificationService, useValue: mockNotificationService },
+        { provide: AlertService, useValue: { addInfo: vi.fn() } },
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
         },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(NotificationSettingsComponent, {
+        remove: { imports: [NotificationRuleComponent] },
+        add: { imports: [NotificationRuleStubComponent] },
+      })
+      .compileComponents();
 
     entityMapper = TestBed.inject(
       EntityMapperService,
@@ -283,5 +306,91 @@ describe("NotificationSettingComponent", () => {
 
     expect(component.notificationConfig().channels?.["email"]).toBe(false);
     expect(unsavedChanges.pending()).toBe(true);
+  });
+
+  describe("initial config for a new user", () => {
+    const todoRule = (label: string, assignee: string): NotificationRule => ({
+      label,
+      notificationType: "entity_change",
+      entityType: "Todo",
+      changeType: ["created"],
+      conditions: { assignedTo: { $elemMatch: assignee } },
+      enabled: true,
+    });
+
+    beforeEach(() => {
+      mockNotificationService.loadNotificationConfig.mockRejectedValue({
+        status: 404,
+      });
+    });
+
+    it.each([
+      {
+        name: "the default rules for the linked profile",
+        profileId: "demo",
+        template: undefined,
+        expected: [
+          {
+            entityType: "Todo",
+            conditions: { assignedTo: { $elemMatch: "TestEntity:demo" } },
+            enabled: true,
+          },
+          {
+            entityType: "Note",
+            conditions: { authors: { $elemMatch: "TestEntity:demo" } },
+          },
+        ],
+      },
+      {
+        name: "no default rules without a linked profile",
+        profileId: null,
+        template: undefined,
+        expected: [],
+      },
+      {
+        name: "template rules with the current user filled in everywhere",
+        profileId: "demo",
+        template: [
+          todoRule("first", PLACEHOLDERS.CURRENT_USER),
+          todoRule("second", PLACEHOLDERS.CURRENT_USER),
+        ],
+        expected: [
+          {
+            label: "first",
+            conditions: { assignedTo: { $elemMatch: "TestEntity:demo" } },
+          },
+          {
+            label: "second",
+            conditions: { assignedTo: { $elemMatch: "TestEntity:demo" } },
+          },
+        ],
+      },
+      {
+        name: "only the template rules not about the current user without a linked profile",
+        profileId: null,
+        template: [
+          todoRule("mine", PLACEHOLDERS.CURRENT_USER),
+          todoRule("someone else", "TestEntity:other"),
+        ],
+        expected: [{ label: "someone else" }],
+      },
+    ])("should create $name", async ({ profileId, template, expected }) => {
+      TestBed.inject(CurrentUserSubject).next(
+        profileId ? new TestEntity(profileId) : null,
+      );
+      if (template) {
+        entityMapper.add(
+          new Config(NotificationConfig.TEMPLATE_ENTITY_ID, {
+            notificationRules: template,
+          }),
+        );
+      }
+
+      await initializeComponent();
+
+      expect(component.notificationConfig().notificationRules).toEqual(
+        expected.map((rule) => expect.objectContaining(rule)),
+      );
+    });
   });
 });

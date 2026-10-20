@@ -1,5 +1,7 @@
 import { flattenTree, rebuildTree } from "#src/app/utils/flat-tree/flat-tree";
+import { ReportDefinitionDto } from "../report-config";
 import {
+  getReportDefinitionEntryError,
   isGroupNode,
   newGroupNode,
   newQueryNode,
@@ -22,6 +24,28 @@ describe("report-definition-ui-node", () => {
     ];
 
     expect(toReportDefinition(toUiNodes(definition))).toEqual(definition);
+  });
+
+  it("keeps the title of a stored group that has no items", () => {
+    expect(toReportDefinition(toUiNodes([{ groupTitle: "G" }]))).toEqual([
+      { groupTitle: "G", items: [] },
+    ]);
+  });
+
+  it.each<[string, ReportDefinitionDto, boolean]>([
+    ["a query", { query: "SELECT 1" }, true],
+    ["an empty query", { query: "" }, false],
+    ["a blank query", { query: "  " }, false],
+    ["a group", { groupTitle: "G", items: [{ query: "q" }] }, true],
+    [
+      "a group without title",
+      { groupTitle: " ", items: [{ query: "q" }] },
+      false,
+    ],
+    ["a group without items", { groupTitle: "G", items: [] }, false],
+    ["a group title without an items list", { groupTitle: "G" }, false],
+  ])("decides whether %s can be calculated", (_, entry, calculable) => {
+    expect(getReportDefinitionEntryError(entry) === undefined).toBe(calculable);
   });
 
   it("assigns a unique id to every node and marks groups", () => {

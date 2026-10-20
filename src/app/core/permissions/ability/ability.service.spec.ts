@@ -259,6 +259,30 @@ describe("AbilityService", () => {
     }
   });
 
+  it("should report a failure to enforce updated rules rather than leave it unhandled", async () => {
+    vi.useFakeTimers();
+    const errorSpy = vi.spyOn(Logging, "error");
+    try {
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      const failure = new Error("enforcement failed");
+      vi.mocked(
+        TestBed.inject(PermissionEnforcerService).enforcePermissionsOnLocalData,
+      ).mockRejectedValue(failure);
+
+      entityUpdates.next({
+        entity: new Config(Config.PERMISSION_KEY, rules),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(errorSpy).toHaveBeenCalledWith(expect.any(String), failure);
+    } finally {
+      vi.useRealTimers();
+      errorSpy.mockRestore();
+    }
+  });
+
   it("should allow to access user properties in the rules", async () => {
     vi.useFakeTimers();
     try {
@@ -332,6 +356,41 @@ describe("AbilityService", () => {
       const testEntity = new TestEntity(TEST_USER);
       // When entityId is undefined, the condition "_id: <PLACEHOLDER>" won't match any entity
       expect(ability.cannot("manage", testEntity)).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should not report a rule using ${user.entityId} for an account without linked profile", async () => {
+    vi.useFakeTimers();
+    try {
+      // the session of an account without profile has no `entityId` property at all
+      TestBed.inject(SessionSubject).next({
+        name: "user-without-entity",
+        id: "1",
+        roles: ["user_app"],
+      });
+      TestBed.inject(CurrentUserSubject).next(null);
+      service.initializeRules();
+      await vi.advanceTimersByTimeAsync(0);
+      const warnSpy = vi.spyOn(Logging, "warn");
+
+      entityUpdates.next({
+        entity: new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+          user_app: [
+            {
+              subject: "TestEntity",
+              action: "manage",
+              conditions: { _id: "${user.entityId}" },
+            },
+          ],
+        }),
+        type: "update",
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(ability.cannot("manage", new TestEntity(TEST_USER))).toBe(true);
     } finally {
       vi.useRealTimers();
     }
@@ -626,13 +685,15 @@ describe("AbilityService", () => {
       expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
     });
 
-    it("should report an unexpected failure as PermissionRulesLoadError", async () => {
+    it("should report an unexpected failure with the error", async () => {
       const errorSpy = vi.spyOn(Logging, "error");
+      const failure = new Error("something unexpected");
 
-      await initWithLoadError(new Error("something unexpected"));
+      await initWithLoadError(failure);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "PermissionRulesLoadError" }),
+        "Failed to load permission rules",
+        failure,
       );
     });
   });

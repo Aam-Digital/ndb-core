@@ -172,7 +172,7 @@
       (click)="addNew()"
       angulartics2On="click"
       angularticsCategory="UserAction"
-      [angularticsAction]="title().toLowerCase().replace(' ', '_') + '_add_new'"
+      [angularticsAction]="addNewAnalyticsAction()"
       *appDisabledEntityOperation="{
         entity: entityConstructor()!,
         operation: 'create',

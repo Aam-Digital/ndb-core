@@ -9,7 +9,11 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+} from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -27,12 +31,15 @@ import {
   moveSubtree,
   rebuildTree,
   removeSubtree,
+  subtreeLength,
   updateRow,
 } from "#src/app/utils/flat-tree/flat-tree";
 import { ReportDefinitionDto } from "../report-config";
 import { JsonEditorComponent } from "#src/app/core/admin/json-editor/json-editor.component";
 import { SqlCodeEditorComponent } from "../edit-sql-query/sql-code-editor.component";
 import {
+  getReportDefinitionEntryError,
+  hasInvalidReportDefinitionEntry,
   isGroupNode,
   newGroupNode,
   newQueryNode,
@@ -51,6 +58,9 @@ import {
  * group via its "+" buttons, and any row can be dragged to a new position — dragging it sideways
  * nests it into the group above or lifts it back out, and dragging a group carries its whole
  * subtree. For non-"sql" modes the definition is edited as raw JSON.
+ *
+ * A "sql" definition with an entry the backend cannot calculate (an empty query, or a group
+ * without title or items) is invalid, and the form shows which entries need fixing.
  */
 @DynamicComponent("EditReportDefinition")
 @Component({
@@ -93,9 +103,18 @@ export class EditReportDefinitionComponent
   private readonly flatRows = signal<FlatTreeRow<ReportDefinitionUiNode>[]>([]);
 
   /** the rows as rendered, with the display flags the template needs derived once per change */
-  readonly rows = computed(() =>
-    this.flatRows().map((row) => ({ ...row, isGroup: isGroupNode(row.data) })),
-  );
+  readonly rows = computed(() => {
+    const rows = this.flatRows();
+    return rows.map((row, index) => ({
+      ...row,
+      isGroup: isGroupNode(row.data),
+      // a row's child entries are the rows following it, not its `items`
+      error: getReportDefinitionEntryError(
+        row.data,
+        subtreeLength(rows, index) > 1,
+      ),
+    }));
+  });
 
   /** JSON of the last definition synced in either direction, to break the value<->rows loop */
   private lastSync = "";
@@ -123,9 +142,44 @@ export class EditReportDefinitionComponent
       this.mode.set(modeControl.value);
       modeControl.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((value) => this.mode.set(value));
+        .subscribe((value) => {
+          this.mode.set(value);
+          // whether the definition is validated depends on the mode
+          this.formControl.updateValueAndValidity();
+        });
+    }
+
+    const control = this.formControl;
+    if (control) {
+      control.addValidators(this.validateSqlDefinition);
+      control.updateValueAndValidity({ emitEvent: false });
+      this.destroyRef.onDestroy(() =>
+        control.removeValidators(this.validateSqlDefinition),
+      );
     }
   }
+
+  /**
+   * Prevent saving a "sql" definition that the backend would reject when calculating the report.
+   * Reads the mode from the control's parent, so it does not depend on this component's state.
+   */
+  private readonly validateSqlDefinition = (
+    control: AbstractControl,
+  ): ValidationErrors | null => {
+    const definition = control.value;
+    if (
+      control.parent?.get("mode")?.value !== "sql" ||
+      !Array.isArray(definition) ||
+      !hasInvalidReportDefinitionEntry(definition)
+    ) {
+      return null;
+    }
+    return {
+      reportDefinition: {
+        errorMessage: $localize`:ReportConfig:Some queries or groups are incomplete. Complete or remove them to save the report.`,
+      },
+    };
+  };
 
   setQuery(index: number, query: string): void {
     this.updateNode(index, { query });

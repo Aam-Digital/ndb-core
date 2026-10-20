@@ -21,19 +21,10 @@ body {
 .ui-toolbar {
   position: sticky;
   top: 0;
-  padding-right: 0px;
+  padding-inline-end: 0px;
   z-index: 2;
   justify-content: space-between;
   @include mat-elevation.elevation(2);
-}
-
-.search-field {
-  /*
-   * Use a fixed width here because
-   * the form field does not work with
-   * relative / computed sizes
-   */
-  width: 450px;
 }
 
 .header-icon {
@@ -97,7 +88,7 @@ mat-sidenav-container {
  * merges into the main element
  */
 .mat-drawer-side {
-  border-right: 0;
+  border-inline-end: 0;
 }
 
 .site-logo {
@@ -117,13 +108,13 @@ mat-sidenav-container {
   box-sizing: border-box;
 
   &:not(:last-child) {
-    border-right: solid 1px rgba(0, 0, 0, 0.12);
+    border-inline-end: solid 1px rgba(0, 0, 0, 0.12);
   }
 }
 
 .admin-overview-button {
   width: 100%;
-  border-right: none !important;
+  border-inline-end: none !important;
 }
 
 .info-icon {
@@ -134,7 +125,7 @@ mat-sidenav-container {
 
 .info-button {
   width: 48px;
-  border-right: solid 1px rgba(0, 0, 0, 0.12);
+  border-inline-end: solid 1px rgba(0, 0, 0, 0.12);
   border-radius: 0;
   overflow: hidden;
 }

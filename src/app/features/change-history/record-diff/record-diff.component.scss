@@ -112,7 +112,7 @@ $diff-columns: 140px minmax(0, 1fr) 28px minmax(0, 1fr);
 
   .value .value-caption {
     display: inline;
-    margin-right: 2px;
+    margin-inline-end: 2px;
   }
 
   .value.before .value-caption {

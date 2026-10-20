@@ -52,10 +52,11 @@ export class DefaultValueService {
       if (strategy) {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
-        Logging.warn(
-          "DefaultValue strategy not found",
-          fieldConfig.defaultValue?.mode,
-        );
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug("DefaultValue strategy not found", {
+          field: fieldConfig.id,
+          mode: fieldConfig.defaultValue?.mode,
+        });
       }
     }
   }
@@ -127,6 +128,13 @@ export interface FullDefaultValueHint {
 
   syncFromParentField: () => void;
 
+  /**
+   * The value is collected from all records of the inheritedFromType
+   * that link to this record in their inheritedFromField
+   * (rather than inherited from a single parent record selected in this record's inheritedFromField).
+   */
+  isCollectedFromLinkedRecords?: boolean;
+
   isEmpty?: undefined | false;
 }
 
@@ -140,4 +148,5 @@ export interface EmptyDefaultValueHint {
   isInSync?: undefined;
   inheritedFromType?: undefined;
   syncFromParentField?: undefined;
+  isCollectedFromLinkedRecords?: false;
 }

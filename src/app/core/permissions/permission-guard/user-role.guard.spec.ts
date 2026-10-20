@@ -68,6 +68,24 @@ describe("UserRoleGuard", () => {
     expect(router.navigate).toHaveBeenCalledWith(["/404"]);
   });
 
+  it.each([
+    [["admin_app", "account_manager"], true],
+    [["admin_app"], false],
+    [["account_manager", "user_app"], false],
+  ])(
+    "allows a route with allRequiredUserRoles only to users with all of them (user roles %j)",
+    async (roles, expected) => {
+      sessionInfo.next({ name: "user", id: "3", roles });
+
+      const result = await guard.canActivate({
+        routeConfig: { path: "url" },
+        data: { allRequiredUserRoles: ["admin_app", "account_manager"] },
+      } as any);
+
+      expect(result).toBe(expected);
+    },
+  );
+
   it("should return true if no config is set", async () => {
     const result = await guard.canActivate({
       routeConfig: { path: "url" },

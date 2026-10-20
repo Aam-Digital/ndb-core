@@ -3,13 +3,19 @@
 End-to-end tests run the app in the browser using browser-local database. We use
 [Playwright][] as the testing framework.
 
-Before you run the tests you need to start a local development server with `npm
-start`. You can use the `playwright` CLI to run the tests from the terminal or
-start the [Playwright UI].
+The tests expect the app on `http://localhost:4200`. Serve a build there, as CI
+does, rather than the `npm start` dev server:
 
 ```bash
-npx playwright test
-npx playwright test --ui
+npx ng build --configuration=development
+npx serve dist -p 4200 --single
+```
+
+Then run the tests from the terminal or start the [Playwright UI]:
+
+```bash
+npm run e2e
+npm run e2e -- --ui
 ```
 
 To debug test runs you can use Playwright’s [Trace Viewer]. On CI traces for
@@ -34,13 +40,23 @@ markup.
 - Review [Best Practices](https://playwright.dev/docs/best-practices) from the
   Playwright documentation.
 
-- Import `test` and `expect`, `#e2e/fixtures.ts` instead of `@playwright/test`:
+- Keep the number of stand-alone tests to a minimum: the initial `loadApp()` is
+  expensive, so prefer adding a new check as an additional step to an existing
+  scenario.
+
+- A new larger feature (a new user flow, not a small change to an existing one) gets an
+  e2e scenario for its main path. Keep the number of scenarios and screenshots small: every
+  one adds to the run time and to the visual review, so cover the edge cases in unit tests.
+
+- Import from `#e2e/fixtures.js` instead of `@playwright/test` (enforced by ESLint):
 
   ```typescript
-  import { expect, test } from "#e2e/fixtures.ts";
+  import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
   ```
 
-  This prepares the application properly and loads it in the browser.
+  This prepares the application properly and loads it in the browser. The file
+  also provides helpers such as `selectFilterOption()` (entity list filters),
+  `readCsvRows()` (downloaded exports) and `waitForDashboardWidgetsToLoad()`.
 
 - Prefer actions over expectations. Instead of the following
 
@@ -57,17 +73,93 @@ markup.
   ```
 
 - Use accessibility-based locators, in descending preference
-  - [`getByLabel()`](https://playwright.dev/docs/locators#locate-by-label)
-  - [`getByTitle()`](https://playwright.dev/docs/locators#locate-by-title)
-  - [`getByPlaceholder()`](https://playwright.dev/docs/locators#locate-by-placeholder)
-  - [`getByRole()`](https://playwright.dev/docs/locators#locate-by-role)
-  - [`getByText()`](https://playwright.dev/docs/locators#locate-by-text)
+  - [`getByLabel("Name")`](https://playwright.dev/docs/locators#locate-by-label)
+  - [`getByTitle("Edit")`](https://playwright.dev/docs/locators#locate-by-title)
+  - [`getByPlaceholder("Search...")`](https://playwright.dev/docs/locators#locate-by-placeholder)
+  - [`getByRole("button", { name: "Save" })`](https://playwright.dev/docs/locators#locate-by-role)
+  - [`getByText("Dashboard")`](https://playwright.dev/docs/locators#locate-by-text)
 
   Avoid CSS-based locators. If necessary, adjust the accessibility properties in
   HTML templates so that the desired elements can be located.
+  Exception: Angular Material form fields, see below.
 
 - Avoid navigation with `page.goto()`. Instead, click on the links that lead you
   to the desired page. This avoids reloading the app which is slow.
+
+  ```typescript
+  await page.getByRole("navigation").getByText("Dashboard").click();
+  ```
+
+### Test data
+
+`loadApp(page, entities?)` loads the app with the given entities in its
+database, or with the default demo data if you omit them. Create the entities
+with the standalone `generate*()` functions of the demo data generators (e.g.
+`generateUsers()`, `generateChild()`, `generateNote()`, `generateTodo()`,
+`generateActivity()`) and use `faker` (from `#src/app/core/demo-data/faker.js`)
+for randomized fields.
+
+The clock is mocked to a fixed date. Use `E2E_REF_DATE` from
+`#e2e/fixtures.js` (`"2025-01-23"`) for date-dependent logic. Dates are
+displayed as `dd.MM.yyyy`.
+
+Give fixtures semantic names (`childToAdd`, `childToKeep`, `childToRemove`,
+`userToAssign`) and use titles in angle brackets (e.g. `"<COACHING CLASS>"`)
+to tell them apart from demo data.
+
+```typescript
+import { range } from "lodash-es";
+import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
+import { faker } from "#src/app/core/demo-data/faker.js";
+import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { generateNote } from "#src/app/child-dev-project/notes/demo-data/demo-note-generator.service.js";
+
+test("Dashboard shows correct counts", async ({ page }) => {
+  const users = generateUsers();
+  const children = range(5).map(() => generateChild());
+  const notes = range(3).map(() =>
+    generateNote({
+      child: faker.helpers.arrayElement(children),
+      author: faker.helpers.arrayElement(users),
+      date: faker.date.recent({ days: 10 }),
+    }),
+  );
+
+  await loadApp(page, [...users, ...children, ...notes]);
+
+  await page.getByRole("navigation").getByText("Dashboard").click();
+  await expect(page.getByText("5 Children")).toBeVisible();
+});
+```
+
+### Angular Material quirks
+
+- **Form fields:** floating labels are _not_ found by `getByLabel()`, because
+  Playwright does not resolve their `aria-labelledby` wiring. Use the
+  `mat-form-field`'s id instead, which is always `entity-field__<fieldId>`
+  (the field's schema key):
+
+  ```typescript
+  await page.locator("#entity-field__subject").getByRole("textbox").fill("My Task");
+  await page.locator("#entity-field__relatedEntities").locator(".fa-caret-down").click();
+  ```
+
+- **Options with checkboxes** (multi-select): check them with
+  `{ checked: true }`, not `{ selected: true }`:
+
+  ```typescript
+  await page.getByRole("option", { name: child.name }).getByRole("checkbox", { checked: true });
+  ```
+
+- **Dialogs:** records open in a popup when `clickMode: "popup-details"` is
+  configured. Scope locators to `page.getByRole("dialog")` and close it with
+  `page.locator("button.overlay-close-button")`. The list behind an open dialog
+  is `aria-hidden`, so close the dialog before querying table rows or cells.
+  Dialogs also close automatically when the router navigates (e.g. a click on
+  a side-nav item).
+- **Buttons inside a `mat-form-field`** (e.g. "Complete Task") can have their
+  clicks intercepted by the form field wrapper. Use `click({ force: true })`.
 
 ## Visual regression screenshots
 
@@ -88,7 +180,8 @@ This approach captures the app in a stable state rather than during transitions.
 
 The `argosScreenshot()` function waits for page stabilization before capturing.
 Use [`aria-busy=true`][aria-busy] on loading elements to help ensure screenshots
-are taken only when the UI is ready.
+are taken only when the UI is ready. On the dashboard, call
+`await waitForDashboardWidgetsToLoad(page)` before taking a screenshot.
 
 Visual differences between test runs may occur even when no actual changes
 exist. Adjust sensitivity to minor variations using the [`threshold`
@@ -96,31 +189,7 @@ option](https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options)
 in `argosScreenshot()`. Set a default threshold with `argos upload
 --threshold=...`
 
-## AI-Assisted Test Development
-
-You can use [Claude Code][] to write tests based on Gherkin-style scenario steps.
-This requires a Claude account (the "Free" plan may be sufficient for occasional use).
-
-Start by adding the steps to a test file, e.g. `e2e/tests/attendance-tests.spec.ts`:
-
-```typescript
-/*
-TODO: Add a child
-When I navigate to "Children"
-And I click on "Add New"
-Then the heading "Adding new child" is displayed
-When I fill in "<NAME>" in the field "Name"
-And then I click on "Save".
-Then the heading changes to "<NAME>"
-*/
-```
-
-Then, start `claude` and run the command `/write-e2e-tests
-e2e/tests/attendance-test.spec.ts`. This will create a new test case "Add a
-child". You can then work with the initial draft and fix it until it passes.
-
 [aria-busy]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
 [Trace Viewer]: https://playwright.dev/docs/trace-viewer
-[Claude Code]: https://docs.anthropic.com/en/docs/claude-code/common-workflows#create-custom-slash-commands

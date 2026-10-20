@@ -418,6 +418,14 @@ export class EditEntityComponent<
   private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
 
+    if (!this.entityRegistry.has(type)) {
+      Logging.debug(
+        "[ENTITY_SELECT] Selected value is not an id of a known entity type.",
+        selectedId,
+      );
+      return undefined;
+    }
+
     const entity = await this.entityMapperService
       .load<E>(type, selectedId)
       .catch((err: any) => {

@@ -1,3 +1,16 @@
+@if (canUpdateLinkedRecords()) {
+  <div [appTemplateTooltip]="updateLinkedRecordsTooltip" class="inline-box">
+    <button
+      mat-icon-button
+      type="button"
+      [disabled]="form()?.formGroup?.enabled || isUpdatingLinkedRecords()"
+      (click)="updateLinkedRecords()"
+    >
+      <fa-icon icon="circle-arrow-up"></fa-icon>
+    </button>
+  </div>
+}
+
 @if (defaultValueHint()) {
   <div [appTemplateTooltip]="tooltip" class="inline-box">
     <button
@@ -19,18 +32,41 @@
 
 <ng-template #tooltip>
   <div class="field-hint">
-    <div i18n>
-      Inherited value from parent record selected in field
-      "<app-entity-field-label
-        [field]="defaultValueHint()?.inheritedFromField"
-        [entityType]="entity()?.getConstructor()"
-      ></app-entity-field-label
-      >"
-    </div>
+    @if (defaultValueHint()?.isCollectedFromLinkedRecords) {
+      <div i18n>
+        Values collected from all records linking to this record in their field
+        "<app-entity-field-label
+          [field]="defaultValueHint()?.inheritedFromField"
+          [entityType]="defaultValueHint()?.inheritedFromType"
+        ></app-entity-field-label
+        >"
+      </div>
+    } @else {
+      <div i18n>
+        Inherited value from parent record selected in field
+        "<app-entity-field-label
+          [field]="defaultValueHint()?.inheritedFromField"
+          [entityType]="entity()?.getConstructor()"
+        ></app-entity-field-label
+        >"
+      </div>
+    }
 
     <br />
 
-    @if (defaultValueHint()?.isEmpty) {
+    @if (defaultValueHint()?.isCollectedFromLinkedRecords) {
+      @if (defaultValueHint()?.isInSync) {
+        <div i18n>(up-to-date, contains the values of all linked records)</div>
+      } @else {
+        <div i18n>
+          (manually changed): click to replace with the values of all linked
+          records
+          @if (!form()?.formGroup?.enabled) {
+            (requires the form to be in "Edit" mode)
+          }
+        </div>
+      }
+    } @else if (defaultValueHint()?.isEmpty) {
       <div i18n>
         Select exactly one record in the parent field to automatically inherit
         its value here.
@@ -47,5 +83,22 @@
       </div>
       <div i18n></div>
     }
+  </div>
+</ng-template>
+
+<ng-template #updateLinkedRecordsTooltip>
+  <div class="field-hint">
+    <div i18n>
+      The value of this field is automatically passed on to linked records.
+    </div>
+
+    <br />
+
+    <div i18n>
+      Click to review and update them now
+      @if (form()?.formGroup?.enabled) {
+        (not available while editing)
+      }
+    </div>
   </div>
 </ng-template>

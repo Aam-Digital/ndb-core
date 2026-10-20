@@ -2,18 +2,37 @@
 
 /** Create utility classes for standard sizes **/
 
-$sides: right, left, top, bottom;
+/* The block axis is unaffected by text direction, so these keep their physical names. */
+$block-sides: top, bottom;
+
+/* The inline axis mirrors in RTL, so these map a direction-neutral name to a logical property. */
+$inline-sides: (
+  start: inline-start,
+  end: inline-end,
+);
 
 @each $ident, $size in sizes.$standard-sizes {
-  @each $side in $sides {
-    /* Creates padding classes for one side only (i.e. padding-left-..., padding-right-...) */
+  @each $side in $block-sides {
+    /* Creates padding classes for one side only (i.e. padding-top-..., padding-bottom-...) */
     .padding-#{$side}-#{$ident} {
       padding-#{$side}: $size;
     }
 
-    /* Creates margin classes for one side only (i.e. margin-left-small, margin-top-regular) */
+    /* Creates margin classes for one side only (i.e. margin-top-small, margin-bottom-regular) */
     .margin-#{$side}-#{$ident} {
       margin-#{$side}: $size;
+    }
+  }
+
+  @each $name, $prop in $inline-sides {
+    /* Creates padding classes for the reading-start/end side (i.e. padding-start-..., padding-end-...) */
+    .padding-#{$name}-#{$ident} {
+      padding-#{$prop}: $size;
+    }
+
+    /* Creates margin classes for the reading-start/end side (i.e. margin-start-small, margin-end-regular) */
+    .margin-#{$name}-#{$ident} {
+      margin-#{$prop}: $size;
     }
   }
 
@@ -37,8 +56,8 @@ $sides: right, left, top, bottom;
 .remove-padding-bottom {
   padding-bottom: 0 !important;
 }
-.remove-padding-left {
-  padding-left: 0 !important;
+.remove-padding-start {
+  padding-inline-start: 0 !important;
 }
 .remove-margin-bottom {
   margin-bottom: 0 !important;
@@ -46,13 +65,12 @@ $sides: right, left, top, bottom;
 .remove-margin-top {
   margin-top: 0 !important;
 }
-.remove-margin-left {
-  margin-left: 0 !important;
+.remove-margin-start {
+  margin-inline-start: 0 !important;
 }
 
 .margin-sides-small {
-  margin-right: sizes.$small;
-  margin-left: sizes.$small;
+  margin-inline: sizes.$small;
 }
 
 .width-1-2 {

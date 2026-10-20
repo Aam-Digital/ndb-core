@@ -39,6 +39,31 @@
     ></app-entity-field-select>
   </mat-form-field>
 
+  @if (isAddToExistingAvailable) {
+    <div class="margin-bottom-regular">
+      <mat-slide-toggle
+        matTooltip="Keep the existing values of this field and add the new values of the related records. Values removed from a related record are suggested for removal unless another related record still has them."
+        i18n-matTooltip
+        [checked]="addToExisting()"
+        (change)="addToExisting.set($event.checked)"
+        i18n
+      >
+        Add to existing values instead of replacing
+      </mat-slide-toggle>
+    </div>
+  } @else if (targetFieldConfig.isArray) {
+    <p class="hint-text margin-bottom-regular" i18n>
+      Adding to the existing values is only possible if the related records link
+      to this record (option "Entity > field"), not if this record links to
+      them.
+    </p>
+  } @else {
+    <p class="hint-text margin-bottom-regular" i18n>
+      Adding to the existing values is only possible for fields that allow
+      multiple values.
+    </p>
+  }
+
   <!--
     Detailed trigger value -> target value mapping
   -->

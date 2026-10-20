@@ -19,7 +19,7 @@ $slider-padding-all: 16px;
 }
 
 .slider {
-  padding-left: sizes.$regular;
+  padding-inline-start: sizes.$regular;
   font-size: small;
 
   @media all and (max-width: $approx-width-paginator) {

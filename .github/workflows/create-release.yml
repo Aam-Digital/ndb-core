@@ -1,77 +1,25 @@
 name: Semantic Release
-on:
-  workflow_dispatch
+# Creates a full release from master (manual release mode, see Aam-Digital/.github).
+# The Docker image, Sentry release, translations and the cleanup of old edge images are handled by
+# release-published.yml and i18n-publish-translations.yml, which are triggered when the release is published.
+on: workflow_dispatch
 
 permissions:
-  contents: write  # needed for semantic-release to create tags/releases
+  contents: read
 
 jobs:
-  pre-releases-cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-
-      - name: Delete previous pre-release releases and tags
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          # Delete all pre-release releases and their tags
-          gh release list --repo "$GITHUB_REPOSITORY" --limit 1000 \
-            --json tagName,isPrerelease \
-            --jq '.[] | select(.isPrerelease) | .tagName' \
-            | while read -r tag; do
-                echo "Deleting release and tag: $tag"
-                gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag
-              done
-
-          # Delete any remaining orphaned pre-release git tags (semantic-release format: x.y.z-master.n)
-          git fetch --tags
-          git tag -l '*-master.*' | while read -r tag; do
-            echo "Deleting orphaned tag: $tag"
-            git push --delete origin "$tag" || true
-          done
-
-  toolchain:
-    uses: ./.github/workflows/_node-toolchain.yml
-
   release:
-    needs: [pre-releases-cleanup, toolchain]
-    runs-on: ubuntu-latest
-    outputs:
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-    steps:
-      - name: Checkout repository files
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Set up node
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ needs.toolchain.outputs.node-version }}
-          cache: npm
-
-      - name: Set up npm
-        run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
-
-      - name: Semantic Release
-        id: semantic
-        uses: cycjimmy/semantic-release-action@1989a0fefc4aea321e07f717680ed8e345925dc1 # v7.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          branches: |
-            [{"name": "master", "prerelease": false}]
-          extra_plugins: |
-            semantic-release-replace-plugin@1.2.6
-            @semantic-release/git
-            @semantic-release/github
-            semantic-release-slack-bot
-
-  # Build and Docker image are handled by tag-published.yml,
-  # which is triggered automatically when semantic-release pushes a new tag.
+    # releases are only created from the default branch (workflow_dispatch can run on any branch)
+    if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    uses: Aam-Digital/.github/.github/workflows/release.yml@v1
+    permissions:
+      contents: read
+    with:
+      extra-plugins: |
+        semantic-release-replace-plugin@1.2.6
+        @semantic-release/git
+        @semantic-release/github
+        semantic-release-slack-bot
+    secrets:
+      token: ${{ secrets.GH_TOKEN }}
+      slack-webhook: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -9,9 +9,13 @@ import {
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { setupCustomFormControlEditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EditReportDefinitionComponent } from "./edit-report-definition.component";
+import { getReportDefinitionEntryError } from "./report-definition-ui-node";
+import { ReportDefinitionDto } from "../report-config";
 
 /** wire the component to a `reportDefinition` control sitting next to a `mode` control */
-function createWithMode(mode: string): EditReportDefinitionComponent {
+function createWithMode(
+  mode: string,
+): ComponentFixture<EditReportDefinitionComponent> {
   const fg = new UntypedFormGroup({
     mode: new UntypedFormControl(mode),
     reportDefinition: new UntypedFormControl([]),
@@ -21,7 +25,7 @@ function createWithMode(mode: string): EditReportDefinitionComponent {
   component.ngControl = { control: fg.get("reportDefinition") } as NgControl;
   fixture.componentRef.setInput("formFieldConfig", { id: "reportDefinition" });
   fixture.detectChanges();
-  return component;
+  return fixture;
 }
 
 describe("EditReportDefinitionComponent", () => {
@@ -65,9 +69,54 @@ describe("EditReportDefinitionComponent", () => {
   });
 
   it("uses the structured SQL editor for sql mode and the JSON editor otherwise", () => {
-    expect(createWithMode("sql").isSql()).toBe(true);
-    expect(createWithMode("reporting").isSql()).toBe(false);
-    expect(createWithMode("exporting").isSql()).toBe(false);
+    expect(createWithMode("sql").componentInstance.isSql()).toBe(true);
+    expect(createWithMode("reporting").componentInstance.isSql()).toBe(false);
+    expect(createWithMode("exporting").componentInstance.isSql()).toBe(false);
+  });
+
+  it.each<[string, ReportDefinitionDto[], boolean]>([
+    [
+      "complete queries and groups",
+      [{ query: "a" }, { groupTitle: "G", items: [{ query: "b" }] }],
+      true,
+    ],
+    ["an empty query", [{ query: "a" }, { query: "" }], false],
+    [
+      "an incomplete entry nested in a group",
+      [{ groupTitle: "G", items: [{ groupTitle: "Sub", items: [] }] }],
+      false,
+    ],
+  ])("validates a sql definition with %s", (_, definition, valid) => {
+    const control = createWithMode("sql").componentInstance.formControl;
+
+    control.setValue(definition);
+
+    expect(control.valid).toBe(valid);
+  });
+
+  it("only validates the definition while the report is in sql mode", () => {
+    const control = createWithMode("reporting").componentInstance.formControl;
+    control.setValue([{ query: "" }]);
+    expect(control.valid).toBe(true);
+
+    control.parent.get("mode").setValue("sql");
+
+    expect(control.valid).toBe(false);
+  });
+
+  it("points out an incomplete entry once the user tried to save", () => {
+    const sqlFixture = createWithMode("sql");
+    const control = sqlFixture.componentInstance.formControl;
+    const incompleteGroup = { groupTitle: "G", items: [] };
+    const groupError = getReportDefinitionEntryError(incompleteGroup);
+    control.setValue([incompleteGroup]);
+    sqlFixture.detectChanges();
+    expect(sqlFixture.nativeElement.textContent).not.toContain(groupError);
+
+    control.markAsTouched(); // as saving the form does
+    sqlFixture.detectChanges();
+
+    expect(sqlFixture.nativeElement.textContent).toContain(groupError);
   });
 
   it("loads an external definition into flat rows with the right nesting levels", () => {

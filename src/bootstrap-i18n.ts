@@ -62,16 +62,42 @@ async function fetchTranslations(
     const versionedUrl = `${cdnUrl}/${environment.appVersion}/messages.${locale}.json`;
     const latestUrl = `${cdnUrl}/latest/messages.${locale}.json`;
 
+    const failedResponses: number[] = [];
     for (const url of [versionedUrl, latestUrl]) {
       try {
         const response = await fetch(url);
         if (response.ok) {
           return await response.json();
         }
+        failedResponses.push(response.status);
       } catch (e) {
         Logging.debug(`CDN fetch failed for '${url}':`, e);
       }
     }
+
+    if (failedResponses.length === 0) {
+      // no response at all: the device is offline or has a flaky connection, not a fault to report
+      Logging.debug(
+        "Could not reach the translations CDN, falling back to the default language.",
+        { locale },
+      );
+      return undefined;
+    }
+    if (environment.appVersion?.startsWith("pr-")) {
+      // preview builds of pull requests have no published translations
+      Logging.debug("No translations published for this preview build", {
+        locale,
+        appVersion: environment.appVersion,
+      });
+      return undefined;
+    }
+    Logging.warn(
+      // the locale is context, not part of the message: interpolated it would
+      // open a separate remote-monitoring issue per locale (see logging/README.md)
+      "Could not load translations for the requested locale, falling back to the default language.",
+      { locale, responseStatus: failedResponses },
+    );
+    return undefined;
   }
 
   Logging.warn(
