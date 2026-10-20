@@ -133,6 +133,30 @@ test("Dashboard shows correct counts", async ({ page }) => {
 });
 ```
 
+### Console errors
+
+A test fails if the app logs an error to the browser console (`console.error`,
+e.g. through `Logging.error()`) or throws an uncaught exception, even if all of
+its assertions pass. Many regressions only show up as such logged errors. The
+failure message lists the errors.
+
+- Errors expected in every run are allowed in `KNOWN_CONSOLE_ERRORS` in
+  `e2e/fixtures.ts`. Keep that list short, add a comment with the reason (and an
+  issue link) to each entry.
+- If a test triggers an error deliberately, allow it for the tests of that file
+  or `describe` block with a pattern:
+
+  ```typescript
+  test.use({ allowedConsoleErrors: [/Could not load the file/] });
+  ```
+
+Images from external hosts (e.g. map tiles) are replaced by an empty image, so
+the tests don't depend on these servers. A route that a test registers itself
+with `page.route()` takes precedence.
+
+The mocked clock replaces `Date`; the fixture makes sure that subclasses like
+`DateWithAge` still create instances of the subclass.
+
 ### Angular Material quirks
 
 - **Form fields:** floating labels are _not_ found by `getByLabel()`, because
