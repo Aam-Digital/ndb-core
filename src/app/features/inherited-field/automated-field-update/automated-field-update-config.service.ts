@@ -23,7 +23,7 @@ import {
   getRemovedValues,
   isEmptyValue,
 } from "../add-missing-values";
-import { CommonValue, getCommonValue } from "../get-common-value";
+import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 import { addHigherLevels } from "./add-higher-levels";
 
@@ -46,6 +46,17 @@ interface AffectedRule {
  */
 interface NewValue {
   value: any;
+  noCommonValue?: NoCommonValueReason;
+}
+
+/**
+ * The value that the linked parent records of a record have in common.
+ */
+export interface CommonValueOfParents {
+  /** the value the parent records have in common (in database format) */
+  value?: unknown;
+
+  /** why the parent records provide no value in common, if they don't */
   noCommonValue?: NoCommonValueReason;
 }
 
@@ -493,16 +504,17 @@ export class AutomatedFieldUpdateConfigService {
       return { value: this.calculateNewValue(sourceEntity, rule) };
     }
 
-    const otherEntities = this.withPendingValues(
-      await this.loadEntitiesByIds(sourceEntity.getConstructor(), otherIds),
-      pendingEntities,
+    const { value, noCommonValue } = await this.loadCommonValue(
+      otherIds,
+      rule,
+      {
+        parentType: sourceEntity.getConstructor(),
+        loadedParents: [sourceEntity],
+        pendingEntities,
+      },
     );
-    const commonValue: CommonValue | undefined =
-      otherEntities.length === otherIds.length
-        ? this.calculateCommonValue([sourceEntity, ...otherEntities], rule)
-        : undefined;
 
-    if (!commonValue || commonValue.isConflict) {
+    if (noCommonValue) {
       return {
         value: this.transformSourceValueToDatabaseFormat(
           targetEntity[fieldId],
@@ -510,10 +522,10 @@ export class AutomatedFieldUpdateConfigService {
           fieldId,
           this.entitySchemaService,
         ),
-        noCommonValue: commonValue ? "conflict" : "unavailable",
+        noCommonValue,
       };
     }
-    return { value: commonValue.value };
+    return { value };
   }
 
   /**
@@ -605,7 +617,7 @@ export class AutomatedFieldUpdateConfigService {
       const shownNoCommonValue = isEmptyValue(currentValue)
         ? undefined
         : noCommonValue;
-      if (isEqual(currentValue, newValue) && !shownNoCommonValue) continue;
+      if (isSameValue(currentValue, newValue) && !shownNoCommonValue) continue;
 
       affectedEntities.push({
         id: targetEntity.getId(),
@@ -664,6 +676,47 @@ export class AutomatedFieldUpdateConfigService {
     return getCommonValue(
       sourceEntities.map((entity) => this.calculateNewValue(entity, rule)),
     );
+  }
+
+  /**
+   * Load the linked parent records and get the value they all have in common
+   * (see {@link calculateCommonValue}).
+   * If any of them cannot be loaded (e.g. the user has no permission to read it), no common value can be determined.
+   * @param parentIds The ids of the linked parent records to load
+   * @param rule The inheritance rule
+   * @param options.parentType The entity type of the parent records
+   *   (ids of other types are not loaded, ids without type prefix are loaded as this type);
+   *   if not given, each record is loaded as the type of its id prefix
+   * @param options.loadedParents Further linked parents that are already loaded (not in parentIds)
+   * @param options.pendingEntities Records with suggested values that are not saved yet,
+   *   used instead of the saved records with the same id
+   */
+  public async loadCommonValue(
+    parentIds: string[],
+    rule: DefaultValueConfigInheritedField,
+    options: {
+      parentType?: EntityConstructor;
+      loadedParents?: Entity[];
+      pendingEntities?: Map<string, Entity>;
+    } = {},
+  ): Promise<CommonValueOfParents> {
+    const loaded = await this.loadEntitiesByIds(options.parentType, parentIds);
+    // without all linked parents available, no shared value can be determined
+    if (loaded.length !== parentIds.length) {
+      return { noCommonValue: "unavailable" };
+    }
+
+    const parents = this.withPendingValues(
+      loaded,
+      options.pendingEntities ?? new Map(),
+    );
+    const commonValue = this.calculateCommonValue(
+      [...(options.loadedParents ?? []), ...parents],
+      rule,
+    );
+    return commonValue.isConflict
+      ? { noCommonValue: "conflict" }
+      : { value: commonValue.value };
   }
 
   /**
@@ -808,36 +861,66 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Load entities by their IDs
+   * Load entities by their IDs, skipping those that cannot be loaded.
+   * @param entityType The type of entities to load (ids of other types are skipped);
+   *   if undefined, each entity is loaded as the type of its id prefix
+   * @param entityIds
    */
   private async loadEntitiesByIds(
-    entityType: EntityConstructor,
+    entityType: EntityConstructor | undefined,
     entityIds: string[],
   ): Promise<Entity[]> {
     // The reference field can hold ids of several entity types. Ids without any type prefix
     // are still loaded, because the mapper adds the prefix of the given type itself.
-    const typePrefix = `${entityType.ENTITY_TYPE}:`;
-    const idsOfEntityType = entityIds.filter(
-      (id) => String(id).startsWith(typePrefix) || !String(id).includes(":"),
-    );
+    const idsToLoad = entityType
+      ? entityIds.filter(
+          (id) =>
+            String(id).startsWith(`${entityType.ENTITY_TYPE}:`) ||
+            !String(id).includes(":"),
+        )
+      : entityIds;
 
     const loadedEntities = await Promise.all(
-      idsOfEntityType.map(async (id) => {
-        try {
-          const entity = await this.entityMapper.load(entityType, id);
-          return entity;
-        } catch (error) {
-          Logging.warn(
-            "AutomatedFieldUpdateConfigService: Failed to load entity for automated field update",
-            { entityType: entityType.ENTITY_TYPE, entityId: id },
-            error,
-          );
-          return null;
-        }
-      }),
+      idsToLoad.map((id) => this.loadEntity(id, entityType)),
     );
 
     return loadedEntities.filter((entity) => entity);
+  }
+
+  /**
+   * Load an entity, logging why it could not be loaded.
+   * @param entityId
+   * @param entityType The type of the entity; if not given, the type of the id prefix
+   * @return the entity, or undefined if it could not be loaded
+   */
+  private async loadEntity(
+    entityId: string,
+    entityType?: EntityConstructor,
+  ): Promise<Entity | undefined> {
+    try {
+      return await this.entityMapper.load(
+        entityType ?? Entity.extractTypeFromId(entityId),
+        entityId,
+      );
+    } catch (error) {
+      const context = { entityType: entityType?.ENTITY_TYPE, entityId };
+      const status = error?.["status"] ?? error?.["statusCode"];
+      if (status === 401 || status === 403) {
+        // the user simply has no read access to the linked entity - expected for some roles
+        Logging.debug(
+          "AutomatedFieldUpdateConfigService: No permission to load linked entity",
+          context,
+          error,
+        );
+      } else {
+        Logging.warn(
+          "AutomatedFieldUpdateConfigService: Failed to load linked entity",
+          context,
+          error,
+        );
+      }
+      return undefined;
+    }
   }
 
   /**
@@ -917,7 +1000,7 @@ export class AutomatedFieldUpdateConfigService {
         update.targetFieldId,
         this.entitySchemaService,
       );
-    return isEqual(
+    return isSameValue(
       toDatabaseFormat(update.newValue),
       toDatabaseFormat(entity[update.targetFieldId]),
     );

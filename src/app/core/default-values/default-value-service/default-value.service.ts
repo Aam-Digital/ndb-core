@@ -28,7 +28,6 @@ export class DefaultValueService {
     for (const strategy of this.defaultValueStrategies) {
       await strategy.initEntityForm(form);
     }
-    this.enableChangeListener(form);
 
     for (const fieldConfig of form.fieldConfigs) {
       if (!fieldConfig.defaultValue) {
@@ -89,15 +88,6 @@ export class DefaultValueService {
     return true;
   }
 
-  private enableChangeListener<T extends Entity>(form: EntityForm<T>) {
-    form.watcher.set(
-      "formGroupValueChanges",
-      form.formGroup.valueChanges.subscribe(async (change) =>
-        this.defaultValueStrategies.forEach((s) => s.onFormValueChanges(form)),
-      ),
-    );
-  }
-
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     fieldId: string,
@@ -144,7 +134,8 @@ export interface FullDefaultValueHint {
 
   noCommonValue?: undefined;
 
-  isEmpty?: undefined | false;
+  isEmpty?: false;
+  isLoading?: false;
 }
 
 /**
@@ -158,6 +149,11 @@ export interface EmptyDefaultValueHint {
    * Parent records are linked but they provide no value in common to inherit.
    */
   noCommonValue?: NoCommonValueReason;
+
+  /**
+   * Parent records are linked but still being loaded.
+   */
+  isLoading?: boolean;
 
   isInSync?: undefined;
   inheritedFromType?: undefined;

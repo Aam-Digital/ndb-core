@@ -68,12 +68,3 @@ app-entity-field-edit + .hint-text {
     text-decoration: line-through;
   }
 }
-
-// easy-to-overlook cases that should stand out
-.no-common-value-warning,
-.update-failed {
-  display: flex;
-  align-items: flex-start;
-  gap: sizes.$small;
-  color: colors.$error;
-}

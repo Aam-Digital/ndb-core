@@ -84,27 +84,9 @@
               </div>
             }
             @if (entity.noCommonValue) {
-              <div class="hint-text no-common-value-warning">
-                <fa-icon icon="warning"></fa-icon>
-                @if (entity.noCommonValue === "unavailable") {
-                  <span i18n
-                    >Some linked records could not be loaded, current value
-                    kept</span
-                  >
-                  <fa-icon
-                    icon="circle-info"
-                    i18n-matTooltip
-                    matTooltip="Some linked records could not be loaded (e.g. because you have no access to them), so no new value is suggested. The current value is kept unless you change it here."
-                  ></fa-icon>
-                } @else {
-                  <span i18n>No value in common, current value kept</span>
-                  <fa-icon
-                    icon="circle-info"
-                    i18n-matTooltip
-                    matTooltip="The linked records have no value in common, so no new value is suggested. The current value is kept unless you change it here."
-                  ></fa-icon>
-                }
-              </div>
+              <app-hint-box type="warning">
+                <app-no-common-value-hint [reason]="entity.noCommonValue" />
+              </app-hint-box>
             }
             @if (entity.unlinked) {
               <div class="hint-text" i18n>No longer linked</div>
@@ -129,13 +111,12 @@
   }
 
   @if (recalculationFailed()) {
-    <div class="hint-text update-failed">
-      <fa-icon icon="warning"></fa-icon>
-      <span i18n
-        >The suggestions for the records above could not be updated. Change a
-        value to try again.</span
-      >
-    </div>
+    <app-hint-box type="warning">
+      <span i18n>
+        The suggestions for the records above could not be updated. Change a
+        value to try again.
+      </span>
+    </app-hint-box>
   }
 </mat-dialog-content>
 

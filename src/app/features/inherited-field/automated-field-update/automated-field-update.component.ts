@@ -13,6 +13,8 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { NoCommonValueHintComponent } from "../no-common-value-hint/no-common-value-hint.component";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -153,9 +155,11 @@ function isSameRow(a: AffectedEntity, b: AffectedEntity): boolean {
     EntityFieldViewComponent,
     FontAwesomeModule,
     HelpButtonComponent,
+    HintBoxComponent,
     MatTooltipModule,
     MatButton,
     MatDialogModule,
+    NoCommonValueHintComponent,
   ],
   templateUrl: "./automated-field-update.component.html",
   styleUrl: "./automated-field-update.component.scss",
