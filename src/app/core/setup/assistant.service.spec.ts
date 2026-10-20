@@ -1,7 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import { AssistantService } from "./assistant.service";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import {
+  DialogPosition,
+  MatDialog,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { AssistantDialogComponent } from "./assistant-dialog/assistant-dialog.component";
+import { Direction, Directionality } from "@angular/cdk/bidi";
 import { of } from "rxjs";
 import type { Mock } from "vitest";
 
@@ -20,11 +25,14 @@ describe("AssistantService", () => {
   let service: AssistantService;
   let mockDialog: MatDialogMock;
   let mockDialogRef: AssistantDialogRefMock;
+  let mockDirectionality: { value: Direction };
 
   beforeEach(() => {
     mockDialogRef = {
       afterClosed: vi.fn().mockName("MatDialogRef.afterClosed"),
     };
+    // otherwise the real root-provided Directionality reads the test document
+    mockDirectionality = { value: "ltr" };
     mockDialog = {
       open: vi.fn().mockName("MatDialog.open"),
     };
@@ -33,6 +41,7 @@ describe("AssistantService", () => {
       providers: [
         AssistantService,
         { provide: MatDialog, useValue: mockDialog },
+        { provide: Directionality, useValue: mockDirectionality },
       ],
     });
     service = TestBed.inject(AssistantService);
@@ -52,6 +61,28 @@ describe("AssistantService", () => {
       }),
     );
   });
+
+  // annotated, so the direction stays a `Direction` instead of widening to `string`
+  const positionCases: [Direction, DialogPosition][] = [
+    ["rtl", { top: "0px", left: "0px" }],
+    ["ltr", { top: "0px", right: "0px" }],
+  ];
+
+  it.each(positionCases)(
+    "should open the panel on the same edge its button sits on in %s",
+    async (direction, position) => {
+      mockDirectionality.value = direction;
+      mockDialogRef.afterClosed.mockReturnValue(of(undefined));
+      mockDialog.open.mockReturnValue(mockDialogRef);
+
+      await service.openAssistant();
+
+      expect(mockDialog.open).toHaveBeenCalledWith(
+        AssistantDialogComponent,
+        expect.objectContaining({ position }),
+      );
+    },
+  );
 
   it("should not open dialog if already open", async () => {
     mockDialogRef.afterClosed.mockReturnValue(of(undefined));
