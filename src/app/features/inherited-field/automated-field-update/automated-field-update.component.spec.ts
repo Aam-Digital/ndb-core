@@ -178,7 +178,10 @@ describe("AutomatedFieldUpdateComponent", () => {
   });
 
   it("should keep the value the user entered for an entity above that is not suggested any more", async () => {
-    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+    initDialog([
+      affected(FIRST, ["a"], 1),
+      { ...affected(SECOND, ["a"], 2), noCommonValue: "conflict" },
+    ]);
     edit(SECOND, ["mine"]);
     await waitForUpdate();
 
@@ -191,6 +194,8 @@ describe("AutomatedFieldUpdateComponent", () => {
     ]);
     // the suggestion for it is to keep its saved value
     expect(row(SECOND).suggestionChanged).toBe(true);
+    // the hints of the earlier suggestion do not apply any more
+    expect(row(SECOND).noCommonValue).toBeUndefined();
   });
 
   it("should try again on the next change if updating the suggestions above failed", async () => {

@@ -221,6 +221,9 @@ export class AutomatedFieldUpdateComponent {
       .map((entry) => ({
         ...entry.row,
         newValue: this.getSavedValue(entry.row),
+        // the hints of the earlier suggestion
+        noCommonValue: undefined,
+        unlinked: undefined,
       }));
     return [...suggestions, ...notSuggestedAnyMore].map((row) =>
       this.toDialogRow(row, entries.get(getRowKey(row))),
