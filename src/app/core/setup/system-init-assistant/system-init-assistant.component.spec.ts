@@ -55,6 +55,32 @@ describe("SystemInitAssistantComponent", () => {
     expect((component as any).initializeSystem).toHaveBeenCalled();
   });
 
+  it.each([
+    ["only the languages of localised use cases", [{ locale: "de" }], ["de"]],
+    [
+      "every language a use case lists",
+      [{ locale: ["de", "fr"] }],
+      ["de", "fr"],
+    ],
+    [
+      "every language if a use case is offered in all of them",
+      [{ locale: "de" }, {}],
+      ["en-US", "de", "fr"],
+    ],
+  ])("offers %s to choose from", async (_, useCases, expectedLocales) => {
+    await configureComponent();
+    vi.spyOn(
+      component["setupService"],
+      "getAvailableBaseConfig",
+    ).mockResolvedValue(useCases as any);
+
+    await component.ngOnInit();
+
+    expect(component.availableLocales().map((l) => l.id)).toEqual(
+      expectedLocales,
+    );
+  });
+
   it("does not show the profile step before a base config was imported successfully", async () => {
     await configureComponent();
     vi.spyOn(
