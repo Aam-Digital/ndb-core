@@ -10,6 +10,16 @@ import {
   AutomatedFieldUpdateComponent,
 } from "./automated-field-update.component";
 
+/** The fields of the changed entity and the ids of the rows of each group, to compare them */
+function summarizeGroups(
+  groups: ReturnType<AutomatedFieldUpdateComponent["groups"]>,
+) {
+  return groups.map((group) => ({
+    fields: group.changes.map((change) => change.field.id),
+    rows: group.rows.map((row) => row.id),
+  }));
+}
+
 describe("AutomatedFieldUpdateComponent", () => {
   let component: AutomatedFieldUpdateComponent;
   let loadNextLevel: ReturnType<typeof vi.fn>;
@@ -260,12 +270,7 @@ describe("AutomatedFieldUpdateComponent", () => {
         basedOn(affected(SECOND, ["a"], 2), "tags"),
       ]);
 
-      expect(
-        component.groups().map((group) => ({
-          fields: group.changes.map((change) => change.field.id),
-          rows: group.rows.map((row) => row.id),
-        })),
-      ).toEqual([
+      expect(summarizeGroups(component.groups())).toEqual([
         { fields: ["center"], rows: [FIRST, SECOND] },
         { fields: ["gender"], rows: [other] },
       ]);
