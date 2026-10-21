@@ -43,6 +43,13 @@ describe("AdminTabsComponent", () => {
     expect(labelTexts()[1]).toBe("Renamed");
   });
 
+  it("should show the active language's text of a multi-lingual tab title", () => {
+    tabs[1].title = { de: "Zwei", "en-US": "Two" };
+    fixture.detectChanges();
+
+    expect(labelTexts()[1]).toBe("Two");
+  });
+
   /** the rendered text of every tab label */
   function labelTexts(): string[] {
     return Array.from(fixture.nativeElement.querySelectorAll(".drop-item")).map(

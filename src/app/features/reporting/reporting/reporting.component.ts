@@ -95,18 +95,15 @@ export class ReportingComponent {
 
   private reportsResource = resource({
     loader: () =>
-      this.entityMapper.loadType(ReportEntity).then((res) =>
-        res
-          // resolve once here, so everything downstream works on plain strings.
-          .map((report) => {
-            const forDisplay = report.copy();
-            forDisplay.title = resolveLocaleText(report.title);
-            return forDisplay;
-          })
-          .sort((a, b) =>
-            (a.title as string)?.localeCompare(b.title as string),
+      this.entityMapper
+        .loadType(ReportEntity)
+        .then((res) =>
+          res.sort((a, b) =>
+            resolveLocaleText(a.title)?.localeCompare(
+              resolveLocaleText(b.title),
+            ),
           ),
-      ),
+        ),
   });
   reports = this.reportsResource.value;
 

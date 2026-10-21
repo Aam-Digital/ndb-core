@@ -12,7 +12,11 @@ import { ReportRow } from "../report-row";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
-import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import {
+  MockEntityMapperService,
+  mockEntityMapperProvider,
+} from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { ReportEntity, SqlReport } from "../report-config";
 import {
   ReportCalculation,
@@ -469,5 +473,24 @@ describe("ReportingComponent", () => {
     expect(component.reportCalculation()?.id).toBe("fresh");
     expect(component.isStale()).toBe(false);
     expect(component.isRefreshing()).toBe(false);
+  });
+
+  it("should list reports sorted by their title in the active language and keep the raw titles", async () => {
+    const titles = [
+      { de: "Alpha", "en-US": "Zulu" },
+      { de: "Zebra", "en-US": "Bravo" },
+      "Charlie",
+    ];
+    (TestBed.inject(EntityMapperService) as MockEntityMapperService).addAll(
+      titles.map((title) => Object.assign(new ReportEntity(), { title })),
+    );
+
+    const fixtureWithReports = TestBed.createComponent(ReportingComponent);
+    fixtureWithReports.detectChanges();
+    await fixtureWithReports.whenStable();
+
+    expect(
+      fixtureWithReports.componentInstance.reports().map((r) => r.title),
+    ).toEqual([titles[1], titles[2], titles[0]]);
   });
 });

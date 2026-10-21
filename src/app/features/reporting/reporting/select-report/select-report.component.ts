@@ -25,6 +25,7 @@ import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-ran
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { resolveLocaleText } from "app/core/language/active-locale";
+import { LocaleTextPipe } from "app/core/language/locale-text.pipe";
 
 export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -76,6 +77,7 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
     MatTooltipModule,
     DateRangeFilterComponent,
     FaDynamicIconComponent,
+    LocaleTextPipe,
   ],
 })
 export class SelectReportComponent {
