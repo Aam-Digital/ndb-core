@@ -44,5 +44,21 @@ reviewers keep finding on top of that.
     deliberately (#4238, #4227).
 13. **Regression without a regression test.** A bugfix PR should carry a test that would
     have caught the bug. If it does not, ask for one (#4116).
-14. **Clean Code.** Any unnecessary complexity must be removed. 
-   Check pre-existing code and other files for similar code that could be reused or generalized also.
+14. **Clean Code.** Any unnecessary complexity must be removed.
+    Check pre-existing code and other files for similar code that could be reused or generalized also.
+15. **Bidi attributes (`dir`, `lang`, `<bdi>`).** Checked in Chromium on an RTL page: an
+    empty `dir="auto"` input or textarea resolves to LTR, so the caret starts on the left
+    until the first RTL letter is typed; a value without a strong letter (number, phone
+    number) stays LTR and left-aligned next to a right-aligned label; a negative
+    `type="number"` input shows `-5` as `5-` without `dir="ltr"`; `dir="auto"` on a
+    multi-paragraph block takes the direction of the whole block from its first letter.
+    `lang` describes the text on the page, so setting it before the translations are
+    confirmed labels English text with another language (#4504, #4540).
+16. **A test that cannot fail for the reason in its name.** A "when the fetch fails" test
+    that never makes the fetch fail, or a case that repeats a row of the `it.each` above
+    it (#4504). Check that the test goes red when the guarded code is removed. The runner
+    is not isolated, so also check that it does not depend on global state another spec may
+    set, such as a locale registered by an earlier test.
+17. **Stacked PRs.** A PR whose base is another feature branch can only merge after that
+    one. Check what users see between the two merges (#4504 mirrors the assistant button,
+    #4540 moves its panel) and that the diff is still right after the base is retargeted.

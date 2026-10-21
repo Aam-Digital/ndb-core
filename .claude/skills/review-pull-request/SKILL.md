@@ -12,19 +12,23 @@ past reviews (see [patterns.md](patterns.md)). The result is a short terminal re
 
 It complements the other checks and does not replace them: the project conventions in
 `AGENTS.md` are the baseline, CodeRabbit and CI run automatically, and a manual test of
-the running PR deployment finds what no code review does. Do the manual test first when
-you can.
+the running PR deployment finds what no code review does (see `test-pr-preview`). Do the
+manual test first when you can.
 
 ## Steps
 
 1. **Find the PR and its issue.** Use the PR from the argument or the request (URL or
    number), or the PR of the current branch if there is none, and ask if there is no PR
-   either. Read the PR and its diff with `gh`, and the linked issue (`closes #`, `fixes #`,
+   either. Read the PR and its diff with `gh` (or the GitHub MCP tools where `gh` is not
+   available, e.g. Claude Code on the web), and the linked issue (`closes #`, `fixes #`,
    or a number in the title) with its comments, because scope often changes there. If
-   there is no linked issue, say so and do not invent one.
+   there is no linked issue, say so and do not invent one. If the PR was reviewed before,
+   read the existing review threads and diff only the commits since that review, then
+   say which earlier findings are fixed instead of reporting them again.
 2. **Check coverage.** Compare the ask with what the diff changes and state one of: fully
    addressed / partially addressed (name the gap) / diff does not obviously match the
-   issue / no linked issue.
+   issue / no linked issue. If the coverage is partial but the PR says `closes #n`, report
+   it: merging closes the issue with the gap still open.
 3. **Read the diff.** Every hunk, plus the whole function around each hunk: a bug in an
    unchanged line of a touched function is in scope when the PR exposes it or fails to
    fix it. For each hunk ask what input, state or timing makes the line wrong.

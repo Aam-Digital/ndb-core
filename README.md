@@ -117,7 +117,7 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 
 Shared skills are defined in `.claude/skills/`. Claude Code picks the matching one from what you ask
 (e.g. "can you do a code review of PR 4526"), or you call it by name (e.g. `/review-pull-request 4526`).
-A feature usually goes through them in this order: use cases, prototype, plan, then the code, then the review.
+A feature usually goes through them in this order: use cases, prototype, plan, then the code, then the preview test and the review.
 
 | Skill                 | Purpose                                                        |
 | --------------------- | -------------------------------------------------------------- |
@@ -125,6 +125,7 @@ A feature usually goes through them in this order: use cases, prototype, plan, t
 | `design-prototype`    | Build a clickable prototype with the Aam Digital design system |
 | `figma-mockups`       | Design screens in the Aam Digital Figma design system file     |
 | `plan-implementation` | Write the implementation plan for an issue                     |
+| `test-pr-preview`     | Test a pull request on its preview deployment                  |
 | `review-pull-request` | Review a pull request                                          |
 
 Set up once: open Claude Code in this repository and trust the folder, and log in to the GitHub CLI
