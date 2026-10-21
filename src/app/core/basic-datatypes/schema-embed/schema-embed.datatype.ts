@@ -120,6 +120,26 @@ export class SchemaEmbedDatatype<
   }
 
   /**
+   * Whether the given field holds an array of embedded objects
+   * (as opposed to a single embedded object).
+   *
+   * Can be removed once {@link EventAttendanceMapDatatype} is removed.
+   */
+  holdsArray(schemaField: EntitySchemaField): boolean {
+    return schemaField.isArray === true;
+  }
+
+  /**
+   * Path of an inner property within a stored embedded object, for database queries.
+   * The embedded object is stored as-is, so this is the property name itself.
+   *
+   * Can be removed once {@link EventAttendanceMapDatatype} is removed.
+   */
+  getEmbeddedFieldDbPath(innerProp: string): string {
+    return innerProp;
+  }
+
+  /**
    * The embedded object is stored as-is, so an inner reference is matched through the
    * outer field - either inside an array of embedded objects or, where a single object
    * is stored, through the dotted path to the inner property.

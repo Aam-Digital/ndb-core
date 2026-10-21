@@ -17,7 +17,8 @@ import {
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { EntitySchema } from "#src/app/core/entity/schema/entity-schema";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
-import { getEmbeddedSchema } from "#src/app/core/entity/schema/embedded-schema-field.util";
+import { getSchemaEmbedDatatype } from "#src/app/core/entity/schema/embedded-schema-field.util";
+import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 
 /** datatypes whose value is stored as the referenced id alone */
 const STORED_BY_ID_DATATYPES = ["configurable-enum", "entity"];
@@ -264,9 +265,7 @@ export class PaginatedDataSource<
         continue;
       }
       dbSegments.push(
-        current.isLegacyAttendanceEntry
-          ? toLegacyAttendanceEntryPath(segment)
-          : segment,
+        current.container?.getEmbeddedFieldDbPath(segment) ?? segment,
       );
       field = current.schema?.get(segment);
       current = this.getEmbeddedContext(field);
@@ -306,21 +305,16 @@ export class PaginatedDataSource<
   private getEmbeddedContext(
     field: EntitySchemaField | undefined,
   ): SchemaContext {
-    return {
-      schema: getEmbeddedSchema(this.schemaService, field),
-      isLegacyAttendanceEntry: field?.dataType === LEGACY_ATTENDANCE_DATATYPE,
-    };
+    const container = getSchemaEmbedDatatype(this.schemaService, field);
+    return { schema: container?.getEffectiveSchema(field), container };
   }
 }
 
 /** The schema that the keys of a (nested) query object refer to. */
 interface SchemaContext {
   schema?: EntitySchema;
-  /**
-   * Whether the keys refer to an entry of the deprecated "event-attendance-map" datatype,
-   * which is stored as a tuple `[participantId, {status, remarks}]` instead of an object.
-   */
-  isLegacyAttendanceEntry?: boolean;
+  /** The datatype of the embedded field whose inner fields the keys refer to, which knows their paths in the stored value. */
+  container?: SchemaEmbedDatatype;
   /** Whether the keys are the conditions on an array entry inside `$elemMatch`. */
   inElemMatch?: boolean;
 }
@@ -329,23 +323,6 @@ function isOperatorObject(condition: unknown): condition is object {
   return (
     !!condition && typeof condition === "object" && !Array.isArray(condition)
   );
-}
-
-/**
- * The deprecated `EventAttendanceMapDatatype`, which stores its entries as a tuple.
- *
- * @deprecated remove together with EventAttendanceMapDatatype
- */
-const LEGACY_ATTENDANCE_DATATYPE = "event-attendance-map";
-
-/**
- * Path of an `AttendanceItem` property within the tuple
- * `[participantId, {status, remarks}]` stored by the deprecated `EventAttendanceMapDatatype`.
- *
- * @deprecated remove together with EventAttendanceMapDatatype
- */
-function toLegacyAttendanceEntryPath(innerProp: string): string {
-  return innerProp === "participant" ? "0" : `1.${innerProp}`;
 }
 
 /**

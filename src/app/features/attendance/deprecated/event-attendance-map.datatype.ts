@@ -1,8 +1,6 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { AttendanceItem } from "../model/attendance-item";
-import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
-import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import { SchemaEmbeddedType } from "#src/app/core/entity/schema/entity-schema";
+import { SchemaEmbedDatatype } from "#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype";
 import { EntitySchemaField } from "#src/app/core/entity/schema/entity-schema-field";
 import type { DataFilter } from "#src/app/core/filter/filters/filters";
 
@@ -11,14 +9,16 @@ import type { DataFilter } from "#src/app/core/filter/filters/filters";
  * Each value in the map is an {@link AttendanceItem}, transformed
  * using its schema annotations (via {@link EntitySchemaService}).
  *
+ * Unlike other {@link SchemaEmbedDatatype}s, each entry is stored as a tuple
+ * `[participantId, {status, remarks}]` instead of the embedded object itself.
+ * Any method of {@link SchemaEmbedDatatype} that works on the stored value
+ * (rather than the loaded `AttendanceItem[]`) therefore has to be overridden here.
+ *
  * @deprecated Use the new `attendance` datatype ({@link AttendanceDatatype}) with `isArray: true` instead.
  */
 @Injectable()
-export class EventAttendanceMapDatatype extends DefaultDatatype<
-  AttendanceItem[],
-  [string, any][]
-> {
-  static override dataType = "event-attendance-map";
+export class EventAttendanceMapDatatype extends SchemaEmbedDatatype {
+  static override readonly dataType = "event-attendance-map";
 
   override editComponent = "EditAttendance";
   override viewComponent = "DisplayAttendance";
@@ -29,9 +29,24 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
    * (e.g. `getEmbeddedSchema` for filters) can discover `AttendanceItem`'s fields
    * without requiring every one of them to be redeclared in a field's `additional` config.
    */
-  embeddedType: SchemaEmbeddedType<AttendanceItem> = AttendanceItem;
+  override embeddedType = AttendanceItem;
 
-  private readonly schemaService = inject(EntitySchemaService);
+  /**
+   * Always an array of entries, although the field does not (and, as the whole array is
+   * (de)serialized here at once, cannot) declare `isArray: true`.
+   */
+  override holdsArray(): boolean {
+    return true;
+  }
+
+  /**
+   * Path of an {@link AttendanceItem} property within the stored tuple
+   * `[participantId, {status, remarks}]` (see {@link getReferenceSelector} for why an
+   * integer path segment works on both query engines).
+   */
+  override getEmbeddedFieldDbPath(innerProp: string): string {
+    return innerProp === "participant" ? "0" : `1.${innerProp}`;
+  }
 
   /**
    * Unlike the embedded objects of the `attendance` datatype, this one stores each entry as a
@@ -49,7 +64,8 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
     schemaField: EntitySchemaField,
     referencedId: string,
   ): DataFilter<any>[] {
-    return [{ [fieldId]: { $elemMatch: { "0": referencedId } } }];
+    const participantPath = this.getEmbeddedFieldDbPath("participant");
+    return [{ [fieldId]: { $elemMatch: { [participantPath]: referencedId } } }];
   }
 
   override transformToDatabaseFormat(value: AttendanceItem[]) {
