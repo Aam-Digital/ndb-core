@@ -1158,8 +1158,6 @@
       "config": {
         "entityType": "participantSurvey",
         "columnGroups": {
-          "default": "Overview",
-          "mobile": "Overview",
           "groups": [
             {
               "name": "Overview",

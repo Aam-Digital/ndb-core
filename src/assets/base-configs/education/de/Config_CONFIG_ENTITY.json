@@ -226,8 +226,6 @@
         "clickMode": "popup-details",
         "title": "Notizen",
         "columnGroups": {
-          "default": "Standard",
-          "mobile": "Mobil",
           "groups": [
             {
               "name": "Standard",
@@ -373,8 +371,6 @@
           }
         ],
         "columnGroups": {
-          "default": "Übersicht",
-          "mobile": "Mobil",
           "groups": [
             {
               "name": "Übersicht",

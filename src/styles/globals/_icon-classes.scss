@@ -4,3 +4,13 @@
   margin-inline-end: sizes.$small;
   vertical-align: baseline;
 }
+
+/**
+ * Flips an icon in RTL. Only for icons whose meaning depends on reading direction
+ * (arrows, chevrons, tree twisties) - never apply broadly, or the search magnifier
+ * and the logo get mirrored too.
+ */
+.mirror-in-rtl {
+  display: inline-block;
+  transform: scaleX(var(--text-x-direction, 1));
+}

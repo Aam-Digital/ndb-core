@@ -2,7 +2,13 @@
  * Converts a timestamp into a human-readable time format,
  * such as "Just Now", "5min", "2h", "Yesterday", "3d", or "Jan 2024".
  */
-import { OnDestroy, Pipe, PipeTransform } from "@angular/core";
+import {
+  inject,
+  LOCALE_ID,
+  OnDestroy,
+  Pipe,
+  PipeTransform,
+} from "@angular/core";
 import { Observable, Subject, timer } from "rxjs";
 import { map, shareReplay, takeUntil } from "rxjs/operators";
 
@@ -11,6 +17,7 @@ import { map, shareReplay, takeUntil } from "rxjs/operators";
   standalone: true,
 })
 export class NotificationTimePipe implements PipeTransform, OnDestroy {
+  private readonly locale = inject(LOCALE_ID);
   private readonly destroy$ = new Subject<void>();
   private readonly timeUpdate$ = timer(0, 60000).pipe(
     map(() => new Date()),
@@ -59,7 +66,7 @@ export class NotificationTimePipe implements PipeTransform, OnDestroy {
     } else if (days >= 7 && days < 30) {
       return $localize`${days}d ago`;
     } else {
-      const monthYear = notificationTime.toLocaleString("en-US", {
+      const monthYear = notificationTime.toLocaleString(this.locale, {
         month: "short",
         year: "numeric",
       });

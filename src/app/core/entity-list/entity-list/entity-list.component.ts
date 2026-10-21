@@ -68,6 +68,18 @@ import { resolveDataSource } from "#src/app/core/common-components/entities-tabl
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
 
 /**
+ * The column group shown on small screens: the one with the fewest columns
+ * (the first of them if several have the same number).
+ */
+function indexOfGroupWithFewestColumns(groups: GroupConfig[]): number {
+  return groups.reduce(
+    (fewest, group, index) =>
+      group.columns.length < groups[fewest].columns.length ? index : fewest,
+    0,
+  );
+}
+
+/**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
  * The filter and grouping settings are written into the URL params to allow going back to the previous view.
  * The pagination settings are stored for each user.
@@ -201,8 +213,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   columnGroups = input<ColumnGroupsConfig>();
   groups: GroupConfig[] = [];
-  defaultColumnGroup = "";
-  mobileColumnGroup = "";
   filters = input<FilterConfig[]>([]);
 
   /**
@@ -259,13 +269,14 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => {
-        if (!isDesktop) {
-          this.displayColumnGroupByName(this.mobileColumnGroup);
-        } else if (
-          this.selectedColumnGroupIndex ===
-          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
-        ) {
-          this.displayColumnGroupByName(this.defaultColumnGroup);
+        // groups are not set yet on the initial emit during construction
+        if (this.groups.length > 0) {
+          const mobileIndex = indexOfGroupWithFewestColumns(this.groups);
+          if (!isDesktop) {
+            this.selectedColumnGroupIndex = mobileIndex;
+          } else if (this.selectedColumnGroupIndex === mobileIndex) {
+            this.selectedColumnGroupIndex = 0;
+          }
         }
 
         this.isDesktop = isDesktop;
@@ -317,12 +328,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     }
 
     this.initColumnGroups(this.columnGroups());
-
-    this.displayColumnGroupByName(
-      this.screenWidthObserver.isDesktop()
-        ? this.defaultColumnGroup
-        : this.mobileColumnGroup,
-    );
+    this.selectedColumnGroupIndex = this.screenWidthObserver.isDesktop()
+      ? 0
+      : indexOfGroupWithFewestColumns(this.groups);
 
     if (!this.title()) {
       this.title.set(this.entityConstructor()?.labelPlural);
@@ -332,15 +340,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
-      this.defaultColumnGroup =
-        columnGroup.default && this.configuredTabExists(columnGroup.default)
-          ? columnGroup.default
-          : columnGroup.groups[0].name;
-
-      this.mobileColumnGroup =
-        columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
-          ? columnGroup.mobile
-          : columnGroup.groups[0].name;
     } else {
       this.groups = [
         {
@@ -350,29 +349,11 @@ export class EntityListComponent<T extends Entity> implements OnInit {
           ),
         },
       ];
-      this.defaultColumnGroup = "default";
-      this.mobileColumnGroup = "default";
     }
-  }
-
-  private configuredTabExists(groupName: string): boolean {
-    return this.groups.some((group) => group.name === groupName);
   }
 
   applyFilter(filterValue: string) {
     this.recordsDataSource().filter = filterValue.trim().toLowerCase();
-  }
-
-  private displayColumnGroupByName(columnGroupName: string) {
-    const selectedColumnIndex =
-      this.getSelectedColumnIndexByName(columnGroupName);
-    if (selectedColumnIndex !== -1) {
-      this.selectedColumnGroupIndex = selectedColumnIndex;
-    }
-  }
-
-  private getSelectedColumnIndexByName(columnGroupName: string) {
-    return this.groups.findIndex((c) => c.name === columnGroupName);
   }
 
   /**
