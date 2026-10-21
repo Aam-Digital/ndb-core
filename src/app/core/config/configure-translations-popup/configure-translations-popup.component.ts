@@ -37,8 +37,8 @@ interface TranslationRow {
  *
  * Works on the *raw* config value (plain string or per-language map) and returns
  * a new raw value - it never resolves anything, so no language can be lost here.
- * A value that ends up with only one language is returned as a plain string
- * again, keeping configs that don't need multiple languages simple.
+ * A plain string that no further language is added to stays a plain string,
+ * keeping configs that don't need multiple languages simple.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,7 +88,10 @@ export class ConfigureTranslationsPopupComponent {
 
   /**
    * Build the new raw value. Only the default language on its own collapses to a
-   * plain string: {@link initialTextFor} reads one back as that language's text.
+   * plain string ({@link initialTextFor} reads one back as that language's text),
+   * and only if the dialog was opened with a plain string. A map stays a map:
+   * saved as a plain string, its text would look unchanged to the config merge,
+   * which would then restore the translations that were just removed.
    */
   private buildValue(): TranslatableText | undefined {
     const filled = this.rows.filter((row) => !!row.text?.trim());
@@ -96,7 +99,11 @@ export class ConfigureTranslationsPopupComponent {
     if (filled.length === 0) {
       return undefined;
     }
-    if (filled.length === 1 && filled[0].locale === DEFAULT_LANGUAGE) {
+    if (
+      filled.length === 1 &&
+      filled[0].locale === DEFAULT_LANGUAGE &&
+      !isLocaleTranslationMap(this.data?.value)
+    ) {
       return filled[0].text.trim();
     }
 
