@@ -2,7 +2,7 @@
 // in the browser build this comes from the polyfills bundle instead
 import "@angular/localize/init";
 // eslint-disable-next-line no-restricted-imports
-import { Download, Page, test as base } from "@playwright/test";
+import { Download, expect, Page, test as base } from "@playwright/test";
 // eslint-disable-next-line no-restricted-imports
 import {
   argosScreenshot as argosScreenshotBase,
@@ -38,8 +38,7 @@ import { EntityActionsService } from "#src/app/core/entity/entity-actions/entity
 import { ConfigService } from "#src/app/core/config/config.service";
 import { EventAttendanceMapDatatype } from "#src/app/features/attendance/deprecated/event-attendance-map.datatype";
 
-// eslint-disable-next-line no-restricted-imports
-export { expect } from "@playwright/test";
+export { expect };
 export type { Page };
 
 /** The mocked "now" date to which e2e tests are fixed. */
@@ -47,11 +46,48 @@ export const E2E_REF_DATE = "2025-01-23";
 
 faker.setDefaultRefDate(E2E_REF_DATE);
 
-export const test = base.extend<{ forEachTest: void }>({
+/**
+ * Console errors that are expected in every e2e run and therefore don't fail a test.
+ *
+ * Keep this list short and document the reason for each entry.
+ * To allow errors that a single test triggers deliberately, use the `allowedConsoleErrors` option instead.
+ */
+const KNOWN_CONSOLE_ERRORS: RegExp[] = [
+  // The app first requests the translations of its own version, which don't
+  // exist for the e2e build (version 0.0.0), and then falls back to the latest.
+  /^Failed to load resource: .*404.*\/locale\/0\.0\.0\/messages\.\w+\.json/,
+];
+
+/** Options that tests can override with `test.use({ ... })`. */
+export interface E2eOptions {
+  /**
+   * Patterns of console errors (and uncaught page errors) that the tests of this file or `describe` block
+   * expect, e.g. because they deliberately trigger an error. Any other error fails the test.
+   */
+  allowedConsoleErrors: RegExp[];
+}
+
+export const test = base.extend<{ forEachTest: void } & E2eOptions>({
+  allowedConsoleErrors: [[], { option: true }],
+
   forEachTest: [
-    async ({ page }, use) => {
+    async ({ page, baseURL, allowedConsoleErrors }, use) => {
       await page.clock.install();
       await page.clock.setFixedTime(E2E_REF_DATE);
+      // The mock clock replaces `Date` with a function that always returns a
+      // native `Date` object. Constructing a subclass (e.g. `DateWithAge`)
+      // would therefore not create an instance of the subclass, unlike in a
+      // real browser, and cause endless update loops in the app.
+      // (A string, because the transpiled function would reference helpers
+      // that don't exist in the browser.)
+      await page.addInitScript({
+        content: `globalThis.Date = new Proxy(Date, {
+          construct(target, args, newTarget) {
+            const date = Reflect.construct(target, args, newTarget);
+            return Object.setPrototypeOf(date, newTarget.prototype);
+          },
+        });`,
+      });
       await page.addInitScript((E2E_REF_DATE) => {
         // @ts-expect-error Because we install a mock clock, `Data.name` is
         // `ClockDate` and not `Date`. This would break the Entity Schema
@@ -60,11 +96,65 @@ export const test = base.extend<{ forEachTest: void }>({
         globalThis.NDB_E2E_REF_DATE = new Date(E2E_REF_DATE);
       }, E2E_REF_DATE);
 
+      await stubExternalImages(page, baseURL);
+      const consoleErrors = collectConsoleErrors(page);
+
       await use();
+
+      const allowed = [...KNOWN_CONSOLE_ERRORS, ...allowedConsoleErrors];
+      const unexpectedErrors = consoleErrors.filter(
+        (error) => !allowed.some((pattern) => pattern.test(error)),
+      );
+      expect(
+        unexpectedErrors,
+        "The app logged unexpected errors to the browser console. " +
+          "Fix them or, if the test triggers them deliberately, " +
+          "allow them with `test.use({ allowedConsoleErrors: [...] })`.",
+      ).toEqual([]);
     },
     { auto: true },
   ],
 });
+
+/**
+ * Record all `console.error` messages and uncaught exceptions of the page.
+ */
+function collectConsoleErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") {
+      const { url, lineNumber } = message.location();
+      errors.push(`${message.text()} (at ${url}:${lineNumber})`);
+    }
+  });
+  page.on("pageerror", (error) => errors.push(error.stack ?? String(error)));
+  return errors;
+}
+
+/** A transparent 1x1 PNG image. */
+const EMPTY_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+  "base64",
+);
+
+/**
+ * Serve an empty image for images from external hosts (e.g. map tiles),
+ * so that the tests neither depend on these servers being reachable
+ * nor fail on "Failed to load resource" console errors.
+ *
+ * Other external requests (e.g. translations) are needed by the app and still go through.
+ * Routes that a test registers itself take precedence over this one.
+ */
+async function stubExternalImages(page: Page, baseURL: string | undefined) {
+  const appOrigin = new URL(baseURL ?? "http://localhost:4200").origin;
+  await page.route(
+    (url) => url.origin !== appOrigin,
+    (route) =>
+      route.request().resourceType() === "image"
+        ? route.fulfill({ contentType: "image/png", body: EMPTY_PNG })
+        : route.fallback(),
+  );
+}
 
 const ARGOS_BASE_CSS =
   // Hide Material tooltips, which can appear from prior hover interactions and cause flaky screenshots

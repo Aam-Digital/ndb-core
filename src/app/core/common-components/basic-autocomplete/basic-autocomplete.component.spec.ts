@@ -78,6 +78,25 @@ describe("BasicAutocompleteComponent", () => {
     expect(currentAutocompleteSuggestions).toEqual([school2]);
   });
 
+  it("should filter options whose label is not a string", () => {
+    const numericOption = { _id: "1", _label: 2024 };
+    const objectOption = { _id: "2", _label: { text: "nested" } };
+    const textOption = { _id: "3", _label: "Text" };
+    fixture.componentRef.setInput("options", [
+      numericOption,
+      objectOption,
+      textOption,
+    ]);
+    fixture.detectChanges();
+    let currentAutocompleteSuggestions: any[];
+    component.autocompleteSuggestedOptions.subscribe(
+      (value) => (currentAutocompleteSuggestions = value.map((o) => o.initial)),
+    );
+
+    expect(() => component.autocompleteForm.setValue("20")).not.toThrow();
+    expect(currentAutocompleteSuggestions).toEqual([numericOption]);
+  });
+
   it("should show name of the selected entity", async () => {
     const child1 = TestEntity.create("First Child");
     const child2 = TestEntity.create("Second Child");

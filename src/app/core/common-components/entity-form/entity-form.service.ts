@@ -148,7 +148,6 @@ export class EntityFormService {
       entity: entity,
       fieldConfigs: fields,
       onFormStateChange: new EventEmitter(),
-      inheritedParentValues: new Map(),
       watcher: new Map(),
     };
 

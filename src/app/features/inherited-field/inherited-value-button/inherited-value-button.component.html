@@ -66,10 +66,14 @@
           }
         </div>
       }
+    } @else if (defaultValueHint()?.isLoading) {
+      <div i18n>Loading the linked records ...</div>
+    } @else if (defaultValueHint()?.noCommonValue; as reason) {
+      <div><app-no-common-value-hint [reason]="reason" /></div>
     } @else if (defaultValueHint()?.isEmpty) {
       <div i18n>
-        Select exactly one record in the parent field to automatically inherit
-        its value here.
+        Select one or more records in the parent field to automatically inherit
+        their shared value here.
       </div>
     } @else if (defaultValueHint()?.isInSync) {
       <div i18n>(up-to-date, inherited from parent record)</div>

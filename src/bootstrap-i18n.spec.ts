@@ -57,13 +57,6 @@ describe("initLanguage", () => {
     expect(document.documentElement.lang).toBe(locale);
   });
 
-  it("should still apply the reading direction when translations fail to load", async () => {
-    // the layout belongs to the language, not to its translations
-    await initLanguage("ar");
-
-    expect(document.documentElement.dir).toBe("rtl");
-  });
-
   it("should leave the document untouched for an invalid locale", async () => {
     document.documentElement.dir = "ltr";
 
@@ -103,6 +96,15 @@ describe("initLanguage", () => {
       await initLanguage();
 
       expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    it("should still apply the reading direction when the fetch fails", async () => {
+      fetchSpy.mockRejectedValue(new TypeError("Failed to fetch"));
+
+      await initLanguage("ar");
+
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(document.documentElement.dir).toBe("rtl");
     });
 
     it("should not report it for a preview build of a pull request", async () => {
