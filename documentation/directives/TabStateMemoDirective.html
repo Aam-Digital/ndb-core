@@ -361,7 +361,7 @@ export class TabStateMemoDirective implements OnInit {
         startWith(null),
         untilDestroyed(this),
       )
-      .subscribe(() &#x3D;&gt; {
+      .subscribe((navigationEvent) &#x3D;&gt; {
         const potentialNextTabIndex &#x3D; parseInt(
           this.route.snapshot.queryParamMap.get(this.tabIndexKey),
           10,
@@ -375,6 +375,10 @@ export class TabStateMemoDirective implements OnInit {
           // Without this, an in-app navigation that only changes the tabIndex
           // query param updates the URL but not the visible tab (OnPush parents).
           this.cdr.markForCheck();
+
+          if (navigationEvent &#x3D;&#x3D;&#x3D; null) {
+            this.notifyInitialSelectedIndex();
+          }
         }
       });
     this.tab.selectedIndexChange
@@ -382,10 +386,31 @@ export class TabStateMemoDirective implements OnInit {
       .subscribe((next) &#x3D;&gt; this.updateURLQueryParams(next));
   }
 
+  /**
+   * MatTabGroup does not emit &#x60;selectedIndexChange&#x60; for the very first index it applies,
+   * so a parent binding &#x60;[(selectedIndex)]&#x60; would not learn about the tab restored from the URL.
+   * Emit it like MatTabGroup does for later changes: in a microtask, after the current
+   * change detection run, with the index the tab group actually applied (clamped to its tabs).
+   */
+  private notifyInitialSelectedIndex() {
+    void Promise.resolve().then(() &#x3D;&gt; {
+      const appliedIndex &#x3D; this.tab.selectedIndex;
+      if (appliedIndex !&#x3D;&#x3D; null &amp;&amp; appliedIndex &gt;&#x3D; 0) {
+        this.tab.selectedIndexChange.emit(appliedIndex);
+      }
+    });
+  }
+
   // Update the URL
   private async updateURLQueryParams(value: number) {
     if (this.viewContext?.isDialog) {
       // does not apply if opened in popup
+      return;
+    }
+    if (
+      this.route.snapshot.queryParamMap.get(this.tabIndexKey) &#x3D;&#x3D;&#x3D; String(value)
+    ) {
+      // URL already holds this state (e.g. the index was just restored from it)
       return;
     }
 
