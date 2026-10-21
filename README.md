@@ -13,6 +13,8 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 [![Developer Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 
+[<img src="https://argos-ci.com/badge.svg" alt="Covered by Argos Visual Testing" height="51" />](https://argos-ci.com?utm_source=aam-digital&utm_campaign=oss)
+
 # Aam Digital
 
 _Enabling social organizations digitally to transform lives._
