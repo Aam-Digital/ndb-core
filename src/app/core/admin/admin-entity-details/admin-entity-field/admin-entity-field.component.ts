@@ -3,7 +3,6 @@ import {
   computed,
   DestroyRef,
   inject,
-  LOCALE_ID,
   OnInit,
   signal,
   viewChild,
@@ -48,12 +47,8 @@ import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/con
 import { EntityConfig } from "../../../entity/entity-config";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
-import {
-  resolveTranslatableText,
-  TranslatableText,
-} from "../../../config/multi-lingual-config";
-import { availableLocales } from "../../../language/languages";
-import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
+import { TranslatableText } from "../../../config/multi-lingual-config";
+import { resolveLocaleText } from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
@@ -142,9 +137,6 @@ export class AdminEntityFieldComponent implements OnInit {
   readonly resolvedLabel = computed(
     () => this.resolveForDisplay(this.labelValue()) ?? "",
   );
-
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   private readonly validatorConfig = viewChild(
     ConfigureEntityFieldValidatorComponent,
@@ -641,12 +633,8 @@ export class AdminEntityFieldComponent implements OnInit {
     return rawValue ?? this.data.entitySchemaField[property];
   }
 
+  /** typed, so that the `any` values of form controls resolve to a string */
   private resolveForDisplay(value: TranslatableText): string | undefined {
-    return resolveTranslatableText(
-      value,
-      this.locale,
-      DEFAULT_LANGUAGE,
-      this.validLocaleIds,
-    );
+    return resolveLocaleText(value);
   }
 }

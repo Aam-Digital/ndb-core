@@ -11,7 +11,8 @@ import { FormsModule } from "@angular/forms";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { availableLocales } from "../../language/languages";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
-import { isTranslatableText, TranslatableText } from "../multi-lingual-config";
+import { isLocaleTranslationMap } from "../../language/active-locale";
+import { TranslatableText } from "../multi-lingual-config";
 
 export interface ConfigureTranslationsResult {
   /** the new value, or undefined when every language was cleared */
@@ -58,8 +59,6 @@ export class ConfigureTranslationsPopupComponent {
   private readonly dialogRef =
     inject<MatDialogRef<ConfigureTranslationsPopupComponent>>(MatDialogRef);
 
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
-
   rows: TranslationRow[] = availableLocales.values.map((locale) => ({
     locale: locale.id,
     localeLabel: locale.label,
@@ -68,7 +67,7 @@ export class ConfigureTranslationsPopupComponent {
 
   private initialTextFor(locale: string): string {
     const value = this.data?.value;
-    if (isTranslatableText(value, this.validLocaleIds)) {
+    if (isLocaleTranslationMap(value)) {
       return value[locale] ?? "";
     }
     // a plain string so far: it is the text everyone sees today, so it becomes

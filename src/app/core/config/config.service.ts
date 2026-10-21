@@ -1,4 +1,4 @@
-import { inject, Injectable, LOCALE_ID } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -7,9 +7,7 @@ import { Logging } from "../logging/logging.service";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
-import { resolveTranslatableConfig } from "./multi-lingual-config";
-import { DEFAULT_LANGUAGE } from "../language/language-statics";
-import { availableLocales } from "../language/languages";
+import { resolveLocaleConfig } from "../language/active-locale";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -42,9 +40,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
    */
   private resolvedConfigData: Record<string, any>;
 
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
-
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
   constructor(
@@ -67,12 +62,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       }
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
       this.currentConfig = this.applyMigrations(config);
-      this.resolvedConfigData = resolveTranslatableConfig(
-        this.currentConfig.data,
-        this.locale,
-        DEFAULT_LANGUAGE,
-        this.validLocaleIds,
-      );
+      this.resolvedConfigData = resolveLocaleConfig(this.currentConfig.data);
       this.logConfigRev();
     });
 
