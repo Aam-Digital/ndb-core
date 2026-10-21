@@ -15,13 +15,21 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
 } from "@angular/forms";
-import { MatDatepickerModule } from "@angular/material/datepicker";
+import { DateRange, MatDatepickerModule } from "@angular/material/datepicker";
+import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import moment from "moment";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
+import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import {
+  calculateDateRange,
+  periodRangeOptions,
+} from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeValue } from "../date-range.datatype";
 
 /** Validator for the value of the field: the end must not be before the start. */
@@ -62,6 +70,10 @@ export class EditDateRangeComponent
   formFieldConfig = input<FormFieldConfig>();
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
+
+  /** the predefined ranges offered next to the calendar */
+  readonly rangeOptions = periodRangeOptions;
 
   /** the two inputs of the range picker, which are kept in sync with the form control of the field */
   readonly range = new FormGroup({
@@ -136,6 +148,60 @@ export class EditDateRangeComponent
       { emitEvent: false },
     );
   }
+
+  /**
+   * Pick the dates in the calendar or as one of the predefined ranges
+   * (the same panel as the date filters of lists and reports).
+   */
+  openPanel(event: Event) {
+    event.stopPropagation();
+    // the click also reaches the disabled toggle, e.g. next to its button
+    if (!this.enabled()) {
+      return;
+    }
+
+    const { start, end } = this.range.value;
+    this.dialog
+      .open(DateRangeFilterPanelComponent, {
+        width: "600px",
+        minWidth: "400px",
+        data: {
+          dateRange: new DateRange(start ?? null, end ?? null),
+          rangeOptions: this.rangeOptions,
+          hideAllOption: true,
+        },
+      })
+      .afterClosed()
+      .subscribe((result?: { selectedOptionValues: string[] }) => {
+        if (result?.selectedOptionValues?.length) {
+          this.range.setValue(this.toDates(result.selectedOptionValues));
+        }
+      });
+  }
+
+  /** The dates of a selection in the panel: "no date", the index of a predefined range, or two picked dates. */
+  private toDates([first, second]: string[]): {
+    start: Date | null;
+    end: Date | null;
+  } {
+    if (first === EMPTY_FILTER_OPTION_KEY) {
+      return { start: null, end: null };
+    }
+    if (second === undefined) {
+      const range = calculateDateRange(this.rangeOptions[Number(first)]);
+      return { start: startOfDay(range.start), end: startOfDay(range.end) };
+    }
+    return { start: fromDateString(first), end: fromDateString(second) };
+  }
+}
+
+function startOfDay(date: Date): Date {
+  return moment(date).startOf("day").toDate();
+}
+
+/** a date as "YYYY-MM-DD" (as the panel returns the picked dates), in local time */
+function fromDateString(value: string): Date {
+  return moment(value, "YYYY-MM-DD").toDate();
 }
 
 function isSameDate(a?: Date | null, b?: Date | null): boolean {

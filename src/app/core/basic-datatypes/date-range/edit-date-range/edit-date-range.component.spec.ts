@@ -1,8 +1,18 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
 import { provideNativeDateAdapter } from "@angular/material/core";
+import { DateRange } from "@angular/material/datepicker";
+import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
+import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
+import {
+  MatDialogMock,
+  mockMatDialog,
+  mockMatDialogRef,
+} from "../../../../utils/test-utils/dialog-mocks";
+import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { periodRangeOptions } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
 import {
   EditDateRangeComponent,
   endNotBeforeStart,
@@ -11,14 +21,19 @@ import {
 describe("EditDateRangeComponent", () => {
   let component: EditDateRangeComponent;
   let fixture: ComponentFixture<EditDateRangeComponent>;
+  let dialog: MatDialogMock;
 
   const start = new Date(2026, 2, 1);
   const end = new Date(2026, 4, 31);
 
   beforeEach(async () => {
+    dialog = mockMatDialog();
     await TestBed.configureTestingModule({
       imports: [EditDateRangeComponent, NoopAnimationsModule],
-      providers: [provideNativeDateAdapter()],
+      providers: [
+        provideNativeDateAdapter(),
+        { provide: MatDialog, useValue: dialog },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditDateRangeComponent);
@@ -87,6 +102,65 @@ describe("EditDateRangeComponent", () => {
 
     expect(control.valid).toBe(true);
   });
+
+  it("should open the panel of the date filters with the current dates, for selecting a value", () => {
+    component.formControl.setValue({ start, end });
+
+    component.openPanel(new Event("click"));
+
+    expect(dialog.open).toHaveBeenCalledWith(
+      DateRangeFilterPanelComponent,
+      expect.objectContaining({
+        data: {
+          dateRange: new DateRange(start, end),
+          rangeOptions: periodRangeOptions,
+          hideAllOption: true,
+        },
+      }),
+    );
+  });
+
+  it("should not open the panel while the field cannot be edited", () => {
+    component.formControl.disable();
+    fixture.detectChanges();
+
+    component.openPanel(new Event("click"));
+
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  const today = new Date();
+  it.each([
+    [
+      "two dates picked in the calendar",
+      { selectedOptionValues: ["2026-04-01", "2026-04-30"] },
+      { start: new Date(2026, 3, 1), end: new Date(2026, 3, 30) },
+    ],
+    [
+      "the predefined range of the current month",
+      { selectedOptionValues: ["0"] },
+      {
+        start: new Date(today.getFullYear(), today.getMonth(), 1),
+        end: new Date(today.getFullYear(), today.getMonth() + 1, 0),
+      },
+    ],
+    [
+      "'no date defined'",
+      { selectedOptionValues: [EMPTY_FILTER_OPTION_KEY] },
+      null,
+    ],
+    ["nothing (the panel is closed)", undefined, { start, end }],
+  ])(
+    "should set the field to what is selected in the panel: %s",
+    (_, panelResult, expected) => {
+      component.formControl.setValue({ start, end });
+      dialog.open.mockReturnValue(mockMatDialogRef(panelResult));
+
+      component.openPanel(new Event("click"));
+
+      expect(component.formControl.value).toEqual(expected);
+    },
+  );
 
   it("should mark the field as invalid if the end date is before the start date", () => {
     component.range.setValue({ start: end, end: start });

@@ -1,5 +1,5 @@
 <div class="flex-row">
-  <mat-date-range-input [rangePicker]="rangePicker" [formGroup]="range">
+  <mat-date-range-input [formGroup]="range">
     <input
       matStartDate
       formControlName="start"
@@ -15,8 +15,8 @@
   </mat-date-range-input>
 
   <mat-datepicker-toggle
-    [for]="rangePicker"
     class="input-action-button"
+    [disabled]="!enabled()"
+    (click)="openPanel($event)"
   ></mat-datepicker-toggle>
-  <mat-date-range-picker #rangePicker></mat-date-range-picker>
 </div>

@@ -117,6 +117,23 @@ describe("DateRangeFilterPanelComponent", () => {
     expect(dialogCloseSpy).toHaveBeenCalledWith({ selectedOptionValues: [] });
   });
 
+  it("should leave out the 'All' option when selecting the dates of a field", () => {
+    Object.assign(TestBed.inject(MAT_DIALOG_DATA), {
+      hideAllOption: true,
+      dateRange: undefined,
+    });
+    const fieldPanel = TestBed.createComponent(DateRangeFilterPanelComponent);
+    fieldPanel.detectChanges();
+
+    const buttonLabels = [
+      ...fieldPanel.nativeElement.querySelectorAll("button"),
+    ].map((button: HTMLElement) => button.textContent.trim());
+    expect(buttonLabels).not.toContain("All");
+    expect(fieldPanel.componentInstance.selectedRangeValue()).toEqual(
+      new DateRange(null, null),
+    );
+  });
+
   it("should set empty option when selected", () => {
     component.selectRangeAndClose("empty");
     expect(dialogCloseSpy).toHaveBeenCalledWith({

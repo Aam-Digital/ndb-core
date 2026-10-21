@@ -66,15 +66,27 @@ export class DateRangeFilterPanelComponent {
     selectedOption?: DateRangeFilterConfigOption;
     dateRange?: DateRange<Date>;
     rangeOptions?: DateRangeFilterConfigOption[];
+    /**
+     * For selecting the dates of a field rather than a filter:
+     * no "All" option, and without given dates nothing is selected initially.
+     */
+    hideAllOption?: boolean;
   };
   private dialogRef =
     inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
 
+  readonly showAllOption = !this.data?.hideAllOption;
+
   selectedRangeValue = signal<DateRange<Date>>(
-    new DateRange(
-      this.data?.dateRange?.start ?? new Date("1900-01-01"),
-      this.data?.dateRange?.end ?? new Date("2999-12-31"),
-    ),
+    this.showAllOption
+      ? new DateRange(
+          this.data?.dateRange?.start ?? new Date("1900-01-01"),
+          this.data?.dateRange?.end ?? new Date("2999-12-31"),
+        )
+      : new DateRange(
+          this.data?.dateRange?.start ?? null,
+          this.data?.dateRange?.end ?? null,
+        ),
   );
   selectedOption = signal<DateRangeFilterConfigOption | undefined>(
     this.data?.selectedOption,
