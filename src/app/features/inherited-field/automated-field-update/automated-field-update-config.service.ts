@@ -199,8 +199,9 @@ export class AutomatedFieldUpdateConfigService {
       },
     ];
 
-    for (let step = 0; queue.length > 0; step++) {
-      if (step >= MAX_STEPS) {
+    let steps = 0;
+    while (queue.length > 0) {
+      if (steps++ >= MAX_STEPS) {
         Logging.warn(
           "AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps",
           { entityType: trigger.entity.getType() },
