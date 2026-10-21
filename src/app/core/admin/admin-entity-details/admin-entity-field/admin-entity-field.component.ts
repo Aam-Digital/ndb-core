@@ -48,7 +48,10 @@ import { EntityConfig } from "../../../entity/entity-config";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
 import { TranslatableText } from "../../../config/multi-lingual-config";
-import { resolveLocaleText } from "../../../language/active-locale";
+import {
+  mergeLocaleTranslations,
+  resolveLocaleText,
+} from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
@@ -629,8 +632,14 @@ export class AdminEntityFieldComponent implements OnInit {
     const rawValue =
       entityConfig?.attributes?.[this.data.entitySchemaField.id]?.[property];
 
-    // a field that is not in the config yet (newly added) has no raw value
-    return rawValue ?? this.data.entitySchemaField[property];
+    // The config document only has what was saved, the runtime schema also has the
+    // edits applied on this page since. Combine them the way saving does: that keeps
+    // the translations of other languages, but not an outdated text. A field that is
+    // not in the config yet (newly added) has no raw value, so the schema's wins.
+    return mergeLocaleTranslations(
+      { [property]: rawValue },
+      { [property]: this.data.entitySchemaField[property] },
+    )[property];
   }
 
   /** typed, so that the `any` values of form controls resolve to a string */
