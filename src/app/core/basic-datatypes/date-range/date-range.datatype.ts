@@ -30,8 +30,8 @@ export class DateRangeDatatype extends DefaultDatatype<
   DateRangeValue,
   DateRangeDatabaseValue
 > {
-  static override dataType = "date-range";
-  static override label: string = $localize`:datatype-label:date range (start and end date)`;
+  static override readonly dataType = "date-range";
+  static override readonly label: string = $localize`:datatype-label:date range (start and end date)`;
 
   override viewComponent = "DisplayDateRange";
   override editComponent = "EditDateRange";

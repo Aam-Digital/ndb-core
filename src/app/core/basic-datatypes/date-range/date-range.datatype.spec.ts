@@ -1,5 +1,8 @@
 import { testDatatype } from "../../entity/schema/entity-schema.service.test-utils";
-import { DateRangeDatatype } from "./date-range.datatype";
+import {
+  DateRangeDatabaseValue,
+  DateRangeDatatype,
+} from "./date-range.datatype";
 
 describe("Schema data type: date-range", () => {
   testDatatype(
@@ -30,7 +33,7 @@ describe("Schema data type: date-range", () => {
     ["a date in the wrong format", { start: 20260301 }],
   ])("reads %s as no value", (_, databaseValue) => {
     expect(
-      datatype.transformToObjectFormat(databaseValue as any),
+      datatype.transformToObjectFormat(databaseValue as DateRangeDatabaseValue),
     ).toBeUndefined();
   });
 

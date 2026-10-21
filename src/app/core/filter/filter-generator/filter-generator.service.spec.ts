@@ -388,7 +388,7 @@ describe("FilterGeneratorService", () => {
     it("should match only the records without a period with the empty option", async () => {
       const matches = await generatePeriodFilter([EMPTY_FILTER_OPTION_KEY]);
 
-      expect(matches(entityWith(undefined))).toBe(true);
+      expect(matches(entityWith())).toBe(true);
       expect(matches(entityWith({ start: day(3, 1) }))).toBe(false);
     });
   });
