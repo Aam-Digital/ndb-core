@@ -22,8 +22,9 @@
   flex: 0 0 110px;
 }
 
-.compare-mode-select {
-  flex: 0 0 200px;
+.compare-mode {
+  margin-inline-start: 8px;
+  --mat-standard-button-toggle-height: 36px;
 }
 
 .value-input {

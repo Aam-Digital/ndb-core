@@ -10,6 +10,7 @@ import {
   signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSelectModule } from "@angular/material/select";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -25,6 +26,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { IconButtonComponent } from "../icon-button/icon-button.component";
+import { FaDynamicIconComponent } from "../fa-dynamic-icon/fa-dynamic-icon.component";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { negate, splitNegation, withSameNegation } from "./condition-negation";
 import {
@@ -58,6 +60,8 @@ import { asArray } from "app/utils/asArray";
     DynamicEditComponent,
     ReactiveFormsModule,
     EntityFieldSelectComponent,
+    NgTemplateOutlet,
+    FaDynamicIconComponent,
   ],
 })
 export class ConditionsEditorComponent implements OnInit {

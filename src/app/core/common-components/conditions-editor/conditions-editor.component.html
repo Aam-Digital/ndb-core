@@ -59,22 +59,6 @@
           conditionFormFieldConfigs.get(conditionId + "");
           as formFieldConfig
         ) {
-          @if (currentRecordType()) {
-            <mat-form-field class="compare-mode-select">
-              <mat-label i18n>Compared with</mat-label>
-              <mat-select
-                [value]="isReferenceRow(conditionId)"
-                (valueChange)="setReferenceRow(conditionId, $event)"
-                [disabled]="disabled"
-              >
-                <mat-option [value]="false" i18n>a fixed value</mat-option>
-                <mat-option [value]="true" i18n
-                  >a field of the edited record</mat-option
-                >
-              </mat-select>
-            </mat-form-field>
-          }
-
           @if (isReferenceRow(conditionId)) {
             <mat-form-field class="value-input" floatLabel="always">
               <mat-label i18n>Field of the edited record</mat-label>
@@ -84,6 +68,14 @@
                 [hideOption]="referenceFieldFilters.get(conditionId + '')"
                 (valueChange)="onReferencedFieldChange(conditionId, $event)"
               ></app-entity-field-select>
+              @if (currentRecordType()) {
+                <div matSuffix>
+                  <ng-container
+                    [ngTemplateOutlet]="compareMode"
+                    [ngTemplateOutletContext]="{ $implicit: conditionId }"
+                  ></ng-container>
+                </div>
+              }
             </mat-form-field>
           } @else if (
             conditionFormControls.get(conditionId + "");
@@ -95,6 +87,14 @@
                 [formFieldConfig]="formFieldConfig"
                 [formControl]="formControl"
               ></app-dynamic-edit>
+              @if (currentRecordType()) {
+                <div matSuffix>
+                  <ng-container
+                    [ngTemplateOutlet]="compareMode"
+                    [ngTemplateOutletContext]="{ $implicit: conditionId }"
+                  ></ng-container>
+                </div>
+              }
             </mat-form-field>
           }
         }
@@ -126,3 +126,35 @@
     </div>
   </div>
 </div>
+
+<!-- whether a row compares with a fixed value or with a field of the edited record -->
+<ng-template #compareMode let-conditionId>
+  <mat-button-toggle-group
+    class="compare-mode"
+    [value]="isReferenceRow(conditionId)"
+    (change)="setReferenceRow(conditionId, $event.value)"
+    [disabled]="disabled"
+    hideSingleSelectionIndicator
+    aria-label="Compared with"
+    i18n-aria-label
+  >
+    <mat-button-toggle
+      [value]="false"
+      aria-label="a fixed value"
+      i18n-aria-label
+      matTooltip="a fixed value"
+      i18n-matTooltip
+    >
+      <app-fa-dynamic-icon icon="circle"></app-fa-dynamic-icon>
+    </mat-button-toggle>
+    <mat-button-toggle
+      [value]="true"
+      aria-label="a field of the edited record"
+      i18n-aria-label
+      matTooltip="a field of the edited record"
+      i18n-matTooltip
+    >
+      <app-fa-dynamic-icon icon="circle-left"></app-fa-dynamic-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+</ng-template>

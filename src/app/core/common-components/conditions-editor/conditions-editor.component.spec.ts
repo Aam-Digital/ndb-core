@@ -481,6 +481,28 @@ describe("ConditionsEditorComponent", () => {
       expect(component.conditionsArray()[0]).toEqual({ genderSingle: null });
     });
 
+    it("switches a row to a field of the edited record with the mode buttons in its value field", () => {
+      component.conditions = { $or: [{ name: null }] };
+      component.ngOnInit();
+      fixture.detectChanges();
+
+      const modeButton = fixture.debugElement
+        .queryAll(By.css("button"))
+        .find(
+          (b) =>
+            b.nativeElement.getAttribute("aria-label") ===
+            "a field of the edited record",
+        );
+      expect(modeButton).toBeTruthy();
+      modeButton.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(component.isReferenceRow(0)).toBe(true);
+      expect(fixture.nativeElement.textContent).toContain(
+        "Field of the edited record",
+      );
+    });
+
     it("keeps 'is not' when switching between a fixed value and a field of the edited record", () => {
       component.conditions = {
         $or: [{ genderSingle: { $not: { $in: ["M"] } } }],
