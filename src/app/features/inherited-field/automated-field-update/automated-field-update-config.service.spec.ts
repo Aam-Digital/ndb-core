@@ -1283,8 +1283,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
     }
 
     /** change the tags of the action (which has to be added to the database) and return the suggestions of the dialog */
-    async function changeTags(action: HierarchyAction, tagsAfter: string[]) {
-      const actionBefore = action.copy();
+    async function changeTags(
+      action: HierarchyAction,
+      tagsAfter: string[],
+      actionBefore = action.copy(),
+    ) {
       action.tags = toTags(tagsAfter);
       mockDialog.open.mockClear();
 
@@ -1422,6 +1425,28 @@ describe("AutomatedFieldUpdateConfigService", () => {
         [workPackage1.getId(), []],
         [workPackage2.getId(), []],
         [project.getId(), []],
+      ]);
+    });
+
+    it("removes a value from the parent of the parent that one branch below it drops while another branch only adds values", async () => {
+      const project = createAction(["water", "health"]);
+      const workPackage1 = createAction(["water"], project);
+      const workPackage2 = createAction(["health"], project);
+      const activity = createAction(["water"], workPackage1);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+      const activityBefore = activity.copy();
+      activity.parents = [workPackage2.getId()];
+
+      const suggestions = await changeTags(
+        activity,
+        ["education"],
+        activityBefore,
+      );
+
+      expect(suggestions.map(([id, value]) => [id, value])).toEqual([
+        [workPackage2.getId(), ["health", "education"]],
+        [workPackage1.getId(), []],
+        [project.getId(), ["health", "education"]],
       ]);
     });
 

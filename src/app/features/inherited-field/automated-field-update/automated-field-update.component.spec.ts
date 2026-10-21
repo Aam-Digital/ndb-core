@@ -8,6 +8,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import {
   AffectedEntity,
   AutomatedFieldUpdateComponent,
+  EnteredValue,
 } from "./automated-field-update.component";
 
 /** The fields of the changed entity and the ids of the rows of each group, to compare them */
@@ -22,7 +23,7 @@ function summarizeGroups(
 
 describe("AutomatedFieldUpdateComponent", () => {
   let component: AutomatedFieldUpdateComponent;
-  let loadNextLevel: ReturnType<typeof vi.fn>;
+  let recalculate: ReturnType<typeof vi.fn>;
   let createEntityForm: ReturnType<typeof vi.fn>;
   let dialogRef: { close: ReturnType<typeof vi.fn> };
 
@@ -46,13 +47,23 @@ describe("AutomatedFieldUpdateComponent", () => {
     };
   }
 
-  /** The entity above the first one is suggested the value of the first one, if that is not "none" */
-  function suggestAbove(source: AffectedEntity): Promise<AffectedEntity[]> {
-    const suggestion =
-      source.id === FIRST && !isEqual(source.newValue, ["none"]);
-    return Promise.resolve(
-      suggestion ? [affected(SECOND, source.newValue as any, 2)] : [],
-    );
+  /**
+   * The first entity keeps its suggestion, the entity above it is suggested the value of the first one
+   * (entered by the user or suggested), if that is not "none"
+   */
+  function suggestAbove(
+    enteredValues: EnteredValue[],
+  ): Promise<AffectedEntity[]> {
+    const first = component.data.entities[0];
+    const firstValue =
+      enteredValues.find((entered) => entered.id === FIRST)?.value ??
+      first.newValue;
+    return Promise.resolve([
+      affected(FIRST, first.newValue as any, 1),
+      ...(isEqual(firstValue, ["none"])
+        ? []
+        : [affected(SECOND, firstValue as any, 2)]),
+    ]);
   }
 
   function valueOf(row: AffectedEntity) {
@@ -76,7 +87,7 @@ describe("AutomatedFieldUpdateComponent", () => {
               entity: new Entity("trigger"),
               before: new Entity("trigger"),
             },
-            loadNextLevel,
+            recalculate,
           },
         },
         { provide: MatDialogRef, useValue: dialogRef },
@@ -112,7 +123,7 @@ describe("AutomatedFieldUpdateComponent", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    loadNextLevel = vi.fn(suggestAbove);
+    recalculate = vi.fn(suggestAbove);
     createEntityForm = vi.fn((fieldIds: string[]) =>
       Promise.resolve({
         formGroup: new FormGroup({ [fieldIds[0]]: new FormControl() }),
@@ -133,10 +144,9 @@ describe("AutomatedFieldUpdateComponent", () => {
     expect(component.recalculating()).toBe(true);
     await waitForUpdate();
 
-    expect(loadNextLevel).toHaveBeenCalledWith(
-      expect.objectContaining({ id: FIRST, newValue: ["x"] }),
-      [expect.objectContaining({ id: FIRST, newValue: ["x"] })],
-    );
+    expect(recalculate).toHaveBeenCalledWith([
+      { id: FIRST, targetFieldId: "tags", value: ["x"] },
+    ]);
     expect(component.rows()).toEqual([first, second]);
     expect(valueOf(second)).toEqual(["x"]);
     expect(second.edited).toBeFalsy();
@@ -185,7 +195,7 @@ describe("AutomatedFieldUpdateComponent", () => {
   it("should try again on the next change if updating the suggestions above failed", async () => {
     await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
     const [first, second] = component.rows();
-    loadNextLevel.mockRejectedValueOnce(new Error("could not load"));
+    recalculate.mockRejectedValueOnce(new Error("could not load"));
 
     edit(first, ["x"]);
     await waitForUpdate();
@@ -209,7 +219,7 @@ describe("AutomatedFieldUpdateComponent", () => {
     edit(first, ["y"]);
     await waitForUpdate();
     expect(second.suggestionChanged).toBe(true);
-    loadNextLevel.mockRejectedValueOnce(new Error("could not load"));
+    recalculate.mockRejectedValueOnce(new Error("could not load"));
     edit(first, ["z"]);
     await waitForUpdate();
     expect(component.recalculationFailed()).toBe(true);
@@ -287,12 +297,11 @@ describe("AutomatedFieldUpdateComponent", () => {
 
     it("should add the group of an entity that is only affected after a change", async () => {
       await initDialog([basedOn(affected(FIRST, ["none"], 1), "center")]);
-      loadNextLevel.mockImplementation((source: AffectedEntity) =>
-        Promise.resolve(
-          source.id === FIRST
-            ? [basedOn(affected(SECOND, source.newValue as any, 2), "tags")]
-            : [],
-        ),
+      recalculate.mockImplementation(([entered]: EnteredValue[]) =>
+        Promise.resolve([
+          basedOn(affected(FIRST, ["none"], 1), "center"),
+          basedOn(affected(SECOND, entered.value as any, 2), "tags"),
+        ]),
       );
 
       edit(component.rows()[0], ["x"]);

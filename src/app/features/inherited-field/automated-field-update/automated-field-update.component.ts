@@ -42,7 +42,6 @@ import {
   switchMap,
 } from "rxjs";
 import { Logging } from "#src/app/core/logging/logging.service";
-import { addHigherLevels } from "./add-higher-levels";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 
@@ -115,6 +114,18 @@ export interface UpdateTrigger {
 
   /** The changed entity before the change (the same as entity if there is no change) */
   before: Entity;
+
+  /** The field of the entity to pass on to the entities it links to, regardless of a change (from the button next to the field) */
+  fieldId?: string;
+}
+
+/** A value that the user entered for an affected entity, instead of the suggested one */
+export interface EnteredValue {
+  id: string;
+  targetFieldId: string;
+
+  /** in database format */
+  value: unknown;
 }
 
 /** A field of the changed entity that caused an update, and whether its value was changed */
@@ -168,14 +179,8 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   data = inject<{
     entities: AffectedEntity[];
     trigger?: UpdateTrigger;
-    /**
-     * Finds the entities that would be updated next if the given affected entity had its suggested value,
-     * taking into account all given affected entities with their suggested values
-     */
-    loadNextLevel?: (
-      affected: AffectedEntity,
-      found: AffectedEntity[],
-    ) => Promise<AffectedEntity[]>;
+    /** Finds the affected entities again, based on the values the user entered instead of the suggestions */
+    recalculate?: (enteredValues: EnteredValue[]) => Promise<AffectedEntity[]>;
   }>(MAT_DIALOG_DATA);
   private dialogRef =
     inject<MatDialogRef<AutomatedFieldUpdateComponent>>(MatDialogRef);
@@ -195,9 +200,6 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   /** Whether the last update of the entities above failed, so that it has to be tried again with a change */
   readonly recalculationFailed = signal(false);
 
-  private readonly firstLevel = this.data.entities
-    .filter((entity) => (entity.level ?? 1) === 1)
-    .map((entity) => ({ ...entity }));
   private readonly valueChanged = new Subject<void>();
   private changeCount = 0;
 
@@ -373,7 +375,7 @@ export class AutomatedFieldUpdateComponent implements OnInit {
 
   /** Suggest the values of the entities above again whenever a value is changed, as they are based on it */
   private recalculateOnChange(): void {
-    if (!this.data.loadNextLevel || !this.data.trigger) return;
+    if (!this.data.recalculate) return;
 
     this.valueChanged
       .pipe(
@@ -415,23 +417,15 @@ export class AutomatedFieldUpdateComponent implements OnInit {
   }
 
   private loadHigherLevels(): Promise<AffectedEntity[]> {
-    return addHigherLevels(
-      this.firstLevel,
-      this.data.trigger.entity.getId(),
-      (source, found) =>
-        this.data.loadNextLevel(
-          this.withEnteredValue(source),
-          found.map((row) => this.withEnteredValue(row)),
-        ),
+    return this.data.recalculate(
+      this.rows()
+        .filter((row) => row.edited)
+        .map((row) => ({
+          id: row.id,
+          targetFieldId: row.targetFieldId,
+          value: this.getDatabaseValue(row),
+        })),
     );
-  }
-
-  /** What the user entered is the base for the entities above, instead of the suggestion */
-  private withEnteredValue(suggestion: AffectedEntity): AffectedEntity {
-    const row = this.rows().find((r) => isSameRow(r, suggestion));
-    return row?.edited
-      ? { ...suggestion, newValue: this.getDatabaseValue(row) }
-      : suggestion;
   }
 
   /** Show the given entities, keeping the form (and so the changes of the user) of the ones that are shown already */
