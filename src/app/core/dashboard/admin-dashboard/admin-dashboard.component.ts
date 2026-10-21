@@ -69,10 +69,10 @@ export class AdminDashboardComponent {
 
   // raw, because save() writes this back to the config document - a resolved
   // value would drop every other configured language
-  private readonly dashboardViewConfig = computed(
-    () =>
-      this.configService.getRawConfig(this.dashboardViewConfigKey()) as
-        DynamicComponentConfig<DashboardConfig> | undefined,
+  private readonly dashboardViewConfig = computed(() =>
+    this.configService.getRawConfig<DynamicComponentConfig<DashboardConfig>>(
+      this.dashboardViewConfigKey(),
+    ),
   );
 
   dashboardConfig = linkedSignal(() =>

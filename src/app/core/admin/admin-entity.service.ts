@@ -8,6 +8,7 @@ import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { DynamicComponentConfig } from "../config/dynamic-components/dynamic-component-config.interface";
 import { NoteDetailsConfig } from "#src/app/child-dev-project/notes/note-details/note-details-config.interface";
+import { RawConfig } from "../config/multi-lingual-config";
 import { mergeLocaleTranslations } from "../language/active-locale";
 
 /**
@@ -47,7 +48,7 @@ export class AdminEntityService {
    */
   public async setAndSaveEntityConfig(
     entityConstructor: EntityConstructor,
-    configEntitySettings?: EntityConfig,
+    configEntitySettings?: RawConfig<EntityConfig>,
     configListView?: DynamicComponentConfig<EntityListConfig>,
     configDetailsView?: DynamicComponentConfig<
       EntityDetailsConfig | NoteDetailsConfig
@@ -89,7 +90,7 @@ export class AdminEntityService {
   private updateConfigWithEntitySchema(
     newConfig: Config,
     entityConstructor: EntityConstructor,
-    configEntitySettings?: EntityConfig,
+    configEntitySettings?: RawConfig<EntityConfig>,
   ) {
     let entitySchemaConfig: EntityConfig =
       this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};

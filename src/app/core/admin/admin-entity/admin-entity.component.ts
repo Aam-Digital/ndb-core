@@ -20,6 +20,7 @@ import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/e
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { RawConfig } from "../../config/multi-lingual-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityConfig } from "../../entity/entity-config";
@@ -108,7 +109,7 @@ export class AdminEntityComponent {
     // labels come from the raw config (not the resolved constructor statics)
     // so that all configured languages remain editable
     const rawConfig = this.entityConfigService.getRawEntityConfig(entityCtr);
-    const config: EntityConfig = {
+    const config: RawConfig<EntityConfig> = {
       label: rawConfig?.label ?? entityCtr.label,
       labelPlural: rawConfig?.labelPlural ?? entityCtr.labelPlural,
       icon: entityCtr.icon,
@@ -129,7 +130,9 @@ export class AdminEntityComponent {
       config.toBlockDetailsAttributes = entityCtr.toBlockDetailsAttributes;
     }
 
-    return config;
+    // the general settings editor keeps the other languages of these texts intact,
+    // but still declares them as plain strings
+    return config as EntityConfig;
   }
 
   private loadViewConfig(
@@ -142,8 +145,8 @@ export class AdminEntityComponent {
         : EntityConfigService.getListViewId(entityType);
     // raw, because this editor saves the view config back to the config
     // document - resolving here would drop all other languages
-    const viewConfig: DynamicComponentConfig =
-      this.configService.getRawConfig(viewId);
+    const viewConfig =
+      this.configService.getRawConfig<DynamicComponentConfig>(viewId);
 
     if (!viewConfig) {
       // return default view config

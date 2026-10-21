@@ -44,7 +44,6 @@ import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-e
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
-import { EntityConfig } from "../../../entity/entity-config";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
 import { TranslatableText } from "../../../config/multi-lingual-config";
@@ -627,8 +626,9 @@ export class AdminEntityFieldComponent implements OnInit {
       return this.data.entitySchemaField[property];
     }
 
-    const entityConfig: EntityConfig =
-      this.entityConfigService.getRawEntityConfig(this.entityType);
+    const entityConfig = this.entityConfigService.getRawEntityConfig(
+      this.entityType,
+    );
     const rawValue =
       entityConfig?.attributes?.[this.data.entitySchemaField.id]?.[property];
 

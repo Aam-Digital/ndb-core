@@ -8,6 +8,7 @@ import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
 import { resolveLocaleConfig } from "../language/active-locale";
+import { RawConfig } from "./multi-lingual-config";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -162,9 +163,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   /**
    * Get a config item with its raw values (multi-lingual maps left intact).
-   * Required for any read-modify-save flow.
+   * Required for any read-modify-save flow. Its display texts may be such maps
+   * (see {@link RawConfig}), so resolve them wherever they are displayed.
    */
-  public getRawConfig<T>(id: string): T | undefined {
+  public getRawConfig<T>(id: string): RawConfig<T> | undefined {
     return this.currentConfig?.data?.[id];
   }
 
@@ -186,8 +188,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
    * Like getAllConfigs(), but with raw values (multi-lingual maps left intact).
    * Required for any read-modify-save flow.
    */
-  public getAllRawConfigs<T>(prefix: string): T[] {
-    return ConfigService.collectConfigsByPrefix<T>(
+  public getAllRawConfigs<T>(prefix: string): RawConfig<T>[] {
+    return ConfigService.collectConfigsByPrefix<RawConfig<T>>(
       this.currentConfig?.data,
       prefix,
     );

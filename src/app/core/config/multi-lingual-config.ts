@@ -21,6 +21,36 @@
 /** A config text that may be a plain string or a per-locale translation map. */
 export type TranslatableText = string | Record<string, string>;
 
+/** Names of the config properties that hold a user-facing text. */
+type TranslatableTextProperty =
+  "label" | "labelShort" | "labelPlural" | "description" | "title" | "header";
+
+/**
+ * Config as it is stored, i.e. before it is resolved to the active language:
+ * every user-facing text (a `string` property named label, labelShort,
+ * labelPlural, description, title or header) may also be a per-language map.
+ * Properties are matched by name only, so a `title` holding e.g. a field id is
+ * widened too.
+ *
+ * The config types (e.g. `EntityConfig`) describe the *resolved* config, where
+ * these are always plain strings. Use this type for config that is read raw to
+ * edit and save it, so that code treating such a text as a plain string is
+ * flagged. Resolve it (see `resolveLocaleText`) wherever the text is displayed.
+ */
+export type RawConfig<T> = 0 extends 1 & T
+  ? T // `any` stays `any`
+  : T extends (...args: any[]) => any
+    ? T
+    : T extends object
+      ? {
+          [K in keyof T]: K extends TranslatableTextProperty
+            ? RawText<T[K]>
+            : RawConfig<T[K]>;
+        }
+      : T;
+
+type RawText<V> = V extends string ? TranslatableText : RawConfig<V>;
+
 /** Reduce a locale id to its language subtag, e.g. `en-US` -> `en`. */
 function baseLanguage(locale: string): string {
   return locale.split("-")[0].toLowerCase();
