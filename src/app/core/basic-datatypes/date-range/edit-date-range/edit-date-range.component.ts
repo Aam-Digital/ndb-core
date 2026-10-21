@@ -100,6 +100,11 @@ export class EditDateRangeComponent
       this.pickerInputsReadable,
     ]);
     this.formControl.updateValueAndValidity({ emitEvent: false });
+    // it checks the inputs of this component, so it must not stay on the field once the component is gone
+    this.destroyRef.onDestroy(() => {
+      this.formControl.removeValidators(this.pickerInputsReadable);
+      this.formControl.updateValueAndValidity({ emitEvent: false });
+    });
 
     this.showValue(this.formControl.value);
     this.formControl.valueChanges

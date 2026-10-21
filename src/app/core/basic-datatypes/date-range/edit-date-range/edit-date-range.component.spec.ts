@@ -57,7 +57,7 @@ describe("EditDateRangeComponent", () => {
     return input;
   }
 
-  it("should keep a text that is typed and cannot be read as a date, and mark the field as invalid", () => {
+  it("should report a typed text that is not a date as an error of the field, keeping the text", () => {
     typeInto("input[matStartDate]", "3/1/2026");
     const endInput = typeInto("input[matEndDate]", "not a date");
 
@@ -75,6 +75,17 @@ describe("EditDateRangeComponent", () => {
 
     expect(component.formControl.valid).toBe(true);
     expect(component.formControl.value).toEqual({ start, end });
+  });
+
+  it("should not keep a text that is not a date as an error of the field once the component is gone", () => {
+    typeInto("input[matEndDate]", "not a date");
+    const control = component.formControl;
+
+    // e.g. the field is hidden by a display condition while the form stays open
+    fixture.destroy();
+    control.setValue({ start, end });
+
+    expect(control.valid).toBe(true);
   });
 
   it("should mark the field as invalid if the end date is before the start date", () => {
