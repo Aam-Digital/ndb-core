@@ -217,6 +217,50 @@ describe("multi-lingual-config", () => {
 
       expect(merged.label).toBe("New Field");
     });
+
+    it.each([
+      {
+        invariant:
+          "keeps the translations of any key, not only labels, while its text is unchanged",
+        raw: { title: { "en-US": "Children", de: "Kinder" } },
+        edited: { title: "Children" },
+        keys: undefined,
+        expected: { title: { "en-US": "Children", de: "Kinder" } },
+      },
+      {
+        invariant:
+          "updates only the active locale of any key, not only labels, once its text changed",
+        raw: { title: { "en-US": "Children", de: "Kinder" } },
+        edited: { title: "Pupils" },
+        keys: undefined,
+        expected: { title: { "en-US": "Pupils", de: "Kinder" } },
+      },
+      {
+        invariant:
+          "leaves the keys outside a restricting translatableKeys to the edited value",
+        raw: {
+          label: { "en-US": "Name", de: "Vorname" },
+          title: { "en-US": "Children", de: "Kinder" },
+        },
+        edited: { label: "Name", title: "Children" },
+        keys: ["label"],
+        expected: {
+          label: { "en-US": "Name", de: "Vorname" },
+          title: "Children",
+        },
+      },
+    ])("$invariant", ({ raw, edited, keys, expected }) => {
+      const merged = mergeTranslatableValues(
+        raw,
+        edited,
+        "en-US",
+        DEFAULT,
+        LOCALES,
+        keys,
+      );
+
+      expect(merged).toEqual(expected);
+    });
   });
 
   describe("resolveTranslatableConfig", () => {

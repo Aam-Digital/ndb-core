@@ -107,17 +107,6 @@ export function resolveTranslatableText(
 }
 
 /**
- * Config keys that hold user-facing text and may therefore be multi-lingual.
- * Keys not present on a given object are simply skipped.
- */
-export const TRANSLATABLE_CONFIG_KEYS = [
-  "label",
-  "labelShort",
-  "labelPlural",
-  "description",
-] as const;
-
-/**
  * Merge an edited, locale-resolved config object back onto its raw counterpart,
  * preserving the translations of all other languages.
  *
@@ -126,7 +115,8 @@ export const TRANSLATABLE_CONFIG_KEYS = [
  * with the single string of the editing admin's language and silently drop every
  * other language.
  *
- * For each translatable key, if the raw value is a translation map:
+ * For each key whose raw value is a translation map (whatever the key is called,
+ * unless `translatableKeys` restricts it to some):
  * - unchanged (the edited text still equals what the admin was shown) -> keep the map
  * - changed -> update only the active locale's entry, keeping the other languages
  *
@@ -139,14 +129,14 @@ export function mergeTranslatableValues<T extends Record<string, any>>(
   activeLocale: string,
   defaultLocale: string,
   validLocaleIds: readonly string[],
-  translatableKeys: readonly string[] = TRANSLATABLE_CONFIG_KEYS,
+  translatableKeys?: readonly string[],
 ): T {
   const merged: Record<string, any> = { ...edited };
   if (!raw) {
     return merged as T;
   }
 
-  for (const key of translatableKeys) {
+  for (const key of translatableKeys ?? Object.keys(raw)) {
     const rawValue = raw[key];
     if (!isTranslatableText(rawValue, validLocaleIds)) {
       // never was multi-lingual -> keep the edited value unchanged
