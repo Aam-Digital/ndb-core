@@ -63,52 +63,11 @@
             }
           </td>
           <td>
-            <app-entity-field-edit
-              [field]="entity.selectedField"
-              [entity]="entity.affectedEntity"
-              [form]="entity.form"
-              [hideInheritButton]="true"
-              [highlightAdded]="entity.addToExisting"
-            ></app-entity-field-edit>
-            @if (entity.removedEntity) {
-              <div class="hint-text removed-values">
-                <app-fa-dynamic-icon
-                  icon="minus"
-                  i18n-matTooltip="tooltip for values that are removed"
-                  matTooltip="Removed"
-                ></app-fa-dynamic-icon>
-                <span
-                  class="visually-hidden"
-                  i18n="screen reader text for values that are removed"
-                  >Removed:</span
-                >
-                <app-entity-field-view
-                  [field]="entity.selectedField"
-                  [entity]="entity.removedEntity"
-                ></app-entity-field-view>
-              </div>
-            }
-            @if (entity.noCommonValue) {
-              <app-hint-box type="warning">
-                <app-no-common-value-hint [reason]="entity.noCommonValue" />
-              </app-hint-box>
-            }
-            @if (entity.unlinked) {
-              <div class="hint-text" i18n>No longer linked</div>
-            }
-            @if (entity.suggestionChanged) {
-              <div class="hint-text suggestion-changed">
-                <span i18n>The suggestion changed, your value is kept.</span>
-                <button
-                  type="button"
-                  mat-button
-                  (click)="useSuggestion(entity)"
-                  i18n
-                >
-                  Use suggestion
-                </button>
-              </div>
-            }
+            <app-affected-entity-value
+              [row]="entity"
+              (valueChange)="onValueChange(entity, $event)"
+              (useSuggestion)="useSuggestion(entity)"
+            ></app-affected-entity-value>
           </td>
         </tr>
       }
