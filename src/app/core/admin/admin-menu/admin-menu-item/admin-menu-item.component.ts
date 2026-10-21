@@ -1,5 +1,4 @@
 import {
-  LOCALE_ID,
   Component,
   input,
   computed,
@@ -8,9 +7,7 @@ import {
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { resolveTranslatableText } from "../../../config/multi-lingual-config";
-import { availableLocales } from "../../../language/languages";
-import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
+import { resolveLocaleText } from "../../../language/active-locale";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -54,8 +51,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 })
 export class AdminMenuItemComponent {
   private readonly dialog = inject(MatDialog);
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
   private readonly menuService = inject(MenuService);
 
   item = model.required<MenuItemForAdminUi>();
@@ -73,12 +68,7 @@ export class AdminMenuItemComponent {
     const plainItem = this.menuService.generateMenuItemForEntityType({
       ...itemWithoutSubMenu,
       // this preview displays the label, so show the active language's text
-      label: resolveTranslatableText(
-        item.label,
-        this.locale,
-        DEFAULT_LANGUAGE,
-        this.validLocaleIds,
-      ),
+      label: resolveLocaleText(item.label),
     });
     delete plainItem.link;
     delete plainItem.subMenu;
