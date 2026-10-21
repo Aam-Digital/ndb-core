@@ -3,7 +3,12 @@ import { EntityBulkEditComponent } from "./entity-bulk-edit.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import {
@@ -15,7 +20,6 @@ import type { Mock } from "vitest";
 import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
 import { By } from "@angular/platform-browser";
-import { FormControl, FormGroup } from "@angular/forms";
 import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
 
 type DialogRefMock = {
