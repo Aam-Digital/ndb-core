@@ -1,5 +1,11 @@
 <div class="flex-row align-center gap-small">
-  <input [formControl]="formControl" matInput type="email" class="flex-grow" />
+  <input
+    [formControl]="formControl"
+    matInput
+    type="email"
+    class="flex-grow"
+    dir="ltr"
+  />
 
   @if (valueSignal() && entity()) {
     <button

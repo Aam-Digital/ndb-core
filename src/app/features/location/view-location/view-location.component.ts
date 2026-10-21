@@ -10,5 +10,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   selector: "app-view-location",
   templateUrl: "./view-location.component.html",
   imports: [FaIconComponent],
+  // dir: an address is user-entered and can be in any language
+  host: { dir: "auto" },
 })
 export class ViewLocationComponent extends ViewDirective<GeoLocation> {}

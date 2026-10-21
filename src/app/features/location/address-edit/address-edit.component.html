@@ -13,7 +13,7 @@
 
   <div class="selected-location-display">
     <span class="location-label hint-text" i18n>Selected Location</span>
-    <div class="location-value">
+    <div class="location-value" dir="auto">
       @if (
         selectedLocation()?.locationString ||
         selectedLocation()?.geoLookup?.display_name
@@ -31,7 +31,7 @@
       selectedLocation()?.geoLookup?.display_name !==
       selectedLocation()?.locationString
     ) {
-      <div class="location-hint hint-text">
+      <div class="location-hint hint-text" dir="auto">
         @if (selectedLocation()?.geoLookup) {
           <span
             matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
