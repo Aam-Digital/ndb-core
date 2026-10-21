@@ -250,8 +250,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="50"
-                                    class="link-to-prism">src/app/core/language/date-adapter-with-formatting.ts:50</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="56"
+                                    class="link-to-prism">src/app/core/language/date-adapter-with-formatting.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -484,7 +484,13 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
   }
 
   override getFirstDayOfWeek(): number {
-    return getLocaleFirstDayOfWeek(this.locale);
+    try {
+      return getLocaleFirstDayOfWeek(this.locale);
+    } catch {
+      // throws for a locale whose data was never registered; the base adapter
+      // falls back to &#x60;Intl&#x60;, which needs no registration
+      return super.getFirstDayOfWeek();
+    }
   }
 
   override format(date: Date, displayFormat: any): string {

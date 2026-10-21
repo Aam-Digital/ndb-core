@@ -180,6 +180,10 @@
 
 
 
+            <tr>
+                <td class="col-md-3">host</td>
+                <td class="col-md-9"><code>{<br>}</code></td>
+            </tr>
 
 
 
@@ -519,7 +523,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/core/basic-datatypes/string/display-text/display-text.component.ts:18</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/basic-datatypes/string/display-text/display-text.component.ts:21</a></div>
                         </td>
                     </tr>
 
@@ -636,6 +640,9 @@ import { DynamicComponent } from &quot;../../../config/dynamic-components/dynami
   selector: &quot;app-display-text&quot;,
   template: &#x60;{{ displayValue() }}&#x60;,
   standalone: true,
+  // dir: values with no strongly-typed character, like phone numbers, would
+  // otherwise be reordered by the bidi algorithm
+  host: { dir: &quot;auto&quot; },
 })
 export class DisplayTextComponent extends ViewDirective&lt;unknown&gt; {
   readonly displayValue &#x3D; computed(() &#x3D;&gt; format(this.value()));

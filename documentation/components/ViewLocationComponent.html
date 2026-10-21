@@ -171,6 +171,10 @@
 
 
 
+            <tr>
+                <td class="col-md-3">host</td>
+                <td class="col-md-9"><code>{<br>}</code></td>
+            </tr>
 
 
 
@@ -597,6 +601,8 @@ import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
   selector: &quot;app-view-location&quot;,
   templateUrl: &quot;./view-location.component.html&quot;,
   imports: [FaIconComponent],
+  // dir: an address is user-entered and can be in any language
+  host: { dir: &quot;auto&quot; },
 })
 export class ViewLocationComponent extends ViewDirective&lt;GeoLocation&gt; {}
 </code></pre>

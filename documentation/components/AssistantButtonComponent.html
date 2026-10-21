@@ -487,7 +487,12 @@ export class AssistantButtonComponent implements OnInit {
   min-height: 65px;
   min-width: 120px;
   border-radius: 0;
+  // cuts off the bottom corner facing the content; &#x60;clip-path&#x60; has no logical form
   clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%);
+
+  :host-context([dir&#x3D;&quot;rtl&quot;]) &amp; {
+    clip-path: polygon(0 0, 100% 0, calc(100% - 30px) 100%, 0 100%);
+  }
 
   ::ng-deep .mdc-button__label {
     width: 100%;
