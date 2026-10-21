@@ -112,7 +112,7 @@ export class SchemaEmbedDatatype<
    * Build the effective inner schema from the embedded type's annotations
    * and/or the `additional` config.
    */
-  private getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
+  getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
     return mergeEmbeddedSchema(
       this.embeddedType?.schema,
       schemaField?.additional,
@@ -124,17 +124,16 @@ export class SchemaEmbedDatatype<
    * outer field - either inside an array of embedded objects or, where a single object
    * is stored, through the dotted path to the inner property.
    *
-   * The inner keys come from `additional` only (not from {@link getEffectiveSchema}),
-   * so they stay identical to the ones the in-memory post-filter inspects.
+   * The inner keys come from {@link getEffectiveSchema}.
    */
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
     referencedId: string,
   ): DataFilter<any>[] | undefined {
-    const innerKeys = getInnerEntityReferenceFields(schemaField).map(
-      ([key]) => key,
-    );
+    const innerKeys = getInnerEntityReferenceFields(
+      this.getEffectiveSchema(schemaField),
+    ).map(([key]) => key);
     if (innerKeys.length === 0) {
       // nothing we could match on - let the caller load the whole type instead
       return undefined;

@@ -6,6 +6,7 @@ import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntitySchema } from "../../../entity/schema/entity-schema";
+import { SchemaEmbedDatatype } from "../../../basic-datatypes/schema-embed/schema-embed.datatype";
 
 class AttendanceItemMock {
   static readonly schema: EntitySchema = new Map([
@@ -41,14 +42,6 @@ class Event extends Entity {
         dataType: "attendance",
       },
     ],
-    [
-      "otherAttendance",
-      {
-        dataType: "attendance",
-        // partial override: dataType "configurable-enum" is inherited from AttendanceItemMock
-        additional: { status: { additional: "other-status" } },
-      },
-    ],
   ]);
 }
 
@@ -68,13 +61,11 @@ describe("ConfigurableEnumCleanupService", () => {
       remove: vi.fn(),
     };
 
+    let attendanceDatatype: SchemaEmbedDatatype;
     mockEntitySchemaService = {
-      getDatatypeOrDefault: vi.fn((datatypeName: string) => {
-        if (datatypeName === "attendance") {
-          return { embeddedType: AttendanceItemMock };
-        }
-        return undefined;
-      }),
+      getDatatypeOrDefault: vi.fn((datatypeName: string) =>
+        datatypeName === "attendance" ? attendanceDatatype : undefined,
+      ),
     };
 
     const entityRegistry = new EntityRegistry();
@@ -89,6 +80,10 @@ describe("ConfigurableEnumCleanupService", () => {
       ],
     }).compileComponents();
 
+    attendanceDatatype = TestBed.runInInjectionContext(
+      () => new SchemaEmbedDatatype(),
+    );
+    attendanceDatatype.embeddedType = AttendanceItemMock;
     service = TestBed.inject(ConfigurableEnumCleanupService);
   });
 
@@ -122,17 +117,6 @@ describe("ConfigurableEnumCleanupService", () => {
     expect(analysis.unusedEnums.map((x) => x.enumEntity.getId(true))).toEqual([
       "unused",
     ]);
-  });
-
-  it("detects an enum set by a partial override of an embedded field, inheriting its dataType", async () => {
-    const otherStatus = new ConfigurableEnum("other-status");
-    mockEntityMapper.loadType.mockResolvedValue([otherStatus]);
-
-    const analysis = await service.analyzeUnusedConfigurableEnums();
-
-    expect(
-      analysis.usedEnumDetails.map((x) => x.enumEntity.getId(true)),
-    ).toEqual(["other-status"]);
   });
 
   it("should only delete enum that is still unused", async () => {

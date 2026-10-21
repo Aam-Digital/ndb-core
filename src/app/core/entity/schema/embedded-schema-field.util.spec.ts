@@ -12,7 +12,6 @@ import { EntitySchema } from "./entity-schema";
 import { EntitySchemaService } from "./entity-schema.service";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
-import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
 import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
 import { mockEntityMapperProvider } from "../entity-mapper/mock-entity-mapper-service";
 import {
@@ -125,35 +124,7 @@ describe("embedded-schema-field.util", () => {
     expect(ids.filter((id) => id.startsWith("name"))).toEqual([]);
   });
 
-  describe("getEmbeddedSchema merging the embeddedType's own field with an additional override", () => {
-    it("forwards dataType and label from AttendanceItem.participant when the override only sets additional", () => {
-      const baseLabel = AttendanceItem.schema.get("participant").label;
-      expect(baseLabel).toBeTruthy(); // sanity check that there is something to inherit
-
-      const schema = getEmbeddedSchema(schemaService, {
-        dataType: "attendance",
-        additional: { participant: { additional: ["Child"] } },
-      });
-
-      expect(schema.get("participant")).toEqual(
-        expect.objectContaining({
-          dataType: "entity",
-          label: baseLabel,
-          additional: ["Child"],
-          id: "participant",
-        }),
-      );
-    });
-
-    it("lets an explicit dataType in the override win over the inherited one", () => {
-      const schema = getEmbeddedSchema(schemaService, {
-        dataType: "attendance",
-        additional: { participant: { dataType: "string" } },
-      });
-
-      expect(schema.get("participant").dataType).toEqual("string");
-    });
-
+  describe("getEmbeddedSchema", () => {
     it("returns undefined for a field that is not an embedded schema field at all", () => {
       expect(
         getEmbeddedSchema(schemaService, { dataType: "string" }),

@@ -6,6 +6,7 @@ import {
   mergeEmbeddedSchema,
   SchemaEmbedDatatype,
 } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { getInnerEntityReferenceFields } from "./entity-reference-fields";
 
 /**
  * Separator used to build an id referencing a property nested inside an embedded field,
@@ -32,33 +33,30 @@ export interface EmbeddedFieldRef {
 }
 
 /**
- * Datatypes whose values are always an array of embedded items, even though their schema field
- * does not (and, given how their (de)serialization is implemented, structurally cannot) declare
- * `isArray: true` itself - unlike their modern replacement (e.g. `AttendanceDatatype`), which
- * enforces `isArray: true` via `normalizeSchemaField`.
+ * The deprecated `EventAttendanceMapDatatype`, which needs special handling here:
+ * - it embeds `AttendanceItem`s without extending {@link SchemaEmbedDatatype},
+ *   it only declares its `embeddedType` for discovering the inner fields
+ * - its values are always an array of embedded items, even though its schema field
+ *   does not (and, given how its (de)serialization is implemented, structurally cannot) declare
+ *   `isArray: true` itself - unlike its modern replacement `AttendanceDatatype`, which
+ *   enforces `isArray: true` via `normalizeSchemaField`.
  *
- * @deprecated only needed for backwards compatibility with this legacy datatype
+ * @deprecated remove together with EventAttendanceMapDatatype
  */
-const ALWAYS_ARRAY_EMBEDDED_DATATYPES = new Set(["event-attendance-map"]);
+const LEGACY_EMBEDDED_DATATYPE = "event-attendance-map";
 
 /**
  * Whether the given (outer) schema field holds an array of embedded objects
  * (as opposed to a single embedded object).
  */
 function isEmbeddedArrayField(field: EntitySchemaField): boolean {
-  return (
-    field.isArray === true ||
-    ALWAYS_ARRAY_EMBEDDED_DATATYPES.has(field.dataType)
-  );
+  return field.isArray === true || field.dataType === LEGACY_EMBEDDED_DATATYPE;
 }
 
 /**
  * Build the map of inner schema fields of an embedded field
  * (e.g. `dataType: "schema-embed"`, `"attendance"` or the deprecated `"event-attendance-map"`),
- * the same way the datatype itself (de)serializes them (see {@link mergeEmbeddedSchema}).
- *
- * A field counts as embedded if its datatype is a {@link SchemaEmbedDatatype}
- * or declares an `embeddedType` (like the deprecated `EventAttendanceMapDatatype`).
+ * the same way the datatype itself (de)serializes them (see {@link SchemaEmbedDatatype.getEffectiveSchema}).
  *
  * Returns `undefined` if the field is not an embedded schema field (i.e. has no inner fields).
  */
@@ -70,17 +68,32 @@ export function getEmbeddedSchema(
     return undefined;
   }
 
-  const datatype = schemaService.getDatatypeOrDefault(field.dataType, true) as
-    { embeddedType?: SchemaEmbeddedType } | undefined;
-  if (!(datatype instanceof SchemaEmbedDatatype) && !datatype?.embeddedType) {
+  const datatype = schemaService.getDatatypeOrDefault(field.dataType, true);
+  let innerSchema: EntitySchema;
+  if (datatype instanceof SchemaEmbedDatatype) {
+    innerSchema = datatype.getEffectiveSchema(field);
+  } else if (field.dataType === LEGACY_EMBEDDED_DATATYPE) {
+    innerSchema = mergeEmbeddedSchema(
+      (datatype as { embeddedType?: SchemaEmbeddedType } | undefined)
+        ?.embeddedType?.schema,
+      field.additional,
+    );
+  } else {
     return undefined;
   }
-
-  const innerSchema = mergeEmbeddedSchema(
-    datatype.embeddedType?.schema,
-    field.additional,
-  );
   return innerSchema.size > 0 ? innerSchema : undefined;
+}
+
+/**
+ * The inner entity-reference properties of an embedded field
+ * (e.g. the "participant" of an attendance field), resolved through the field's datatype,
+ * so that inner fields only partially overridden in `additional` are included as well.
+ */
+export function getEmbeddedEntityReferenceFields(
+  schemaService: EntitySchemaService,
+  field: EntitySchemaField | undefined,
+): [string, EntitySchemaField][] {
+  return getInnerEntityReferenceFields(getEmbeddedSchema(schemaService, field));
 }
 
 /**
