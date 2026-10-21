@@ -479,6 +479,14 @@
           "title",
           "authors",
           "attendance"
+        ],
+        "filters": [
+          {
+            "id": "attendance.participant"
+          },
+          {
+            "id": "attendance.status"
+          }
         ]
       },
       "_id": "view:event"
