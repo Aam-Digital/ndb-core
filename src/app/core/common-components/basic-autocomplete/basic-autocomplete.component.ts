@@ -295,6 +295,10 @@ export class BasicAutocompleteComponent<O, V = O>
   /**
    * The values that existed before the user selected anything (multi select only).
    * If given, selected values that are not among them are highlighted as added.
+   *
+   * This is an input instead of being taken from the first value of the component,
+   * because the form control can already hold a new value when the component is created
+   * (e.g. a suggested value in the "Update related records" dialog).
    */
   existingValues = input<V[]>();
 

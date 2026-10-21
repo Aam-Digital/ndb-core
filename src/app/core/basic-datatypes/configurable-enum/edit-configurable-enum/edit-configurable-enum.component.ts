@@ -23,10 +23,12 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import {
+  EditComponent,
+  getExistingValuesToHighlight,
+} from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { asArray } from "../../../../utils/asArray";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import {
   ConfigurableEnum,
@@ -91,9 +93,7 @@ export class EditConfigurableEnumComponent
 
   readonly multi = computed(() => this.formFieldConfig()?.isArray ?? false);
   readonly existingValues = computed(() =>
-    this.highlightAdded()
-      ? asArray(this.entity()?.[this.formFieldConfig()?.id] ?? [])
-      : undefined,
+    getExistingValuesToHighlight<ConfigurableEnumValue>(this),
   );
   readonly enumId = computed(() => this.formFieldConfig()?.additional);
   readonly enumEntity = computed<ConfigurableEnum | undefined>(() => {

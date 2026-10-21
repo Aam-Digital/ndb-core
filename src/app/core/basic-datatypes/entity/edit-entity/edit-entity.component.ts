@@ -34,7 +34,10 @@ import { CustomFormControlDirective } from "../../../common-components/basic-aut
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import {
+  EditComponent,
+  getExistingValuesToHighlight,
+} from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
@@ -85,9 +88,7 @@ export class EditEntityComponent<
   highlightAdded = input<boolean>(false);
 
   readonly existingValues = computed(() =>
-    this.highlightAdded()
-      ? asArray(this.entity()?.[this.formFieldConfig()?.id] ?? [])
-      : undefined,
+    getExistingValuesToHighlight<string>(this),
   );
 
   @ViewChild(BasicAutocompleteComponent)
