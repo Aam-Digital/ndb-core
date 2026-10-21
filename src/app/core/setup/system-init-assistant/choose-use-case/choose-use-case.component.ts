@@ -1,7 +1,6 @@
 import {
   Component,
   computed,
-  effect,
   inject,
   input,
   InputSignal,
@@ -9,7 +8,7 @@ import {
   Signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { BaseConfig } from "../../base-config";
+import { BaseConfig, isOfferedInLocale } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
 import { MarkdownComponent } from "ngx-markdown";
 import { FormsModule } from "@angular/forms";
@@ -27,17 +26,37 @@ export class ChooseUseCaseComponent {
 
   useCases: InputSignal<BaseConfig[]> = input([]);
 
-  availableUseCases: Signal<BaseConfig[]> = computed(() => {
-    const current = this.languageService.getCurrentLocale();
-    return this.useCases().filter((uc) => (uc.locale ?? current) === current);
+  private readonly localisedUseCases = computed(() =>
+    this.useCases().filter((uc) => !!uc.locale),
+  );
+
+  /** True while use cases exist for other languages but none for the user's own. */
+  hasNoUseCaseInCurrentLocale: Signal<boolean> = computed(() => {
+    const localised = this.localisedUseCases();
+    return (
+      localised.length > 0 &&
+      !localised.some((uc) => this.isOfferedInCurrentLocale(uc))
+    );
   });
 
-  private readonly switchLanguageIfNoUseCaseInCurrentLocale = effect(() => {
-    if (this.availableUseCases().length === 0 && this.useCases().length > 0) {
-      const nextLanguage = this.useCases().find((uc) => !!uc.locale)?.locale;
-      if (nextLanguage) this.languageService.switchLocale(nextLanguage);
-    }
-  });
+  /**
+   * Falls back to offering every use case rather than switching the user's language
+   * for them - they came here in the language they want to work in. The ones from
+   * another language are greyed out, so the mismatch is visible rather than silent.
+   */
+  availableUseCases: Signal<BaseConfig[]> = computed(() =>
+    this.useCases().filter(
+      (uc) =>
+        !uc.locale ||
+        this.isOfferedInCurrentLocale(uc) ||
+        this.hasNoUseCaseInCurrentLocale(),
+    ),
+  );
+
+  /** A use case without a locale is offered in every language, so never greyed out. */
+  isOfferedInCurrentLocale(useCase: BaseConfig): boolean {
+    return isOfferedInLocale(useCase, this.languageService.getCurrentLocale());
+  }
 
   selectionChanged = output<BaseConfig>();
 

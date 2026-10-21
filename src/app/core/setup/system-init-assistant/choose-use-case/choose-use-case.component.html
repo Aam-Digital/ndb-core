@@ -7,11 +7,26 @@
       (selectionChange)="onSelectionChange()"
     >
       @for (useCase of availableUseCases(); track useCase.id) {
-        <mat-option [value]="useCase">
+        <mat-option
+          [value]="useCase"
+          [class.greyed-out]="!isOfferedInCurrentLocale(useCase)"
+        >
           {{ useCase.name }}
         </mat-option>
       }
     </mat-select>
+
+    @if (hasNoUseCaseInCurrentLocale()) {
+      <mat-hint
+        i18n="
+          Setup wizard hint, shown when no setup scenario exists in the user's
+          own language and the ones from other languages are offered greyed out
+          instead
+        "
+      >
+        Nothing in your language yet - you can still choose one of these.
+      </mat-hint>
+    }
   </mat-form-field>
 
   <div class="flex-1 description-container">

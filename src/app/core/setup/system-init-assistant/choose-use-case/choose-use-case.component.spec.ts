@@ -34,49 +34,44 @@ describe("ChooseUseCaseComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  describe("switchLanguageIfNoUseCaseInCurrentLocale effect", () => {
-    it("should switch locale when no use cases available in current locale but available in other locale", () => {
-      // Arrange
-      const useCasesInDifferentLocales: BaseConfig[] = [
-        { locale: "fr", label: "French 1" } as unknown as BaseConfig,
-        { locale: "de", label: "German 1" } as unknown as BaseConfig,
-      ];
-      mockLanguageService.getCurrentLocale.mockReturnValue("en");
+  describe("availableUseCases", () => {
+    /** only the two fields these tests care about */
+    const useCase = (name: string, locale?: string) =>
+      ({ name, locale }) as unknown as BaseConfig;
 
-      // Act
-      fixture.componentRef.setInput("useCases", useCasesInDifferentLocales);
+    function given(locale: string, useCases: BaseConfig[]) {
+      mockLanguageService.getCurrentLocale.mockReturnValue(locale);
+      fixture.componentRef.setInput("useCases", useCases);
       fixture.detectChanges();
+    }
 
-      // Assert
-      expect(mockLanguageService.switchLocale).toHaveBeenCalledWith("fr");
+    const names = () => component.availableUseCases().map((uc) => uc.name);
+
+    it("should offer the use cases in the current language, and those without one", () => {
+      given("en", [
+        useCase("English", "en"),
+        useCase("German", "de"),
+        useCase("Start from scratch"),
+      ]);
+
+      expect(names()).toEqual(["English", "Start from scratch"]);
+      expect(component.hasNoUseCaseInCurrentLocale()).toBe(false);
     });
 
-    it("should not switch locale when use cases are available in current locale", () => {
-      // Arrange
-      const useCasesInCurrentLocale: BaseConfig[] = [
-        { locale: "en", label: "English 1" } as unknown as BaseConfig,
-        { locale: "de", label: "German 1" } as unknown as BaseConfig,
-      ];
-      mockLanguageService.getCurrentLocale.mockReturnValue("en");
+    it("should offer every use case when none is written in the current language", () => {
+      given("ar", [
+        useCase("French", "fr"),
+        useCase("German", "de"),
+        useCase("Start from scratch"),
+      ]);
 
-      // Act
-      fixture.componentRef.setInput("useCases", useCasesInCurrentLocale);
-      fixture.detectChanges();
-
-      // Assert
-      expect(mockLanguageService.switchLocale).not.toHaveBeenCalled();
+      expect(names()).toEqual(["French", "German", "Start from scratch"]);
+      expect(component.hasNoUseCaseInCurrentLocale()).toBe(true);
     });
 
-    it("should not switch locale when there are no use cases at all", () => {
-      // Arrange
-      const emptyUseCases: BaseConfig[] = [];
-      mockLanguageService.getCurrentLocale.mockReturnValue("en");
+    it("should never switch the language on the user's behalf", () => {
+      given("ar", [useCase("French", "fr"), useCase("German", "de")]);
 
-      // Act
-      fixture.componentRef.setInput("useCases", emptyUseCases);
-      fixture.detectChanges();
-
-      // Assert
       expect(mockLanguageService.switchLocale).not.toHaveBeenCalled();
     });
   });
