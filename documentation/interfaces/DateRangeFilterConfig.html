@@ -272,7 +272,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="98" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:98</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:93</a></div>
                                 </td>
                             </tr>
 
@@ -316,7 +316,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:83</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:78</a></div>
                                 </td>
                             </tr>
 
@@ -355,7 +355,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:81</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -399,7 +399,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:84</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="79" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:79</a></div>
                                 </td>
                             </tr>
 
@@ -443,7 +443,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:85</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:80</a></div>
                                 </td>
                             </tr>
 
@@ -487,7 +487,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="82" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:82</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:77</a></div>
                                 </td>
                             </tr>
 
@@ -551,19 +551,14 @@ export interface EntityListConfig {
 }
 
 export interface ColumnGroupsConfig {
+  /**
+   * The groups of columns the user can switch between (shown as tabs).
+   *
+   * The first group is selected initially.
+   * On a small screen (mobile), the group with the fewest columns is selected initially instead
+   * (the first of them if several have the same number of columns).
+   */
   groups: GroupConfig[];
-
-  /**
-   * The name of the group that should be selected by default.
-   * Default is the name of the first group.
-   */
-  default?: string;
-
-  /**
-   * The name of the group that should be selected by default on a mobile device.
-   * Default is the name of the first group.
-   */
-  mobile?: string;
 }
 
 export interface GroupConfig {

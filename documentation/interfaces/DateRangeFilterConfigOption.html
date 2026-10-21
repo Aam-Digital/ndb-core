@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="106" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:106</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="101" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:101</a></div>
                                 </td>
                             </tr>
 
@@ -274,7 +274,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:110</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:105</a></div>
                                 </td>
                             </tr>
 
@@ -318,7 +318,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="102" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:102</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="97" class="link-to-prism">src/app/core/entity-list/EntityListConfig.ts:97</a></div>
                                 </td>
                             </tr>
 
@@ -382,19 +382,14 @@ export interface EntityListConfig {
 }
 
 export interface ColumnGroupsConfig {
+  /**
+   * The groups of columns the user can switch between (shown as tabs).
+   *
+   * The first group is selected initially.
+   * On a small screen (mobile), the group with the fewest columns is selected initially instead
+   * (the first of them if several have the same number of columns).
+   */
   groups: GroupConfig[];
-
-  /**
-   * The name of the group that should be selected by default.
-   * Default is the name of the first group.
-   */
-  default?: string;
-
-  /**
-   * The name of the group that should be selected by default on a mobile device.
-   * Default is the name of the first group.
-   */
-  mobile?: string;
 }
 
 export interface GroupConfig {

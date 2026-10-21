@@ -245,7 +245,7 @@ The Dashboard-Component for example takes as <code>&quot;widgets:&quot;</code> a
 }
 },
 ...</code></pre></div><h4>List components</h4>
-<p>List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects <code>&quot;title&quot;</code>, <code>&quot;columns&quot;</code>, <code>&quot;columnGroup&quot;</code> (optional) and <code>&quot;filters&quot;</code> (optional).
+<p>List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects <code>&quot;title&quot;</code>, <code>&quot;columns&quot;</code>, <code>&quot;columnGroups&quot;</code> (optional) and <code>&quot;filters&quot;</code> (optional).
 (These are implemented by the <code>EntityListComponent</code>.)</p>
 <p>The <code>&quot;title&quot;</code> is the text shown in the heading of the component.</p>
 <p><code>&quot;columns&quot;</code> contains an array of the columns to be displayed.
@@ -263,16 +263,18 @@ If all the information is available on the schema or through the datatype of a p
 &quot;label&quot;: &quot;Name&quot;,
 &quot;id&quot;: &quot;name&quot;
 },
-...</code></pre></div><p>The <code>&quot;columnGroup&quot;</code> object holds the three properties <code>&quot;default&quot;</code>, <code>&quot;mobile&quot;</code> and <code>&quot;groups&quot;</code>.
-<code>&quot;default&quot;</code> and <code>&quot;mobile&quot;</code> hold the names of the group of columns being displayed by default or on a mobile device.
-If the <code>&quot;columnGroup&quot;</code> property is not defined, all columns will be displayed.
-If <code>&quot;default&quot;</code> or <code>&quot;mobile&quot;</code> is not defined, the first entry of <code>&quot;groups&quot;</code> will be used.
-<code>&quot;groups&quot;</code> consists of an array of groups of columns, where every entry has a <code>&quot;name&quot;</code> and an array of column ids within <code>&quot;columns&quot;</code>.
+...</code></pre></div><p>The optional <code>&quot;columnGroups&quot;</code> object holds the property <code>&quot;groups&quot;</code>, an array of groups of columns, where every entry has a <code>&quot;name&quot;</code> and an array of column ids within <code>&quot;columns&quot;</code>.
+The groups are shown as tabs above the table, so users can switch between them.
+If the <code>&quot;columnGroups&quot;</code> property is not defined, all columns will be displayed.
 Properties that are listed in any of the <code>groups</code> arrays and don&#39;t require further configurations, can be omitted from the <code>columns</code> array, the <code>EntityListComponent</code> will automatically add them.</p>
+<p>Which group is selected when the list opens follows fixed rules:</p>
+<ul>
+<li>On a desktop screen, the first group is selected. Put the group users need most first.</li>
+<li>On a small (mobile) screen, the group with the fewest columns is selected (the first of them if several groups have the same number of columns).</li>
+</ul>
+<p>Older configs may still contain <code>&quot;default&quot;</code> and <code>&quot;mobile&quot;</code> properties in <code>&quot;columnGroups&quot;</code>. These are ignored.</p>
 <p>Example:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;columnGroup&quot;: {
-&quot;default&quot;: &quot;School Info&quot;,
-&quot;mobile&quot;: &quot;Mobile&quot;,
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;columnGroups&quot;: {
 &quot;groups&quot;: [
 {
 &quot;name&quot;: &quot;Basic Info&quot;,
@@ -284,11 +286,10 @@ Properties that are listed in any of the <code>groups</code> arrays and don&#39;
 ]
 },
 {
-&quot;name&quot;: &quot;School Info&quot;,
+&quot;name&quot;: &quot;Mobile&quot;,
 &quot;columns&quot;: [
 &quot;projectNumber&quot;,
-&quot;name&quot;,
-...
+&quot;name&quot;
 ]
 },
 </code></pre></div><p>The object <code>&quot;filters&quot;</code> within the config of a list component can be used to create filter options for the list data.

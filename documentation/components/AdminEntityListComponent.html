@@ -357,7 +357,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:53</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:55</a></div>
                             </td>
                         </tr>
 
@@ -449,8 +449,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:92</a></div>
                         </td>
                     </tr>
 
@@ -486,8 +486,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:77</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:79</a></div>
                         </td>
                     </tr>
 
@@ -565,8 +565,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="67"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:67</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="69"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:69</a></div>
                         </td>
                     </tr>
 
@@ -632,8 +632,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="94"
-                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:94</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:96</a></div>
                         </td>
                     </tr>
 
@@ -705,19 +705,21 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>linkedSignal(
-    () &#x3D;&gt;
-      this.config().columnGroups ?? {
-        groups: [
-          {
-            name: &quot;&quot;,
-            columns: (this.config().columns ?? []).map((c) &#x3D;&gt;
-              typeof c &#x3D;&#x3D;&#x3D; &quot;string&quot; ? c : c.id,
-            ),
-          },
-        ],
-      },
-  )</code>
+                        <i>Default value : </i><code>linkedSignal(() &#x3D;&gt; {
+    const configured &#x3D; this.config().columnGroups;
+    return configured
+      ? { groups: configured.groups }
+      : {
+          groups: [
+            {
+              name: &quot;&quot;,
+              columns: (this.config().columns ?? []).map((c) &#x3D;&gt;
+                typeof c &#x3D;&#x3D;&#x3D; &quot;string&quot; ? c : c.id,
+              ),
+            },
+          ],
+        };
+  })</code>
                     </td>
                 </tr>
                     <tr>
@@ -806,19 +808,21 @@ export class AdminEntityListComponent {
 
   filters &#x3D; linkedSignal(() &#x3D;&gt; (this.config().filters ?? []).map((f) &#x3D;&gt; f.id));
 
-  columnGroups &#x3D; linkedSignal(
-    () &#x3D;&gt;
-      this.config().columnGroups ?? {
-        groups: [
-          {
-            name: &quot;&quot;,
-            columns: (this.config().columns ?? []).map((c) &#x3D;&gt;
-              typeof c &#x3D;&#x3D;&#x3D; &quot;string&quot; ? c : c.id,
-            ),
-          },
-        ],
-      },
-  );
+  columnGroups &#x3D; linkedSignal(() &#x3D;&gt; {
+    const configured &#x3D; this.config().columnGroups;
+    return configured
+      ? { groups: configured.groups }
+      : {
+          groups: [
+            {
+              name: &quot;&quot;,
+              columns: (this.config().columns ?? []).map((c) &#x3D;&gt;
+                typeof c &#x3D;&#x3D;&#x3D; &quot;string&quot; ? c : c.id,
+              ),
+            },
+          ],
+        };
+  });
 
   constructor() {
     // keep the config object updated in-place while using signals for the component
