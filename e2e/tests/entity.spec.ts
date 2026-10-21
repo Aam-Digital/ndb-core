@@ -172,6 +172,23 @@ test("List filter narrows results and clears restore full list", async ({
   await expect(
     page.getByRole("cell", { name: "Tollygunge Child 0" }),
   ).toBeVisible();
+
+  // The selected column group survives opening a record and navigating back:
+  // the restored tab and the displayed columns stay in sync.
+  const schoolInfoTab = page.getByRole("tab", { name: "School Info" });
+  const motherTongueHeader = page.getByRole("columnheader", {
+    name: "Mother Tongue",
+  });
+  await schoolInfoTab.click();
+  await expect(motherTongueHeader).toBeVisible();
+  await page.getByRole("cell", { name: "Alipore Child 0" }).click();
+  await expect(page).toHaveURL(/\/child\//);
+  await page.goBack();
+  await expect(schoolInfoTab).toHaveAttribute("aria-selected", "true");
+  await expect(motherTongueHeader).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Email" })).toHaveCount(
+    0,
+  );
 });
 
 const MATCHING_SCHOOL_NAME = "Alpha School";
