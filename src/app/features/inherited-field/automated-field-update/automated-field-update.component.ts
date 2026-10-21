@@ -12,7 +12,7 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { NoCommonValueHintComponent } from "../no-common-value-hint/no-common-value-hint.component";
 import { MatButton } from "@angular/material/button";
@@ -153,7 +153,7 @@ function isSameRow(a: AffectedEntity, b: AffectedEntity): boolean {
     EntityBlockComponent,
     EntityFieldLabelPipe,
     EntityFieldViewComponent,
-    FontAwesomeModule,
+    FaDynamicIconComponent,
     HelpButtonComponent,
     HintBoxComponent,
     MatTooltipModule,

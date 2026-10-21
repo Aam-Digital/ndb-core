@@ -23,7 +23,7 @@
               [entity]="data.trigger.before"
             ></app-entity-field-view>
             @if (change.isChanged) {
-              <fa-icon icon="arrow-right"></fa-icon>
+              <app-fa-dynamic-icon icon="arrow-right"></app-fa-dynamic-icon>
               <app-entity-field-view
                 [field]="change.field"
                 [entity]="data.trigger.entity"
@@ -72,11 +72,16 @@
             ></app-entity-field-edit>
             @if (entity.removedEntity) {
               <div class="hint-text removed-values">
-                <fa-icon
+                <app-fa-dynamic-icon
                   icon="minus"
                   i18n-matTooltip="tooltip for values that are removed"
                   matTooltip="Removed"
-                ></fa-icon>
+                ></app-fa-dynamic-icon>
+                <span
+                  class="visually-hidden"
+                  i18n="screen reader text for values that are removed"
+                  >Removed:</span
+                >
                 <app-entity-field-view
                   [field]="entity.selectedField"
                   [entity]="entity.removedEntity"
