@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl } from "@angular/forms";
+import { BehaviorSubject } from "rxjs";
 import { By } from "@angular/platform-browser";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
@@ -10,11 +11,14 @@ import { EditAttendanceComponent } from "./edit-attendance.component";
 import { AttendanceItem } from "../model/attendance-item";
 import { EditConfigurableEnumComponent } from "#src/app/core/basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { EditEntityComponent } from "#src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component";
+import { CurrentRecordContext } from "#src/app/core/common-components/entity-form/current-record-state";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
   let fixture: ComponentFixture<EditAttendanceComponent>;
   let attendanceForm: FormControl<AttendanceItem[]>;
+  /** the state of the record being edited, as provided by the form of the attendance field */
+  let recordState: BehaviorSubject<Entity | undefined>;
 
   let childrenEntities: Entity[];
 
@@ -22,11 +26,18 @@ describe("EditAttendanceComponent", () => {
     childrenEntities = [new TestEntity("child1"), new TestEntity("child2")];
     childrenEntities[0]["other"] = "BERLIN";
     childrenEntities[1]["other"] = "HAMBURG";
+    recordState = new BehaviorSubject<Entity | undefined>(undefined);
 
     await TestBed.configureTestingModule({
       imports: [
         EditAttendanceComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, childrenEntities),
+      ],
+      providers: [
+        {
+          provide: CurrentRecordContext,
+          useValue: { currentRecordState: () => recordState },
+        },
       ],
     }).compileComponents();
 
@@ -141,19 +152,20 @@ describe("EditAttendanceComponent", () => {
     expect(component.participantFilter()(newEntity)).toBe(false);
   });
 
-  it("offers only participants matching the field's selectionCondition, compared with the current values of the record", async () => {
-    const recordForm = new FormGroup({
-      attendance: attendanceForm,
-      other: new FormControl("BERLIN"),
-    });
+  it("offers only participants matching the selectionCondition of the embedded participant field, compared with the current values of the record", async () => {
+    const editRecord = (other: string) =>
+      recordState.next(Object.assign(new TestEntity(), { other }));
     attendanceForm.setValue([]);
-    fixture.componentRef.setInput("entity", new TestEntity());
+    editRecord("BERLIN");
     fixture.componentRef.setInput("formFieldConfig", {
       id: "attendance",
       additional: {
-        participant: { dataType: "entity", additional: "TestEntity" },
+        participant: {
+          dataType: "entity",
+          additional: "TestEntity",
+          selectionCondition: { other: { $in: ["$current_record.other"] } },
+        },
       },
-      selectionCondition: { other: { $in: ["$current_record.other"] } },
     });
     const addParticipantDropdown: EditEntityComponent =
       fixture.debugElement.query(
@@ -171,7 +183,7 @@ describe("EditAttendanceComponent", () => {
 
     await expectOffered([childrenEntities[0].getId()]);
 
-    recordForm.get("other").setValue("HAMBURG");
+    editRecord("HAMBURG");
 
     await expectOffered([childrenEntities[1].getId()]);
   });

@@ -14,6 +14,9 @@ import { UnsavedChangesService } from "#src/app/core/entity-details/form/unsaved
 import type { Mock } from "vitest";
 import { Subject } from "rxjs";
 import { signal, WritableSignal } from "@angular/core";
+import { By } from "@angular/platform-browser";
+import { FormControl, FormGroup } from "@angular/forms";
+import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
 
 type DialogRefMock = {
   beforeClosed: Mock;
@@ -101,6 +104,22 @@ describe("EntityBulkEditComponent", () => {
 
     component.ngOnInit();
     expect(component.selectedFieldFormControl.value).toBe("");
+  });
+
+  it("edits the value for several records, so there is no single record other fields could refer to", async () => {
+    mockEntityFormService.extendFormFieldConfig.mockReturnValue({ id: "name" });
+    mockEntityFormService.createEntityForm.mockResolvedValue({
+      formGroup: new FormGroup({ name: new FormControl("") }),
+    });
+
+    component.selectedFieldFormControl.setValue("name");
+    await vi.waitFor(() => expect(component.showValueForm).toBe(true));
+    fixture.detectChanges();
+
+    const fieldEdit: EntityFieldEditComponent = fixture.debugElement.query(
+      By.directive(EntityFieldEditComponent),
+    ).componentInstance;
+    expect(fieldEdit.forMultipleRecords()).toBe(true);
   });
 
   it("should not save if the form is invalid", () => {

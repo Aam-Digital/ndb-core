@@ -563,11 +563,6 @@ describe("AdminEntityFieldComponent", () => {
       additional: TestEntity.ENTITY_TYPE,
     };
 
-    const attendance = (types: string[]): EntitySchemaField => ({
-      dataType: AttendanceDatatype.dataType,
-      additional: { participant: { dataType: "entity", additional: types } },
-    });
-
     it.each<[string, EntitySchemaField, boolean]>([
       ["a single record type", entityRef, true],
       [
@@ -589,13 +584,16 @@ describe("AdminEntityFieldComponent", () => {
         true,
       ],
       [
-        "one participant type of an attendance field",
-        attendance([TestEntity.ENTITY_TYPE]),
-        true,
-      ],
-      [
-        "several participant types of an attendance field",
-        attendance([TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE]),
+        "an attendance field (configured in the JSON config for now)",
+        {
+          dataType: AttendanceDatatype.dataType,
+          additional: {
+            participant: {
+              dataType: "entity",
+              additional: [TestEntity.ENTITY_TYPE],
+            },
+          },
+        },
         false,
       ],
       [
@@ -607,31 +605,10 @@ describe("AdminEntityFieldComponent", () => {
       "offers the selection filter only for fields referencing exactly one record type (%s)",
       async (_, field, expectedOffered) => {
         await recreateComponentWithData({ label: "ref", ...field });
-        await new Promise((resolve) => setTimeout(resolve)); // attendance types are set asynchronously
 
         expect(!!(await findSelectionFilterButton())).toBe(expectedOffered);
       },
     );
-
-    it("clears the condition when the participant type of an attendance field changes", async () => {
-      const condition = { other: { $in: ["X"] } };
-      await recreateComponentWithData({
-        label: "attendance",
-        ...attendance([TestEntity.ENTITY_TYPE]),
-        selectionCondition: condition,
-      } as EntitySchemaField);
-      await new Promise((resolve) => setTimeout(resolve)); // attendance types are set asynchronously
-      await fixture.whenStable();
-      expect(dialogData.entitySchemaField.selectionCondition).toEqual(
-        condition,
-      );
-
-      component.attendanceParticipantTypesForm.setValue([Note.ENTITY_TYPE]);
-      fixture.detectChanges();
-      await fixture.whenStable();
-
-      expect(dialogData.entitySchemaField.selectionCondition).toBeUndefined();
-    });
 
     describe("when the target of the field changes", () => {
       const condition = { other: { $in: ["X"] } };

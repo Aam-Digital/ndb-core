@@ -15,12 +15,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import {
-  AbstractControl,
-  FormControl,
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
@@ -36,6 +31,7 @@ import {
   CreateOptionConfig,
 } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { CurrentRecordContext } from "../../../common-components/entity-form/current-record-state";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -90,7 +86,6 @@ export class EditEntityComponent<
   implements OnInit, DoCheck, EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
-  entity = input<Entity>();
 
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<E, T>;
@@ -205,31 +200,26 @@ export class EditEntityComponent<
     },
   });
 
-  /**
-   * (Optional) the form of the record being edited, if the form control of this field is not part of it
-   * (e.g. the dropdown to add participants to an attendance field).
-   */
-  recordForm = input<AbstractControl | null>();
+  private readonly recordContext = inject(CurrentRecordContext, {
+    optional: true,
+  });
 
   /**
-   * Current (possibly unsaved) values of the form of the record being edited,
+   * The record being edited, with the current, possibly unsaved values of its form,
    * to resolve placeholders in the `selectionCondition` referring to that record.
+   * Only followed while the field has such a condition.
    */
-  private readonly recordFormValues: Signal<Record<string, unknown>> = toSignal(
+  private readonly currentRecord: Signal<Entity | undefined> = toSignal(
     toObservable(
-      computed(() => this.recordForm() ?? this.control().parent),
+      computed(() => !!this.formFieldConfig()?.selectionCondition),
     ).pipe(
-      switchMap((form) => {
-        if (!form) {
-          return of({});
-        }
-        return form.valueChanges.pipe(
-          startWith(null),
-          map(() => form.getRawValue()),
-        );
-      }),
+      switchMap((hasCondition) =>
+        hasCondition && this.recordContext
+          ? this.recordContext.currentRecordState()
+          : of(undefined),
+      ),
     ),
-    { initialValue: {} },
+    { initialValue: undefined },
   );
 
   /**
@@ -249,13 +239,11 @@ export class EditEntityComponent<
           return undefined;
         }
 
-        const record = this.entity();
-        const formValues = this.recordFormValues();
+        const record = this.currentRecord();
         const resolved = resolveCurrentRecordPlaceholders(
           condition,
           (fieldId) => {
-            const value =
-              fieldId in formValues ? formValues[fieldId] : record?.[fieldId];
+            const value = record?.[fieldId];
             const schemaField = record?.getSchema().get(fieldId);
             if (value === undefined || value === null || !schemaField) {
               return value;

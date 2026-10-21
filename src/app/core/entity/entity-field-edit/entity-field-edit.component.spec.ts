@@ -5,6 +5,8 @@ import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Entity } from "../model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { CurrentRecordContext } from "../../common-components/entity-form/current-record-state";
 import { EntityFieldEditComponent } from "./entity-field-edit.component";
 
 describe("EntityFieldEditComponent", () => {
@@ -113,5 +115,69 @@ describe("EntityFieldEditComponent", () => {
     expect(
       fixture.nativeElement.querySelector("app-entity-field-view"),
     ).toBeFalsy();
+  });
+
+  describe("current record state for the fields", () => {
+    function collectStates() {
+      const states: TestEntity[] = [];
+      component
+        .currentRecordState()
+        .subscribe((s) => states.push(s as TestEntity));
+      return states;
+    }
+
+    it("is provided to the field components", () => {
+      expect(fixture.debugElement.injector.get(CurrentRecordContext)).toBe(
+        component,
+      );
+    });
+
+    it("combines the record with the current, possibly unsaved values of its form", async () => {
+      const entity = TestEntity.create({ name: "Saved", other: "BERLIN" });
+      const formGroup = new FormGroup({ other: new FormControl("BERLIN") });
+      fixture.componentRef.setInput("entity", entity);
+      fixture.componentRef.setInput("form", { formGroup } as any);
+      const states = collectStates();
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(states.at(-1)?.other).toBe("BERLIN");
+      });
+
+      formGroup.get("other").setValue("HAMBURG");
+      formGroup.get("other").disable(); // disabled fields still count, like for display conditions
+
+      await vi.waitFor(() => expect(states.at(-1)?.other).toBe("HAMBURG"));
+      expect(states.at(-1)?.name).toBe("Saved");
+      expect(entity.other, "the saved record is not changed").toBe("BERLIN");
+    });
+
+    it("is the record itself if there is no form", async () => {
+      const entity = TestEntity.create({ other: "BERLIN" });
+      fixture.componentRef.setInput("entity", entity);
+      const states = collectStates();
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(states.at(-1)).toBe(entity);
+      });
+    });
+
+    it("is empty if the field edits several records at once", async () => {
+      fixture.componentRef.setInput(
+        "entity",
+        TestEntity.create({ other: "A" }),
+      );
+      fixture.componentRef.setInput("form", {
+        formGroup: new FormGroup({ other: new FormControl("A") }),
+      } as any);
+      fixture.componentRef.setInput("forMultipleRecords", true);
+      const states = collectStates();
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(states).toHaveLength(1);
+      });
+      expect(states[0]).toBeUndefined();
+    });
   });
 });

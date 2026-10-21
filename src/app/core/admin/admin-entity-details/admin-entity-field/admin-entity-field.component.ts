@@ -394,28 +394,21 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   /**
-   * The record type this field references (for an attendance field: its participants),
-   * if it is exactly one, as required for a `selectionCondition`.
+   * The record type this field references, if it is exactly one,
+   * as required for a `selectionCondition`.
    */
   private getSelectionConditionTargetType(): EntityConstructor | undefined {
-    const additional = this.additionalForm.value;
-    let referencedTypes: unknown;
-    switch (this.schemaFieldsForm.get("dataType").value) {
-      case EntityDatatype.dataType:
-        referencedTypes = additional;
-        break;
-      case AttendanceDatatype.dataType:
-        referencedTypes = additional?.participant?.additional;
-        break;
-      default:
-        return undefined;
-    }
-
-    const types = asArray(referencedTypes ?? []);
-    if (types.length !== 1 || !this.entityRegistry.has(types[0] as string)) {
+    if (
+      this.schemaFieldsForm.get("dataType").value !== EntityDatatype.dataType
+    ) {
       return undefined;
     }
-    return this.entityRegistry.get(types[0] as string);
+
+    const types = asArray(this.additionalForm.value ?? []);
+    if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
+      return undefined;
+    }
+    return this.entityRegistry.get(types[0]);
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
