@@ -7,8 +7,8 @@
 ![Italian](https://img.shields.io/poeditor/progress/740876/it?token=56acaf6808f07eb52c5b39a3abea19a7)
 ![German](https://img.shields.io/poeditor/progress/740876/de?token=56acaf6808f07eb52c5b39a3abea19a7)
 
-[![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
+[![Maintainability](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/maintainability.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
+[![Code Coverage](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/coverage.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 [![Developer Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 
