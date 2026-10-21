@@ -82,6 +82,14 @@ describe("AffectedEntityValueComponent", () => {
     expect(emitted).toEqual([["a", "b"]]);
   });
 
+  it("should keep the field config for a new row of the same field, as a new config rebuilds the edit component", () => {
+    const field = fixture.componentInstance.field();
+
+    fixture.componentRef.setInput("row", row(["c"]));
+
+    expect(fixture.componentInstance.field()).toBe(field);
+  });
+
   it("should show a new value without reporting it as a change of the user", async () => {
     fixture.componentRef.setInput("row", row(["c"]));
     fixture.detectChanges();

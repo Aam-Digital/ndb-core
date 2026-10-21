@@ -62,10 +62,17 @@ export class AffectedEntityValueComponent implements OnInit {
 
   readonly form = signal<EntityForm<Entity> | undefined>(undefined);
 
+  private readonly fieldId = computed(() => this.row().targetFieldId);
+  private readonly entityType = computed(() => this.row().targetEntityType);
+
+  /**
+   * Only created again for another field, not for every new row: a new config rebuilds the edit component,
+   * which would e.g. close the dropdown in which the user is selecting values.
+   */
   readonly field = computed(() =>
     this.entityFormService.extendFormFieldConfig(
-      this.row().targetFieldId,
-      this.row().targetEntityType,
+      this.fieldId(),
+      this.entityType(),
     ),
   );
 
