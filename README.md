@@ -4,7 +4,6 @@
 
 ![English](https://img.shields.io/poeditor/progress/740876/en?token=df0ad216f2202ce5d46358c3f27af8e1)
 ![French](https://img.shields.io/poeditor/progress/740876/fr?token=df0ad216f2202ce5d46358c3f27af8e1)
-![Italian](https://img.shields.io/poeditor/progress/740876/it?token=df0ad216f2202ce5d46358c3f27af8e1)
 ![German](https://img.shields.io/poeditor/progress/740876/de?token=df0ad216f2202ce5d46358c3f27af8e1)
 ![Spanish](https://img.shields.io/poeditor/progress/740876/es?token=df0ad216f2202ce5d46358c3f27af8e1)
 ![Arabic](https://img.shields.io/poeditor/progress/740876/ar?token=df0ad216f2202ce5d46358c3f27af8e1)
