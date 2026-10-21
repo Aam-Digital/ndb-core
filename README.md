@@ -11,9 +11,8 @@
 [![Maintainability](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/maintainability.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
 [![Code Coverage](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/coverage.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
-[![Developer Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
-
 [<img src="https://argos-ci.com/badge-large.svg" alt="Covered by Argos Visual Testing" />](https://argos-ci.com?utm_source=aam-digital&utm_campaign=oss)
+[![Developer Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 
 # Aam Digital
 
