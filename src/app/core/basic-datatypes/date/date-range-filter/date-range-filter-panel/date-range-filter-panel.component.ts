@@ -1,11 +1,14 @@
 import {
   Component,
   inject,
+  Injectable,
   ChangeDetectionStrategy,
   signal,
 } from "@angular/core";
 import {
   DateRange,
+  DefaultMatCalendarRangeStrategy,
+  MAT_DATE_RANGE_SELECTION_STRATEGY,
   MatDatepickerModule,
   MatDateSelectionModel,
   MatRangeDateSelectionModel,
@@ -48,6 +51,25 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   },
 ];
 
+/**
+ * Shows the range up to the day that is hovered, after the start date was picked in the calendar.
+ * If that day is before the start date, the range is shown the other way round, as the panel orders the picked dates.
+ */
+@Injectable()
+export class RangePreviewStrategy extends DefaultMatCalendarRangeStrategy<Date> {
+  override createPreview(
+    activeDate: Date | null,
+    currentRange: DateRange<Date>,
+  ): DateRange<Date> {
+    if (!currentRange.start || currentRange.end || !activeDate) {
+      return new DateRange(null, null);
+    }
+    return activeDate < currentRange.start
+      ? new DateRange(activeDate, currentRange.start)
+      : new DateRange(currentRange.start, activeDate);
+  }
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-date-range-filter-panel",
@@ -55,6 +77,10 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   styleUrls: ["./date-range-filter-panel.component.scss"],
   providers: [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
+    {
+      provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
+      useClass: RangePreviewStrategy,
+    },
   ],
   imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })

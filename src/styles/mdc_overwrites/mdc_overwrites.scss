@@ -11,11 +11,20 @@
   opacity: 25%;
 }
 
+$date-range-color: #{color-mix(
+    in srgb,
+    mat.m2-get-color-from-palette(theme.$primary, 500),
+    transparent 80%
+  )};
+
 /* Color for selected date range in date picker defaults to white */
 .mat-calendar-body-in-range::before {
-  --mat-datepicker-calendar-date-in-range-state-background-color: #{color-mix(
-      in srgb,
-      mat.m2-get-color-from-palette(theme.$primary, 500),
-      transparent 80%
-    )} !important;
+  --mat-datepicker-calendar-date-in-range-state-background-color: #{$date-range-color} !important;
+}
+
+/* The range up to the hovered day, after the start date was picked: filled like a selected range instead of a dashed outline */
+.mat-calendar-body-cell.mat-calendar-body-in-preview
+  .mat-calendar-body-cell-preview {
+  background: #{$date-range-color};
+  border: none;
 }
