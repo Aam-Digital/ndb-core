@@ -26,6 +26,7 @@ import {
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 import { ChangeSet, ChangeSetState, isLinkedTo } from "./change-set";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -100,6 +101,7 @@ export class AutomatedFieldUpdateConfigService {
   private readonly dialog = inject(MatDialog);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes = new Set<string>();
@@ -239,7 +241,13 @@ export class AutomatedFieldUpdateConfigService {
     source: Entity,
     level: number,
   ): Promise<boolean> {
-    if (target.getId() === trigger.entity.getId()) return false;
+    // the changed entity is never offered, and the chain ends at an entity the user may not update
+    if (
+      target.getId() === trigger.entity.getId() ||
+      !this.canUpdate(target, rule.fieldId)
+    ) {
+      return false;
+    }
 
     const key = `${target.getId()}|${rule.fieldId}`;
     const existing = affectedEntities.get(key);
@@ -310,6 +318,16 @@ export class AutomatedFieldUpdateConfigService {
         ...this.getLinkedIds(source, rule),
         ...this.getLinkedIds(changeSet.get(source, "before"), rule),
       ]),
+    );
+  }
+
+  /**
+   * Whether the user may change the field of the entity.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  private canUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !this.ability?.initialized || this.ability.can("update", entity, fieldId)
     );
   }
 
@@ -969,7 +987,7 @@ export class AutomatedFieldUpdateConfigService {
       updatesByEntityId.set(update.id, existing);
     });
 
-    const savePromises: Promise<any>[] = [];
+    const entitiesToSave: Entity[] = [];
     updatesByEntityId.forEach((updates) => {
       const entity = updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
@@ -980,11 +998,12 @@ export class AutomatedFieldUpdateConfigService {
         changes.forEach((update) => {
           entity[update.targetFieldId] = update.newValue;
         });
-        savePromises.push(this.entityMapper.save(entity));
+        entitiesToSave.push(entity);
       }
     });
 
-    await Promise.all(savePromises);
+    // together, so that none of them is saved if the user may not save one of them
+    await this.entityMapper.saveAll(entitiesToSave);
     return true;
   }
 
