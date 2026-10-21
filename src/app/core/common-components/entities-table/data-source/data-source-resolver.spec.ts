@@ -10,6 +10,21 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { LoaderMethod } from "#src/app/core/entity/entity-special-loader/entity-special-loader.service";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { Database } from "#src/app/core/database/database";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
+import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";
+import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
+
+class InternalTestEntity extends Entity {
+  static override isInternalEntity = true;
+}
+
+class InternalTranslatedTestEntity extends Entity {
+  static override isInternalEntity = true;
+
+  @DatabaseField({ dataType: TranslatableTextDatatype.dataType })
+  title: TranslatableText;
+}
 
 describe("resolveDataSource", () => {
   let injector: Injector;
@@ -129,6 +144,50 @@ describe("resolveDataSource", () => {
 
     expect(dataSource).toBeInstanceOf(InMemoryDataSource);
   });
+
+  it.each([
+    {
+      scenario: "list an internal entity type with translated texts in memory",
+      entityType: InternalTranslatedTestEntity,
+      expected: InMemoryDataSource,
+    },
+    {
+      scenario: "keep paging an internal entity type without translated texts",
+      entityType: InternalTestEntity,
+      expected: PaginatedDataSource,
+    },
+    {
+      scenario: "keep paging a regular entity type",
+      entityType: TestEntity,
+      expected: PaginatedDataSource,
+    },
+    {
+      scenario: "let an explicit dataSource win",
+      entityType: InternalTranslatedTestEntity,
+      dataSource: "paginated" as const,
+      expected: PaginatedDataSource,
+    },
+    {
+      scenario: "keep paging a loader that serves pages",
+      entityType: InternalTranslatedTestEntity,
+      loaderMethod: LoaderMethod.AuditRecordsRelatedToEntity,
+      expected: PaginatedDataSource,
+    },
+  ])(
+    "should $scenario when online",
+    ({ entityType, dataSource, loaderMethod, expected }) => {
+      environment.session_type = SessionType.online;
+
+      const resolved = resolveDataSource<Entity>(
+        injector,
+        dataSource,
+        loaderMethod,
+        entityType,
+      );
+
+      expect(resolved).toBeInstanceOf(expected);
+    },
+  );
 
   it("should always use the InMemoryDataSource outside of online mode, regardless of loaderMethod", () => {
     environment.session_type = SessionType.mock;
