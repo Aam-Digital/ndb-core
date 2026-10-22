@@ -59,8 +59,20 @@ mat-form-field {
    * variable instead of writing a separate `[dir="rtl"]` rule for each.
    */
   --text-x-direction: 1;
+
+  /**
+   * Arabic letters join to each other, so tracking pulls a word apart and tight
+   * line boxes clip the diacritics. Both are set per direction here rather than in
+   * each component, because view encapsulation scopes `[dir="rtl"]` to the
+   * component and it would never match `dir` on the document root - custom
+   * properties inherit through the DOM instead, so they are unaffected.
+   */
+  --letter-spacing-wide: 0.04em;
+  --line-height-scale: 1;
 }
 
 [dir="rtl"] {
   --text-x-direction: -1;
+  --letter-spacing-wide: 0;
+  --line-height-scale: 1.3;
 }

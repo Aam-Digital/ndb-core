@@ -43,9 +43,13 @@
 
   <div class="flex-1 description-container">
     @if (startFromScratch) {
-      <div markdown [data]="startFromScratchUseCase()?.description"></div>
+      <div
+        markdown
+        [data]="startFromScratchUseCase()?.description"
+        dir="auto"
+      ></div>
     } @else if (selectedUseCase) {
-      <div markdown [data]="selectedUseCase.description"></div>
+      <div markdown [data]="selectedUseCase.description" dir="auto"></div>
     } @else {
       <p class="description-no-use-case" i18n>
         Select a use case as an initial configuration for your system.

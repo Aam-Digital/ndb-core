@@ -13,7 +13,7 @@
 
   ::ng-deep .mdc-button__label {
     width: 100%;
-    line-height: 16px;
+    line-height: calc(16px * var(--line-height-scale));
     display: flex;
     flex-direction: column;
     align-items: end;
