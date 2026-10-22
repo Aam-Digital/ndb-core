@@ -1,5 +1,4 @@
 import {
-  LOCALE_ID,
   Component,
   inject,
   input,
@@ -32,13 +31,9 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AdminEntityService } from "../../admin-entity.service";
-import {
-  resolveTranslatableText,
-  TranslatableText,
-} from "../../../config/multi-lingual-config";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
-import { availableLocales } from "../../../language/languages";
-import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
+import { resolveLocaleText } from "../../../language/active-locale";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
@@ -85,18 +80,6 @@ import { NumberDatatype } from "#src/app/core/basic-datatypes/number/number.data
 export class AdminEntityGeneralSettingsComponent {
   private fb = inject(FormBuilder);
   private adminEntityService = inject(AdminEntityService);
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
-
-  /** resolve a possibly multi-lingual text to the currently active language */
-  protected resolveText(value: TranslatableText): string | undefined {
-    return resolveTranslatableText(
-      value,
-      this.locale,
-      DEFAULT_LANGUAGE,
-      this.validLocaleIds,
-    );
-  }
 
   entityConstructor = input.required<EntityConstructor>();
   generalSettings = input.required<EntityConfig>();
@@ -137,7 +120,7 @@ export class AdminEntityGeneralSettingsComponent {
 
   /** the entity label of the active language, used as the plural's placeholder */
   protected readonly resolvedLabel = computed(
-    () => this.resolveText(this.labelValue()) ?? "",
+    () => resolveLocaleText(this.labelValue()) ?? "",
   );
 
   toStringAttributesOptions = computed<SimpleDropdownValue[]>(() => {
@@ -156,7 +139,7 @@ export class AdminEntityGeneralSettingsComponent {
       )
       .map(([key, field]) => ({
         value: key,
-        label: this.resolveText(field.label),
+        label: resolveLocaleText(field.label),
       }));
 
     return [
@@ -173,7 +156,7 @@ export class AdminEntityGeneralSettingsComponent {
       .filter(([, field]) => !field.isInternalField)
       .map(([key, field]) => ({
         key,
-        label: this.resolveText(field.label),
+        label: resolveLocaleText(field.label),
         field,
       }));
     return new MatTableDataSource(fields);

@@ -1,6 +1,10 @@
 import moment from "moment";
 import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import {
+  isLocaleTranslationMap,
+  resolveLocaleText,
+} from "app/core/language/active-locale";
 
 /**
  * Transform a whole object into a readable format.
@@ -44,6 +48,9 @@ export function getReadableValue(value: any): any {
   }
   if (isGeoLocation(value)) {
     return value.locationString;
+  }
+  if (isLocaleTranslationMap(value)) {
+    return resolveLocaleText(value);
   }
 
   return value;

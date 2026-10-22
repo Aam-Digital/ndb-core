@@ -2,6 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { configureActiveLocale } from "../language/active-locale";
 import { AVAILABLE_LOCALE_IDS } from "../language/available-locales";
+import { DisplayTranslatableTextComponent } from "./display-translatable-text/display-translatable-text.component";
 import { TranslatableTextDatatype } from "./translatable-text.datatype";
 
 describe("TranslatableTextDatatype", () => {
@@ -55,5 +56,16 @@ describe("TranslatableTextDatatype", () => {
   it("declares the components that resolve for display and edit translations", () => {
     expect(datatype.viewComponent).toBe("DisplayTranslatableText");
     expect(datatype.editComponent).toBe("EditTranslatableText");
+  });
+
+  it("shows the text of the active language in the view component", () => {
+    const fixture = TestBed.createComponent(DisplayTranslatableTextComponent);
+    fixture.componentRef.setInput("value", {
+      "en-US": "Subject",
+      de: "Betreff",
+    });
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toBe("Betreff");
   });
 });

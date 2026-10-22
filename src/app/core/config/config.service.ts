@@ -1,4 +1,4 @@
-import { inject, Injectable, Injector, LOCALE_ID } from "@angular/core";
+import { inject, Injectable, Injector } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
@@ -8,9 +8,8 @@ import { NamedError } from "../logging/reported-errors";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
-import { resolveTranslatableConfig } from "./multi-lingual-config";
-import { DEFAULT_LANGUAGE } from "../language/language-statics";
-import { availableLocales } from "../language/languages";
+import { resolveLocaleConfig } from "../language/active-locale";
+import { RawConfig } from "./multi-lingual-config";
 import { ConfigValidationService } from "./config-validation/config-validation.service";
 
 /**
@@ -44,9 +43,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
    */
   private resolvedConfigData: Record<string, any>;
 
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
-
   // resolved lazily: the validation checks services that themselves depend on the ConfigService
   private readonly injector = inject(Injector);
 
@@ -73,12 +69,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
       const previousConfig = this.currentConfig;
       this.currentConfig = this.applyMigrations(config);
-      this.resolvedConfigData = resolveTranslatableConfig(
-        this.currentConfig.data,
-        this.locale,
-        DEFAULT_LANGUAGE,
-        this.validLocaleIds,
-      );
+      this.resolvedConfigData = resolveLocaleConfig(this.currentConfig.data);
       this.logConfigRev();
       if (previousConfig && previousConfig._rev !== this.currentConfig._rev) {
         // the config was just saved (by this or another admin)
@@ -191,9 +182,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   /**
    * Get a config item with its raw values (multi-lingual maps left intact).
-   * Required for any read-modify-save flow.
+   * Required for any read-modify-save flow. Its display texts may be such maps
+   * (see {@link RawConfig}), so resolve them wherever they are displayed.
    */
-  public getRawConfig<T>(id: string): T | undefined {
+  public getRawConfig<T>(id: string): RawConfig<T> | undefined {
     return this.currentConfig?.data?.[id];
   }
 
@@ -215,8 +207,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
    * Like getAllConfigs(), but with raw values (multi-lingual maps left intact).
    * Required for any read-modify-save flow.
    */
-  public getAllRawConfigs<T>(prefix: string): T[] {
-    return ConfigService.collectConfigsByPrefix<T>(
+  public getAllRawConfigs<T>(prefix: string): RawConfig<T>[] {
+    return ConfigService.collectConfigsByPrefix<RawConfig<T>>(
       this.currentConfig?.data,
       prefix,
     );

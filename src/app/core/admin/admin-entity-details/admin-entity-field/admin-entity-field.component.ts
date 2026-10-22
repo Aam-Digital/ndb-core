@@ -3,7 +3,6 @@ import {
   computed,
   DestroyRef,
   inject,
-  LOCALE_ID,
   OnInit,
   signal,
   viewChild,
@@ -45,15 +44,13 @@ import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-e
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
-import { EntityConfig } from "../../../entity/entity-config";
 import { EntityConfigService } from "../../../entity/entity-config.service";
 import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 import {
-  resolveTranslatableText,
-  TranslatableText,
-} from "../../../config/multi-lingual-config";
-import { availableLocales } from "../../../language/languages";
-import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
+  mergeLocaleTranslations,
+  resolveLocaleText,
+} from "../../../language/active-locale";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
@@ -140,11 +137,8 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** the label text of the active language, for display outside the form field */
   readonly resolvedLabel = computed(
-    () => this.resolveForDisplay(this.labelValue()) ?? "",
+    () => resolveLocaleText(this.labelValue()) ?? "",
   );
-
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   private readonly validatorConfig = viewChild(
     ConfigureEntityFieldValidatorComponent,
@@ -239,7 +233,7 @@ export class AdminEntityFieldComponent implements OnInit {
                 if (key === this.data.entitySchemaField.id) continue;
                 if (field.label) {
                   // compare the texts of the active language, not raw maps
-                  labels.push(this.resolveForDisplay(field.label));
+                  labels.push(resolveLocaleText(field.label));
                 }
               }
               return labels;
@@ -369,7 +363,7 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
-    const label = this.resolveForDisplay(
+    const label = resolveLocaleText(
       this.schemaFieldsForm.get("labelShort").value ??
         this.schemaFieldsForm.get("label").value,
     );
@@ -471,7 +465,7 @@ export class AdminEntityFieldComponent implements OnInit {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
       const newOption = this.createNewAdditionalOption(
         // resolve first: `generateIdFromLabel` returns undefined for a per-language map
-        this.resolveForDisplay(this.schemaFieldsForm.get("label").value),
+        resolveLocaleText(this.schemaFieldsForm.get("label").value),
       );
       this.typeAdditionalOptions.push(newOption);
       this.additionalForm.setValue(newOption.value);
@@ -632,21 +626,19 @@ export class AdminEntityFieldComponent implements OnInit {
       return this.data.entitySchemaField[property];
     }
 
-    const entityConfig: EntityConfig =
-      this.entityConfigService.getRawEntityConfig(this.entityType);
+    const entityConfig = this.entityConfigService.getRawEntityConfig(
+      this.entityType,
+    );
     const rawValue =
       entityConfig?.attributes?.[this.data.entitySchemaField.id]?.[property];
 
-    // a field that is not in the config yet (newly added) has no raw value
-    return rawValue ?? this.data.entitySchemaField[property];
-  }
-
-  private resolveForDisplay(value: TranslatableText): string | undefined {
-    return resolveTranslatableText(
-      value,
-      this.locale,
-      DEFAULT_LANGUAGE,
-      this.validLocaleIds,
-    );
+    // The config document only has what was saved, the runtime schema also has the
+    // edits applied on this page since. Combine them the way saving does: that keeps
+    // the translations of other languages, but not an outdated text. A field that is
+    // not in the config yet (newly added) has no raw value, so the schema's wins.
+    return mergeLocaleTranslations(
+      { [property]: rawValue },
+      { [property]: this.data.entitySchemaField[property] },
+    )[property];
   }
 }

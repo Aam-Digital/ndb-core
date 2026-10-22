@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { MatDialog } from "@angular/material/dialog";
+import { MatSelectHarness } from "@angular/material/select/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Angulartics2Module } from "angulartics2";
 import { SelectReportComponent } from "./select-report.component";
@@ -10,6 +13,7 @@ import { ReportEntity } from "../../report-config";
 describe("SelectReportComponent", () => {
   let component: SelectReportComponent;
   let fixture: ComponentFixture<SelectReportComponent>;
+  let loader: HarnessLoader;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -28,6 +32,7 @@ describe("SelectReportComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SelectReportComponent);
     component = fixture.componentInstance;
+    loader = TestbedHarnessEnvironment.loader(fixture);
     fixture.detectChanges();
   });
 
@@ -37,6 +42,26 @@ describe("SelectReportComponent", () => {
     fixture.detectChanges();
 
     expect(component.selectedReport()).toBe(report);
+  });
+
+  it("should show report titles in the active language rather than the raw translation map", async () => {
+    const multiLingual = new ReportEntity();
+    multiLingual.title = { de: "Bericht", "en-US": "Report" };
+    const plain = new ReportEntity();
+    plain.title = "Plain";
+    fixture.componentRef.setInput("reports", [multiLingual, plain]);
+    fixture.detectChanges();
+
+    const select = await loader.getHarness(MatSelectHarness);
+    await select.open();
+    const options = await select.getOptions();
+    expect(await Promise.all(options.map((o) => o.getText()))).toEqual([
+      "Report",
+      "Plain",
+    ]);
+
+    await options[0].click();
+    expect(await select.getValueText()).toBe("Report");
   });
 
   it("should display date range filter when a non-sql query uses date placeholders", () => {

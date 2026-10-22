@@ -1,13 +1,12 @@
 import {
   Component,
-  computed,
   input,
   resource,
   inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
-import { resolveLocaleText } from "#src/app/core/language/active-locale";
+import { LocaleTextPipe } from "#src/app/core/language/locale-text.pipe";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -26,6 +25,7 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
     MatTooltipModule,
     FontAwesomeModule,
     FaDynamicIconComponent,
+    LocaleTextPipe,
   ],
 })
 export class CustomFormLinkButtonComponent {
@@ -76,14 +76,6 @@ export class CustomFormLinkButtonComponent {
       return selectedForms;
     },
   });
-
-  /** the matching forms, with their titles resolved for display */
-  readonly matchingForms = computed(() =>
-    (this.matchingCustomForms.value() ?? []).map((config) => ({
-      config,
-      title: resolveLocaleText(config.title) ?? "",
-    })),
-  );
 
   async copyLink(matchingCustomForm: PublicFormConfig) {
     const linkedEntity = this.linkedEntity();

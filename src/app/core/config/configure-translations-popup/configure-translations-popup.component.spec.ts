@@ -4,6 +4,13 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 import {
+  configureActiveLocale,
+  mergeLocaleTranslations,
+} from "../../language/active-locale";
+import { AVAILABLE_LOCALE_IDS } from "../../language/available-locales";
+import { DEFAULT_LANGUAGE } from "../../language/language-statics";
+import { TranslatableText } from "../multi-lingual-config";
+import {
   ConfigureTranslationsDialogData,
   ConfigureTranslationsPopupComponent,
 } from "./configure-translations-popup.component";
@@ -37,7 +44,10 @@ describe("ConfigureTranslationsPopupComponent", () => {
     component.rows.find((r) => r.locale === locale).text = text;
   }
 
-  afterEach(() => TestBed.resetTestingModule());
+  afterEach(() => {
+    TestBed.resetTestingModule();
+    configureActiveLocale(DEFAULT_LANGUAGE, AVAILABLE_LOCALE_IDS);
+  });
 
   it("should create a row for every available language", async () => {
     await createComponent({ value: undefined });
@@ -62,36 +72,79 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(component.rows.find((r) => r.locale === "de").text).toBe("");
   });
 
-  it("should return a translation map once several languages are filled in", async () => {
-    await createComponent({ value: "Name" });
-    setText("de", "Vorname");
-
-    component.onSave();
-
-    expect(dialogRef.close).toHaveBeenCalledWith({
+  it.each<{
+    invariant: string;
+    value: TranslatableText | undefined;
+    edits: Record<string, string>;
+    expected: TranslatableText | undefined;
+  }>([
+    {
+      invariant:
+        "return a translation map once several languages are filled in",
+      value: "Name",
+      edits: { de: "Vorname" },
+      expected: { "en-US": "Name", de: "Vorname" },
+    },
+    {
+      invariant:
+        "keep a plain string a plain string while only the default language is filled in",
+      value: "Name",
+      edits: { "en-US": "Full Name" },
+      expected: "Full Name",
+    },
+    {
+      invariant: "ignore languages that only contain whitespace",
+      value: "Name",
+      edits: { de: "   " },
+      expected: "Name",
+    },
+    {
+      invariant: "keep a single non-default translation as a one-entry map",
+      value: undefined,
+      edits: { de: "Vorname" },
+      expected: { de: "Vorname" },
+    },
+    {
+      invariant:
+        "keep a map a map when only the default language is left, so that the removal can be saved",
       value: { "en-US": "Name", de: "Vorname" },
-    });
-  });
-
-  it("should return a plain string while only one language is filled in", async () => {
-    await createComponent({ value: { "en-US": "Name", de: "Vorname" } });
-    setText("de", "");
+      edits: { de: "" },
+      expected: { "en-US": "Name" },
+    },
+    {
+      invariant: "return no value once every language of a map is cleared",
+      value: { "en-US": "Name", de: "Vorname" },
+      edits: { "en-US": "", de: "" },
+      expected: undefined,
+    },
+  ])("should $invariant", async ({ value, edits, expected }) => {
+    await createComponent({ value });
+    for (const [locale, text] of Object.entries(edits)) {
+      setText(locale, text);
+    }
 
     component.onSave();
 
-    expect(dialogRef.close).toHaveBeenCalledWith({ value: "Name" });
+    expect(dialogRef.close).toHaveBeenCalledWith({ value: expected });
   });
 
-  it("should keep a single non-default translation as a one-entry map", async () => {
-    await createComponent({ value: undefined });
-    setText("de", "Vorname");
+  it.each(["en-US", "de"])(
+    "should let a removed translation stay removed once saved, in a %s UI",
+    async (uiLocale) => {
+      configureActiveLocale(uiLocale, AVAILABLE_LOCALE_IDS);
+      const stored = { "en-US": "Name", de: "Vorname" };
+      await createComponent({ value: stored });
+      setText("de", "");
 
-    component.onSave();
+      component.onSave();
 
-    expect(dialogRef.close).toHaveBeenCalledWith({
-      value: { de: "Vorname" },
-    });
-  });
+      // what the admin editors do with the result when saving the config
+      const [{ value }] = dialogRef.close.mock.calls[0];
+      expect(
+        mergeLocaleTranslations({ label: stored }, { label: value }),
+      ).toEqual({ label: { "en-US": "Name" } });
+    },
+  );
 
   it("should read a single non-default translation back into its own language", async () => {
     // a plain string would be read back as the default language's text
@@ -99,15 +152,6 @@ describe("ConfigureTranslationsPopupComponent", () => {
 
     expect(component.rows.find((r) => r.locale === "de").text).toBe("Vorname");
     expect(component.rows.find((r) => r.locale === "en-US").text).toBe("");
-  });
-
-  it("should ignore languages that only contain whitespace", async () => {
-    await createComponent({ value: "Name" });
-    setText("de", "   ");
-
-    component.onSave();
-
-    expect(dialogRef.close).toHaveBeenCalledWith({ value: "Name" });
   });
 
   it("should close without a value when cancelled, leaving the config untouched", async () => {

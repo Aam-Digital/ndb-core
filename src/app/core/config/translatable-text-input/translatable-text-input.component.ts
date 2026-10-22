@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  LOCALE_ID,
   computed,
   inject,
   input,
@@ -15,18 +14,17 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
-import { DEFAULT_LANGUAGE } from "../../language/language-statics";
-import { availableLocales } from "../../language/languages";
+import {
+  getActiveLocale,
+  isLocaleTranslationMap,
+  resolveLocaleText,
+} from "../../language/active-locale";
 import { DynamicComponent } from "../dynamic-components/dynamic-component.decorator";
 import {
   ConfigureTranslationsPopupComponent,
   ConfigureTranslationsResult,
 } from "../configure-translations-popup/configure-translations-popup.component";
-import {
-  isTranslatableText,
-  resolveTranslatableText,
-  TranslatableText,
-} from "../multi-lingual-config";
+import { TranslatableText } from "../multi-lingual-config";
 
 /**
  * Input for a configurable text that can be translated into multiple languages.
@@ -92,31 +90,23 @@ export class TranslatableTextInputComponent
   showTranslationsButton = input(true);
 
   private readonly dialog = inject(MatDialog);
-  private readonly locale = inject(LOCALE_ID);
-  private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
   /** the text of the currently active language, shown in the text field */
   readonly displayText = computed(() => {
     const value = this.valueSignal();
-    const resolved =
-      resolveTranslatableText(
-        value,
-        this.locale,
-        DEFAULT_LANGUAGE,
-        this.validLocaleIds,
-      ) ?? "";
+    const resolved = resolveLocaleText(value) ?? "";
 
-    if (!isTranslatableText(value, this.validLocaleIds)) {
+    if (!isLocaleTranslationMap(value)) {
       return resolved;
     }
     // an already-present slot wins over the resolved fallback, even when empty -
     // otherwise clearing the text would snap back to another language
-    return value[this.locale] ?? resolved;
+    return value[getActiveLocale()] ?? resolved;
   });
 
   /** whether this text is currently configured in more than one language */
   readonly isMultiLingual = computed(() =>
-    isTranslatableText(this.valueSignal(), this.validLocaleIds),
+    isLocaleTranslationMap(this.valueSignal()),
   );
 
   /**
@@ -126,8 +116,8 @@ export class TranslatableTextInputComponent
   onTextInput(text: string) {
     const current = this.valueSignal();
     this.applyValue(
-      isTranslatableText(current, this.validLocaleIds)
-        ? { ...current, [this.locale]: text }
+      isLocaleTranslationMap(current)
+        ? { ...current, [getActiveLocale()]: text }
         : text,
     );
   }

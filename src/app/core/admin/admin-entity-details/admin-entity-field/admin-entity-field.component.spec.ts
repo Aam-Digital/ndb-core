@@ -24,6 +24,8 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { EntityConfigService } from "../../../entity/entity-config.service";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -614,6 +616,82 @@ describe("AdminEntityFieldComponent", () => {
       expect(component.fieldIdForm.value).toBe(
         generateIdFromLabel("My New Field"),
       );
+    });
+  });
+
+  describe("reopening a field that was applied but not saved yet", () => {
+    /** the config document still holds the field as it was before this page was edited */
+    function mockSavedLabel(saved: TranslatableText | undefined) {
+      vi.spyOn(
+        TestBed.inject(EntityConfigService),
+        "getRawEntityConfig",
+      ).mockReturnValue({ attributes: { name: { label: saved } } } as any);
+    }
+
+    it.each<{
+      invariant: string;
+      saved: TranslatableText | undefined;
+      inMemory: TranslatableText;
+      expected: TranslatableText;
+    }>([
+      {
+        invariant: "the text that was applied, not the saved one",
+        saved: "Old label",
+        inMemory: "New label",
+        expected: "New label",
+      },
+      {
+        invariant: "the translations that were applied, not the saved ones",
+        saved: { "en-US": "Name", de: "Vorname" },
+        inMemory: { "en-US": "Full name", de: "Vorname" },
+        expected: { "en-US": "Full name", de: "Vorname" },
+      },
+      {
+        invariant: "all saved translations while their text is unchanged",
+        saved: { "en-US": "Name", de: "Vorname" },
+        inMemory: "Name",
+        expected: { "en-US": "Name", de: "Vorname" },
+      },
+      {
+        invariant: "only the active language updated once its text was edited",
+        saved: { "en-US": "Name", de: "Vorname" },
+        inMemory: "Full name",
+        expected: { "en-US": "Full name", de: "Vorname" },
+      },
+      {
+        invariant: "the applied text for a field that is not saved yet",
+        saved: undefined,
+        inMemory: "New label",
+        expected: "New label",
+      },
+    ])("should show $invariant", async ({ saved, inMemory, expected }) => {
+      mockSavedLabel(saved);
+
+      await recreateComponentWithData({
+        id: "name",
+        label: inMemory,
+        dataType: "string",
+      } as unknown as EntitySchemaField);
+
+      expect(component.schemaFieldsForm.get("label").value).toEqual(expected);
+    });
+
+    it("should not revert the applied label when applying other changes", async () => {
+      mockSavedLabel("Old label");
+      await recreateComponentWithData({
+        id: "name",
+        label: "New label",
+        dataType: "string",
+      } as EntitySchemaField);
+
+      // any change writes the whole form back onto the schema field
+      component.schemaFieldsForm
+        .get("description")
+        .setValue("Some description");
+      await fixture.whenStable();
+      await component.save();
+
+      expect(dialogData.entitySchemaField.label).toBe("New label");
     });
   });
 });

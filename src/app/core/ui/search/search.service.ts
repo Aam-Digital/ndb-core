@@ -76,11 +76,25 @@ export class SearchService {
   private getSearchIndexDesignDoc() {
     let searchIndex = `(doc) => {\n`;
     searchIndex += `const splitTokens = (value) => value.toLowerCase().split(/[\\s/.:,]+/).filter((val) => !!val)\n`;
+    // A plain object (e.g. a translation map) is indexed with the texts of all its languages.
+    // Primitives and arrays (which have a length) keep being indexed through toString().
+    // This function also runs in CouchDB's JavaScript engine: no Object.values or other newer APIs.
+    searchIndex += `const emitTokens = (value) => {\n`;
+    searchIndex += `if (typeof value === "object" && typeof value.length === "undefined") {\n`;
+    searchIndex += `for (const key in value) {\n`;
+    searchIndex += `if (typeof value[key] === "string") {\n`;
+    searchIndex += `splitTokens(value[key]).forEach((val) => emit(val))\n`;
+    searchIndex += `}\n`;
+    searchIndex += `}\n`;
+    searchIndex += `} else {\n`;
+    searchIndex += `splitTokens(value.toString()).forEach((val) => emit(val))\n`;
+    searchIndex += `}\n`;
+    searchIndex += `}\n`;
     this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
       attributes.forEach((attr) => {
         searchIndex += `if (doc["${attr}"] !== undefined && doc["${attr}"] !== null) {\n`;
-        searchIndex += `splitTokens(doc["${attr}"].toString()).forEach((val) => emit(val))\n`;
+        searchIndex += `emitTokens(doc["${attr}"])\n`;
         searchIndex += `}\n`;
       });
       searchIndex += `return\n`;
@@ -131,7 +145,8 @@ export class SearchService {
 
   /**
    * Converts a search value into lowercase tokens used for indexing and matching.
-   * Supports primitive values and arrays; splits tokens by whitespace, "/", ":", ".", and ",".
+   * Supports primitive values, arrays and the string values of plain objects (e.g. translation maps);
+   * splits tokens by whitespace, "/", ":", ".", and ",".
    */
   private tokenizeSearchTerm(value: unknown): string[] {
     if (value === null || value === undefined) {
@@ -139,6 +154,11 @@ export class SearchService {
     }
     if (Array.isArray(value)) {
       return value.flatMap((entry) => this.tokenizeSearchTerm(entry));
+    }
+    if (typeof value === "object") {
+      return Object.values(value).flatMap((entry) =>
+        typeof entry === "string" ? this.tokenizeSearchTerm(entry) : [],
+      );
     }
     if (
       typeof value !== "string" &&

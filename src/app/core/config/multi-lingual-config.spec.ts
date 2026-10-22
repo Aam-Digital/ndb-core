@@ -1,8 +1,10 @@
 import {
   isTranslatableText,
   mergeTranslatableValues,
+  RawConfig,
   resolveTranslatableConfig,
   resolveTranslatableText,
+  TranslatableText,
 } from "./multi-lingual-config";
 
 describe("multi-lingual-config", () => {
@@ -217,6 +219,50 @@ describe("multi-lingual-config", () => {
 
       expect(merged.label).toBe("New Field");
     });
+
+    it.each([
+      {
+        invariant:
+          "keeps the translations of any key, not only labels, while its text is unchanged",
+        raw: { title: { "en-US": "Children", de: "Kinder" } },
+        edited: { title: "Children" },
+        keys: undefined,
+        expected: { title: { "en-US": "Children", de: "Kinder" } },
+      },
+      {
+        invariant:
+          "updates only the active locale of any key, not only labels, once its text changed",
+        raw: { title: { "en-US": "Children", de: "Kinder" } },
+        edited: { title: "Pupils" },
+        keys: undefined,
+        expected: { title: { "en-US": "Pupils", de: "Kinder" } },
+      },
+      {
+        invariant:
+          "leaves the keys outside a restricting translatableKeys to the edited value",
+        raw: {
+          label: { "en-US": "Name", de: "Vorname" },
+          title: { "en-US": "Children", de: "Kinder" },
+        },
+        edited: { label: "Name", title: "Children" },
+        keys: ["label"],
+        expected: {
+          label: { "en-US": "Name", de: "Vorname" },
+          title: "Children",
+        },
+      },
+    ])("$invariant", ({ raw, edited, keys, expected }) => {
+      const merged = mergeTranslatableValues(
+        raw,
+        edited,
+        "en-US",
+        DEFAULT,
+        LOCALES,
+        keys,
+      );
+
+      expect(merged).toEqual(expected);
+    });
   });
 
   describe("resolveTranslatableConfig", () => {
@@ -272,6 +318,48 @@ describe("multi-lingual-config", () => {
 
       expect(resolved.label).toBe("Vorname");
       expect(raw.label).toEqual({ "en-US": "Name", de: "Vorname" });
+    });
+  });
+
+  // type-level contract, checked when the spec is compiled
+  describe("RawConfig", () => {
+    // as the config interfaces declare it: every text is a plain string and,
+    // like in most of them, every property is optional
+    interface ResolvedSample {
+      label?: string;
+      icon?: string;
+      custom?: any;
+      attributes?: {
+        [id: string]: { description?: string; dataType?: string };
+      };
+      panels?: { title?: string; components?: { header?: string }[] }[];
+      range?: [string, { labelShort?: string }];
+    }
+    type Raw = RawConfig<ResolvedSample>;
+
+    it("lets the display texts at every level also be translation maps", () => {
+      expectTypeOf<Raw["label"]>().toEqualTypeOf<TranslatableText>();
+      expectTypeOf<
+        Raw["attributes"][string]["description"]
+      >().toEqualTypeOf<TranslatableText>();
+      expectTypeOf<
+        Raw["panels"][number]["title"]
+      >().toEqualTypeOf<TranslatableText>();
+      expectTypeOf<
+        Raw["panels"][number]["components"][number]["header"]
+      >().toEqualTypeOf<TranslatableText>();
+      expectTypeOf<
+        Raw["range"][1]["labelShort"]
+      >().toEqualTypeOf<TranslatableText>();
+    });
+
+    it("leaves all other properties, and any, as they are", () => {
+      expectTypeOf<Raw["icon"]>().toEqualTypeOf<string>();
+      expectTypeOf<
+        Raw["attributes"][string]["dataType"]
+      >().toEqualTypeOf<string>();
+      expectTypeOf<Raw["custom"]>().toBeAny();
+      expectTypeOf<RawConfig<any>>().toBeAny();
     });
   });
 });

@@ -23,7 +23,7 @@
         >
           @for (report of reports(); track report.getId()) {
             <mat-option [value]="report">
-              {{ report.title }}
+              {{ report.title | localeText }}
             </mat-option>
           }
         </mat-select>

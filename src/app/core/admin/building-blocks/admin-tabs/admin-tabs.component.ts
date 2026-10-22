@@ -25,7 +25,7 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
-import { resolveLocaleText } from "../../../language/active-locale";
+import { LocaleTextPipe } from "../../../language/locale-text.pipe";
 import { TranslatableText } from "../../../config/multi-lingual-config";
 
 /**
@@ -56,6 +56,7 @@ import { TranslatableText } from "../../../config/multi-lingual-config";
     MatTabLabel,
     MatTooltip,
     DragDropModule,
+    LocaleTextPipe,
   ],
   templateUrl: "./admin-tabs.component.html",
   styleUrl: "./admin-tabs.component.scss",
@@ -81,12 +82,6 @@ export class AdminTabsComponent<
     }
     return tabs[0].hasOwnProperty("name") ? "name" : "title";
   });
-
-  /** the tab's title as text - a translatable title may hold a per-language map */
-  tabTitle(tab: E): string {
-    const title: TranslatableText = tab[this.tabTitleProperty()];
-    return resolveLocaleText(title) ?? "";
-  }
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })
   tabTemplate: TemplateRef<any>;
