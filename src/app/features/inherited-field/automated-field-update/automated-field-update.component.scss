@@ -7,26 +7,32 @@
   gap: sizes.$small;
 }
 
-// the change that opened the dialog
+// the change that opened the dialog, collapsed to the triggering record until expanded
 .trigger {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: sizes.$small sizes.$regular;
   margin-bottom: sizes.$regular;
-  padding: sizes.$small sizes.$regular;
-  border-radius: 4px;
   background-color: colors.$background-secondary;
+
+  .trigger-header {
+    display: flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
 
   .trigger-label {
     color: colors.$text-secondary;
     font-size: 0.85em;
   }
 
+  // one changed field per line
   .trigger-change {
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: sizes.$small;
+
+    &:not(:last-child) {
+      margin-bottom: sizes.$small;
+    }
   }
 
   // the change as removed and added values, in the style of the values that the suggestions add and remove

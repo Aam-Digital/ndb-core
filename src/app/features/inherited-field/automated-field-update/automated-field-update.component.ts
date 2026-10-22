@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatButton } from "@angular/material/button";
+import { MatExpansionModule } from "@angular/material/expansion";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import {
   MAT_DIALOG_DATA,
@@ -215,6 +216,7 @@ function withOnlyValues(
     HintBoxComponent,
     MatButton,
     MatDialogModule,
+    MatExpansionModule,
     MatTooltipModule,
   ],
   templateUrl: "./automated-field-update.component.html",

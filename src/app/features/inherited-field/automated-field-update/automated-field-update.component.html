@@ -10,13 +10,19 @@
 <mat-dialog-content>
   @for (group of groups(); track group.sourceFieldId) {
     @if (data.trigger) {
-      <div class="trigger">
-        <span class="trigger-label" i18n>Triggered by</span>
-        <app-entity-block
-          [entityId]="data.trigger.entity.getId()"
-        ></app-entity-block>
+      <mat-expansion-panel class="trigger">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="trigger-header">
+            <span class="trigger-label" i18n>Triggered by</span>
+            <app-entity-block
+              [entityId]="data.trigger.entity.getId()"
+              [linkDisabled]="true"
+            ></app-entity-block>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
         @for (change of group.changes; track change.field.id) {
-          <span class="trigger-change">
+          <div class="trigger-change">
             <span class="trigger-label">{{ change.field.label }}:</span>
             @if (!change.isChanged) {
               <app-entity-field-view
@@ -60,9 +66,9 @@
                 ></app-entity-field-view>
               </span>
             }
-          </span>
+          </div>
         }
-      </div>
+      </mat-expansion-panel>
     }
 
     <table class="full-width">
