@@ -10,7 +10,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
@@ -57,7 +57,7 @@ import { TranslatableText } from "../multi-lingual-config";
     MatInputModule,
     MatButtonModule,
     MatTooltipModule,
-    FontAwesomeModule,
+    FaDynamicIconComponent,
   ],
   providers: [
     {
