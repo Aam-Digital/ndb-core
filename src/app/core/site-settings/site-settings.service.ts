@@ -12,7 +12,6 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 import { environment } from "../../../environments/environment";
 import { hasRemoteSession } from "../session/session-type";
@@ -65,7 +64,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
           : availableLocales.values,
       ),
     ),
-    { initialValue: availableLocales.values as ConfigurableEnumValue[] },
+    { initialValue: availableLocales.values },
   );
 
   private entityConfigReady = inject(EntityConfigReadyService);
