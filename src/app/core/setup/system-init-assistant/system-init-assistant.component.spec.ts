@@ -6,12 +6,27 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
 import { LanguageService } from "app/core/language/language.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { SetupService } from "../setup.service";
 
 describe("SystemInitAssistantComponent", () => {
   let component: SystemInitAssistantComponent;
   let fixture: ComponentFixture<SystemInitAssistantComponent>;
+  let mockSetupService: {
+    getAvailableBaseConfig: ReturnType<typeof vi.fn>;
+    initSystemWithBaseConfig: ReturnType<typeof vi.fn>;
+  };
 
   async function configureComponent() {
+    mockSetupService = {
+      getAvailableBaseConfig: vi
+        .fn()
+        .mockName("SetupService.getAvailableBaseConfig")
+        .mockResolvedValue([]),
+      initSystemWithBaseConfig: vi
+        .fn()
+        .mockName("SetupService.initSystemWithBaseConfig")
+        .mockResolvedValue(undefined),
+    };
     await TestBed.configureTestingModule({
       imports: [SystemInitAssistantComponent, MockedTestingModule.withState()],
       providers: [
@@ -29,6 +44,7 @@ describe("SystemInitAssistantComponent", () => {
           },
         },
         { provide: LOCATION_TOKEN, useValue: { pathname: "/some/path" } },
+        { provide: SetupService, useValue: mockSetupService },
       ],
     }).compileComponents();
 
@@ -39,10 +55,7 @@ describe("SystemInitAssistantComponent", () => {
   it("should preselect use case from route param and initialize system", async () => {
     await configureComponent();
     const mockConfigs = [{ id: "basic_setup" }] as any;
-    vi.spyOn(
-      component["setupService"],
-      "getAvailableBaseConfig",
-    ).mockResolvedValue(mockConfigs);
+    mockSetupService.getAvailableBaseConfig.mockResolvedValue(mockConfigs);
     vi.spyOn(component, "initializeSystem");
 
     (TestBed.inject(ActivatedRoute) as any).snapshot = {
@@ -52,7 +65,7 @@ describe("SystemInitAssistantComponent", () => {
     await component.ngOnInit();
 
     expect(component.selectedUseCase()).toEqual(mockConfigs[0]);
-    expect((component as any).initializeSystem).toHaveBeenCalled();
+    expect(component.initializeSystem).toHaveBeenCalled();
   });
 
   it.each([
@@ -69,10 +82,7 @@ describe("SystemInitAssistantComponent", () => {
     ],
   ])("offers %s to choose from", async (_, useCases, expectedLocales) => {
     await configureComponent();
-    vi.spyOn(
-      component["setupService"],
-      "getAvailableBaseConfig",
-    ).mockResolvedValue(useCases as any);
+    mockSetupService.getAvailableBaseConfig.mockResolvedValue(useCases);
 
     await component.ngOnInit();
 
@@ -83,10 +93,9 @@ describe("SystemInitAssistantComponent", () => {
 
   it("does not show the profile step before a base config was imported successfully", async () => {
     await configureComponent();
-    vi.spyOn(
-      component["setupService"],
-      "initSystemWithBaseConfig",
-    ).mockRejectedValue(new Error("import failed"));
+    mockSetupService.initSystemWithBaseConfig.mockRejectedValue(
+      new Error("import failed"),
+    );
     component.selectedUseCase.set({ id: "basic_setup" } as any);
 
     await component.initializeSystem();

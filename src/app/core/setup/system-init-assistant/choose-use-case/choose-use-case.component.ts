@@ -5,6 +5,7 @@ import {
   input,
   InputSignal,
   output,
+  signal,
   Signal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -39,13 +40,19 @@ export class ChooseUseCaseComponent {
     this.scenarios().filter((uc) => !!uc.locale),
   );
 
+  /** Precomputed, so the template does not re-check every option on each cycle. */
+  offeredInCurrentLocale: Signal<Set<BaseConfig>> = computed(() => {
+    const locale = this.languageService.getCurrentLocale();
+    return new Set(
+      this.scenarios().filter((uc) => isOfferedInLocale(uc, locale)),
+    );
+  });
+
   /** True while use cases exist for other languages but none for the user's own. */
   hasNoUseCaseInCurrentLocale: Signal<boolean> = computed(() => {
     const localised = this.localisedUseCases();
-    return (
-      localised.length > 0 &&
-      !localised.some((uc) => this.isOfferedInCurrentLocale(uc))
-    );
+    const offered = this.offeredInCurrentLocale();
+    return localised.length > 0 && !localised.some((uc) => offered.has(uc));
   });
 
   /**
@@ -53,22 +60,17 @@ export class ChooseUseCaseComponent {
    * for them - they came here in the language they want to work in. The ones from
    * another language are greyed out, so the mismatch is visible rather than silent.
    */
-  availableUseCases: Signal<BaseConfig[]> = computed(() =>
-    this.scenarios().filter(
-      (uc) =>
-        this.isOfferedInCurrentLocale(uc) || this.hasNoUseCaseInCurrentLocale(),
-    ),
-  );
-
-  /** A use case without a locale is offered in every language, so never greyed out. */
-  isOfferedInCurrentLocale(useCase: BaseConfig): boolean {
-    return isOfferedInLocale(useCase, this.languageService.getCurrentLocale());
-  }
+  availableUseCases: Signal<BaseConfig[]> = computed(() => {
+    const offered = this.offeredInCurrentLocale();
+    return this.scenarios().filter(
+      (uc) => offered.has(uc) || this.hasNoUseCaseInCurrentLocale(),
+    );
+  });
 
   selectionChanged = output<BaseConfig | null>();
 
   selectedUseCase: BaseConfig;
-  startFromScratch = false;
+  startFromScratch = signal(false);
 
   onSelectionChange() {
     this.selectionChanged.emit(this.selectedUseCase);
@@ -79,7 +81,7 @@ export class ChooseUseCaseComponent {
    * so it replaces the dropdown's selection while it is ticked.
    */
   onStartFromScratchChange(checked: boolean) {
-    this.startFromScratch = checked;
+    this.startFromScratch.set(checked);
     this.selectionChanged.emit(
       checked ? this.startFromScratchUseCase() : (this.selectedUseCase ?? null),
     );

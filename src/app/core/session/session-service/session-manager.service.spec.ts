@@ -219,6 +219,33 @@ describe("SessionManagerService", () => {
     }
   });
 
+  it("should not initialize the user entity if its type is not configured", async () => {
+    vi.useFakeTimers();
+    try {
+      // a system can be set up with no record types at all, so the type an account
+      // is linked to does not have to exist in the active config
+      mockKeycloak.login.mockResolvedValue({
+        name: "some-user",
+        id: "101",
+        roles: [],
+        entityId: "TypeNotInConfig:1",
+      });
+      mockedEntityMapper.load.mockClear();
+
+      service.remoteLogin();
+      await vi.advanceTimersByTimeAsync(0);
+
+      TestBed.inject(EntityConfigReadyService).markSetupCompleted();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(mockedEntityMapper.load).not.toHaveBeenCalled();
+      expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+      expect(TestBed.inject(CurrentUserSubject).value).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should not initialize the user entity if no entityId is set", async () => {
     vi.useFakeTimers();
     try {

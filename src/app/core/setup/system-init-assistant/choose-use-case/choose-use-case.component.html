@@ -6,12 +6,12 @@
       <mat-select
         [(ngModel)]="selectedUseCase"
         (selectionChange)="onSelectionChange()"
-        [disabled]="startFromScratch"
+        [disabled]="startFromScratch()"
       >
         @for (useCase of availableUseCases(); track useCase.id) {
           <mat-option
             [value]="useCase"
-            [class.greyed-out]="!isOfferedInCurrentLocale(useCase)"
+            [class.greyed-out]="!offeredInCurrentLocale().has(useCase)"
           >
             {{ useCase.name }}
           </mat-option>
@@ -33,7 +33,7 @@
 
     @if (startFromScratchUseCase(); as blankUseCase) {
       <mat-checkbox
-        [checked]="startFromScratch"
+        [checked]="startFromScratch()"
         (change)="onStartFromScratchChange($event.checked)"
       >
         {{ blankUseCase.name }}
@@ -42,7 +42,7 @@
   </div>
 
   <div class="flex-1 description-container">
-    @if (startFromScratch) {
+    @if (startFromScratch()) {
       <div
         markdown
         [data]="startFromScratchUseCase()?.description"
