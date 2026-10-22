@@ -1,0 +1,48 @@
+{
+  "_id": "Config:CONFIG_ENTITY",
+  "data": {
+    "navigationMenu": {
+      "items": [
+        {
+          "label": "Dashboard",
+          "icon": "home",
+          "link": "/"
+        }
+      ]
+    },
+    "view:": {
+      "component": "Dashboard",
+      "config": {
+        "widgets": [
+          {
+            "component": "ShortcutDashboard",
+            "config": {
+              "shortcuts": [
+                {
+                  "label": "Define your record types",
+                  "icon": "table",
+                  "link": "/admin/entity"
+                },
+                {
+                  "label": "Set up user accounts",
+                  "icon": "users",
+                  "link": "/admin/user-list"
+                },
+                {
+                  "label": "Site settings",
+                  "icon": "gear",
+                  "link": "/admin/site-settings"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "primaryAction": {
+      "icon": "table",
+      "actionType": "navigate",
+      "route": "/admin/entity"
+    }
+  }
+}

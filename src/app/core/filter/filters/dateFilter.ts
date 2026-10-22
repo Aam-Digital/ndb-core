@@ -15,6 +15,9 @@ import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-
 /**
  * Represents a filter for date values.
  * The filter can either be one of the predefined options or two manually entered dates.
+ *
+ * For a field that holds a period (a "date-range" with a start and an end date),
+ * the filter matches the periods that overlap the selected dates.
  */
 export class DateFilter<T extends Entity> extends Filter<T> {
   override component = DateRangeFilterComponent;
@@ -23,6 +26,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     public override name: string,
     public override label: string = name,
     public rangeOptions: DateRangeFilterConfigOption[],
+    private readonly isPeriodField = false,
   ) {
     super(name, label);
     this.selectedOptionValues = [];
@@ -56,9 +60,44 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     if (range.end) {
       filterObject.$lte = moment(range.end).format("YYYY-MM-DD");
     }
-    return filterObject.$gte || filterObject.$lte
-      ? ({ [this.name]: filterObject } as DataFilter<T>)
-      : undefined;
+    if (!filterObject.$gte && !filterObject.$lte) {
+      return undefined;
+    }
+    return this.isPeriodField
+      ? this.getOverlapFilter(filterObject)
+      : ({ [this.name]: filterObject } as DataFilter<T>);
+  }
+
+  /**
+   * Periods that start before the end and end after the start of the selected dates.
+   * A period without a start or end date is open-ended, a record without a period is never matched.
+   *
+   * Written as alternatives of plain conditions (without `$and`), so that it also works inside `$elemMatch`
+   * for a period in the entries of an embedded field. Each compared date is also required to exist,
+   * as the in-memory matching counts a comparison with a missing value as equal.
+   */
+  private getOverlapFilter({
+    $gte: from,
+    $lte: to,
+  }: {
+    $gte?: string;
+    $lte?: string;
+  }): DataFilter<T> {
+    const start = `${this.name}.start`;
+    const end = `${this.name}.end`;
+    const startsBeforeEnd = {
+      [start]: { $exists: true, ...(to && { $lte: to }) },
+    };
+    const endsAfterStart = {
+      [end]: { $exists: true, ...(from && { $gte: from }) },
+    };
+    return {
+      $or: [
+        { ...startsBeforeEnd, [end]: { $exists: false } },
+        { ...startsBeforeEnd, ...endsAfterStart },
+        { [start]: { $exists: false }, ...endsAfterStart },
+      ],
+    } as DataFilter<T>;
   }
 
   getSelectedOption() {

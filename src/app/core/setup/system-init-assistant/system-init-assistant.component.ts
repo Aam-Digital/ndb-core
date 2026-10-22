@@ -6,7 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { SetupService } from "../setup.service";
-import { BaseConfig } from "../base-config";
+import { BaseConfig, isOfferedInLocale } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "./choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
@@ -21,6 +21,7 @@ import { FormsModule } from "@angular/forms";
 import { environment } from "#src/environments/environment";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-setup.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /**
  * UI for initial system setup and use case selection,
@@ -36,6 +37,7 @@ import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-set
     MatCheckbox,
     FormsModule,
     UserProfileSetupComponent,
+    FaIconComponent,
   ],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
@@ -46,7 +48,7 @@ export class SystemInitAssistantComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
-  private readonly setupService = inject(SetupService);
+  protected readonly setupService = inject(SetupService);
 
   /** exposed for the template to branch copy that only applies to the public in-memory demo */
   protected readonly environment = environment;
@@ -83,15 +85,15 @@ export class SystemInitAssistantComponent implements OnInit {
     this.dialogRef.disableClose = true;
   }
 
+  /**
+   * Offers a language only if some use case can be set up in it.
+   * A use case without a locale is offered in every language, so all of them can be chosen then.
+   */
   private getAvailableLocalesForUseCases() {
-    const availableDemoLocale = new Set(
-      this.availableUseCases()
-        .map((useCase) => useCase.locale)
-        .filter(Boolean),
-    );
-
     return availableLocales.values.filter((locale) =>
-      availableDemoLocale.has(locale.id),
+      this.availableUseCases().some((useCase) =>
+        isOfferedInLocale(useCase, locale.id),
+      ),
     );
   }
 
@@ -141,7 +143,7 @@ export class SystemInitAssistantComponent implements OnInit {
     }
   }
 
-  onUseCaseSelected(selected: BaseConfig) {
+  onUseCaseSelected(selected: BaseConfig | null) {
     this.selectedUseCase.set(selected);
   }
 

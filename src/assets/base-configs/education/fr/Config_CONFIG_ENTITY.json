@@ -226,8 +226,6 @@
         "clickMode": "popup-details",
         "title": "Observations & Rapports",
         "columnGroups": {
-          "default": "Standard",
-          "mobile": "Mobile",
           "groups": [
             {
               "name": "Standard",
@@ -373,8 +371,6 @@
           }
         ],
         "columnGroups": {
-          "default": "Informations de base",
-          "mobile": "Aperçu rapide (mobile)",
           "groups": [
             {
               "name": "Informations de base",

@@ -23,7 +23,7 @@ test("Create, persist, delete and undo a Child entity end-to-end", async ({
   await loadApp(page, generateUsers());
 
   await page.getByRole("navigation").getByText("Children").click();
-  await page.getByRole("button", { name: "Add New" }).click();
+  await page.getByRole("button", { name: "Add New", exact: true }).click();
 
   // The entity-details page opens in "Adding new Child" mode (full page,
   // not a popup — Child uses navigate clickMode).
@@ -172,6 +172,23 @@ test("List filter narrows results and clears restore full list", async ({
   await expect(
     page.getByRole("cell", { name: "Tollygunge Child 0" }),
   ).toBeVisible();
+
+  // The selected column group survives opening a record and navigating back:
+  // the restored tab and the displayed columns stay in sync.
+  const schoolInfoTab = page.getByRole("tab", { name: "School Info" });
+  const motherTongueHeader = page.getByRole("columnheader", {
+    name: "Mother Tongue",
+  });
+  await schoolInfoTab.click();
+  await expect(motherTongueHeader).toBeVisible();
+  await page.getByRole("cell", { name: "Alipore Child 0" }).click();
+  await expect(page).toHaveURL(/\/child\//);
+  await page.goBack();
+  await expect(schoolInfoTab).toHaveAttribute("aria-selected", "true");
+  await expect(motherTongueHeader).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Email" })).toHaveCount(
+    0,
+  );
 });
 
 const MATCHING_SCHOOL_NAME = "Alpha School";
@@ -716,7 +733,7 @@ test("Display conditions show a single field and a whole field group only while 
   await expect(conditionDialog).not.toBeVisible();
 
   await page.getByRole("button", { name: "Cancel" }).click();
-  await page.getByRole("button", { name: "Add New" }).click();
+  await page.getByRole("button", { name: "Add New", exact: true }).click();
 
   const conditionalField = page.locator("#entity-field__numberField");
   const fieldOfConditionalGroup = page.locator("#entity-field__dateOnlyField");

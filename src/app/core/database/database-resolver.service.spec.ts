@@ -11,7 +11,14 @@ import {
   DbConfig,
 } from "./indexeddb-migration.service";
 import { environment } from "../../../environments/environment";
-import { NAVIGATOR_TOKEN } from "#src/app/utils/di-tokens";
+import {
+  LOCAL_STORAGE_TOKEN,
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+} from "#src/app/utils/di-tokens";
+import { LAST_SYNC_KEY_PREFIX } from "#src/bootstrap-reset";
+import { AlertService } from "../alerts/alert.service";
+import { Logging } from "../logging/logging.service";
 import { Entity } from "../entity/model/entity";
 import { entityRegistry } from "../entity/database-entity.decorator";
 
@@ -290,5 +297,52 @@ describe("DatabaseResolverService", () => {
 
       expect(storage.persist).toHaveBeenCalled();
     });
+  });
+
+  it("should tell the user if the local database was deleted by the browser although it had been synced", async () => {
+    const storage = new Map<string, string>([
+      [LAST_SYNC_KEY_PREFIX + testDbConfig.dbNames.app, "2026-10-01T10:00:00Z"],
+    ]);
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: DatabaseFactoryService, useValue: factory },
+        { provide: IndexeddbMigrationService, useValue: migrationServiceSpy },
+        {
+          provide: WINDOW_TOKEN,
+          useValue: { indexedDB: { databases: async () => [] } },
+        },
+        {
+          provide: LOCAL_STORAGE_TOKEN,
+          useValue: {
+            getItem: (key: string) => storage.get(key) ?? null,
+            setItem: (key: string, value: string) => storage.set(key, value),
+            removeItem: (key: string) => storage.delete(key),
+          },
+        },
+      ],
+    });
+    const svc = TestBed.inject(DatabaseResolverService);
+    // @ts-ignore - forcing this for stable test conditions
+    svc["sessionType"] = SessionType.mock;
+    const alertService = TestBed.inject(AlertService);
+    vi.spyOn(alertService, "addWarning").mockImplementation(() => undefined);
+    const errorSpy = vi.spyOn(Logging, "error").mockImplementation(() => {});
+
+    try {
+      await svc.initDatabasesForSession({
+        name: "test-user",
+        id: "test-uuid",
+        roles: [],
+      } as SessionInfo);
+
+      // still reported: real data loss worth monitoring
+      expect(errorSpy).toHaveBeenCalled();
+      expect(alertService.addWarning).toHaveBeenCalledWith(
+        expect.stringContaining("may have been lost"),
+      );
+    } finally {
+      errorSpy.mockRestore();
+    }
   });
 });

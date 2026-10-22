@@ -17,7 +17,10 @@
     <div class="menu-label" [title]="item().label">{{ item().label }}</div>
 
     @if (hasSubMenu(item())) {
-      <fa-icon [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"></fa-icon>
+      <fa-icon
+        class="mirror-in-rtl"
+        [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"
+      ></fa-icon>
     }
   </a>
 </mat-list-item>

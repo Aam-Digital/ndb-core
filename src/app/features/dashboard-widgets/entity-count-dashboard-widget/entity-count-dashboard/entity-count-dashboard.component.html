@@ -26,7 +26,11 @@
           [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
           [style.transform]="'scale(0.75)'"
         >
-          <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
+          <fa-icon
+            icon="circle-chevron-left"
+            size="xs"
+            class="mirror-in-rtl"
+          ></fa-icon>
         </button>
 
         <span
@@ -54,7 +58,7 @@
           [style.visibility]="groupBy().length > 1 ? 'visible' : 'hidden'"
           [style.transform]="'scale(0.75)'"
         >
-          <fa-icon icon="circle-chevron-right"></fa-icon>
+          <fa-icon icon="circle-chevron-right" class="mirror-in-rtl"></fa-icon>
         </button>
       </div>
 

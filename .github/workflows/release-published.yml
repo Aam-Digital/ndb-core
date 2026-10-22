@@ -1,0 +1,78 @@
+name: Release Published - Publish a new build
+# CI flow for published releases: build, Docker image, Sentry release and image cleanup.
+# Releases are created with the GH_TOKEN PAT (create-release.yml); releases created with the GITHUB_TOKEN would not
+# trigger this. Edge builds of master pushes create no GitHub release; on-master-push.yml builds their image.
+# Whether it is a full release is read from the release's prerelease flag, never from the version string.
+
+on:
+  release:
+    types: [published]
+
+permissions: {} # each job grants what it needs
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+    with:
+      build_name: ${{ github.event.release.tag_name }}
+      # Image tags: the version (the release's tag name), and `stable` and `latest` for a full release
+      version: ${{ github.event.release.tag_name }}
+      stable: ${{ !github.event.release.prerelease }}
+
+  # After a full release, the edge images (`*-edge.*`, formerly `*-master.*`) on ghcr.io are no longer needed.
+  # Images still tagged `edge`, `stable` or `latest` are kept (and `master`, the former prerelease tag). Docker Hub is
+  # not covered.
+  prune-prerelease-images:
+    if: ${{ !github.event.release.prerelease }}
+    needs: build
+    uses: Aam-Digital/.github/.github/workflows/image-cleanup.yml@v1
+    permissions:
+      actions: write
+      packages: write
+    with:
+      tags: "*-edge.*,*-master.*"
+
+  # Sentry release with the sourcemaps of the build (full releases only). A job-level `if`, so that a skipped upload
+  # never shows as a green job. The build already injected the debug IDs (`sentry-cli sourcemaps inject` in
+  # _build.yaml); the same @sentry/cli version from package-lock.json uploads them here.
+  sentry-release:
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # checkout of package-lock.json
+    needs:
+      - build
+    env:
+      BUILD_NAME: ${{ github.event.release.tag_name }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+    steps:
+      - name: Checkout package-lock.json
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          sparse-checkout: package-lock.json
+          sparse-checkout-cone-mode: false
+
+      - name: Download webapp files
+        uses: actions/download-artifact@v8
+        with:
+          name: webapp-files
+          path: dist
+
+      - name: Install sentry-cli
+        # The exact version the build used; --ignore-scripts: the binary comes from a platform-specific dependency
+        run: |
+          version=$(jq -er '.packages["node_modules/@sentry/cli"].version' package-lock.json)
+          npm install --global --ignore-scripts "@sentry/cli@$version"
+          sentry-cli --version
+
+      - name: Create release and upload sourcemaps
+        run: |
+          sentry-cli releases new "ndb-core@$BUILD_NAME"
+          sentry-cli sourcemaps upload --release="ndb-core@$BUILD_NAME" ./dist

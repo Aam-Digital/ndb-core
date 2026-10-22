@@ -1,7 +1,9 @@
 import {
   Component,
   input,
+  computed,
   effect,
+  inject,
   linkedSignal,
   ChangeDetectionStrategy,
 } from "@angular/core";
@@ -17,6 +19,14 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import {
+  EmbeddedFieldRef,
+  getEmbeddedFieldId,
+  getEmbeddedFieldLabel,
+  getEmbeddedFieldRefs,
+} from "../../entity/schema/embedded-schema-field.util";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,23 +43,77 @@ import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-
   styleUrls: ["./admin-entity-list.component.scss"],
 })
 export class AdminEntityListComponent {
+  private readonly schemaService = inject(EntitySchemaService);
+
   entityConstructor = input.required<EntityConstructor>();
   config = input.required<EntityListConfig>();
 
   filters = linkedSignal(() => (this.config().filters ?? []).map((f) => f.id));
 
-  columnGroups = linkedSignal(
-    () =>
-      this.config().columnGroups ?? {
-        groups: [
-          {
-            name: "",
-            columns: (this.config().columns ?? []).map((c) =>
-              typeof c === "string" ? c : c.id,
-            ),
-          },
-        ],
-      },
+  columnGroups = linkedSignal(() => {
+    const configured = this.config().columnGroups;
+    return configured
+      ? { groups: configured.groups }
+      : {
+          groups: [
+            {
+              name: "",
+              columns: (this.config().columns ?? []).map((c) =>
+                typeof c === "string" ? c : c.id,
+              ),
+            },
+          ],
+        };
+  });
+
+  private readonly allEmbeddedFieldRefs = computed<EmbeddedFieldRef[]>(() =>
+    getEmbeddedFieldRefs(this.schemaService, this.entityConstructor()),
+  );
+
+  /**
+   * Properties nested inside embedded fields (e.g. "childrenAttendance.participant"),
+   * offered as additional filter options - but only for those embedded fields that are
+   * themselves currently displayed as a column, mirroring how a custom (non-schema) column
+   * is only offered as a filter option once it has been added as a column (see
+   * `filterAdditionalFields`).
+   * Nested properties that are already configured as filters are always offered, so that
+   * they are not silently dropped from the config once their embedded field is no longer
+   * displayed as a column.
+   */
+  private readonly embeddedFilterFields = computed<ColumnConfig[]>(() => {
+    const displayedColumnIds = new Set(
+      this.columnGroups().groups.flatMap((g) => g.columns),
+    );
+    const configuredFilterIds = new Set(this.filters());
+    return this.allEmbeddedFieldRefs()
+      .filter(
+        (ref) =>
+          displayedColumnIds.has(ref.outerProp) ||
+          configuredFilterIds.has(getEmbeddedFieldId(ref)),
+      )
+      .map((ref) => ({
+        id: getEmbeddedFieldId(ref),
+        label: getEmbeddedFieldLabel(ref),
+      }));
+  });
+
+  filterAdditionalFields = computed<ColumnConfig[]>(() => [
+    ...(this.config().columns ?? []),
+    ...this.embeddedFilterFields(),
+  ]);
+
+  /**
+   * Outer fields that hold embedded properties (e.g. "childrenAttendance") - excluded from
+   * the filter picker's flat schema-field candidates, since filtering by equality on the raw
+   * embedded array/object value doesn't make sense (it falls through to a generic value-list
+   * filter that compares whole arrays/objects); only the specific nested properties (offered
+   * via `embeddedFilterFields`) are meaningful filters. Not applied to the column picker, where
+   * picking the whole embedded field is legitimate (e.g. to display it via `DisplayAttendance`).
+   */
+  filterExcludedFields = computed<string[]>(() =>
+    Array.from(
+      new Set(this.allEmbeddedFieldRefs().map((ref) => ref.outerProp)),
+    ),
   );
 
   constructor() {

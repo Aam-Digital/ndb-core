@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { UserDetailsComponent } from "./user-details.component";
 import { Role, UserAccount } from "../user-admin-service/user-account";
-import { UserAdminService } from "../user-admin-service/user-admin.service";
+import {
+  UserAdminService,
+  UserAdminApiError,
+} from "../user-admin-service/user-admin.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { HttpClient } from "@angular/common/http";
@@ -439,6 +442,27 @@ describe("UserDetailsComponent", () => {
     component.save();
 
     expect(mockHttpClient.post).not.toHaveBeenCalled();
+  });
+
+  it("should tell the admin why an update failed and keep the dialog open", async () => {
+    mockUserAdminService.updateUser.mockReturnValue(
+      of({ userUpdated: false, error: new UserAdminApiError(403) }),
+    );
+    fixture.componentRef.setInput("userAccount", {
+      ...mockUserAccount,
+      userEntityId: undefined,
+    });
+    fixture.detectChanges();
+    component.editMode();
+    fixture.detectChanges();
+
+    component.form.patchValue({ email: "updated@example.com" });
+    await component.save();
+
+    expect(mockAlertService.addDanger).toHaveBeenCalledWith(
+      new UserAdminApiError(403).message,
+    );
+    expect(mockDialogRef.close).not.toHaveBeenCalled();
   });
 
   describe("changing the linked profile", () => {

@@ -1,0 +1,1 @@
+../../.github/instructions/angular-components.instructions.md

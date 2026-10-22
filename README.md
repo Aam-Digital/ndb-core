@@ -1,14 +1,16 @@
 [![Release Version](https://img.shields.io/github/release/Aam-Digital/ndb-core.svg)](https://github.com/Aam-Digital/ndb-core/releases)
 [![DPG Badge](https://img.shields.io/badge/Verified-DPG-3333AB?logo=data:image/svg%2bxml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMSAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjIwMDggMjEuMzY3OEwxMC4xNzM2IDE4LjAxMjRMMTEuNTIxOSAxNi40MDAzTDEzLjk5MjggMTguNDU5TDE5LjYyNjkgMTIuMjExMUwyMS4xOTA5IDEzLjYxNkwxNC4yMDA4IDIxLjM2NzhaTTI0LjYyNDEgOS4zNTEyN0wyNC44MDcxIDMuMDcyOTdMMTguODgxIDUuMTg2NjJMMTUuMzMxNCAtMi4zMzA4MmUtMDVMMTEuNzgyMSA1LjE4NjYyTDUuODU2MDEgMy4wNzI5N0w2LjAzOTA2IDkuMzUxMjdMMCAxMS4xMTc3TDMuODQ1MjEgMTYuMDg5NUwwIDIxLjA2MTJMNi4wMzkwNiAyMi44Mjc3TDUuODU2MDEgMjkuMTA2TDExLjc4MjEgMjYuOTkyM0wxNS4zMzE0IDMyLjE3OUwxOC44ODEgMjYuOTkyM0wyNC44MDcxIDI5LjEwNkwyNC42MjQxIDIyLjgyNzdMMzAuNjYzMSAyMS4wNjEyTDI2LjgxNzYgMTYuMDg5NUwzMC42NjMxIDExLjExNzdMMjQuNjI0MSA5LjM1MTI3WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==)](https://digitalpublicgoods.net/r/aam-digital)
-[![User Support Center](https://img.shields.io/badge/User%20Support%20Center-available-blue)](https://chatwoot.help/hc/aam-digital/en)
+[![User Support Center](https://img.shields.io/badge/User%20Support%20Center-available-blue)](https://help.aam-digital.com/)
 
-![English](https://img.shields.io/poeditor/progress/740876/en?token=56acaf6808f07eb52c5b39a3abea19a7)
-![French](https://img.shields.io/poeditor/progress/740876/fr?token=56acaf6808f07eb52c5b39a3abea19a7)
-![Italian](https://img.shields.io/poeditor/progress/740876/it?token=56acaf6808f07eb52c5b39a3abea19a7)
-![German](https://img.shields.io/poeditor/progress/740876/de?token=56acaf6808f07eb52c5b39a3abea19a7)
+![English](https://img.shields.io/poeditor/progress/740876/en?token=df0ad216f2202ce5d46358c3f27af8e1)
+![French](https://img.shields.io/poeditor/progress/740876/fr?token=df0ad216f2202ce5d46358c3f27af8e1)
+![German](https://img.shields.io/poeditor/progress/740876/de?token=df0ad216f2202ce5d46358c3f27af8e1)
+![Spanish](https://img.shields.io/poeditor/progress/740876/es?token=df0ad216f2202ce5d46358c3f27af8e1)
+![Arabic](https://img.shields.io/poeditor/progress/740876/ar?token=df0ad216f2202ce5d46358c3f27af8e1)
 
-[![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
+[<img src="https://argos-ci.com/badge-large.svg" alt="Covered by Argos Visual Testing" height="20" />](https://argos-ci.com?utm_source=aam-digital&utm_campaign=oss)
+[![Maintainability](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/maintainability.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
+[![Code Coverage](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/coverage.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 [![Developer Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 
@@ -42,7 +44,7 @@ The overall architecture and tech stack including backend services looks like th
 
 ## Setup
 
-1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed.
+1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed. The Node.js version used in CI is in [`.nvmrc`](./.nvmrc) (with [nvm](https://github.com/nvm-sh/nvm): `nvm use`); CI uses the npm that comes with it.
 2. `git clone` this repository to get all the code with its configuration and requirements.
 3. `npm install` the dependencies (external libraries and packages)
 4. `npm run start` to run your local dev server and get started.
@@ -110,21 +112,27 @@ This project supports AI-assisted development through GitHub Copilot, Claude Cod
 | Tool                         | Usage                                                                                                                                               |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GitHub Copilot** (VS Code) | Code generation, chat, agent mode — reads `AGENTS.md`. Use **Plan mode** for architecture planning before implementation.                           |
-| **Claude Code** (CLI)        | Interactive coding assistant — reads `CLAUDE.md` → `AGENTS.md`                                                                                      |
+| **Claude Code** (CLI)        | Interactive coding assistant — reads `AGENTS.md` (do not add a `CLAUDE.md`, it would replace `AGENTS.md`)                                           |
 | **CodeRabbit** (GitHub)      | On-demand PR reviews — configured via `.coderabbit.yaml`. Comment **"@coderabbitai review"** on a PR to trigger a review (auto-review is disabled). |
 
-## Agents
+## Skills
 
-Custom agents are defined in `.claude/agents/` and can be invoked from Copilot chat or Claude Code:
+Shared skills are defined in `.claude/skills/`. Claude Code picks the matching one from what you ask
+(e.g. "can you do a code review of PR 4526"), or you call it by name (e.g. `/review-pull-request 4526`).
+A feature usually goes through them in this order: use cases, prototype, plan, then the code, then the review.
 
-| Agent                     | Purpose                                               | Recommended Tool                       |
-| ------------------------- | ----------------------------------------------------- | -------------------------------------- |
-| `business-analyst`        | Refine requirements into structured, testable docs    | Copilot chat or Claude Code            |
-| `troubleshooter`          | Debug issues using Sentry, devtools, and stack traces | Copilot/Claude Code with Sentry MCP    |
-| `implementation-planner`  | Design technical approach and architecture            | Copilot **Plan mode** or Claude Code   |
-| `implementation-executor` | Full implementation workflow with tests               | Copilot agent mode or Claude Code      |
-| `refactorer`              | Code analysis and refactoring suggestions             | CodeRabbit (on-demand) + manual prompt |
-| `e2e-test-writer`         | Generate Playwright e2e tests                         | Copilot agent mode or Claude Code      |
+| Skill                 | Purpose                                                        |
+| --------------------- | -------------------------------------------------------------- |
+| `feature-use-cases`   | Write the use cases for a new feature                          |
+| `design-prototype`    | Build a clickable prototype with the Aam Digital design system |
+| `figma-mockups`       | Design screens in the Aam Digital Figma design system file     |
+| `plan-implementation` | Write the implementation plan for an issue                     |
+| `review-pull-request` | Review a pull request                                          |
+
+Set up once: open Claude Code in this repository and trust the folder, and log in to the GitHub CLI
+(`gh auth login`). `design-prototype` needs the Artifact tool (log in with your Claude account) and view access
+to the **Aam Digital** design system, `figma-mockups` the Figma connector. The skills write drafts and never
+post to GitHub, you paste the result yourself.
 
 ## MCP Servers
 

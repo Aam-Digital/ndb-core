@@ -1,3 +1,4 @@
+@use "variables/colors";
 @use "mixins/list-table";
 
 @include list-table.container-and-table;
@@ -6,4 +7,8 @@
 
 :host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
   justify-content: flex-start;
+}
+
+.no-profile-hint {
+  color: colors.$warn;
 }

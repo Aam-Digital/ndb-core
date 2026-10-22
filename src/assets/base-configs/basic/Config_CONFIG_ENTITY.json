@@ -69,8 +69,6 @@
         "clickMode": "popup-details",
         "title": "Notes & Reports",
         "columnGroups": {
-          "default": "Standard",
-          "mobile": "Mobile",
           "groups": [
             {
               "name": "Standard",
@@ -393,8 +391,6 @@
           }
         ],
         "columnGroups": {
-          "default": "Basic Info",
-          "mobile": "Basic Info",
           "groups": [
             {
               "name": "Basic Info",
