@@ -324,8 +324,20 @@ export class FilterGeneratorService {
           : { ...option, filter: rewrap(option.filter) },
       );
     } else {
-      const originalGetFilter = filter.getFilter.bind(filter);
-      filter.getFilter = () => rewrap(originalGetFilter());
+      const originalGetFilter = filter.getFilter;
+      // e.g. "no date defined" of a date filter, which has to match like the empty option of the other filters
+      const emptyFilter = this.createEmptyOption<T>(
+        filterId,
+        false,
+        false,
+        embedded,
+      ).filter;
+      // reads the filter it is called on (not the one wrapped here), as the filter component copies a filter on each change
+      filter.getFilter = function (this: Filter<T>) {
+        return this.selectedOptionValues[0] === EMPTY_FILTER_OPTION_KEY
+          ? emptyFilter
+          : rewrap(originalGetFilter.call(this));
+      };
     }
   }
 
@@ -371,6 +383,8 @@ export class FilterGeneratorService {
    * since a compound operator like `$or` directly inside `$elemMatch` is not supported by the
    * mongo2js query parser used here. Both forms are logically equivalent for `$elemMatch`
    * (an item matching A-or-B exists iff an item matching A exists, or one matching B exists).
+   * The same goes for `$and`, which cannot be hoisted that way: a filter with several conditions on one item
+   * has to state them as keys of one object instead (see the overlap query of {@link DateFilter}).
    */
   private wrapInElemMatch<T extends Entity>(
     query: any,
@@ -387,8 +401,9 @@ export class FilterGeneratorService {
   }
 
   /**
-   * Recursively replace any query key equal to `fromKey` (or `fromKey + ".id"`, used e.g. for
-   * configurable-enum values) with `toKey` (or `toKey + ".id"`) inside a DataFilter query object.
+   * Recursively replace `fromKey` with `toKey` in the keys of a DataFilter query object,
+   * also where it starts a path into the value (e.g. `fromKey + ".id"` of configurable-enum values,
+   * or `fromKey + ".start"` of a date range).
    */
   private rewriteEmbeddedKeys(query: any, fromKey: string, toKey: string): any {
     if (Array.isArray(query)) {
@@ -397,12 +412,10 @@ export class FilterGeneratorService {
     if (query && typeof query === "object") {
       const result: any = {};
       for (const [key, value] of Object.entries(query)) {
-        let newKey = key;
-        if (key === fromKey) {
-          newKey = toKey;
-        } else if (key === `${fromKey}.id`) {
-          newKey = `${toKey}.id`;
-        }
+        const newKey =
+          key === fromKey || key.startsWith(`${fromKey}.`)
+            ? toKey + key.substring(fromKey.length)
+            : key;
         result[newKey] = this.rewriteEmbeddedKeys(value, fromKey, toKey);
       }
       return result;

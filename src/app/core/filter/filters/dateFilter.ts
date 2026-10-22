@@ -71,6 +71,10 @@ export class DateFilter<T extends Entity> extends Filter<T> {
   /**
    * Periods that start before the end and end after the start of the selected dates.
    * A period without a start or end date is open-ended, a record without a period is never matched.
+   *
+   * Written as alternatives of plain conditions (without `$and`), so that it also works inside `$elemMatch`
+   * for a period in the entries of an embedded field. Each compared date is also required to exist,
+   * as the in-memory matching counts a comparison with a missing value as equal.
    */
   private getOverlapFilter({
     $gte: from,
@@ -81,23 +85,19 @@ export class DateFilter<T extends Entity> extends Filter<T> {
   }): DataFilter<T> {
     const start = `${this.name}.start`;
     const end = `${this.name}.end`;
-    const conditions: DataFilter<T>[] = [
-      // the period has at least one date (the field itself can be a key with an undefined value)
-      {
-        $or: [{ [start]: { $exists: true } }, { [end]: { $exists: true } }],
-      } as DataFilter<T>,
-    ];
-    if (to) {
-      conditions.push({
-        $or: [{ [start]: { $exists: false } }, { [start]: { $lte: to } }],
-      } as DataFilter<T>);
-    }
-    if (from) {
-      conditions.push({
-        $or: [{ [end]: { $exists: false } }, { [end]: { $gte: from } }],
-      } as DataFilter<T>);
-    }
-    return { $and: conditions } as DataFilter<T>;
+    const startsBeforeEnd = {
+      [start]: { $exists: true, ...(to && { $lte: to }) },
+    };
+    const endsAfterStart = {
+      [end]: { $exists: true, ...(from && { $gte: from }) },
+    };
+    return {
+      $or: [
+        { ...startsBeforeEnd, [end]: { $exists: false } },
+        { ...startsBeforeEnd, ...endsAfterStart },
+        { [start]: { $exists: false }, ...endsAfterStart },
+      ],
+    } as DataFilter<T>;
   }
 
   getSelectedOption() {
