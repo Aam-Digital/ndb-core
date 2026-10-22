@@ -3,11 +3,11 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import type {
+import {
   AffectedEntity,
   EnteredValue,
   UpdateTrigger,
-} from "./automated-field-update.component";
+} from "./automated-field-update.types";
 import { lastValueFrom } from "rxjs";
 import {
   DefaultValueConfigInheritedField,

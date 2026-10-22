@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import { Entity } from "#src/app/core/entity/model/entity";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
-import type { DialogRow } from "../automated-field-update.component";
+import { DialogRow } from "../automated-field-update.types";
 import { AffectedEntityValueComponent } from "./affected-entity-value.component";
 
 describe("AffectedEntityValueComponent", () => {

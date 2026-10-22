@@ -24,7 +24,7 @@ import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.s
 import { Logging } from "#src/app/core/logging/logging.service";
 import { isSameValue } from "../../get-common-value";
 import { NoCommonValueHintComponent } from "../../no-common-value-hint/no-common-value-hint.component";
-import type { DialogRow } from "../automated-field-update.component";
+import { DialogRow } from "../automated-field-update.types";
 
 /**
  * The editable value of one affected entity in the "Update related records" dialog, with its hints.

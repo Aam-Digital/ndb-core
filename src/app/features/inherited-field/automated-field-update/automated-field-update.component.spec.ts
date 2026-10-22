@@ -4,11 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { Entity } from "#src/app/core/entity/model/entity";
-import {
-  AffectedEntity,
-  AutomatedFieldUpdateComponent,
-  EnteredValue,
-} from "./automated-field-update.component";
+import { AutomatedFieldUpdateComponent } from "./automated-field-update.component";
+import { AffectedEntity, EnteredValue } from "./automated-field-update.types";
 
 /** The fields of the changed entity and the ids of the rows of each group, to compare them */
 function summarizeGroups(
