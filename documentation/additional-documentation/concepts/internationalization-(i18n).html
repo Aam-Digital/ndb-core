@@ -299,6 +299,57 @@ will implicitly be <code>INTERPOLATION</code> and cannot be changed</p>
 </li>
 </ul>
 <hr>
+<h2>Right-to-left (RTL) languages</h2>
+<p>Arabic, Hebrew, Urdu and others are read right to left. Translating the strings is not enough: the layout has
+to mirror as well.</p>
+<p>The direction is applied once during the i18n bootstrap, from the locale itself, before Angular starts:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">document.documentElement.dir = isRtlLocale(locale) ? &quot;rtl&quot; : &quot;ltr&quot;;</code></pre></div><p>It has to happen that early because Angular Material reads the direction when the CDK&#39;s <code>Directionality</code> is first constructed, and never looks again. Nothing switches direction at runtime - changing the language reloads the page.</p>
+<p>Everything below is about writing components that follow that direction.</p>
+<h3>Use logical CSS properties</h3>
+<p>Write <code>inline-start</code> / <code>inline-end</code> instead of <code>left</code> / <code>right</code>, and the browser mirrors them for you:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-scss">margin-inline-start: 8px; // not margin-left
+padding-inline-end: 8px; // not padding-right
+inset-inline-start: 0; // not left: 0
+text-align: start; // not text-align: left
+border-start-end-radius: 4px; // not border-top-right-radius</code></pre></div><p>Block directions (<code>top</code>, <code>bottom</code>) stay physical - only the inline axis flips. <code>left</code> / <code>right</code> are still correct for anything that is genuinely geometric, such as centring with <code>left: 50%</code> and a transform.</p>
+<h3>Scoping styles to RTL inside a component</h3>
+<p>A plain <code>[dir=&quot;rtl&quot;]</code> selector in a component stylesheet <strong>silently does nothing</strong>. View encapsulation rewrites it to <code>[dir=&quot;rtl&quot;][_ngcontent-xyz]</code>, which can never match <code>&lt;html dir=&quot;rtl&quot;&gt;</code>. Use <code>:host-context()</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-scss">.panel {
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+
+  :host-context([dir=&quot;rtl&quot;]) &amp; {
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+}</code></pre></div><p>CSS custom properties are unaffected, because they inherit through the DOM - which is why the shared values below are defined as variables rather than as rules.</p>
+<h3>Mirroring icons</h3>
+<p>Add <code>.mirror-in-rtl</code> to icons whose meaning depends on reading direction - arrows, chevrons, tree twisties:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-angular2html">&lt;fa-icon icon=&quot;chevron-right&quot; class=&quot;mirror-in-rtl&quot;&gt;&lt;/fa-icon&gt;</code></pre></div><p>Never apply it broadly. A blanket flip also mirrors the search magnifier, the logo and every other icon that means the same thing in both directions.</p>
+<h3>Typography</h3>
+<p>Arabic letters join to one another, so some ordinary CSS actively damages them. Two variables are set per direction in <code>ui.component.global-styles.scss</code>:</p>
+<ul>
+<li><code>--letter-spacing-wide</code> is <code>0</code> in RTL. Tracking pulls joined letters apart.</li>
+<li><code>--line-height-scale</code> is <code>1.3</code> in RTL. Tight line boxes clip the diacritics.</li>
+</ul>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-scss">letter-spacing: var(--letter-spacing-wide);
+line-height: calc(1.2 * var(--line-height-scale));</code></pre></div><h3>Isolating content from the surrounding direction</h3>
+<p>The UI follows the document direction, but <em>content</em> should resolve its own. Three tools, by what the value is:</p>
+<ul>
+<li><code>dir=&quot;auto&quot;</code> for free text a user wrote, which may be in any language</li>
+<li><code>dir=&quot;ltr&quot;</code> for values that are always left-to-right regardless of the UI
+language - phone numbers, emails, URLs, IDs</li>
+<li><code>&lt;bdi&gt;</code> around a value embedded in a sentence, so it cannot reorder the text
+around it</li>
+</ul>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-angular2html">&lt;textarea dir=&quot;auto&quot;&gt;&lt;/textarea&gt;
+&lt;input type=&quot;email&quot; dir=&quot;ltr&quot; /&gt;
+&lt;bdi&gt;{{ value | customDate }}&lt;/bdi&gt;</code></pre></div><p>Watch for number pairs with spaces, like <code>{{ a }} / {{ b }}</code>. The spaced slash is a neutral character, so under RTL the two numbers swap and <code>1 / 3</code> renders as <code>3 / 1</code>. Wrap them in <code>&lt;bdi dir=&quot;ltr&quot;&gt;</code>.</p>
+<h3>Reading the direction from TypeScript</h3>
+<p>Where a value cannot be expressed in CSS, inject the CDK&#39;s <code>Directionality</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">private readonly directionality = inject(Directionality);
+
+position:
+  this.directionality.value === &quot;rtl&quot; ? { left: &quot;0px&quot; } : { right: &quot;0px&quot; };</code></pre></div><p>In a stylesheet, the <code>--text-x-direction</code> variable (<code>1</code> in LTR, <code>-1</code> in RTL) does the same job for transforms and angles, which have no logical equivalent:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-scss">transform: scaleX(var(--text-x-direction, 1));</code></pre></div><hr>
 <h2>Adding a new language</h2>
 <p>This section depicts the workflow one needs to go through to add another language
 (such as <em>hindi</em>, <em>bengali</em>, <em>french</em> etc.) to the project.</p>

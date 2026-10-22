@@ -255,8 +255,8 @@ Provides a centralized way to open the assistant from anywhere in the applicatio
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="61"
-                                    class="link-to-prism">src/app/core/setup/assistant.service.ts:61</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/app/core/setup/assistant.service.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -296,8 +296,8 @@ Provides a centralized way to open the assistant from anywhere in the applicatio
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="29"
-                                    class="link-to-prism">src/app/core/setup/assistant.service.ts:29</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/app/core/setup/assistant.service.ts:31</a></div>
                         </td>
                     </tr>
 
@@ -352,7 +352,7 @@ Provides a centralized way to open the assistant from anywhere in the applicatio
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/setup/assistant.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/setup/assistant.service.ts:15</a></div>
                         </td>
                     </tr>
 
@@ -383,7 +383,7 @@ Provides a centralized way to open the assistant from anywhere in the applicatio
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/setup/assistant.service.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/setup/assistant.service.ts:25</a></div>
                         </td>
                     </tr>
 
@@ -405,6 +405,7 @@ Set to false to disable the assistant globally.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
 import { MatDialog, MatDialogRef } from &quot;@angular/material/dialog&quot;;
+import { Directionality } from &quot;@angular/cdk/bidi&quot;;
 import { lastValueFrom } from &quot;rxjs&quot;;
 import { AssistantDialogComponent } from &quot;./assistant-dialog/assistant-dialog.component&quot;;
 
@@ -419,6 +420,7 @@ export class AssistantService {
   static readonly ASSISTANT_DIALOG_HEIGHT &#x3D; &quot;calc(100% - 64px)&quot;;
 
   private readonly dialog &#x3D; inject(MatDialog);
+  private readonly directionality &#x3D; inject(Directionality);
   private isDialogOpen: boolean &#x3D; false;
 
   /**
@@ -447,7 +449,12 @@ export class AssistantService {
         height: AssistantService.ASSISTANT_DIALOG_HEIGHT,
         maxWidth: &quot;100%&quot;,
         maxHeight: &quot;100%&quot;,
-        position: { top: &quot;0px&quot;, right: &quot;0px&quot; },
+        // the panel slides in from the same edge its button sits on, which mirrors
+        // in RTL; a dialog position is set in JS, so it cannot use a logical property
+        position:
+          this.directionality.value &#x3D;&#x3D;&#x3D; &quot;rtl&quot;
+            ? { top: &quot;0px&quot;, left: &quot;0px&quot; }
+            : { top: &quot;0px&quot;, right: &quot;0px&quot; },
         backdropClass: &quot;backdrop-below-toolbar&quot;,
         minWidth: &quot;350px&quot;,
         width: &quot;40vw&quot;,
