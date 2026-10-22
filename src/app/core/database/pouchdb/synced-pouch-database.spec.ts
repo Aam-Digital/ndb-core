@@ -618,21 +618,9 @@ describe("SyncedPouchDatabase", () => {
       beforeEach(() => {
         PouchDB.plugin(memory);
         service.adapter = "memory";
-        // every `_changes` page of a replication from scratch reports all docs the user may not read
-        fetchSpy = vi.spyOn(PouchDB, "fetch").mockImplementation(
-          async (url: string) =>
-            new Response(
-              JSON.stringify(
-                url.includes("_changes")
-                  ? {
-                      results: [],
-                      last_seq: "1-seq",
-                      lostPermissions: ["Child:not-permitted"],
-                    }
-                  : {},
-              ),
-            ),
-        ) as unknown as Mock;
+        fetchSpy = vi
+          .spyOn(PouchDB, "fetch")
+          .mockImplementation(fakeRemoteFetch) as unknown as Mock;
       });
 
       afterEach(async () => {
@@ -662,3 +650,15 @@ describe("SyncedPouchDatabase", () => {
     });
   });
 });
+
+/** A remote database, whose every `_changes` page (of a replication from scratch) reports all docs the user may not read */
+async function fakeRemoteFetch(url: string): Promise<Response> {
+  const body = url.includes("_changes")
+    ? {
+        results: [],
+        last_seq: "1-seq",
+        lostPermissions: ["Child:not-permitted"],
+      }
+    : {};
+  return new Response(JSON.stringify(body));
+}
