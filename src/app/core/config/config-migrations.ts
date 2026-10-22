@@ -124,8 +124,6 @@ const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
     configPart["config"] = { columns: configPart["config"] };
   }
   configPart["config"]["entityType"] = "HistoricalEntityData";
-  // the removed HistoricalDataService loader matched records by this field
-  configPart["config"]["property"] ??= "relatedEntity";
 
   return configPart;
 };
