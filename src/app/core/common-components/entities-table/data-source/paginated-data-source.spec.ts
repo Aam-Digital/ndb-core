@@ -145,6 +145,17 @@ describe("PaginatedDataSource", () => {
           type: { dataType: "configurable-enum", additional: "phone-types" },
         },
       });
+      EmbedTest.schema.set("log", {
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          tags: {
+            dataType: "configurable-enum",
+            isArray: true,
+            additional: "tags",
+          },
+        },
+      });
 
       // documents as stored in the database, not as loaded entities
       const docs = [
@@ -154,18 +165,24 @@ describe("PaginatedDataSource", () => {
           attendance: [{ participant: "Child:a", status: "PRESENT" }],
           childrenAttendance: [["Child:a", { status: "PRESENT" }]],
           phone: { type: "mobile" },
+          log: [{ tags: ["A", "B"] }],
         },
         {
           _id: "PaginatedEmbedTest:b",
           attendance: [{ participant: "Child:b" }],
           childrenAttendance: [["Child:b", { remarks: "" }]],
           phone: { type: "landline" },
+          log: [{ tags: ["C"] }, { tags: [] }],
         },
       ];
 
       /** the "not defined" filter as FilterGeneratorService builds it for an embedded array */
-      function notDefinedInArray(outerProp: string, innerProp: string) {
-        const inner = createEmptyValueFilter(innerProp, true) as {
+      function notDefinedInArray(
+        outerProp: string,
+        innerProp: string,
+        innerIsArray = false,
+      ) {
+        const inner = createEmptyValueFilter(innerProp, true, innerIsArray) as {
           $or: object[];
         };
         return {
@@ -225,6 +242,20 @@ describe("PaginatedDataSource", () => {
         [
           "enum not defined in legacy attendance tuple",
           notDefinedInArray("childrenAttendance", "status"),
+          ["b"],
+        ],
+        [
+          "multi-value enum in embedded array",
+          {
+            log: {
+              $elemMatch: { "tags.id": { $elemMatch: { $eq: "B" } } },
+            },
+          },
+          ["a"],
+        ],
+        [
+          "multi-value enum not defined in embedded array",
+          notDefinedInArray("log", "tags", true),
           ["b"],
         ],
         [

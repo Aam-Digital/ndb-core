@@ -783,7 +783,7 @@ describe("FilterGeneratorService", () => {
       expect(filter(allEntities, emptyOption)).toEqual([e3]);
     });
 
-    it("offers the single enum values of a multi-value property nested in an embedded array field, not the arrays", async () => {
+    it("filters a multi-value property nested in an embedded array field by its single values, counting an empty list as not defined", async () => {
       @DatabaseEntity("EmbeddedMultiEnumTestEntity")
       class EmbeddedMultiEnumTestEntity extends Entity {}
       EmbeddedMultiEnumTestEntity.schema.set("logEntries", {
@@ -818,6 +818,11 @@ describe("FilterGeneratorService", () => {
       expect(enumFilter.options.filter((opt) => opt.isInvalid)).toEqual([]);
       const optionB = enumFilter.options.find((opt) => opt.key === typeB.id);
       expect(filter(allEntities, optionB)).toEqual([e1]);
+
+      const emptyOption = enumFilter.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      expect(filter(allEntities, emptyOption)).toEqual([e2]);
     });
 
     it("should create a string filter for a property nested in a single (non-array) embedded object field, using a flat dot-path query", async () => {

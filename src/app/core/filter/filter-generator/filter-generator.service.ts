@@ -251,10 +251,11 @@ export class FilterGeneratorService {
   ): FilterSelectionOption<T> {
     let filter: DataFilter<T>;
     if (embedded) {
+      const innerIsArray = embedded.innerSchema.isArray === true;
       const innerEmpty = createEmptyValueFilter<T>(
         embedded.innerProp,
         includeNestedId,
-        false,
+        innerIsArray,
       );
       filter = embedded.isArray
         ? ({
@@ -269,7 +270,7 @@ export class FilterGeneratorService {
         : createEmptyValueFilter<T>(
             `${embedded.outerProp}.${embedded.innerProp}`,
             includeNestedId,
-            false,
+            innerIsArray,
           );
     } else {
       filter = createEmptyValueFilter(
