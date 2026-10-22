@@ -1,8 +1,4 @@
 import { isDeepStrictEqual } from "node:util";
-import {
-  migrateReportConfig,
-  type MigratableReportConfig,
-} from "./report-config-migration.js";
 import type {
   MigrationDefinition,
   MigrationResult,
@@ -30,8 +26,14 @@ const REPORT_PERIOD_TRANSFORMATIONS = {
   endDate: ["SQL_TO_DATE"],
 };
 
-type LegacyReportConfig = MigratableReportConfig & {
+type LegacyReportConfig = {
   _id: string;
+  mode?: string;
+  /** reporting/exporting definition, replaced by reportDefinition */
+  aggregationDefinitions?: unknown;
+  /** SQL v1: a single query string, replaced by reportDefinition */
+  aggregationDefinition?: unknown;
+  reportDefinition?: unknown[];
   neededArgs?: unknown;
   version?: unknown;
   transformations?: Record<string, string[]>;
@@ -45,11 +47,11 @@ type CleanupOutcome =
  * `reportDefinition`: `aggregationDefinitions` (reporting/exporting), and the SQL v1 fields
  * `aggregationDefinition` (a single query string), `neededArgs` (positional `?` args) and `version`.
  *
- * Follow-up to `consolidate-report-definition`, which copied the legacy fields into `reportDefinition`
- * but kept them. A doc that was never consolidated (no `reportDefinition` yet) is consolidated first.
- * An existing `reportDefinition` is never overwritten: the app has only used it since that release,
- * so a differing `aggregationDefinitions` is stale (e.g. the report was edited since); such a removal
- * is reported as a warning, and the migration backup allows restoring it.
+ * A doc without a `reportDefinition` yet is consolidated first: `aggregationDefinitions`
+ * (reporting/exporting) or the SQL v1 query string become its `reportDefinition`.
+ * An existing `reportDefinition` is never overwritten: the app already uses it, so a differing
+ * `aggregationDefinitions` is stale (e.g. the report was edited since); such a removal is reported
+ * as a warning, and the migration backup allows restoring it.
  *
  * A v1 SQL query with positional `?` placeholders is converted to the named `$startDate`/`$endDate`
  * placeholders plus the matching `transformations`, so the report keeps its date range.
@@ -104,10 +106,24 @@ export const reportDefinitionLegacyCleanup: MigrationDefinition = {
   },
 };
 
+/**
+ * Move the legacy definition into `reportDefinition`:
+ * SQL v1 keeps a single query string, reporting/exporting keep `aggregationDefinitions`.
+ */
+function consolidateReportDefinition(doc: LegacyReportConfig) {
+  if (doc.mode === "sql") {
+    if (typeof doc.aggregationDefinition === "string") {
+      doc.reportDefinition = [{ query: doc.aggregationDefinition }];
+    }
+  } else if (isNonEmptyArray(doc.aggregationDefinitions)) {
+    doc.reportDefinition = doc.aggregationDefinitions;
+  }
+}
+
 function cleanUpReportConfig(original: LegacyReportConfig): CleanupOutcome {
   const doc = structuredClone(original);
   if (!isNonEmptyArray(doc.reportDefinition)) {
-    migrateReportConfig(doc);
+    consolidateReportDefinition(doc);
   }
   const hasDefinition = isNonEmptyArray(doc.reportDefinition);
 
