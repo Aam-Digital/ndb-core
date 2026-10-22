@@ -112,15 +112,20 @@ export const reportDefinitionLegacyCleanup: MigrationDefinition = {
 
 /**
  * Move the legacy definition into `reportDefinition`:
- * SQL v1 keeps a single query string, reporting/exporting keep `aggregationDefinitions`.
+ * SQL v1 keeps a single query string (older SQL reports a list of query strings in
+ * `aggregationDefinitions`), reporting/exporting keep `aggregationDefinitions`.
  */
 function consolidateReportDefinition(doc: LegacyReportConfig) {
-  if (doc.mode === "sql") {
-    if (typeof doc.aggregationDefinition === "string") {
-      doc.reportDefinition = [{ query: doc.aggregationDefinition }];
+  if (doc.mode !== "sql") {
+    if (isNonEmptyArray(doc.aggregationDefinitions)) {
+      doc.reportDefinition = doc.aggregationDefinitions;
     }
-  } else if (isNonEmptyArray(doc.aggregationDefinitions)) {
-    doc.reportDefinition = doc.aggregationDefinitions;
+  } else if (typeof doc.aggregationDefinition === "string") {
+    doc.reportDefinition = [{ query: doc.aggregationDefinition }];
+  } else if (isQueryStringList(doc.aggregationDefinitions)) {
+    doc.reportDefinition = doc.aggregationDefinitions.map((query) => ({
+      query,
+    }));
   }
 }
 
@@ -170,27 +175,35 @@ function checkAggregationReport(
   return {};
 }
 
-/** SQL v1: the definition was a single query string with positional args */
+/** SQL v1: the definition was a single query string (or a list of them) with positional args */
 function checkSqlReport(
   original: LegacyReportConfig,
   doc: LegacyReportConfig,
 ): LegacyCheck {
   if (
     !isNonEmptyArray(doc.reportDefinition) &&
-    isNonEmpty(original.aggregationDefinition)
+    (isNonEmpty(original.aggregationDefinition) ||
+      isNonEmpty(original.aggregationDefinitions))
   ) {
     return {
       skipReason:
-        "its aggregationDefinition is not an SQL query string and there is no reportDefinition",
+        "its legacy definition is not an SQL query string (or a list of them) and there is no reportDefinition",
     };
   }
   const skipReason = convertPositionalArgs(doc);
   if (skipReason) {
     return { skipReason };
   }
-  if (isNonEmpty(original.aggregationDefinitions)) {
+  const aggregationDefinitionsUnused =
+    isNonEmptyArray(original.reportDefinition) ||
+    typeof original.aggregationDefinition === "string";
+  if (
+    aggregationDefinitionsUnused &&
+    isNonEmpty(original.aggregationDefinitions)
+  ) {
     return {
-      warning: "removed aggregationDefinitions, which SQL reports do not use",
+      warning:
+        "removed aggregationDefinitions next to an SQL definition (kept the SQL definition)",
     };
   }
   return {};
@@ -198,47 +211,76 @@ function checkSqlReport(
 
 /**
  * Replace the v1 SQL positional `?` placeholders, filled from `neededArgs` in order,
- * by the named `$startDate`/`$endDate` placeholders and their `transformations`.
+ * by the named `$startDate`/`$endDate` placeholders, and add the report period
+ * `transformations` for every query using these named placeholders.
  * @returns why the doc cannot be converted safely, if so
  */
 function convertPositionalArgs(doc: LegacyReportConfig): string | undefined {
-  const neededArgs = doc.neededArgs;
-  if (!isNonEmptyArray(neededArgs) || hasKeys(doc.transformations)) {
-    // no positional args, or the named args are declared already
-    return undefined;
-  }
-
   const queryItems = collectQueryItems(doc.reportDefinition);
-  const placeholderCount = queryItems.reduce(
-    (sum, item) => sum + findPositionalPlaceholders(item.query).length,
-    0,
+  const placeholders = queryItems.map((item) =>
+    findPositionalPlaceholders(item.query),
   );
-  if (placeholderCount === 0) {
-    // the args are not used by any query
-    return undefined;
+  const placeholderCount = placeholders.flat().length;
+  if (placeholderCount > 0) {
+    const skipReason = replacePositionalArgs(doc, queryItems, placeholders);
+    if (skipReason) {
+      return skipReason;
+    }
   }
+  addReportPeriodTransformations(doc, queryItems);
+  return undefined;
+}
 
+function replacePositionalArgs(
+  doc: LegacyReportConfig,
+  queryItems: { query: string }[],
+  placeholders: number[][],
+): string | undefined {
+  const rewrite = "rewrite the query with $startDate/$endDate placeholders";
+  const neededArgs = doc.neededArgs;
+  if (!isNonEmptyArray(neededArgs)) {
+    return `its query uses positional "?" placeholders without neededArgs; ${rewrite}`;
+  }
+  const numbered = queryItems.some((item, i) =>
+    placeholders[i].some((position) => /\d/.test(item.query[position + 1])),
+  );
+  if (numbered) {
+    return `numbered placeholders like "?1" are not supported; ${rewrite}`;
+  }
   const names = neededArgs.map((arg) => REPORT_PERIOD_PLACEHOLDERS.get(arg));
   if (names.some((name) => !name)) {
-    return `neededArgs ${JSON.stringify(neededArgs)} are not supported; rewrite the query with $startDate/$endDate placeholders`;
+    return `neededArgs ${JSON.stringify(neededArgs)} are not supported; ${rewrite}`;
   }
-  if (queryItems.length !== 1 || placeholderCount !== names.length) {
-    return `the "?" placeholders cannot be matched to neededArgs ${JSON.stringify(neededArgs)}; rewrite the query with $startDate/$endDate placeholders`;
+  if (queryItems.length !== 1 || placeholders[0].length !== names.length) {
+    return `the "?" placeholders cannot be matched to neededArgs ${JSON.stringify(neededArgs)}; ${rewrite}`;
   }
 
   const item = queryItems[0];
-  const positions = findPositionalPlaceholders(item.query);
   let query = item.query;
-  for (let i = positions.length - 1; i >= 0; i--) {
+  for (let i = placeholders[0].length - 1; i >= 0; i--) {
+    const position = placeholders[0][i];
     query =
-      query.slice(0, positions[i]) +
-      "$" +
-      names[i] +
-      query.slice(positions[i] + 1);
+      query.slice(0, position) + "$" + names[i] + query.slice(position + 1);
   }
   item.query = query;
-  doc.transformations = { ...REPORT_PERIOD_TRANSFORMATIONS };
   return undefined;
+}
+
+/**
+ * Add the report period `transformations` that a query with `$startDate`/`$endDate` needs,
+ * keeping any other (or already configured) transformations; the same rule as the Admin UI.
+ */
+function addReportPeriodTransformations(
+  doc: LegacyReportConfig,
+  queryItems: { query: string }[],
+) {
+  if (!queryItems.some((item) => /\$startDate|\$endDate/.test(item.query))) {
+    return;
+  }
+  doc.transformations = {
+    ...REPORT_PERIOD_TRANSFORMATIONS,
+    ...doc.transformations,
+  };
 }
 
 function collectQueryItems(node: unknown): { query: string }[] {
@@ -289,6 +331,12 @@ function endOfSkippedSpan(query: string, i: number): number | undefined {
     }
   }
   return undefined;
+}
+
+function isQueryStringList(value: unknown): value is string[] {
+  return (
+    isNonEmptyArray(value) && value.every((query) => typeof query === "string")
+  );
 }
 
 function isNonEmptyArray(value: unknown): value is unknown[] {

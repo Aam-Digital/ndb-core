@@ -105,6 +105,48 @@ describe("reportDefinitionLegacyCleanup migration", () => {
         ],
       },
     ],
+    [
+      "converts positional args even if unrelated transformations exist",
+      {
+        mode: "sql",
+        aggregationDefinition: "SELECT * FROM Note WHERE date BETWEEN ? AND ?",
+        neededArgs: ["from", "to"],
+        transformations: { other: ["X"] },
+      },
+      {
+        mode: "sql",
+        transformations: { ...PERIOD, other: ["X"] },
+        reportDefinition: [
+          {
+            query:
+              "SELECT * FROM Note WHERE date BETWEEN $startDate AND $endDate",
+          },
+        ],
+      },
+    ],
+    [
+      "adds the report period transformations to a query that already uses named date placeholders",
+      {
+        mode: "sql",
+        aggregationDefinition: "SELECT * FROM Note WHERE date > $startDate",
+        neededArgs: ["startDate", "endDate"],
+      },
+      {
+        mode: "sql",
+        transformations: PERIOD,
+        reportDefinition: [
+          { query: "SELECT * FROM Note WHERE date > $startDate" },
+        ],
+      },
+    ],
+    [
+      "consolidates the query strings of an SQL report older than v1",
+      { mode: "sql", aggregationDefinitions: ["SELECT 1", "SELECT 2"] },
+      {
+        mode: "sql",
+        reportDefinition: [{ query: "SELECT 1" }, { query: "SELECT 2" }],
+      },
+    ],
   ])("%s", async (_name, legacy, expected) => {
     const store = seed(legacy);
 
@@ -144,6 +186,18 @@ describe("reportDefinitionLegacyCleanup migration", () => {
     [
       "an aggregationDefinition that is not a query string",
       { aggregationDefinition: { query: "SELECT 1" } },
+    ],
+    [
+      "aggregationDefinitions that are not query strings",
+      { aggregationDefinitions: [{ query: "SELECT 1" }] },
+    ],
+    [
+      "positional placeholders without neededArgs",
+      { version: 2, reportDefinition: [{ query: "SELECT * WHERE d > ?" }] },
+    ],
+    [
+      "numbered placeholders",
+      { aggregationDefinition: "SELECT * WHERE d > ?1", neededArgs: ["from"] },
     ],
   ])(
     "leaves an SQL report untouched and reports it for %s",
