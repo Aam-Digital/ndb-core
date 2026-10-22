@@ -15,6 +15,9 @@ export interface AffectedEntity {
   /** New value to be applied to the target field (database format; entity format in the result of the dialog) */
   newValue: unknown;
 
+  /** The value that the target field has when it is saved (database format) */
+  savedValue: unknown;
+
   /** Field Id that will receive the status update */
   targetFieldId: string;
 

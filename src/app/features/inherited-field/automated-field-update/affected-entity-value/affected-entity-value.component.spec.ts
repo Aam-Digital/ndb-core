@@ -19,6 +19,7 @@ describe("AffectedEntityValueComponent", () => {
     return {
       id: "Entity:1",
       newValue: value,
+      savedValue: undefined,
       value,
       targetFieldId: "tags",
       targetEntityType: Entity,

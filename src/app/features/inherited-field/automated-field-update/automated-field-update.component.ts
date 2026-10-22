@@ -172,7 +172,7 @@ export class AutomatedFieldUpdateComponent {
       .filter((entry) => !suggestedKeys.has(getRowKey(entry.row)))
       .map((entry) => ({
         ...entry.row,
-        newValue: this.getSavedValue(entry.row),
+        newValue: entry.row.savedValue,
         // the hints of the earlier suggestion
         noCommonValue: undefined,
         unlinked: undefined,
@@ -331,15 +331,6 @@ export class AutomatedFieldUpdateComponent {
       row.targetFieldId,
       getMissingValues(current, shown),
       true,
-    );
-  }
-
-  /** The saved value of the affected entity (database format) */
-  private getSavedValue(row: AffectedEntity): unknown {
-    return this.entitySchemaService.valueToDatabaseFormat(
-      row.affectedEntity[row.targetFieldId],
-      row.selectedField,
-      row.affectedEntity,
     );
   }
 

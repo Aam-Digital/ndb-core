@@ -24,6 +24,7 @@ describe("AutomatedFieldUpdateComponent", () => {
 
   const FIRST = "Entity:first";
   const SECOND = "Entity:second";
+  const SAVED = ["saved"];
 
   function affected(
     id: string,
@@ -33,6 +34,7 @@ describe("AutomatedFieldUpdateComponent", () => {
     return {
       id,
       newValue,
+      savedValue: SAVED,
       targetFieldId: "tags",
       targetEntityType: Entity,
       affectedEntity: new Entity(id.split(":")[1]),
@@ -193,6 +195,7 @@ describe("AutomatedFieldUpdateComponent", () => {
       [SECOND, ["mine"]],
     ]);
     // the suggestion for it is to keep its saved value
+    expect(row(SECOND).newValue).toEqual(SAVED);
     expect(row(SECOND).suggestionChanged).toBe(true);
     // the hints of the earlier suggestion do not apply any more
     expect(row(SECOND).noCommonValue).toBeUndefined();

@@ -640,6 +640,7 @@ export class AutomatedFieldUpdateConfigService {
     return {
       id: targetEntity.getId(),
       newValue,
+      savedValue: currentValue,
       targetFieldId,
       targetEntityType,
       selectedField: { ...fieldConfig, id: targetFieldId },
