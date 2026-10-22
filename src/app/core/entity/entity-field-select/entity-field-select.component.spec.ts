@@ -45,4 +45,22 @@ describe("EntityFieldSelectComponent", () => {
       "Custom Name",
     );
   });
+
+  it("leaves excluded fields out, whether inferred from the schema or given explicitly", () => {
+    fixture.componentRef.setInput("entityType", TestEntity);
+    fixture.componentRef.setInput("options", [
+      { id: "distance", label: "Distance" },
+      { id: "distance.unit", label: "Distance -> Unit" },
+    ]);
+    fixture.componentRef.setInput("excludedFields", ["other", "distance"]);
+    fixture.detectChanges();
+
+    component.autocompleteForm.setValue("");
+
+    const offeredIds = component.autocompleteOptions().map((o) => o.asValue);
+    expect(offeredIds).not.toContain("other");
+    expect(offeredIds).not.toContain("distance");
+    expect(offeredIds).toContain("distance.unit");
+    expect(offeredIds).toContain("name");
+  });
 });

@@ -57,6 +57,14 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   /** The entity type whose fields to display. */
   entityType = input<string | EntityConstructor>();
 
+  /**
+   * ids of fields to leave out of the dropdown - applies to both explicitly passed `options`
+   * and fields inferred from the entity's schema (e.g. because a more specific alternative is
+   * offered instead, or because the field doesn't make sense to pick directly, see
+   * `AdminEntityListComponent.filterExcludedFields`).
+   */
+  excludedFields = input<string[]>([]);
+
   private entityRegistry = inject(EntityRegistry);
 
   private readonly resolvedEntityType = computed(() => {
@@ -84,6 +92,7 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
    * An explicit config takes precedence over the inferred field of the same id.
    */
   protected override optionsSource = computed(() => {
+    const excluded = new Set(this.excludedFields());
     const optionsById = new Map<string, FormFieldConfig>();
     for (const option of this.options() ?? []) {
       optionsById.set(option.id, option);
@@ -93,7 +102,9 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
         optionsById.set(inferredOption.id, inferredOption);
       }
     }
-    return [...optionsById.values()];
+    return [...optionsById.values()].filter(
+      (option) => !excluded.has(option.id),
+    );
   });
 
   private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
