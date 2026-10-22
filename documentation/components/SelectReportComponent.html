@@ -622,8 +622,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="97"
-                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:97</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -659,8 +659,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="114"
-                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:114</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -726,8 +726,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="120"
-                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:120</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -763,8 +763,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:99</a></div>
                         </td>
                     </tr>
 
@@ -818,7 +818,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:88</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -875,20 +875,9 @@
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed&lt;boolean&gt;(() &#x3D;&gt; {
-    const report &#x3D; this.selectedReport();
-    if (!report) return false;
-    // Primary signal: whether the report&#x27;s queries actually use date placeholders.
-    if (reportUsesDateRange(report)) return true;
-    // Fallback for legacy configs that declared the date args explicitly:
-    // v1 configs use neededArgs; v2/canonical use transformations.
-    return (
-      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;from&quot; || a &#x3D;&#x3D;&#x3D; &quot;startDate&quot;) ||
-      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;to&quot; || a &#x3D;&#x3D;&#x3D; &quot;endDate&quot;) ||
-      !!report.transformations?.[&quot;startDate&quot;] ||
-      !!report.transformations?.[&quot;endDate&quot;]
-    );
-  })</code>
+                        <i>Default value : </i><code>computed&lt;boolean&gt;(() &#x3D;&gt;
+    reportUsesDateRange(this.selectedReport()),
+  )</code>
                     </td>
                 </tr>
                     <tr>
@@ -997,7 +986,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="129" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:129</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:118</a></div>
                                 </td>
                             </tr>
 
@@ -1080,20 +1069,9 @@ export class SelectReportComponent {
   fromDate &#x3D; signal&lt;Date | undefined&gt;(undefined);
   toDate &#x3D; signal&lt;Date | undefined&gt;(undefined);
   /** whether the currently selected report includes filter parameters for a &quot;from&quot; - &quot;to&quot; date range */
-  isDateRangeReport &#x3D; computed&lt;boolean&gt;(() &#x3D;&gt; {
-    const report &#x3D; this.selectedReport();
-    if (!report) return false;
-    // Primary signal: whether the report&#x27;s queries actually use date placeholders.
-    if (reportUsesDateRange(report)) return true;
-    // Fallback for legacy configs that declared the date args explicitly:
-    // v1 configs use neededArgs; v2/canonical use transformations.
-    return (
-      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;from&quot; || a &#x3D;&#x3D;&#x3D; &quot;startDate&quot;) ||
-      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;to&quot; || a &#x3D;&#x3D;&#x3D; &quot;endDate&quot;) ||
-      !!report.transformations?.[&quot;startDate&quot;] ||
-      !!report.transformations?.[&quot;endDate&quot;]
-    );
-  });
+  isDateRangeReport &#x3D; computed&lt;boolean&gt;(() &#x3D;&gt;
+    reportUsesDateRange(this.selectedReport()),
+  );
 
   dateRangeFilterConfig &#x3D; computed&lt;DateFilter&lt;any&gt; | undefined&gt;(() &#x3D;&gt; {
     if (!this.isDateRangeReport()) return undefined;

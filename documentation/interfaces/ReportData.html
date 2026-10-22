@@ -740,9 +740,9 @@ export class SqlReportService {
     from: Date,
     to: Date,
   ): boolean {
-    // Backend stores args as &quot;startDate&quot;/&quot;endDate&quot; (canonical); legacy calculations may use &quot;from&quot;/&quot;to&quot;
-    const argFrom &#x3D; value.args[&quot;startDate&quot;] ?? value.args[&quot;from&quot;];
-    const argTo &#x3D; value.args[&quot;endDate&quot;] ?? value.args[&quot;to&quot;];
+    // the backend stores the requested &quot;from&quot; / &quot;to&quot; as &quot;startDate&quot; / &quot;endDate&quot;
+    const argFrom &#x3D; value.args[&quot;startDate&quot;];
+    const argTo &#x3D; value.args[&quot;endDate&quot;];
 
     if (!argFrom || !argTo) {
       return false;

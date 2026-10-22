@@ -236,7 +236,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="115" class="link-to-prism">src/app/features/reporting/report-config.ts:115</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/features/reporting/report-config.ts:87</a></div>
                                 </td>
                             </tr>
 
@@ -286,7 +286,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/features/reporting/report-config.ts:118</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="90" class="link-to-prism">src/app/features/reporting/report-config.ts:90</a></div>
                                 </td>
                             </tr>
 
@@ -336,7 +336,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/features/reporting/report-config.ts:112</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/features/reporting/report-config.ts:84</a></div>
                                 </td>
                             </tr>
 
@@ -406,33 +406,7 @@ class ReportConfig extends Entity {
   mode?: string;
 
   /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Omitted for canonical configs (backend normalizes legacy v1 docs on read).
-   */
-  @DatabaseField() version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) list of arguments needed for the sql query. Placeholder &quot;?&quot; will be replaced.
-   */
-  @DatabaseField() neededArgs?: string[] &#x3D; [];
-
-  /**
-   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
-   * (consolidate-report-definition), which copies this into &#x60;reportDefinition&#x60; without deleting
-   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
-   * a follow-up migration removes it once every environment runs the new code.
-   */
-  @DatabaseField() aggregationDefinitions?: any[];
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) the definition to calculate the report
-   */
-  @DatabaseField() aggregationDefinition?: string;
-
-  /**
-   *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
+   *  (sql only) transformations that are applied to input variables (e.g. startDate, endDate)
    *  example: {startDate: [&quot;SQL_FROM_DATE&quot;], endDate: [&quot;SQL_TO_DATE&quot;]}
    */
   @DatabaseField({
@@ -449,8 +423,6 @@ class ReportConfig extends Entity {
    * - &quot;sql&quot;:       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
    * - &quot;reporting&quot;: {@link Aggregation}[] — in-browser aggregation definitions.
    * - &quot;exporting&quot;: {@link ExportColumnConfig}[] — export column definitions.
-   *
-   * Consolidated from the former &#x60;aggregationDefinitions&#x60; so all report modes share one field.
    */
   @DatabaseField({
     label: $localize&#x60;:ReportConfig:Report definition&#x60;,
@@ -509,24 +481,6 @@ export interface SqlReport extends ReportConfig {
   mode: &quot;sql&quot;;
 
   /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Legacy version field. Omitted in canonical configs; backend normalizes on read.
-   */
-  version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) a valid SQL SELECT statement, can contain &quot;?&quot; or &quot;$name&quot; placeholders
-   */
-  aggregationDefinition?: string;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) list of argument names passed into the sql statement
-   */
-  neededArgs?: string[];
-
-  /**
    * see ReportConfig docs
    */
   transformations: {
@@ -543,10 +497,9 @@ export interface SqlReport extends ReportConfig {
  * Whether a report&#x27;s results should be rendered as a hierarchical group/count
  * table (&#x60;sql-v2-table&#x60;) rather than a flat tabular table (&#x60;object-table&#x60;).
  *
- * Derived purely from the canonical config structure (no version flag):
+ * Derived from the config structure:
  * a report is hierarchical when its &#x60;reportDefinition&#x60; contains a group
  * (&#x60;groupTitle&#x60;) or more than one top-level item; otherwise it is tabular.
- * Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.
  */
 export function isHierarchicalReport(
   report: ReportEntity | undefined,

@@ -2928,9 +2928,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/MenuItemForAdminUi.html" data-type="entity-link" >MenuItemForAdminUi</a>
                             </li>
                             <li class="link">
-                                <a href="interfaces/MigratableReportConfig.html" data-type="entity-link" >MigratableReportConfig</a>
-                            </li>
-                            <li class="link">
                                 <a href="interfaces/MouseSelectionInput.html" data-type="entity-link" >MouseSelectionInput&lt;T extends Entity&gt;</a>
                             </li>
                             <li class="link">

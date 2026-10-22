@@ -214,18 +214,6 @@
                         </li>
                         <li>
                                     <span class="modifier">Optional</span>
-                                <a href="#aggregationDefinition" class="reference-link deprecated-name">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">aggregationDefinition</span>
-                                </a>
-                        </li>
-                        <li>
-                                    <span class="modifier">Optional</span>
-                                <a href="#aggregationDefinitions" class="reference-link deprecated-name">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">aggregationDefinitions</span>
-                                </a>
-                        </li>
-                        <li>
-                                    <span class="modifier">Optional</span>
                                 <a href="#description" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">description</span>
                                 </a>
@@ -251,12 +239,6 @@
                                 </a>
                         </li>
                         <li>
-                                    <span class="modifier">Optional</span>
-                                <a href="#neededArgs" class="reference-link deprecated-name">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">neededArgs</span>
-                                </a>
-                        </li>
-                        <li>
                                 <a href="#route" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">route</span>
                                 </a>
@@ -274,12 +256,6 @@
                         <li>
                                 <a href="#transformations" class="reference-link ">
                                     <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">transformations</span>
-                                </a>
-                        </li>
-                        <li>
-                                    <span class="modifier">Optional</span>
-                                <a href="#version" class="reference-link deprecated-name">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">version</span>
                                 </a>
                         </li>
                         <li>
@@ -1288,7 +1264,7 @@ and highlighted in generic components of the UI.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="146" class="link-to-prism">src/app/features/reporting/report-config.ts:146</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/features/reporting/report-config.ts:118</a></div>
                                 </td>
                             </tr>
 
@@ -1333,128 +1309,10 @@ and highlighted in generic components of the UI.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="147" class="link-to-prism">src/app/features/reporting/report-config.ts:147</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/features/reporting/report-config.ts:119</a></div>
                                 </td>
                             </tr>
 
-                </tbody>
-            </table>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
-                                <a name="aggregationDefinition"></a>
-                                <span class="name deprecated-name"><b>aggregationDefinition</b>
-                                    <a href="#aggregationDefinition">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4 deprecated">
-                                <p>(will be removed completely after server-side migration)
-(sql v1 only) the definition to calculate the report</p>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>aggregationDefinition:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Optional</i>
-                                </td>
-                            </tr>
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/features/reporting/report-config.ts:77</a></div>
-                                </td>
-                            </tr>
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-description"><p>(sql v1 only) the definition to calculate the report</p>
-</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
-                                <a name="aggregationDefinitions"></a>
-                                <span class="name deprecated-name"><b>aggregationDefinitions</b>
-                                    <a href="#aggregationDefinitions">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4 deprecated">
-                                <p>Consolidated into {@link reportDefinition} by the one-time CLI migration
-(consolidate-report-definition), which copies this into <code>reportDefinition</code> without deleting
-it. Kept during the coexistence period so legacy docs still load and old code keeps working;
-a follow-up migration removes it once every environment runs the new code.</p>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>aggregationDefinitions:     <code>any[]</code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>    <code>any[]</code>
-
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Optional</i>
-                                </td>
-                            </tr>
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/features/reporting/report-config.ts:71</a></div>
-                                </td>
-                            </tr>
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-description"><p>(consolidate-report-definition), which copies this into <code>reportDefinition</code> without deleting
-it. Kept during the coexistence period so legacy docs still load and old code keeps working;
-a follow-up migration removes it once every environment runs the new code.</p>
-</div>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
             <table class="table table-sm table-bordered">
@@ -1687,68 +1545,6 @@ a follow-up migration removes it once every environment runs the new code.</p>
                 <tbody>
                         <tr>
                             <td class="col-md-4">
-                                <a name="neededArgs"></a>
-                                <span class="name deprecated-name"><b>neededArgs</b>
-                                    <a href="#neededArgs">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4 deprecated">
-                                <p>(will be removed completely after server-side migration)
-(sql v1 only) list of arguments needed for the sql query. Placeholder &quot;?&quot; will be replaced.</p>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>neededArgs:     <code>string[]</code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>    <code>string[]</code>
-
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Optional</i>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Default value: </i><code>[]</code>
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/features/reporting/report-config.ts:63</a></div>
-                                </td>
-                            </tr>
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-description"><p>(sql v1 only) list of arguments needed for the sql query. Placeholder &quot;?&quot; will be replaced.</p>
-</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
                                 <a name="route"></a>
                                 <span class="name "><b>route</b>
                                     <a href="#route">
@@ -1911,71 +1707,14 @@ a follow-up migration removes it once every environment runs the new code.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/features/reporting/report-config.ts:88</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="62" class="link-to-prism">src/app/features/reporting/report-config.ts:62</a></div>
                                 </td>
                             </tr>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-description"><p> (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
+                            <div class="io-description"><p> (sql only) transformations that are applied to input variables (e.g. startDate, endDate)
  example: {startDate: [&quot;SQL_FROM_DATE&quot;], endDate: [&quot;SQL_TO_DATE&quot;]}</p>
-</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="table table-sm table-bordered">
-                <tbody>
-                        <tr>
-                            <td class="col-md-4">
-                                <a name="version"></a>
-                                <span class="name deprecated-name"><b>version</b>
-                                    <a href="#version">
-                                        <span class="icon ion-ios-link"></span>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4 deprecated">
-                                <p>(will be removed completely after server-side migration)
-Omitted for canonical configs (backend normalizes legacy v1 docs on read).</p>
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-4">
-                                <code>version:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-</code>
-                            </td>
-                        </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-
-                                </td>
-                            </tr>
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <i>Optional</i>
-                                </td>
-                            </tr>
-
-
-
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/app/features/reporting/report-config.ts:57</a></div>
-                                </td>
-                            </tr>
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-description"><p>Omitted for canonical configs (backend normalizes legacy v1 docs on read).</p>
 </div>
                         </td>
                     </tr>
@@ -2708,33 +2447,7 @@ class ReportConfig extends Entity {
   mode?: string;
 
   /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Omitted for canonical configs (backend normalizes legacy v1 docs on read).
-   */
-  @DatabaseField() version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) list of arguments needed for the sql query. Placeholder &quot;?&quot; will be replaced.
-   */
-  @DatabaseField() neededArgs?: string[] &#x3D; [];
-
-  /**
-   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
-   * (consolidate-report-definition), which copies this into &#x60;reportDefinition&#x60; without deleting
-   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
-   * a follow-up migration removes it once every environment runs the new code.
-   */
-  @DatabaseField() aggregationDefinitions?: any[];
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) the definition to calculate the report
-   */
-  @DatabaseField() aggregationDefinition?: string;
-
-  /**
-   *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
+   *  (sql only) transformations that are applied to input variables (e.g. startDate, endDate)
    *  example: {startDate: [&quot;SQL_FROM_DATE&quot;], endDate: [&quot;SQL_TO_DATE&quot;]}
    */
   @DatabaseField({
@@ -2751,8 +2464,6 @@ class ReportConfig extends Entity {
    * - &quot;sql&quot;:       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
    * - &quot;reporting&quot;: {@link Aggregation}[] — in-browser aggregation definitions.
    * - &quot;exporting&quot;: {@link ExportColumnConfig}[] — export column definitions.
-   *
-   * Consolidated from the former &#x60;aggregationDefinitions&#x60; so all report modes share one field.
    */
   @DatabaseField({
     label: $localize&#x60;:ReportConfig:Report definition&#x60;,
@@ -2811,24 +2522,6 @@ export interface SqlReport extends ReportConfig {
   mode: &quot;sql&quot;;
 
   /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Legacy version field. Omitted in canonical configs; backend normalizes on read.
-   */
-  version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) a valid SQL SELECT statement, can contain &quot;?&quot; or &quot;$name&quot; placeholders
-   */
-  aggregationDefinition?: string;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) list of argument names passed into the sql statement
-   */
-  neededArgs?: string[];
-
-  /**
    * see ReportConfig docs
    */
   transformations: {
@@ -2845,10 +2538,9 @@ export interface SqlReport extends ReportConfig {
  * Whether a report&#x27;s results should be rendered as a hierarchical group/count
  * table (&#x60;sql-v2-table&#x60;) rather than a flat tabular table (&#x60;object-table&#x60;).
  *
- * Derived purely from the canonical config structure (no version flag):
+ * Derived from the config structure:
  * a report is hierarchical when its &#x60;reportDefinition&#x60; contains a group
  * (&#x60;groupTitle&#x60;) or more than one top-level item; otherwise it is tabular.
- * Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.
  */
 export function isHierarchicalReport(
   report: ReportEntity | undefined,

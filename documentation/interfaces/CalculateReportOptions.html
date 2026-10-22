@@ -228,7 +228,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="154" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:154</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="143" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:143</a></div>
                                 </td>
                             </tr>
 
@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="153" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:153</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="142" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:142</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:155</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:144</a></div>
                                 </td>
                             </tr>
 
@@ -389,20 +389,9 @@ export class SelectReportComponent {
   fromDate &#x3D; signal&lt;Date | undefined&gt;(undefined);
   toDate &#x3D; signal&lt;Date | undefined&gt;(undefined);
   /** whether the currently selected report includes filter parameters for a &quot;from&quot; - &quot;to&quot; date range */
-  isDateRangeReport &#x3D; computed&lt;boolean&gt;(() &#x3D;&gt; {
-    const report &#x3D; this.selectedReport();
-    if (!report) return false;
-    // Primary signal: whether the report&#x27;s queries actually use date placeholders.
-    if (reportUsesDateRange(report)) return true;
-    // Fallback for legacy configs that declared the date args explicitly:
-    // v1 configs use neededArgs; v2/canonical use transformations.
-    return (
-      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;from&quot; || a &#x3D;&#x3D;&#x3D; &quot;startDate&quot;) ||
-      !!report.neededArgs?.find((a) &#x3D;&gt; a &#x3D;&#x3D;&#x3D; &quot;to&quot; || a &#x3D;&#x3D;&#x3D; &quot;endDate&quot;) ||
-      !!report.transformations?.[&quot;startDate&quot;] ||
-      !!report.transformations?.[&quot;endDate&quot;]
-    );
-  });
+  isDateRangeReport &#x3D; computed&lt;boolean&gt;(() &#x3D;&gt;
+    reportUsesDateRange(this.selectedReport()),
+  );
 
   dateRangeFilterConfig &#x3D; computed&lt;DateFilter&lt;any&gt; | undefined&gt;(() &#x3D;&gt; {
     if (!this.isDateRangeReport()) return undefined;
