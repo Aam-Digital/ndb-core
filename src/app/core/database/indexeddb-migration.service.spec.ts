@@ -12,6 +12,20 @@ import { AlertService } from "../alerts/alert.service";
 import { Logging } from "../logging/logging.service";
 import { mockConfirmationDialog } from "../../utils/test-utils/dialog-mocks";
 
+// names derived from the test session (name "testuser", id "abc-123-uuid")
+const MIGRATED_FLAG = "DB_MIGRATED_abc-123-uuid";
+const LEGACY_APP_DB = "_pouch_testuser-app";
+const LEGACY_NOTIFICATIONS_DB = "_pouch_notifications_abc-123-uuid";
+const NEW_APP_DB = "_pouch_abc-123-uuid-app";
+const LEGACY_DB_NAMES = {
+  app: "testuser-app",
+  notifications: "notifications_abc-123-uuid",
+};
+const NEW_DB_NAMES = {
+  app: "abc-123-uuid-app",
+  notifications: "abc-123-uuid-notifications",
+};
+
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
   let confirmationDialogSpy: ReturnType<typeof mockConfirmationDialog>;
@@ -106,13 +120,13 @@ describe("IndexeddbMigrationService", () => {
     vi.spyOn<any, any>(service, "getAnalyticsService").mockResolvedValue({
       eventTrack: eventTrackSpy,
     });
-    localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
+    localStorage.removeItem(MIGRATED_FLAG);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
     environment.use_indexeddb_adapter = originalUseIndexeddbAdapter;
-    localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
+    localStorage.removeItem(MIGRATED_FLAG);
   });
 
   describe("resolveDbConfig", () => {
@@ -121,12 +135,9 @@ describe("IndexeddbMigrationService", () => {
         scenario: "flag disabled (deployment opted out)",
         useIndexeddbAdapter: false,
         migrated: false,
-        existingDbs: ["_pouch_testuser-app"],
+        existingDbs: [LEGACY_APP_DB],
         adapter: "idb",
-        dbNames: {
-          app: "testuser-app",
-          notifications: "notifications_abc-123-uuid",
-        },
+        dbNames: LEGACY_DB_NAMES,
         migrationPending: false,
         trackedEvent: "idb_indexeddb-disabled-config",
         migratedAfter: null,
@@ -137,12 +148,9 @@ describe("IndexeddbMigrationService", () => {
         scenario: "flag disabled after a completed migration (rollback)",
         useIndexeddbAdapter: false,
         migrated: true,
-        existingDbs: ["_pouch_testuser-app", "_pouch_abc-123-uuid-app"],
+        existingDbs: [LEGACY_APP_DB, NEW_APP_DB],
         adapter: "idb",
-        dbNames: {
-          app: "testuser-app",
-          notifications: "notifications_abc-123-uuid",
-        },
+        dbNames: LEGACY_DB_NAMES,
         migrationPending: false,
         trackedEvent: "idb_indexeddb-disabled-config",
         migratedAfter: null,
@@ -151,12 +159,9 @@ describe("IndexeddbMigrationService", () => {
         scenario: "already migrated",
         useIndexeddbAdapter: true,
         migrated: true,
-        existingDbs: ["_pouch_testuser-app", "_pouch_abc-123-uuid-app"],
+        existingDbs: [LEGACY_APP_DB, NEW_APP_DB],
         adapter: "indexeddb",
-        dbNames: {
-          app: "abc-123-uuid-app",
-          notifications: "abc-123-uuid-notifications",
-        },
+        dbNames: NEW_DB_NAMES,
         migrationPending: false,
         trackedEvent: "indexeddb_after-migration",
         migratedAfter: "true",
@@ -170,10 +175,7 @@ describe("IndexeddbMigrationService", () => {
           "_pouch_notifications_other-user-id",
         ],
         adapter: "indexeddb",
-        dbNames: {
-          app: "abc-123-uuid-app",
-          notifications: "abc-123-uuid-notifications",
-        },
+        dbNames: NEW_DB_NAMES,
         migrationPending: false,
         trackedEvent: "indexeddb_fresh-install",
         migratedAfter: "true",
@@ -182,12 +184,9 @@ describe("IndexeddbMigrationService", () => {
         scenario: "existing user on the old adapter",
         useIndexeddbAdapter: true,
         migrated: false,
-        existingDbs: ["_pouch_testuser-app"],
+        existingDbs: [LEGACY_APP_DB],
         adapter: "idb",
-        dbNames: {
-          app: "testuser-app",
-          notifications: "notifications_abc-123-uuid",
-        },
+        dbNames: LEGACY_DB_NAMES,
         migrationPending: true,
         trackedEvent: "idb_migration-pending",
         migratedAfter: null,
@@ -197,7 +196,7 @@ describe("IndexeddbMigrationService", () => {
       async (c) => {
         environment.use_indexeddb_adapter = c.useIndexeddbAdapter;
         if (c.migrated) {
-          localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
+          localStorage.setItem(MIGRATED_FLAG, "true");
         }
         mockWindow.indexedDB.databases.mockResolvedValue(
           c.existingDbs.map((name) => ({ name, version: 1 })),
@@ -207,9 +206,7 @@ describe("IndexeddbMigrationService", () => {
 
         expect(config).toEqual({ adapter: c.adapter, dbNames: c.dbNames });
         expect(service.migrationPending).toBe(c.migrationPending);
-        expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBe(
-          c.migratedAfter,
-        );
+        expect(localStorage.getItem(MIGRATED_FLAG)).toBe(c.migratedAfter);
         expect(eventTrackSpy).toHaveBeenCalledWith(c.trackedEvent, {
           category: "indexeddb_adapter_migration",
         });
@@ -253,7 +250,7 @@ describe("IndexeddbMigrationService", () => {
 
       service.runBackgroundMigration(session, mockDb);
       await flushPromises();
-      expect(createPouchDbSpy).toHaveBeenCalledWith("abc-123-uuid-app");
+      expect(createPouchDbSpy).toHaveBeenCalledWith(NEW_DB_NAMES.app);
       // a connection of its own, so that the old db's sync does not purge what it reports as not permitted
       expect(mockNewDb.replicate.from).toHaveBeenCalledWith(remoteSource, {
         batch_size: 500,
@@ -302,7 +299,7 @@ describe("IndexeddbMigrationService", () => {
           .spyOn(mockDb, "ensureSynced")
           .mockImplementation(async () => {
             duringFinalSync = {
-              migratedFlag: localStorage.getItem("DB_MIGRATED_abc-123-uuid"),
+              migratedFlag: localStorage.getItem(MIGRATED_FLAG),
               blocked:
                 confirmationDialogSpy.showProgressDialog.mock.calls.length ===
                   1 && progressDialog.close.mock.calls.length === 0,
@@ -325,7 +322,7 @@ describe("IndexeddbMigrationService", () => {
           });
           expect(progressDialog.close).toHaveBeenCalled();
         }
-        expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBe(
+        expect(localStorage.getItem(MIGRATED_FLAG)).toBe(
           switched ? "true" : null,
         );
         expect(mockWindow.location.reload).toHaveBeenCalledTimes(
@@ -369,7 +366,7 @@ describe("IndexeddbMigrationService", () => {
         await flushPromises();
 
         expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
-        expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
+        expect(localStorage.getItem(MIGRATED_FLAG)).toBeNull();
         expect(remoteSource.close).toHaveBeenCalled();
         expect(warnSpy).toHaveBeenCalledTimes(reported ? 1 : 0);
         expect(eventTrackSpy).toHaveBeenCalledWith(
@@ -400,7 +397,7 @@ describe("IndexeddbMigrationService", () => {
 
   describe("cleanupLegacyDatabases", () => {
     it("should skip cleanup when not migrated", async () => {
-      localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
+      localStorage.removeItem(MIGRATED_FLAG);
 
       await service.cleanupLegacyDatabases(session);
 
@@ -408,7 +405,7 @@ describe("IndexeddbMigrationService", () => {
     });
 
     it("should delete legacy databases when migrated", async () => {
-      localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
+      localStorage.setItem(MIGRATED_FLAG, "true");
       mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
         const req = {
           onsuccess: null as any,
@@ -418,36 +415,36 @@ describe("IndexeddbMigrationService", () => {
         return req;
       });
       mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: "_pouch_testuser-app", version: 1 },
+        { name: LEGACY_APP_DB, version: 1 },
         { name: "_pouch_testuser-app_mrview123", version: 1 },
-        { name: "_pouch_notifications_abc-123-uuid", version: 1 },
-        { name: "_pouch_abc-123-uuid-app", version: 1 },
+        { name: LEGACY_NOTIFICATIONS_DB, version: 1 },
+        { name: NEW_APP_DB, version: 1 },
         { name: "_pouch_abc-123-uuid-notifications", version: 1 },
       ]);
 
       await service.cleanupLegacyDatabases(session);
 
       expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
-        "_pouch_testuser-app",
+        LEGACY_APP_DB,
       );
       expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
         "_pouch_testuser-app_mrview123",
       );
       expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith(
-        "_pouch_notifications_abc-123-uuid",
+        LEGACY_NOTIFICATIONS_DB,
       );
       expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledTimes(3);
 
       expect(mockWindow.indexedDB.deleteDatabase).not.toHaveBeenCalledWith(
-        "_pouch_abc-123-uuid-app",
+        NEW_APP_DB,
       );
     });
 
     it("should continue if one database deletion fails", async () => {
-      localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
+      localStorage.setItem(MIGRATED_FLAG, "true");
       mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: "_pouch_testuser-app", version: 1 },
-        { name: "_pouch_notifications_abc-123-uuid", version: 1 },
+        { name: LEGACY_APP_DB, version: 1 },
+        { name: LEGACY_NOTIFICATIONS_DB, version: 1 },
       ]);
       let callCount = 0;
       mockWindow.indexedDB.deleteDatabase.mockImplementation(() => {
