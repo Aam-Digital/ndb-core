@@ -12,7 +12,7 @@ const TODO_PATH = "todo";
 const TODO_VIEW_KEY = `view:${TODO_PATH}`;
 
 /**
- * Point legacy links to the task list to its entity route.
+ * Point legacy links to the task list to its entity route (changes the given config in place).
  *
  * The app adds the entity list view for tasks at runtime (`addDefaultTodoViews`), so a config without
  * its own view config for that route got these links fixed only at runtime, and `latest-config-formats`
@@ -22,10 +22,10 @@ const TODO_VIEW_KEY = `view:${TODO_PATH}`;
  *
  * A config with its own view config for the route that is not an entity list is left unchanged.
  */
-export function migrateTodoRouteLinks(config: any): any {
+export function migrateTodoRouteLinks(config: any): void {
   const data = config?.data;
   if (!data || typeof data !== "object") {
-    return config;
+    return;
   }
   const ownTodoView = data[TODO_VIEW_KEY];
   if (
@@ -33,7 +33,7 @@ export function migrateTodoRouteLinks(config: any): any {
     !ownTodoView.config?.entityType &&
     !ownTodoView.config?.entity
   ) {
-    return config;
+    return;
   }
 
   if (Array.isArray(data.navigationMenu?.items)) {
@@ -54,8 +54,6 @@ export function migrateTodoRouteLinks(config: any): any {
       }
     }
   }
-
-  return config;
 }
 
 function migrateNavMenuItems(items: any[]): any[] {
@@ -116,7 +114,8 @@ export const todoRouteLinks: MigrationDefinition = {
       throw error;
     }
 
-    const newConfig = migrateTodoRouteLinks(JSON.parse(JSON.stringify(config)));
+    const newConfig = JSON.parse(JSON.stringify(config));
+    migrateTodoRouteLinks(newConfig);
     ctx.validateJson(newConfig);
 
     if (JSON.stringify(config) === JSON.stringify(newConfig)) {
