@@ -124,5 +124,16 @@
       "education/EmailTemplate_birthday.json"
     ],
     "locale": "en-US"
+  },
+  {
+    "id": "minimal",
+    "name": "Start from scratch",
+    "description": "An empty system with no predefined record types. You define your own structure from the admin screens.\n\nChoose this if none of the other scenarios fits how your organisation works.",
+    "entitiesToImport": [
+      "minimal/Config_CONFIG_ENTITY.json",
+      "basic/Config_Permissions.json",
+      "basic/SiteSettings_global.json"
+    ],
+    "startFromScratch": true
   }
 ]

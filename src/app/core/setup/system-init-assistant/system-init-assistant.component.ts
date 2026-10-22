@@ -6,7 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { SetupService } from "../setup.service";
-import { BaseConfig } from "../base-config";
+import { BaseConfig, isOfferedInLocale } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "./choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
@@ -85,15 +85,15 @@ export class SystemInitAssistantComponent implements OnInit {
     this.dialogRef.disableClose = true;
   }
 
+  /**
+   * Offers a language only if some use case can be set up in it.
+   * A use case without a locale is offered in every language, so all of them can be chosen then.
+   */
   private getAvailableLocalesForUseCases() {
-    const availableDemoLocale = new Set(
-      this.availableUseCases()
-        .map((useCase) => useCase.locale)
-        .filter(Boolean),
-    );
-
     return availableLocales.values.filter((locale) =>
-      availableDemoLocale.has(locale.id),
+      this.availableUseCases().some((useCase) =>
+        isOfferedInLocale(useCase, locale.id),
+      ),
     );
   }
 
@@ -143,7 +143,7 @@ export class SystemInitAssistantComponent implements OnInit {
     }
   }
 
-  onUseCaseSelected(selected: BaseConfig) {
+  onUseCaseSelected(selected: BaseConfig | null) {
     this.selectedUseCase.set(selected);
   }
 
