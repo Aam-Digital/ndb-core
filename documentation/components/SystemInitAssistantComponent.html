@@ -524,7 +524,7 @@ used within the AssistantDialog.</p>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onUseCaseSelected(selected: <a href="../interfaces/BaseConfig.html" target="_self">BaseConfig</a>)</code>
+<code>onUseCaseSelected(selected: <a href="../interfaces/BaseConfig.html" target="_self">BaseConfig | null</a>)</code>
                 </td>
             </tr>
 
@@ -555,7 +555,7 @@ used within the AssistantDialog.</p>
                                         <tr>
                                                 <td>selected</td>
                                             <td>
-                                                            <code><a href="../interfaces/BaseConfig.html" target="_self" >BaseConfig</a></code>
+                                                            <code><a href="../interfaces/BaseConfig.html" target="_self" >BaseConfig | null</a></code>
                                             </td>
 
                                             <td>
@@ -968,7 +968,7 @@ used within the AssistantDialog.</p>
   signal,
 } from &quot;@angular/core&quot;;
 import { SetupService } from &quot;../setup.service&quot;;
-import { BaseConfig } from &quot;../base-config&quot;;
+import { BaseConfig, isOfferedInLocale } from &quot;../base-config&quot;;
 import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { ChooseUseCaseComponent } from &quot;./choose-use-case/choose-use-case.component&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
@@ -1047,15 +1047,15 @@ export class SystemInitAssistantComponent implements OnInit {
     this.dialogRef.disableClose &#x3D; true;
   }
 
+  /**
+   * Offers a language only if some use case can be set up in it.
+   * A use case without a locale is offered in every language, so all of them can be chosen then.
+   */
   private getAvailableLocalesForUseCases() {
-    const availableDemoLocale &#x3D; new Set(
-      this.availableUseCases()
-        .map((useCase) &#x3D;&gt; useCase.locale)
-        .filter(Boolean),
-    );
-
     return availableLocales.values.filter((locale) &#x3D;&gt;
-      availableDemoLocale.has(locale.id),
+      this.availableUseCases().some((useCase) &#x3D;&gt;
+        isOfferedInLocale(useCase, locale.id),
+      ),
     );
   }
 
@@ -1105,7 +1105,7 @@ export class SystemInitAssistantComponent implements OnInit {
     }
   }
 
-  onUseCaseSelected(selected: BaseConfig) {
+  onUseCaseSelected(selected: BaseConfig | null) {
     this.selectedUseCase.set(selected);
   }
 

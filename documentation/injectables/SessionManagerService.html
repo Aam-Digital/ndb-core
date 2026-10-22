@@ -289,8 +289,8 @@ After a successful login, the database for the current user is initialised.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:68</a></div>
                         </td>
                     </tr>
 
@@ -330,8 +330,8 @@ If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="215"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:215</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="222"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:222</a></div>
                         </td>
                     </tr>
 
@@ -367,8 +367,8 @@ If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="173"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:173</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:180</a></div>
                         </td>
                     </tr>
 
@@ -408,8 +408,8 @@ If a session exists, complete the login. Otherwise, set state to LOGGED_OUT
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="181"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:181</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="188"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:188</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="132"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:132</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:134</a></div>
                         </td>
                     </tr>
 
@@ -519,8 +519,8 @@ If offline, reset the state and forward to login page.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="110"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:110</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -560,8 +560,8 @@ Should only be called if there is an internet connection</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="124"
-                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:124</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:126</a></div>
                         </td>
                     </tr>
 
@@ -609,7 +609,7 @@ Should only be called if there is an internet connection</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -642,7 +642,7 @@ Should only be called if there is an internet connection</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:54</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/session/session-service/session-manager.service.ts:56</a></div>
                         </td>
                     </tr>
 
@@ -683,6 +683,7 @@ import { NAVIGATOR_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../../utils/di-tok
 import { environment } from &quot;../../../../environments/environment&quot;;
 import { CurrentUserSubject } from &quot;../current-user-subject&quot;;
 import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;../../entity/database-entity.decorator&quot;;
 import { filter, take, takeUntil } from &quot;rxjs/operators&quot;;
 import { Subject, Subscription } from &quot;rxjs&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
@@ -702,6 +703,7 @@ export class SessionManagerService {
   private sessionInfo &#x3D; inject(SessionSubject);
   private currentUser &#x3D; inject(CurrentUserSubject);
   private entityMapper &#x3D; inject(EntityMapperService);
+  private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private loginStateSubject &#x3D; inject(LoginStateSubject);
   private router &#x3D; inject(Router);
   private navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN);
@@ -820,6 +822,11 @@ export class SessionManagerService {
     }
 
     const entityType &#x3D; Entity.extractTypeFromId(entityId);
+    if (!this.entityRegistry.has(entityType)) {
+      this.currentUser.next(null);
+      return;
+    }
+
     this.entityMapper
       .load(entityType, entityId)
       .catch(() &#x3D;&gt; null) // see CurrentUserSubject: emits &quot;null&quot; for non-existing user entity
