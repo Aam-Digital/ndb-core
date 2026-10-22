@@ -137,7 +137,7 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** the label text of the active language, for display outside the form field */
   readonly resolvedLabel = computed(
-    () => this.resolveForDisplay(this.labelValue()) ?? "",
+    () => resolveLocaleText(this.labelValue()) ?? "",
   );
 
   private readonly validatorConfig = viewChild(
@@ -233,7 +233,7 @@ export class AdminEntityFieldComponent implements OnInit {
                 if (key === this.data.entitySchemaField.id) continue;
                 if (field.label) {
                   // compare the texts of the active language, not raw maps
-                  labels.push(this.resolveForDisplay(field.label));
+                  labels.push(resolveLocaleText(field.label));
                 }
               }
               return labels;
@@ -363,7 +363,7 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
-    const label = this.resolveForDisplay(
+    const label = resolveLocaleText(
       this.schemaFieldsForm.get("labelShort").value ??
         this.schemaFieldsForm.get("label").value,
     );
@@ -465,7 +465,7 @@ export class AdminEntityFieldComponent implements OnInit {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
       const newOption = this.createNewAdditionalOption(
         // resolve first: `generateIdFromLabel` returns undefined for a per-language map
-        this.resolveForDisplay(this.schemaFieldsForm.get("label").value),
+        resolveLocaleText(this.schemaFieldsForm.get("label").value),
       );
       this.typeAdditionalOptions.push(newOption);
       this.additionalForm.setValue(newOption.value);
@@ -640,10 +640,5 @@ export class AdminEntityFieldComponent implements OnInit {
       { [property]: rawValue },
       { [property]: this.data.entitySchemaField[property] },
     )[property];
-  }
-
-  /** typed, so that the `any` values of form controls resolve to a string */
-  private resolveForDisplay(value: TranslatableText): string | undefined {
-    return resolveLocaleText(value);
   }
 }

@@ -41,11 +41,14 @@ export function isLocaleTranslationMap(
   return isTranslatableText(value, validLocaleIds);
 }
 
-/** Values that are not translation maps are returned unchanged. */
+/**
+ * A configured text in the active language.
+ * Values that are not translation maps are returned unchanged.
+ */
 export function resolveLocaleText(
   value: TranslatableText | null | undefined,
 ): string | undefined;
-export function resolveLocaleText(value: unknown): unknown;
+export function resolveLocaleText<T>(value: T): T;
 export function resolveLocaleText(value: unknown): unknown {
   return resolveTranslatableText(
     value as TranslatableText,
