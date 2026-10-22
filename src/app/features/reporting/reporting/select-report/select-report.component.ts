@@ -70,17 +70,9 @@ export class SelectReportComponent {
   fromDate = signal<Date | undefined>(undefined);
   toDate = signal<Date | undefined>(undefined);
   /** whether the currently selected report includes filter parameters for a "from" - "to" date range */
-  isDateRangeReport = computed<boolean>(() => {
-    const report = this.selectedReport();
-    if (!report) return false;
-    // Primary signal: whether the report's queries actually use date placeholders.
-    if (reportUsesDateRange(report)) return true;
-    // Fallback: configs that declare the date args explicitly as transformations.
-    return (
-      !!report.transformations?.["startDate"] ||
-      !!report.transformations?.["endDate"]
-    );
-  });
+  isDateRangeReport = computed<boolean>(() =>
+    reportUsesDateRange(this.selectedReport()),
+  );
 
   dateRangeFilterConfig = computed<DateFilter<any> | undefined>(() => {
     if (!this.isDateRangeReport()) return undefined;
