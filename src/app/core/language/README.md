@@ -187,6 +187,13 @@ there:
 are granted per entity type, so sharing one type would mean granting every user
 write access to the site branding.
 
+Users can only pick their own language where `Config:Permissions` grants them their
+own document, e.g. in `_default`:
+`{ "subject": "UserSettings", "action": "manage", "conditions": { "userId": "${user.id}" } }`.
+`UserSettings.userId` is persisted for this purpose, because rule variables cannot be
+matched against a part of the `_id`. Without such a rule the profile shows the
+selector disabled with an explanation, and a rejected save is not reported to Sentry.
+
 Switching the language reloads the page, because the `$localize` translations and
 the active locale are both fixed at bootstrap.
 

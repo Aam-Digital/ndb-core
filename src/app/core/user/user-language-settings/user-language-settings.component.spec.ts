@@ -11,6 +11,10 @@ import { LanguageService } from "../../language/language.service";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { UserSettingsService } from "../../site-settings/user-settings.service";
 import { Logging } from "../../logging/logging.service";
+import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { SessionSubject } from "../../session/auth/session-info";
+import { EntityPermissionError } from "../../entity/entity-mapper/entity-permission-error";
 
 describe("UserLanguageSettingsComponent", () => {
   let component: UserLanguageSettingsComponent;
@@ -19,6 +23,7 @@ describe("UserLanguageSettingsComponent", () => {
   let languageService: { switchToOwnLocale: ReturnType<typeof vi.fn> };
   let alertService: { addDanger: ReturnType<typeof vi.fn> };
   let displayLanguageSelect: BehaviorSubject<boolean>;
+  let ability: EntityAbility;
 
   async function createComponent() {
     userSettings = { setLanguage: vi.fn().mockResolvedValue(undefined) };
@@ -30,8 +35,16 @@ describe("UserLanguageSettingsComponent", () => {
     displayLanguageSelect = new BehaviorSubject(true);
 
     await TestBed.configureTestingModule({
-      imports: [UserLanguageSettingsComponent, NoopAnimationsModule],
+      imports: [
+        UserLanguageSettingsComponent,
+        NoopAnimationsModule,
+        CoreTestingModule,
+      ],
       providers: [
+        {
+          provide: SessionSubject,
+          useValue: new BehaviorSubject({ id: "user-1", name: "user-1" }),
+        },
         { provide: UserSettingsService, useValue: userSettings },
         { provide: LanguageService, useValue: languageService },
         { provide: AlertService, useValue: alertService },
@@ -41,6 +54,9 @@ describe("UserLanguageSettingsComponent", () => {
         },
       ],
     }).compileComponents();
+
+    ability = TestBed.inject(EntityAbility);
+    ability.update([{ subject: "all", action: "manage" }]);
 
     fixture = TestBed.createComponent(UserLanguageSettingsComponent);
     component = fixture.componentInstance;
@@ -66,13 +82,76 @@ describe("UserLanguageSettingsComponent", () => {
   });
 
   it("should not apply the language if saving it failed", async () => {
-    vi.spyOn(Logging, "error").mockImplementation(() => {});
+    const errorLog = vi.spyOn(Logging, "error").mockImplementation(() => {});
     userSettings.setLanguage.mockRejectedValue(new Error("offline"));
 
     await component.onLanguageSelected("de");
 
     expect(languageService.switchToOwnLocale).not.toHaveBeenCalled();
     expect(alertService.addDanger).toHaveBeenCalled();
+    expect(errorLog).toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      "the local permission check",
+      new EntityPermissionError("create", "user-1", "UserSettings"),
+    ],
+    ["the server", { status: 403, error: "forbidden" }],
+  ])(
+    "should not report a save rejected by %s, since the permission config causes it",
+    async (_source, rejection) => {
+      const errorLog = vi.spyOn(Logging, "error").mockImplementation(() => {});
+      const warnLog = vi.spyOn(Logging, "warn").mockImplementation(() => {});
+      userSettings.setLanguage.mockRejectedValue(rejection);
+
+      await component.onLanguageSelected("de");
+
+      expect(errorLog).not.toHaveBeenCalled();
+      expect(warnLog).not.toHaveBeenCalled();
+      // retrying cannot help, so the user is pointed to their administrator
+      expect(alertService.addDanger).toHaveBeenCalledWith(
+        component.missingPermissionText,
+      );
+      expect(languageService.switchToOwnLocale).not.toHaveBeenCalled();
+    },
+  );
+
+  it("should disable the select and explain why while the user may not save their own settings", () => {
+    ability.update([{ subject: "Child", action: "manage" }]);
+    fixture.detectChanges();
+
+    expect(languageSelect().disabled()).toBe(true);
+    expect(languageSelect().hint()).toBe(component.missingPermissionText);
+
+    // the rules can change at runtime, e.g. when an admin grants the permission
+    ability.update([{ subject: "UserSettings", action: "manage" }]);
+    fixture.detectChanges();
+
+    expect(languageSelect().disabled()).toBe(false);
+    expect(languageSelect().hint()).toBe(component.languageHint);
+  });
+
+  it("should check the permission against the user's own settings document", () => {
+    ability.update([
+      {
+        subject: "UserSettings",
+        action: "manage",
+        conditions: { userId: "someone-else" },
+      },
+    ]);
+    fixture.detectChanges();
+    expect(languageSelect().disabled()).toBe(true);
+
+    ability.update([
+      {
+        subject: "UserSettings",
+        action: "manage",
+        conditions: { userId: "user-1" },
+      },
+    ]);
+    fixture.detectChanges();
+    expect(languageSelect().disabled()).toBe(false);
   });
 
   it("should revert the shown selection if saving failed", async () => {
