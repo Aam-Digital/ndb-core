@@ -12,7 +12,7 @@ export interface AffectedEntity {
   /** entityId of the affected entity */
   id: string;
 
-  /** New value to be applied to the target field (database format; entity format in the result of the dialog) */
+  /** New value to be applied to the target field (database format, also in the result of the dialog) */
   newValue: unknown;
 
   /** The value that the target field has when it is saved (database format) */

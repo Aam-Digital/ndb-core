@@ -406,10 +406,10 @@ describe("AutomatedFieldUpdateConfigService", () => {
         {
           provide: ConfigurableEnumService,
           useValue: {
-            getEnumValues: (id: string) =>
-              id === "mentorship-status-enum"
-                ? TEST_MENTORSHIP_ENUM
-                : TEST_SCHOOL_ENUM,
+            getEnumValues: (id: string) => {
+              if (id === "mentorship-status-enum") return TEST_MENTORSHIP_ENUM;
+              return id === "action-tags" ? TEST_TAGS : TEST_SCHOOL_ENUM;
+            },
           },
         },
       ],
@@ -1393,6 +1393,20 @@ describe("AutomatedFieldUpdateConfigService", () => {
         [workPackage.getId(), "middleTags", "lowerTags"],
         [project.getId(), "upperTags", "lowerTags"],
       ]);
+    });
+
+    it("saves the confirmed values of the entities above in entity format", async () => {
+      const project = createAction([]);
+      const activity = createAction([], project);
+      entityMapper.addAll([project, activity]);
+
+      await changeTags(activity, ["health", "education"]);
+
+      const savedProject = await entityMapper.load(
+        HierarchyAction,
+        project.getId(),
+      );
+      expect(savedProject.tags).toEqual(toTags(["health", "education"]));
     });
 
     it("stops at the level where nothing changes", async () => {

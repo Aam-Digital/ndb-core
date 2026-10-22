@@ -994,11 +994,15 @@ export class AutomatedFieldUpdateConfigService {
       const entity = updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
       const changes = updates.filter(
-        (update) => entity && !this.isCurrentValue(entity, update),
+        (update) => entity && !isSameValue(update.newValue, update.savedValue),
       );
       if (changes.length > 0) {
         changes.forEach((update) => {
-          entity[update.targetFieldId] = update.newValue;
+          entity[update.targetFieldId] =
+            this.entitySchemaService.valueToEntityFormat(
+              update.newValue,
+              update.selectedField,
+            );
         });
         entitiesToSave.push(entity);
       }
@@ -1007,23 +1011,6 @@ export class AutomatedFieldUpdateConfigService {
     // together, so that none of them is saved if the user may not save one of them
     await this.entityMapper.saveAll(entitiesToSave);
     return true;
-  }
-
-  /**
-   * Whether the confirmed new value is the value that the entity already has (compared in database format).
-   */
-  private isCurrentValue(entity: Entity, update: AffectedEntity): boolean {
-    const toDatabaseFormat = (value: any) =>
-      this.transformSourceValueToDatabaseFormat(
-        value,
-        entity,
-        update.targetFieldId,
-        this.entitySchemaService,
-      );
-    return isSameValue(
-      toDatabaseFormat(update.newValue),
-      toDatabaseFormat(entity[update.targetFieldId]),
-    );
   }
 
   /**

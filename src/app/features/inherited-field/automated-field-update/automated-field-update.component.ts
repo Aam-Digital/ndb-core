@@ -388,13 +388,7 @@ export class AutomatedFieldUpdateComponent {
 
   onConfirm(): void {
     this.dialogRef.close(
-      this.rows().map((row) => ({
-        ...row,
-        newValue: this.entitySchemaService.valueToEntityFormat(
-          row.value,
-          row.selectedField,
-        ),
-      })),
+      this.rows().map((row) => ({ ...row, newValue: row.value })),
     );
   }
 }
