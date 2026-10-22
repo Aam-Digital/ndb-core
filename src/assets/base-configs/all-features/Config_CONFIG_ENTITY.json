@@ -1088,8 +1088,7 @@
                       "visibleFrom": "lg"
                     }
                   ],
-                  "entityType": "HistoricalEntityData",
-                  "loaderMethod": "HistoricalDataService"
+                  "entityType": "HistoricalEntityData"
                 }
               }
             ]

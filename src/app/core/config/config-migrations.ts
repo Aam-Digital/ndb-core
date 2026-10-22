@@ -3,8 +3,7 @@
  * can import them without pulling in Angular or the full app bundle.
  *
  * Node-safe: no @angular/* imports.
- * Inlined string constants: EntityDatatype.dataType = "entity",
- *   LoaderMethod.HistoricalDataService = "HistoricalDataService".
+ * Inlined string constants: EntityDatatype.dataType = "entity".
  */
 
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "../../utils/related-entities-default-config";
@@ -125,7 +124,6 @@ const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
     configPart["config"] = { columns: configPart["config"] };
   }
   configPart["config"]["entityType"] = "HistoricalEntityData";
-  configPart["config"]["loaderMethod"] = "HistoricalDataService"; // inlined: LoaderMethod.HistoricalDataService
 
   return configPart;
 };
