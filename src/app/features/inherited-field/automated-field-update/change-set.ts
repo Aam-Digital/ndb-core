@@ -17,6 +17,22 @@ export function isLinkedTo(
   );
 }
 
+/** Whether the value of a field differs between the state of a record after and before a change. */
+export function isFieldChanged(
+  after: Entity,
+  before: Entity,
+  fieldId: string,
+): boolean {
+  return JSON.stringify(before[fieldId]) !== JSON.stringify(after[fieldId]);
+}
+
+/** The ids of the fields whose value differs between the state of a record after and before a change. */
+export function getChangedFields(after: Entity, before: Entity): string[] {
+  return [...before.getSchema().keys()].filter((fieldId) =>
+    isFieldChanged(after, before, fieldId),
+  );
+}
+
 /** The state of the records: as saved before the change, or with the change and the suggested values */
 export type ChangeSetState = "before" | "after";
 

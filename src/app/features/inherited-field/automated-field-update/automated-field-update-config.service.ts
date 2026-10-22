@@ -25,7 +25,12 @@ import {
 } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
-import { ChangeSet, ChangeSetState, isLinkedTo } from "./change-set";
+import {
+  ChangeSet,
+  ChangeSetState,
+  getChangedFields,
+  isLinkedTo,
+} from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
 /** the property of an entity that a reference index can be created for */
@@ -179,9 +184,7 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<AffectedEntity[]> {
     const changedFields = trigger.fieldId
       ? [trigger.fieldId]
-      : this.getChangedFields(trigger.entity, trigger.before).map(
-          (f) => f.fieldId,
-        );
+      : getChangedFields(trigger.entity, trigger.before);
     const changeSet = new ChangeSet(
       trigger.entity,
       trigger.before,
@@ -939,31 +942,6 @@ export class AutomatedFieldUpdateConfigService {
       }
       return undefined;
     }
-  }
-
-  /**
-   * Analyze which fields changed during the current editing.
-   * @param newEntity Updated entity after saving
-   * @param originalEntity Entity before changes were applied
-   * @return List of key-value pairs of all changed fields
-   *         (field ID and new value in that field)
-   * @private
-   */
-  private getChangedFields(
-    newEntity: Entity,
-    originalEntity: Entity,
-  ): { fieldId: string; value: any }[] {
-    const changedFields = [];
-
-    for (const [key] of originalEntity.getSchema().entries()) {
-      if (
-        JSON.stringify(originalEntity[key]) !== JSON.stringify(newEntity[key])
-      ) {
-        changedFields.push({ fieldId: key, value: newEntity[key] });
-      }
-    }
-
-    return changedFields;
   }
 
   /**

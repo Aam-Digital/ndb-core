@@ -41,6 +41,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import { isEmptyValue } from "../add-missing-values";
 import { isSameValue } from "../get-common-value";
 import { AffectedEntityValueComponent } from "./affected-entity-value/affected-entity-value.component";
+import { isFieldChanged } from "./change-set";
 import {
   AffectedEntity,
   DialogRow,
@@ -247,8 +248,7 @@ export class AutomatedFieldUpdateComponent {
 
     const entityType = trigger.entity.getConstructor();
     const isChanged = (fieldId: string) =>
-      JSON.stringify(trigger.before[fieldId]) !==
-      JSON.stringify(trigger.entity[fieldId]);
+      isFieldChanged(trigger.entity, trigger.before, fieldId);
     const firstLevel = groupRows.filter((entity) => entity.level === 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds = uniq([
