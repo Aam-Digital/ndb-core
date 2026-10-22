@@ -7,27 +7,6 @@
           "label": "Dashboard",
           "icon": "home",
           "link": "/"
-        },
-        {
-          "label": "Admin",
-          "icon": "wrench",
-          "subMenu": [
-            {
-              "label": "Admin Overview",
-              "icon": "wrench",
-              "link": "/admin"
-            },
-            {
-              "label": "Define Record Types",
-              "icon": "table",
-              "link": "/admin/entity"
-            },
-            {
-              "label": "Users",
-              "icon": "users",
-              "link": "/admin/user-list"
-            }
-          ]
         }
       ]
     },
@@ -58,18 +37,6 @@
             }
           }
         ]
-      }
-    },
-    "entity:User": {
-      "label": "User",
-      "labelPlural": "Users",
-      "icon": "user",
-      "enableUserAccounts": true,
-      "attributes": {
-        "name": {
-          "dataType": "string",
-          "label": "Name"
-        }
       }
     },
     "primaryAction": {

@@ -143,7 +143,7 @@ export class SystemInitAssistantComponent implements OnInit {
     }
   }
 
-  onUseCaseSelected(selected: BaseConfig) {
+  onUseCaseSelected(selected: BaseConfig | null) {
     this.selectedUseCase.set(selected);
   }
 

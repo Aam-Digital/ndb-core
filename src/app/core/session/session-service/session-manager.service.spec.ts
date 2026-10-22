@@ -22,6 +22,10 @@ import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import type { Mock } from "vitest";
 import { EntityConfigReadyService } from "../../entity/entity-config-ready.service";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
 
 type KeycloakAuthServiceMock = Pick<
   KeycloakAuthService,
@@ -89,6 +93,7 @@ describe("SessionManagerService", () => {
         SessionSubject,
         CurrentUserSubject,
         { provide: EntityMapperService, useValue: mockedEntityMapper },
+        { provide: EntityRegistry, useValue: entityRegistry },
         { provide: DatabaseResolverService, useValue: mockDatabaseResolver },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },

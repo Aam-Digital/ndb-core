@@ -35,6 +35,13 @@ export interface BaseConfig {
   locale?: string | string[];
 
   /**
+   * Marks the config that sets up a system with no predefined record types.
+   * Offered as a separate option in the setup wizard rather than listed among
+   * the scenarios, because it is a categorically different choice.
+   */
+  startFromScratch?: boolean;
+
+  /**
    * Base URL from which `entitiesToImport` paths are resolved.
    * When set (e.g. for externally loaded configs), file paths are fetched
    * relative to this URL instead of the local `assets/base-configs/` folder.

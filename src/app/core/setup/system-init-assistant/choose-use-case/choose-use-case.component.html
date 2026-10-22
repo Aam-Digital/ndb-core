@@ -1,36 +1,50 @@
 <div class="flex-row flex-wrap gap-regular align-center">
-  <mat-form-field appearance="fill" class="flex-1 min-width">
-    <mat-label i18n>Select your use case:</mat-label>
+  <div class="flex-1 flex-column use-case-choice">
+    <mat-form-field appearance="fill" class="min-width">
+      <mat-label i18n>Select your use case:</mat-label>
 
-    <mat-select
-      [(ngModel)]="selectedUseCase"
-      (selectionChange)="onSelectionChange()"
-    >
-      @for (useCase of availableUseCases(); track useCase.id) {
-        <mat-option
-          [value]="useCase"
-          [class.greyed-out]="!isOfferedInCurrentLocale(useCase)"
-        >
-          {{ useCase.name }}
-        </mat-option>
-      }
-    </mat-select>
-
-    @if (hasNoUseCaseInCurrentLocale()) {
-      <mat-hint
-        i18n="
-          Setup wizard hint, shown when no setup scenario exists in the user's
-          own language and the ones from other languages are offered greyed out
-          instead
-        "
+      <mat-select
+        [(ngModel)]="selectedUseCase"
+        (selectionChange)="onSelectionChange()"
+        [disabled]="startFromScratch"
       >
-        Nothing in your language yet - you can still choose one of these.
-      </mat-hint>
+        @for (useCase of availableUseCases(); track useCase.id) {
+          <mat-option
+            [value]="useCase"
+            [class.greyed-out]="!isOfferedInCurrentLocale(useCase)"
+          >
+            {{ useCase.name }}
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (hasNoUseCaseInCurrentLocale()) {
+        <mat-hint
+          i18n="
+            Setup wizard hint, shown when no setup scenario exists in the user's
+            own language and the ones from other languages are offered greyed
+            out instead
+          "
+        >
+          Nothing in your language yet - you can still choose one of these.
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    @if (startFromScratchUseCase(); as blankUseCase) {
+      <mat-checkbox
+        [checked]="startFromScratch"
+        (change)="onStartFromScratchChange($event.checked)"
+      >
+        {{ blankUseCase.name }}
+      </mat-checkbox>
     }
-  </mat-form-field>
+  </div>
 
   <div class="flex-1 description-container">
-    @if (selectedUseCase) {
+    @if (startFromScratch) {
+      <div markdown [data]="startFromScratchUseCase()?.description"></div>
+    } @else if (selectedUseCase) {
       <div markdown [data]="selectedUseCase.description"></div>
     } @else {
       <p class="description-no-use-case" i18n>

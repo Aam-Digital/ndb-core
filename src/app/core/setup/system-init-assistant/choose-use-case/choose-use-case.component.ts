@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { BaseConfig, isOfferedInLocale } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MarkdownComponent } from "ngx-markdown";
 import { FormsModule } from "@angular/forms";
 import { LanguageService } from "app/core/language/language.service";
@@ -18,7 +19,7 @@ import { LanguageService } from "app/core/language/language.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-choose-use-case",
   templateUrl: "./choose-use-case.component.html",
-  imports: [MatSelectModule, MarkdownComponent, FormsModule],
+  imports: [MatSelectModule, MatCheckboxModule, MarkdownComponent, FormsModule],
   styleUrls: ["./choose-use-case.component.scss"],
 })
 export class ChooseUseCaseComponent {
@@ -26,8 +27,16 @@ export class ChooseUseCaseComponent {
 
   useCases: InputSignal<BaseConfig[]> = input([]);
 
+  startFromScratchUseCase: Signal<BaseConfig | undefined> = computed(() =>
+    this.useCases().find((uc) => uc.startFromScratch),
+  );
+
+  private readonly scenarios = computed(() =>
+    this.useCases().filter((uc) => !uc.startFromScratch),
+  );
+
   private readonly localisedUseCases = computed(() =>
-    this.useCases().filter((uc) => !!uc.locale),
+    this.scenarios().filter((uc) => !!uc.locale),
   );
 
   /** True while use cases exist for other languages but none for the user's own. */
@@ -45,11 +54,9 @@ export class ChooseUseCaseComponent {
    * another language are greyed out, so the mismatch is visible rather than silent.
    */
   availableUseCases: Signal<BaseConfig[]> = computed(() =>
-    this.useCases().filter(
+    this.scenarios().filter(
       (uc) =>
-        !uc.locale ||
-        this.isOfferedInCurrentLocale(uc) ||
-        this.hasNoUseCaseInCurrentLocale(),
+        this.isOfferedInCurrentLocale(uc) || this.hasNoUseCaseInCurrentLocale(),
     ),
   );
 
@@ -58,11 +65,23 @@ export class ChooseUseCaseComponent {
     return isOfferedInLocale(useCase, this.languageService.getCurrentLocale());
   }
 
-  selectionChanged = output<BaseConfig>();
+  selectionChanged = output<BaseConfig | null>();
 
   selectedUseCase: BaseConfig;
+  startFromScratch = false;
 
   onSelectionChange() {
     this.selectionChanged.emit(this.selectedUseCase);
+  }
+
+  /**
+   * Starting from scratch is an alternative to picking a scenario, not one of them,
+   * so it replaces the dropdown's selection while it is ticked.
+   */
+  onStartFromScratchChange(checked: boolean) {
+    this.startFromScratch = checked;
+    this.selectionChanged.emit(
+      checked ? this.startFromScratchUseCase() : (this.selectedUseCase ?? null),
+    );
   }
 }

@@ -133,6 +133,7 @@
       "minimal/Config_CONFIG_ENTITY.json",
       "basic/Config_Permissions.json",
       "basic/SiteSettings_global.json"
-    ]
+    ],
+    "startFromScratch": true
   }
 ]
