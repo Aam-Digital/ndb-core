@@ -43,16 +43,18 @@ describe("IndexeddbMigrationService", () => {
     const mockDb = Object.create(
       SyncedPouchDatabase.prototype,
     ) as SyncedPouchDatabase;
-    mockDb.getRemotePouchDB = () => ({}) as any;
+    // the separate connection to the server the migration replicates from
+    const remoteSource = { close: vi.fn().mockResolvedValue(undefined) };
+    mockDb.openRemoteReplicationSource = vi.fn(() => remoteSource as any);
     Object.defineProperty(mockDb, "localSyncState", {
       get: () => localSyncState,
     });
 
-    return { mockDb, localSyncState };
+    return { mockDb, localSyncState, remoteSource };
   };
 
   const mockPouchDbCreation = () => {
-    const { mockDb, localSyncState } = createSyncedDbMock();
+    const { mockDb, localSyncState, remoteSource } = createSyncedDbMock();
     const mockNewDb = {
       replicate: {
         from: vi.fn().mockResolvedValue({ ok: true }),
@@ -63,7 +65,13 @@ describe("IndexeddbMigrationService", () => {
       .spyOn(service as any, "createPouchDb")
       .mockReturnValue(mockNewDb as any);
 
-    return { mockDb, localSyncState, mockNewDb, createPouchDbSpy };
+    return {
+      mockDb,
+      localSyncState,
+      remoteSource,
+      mockNewDb,
+      createPouchDbSpy,
+    };
   };
 
   beforeEach(() => {
@@ -206,20 +214,28 @@ describe("IndexeddbMigrationService", () => {
       service.runBackgroundMigration(session, mockDb);
 
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
+      // no connection to the server is opened (and left open)
+      expect(mockDb.openRemoteReplicationSource).not.toHaveBeenCalled();
     });
 
     it("offers to switch only after both the replication into the new db and the sync of the old db completed", async () => {
       service.migrationPending = true;
-      const { mockDb, localSyncState, mockNewDb, createPouchDbSpy } =
-        mockPouchDbCreation();
+      const {
+        mockDb,
+        localSyncState,
+        remoteSource,
+        mockNewDb,
+        createPouchDbSpy,
+      } = mockPouchDbCreation();
 
       service.runBackgroundMigration(session, mockDb);
       await flushPromises();
       expect(createPouchDbSpy).toHaveBeenCalledWith("abc-123-uuid-app");
-      expect(mockNewDb.replicate.from).toHaveBeenCalledWith(
-        mockDb.getRemotePouchDB(),
-        { batch_size: 500 },
-      );
+      // a connection of its own, so that the old db's sync does not purge what it reports as not permitted
+      expect(mockNewDb.replicate.from).toHaveBeenCalledWith(remoteSource, {
+        batch_size: 500,
+      });
+      expect(remoteSource.close).toHaveBeenCalled();
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
 
       localSyncState.next(SyncState.COMPLETED);
@@ -318,7 +334,8 @@ describe("IndexeddbMigrationService", () => {
       "keeps the old db if the replication into the new db fails: $scenario",
       async ({ error, reported }) => {
         service.migrationPending = true;
-        const { mockDb, localSyncState, mockNewDb } = mockPouchDbCreation();
+        const { mockDb, localSyncState, remoteSource, mockNewDb } =
+          mockPouchDbCreation();
         mockNewDb.replicate.from.mockRejectedValue(error);
         const warnSpy = vi
           .spyOn(Logging, "warn")
@@ -330,6 +347,7 @@ describe("IndexeddbMigrationService", () => {
 
         expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
         expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
+        expect(remoteSource.close).toHaveBeenCalled();
         expect(warnSpy).toHaveBeenCalledTimes(reported ? 1 : 0);
         expect(eventTrackSpy).toHaveBeenCalledWith(
           "migration_replication-failed",

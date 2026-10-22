@@ -448,6 +448,26 @@ export class RemotePouchDatabase extends PouchDatabase {
     return collected;
   }
 
+  /**
+   * Open a separate connection to the same remote database, authenticated the same way,
+   * whose requests do not affect the state of this one: it does not track lost permissions.
+   *
+   * Close it with `close()` once done - never with `destroy()`,
+   * which would delete the database on the server.
+   */
+  openSeparateConnection(): PouchDB.Database {
+    const connection = new RemotePouchDatabase(
+      this.dbName,
+      this.authService,
+      undefined,
+      this.ngZone,
+    );
+    connection.init(undefined, {
+      unauthenticatedSession: this.unauthenticatedSession,
+    });
+    return connection.getPouchDB();
+  }
+
   override supportsFind(): boolean {
     return true;
   }

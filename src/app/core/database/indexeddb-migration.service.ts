@@ -135,8 +135,11 @@ export class IndexeddbMigrationService {
     if (!(db instanceof SyncedPouchDatabase)) {
       return;
     }
-    const remotePouchDB = db.getRemotePouchDB();
-    if (!remotePouchDB || !this.navigator?.onLine) {
+    // check for connectivity first, so that no remote connection is opened (and left open) when offline
+    const remotePouchDB = this.navigator?.onLine
+      ? db.openRemoteReplicationSource()
+      : undefined;
+    if (!remotePouchDB) {
       Logging.debug(
         "IndexeddbMigration: skipping background migration (offline or no remote)",
       );
@@ -149,6 +152,10 @@ export class IndexeddbMigrationService {
     this.migrateDatabase(newDbNames["app"], remotePouchDB, db, session);
   }
 
+  /**
+   * @param remotePouchDB a connection of its own to the remote database (closed here once the replication ended),
+   *                      so that the replication from scratch does not report lost permissions to the old DB's sync
+   */
   private migrateDatabase(
     newDbName: string,
     remotePouchDB: PouchDB.Database,
@@ -178,9 +185,11 @@ export class IndexeddbMigrationService {
     };
 
     // Background replication from remote → new local DB
+    // (PouchDB's replication is only a thenable without `finally()`, so the source is closed in both handlers)
     newDb.replicate
       .from(remotePouchDB, { batch_size: 500 })
       .then(() => {
+        this.closePouchDb(remotePouchDB);
         Logging.debug(
           `IndexeddbMigration: replication into "${newDbName}" completed`,
         );
@@ -188,6 +197,7 @@ export class IndexeddbMigrationService {
         checkBothComplete();
       })
       .catch(async (err) => {
+        this.closePouchDb(remotePouchDB);
         if (
           isReplicationConnectivityError(err) ||
           isReplicationUnauthorizedError(err)
@@ -232,7 +242,7 @@ export class IndexeddbMigrationService {
 
   private closePouchDb(db: PouchDB.Database): void {
     db.close().catch((err) =>
-      Logging.debug("IndexeddbMigration: failed to close new db", err),
+      Logging.debug("IndexeddbMigration: failed to close db", err),
     );
   }
 

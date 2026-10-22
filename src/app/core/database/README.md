@@ -97,6 +97,9 @@ For an existing user, the migration does not copy the local database. It runs in
 
 1. If online, `runBackgroundMigration()` replicates the "app" database from the server into the new local database.
    The old database keeps syncing as usual.
+   The replication uses a connection of its own (`SyncedPouchDatabase.openRemoteReplicationSource()`), closed when it ends:
+   replicating from scratch, the server reports every document the user may not read as a lost permission,
+   which would otherwise make the old database's next sync purge each of them before completing.
 2. When both this replication and the old database's sync have completed, the user is asked to reload.
 3. Only when the user confirms, a final sync pushes all local changes of the old database to the server,
    while a modal progress dialog keeps the user from making further changes.
