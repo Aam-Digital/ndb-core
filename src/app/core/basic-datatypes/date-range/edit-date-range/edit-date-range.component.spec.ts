@@ -120,6 +120,54 @@ describe("EditDateRangeComponent", () => {
     );
   });
 
+  describe("predefined periods", () => {
+    const projectPhase = {
+      label: "Project phase",
+      startOffsets: [{ amount: 0, unit: "years" as const }],
+      endOffsets: [{ amount: 2, unit: "years" as const }],
+    };
+
+    function openedPanelOptions() {
+      component.openPanel(new Event("click"));
+      return dialog.open.mock.calls[0][1].data.rangeOptions;
+    }
+
+    it.each([
+      ["no 'additional' config", undefined, periodRangeOptions],
+      ["an 'additional' config that is not a list", "none", periodRangeOptions],
+      ["an empty list", [], []],
+      ["a list of periods", [projectPhase], [projectPhase]],
+    ])(
+      "should offer the periods of %s in the panel",
+      (_, additional, expected) => {
+        fixture.componentRef.setInput("formFieldConfig", {
+          id: "period",
+          additional,
+        });
+
+        expect(openedPanelOptions()).toEqual(expected);
+      },
+    );
+
+    it("should set the field to the range of a configured period selected in the panel", () => {
+      fixture.componentRef.setInput("formFieldConfig", {
+        id: "period",
+        additional: [projectPhase],
+      });
+      dialog.open.mockReturnValue(
+        mockMatDialogRef({ selectedOptionValues: ["0"] }),
+      );
+
+      component.openPanel(new Event("click"));
+
+      const year = new Date().getFullYear();
+      expect(component.formControl.value).toEqual({
+        start: new Date(year, 0, 1),
+        end: new Date(year + 2, 11, 31),
+      });
+    });
+  });
+
   it("should not open the panel while the field cannot be edited", () => {
     component.formControl.disable();
     fixture.detectChanges();

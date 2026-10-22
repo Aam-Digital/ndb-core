@@ -81,6 +81,11 @@ can be missing. Its datatype class reuses the `date-only` conversion for both da
 component (a range picker), display component, sorting (by start date), export (one column per date) and
 anonymization. See [`date-range`](date-range/date-range.datatype.ts).
 
+Next to the calendar, its edit component offers predefined periods (the current and the last month, quarter and year).
+The `additional` config of the field can change them: a list in the format of the options of date filters
+(`DateRangeFilterConfigOption`) replaces them, and an empty list offers none. In the Admin UI, a checkbox
+switches them off.
+
 ## Customizing how values are sorted in tables
 
 By default, table columns are sorted on the readable value of the field.

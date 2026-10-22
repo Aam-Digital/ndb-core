@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   effect,
   inject,
@@ -30,6 +31,7 @@ import {
   calculateDateRange,
   periodRangeOptions,
 } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
+import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 import { DateRangeValue } from "../date-range.datatype";
 
 /** Validator for the value of the field: the end must not be before the start. */
@@ -72,8 +74,14 @@ export class EditDateRangeComponent
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
 
-  /** the predefined ranges offered next to the calendar */
-  readonly rangeOptions = periodRangeOptions;
+  /**
+   * The predefined ranges offered next to the calendar: the ones in the `additional` config of the field
+   * (an empty list offers none), or the default ones.
+   */
+  readonly rangeOptions = computed<DateRangeFilterConfigOption[]>(() => {
+    const configured = this.formFieldConfig()?.additional;
+    return Array.isArray(configured) ? configured : periodRangeOptions;
+  });
 
   /** the two inputs of the range picker, which are kept in sync with the form control of the field */
   readonly range = new FormGroup({
@@ -167,7 +175,7 @@ export class EditDateRangeComponent
         minWidth: "400px",
         data: {
           dateRange: new DateRange(start ?? null, end ?? null),
-          rangeOptions: this.rangeOptions,
+          rangeOptions: this.rangeOptions(),
           hideAllOption: true,
         },
       })
@@ -188,7 +196,7 @@ export class EditDateRangeComponent
       return { start: null, end: null };
     }
     if (second === undefined) {
-      const range = calculateDateRange(this.rangeOptions[Number(first)]);
+      const range = calculateDateRange(this.rangeOptions()[Number(first)]);
       return { start: startOfDay(range.start), end: startOfDay(range.end) };
     }
     return { start: fromDateString(first), end: fromDateString(second) };
