@@ -87,29 +87,6 @@ function getRowKey(row: AffectedEntity): string {
   return `${row.id}|${row.targetFieldId}`;
 }
 
-/** The values that the other values do not have (values like configurable enums are objects, the same if they have the same id) */
-function getMissingValues(values: unknown[], other: unknown[]): unknown[] {
-  type Value = { id?: unknown } | undefined;
-  return differenceWith(
-    values as Value[],
-    other as Value[],
-    (a, b) => isEqual(a, b) || (a?.id !== undefined && a.id === b?.id),
-  );
-}
-
-/** A copy of the entity that has only the given values in the field, or undefined if there are none */
-function withOnlyValues(
-  entity: Entity,
-  fieldId: string,
-  values: unknown[],
-  isMultiValue: boolean,
-): Entity | undefined {
-  if (values.length === 0) return undefined;
-  const copy = entity.copy();
-  copy[fieldId] = isMultiValue ? values : values[0];
-  return copy;
-}
-
 /**
  * A confirmation dialog for the user to review and confirm
  * the automated updates of fields in related entities,
@@ -260,40 +237,67 @@ export class AutomatedFieldUpdateComponent {
         .map((entity) => entity.relatedReferenceField)
         .filter(isChanged),
     ]).filter((fieldId) => !!fieldId);
-    return fieldIds.map((fieldId) => ({
-      field: this.entityFormService.extendFormFieldConfig(fieldId, entityType),
-      isChanged: isChanged(fieldId),
-      ...this.getRemovedAndAdded(trigger, fieldId),
-    }));
+    return fieldIds.map((fieldId) => {
+      const field = this.entityFormService.extendFormFieldConfig(
+        fieldId,
+        entityType,
+      );
+      return {
+        field,
+        isChanged: isChanged(fieldId),
+        ...this.getRemovedAndAdded(trigger, field),
+      };
+    });
   }
 
   /** What a change of the changed entity removed from the old value of the field, and what it added */
   private getRemovedAndAdded(
     trigger: UpdateTrigger,
-    fieldId: string,
+    field: FormFieldConfig,
   ): Pick<TriggerChange, "removed" | "added"> {
-    const oldValue = trigger.before[fieldId];
-    const newValue = trigger.entity[fieldId];
-    const isMultiValue = Array.isArray(oldValue) || Array.isArray(newValue);
-    const toValues = (value: unknown) =>
-      isEmptyValue(value) ? [] : asArray<unknown>(value);
-    const oldValues = toValues(oldValue);
-    const newValues = toValues(newValue);
+    const oldValues = this.getValues(trigger.before, field);
+    const newValues = this.getValues(trigger.entity, field);
 
     return {
-      removed: withOnlyValues(
+      removed: this.withOnlyValues(
         trigger.before,
-        fieldId,
-        getMissingValues(oldValues, newValues),
-        isMultiValue,
+        field,
+        differenceWith(oldValues, newValues, isEqual),
       ),
-      added: withOnlyValues(
+      added: this.withOnlyValues(
         trigger.entity,
-        fieldId,
-        getMissingValues(newValues, oldValues),
-        isMultiValue,
+        field,
+        differenceWith(newValues, oldValues, isEqual),
       ),
     };
+  }
+
+  /** The values of the field of the entity as a list (database format), which is empty if there is no value */
+  private getValues(entity: Entity, field: FormFieldConfig): unknown[] {
+    const value = this.entitySchemaService.valueToDatabaseFormat(
+      entity[field.id],
+      field,
+      entity,
+    );
+    return isEmptyValue(value) ? [] : asArray<unknown>(value);
+  }
+
+  /**
+   * A copy of the entity that has only the given values (database format) in the field, to display them,
+   * or undefined if there are none.
+   */
+  private withOnlyValues(
+    entity: Entity,
+    field: FormFieldConfig,
+    values: unknown[],
+  ): Entity | undefined {
+    if (values.length === 0) return undefined;
+    const copy = entity.copy();
+    copy[field.id] = this.entitySchemaService.valueToEntityFormat(
+      field.isArray ? values : values[0],
+      field,
+    );
+    return copy;
   }
 
   constructor() {
@@ -312,25 +316,19 @@ export class AutomatedFieldUpdateComponent {
     };
   }
 
-  /** The current values that the shown value does not have any more, as they are removed by it */
+  /** The saved values that the shown value does not have any more, as they are removed by it */
   private getRemovedEntity(
     row: AffectedEntity,
     value: unknown,
   ): Entity | undefined {
-    const current = row.affectedEntity?.[row.targetFieldId];
-    if (!row.addToExisting || !Array.isArray(current)) {
+    if (!row.addToExisting || !Array.isArray(row.savedValue)) {
       return undefined;
     }
 
-    const shown = asArray<unknown>(
-      this.entitySchemaService.valueToEntityFormat(value, row.selectedField) ??
-        [],
-    );
-    return withOnlyValues(
+    return this.withOnlyValues(
       row.affectedEntity,
-      row.targetFieldId,
-      getMissingValues(current, shown),
-      true,
+      row.selectedField,
+      differenceWith(row.savedValue, asArray<unknown>(value ?? []), isEqual),
     );
   }
 

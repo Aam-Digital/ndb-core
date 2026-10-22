@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { Entity } from "#src/app/core/entity/model/entity";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { AutomatedFieldUpdateComponent } from "./automated-field-update.component";
 import { AffectedEntity, EnteredValue } from "./automated-field-update.types";
 
@@ -17,9 +18,15 @@ function summarizeGroups(
   }));
 }
 
+/** Values like the options of an enum are stored by their id */
+function toId(value: unknown): unknown {
+  return value && typeof value === "object" && "id" in value ? value.id : value;
+}
+
 describe("AutomatedFieldUpdateComponent", () => {
   let component: AutomatedFieldUpdateComponent;
   let recalculate: ReturnType<typeof vi.fn>;
+  let fieldConfigs: Record<string, FormFieldConfig>;
   let dialogRef: { close: ReturnType<typeof vi.fn> };
 
   const FIRST = "Entity:first";
@@ -91,13 +98,16 @@ describe("AutomatedFieldUpdateComponent", () => {
         { provide: MatDialogRef, useValue: dialogRef },
         {
           provide: EntityFormService,
-          useValue: { extendFormFieldConfig: (id: string) => ({ id }) },
+          useValue: {
+            extendFormFieldConfig: (id: string) => fieldConfigs[id] ?? { id },
+          },
         },
         {
           provide: EntitySchemaService,
           useValue: {
             valueToEntityFormat: (value: unknown) => value,
-            valueToDatabaseFormat: (value: unknown) => value,
+            valueToDatabaseFormat: (value: unknown) =>
+              Array.isArray(value) ? value.map(toId) : toId(value),
           },
         },
       ],
@@ -118,6 +128,7 @@ describe("AutomatedFieldUpdateComponent", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     recalculate = vi.fn(suggestAbove);
+    fieldConfigs = {};
     dialogRef = { close: vi.fn() };
   });
 
@@ -346,13 +357,14 @@ describe("AutomatedFieldUpdateComponent", () => {
     const B = { id: "b", label: "B" };
     const C = { id: "c", label: "C" };
 
-    function change(before: unknown, after: unknown) {
+    function change(before: unknown, after: unknown, isArray: boolean) {
       const trigger = {
         entity: new Entity("trigger"),
         before: new Entity("trigger"),
       };
       Object.assign(trigger.before, { center: before });
       Object.assign(trigger.entity, { center: after });
+      fieldConfigs["center"] = { id: "center", isArray };
       initDialog(
         [{ ...affected(FIRST, ["a"], 1), sourceFieldId: "center" }],
         trigger,
@@ -365,28 +377,40 @@ describe("AutomatedFieldUpdateComponent", () => {
       };
     }
 
+    // the values are shown from their database format (the ids of the options)
     it.each([
-      ["a value of a list", [A, B], [B, C], [A], [C]],
+      ["a value of a list", true, [A, B], [B, C], ["a"], ["c"]],
       [
         "a value that only has another label, as the same one",
+        true,
         [A],
         [{ id: "a", label: "A (renamed)" }],
         undefined,
         undefined,
       ],
-      ["all values of a list", [A], [], [A], undefined],
-      ["a single value that is replaced", "old", "new", "old", "new"],
-      ["a single value that is cleared", "old", undefined, "old", undefined],
-      ["a single value that is set", undefined, "new", undefined, "new"],
-    ])("should show %s", (_, before, after, expectedRemoved, expectedAdded) => {
-      const result = change(before, after);
+      ["all values of a list", true, [A], [], ["a"], undefined],
+      ["a single value that is replaced", false, "old", "new", "old", "new"],
+      [
+        "a single value that is cleared",
+        false,
+        "old",
+        undefined,
+        "old",
+        undefined,
+      ],
+      ["a single value that is set", false, undefined, "new", undefined, "new"],
+    ])(
+      "should show %s",
+      (_, isArray, before, after, expectedRemoved, expectedAdded) => {
+        const result = change(before, after, isArray);
 
-      expect(result.removed).toEqual(expectedRemoved);
-      expect(result.added).toEqual(expectedAdded);
-    });
+        expect(result.removed).toEqual(expectedRemoved);
+        expect(result.added).toEqual(expectedAdded);
+      },
+    );
 
     it("should show neither removed nor added values if the field did not change", () => {
-      const result = change([A], [A]);
+      const result = change([A], [A], true);
 
       expect(result).toEqual({
         isChanged: false,
@@ -397,13 +421,17 @@ describe("AutomatedFieldUpdateComponent", () => {
   });
 
   describe("removed values", () => {
-    const A = { id: "a", label: "A" };
-    const B = { id: "b", label: "B" };
+    const A = "a";
+    const B = "b";
 
-    function collecting(newValue: unknown[], currentValue: unknown[]) {
-      const row = affected(FIRST, newValue, 1);
-      Object.assign(row.affectedEntity, { tags: currentValue });
-      return { ...row, addToExisting: true };
+    /** a field that collects values, with the given suggested and saved values (database format) */
+    function collecting(newValue: string[], savedValue: string[]) {
+      return {
+        ...affected(FIRST, newValue, 1),
+        savedValue,
+        addToExisting: true,
+        selectedField: { id: "tags", isArray: true },
+      };
     }
 
     function removedValues() {
@@ -412,20 +440,14 @@ describe("AutomatedFieldUpdateComponent", () => {
 
     it.each([
       [
-        "the current values that the suggested value does not have any more",
+        "the saved values that the suggested value does not have any more",
         [A],
         [A, B],
         [B],
       ],
-      ["no removed values if all current values stay", [A, B], [A], undefined],
-      [
-        "no removal for a value with another label but the same id",
-        [{ id: "a", label: "A (renamed)" }],
-        [A],
-        undefined,
-      ],
-    ])("should show %s", (_, newValue, currentValue, expected) => {
-      initDialog([collecting(newValue, currentValue)]);
+      ["no removed values if all saved values stay", [A, B], [A], undefined],
+    ])("should show %s", (_, newValue, savedValue, expected) => {
+      initDialog([collecting(newValue, savedValue)]);
 
       expect(removedValues()).toEqual(expected);
     });
@@ -444,9 +466,7 @@ describe("AutomatedFieldUpdateComponent", () => {
     });
 
     it("should not show removed values for a field that replaces the value", () => {
-      const replacing = affected(FIRST, [A], 1);
-      Object.assign(replacing.affectedEntity, { tags: [A, B] });
-      initDialog([replacing]);
+      initDialog([{ ...affected(FIRST, [A], 1), savedValue: [A, B] }]);
 
       expect(row(FIRST).removedEntity).toBeUndefined();
     });
