@@ -76,7 +76,7 @@
         entity of group.rows;
         track entity.id + "|" + entity.targetFieldId
       ) {
-        <tr [class]="'level-' + entity.level">
+        <tr [class.above]="entity.level > 1" [style.--level]="entity.level">
           <td>
             <app-entity-block [entityId]="entity.id"></app-entity-block>
             @if (entity.level > 1) {

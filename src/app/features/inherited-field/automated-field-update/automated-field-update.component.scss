@@ -62,12 +62,9 @@ table + .trigger {
 }
 
 // records further up the hierarchy are indented, with a line along the way from the records they are reached from
-@for $level from 2 through 10 {
-  tr.level-#{$level} > td:first-child {
-    padding-left: calc(#{sizes.$large} * #{$level - 1});
-    border-left: 2px solid colors.$border-color;
-    margin-left: sizes.$small;
-  }
+tr.above > td:first-child {
+  padding-left: calc(#{sizes.$large} * (var(--level) - 1));
+  border-left: 2px solid colors.$border-color;
 }
 
 .hint-text {
