@@ -50,20 +50,15 @@ ENV KEYCLOAK_URL=""
 ENV KEYCLOAK_REALM=""
 
 # The url to the backend API, see https://github.com/Aam-Digital/aam-services
-# Target for the app's /api (and deprecated /query) path. Only scheme, host and
-# port (e.g. "http://aam-backend-service:8080"), no path: the request path is
-# passed on as is. Same resolvability constraint as COUCHDB_URL above.
+# Target for the app's /api path. Only scheme, host and port (e.g.
+# "http://aam-backend-service:8080"), no path: the request path is passed on as
+# is. Same resolvability constraint as COUCHDB_URL above.
 #
-# Left empty here, with the real default applied in CMD below, so that an
-# unset API_URL is distinguishable from an explicitly set one - that is what
-# lets the deprecated QUERY_URL still win (same pattern as COUCHDB_DIRECT_URL
-# above). Giving this a non-empty default instead would make the fallback in
-# CMD dead code.
-ENV API_URL=""
-# @deprecated: the former name of API_URL, still honoured so that a deployment
-# on an older docker-compose config keeps working when it pulls this image.
-# Remove with the next major release.
-ENV QUERY_URL=""
+# The default is an IP, not "localhost": nginx's `resolver` only queries DNS and
+# never reads /etc/hosts, so "localhost" would depend on the DNS server
+# answering for it. An empty value falls back to this default as well (see CMD),
+# so e.g. `API_URL: ${UNSET_VAR}` in a compose file cannot stop nginx from starting.
+ENV API_URL="http://127.0.0.1:3000"
 
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
@@ -87,9 +82,6 @@ ENV CSP_EXTRA_FRAME_ANCESTORS=""
 # re-resolve upstreams (CouchDB, backend API, Nominatim) at runtime with IPv6 disabled (see
 # default.conf).
 #
-# The API_URL fallback is an IP, not "localhost": nginx's `resolver` only queries DNS and
-# never reads /etc/hosts, so "localhost" would depend on the DNS server answering for it.
-#
 # The awk program below reads `$1`/`$2`, not `$$1`/`$$2` as it did previously. This is
 # load-bearing, not cosmetic: awk reads `$$1` as `$($1)`, which never matches a nameserver
 # line, so RESOLVER always fell through to the 8.8.8.8 fallback. 8.8.8.8 cannot resolve
@@ -98,7 +90,7 @@ ENV CSP_EXTRA_FRAME_ANCESTORS=""
 CMD export RESOLVER=$(awk '$1=="nameserver" && $2 !~ /:/ {print $2}' /etc/resolv.conf | xargs) &&\
     if [ -z "$RESOLVER" ]; then export RESOLVER=8.8.8.8; fi &&\
     export COUCHDB_DIRECT_URL="${COUCHDB_DIRECT_URL:-$COUCHDB_URL}" &&\
-    export API_URL="${API_URL:-${QUERY_URL:-http://127.0.0.1:3000}}" &&\
+    export API_URL="${API_URL:-http://127.0.0.1:3000}" &&\
     if [ -n "$KEYCLOAK_URL" ] && [ -n "$KEYCLOAK_REALM" ]; then\
       envsubst '$$KEYCLOAK_URL $$KEYCLOAK_REALM' < /etc/nginx/keycloak.json.template > /usr/share/nginx/html/assets/keycloak.json ||\
         echo 'WARN: KEYCLOAK_URL/KEYCLOAK_REALM are set but assets/keycloak.json could not be written (e.g. still bind-mounted read-only by an older deployment config) - serving the existing file unchanged' >&2;\

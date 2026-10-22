@@ -51,33 +51,7 @@ class ReportConfig extends Entity {
   mode?: string;
 
   /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Omitted for canonical configs (backend normalizes legacy v1 docs on read).
-   */
-  @DatabaseField() version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) list of arguments needed for the sql query. Placeholder "?" will be replaced.
-   */
-  @DatabaseField() neededArgs?: string[] = [];
-
-  /**
-   * @deprecated Consolidated into {@link reportDefinition} by the one-time CLI migration
-   * (consolidate-report-definition), which copies this into `reportDefinition` without deleting
-   * it. Kept during the coexistence period so legacy docs still load and old code keeps working;
-   * a follow-up migration removes it once every environment runs the new code.
-   */
-  @DatabaseField() aggregationDefinitions?: any[];
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (sql v1 only) the definition to calculate the report
-   */
-  @DatabaseField() aggregationDefinition?: string;
-
-  /**
-   *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
+   *  (sql only) transformations that are applied to input variables (e.g. startDate, endDate)
    *  example: {startDate: ["SQL_FROM_DATE"], endDate: ["SQL_TO_DATE"]}
    */
   @DatabaseField({
@@ -94,8 +68,6 @@ class ReportConfig extends Entity {
    * - "sql":       {@link ReportDefinitionDto}[] — SQL queries and optional groups.
    * - "reporting": {@link Aggregation}[] — in-browser aggregation definitions.
    * - "exporting": {@link ExportColumnConfig}[] — export column definitions.
-   *
-   * Consolidated from the former `aggregationDefinitions` so all report modes share one field.
    */
   @DatabaseField({
     label: $localize`:ReportConfig:Report definition`,
@@ -154,24 +126,6 @@ export interface SqlReport extends ReportConfig {
   mode: "sql";
 
   /**
-   * @deprecated (will be removed completely after server-side migration)
-   * Legacy version field. Omitted in canonical configs; backend normalizes on read.
-   */
-  version?: number;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) a valid SQL SELECT statement, can contain "?" or "$name" placeholders
-   */
-  aggregationDefinition?: string;
-
-  /**
-   * @deprecated (will be removed completely after server-side migration)
-   * (v1 only) list of argument names passed into the sql statement
-   */
-  neededArgs?: string[];
-
-  /**
    * see ReportConfig docs
    */
   transformations: {
@@ -188,10 +142,9 @@ export interface SqlReport extends ReportConfig {
  * Whether a report's results should be rendered as a hierarchical group/count
  * table (`sql-v2-table`) rather than a flat tabular table (`object-table`).
  *
- * Derived purely from the canonical config structure (no version flag):
+ * Derived from the config structure:
  * a report is hierarchical when its `reportDefinition` contains a group
  * (`groupTitle`) or more than one top-level item; otherwise it is tabular.
- * Legacy v1 configs (normalized to a single ungrouped query) resolve to tabular.
  */
 export function isHierarchicalReport(
   report: ReportEntity | undefined,

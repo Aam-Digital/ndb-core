@@ -84,17 +84,6 @@ describe("SelectReportComponent", () => {
     expect(component.isDateRangeReport()).toBe(true);
   });
 
-  it("should display date range filter when sql report supports it", () => {
-    const report = new ReportEntity();
-    report.mode = "sql";
-    report.neededArgs = ["from", "to"];
-    fixture.componentRef.setInput("reports", [report]);
-    fixture.detectChanges();
-
-    expect(component.selectedReport()).toBe(report);
-    expect(component.isDateRangeReport()).toBe(true);
-  });
-
   it("should hide date range filter when sql report does not have these args", () => {
     const report = new ReportEntity();
     report.mode = "sql";
@@ -124,8 +113,10 @@ describe("SelectReportComponent", () => {
   it("should not reset dates before calculation when sql report is a DateRangeReport", () => {
     const report = new ReportEntity();
     report.mode = "sql";
+    report.reportDefinition = [
+      { query: "SELECT * FROM Child WHERE d BETWEEN $startDate AND $endDate" },
+    ];
     fixture.componentRef.setInput("reports", [report]);
-    report.neededArgs = ["from", "to"];
     fixture.detectChanges();
     component.fromDate.set(new Date());
     component.toDate.set(new Date());
