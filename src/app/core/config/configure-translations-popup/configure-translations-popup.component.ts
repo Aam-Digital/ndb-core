@@ -10,9 +10,11 @@ import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { availableLocales } from "../../language/languages";
-import { DEFAULT_LANGUAGE } from "../../language/language-statics";
-import { isLocaleTranslationMap } from "../../language/active-locale";
-import { TranslatableText } from "../multi-lingual-config";
+import {
+  getActiveLocale,
+  isLocaleTranslationMap,
+} from "../../language/active-locale";
+import { pickForLocale, TranslatableText } from "../multi-lingual-config";
 
 export interface ConfigureTranslationsResult {
   /** the new value, or undefined when every language was cleared */
@@ -33,12 +35,10 @@ interface TranslationRow {
 }
 
 /**
- * Edit the translations of one configurable text
+ * Edit the translations of one configurable text.
  *
- * Works on the *raw* config value (plain string or per-language map) and returns
- * a new raw value - it never resolves anything, so no language can be lost here.
- * A plain string that no further language is added to stays a plain string,
- * keeping configs that don't need multiple languages simple.
+ * Works on the *raw* value and returns a raw value, never resolving anything, so
+ * no language can be lost. A plain string with no language added stays a string.
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,11 +68,13 @@ export class ConfigureTranslationsPopupComponent {
   private initialTextFor(locale: string): string {
     const value = this.data?.value;
     if (isLocaleTranslationMap(value)) {
-      return value[locale] ?? "";
+      // also reads a hand-written base-language key (`en` for `en-US`), so that
+      // saving normalises it to the locale id instead of dropping it
+      return pickForLocale(value, locale) ?? "";
     }
-    // a plain string so far: it is the text everyone sees today, so it becomes
-    // the default language's translation
-    return locale === DEFAULT_LANGUAGE && typeof value === "string"
+    // a plain string becomes the translation of the language the admin is reading
+    // it in: on a German instance, filing it under English would show the wrong text
+    return locale === getActiveLocale() && typeof value === "string"
       ? value
       : "";
   }
@@ -87,11 +89,10 @@ export class ConfigureTranslationsPopupComponent {
   }
 
   /**
-   * Build the new raw value. Only the default language on its own collapses to a
-   * plain string ({@link initialTextFor} reads one back as that language's text),
-   * and only if the dialog was opened with a plain string. A map stays a map:
-   * saved as a plain string, its text would look unchanged to the config merge,
-   * which would then restore the translations that were just removed.
+   * Build the new raw value. Only the active language on its own collapses back to
+   * a plain string, and only if the dialog was opened with one: a map saved as a
+   * string would look unchanged to the config merge, which would then restore the
+   * translations just removed.
    */
   private buildValue(): TranslatableText | undefined {
     const filled = this.rows.filter((row) => !!row.text?.trim());
@@ -101,7 +102,7 @@ export class ConfigureTranslationsPopupComponent {
     }
     if (
       filled.length === 1 &&
-      filled[0].locale === DEFAULT_LANGUAGE &&
+      filled[0].locale === getActiveLocale() &&
       !isLocaleTranslationMap(this.data?.value)
     ) {
       return filled[0].text.trim();

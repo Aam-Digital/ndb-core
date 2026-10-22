@@ -51,10 +51,7 @@ export class AdminAiAgentComponent {
         .then((document) => [document])
         .catch(() => []),
       this.entityMapper.loadType(ConfigurableEnum),
-      this.entityMapper
-        .load(SiteSettings, SiteSettings.ENTITY_ID)
-        .then((document) => [document])
-        .catch(() => []),
+      this.entityMapper.loadType(SiteSettings),
       this.entityMapper.loadType(ReportEntity),
       this.entityMapper.loadType(PublicFormConfig),
     ];

@@ -29,13 +29,7 @@ textarea.text-field {
 }
 
 .translations-button {
-  flex: 0 0 auto;
   color: colors.$muted;
-  // keep the button from dictating the height of the form field
-  --mdc-icon-button-state-layer-size: 24px;
-  width: 24px;
-  height: 24px;
-  padding: 0;
 }
 
 // highlight the button when translations for several languages exist

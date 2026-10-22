@@ -10,10 +10,8 @@ import { TranslatableText } from "./multi-lingual-config";
 /**
  * A user-facing text that admins can configure in several languages.
  *
- * The transforms stay the identity on purpose: the entity holds the raw value,
- * because resolving here would make every `entityMapper.save()` write back the
- * single resolved string and drop all other languages. This datatype only
- * declares how the value reaches the screen.
+ * The transforms stay the identity on purpose, so the entity keeps the raw value:
+ * resolving here would make every `save()` drop the other languages.
  */
 @Injectable()
 export class TranslatableTextDatatype extends DefaultDatatype<

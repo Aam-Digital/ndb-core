@@ -16,10 +16,7 @@ import { UserSettingsService } from "../../site-settings/user-settings.service";
 
 /**
  * Lets a user pick the language for their own account.
- *
- * The choice is stored for this user only, so different users of the same system
- * can each use their own language. Users who never pick one keep following the
- * system-wide default set by an admin.
+ * Users who never pick one keep following the system-wide default.
  */
 @Component({
   selector: "app-user-language-settings",

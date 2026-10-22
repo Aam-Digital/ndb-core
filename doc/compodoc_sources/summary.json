@@ -65,7 +65,7 @@
       },
       {
         "title": "Internationalization (i18n)",
-        "file": "concepts/i18n.md"
+        "file": "../../src/app/core/language/README.md"
       },
       {
         "title": "UX Guidelines",

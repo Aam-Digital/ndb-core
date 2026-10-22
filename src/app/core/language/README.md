@@ -6,11 +6,13 @@ extracted automatically, translated in an external tool and loaded into the app 
 This document covers the full picture:
 
 1. [How translations work](#how-translations-work) — the pipeline from source string to translated app.
-2. [Marking text for translation](#marking-text-for-translation) — how to write localizable components (developer guide).
-3. [Formatting dates, numbers and other data](#formatting-dates-numbers-and-other-data).
-4. [Pluralization and selection (ICU)](#pluralization-and-selection-icu).
-5. [Do's and don'ts](#dos-and-donts).
-6. [Adding a new language](#adding-a-new-language).
+2. [Multi-lingual configuration](#multi-lingual-configuration) — texts admins configure, stored per language.
+3. [Marking text for translation](#marking-text-for-translation) — how to write localizable components (developer guide).
+4. [Formatting dates, numbers and other data](#formatting-dates-numbers-and-other-data).
+5. [Pluralization and selection (ICU)](#pluralization-and-selection-icu).
+6. [Do's and don'ts](#dos-and-donts).
+7. [Right-to-left (RTL) languages](#right-to-left-rtl-languages).
+8. [Adding a new language](#adding-a-new-language).
 
 ---
 
@@ -58,6 +60,131 @@ specific version. Verify that the source terms in POEditor still match the relea
 before triggering (terms may have changed on `master` since the release).
 
 ---
+
+## Multi-lingual configuration
+
+Everything above is about text in the _source code_. Text that admins configure —
+field labels, menu items, tab titles, report titles — lives in the config document
+and in internal entities, so it never passes through POEditor. Those texts can be
+stored in several languages instead.
+
+### The stored format
+
+A configurable text is either a plain string or a per-language map keyed by locale id:
+
+```json
+{ "label": "First name" }
+```
+
+```json
+{ "label": { "en-US": "First name", "de": "Vorname" } }
+```
+
+Both are valid anywhere a text is configured, so single-language configs keep
+working untouched. The type is `TranslatableText` in
+[`multi-lingual-config.ts`](../config/multi-lingual-config.ts).
+
+A value only counts as a translation map if **every** key is a known locale id
+(or the base language of one, e.g. `en` for `en-US`) **and** every value is a
+string. That deliberately conservative check keeps ordinary config objects from
+being mistaken for translations.
+
+Resolution falls back in this order: the active locale → its base language → the
+default language (`en-US`) → the default's base language → the first non-empty
+entry. A missing translation therefore shows _some_ text rather than nothing.
+
+> **Register a new locale before any config ships text in it.** Until a locale id
+> is listed in `AVAILABLE_LOCALES` ([`available-locales.ts`](./available-locales.ts)),
+> a map containing that key is not recognised as a translation map and renders as
+> `[object Object]`.
+
+### Reading config: resolved vs raw
+
+`ConfigService` exposes two views of the same document:
+
+| Use                                 | Method                                  | Returns                                   |
+| ----------------------------------- | --------------------------------------- | ----------------------------------------- |
+| Displaying something                | `getConfig()` / `getAllConfigs()`       | texts resolved to the active language     |
+| Reading it in order to save it back | `getRawConfig()` / `getAllRawConfigs()` | the stored value, translation maps intact |
+
+**Every read-modify-save flow must use the raw accessors.** Saving a resolved
+value would replace the map with the single language the editing admin happens to
+be using, silently dropping every other translation.
+
+The raw accessors return `RawConfig<T>`, which widens the known display properties
+(`label`, `labelShort`, `labelPlural`, `description`, `title`, `header`) to
+`TranslatableText`. Code that treats such a text as a plain `string` then fails to
+compile — that is the point of the type.
+
+When saving, merge the edited object back onto the raw one with
+`mergeLocaleTranslations()`. It keeps the other languages and only overwrites the
+active language's entry, and only where the text actually changed.
+
+### Resolving a text in code
+
+These all come from [`active-locale.ts`](./active-locale.ts) and use the active
+locale, so no component needs to inject `LOCALE_ID` or know the list of locales:
+
+| Helper                                 | Use                                                         |
+| -------------------------------------- | ----------------------------------------------------------- |
+| `resolveLocaleText(value)`             | one text; anything that is not a map is returned unchanged  |
+| `resolveLocaleConfig(value)`           | a whole config tree, deep-resolved into a new object        |
+| `mergeLocaleTranslations(raw, edited)` | merge an edited object back onto its raw counterpart        |
+| `isLocaleTranslationMap(value)`        | whether a value is a per-language map                       |
+| `getActiveLocale()`                    | the active locale id, e.g. to store a text edited in the UI |
+
+In templates use the `localeText` pipe instead:
+
+```html
+{{ report.title | localeText }}
+```
+
+`Entity.toString()` already resolves `toStringAttributes`, so an entity whose
+title is a map prints correctly with no extra work.
+
+> `active-locale.ts` intentionally has no `@angular/*` imports and reads the locale
+> from module state rather than DI, because `Entity` itself needs it and DI would
+> create a circular import.
+
+### Multi-lingual fields on an entity
+
+An internal entity's own texts (e.g. `ReportConfig.title`,
+`PublicFormConfig.description`) use the `translatable-text` datatype:
+
+```ts
+@DatabaseField({
+  label: $localize`:ReportConfig:Title`,
+  dataType: TranslatableTextDatatype.dataType,
+})
+title: TranslatableText;
+```
+
+That one line gives the field a translations editor, sorting and filtering by the
+displayed text, and resolved CSV exports. The datatype's transforms are the
+identity on purpose: the entity holds the raw value, because resolving on save
+would drop the other languages.
+
+Admins edit these through `TranslatableTextInputComponent`, which shows the active
+language inline and opens `ConfigureTranslationsPopupComponent` for the full
+per-language list.
+
+### Which language a user sees
+
+The active locale is stored in `localStorage` and read at bootstrap. What puts it
+there:
+
+- **At startup** — whatever the language switcher last stored. If nothing is
+  stored, `SiteSettings.defaultLanguage` (the system-wide default) is applied.
+- **On every login** — the user's own `UserSettings.defaultLanguage`, or, if they
+  have none, the site default. Resolving this on each login stops a shared browser
+  from keeping the previous user's choice.
+
+`UserSettings` is a separate entity type from `SiteSettings` on purpose: permissions
+are granted per entity type, so sharing one type would mean granting every user
+write access to the site branding.
+
+Switching the language reloads the page, because the `$localize` translations and
+the active locale are both fixed at bootstrap.
 
 ## Marking text for translation
 

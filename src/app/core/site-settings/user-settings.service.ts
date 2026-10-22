@@ -9,9 +9,8 @@ import { UserSettings } from "./user-settings";
  * Settings a user has chosen for their own account, stored as a
  * {@link UserSettings} document under their account id.
  *
- * Deliberately separate from {@link SiteSettingsService}, which also applies the
- * site branding that individual users must not be able to override - permissions
- * are granted per entity type, so these have to be different types.
+ * Separate from {@link SiteSettingsService} because permissions are granted per
+ * entity type: one shared type would let any user edit the site branding.
  */
 @Injectable({ providedIn: "root" })
 export class UserSettingsService {
@@ -23,8 +22,8 @@ export class UserSettingsService {
   }
 
   /**
-   * @param userId defaults to the logged-in user; pass it to keep a read and a
-   *   following write on the same account even if the session changes between
+   * @param userId defaults to the logged-in user; pass it to keep a read and the
+   *   write that follows on the same account even if the session changes meanwhile
    */
   async loadUserSettings(
     userId = this.userId,

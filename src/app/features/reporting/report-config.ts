@@ -3,7 +3,6 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { Aggregation } from "./data-aggregation.service";
 import { ExportColumnConfig } from "../../core/export/data-transformation-service/export-column-config";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
-import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
 import { TranslatableTextDatatype } from "../../core/config/translatable-text.datatype";
 import { TranslatableText } from "../../core/config/multi-lingual-config";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
@@ -32,13 +31,16 @@ class ReportConfig extends Entity {
   })
   title: TranslatableText;
 
-  /** longer description documenting the purpose and usage of this report */
+  /** longer description documenting the purpose and usage of this report (may be a per-language map) */
   @DatabaseField({
     label: $localize`:ReportConfig:Description`,
     description: $localize`:ReportConfig:Document the purpose and usage of this report. This is also shown to users above the results when the report is run.`,
-    dataType: LongTextDatatype.dataType,
+    dataType: TranslatableTextDatatype.dataType,
+    // long text: keep the truncating display
+    viewComponent: "DisplayLongText",
+    additional: { multiline: true, rows: 5 },
   })
-  description?: string;
+  description?: TranslatableText;
 
   /**
    * (optional) mode of export.

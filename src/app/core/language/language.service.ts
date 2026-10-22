@@ -111,7 +111,7 @@ export class LanguageService {
    * Apply the system default at startup. A user's own language is applied on
    * login instead (see {@link applyOwnLanguageOnLogin}).
    */
-  async initDefaultLanguage(): Promise<void> {
+  initDefaultLanguage(): void {
     const languageSelected = this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );

@@ -43,12 +43,10 @@ export class ConfigurableEnumService {
   }
 
   /**
-   * The options with their labels resolved to the active language, as copies so
-   * the cached entity keeps every language. Ids are never translated.
-   * Use {@link getEnum} when the enum is to be edited and saved.
+   * The options with their labels resolved to the active language, as copies so the
+   * cached entity keeps every language. Use {@link getEnum} to edit and save.
    *
-   * Resolved once per enum, not per call: this sits on a per-record hot path,
-   * and switching language reloads the page, so it cannot go stale.
+   * Cached per enum: this is a per-record hot path, and switching language reloads.
    */
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
     id: string,

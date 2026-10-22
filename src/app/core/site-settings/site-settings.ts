@@ -66,8 +66,8 @@ export class SiteSettings extends Entity {
   error: string;
   @DatabaseField({ label: $localize`Text font` }) font: string;
 
-  constructor(id: string = SiteSettings.ENTITY_ID) {
-    super(id);
+  constructor() {
+    super(SiteSettings.ENTITY_ID);
   }
 
   override toString() {

@@ -29,10 +29,9 @@ import { TranslatableText } from "../multi-lingual-config";
 /**
  * Input for a configurable text that can be translated into multiple languages.
  *
- * The bound form control holds the *raw* value - either a plain string or a
- * per-language map - while the text field itself only shows and edits the text of
- * the currently active language. Editing the text field therefore never drops the
- * translations of other languages, and the button opens a dialog to edit them all.
+ * The form control holds the *raw* value, while the field shows and edits only the
+ * active language - so editing never drops the other translations. The button
+ * opens a dialog to edit them all.
  *
  * Use inside a `mat-form-field`, so the caller keeps control over label and errors:
  * ```html
@@ -124,8 +123,8 @@ export class TranslatableTextInputComponent
 
   /**
    * As an `editComponent` the surrounding DynamicEditComponent is the registered
-   * ControlValueAccessor, so `onChange` here is a no-op - write to the bound
-   * FormControl as well, or the edit is discarded on save.
+   * ControlValueAccessor, so `onChange` here is a no-op: write to the bound
+   * FormControl too, or the edit is discarded on save.
    */
   private applyValue(newValue: TranslatableText | undefined) {
     this.value = newValue;
@@ -142,7 +141,11 @@ export class TranslatableTextInputComponent
 
     this.dialog
       .open(ConfigureTranslationsPopupComponent, {
-        data: { value: this.valueSignal() },
+        data: {
+          value: this.valueSignal(),
+          // only set on the entity-form path; the admin UIs render their own label
+          fieldLabel: resolveLocaleText(this.formFieldConfig()?.label),
+        },
         disableClose: true,
       })
       .afterClosed()

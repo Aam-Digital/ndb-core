@@ -66,11 +66,6 @@ export class AdminTabsComponent<
 > {
   tabs = model<E[]>([]);
 
-  /**
-   * Whether tab titles may be configured in several languages.
-   * Opt-in, so callers whose titles are only ever plain strings are unaffected.
-   */
-  translatableTitle = input<boolean>(false);
   newTabFactory = input<() => E>(
     () => ({ [this.tabTitleProperty()]: "" }) as E,
   );

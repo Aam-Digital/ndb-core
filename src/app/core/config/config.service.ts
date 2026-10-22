@@ -36,10 +36,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
   );
 
   /**
-   * The current config with all multi-lingual values resolved to the active
-   * locale. This is the display view returned by
-   * getConfig()/getAllConfigs(); currentConfig stays raw (translation maps
-   * intact) as the persisted source of truth.
+   * The display view returned by getConfig()/getAllConfigs().
+   * `currentConfig` stays raw, as the persisted source of truth.
    */
   private resolvedConfigData: Record<string, any>;
 
@@ -171,19 +169,16 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   /**
-   * Get a config item, with any multi-lingual values resolved to the active locale.
-   *
-   * Use getRawConfig() instead if you will edit the value and save it back to the
-   * config document, otherwise translations for other languages would be lost.
+   * Get a config item, with multi-lingual values resolved to the active locale.
+   * Use getRawConfig() if you will save it back, or other languages are lost.
    */
   public getConfig<T>(id: string): T | undefined {
     return this.resolvedConfigData?.[id];
   }
 
   /**
-   * Get a config item with its raw values (multi-lingual maps left intact).
-   * Required for any read-modify-save flow. Its display texts may be such maps
-   * (see {@link RawConfig}), so resolve them wherever they are displayed.
+   * Get a config item with its raw values, for any read-modify-save flow.
+   * Its display texts may be translation maps, so resolve them where displayed.
    */
   public getRawConfig<T>(id: string): RawConfig<T> | undefined {
     return this.currentConfig?.data?.[id];

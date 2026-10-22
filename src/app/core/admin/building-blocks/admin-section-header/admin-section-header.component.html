@@ -1,22 +1,12 @@
 <div class="flex-row align-baseline">
   <mat-form-field floatLabel="always" class="flex-grow no-field-margin">
     <mat-label>{{ label() }}</mat-label>
-    @if (translatable()) {
-      <app-translatable-text-input
-        [value]="title()"
-        (valueChange)="title.set($event)"
-        placeholder="(no title)"
-        i18n-placeholder="Placeholder for entering a title"
-      ></app-translatable-text-input>
-    } @else {
-      <input
-        matInput
-        [ngModel]="title()"
-        (ngModelChange)="title.set($event)"
-        placeholder="(no title)"
-        i18n-placeholder="Placeholder for entering a title"
-      />
-    }
+    <app-translatable-text-input
+      [value]="title()"
+      (valueChange)="title.set($event)"
+      placeholder="(no title)"
+      i18n-placeholder="Placeholder for entering a title"
+    ></app-translatable-text-input>
   </mat-form-field>
 
   <ng-content />

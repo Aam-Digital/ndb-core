@@ -41,11 +41,14 @@ describe("multi-lingual-config", () => {
       ).toBe(false);
     });
 
-    it("rejects a map whose keys are not in the configured locales", () => {
-      // "en" is not a configured locale id (the app uses "en-US")
+    it("accepts the base language of a configured locale (en for en-US)", () => {
       expect(isTranslatableText({ en: "Name", de: "Vorname" }, LOCALES)).toBe(
-        false,
+        true,
       );
+    });
+
+    it("rejects a map whose keys are not in the configured locales", () => {
+      expect(isTranslatableText({ es: "Nombre" }, LOCALES)).toBe(false);
     });
   });
 

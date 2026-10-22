@@ -7,10 +7,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { TranslatableText } from "../../../config/multi-lingual-config";
 import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
@@ -30,10 +28,8 @@ import { TranslatableTextInputComponent } from "../../../config/translatable-tex
   selector: "app-admin-section-header",
   imports: [
     FaIconComponent,
-    FormsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule,
     TranslatableTextInputComponent,
   ],
   templateUrl: "./admin-section-header.component.html",
@@ -49,12 +45,6 @@ export class AdminSectionHeaderComponent {
 
   /** disable the confirmation dialog displayed before a remove output is emitted */
   disableConfirmation = input<boolean>(false);
-
-  /**
-   * Whether this title may be configured in several languages.
-   * Opt-in, so callers whose titles are only ever plain strings are unaffected.
-   */
-  translatable = input<boolean>(false);
 
   /** overwrite the label (default: "title") displayed for the form field */
   label = input<string>(

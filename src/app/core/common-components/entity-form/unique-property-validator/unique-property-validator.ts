@@ -1,5 +1,6 @@
 import { FormControl, ValidationErrors } from "@angular/forms";
 import { AsyncPromiseValidatorFn } from "../dynamic-form-validators/validator-types";
+import { resolveLocaleText } from "../../../language/active-locale";
 
 export const UNIQUE_PROPERTY_ERROR_KEY = "uniqueProperty";
 
@@ -27,17 +28,24 @@ function normalizeValue(value: unknown): unknown {
   return value.trim().toLowerCase();
 }
 
+/**
+ * A multi-lingual text is a per-language map, which no two maps compare equal as.
+ * Compare the text of the active language instead, i.e. what the admin actually sees.
+ * Anything that is not such a map is returned unchanged.
+ */
+function comparableValue(value: unknown, shouldNormalize: boolean): unknown {
+  const resolved = resolveLocaleText(value);
+  return shouldNormalize ? normalizeValue(resolved) : resolved;
+}
+
 function isDuplicate(
   currentValue: unknown,
   existingValues: unknown[],
   shouldNormalize: boolean,
 ): boolean {
-  if (shouldNormalize) {
-    currentValue = normalizeValue(currentValue);
-    existingValues = existingValues.map(normalizeValue);
-  }
-
-  return existingValues.includes(currentValue);
+  return existingValues
+    .map((value) => comparableValue(value, shouldNormalize))
+    .includes(comparableValue(currentValue, shouldNormalize));
 }
 
 /**

@@ -65,7 +65,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(component.rows.find((r) => r.locale === "fr").text).toBe("");
   });
 
-  it("should put an existing plain string into the default language", async () => {
+  it("should put an existing plain string into the currently selected language", async () => {
     await createComponent({ value: "Name" });
 
     expect(component.rows.find((r) => r.locale === "en-US").text).toBe("Name");
@@ -87,7 +87,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
     },
     {
       invariant:
-        "keep a plain string a plain string while only the default language is filled in",
+        "keep a plain string a plain string while only the selected language is filled in",
       value: "Name",
       edits: { "en-US": "Full Name" },
       expected: "Full Name",
@@ -106,7 +106,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
     },
     {
       invariant:
-        "keep a map a map when only the default language is left, so that the removal can be saved",
+        "keep a map a map when only one language is left, so that the removal can be saved",
       value: { "en-US": "Name", de: "Vorname" },
       edits: { de: "" },
       expected: { "en-US": "Name" },
@@ -145,6 +145,23 @@ describe("ConfigureTranslationsPopupComponent", () => {
       ).toEqual({ label: { "en-US": "Name" } });
     },
   );
+
+  it("should treat an existing plain string as the language the admin is editing in", async () => {
+    // a German instance whose labels are plain German: adding French must not
+    // store the German text as the English translation
+    configureActiveLocale("de", AVAILABLE_LOCALE_IDS);
+    await createComponent({ value: "Vorname" });
+
+    expect(component.rows.find((r) => r.locale === "de").text).toBe("Vorname");
+    expect(component.rows.find((r) => r.locale === "en-US").text).toBe("");
+
+    setText("fr", "Prénom");
+    component.onSave();
+
+    expect(dialogRef.close).toHaveBeenCalledWith({
+      value: { de: "Vorname", fr: "Prénom" },
+    });
+  });
 
   it("should read a single non-default translation back into its own language", async () => {
     // a plain string would be read back as the default language's text

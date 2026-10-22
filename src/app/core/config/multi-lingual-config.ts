@@ -1,21 +1,9 @@
 /**
- * Pure helpers for resolving multi-lingual config values
+ * Pure helpers for resolving multi-lingual config values.
+ * See `app/core/language/README.md` for the stored format and the rules around it.
  *
- * A translatable config text can be stored either as a plain `string` (the
- * original, still-supported format) or as a per-language map keyed by locale id,
- * e.g. `{ "en-US": "My Field X", "de": "Mein Feld X" }`. At load time the config
- * is resolved down to the single string for the currently active locale, so that
- * every other part of the app keeps seeing the plain-string format it always has.
- *
- * IMPORTANT: this module is intentionally **node-safe** (no `@angular/*` imports),
- * mirroring `config-migrations.ts`, so it stays pure, unit-testable, and reusable
- * outside the Angular app. The list of valid locale ids is passed in by the caller
- * (e.g. `ConfigService` derives it from `availableLocales`) rather than imported,
- * to keep this file dependency-free.
- *
- * These helpers only ever produce the *resolved* (display) view. The raw maps must
- * remain the persisted source of truth — callers must never write a resolved value
- * back to the config document, or all other languages would be lost.
+ * Node-safe on purpose (no `@angular/*` imports), like `config-migrations.ts`:
+ * the valid locale ids are passed in by the caller instead of imported.
  */
 
 /** A config text that may be a plain string or a per-locale translation map. */
@@ -26,16 +14,12 @@ type TranslatableTextProperty =
   "label" | "labelShort" | "labelPlural" | "description" | "title" | "header";
 
 /**
- * Config as it is stored, i.e. before it is resolved to the active language:
- * every user-facing text (a `string` property named label, labelShort,
- * labelPlural, description, title or header) may also be a per-language map.
- * Properties are matched by name only, so a `title` holding e.g. a field id is
- * widened too.
+ * Config as it is stored, before it is resolved to the active language: every
+ * display text may also be a per-language map. Matched by property name only, so
+ * a `title` holding e.g. a field id is widened too.
  *
- * The config types (e.g. `EntityConfig`) describe the *resolved* config, where
- * these are always plain strings. Use this type for config that is read raw to
- * edit and save it, so that code treating such a text as a plain string is
- * flagged. Resolve it (see `resolveLocaleText`) wherever the text is displayed.
+ * Use for config read in order to save it back, so that code treating such a text
+ * as a plain string is flagged.
  */
 export type RawConfig<T> = 0 extends 1 & T
   ? T // `any` stays `any`
@@ -61,12 +45,9 @@ function isNonEmptyString(value: unknown): value is string {
 }
 
 /**
- * Detect whether a value is a translation map: a plain object with at least one
- * entry, where *every* key is a recognized locale id and *every* value is a string.
- *
- * Requiring all keys to be known locales (and all values to be strings) keeps the
- * check conservative, so ordinary config objects that merely contain a locale-like
- * key are not misclassified.
+ * Whether a value is a translation map: every key a known locale id or the base
+ * language of one (`en` for `en-US`), every value a string. Deliberately strict,
+ * so ordinary config objects with a locale-like key are not misclassified.
  */
 export function isTranslatableText(
   value: unknown,
@@ -79,8 +60,12 @@ export function isTranslatableText(
   if (entries.length === 0) {
     return false;
   }
+  const acceptedKeys = new Set([
+    ...validLocaleIds,
+    ...validLocaleIds.map(baseLanguage),
+  ]);
   return entries.every(
-    ([key, val]) => validLocaleIds.includes(key) && typeof val === "string",
+    ([key, val]) => acceptedKeys.has(key) && typeof val === "string",
   );
 }
 
@@ -89,7 +74,7 @@ export function isTranslatableText(
  * exact locale id first, then any entry that shares the same language subtag
  * (e.g. active `en-GB` falling back to a stored `en-US`).
  */
-function pickForLocale(
+export function pickForLocale(
   map: Record<string, string>,
   locale: string,
 ): string | undefined {
@@ -137,21 +122,13 @@ export function resolveTranslatableText(
 }
 
 /**
- * Merge an edited, locale-resolved config object back onto its raw counterpart,
- * preserving the translations of all other languages.
+ * Merge an edited, locale-resolved config object back onto its raw counterpart.
+ * Admin UIs edit the resolved view and write the whole object back, which without
+ * this would replace a translation map with just the editing admin's language.
  *
- * Admin UIs read config through the *resolved* view (plain strings) and write the
- * whole object back. Without this merge, saving would replace a translation map
- * with the single string of the editing admin's language and silently drop every
- * other language.
- *
- * For each key whose raw value is a translation map (whatever the key is called,
- * unless `translatableKeys` restricts it to some):
- * - unchanged (the edited text still equals what the admin was shown) -> keep the map
- * - changed -> update only the active locale's entry, keeping the other languages
- *
- * Raw plain strings keep the previous simple-string behaviour, so configs that never
- * opted into multiple languages are untouched.
+ * For each key whose raw value is a translation map (all of them, unless
+ * `translatableKeys` restricts it): unchanged text keeps the map, a changed text
+ * updates only the active locale's entry.
  */
 export function mergeTranslatableValues<T extends Record<string, any>>(
   raw: Record<string, any> | undefined,

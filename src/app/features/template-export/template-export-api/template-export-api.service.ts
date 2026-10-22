@@ -8,6 +8,7 @@ import { NotAvailableOfflineError } from "../../../core/session/not-available-of
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { switchMap } from "rxjs/operators";
 import { TemplateExport } from "../template-export.entity";
+import { resolveLocaleText } from "../../../core/language/active-locale";
 import { Logging } from "../../../core/logging/logging.service";
 import { environment } from "../../../../environments/environment";
 import {
@@ -192,7 +193,7 @@ export class TemplateExportApiService extends FileService {
     return this.renderTemplate(
       this.API_URL + "/render/" + template.getId(),
       data,
-      template.title,
+      resolveLocaleText(template.title),
     );
   }
 
@@ -217,7 +218,8 @@ export class TemplateExportApiService extends FileService {
     return this.renderTemplate(
       this.API_URL + "/render-batch/" + template.getId() + "?mode=" + mode,
       dataList,
-      template.title + (mode === "combined" ? ".pdf" : ".zip"),
+      resolveLocaleText(template.title) +
+        (mode === "combined" ? ".pdf" : ".zip"),
     );
   }
 }

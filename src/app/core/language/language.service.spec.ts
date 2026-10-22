@@ -82,7 +82,7 @@ describe("LanguageService", () => {
   });
 
   it("should use the default locale if no locale is set", async () => {
-    await service.initDefaultLanguage();
+    service.initDefaultLanguage();
     languageSubject.next({ id: "de", label: "de" });
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
     expect(reloadSpy).toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe("LanguageService", () => {
 
   it("should not change language if a different locale is set", async () => {
     window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
-    await service.initDefaultLanguage();
+    service.initDefaultLanguage();
     languageSubject.next({ id: "de", label: "de" });
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
     expect(reloadSpy).not.toHaveBeenCalled();
@@ -113,7 +113,7 @@ describe("LanguageService", () => {
     // point at which the language stored for the account can be read
     ownLanguage = "fr";
 
-    await service.initDefaultLanguage();
+    service.initDefaultLanguage();
     languageSubject.next({ id: "de", label: "de" });
 
     logIn();

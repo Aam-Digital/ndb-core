@@ -225,15 +225,14 @@ export class AdminEntityFieldComponent implements OnInit {
         asyncValidators: [
           uniquePropertyValidator({
             getExistingValues: async () => {
-              const labels: string[] = [];
+              const labels: TranslatableText[] = [];
               for (const [
                 key,
                 field,
               ] of this.data.entityType.schema.entries()) {
                 if (key === this.data.entitySchemaField.id) continue;
                 if (field.label) {
-                  // compare the texts of the active language, not raw maps
-                  labels.push(resolveLocaleText(field.label));
+                  labels.push(field.label);
                 }
               }
               return labels;

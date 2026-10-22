@@ -3,12 +3,9 @@ import { EntityMenuItem, MenuItem } from "../../ui/navigation/menu-item";
 import { TranslatableText } from "../../config/multi-lingual-config";
 
 /**
- * A menu item as edited in the Admin UI, where the label may be configured in
- * several languages.
- *
+ * A menu item as edited in the Admin UI, where the label may be multi-lingual.
  * The displayed {@link MenuItem} keeps `label: string`, because the navigation
- * only ever receives config that ConfigService already resolved to the active
- * language.
+ * only receives config that ConfigService already resolved.
  */
 export type EditableMenuItem = Omit<MenuItem, "label" | "subMenu"> & {
   label?: TranslatableText;

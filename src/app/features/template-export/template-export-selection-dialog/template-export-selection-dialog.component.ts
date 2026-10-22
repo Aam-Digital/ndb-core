@@ -30,6 +30,7 @@ import { getEntityRuntimeRoute } from "../../../core/entity/entity-config.servic
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DownloadService } from "../../../core/export/download-service/download.service";
+import { resolveLocaleText } from "../../../core/language/active-locale";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
 import { TemplateExportService } from "../template-export-service/template-export.service";
@@ -162,7 +163,7 @@ export class TemplateExportSelectionDialogComponent {
         await this.downloadService.triggerDownload(
           result.file,
           "pdf",
-          result.filename ?? template.title,
+          result.filename ?? resolveLocaleText(template.title),
         );
       } else if (entities.length === 1) {
         const result = await firstValueFrom(
