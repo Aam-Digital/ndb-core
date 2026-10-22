@@ -129,6 +129,23 @@ describe("IndexeddbMigrationService", () => {
         },
         migrationPending: false,
         trackedEvent: "idb_indexeddb-disabled-config",
+        migratedAfter: null,
+      },
+      {
+        // so that enabling the flag again runs the migration with its final sync again,
+        // instead of leaving unsynced changes made on the legacy db in the meantime behind
+        scenario: "flag disabled after a completed migration (rollback)",
+        useIndexeddbAdapter: false,
+        migrated: true,
+        existingDbs: ["_pouch_testuser-app", "_pouch_abc-123-uuid-app"],
+        adapter: "idb",
+        dbNames: {
+          app: "testuser-app",
+          notifications: "notifications_abc-123-uuid",
+        },
+        migrationPending: false,
+        trackedEvent: "idb_indexeddb-disabled-config",
+        migratedAfter: null,
       },
       {
         scenario: "already migrated",
@@ -142,6 +159,7 @@ describe("IndexeddbMigrationService", () => {
         },
         migrationPending: false,
         trackedEvent: "indexeddb_after-migration",
+        migratedAfter: "true",
       },
       {
         scenario: "fresh install (only another user's old DB)",
@@ -158,6 +176,7 @@ describe("IndexeddbMigrationService", () => {
         },
         migrationPending: false,
         trackedEvent: "indexeddb_fresh-install",
+        migratedAfter: "true",
       },
       {
         scenario: "existing user on the old adapter",
@@ -171,6 +190,7 @@ describe("IndexeddbMigrationService", () => {
         },
         migrationPending: true,
         trackedEvent: "idb_migration-pending",
+        migratedAfter: null,
       },
     ])(
       "resolves the db config and tracks the scenario: $scenario",
@@ -187,6 +207,9 @@ describe("IndexeddbMigrationService", () => {
 
         expect(config).toEqual({ adapter: c.adapter, dbNames: c.dbNames });
         expect(service.migrationPending).toBe(c.migrationPending);
+        expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBe(
+          c.migratedAfter,
+        );
         expect(eventTrackSpy).toHaveBeenCalledWith(c.trackedEvent, {
           category: "indexeddb_adapter_migration",
         });

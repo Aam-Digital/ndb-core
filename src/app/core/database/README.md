@@ -83,6 +83,10 @@ Older installations used the legacy `idb` adapter with username-based names (`<u
 The environment flag `use_indexeddb_adapter` (default `true`) controls this.
 A deployment can opt out and keep the legacy adapter by setting `"use_indexeddb_adapter": false` in its `assets/config.json`,
 which overrides the values of `environment.ts` at startup (see `bootstrap-environment.ts`).
+Opting out also removes the `DB_MIGRATED_<uuid>` flag (see below), so enabling the flag again re-runs the migration with its final sync,
+continuing from its replication checkpoint, and no change made on the legacy database in the meantime is left behind.
+Rolling back to the legacy adapter itself has no final sync, though: changes still unsynced in the new database stay behind there,
+so only roll back while users are online and synced.
 
 `IndexeddbMigrationService.resolveDbConfig()` decides at login which database to open, and tracks the scenario as a usage analytics event (category `indexeddb_adapter_migration`):
 

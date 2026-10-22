@@ -58,7 +58,7 @@ export class IndexeddbMigrationService {
    * Determine the database configuration (names + adapter) for the current session.
    *
    * Decision logic:
-   * 1. use_indexeddb_adapter disabled → legacy names + "idb" adapter (no migration)
+   * 1. use_indexeddb_adapter disabled → legacy names + "idb" adapter (no migration; resets the migration flag)
    * 2. Migration flag set → new names + "indexeddb"
    * 3. No old DB exists (fresh install) → new names + "indexeddb"
    * 4. Old DB exists, no flag → legacy names + "idb" (migration pending)
@@ -67,6 +67,10 @@ export class IndexeddbMigrationService {
     this.migrationPending = false; // reset pending flag on each resolve attempt
 
     if (!environment.use_indexeddb_adapter) {
+      // The user works on the legacy DB from now on. If the flag is enabled again, the migration
+      // (continuing from its checkpoint) and its final sync have to run again before switching back,
+      // otherwise changes made on the legacy DB in the meantime and not yet synced would be left behind.
+      this.localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
       await this.trackMigrationEvent("idb_indexeddb-disabled-config");
       Logging.debug(
         "IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config",
