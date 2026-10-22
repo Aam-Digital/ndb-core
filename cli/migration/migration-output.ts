@@ -105,8 +105,8 @@ export function printSummary(
       result: { result },
     } of withVerdicts) {
       console.log(
-        `  ${color("bold", OrgRunner.orgLabel(org).padEnd(50))}${result
-          .verdicts!.map(formatVerdict)
+        `  ${color("bold", OrgRunner.orgLabel(org).padEnd(50))}${result.verdicts
+          .map(formatVerdict)
           .join(color("gray", " · "))}`,
       );
     }

@@ -6,13 +6,14 @@ import { NoteDetailsConfig } from "./note-details/note-details-config.interface"
  * to avoid breaking note views with a default config from AdminModule
  */
 export const addDefaultNoteViews: ConfigMigration = (key, configPart) => {
-  if (configPart?.["_id"] !== "Config:CONFIG_ENTITY" || !configPart?.["data"]) {
-    // add only at top-level of config
-    return configPart;
+  // add only at top-level of config
+  if (configPart?.["_id"] === "Config:CONFIG_ENTITY" && configPart?.["data"]) {
+    addDefaultNoteViewsToConfig(configPart["data"]);
   }
+  return configPart;
+};
 
-  const configData = configPart["data"];
-
+function addDefaultNoteViewsToConfig(configData: Record<string, any>) {
   // a system with a custom route for notes has its list view (if any) configured there
   const route = String(configData["entity:Note"]?.route ?? "note").replace(
     /^\//,
@@ -25,9 +26,7 @@ export const addDefaultNoteViews: ConfigMigration = (key, configPart) => {
     component: "NoteDetails",
     config: getDefaultNoteDetailsConfig(),
   };
-
-  return configPart;
-};
+}
 
 export const defaultNoteListView = {
   component: "EntityList",

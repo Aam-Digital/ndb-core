@@ -131,8 +131,9 @@ export function registerMigrateCommand(program: Command): void {
           logger,
           backupRun,
           args,
-          (question, id) =>
-            timeout.pause(() => answerQuestion(question, id, answers)),
+          pausingWhileAsking(timeout, (question, id) =>
+            answerQuestion(question, id, answers),
+          ),
         );
         try {
           const result = await timeout.run(migration.run(ctx));
@@ -205,4 +206,12 @@ export function registerMigrateCommand(program: Command): void {
       printSummary(outcomes, unreachableCount);
       process.exit(computeExitCode(outcomes, unreachableCount));
     });
+}
+
+/** Ask questions through `ask`, not counting the time waiting for an answer towards the timeout */
+function pausingWhileAsking(
+  timeout: PausableTimeout,
+  ask: (question: string, id: string) => Promise<boolean>,
+): (question: string, id: string) => Promise<boolean> {
+  return (question, id) => timeout.pause(() => ask(question, id));
 }

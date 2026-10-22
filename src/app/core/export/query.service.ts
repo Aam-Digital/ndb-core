@@ -17,9 +17,9 @@ import { TimePeriod } from "../entity-details/related-time-period-entities/time-
   providedIn: "root",
 })
 export class QueryService {
-  private entityMapper = inject(EntityMapperService);
-  private notesService = inject(NotesService);
-  private attendanceService = inject(AttendanceService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly notesService = inject(NotesService);
+  private readonly attendanceService = inject(AttendanceService);
 
   private entities: { [type: string]: { [id: string]: Entity } } = {};
 

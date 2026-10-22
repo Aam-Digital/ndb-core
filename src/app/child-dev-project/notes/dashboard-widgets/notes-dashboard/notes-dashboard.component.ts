@@ -46,8 +46,8 @@ interface NotesDashboardConfig {
   ],
 })
 export class NotesDashboardComponent {
-  private notesService = inject(NotesService);
-  private entities = inject(EntityRegistry);
+  private readonly notesService = inject(NotesService);
+  private readonly entities = inject(EntityRegistry);
 
   static getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entityType || Note.ENTITY_TYPE;

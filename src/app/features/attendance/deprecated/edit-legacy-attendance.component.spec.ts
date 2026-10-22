@@ -118,7 +118,8 @@ describe("EditLegacyAttendanceComponent", () => {
       children: ownChildrenForm,
     });
 
-    const freshFixture = TestBed.createComponent(EditLegacyAttendanceComponent);
+    // testing the deprecated component itself, as long as legacy systems use it
+    const freshFixture = TestBed.createComponent(EditLegacyAttendanceComponent); // NOSONAR
     freshFixture.componentInstance.ngControl = {
       control: ownChildrenForm,
     } as any;

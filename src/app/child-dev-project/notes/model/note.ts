@@ -76,7 +76,7 @@ export class Note extends Entity {
         ([key, field]) => field.dataType === "entity" && key !== "authors",
       )
       .map(([key]) => key)
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
   }
 
   /**
@@ -209,8 +209,8 @@ export class Note extends Entity {
     return this.getColor();
   }
 
-  // TODO: this scans the whole schema for attendance fields on every call (per row and change detection in tables);
-  //  if this becomes a performance issue, resolve the attendance field ids once per entity constructor instead
+  // This scans the whole schema for attendance fields on every call (per row and change detection in tables).
+  // If this becomes a performance issue, resolve the attendance field ids once per entity constructor instead.
   private isMarkedAbsent(participantId: string): boolean {
     return AttendanceDatatype.detectAllFieldsInEntity(
       this.getConstructor(),

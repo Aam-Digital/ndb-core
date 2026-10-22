@@ -562,9 +562,7 @@ describe("noteLegacyChildSchoolFields migration", () => {
       "entity:Note": { attributes: { children: customField } },
     });
 
-    const result = await noteLegacyChildSchoolFields.run(
-      buildTestContext(store),
-    );
+    await noteLegacyChildSchoolFields.run(buildTestContext(store));
 
     expect(configData(store)["entity:Note"].attributes).toEqual({
       children: customField,

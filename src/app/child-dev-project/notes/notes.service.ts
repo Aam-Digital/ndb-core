@@ -32,11 +32,15 @@ export const NOTES_BY_AUTHORS_VIEW = {
  */
 @Injectable({ providedIn: "root" })
 export class NotesService {
-  private entityMapper = inject(EntityMapperService);
-  private dbIndexing = inject(DatabaseIndexingService);
-  private entityConfigReady = inject(EntityConfigReadyService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly entityConfigReady = inject(EntityConfigReadyService);
 
   constructor() {
+    this.createDatabaseIndices();
+  }
+
+  private createDatabaseIndices() {
     this.createNotesIndex();
 
     // the linked fields of notes depend on the (config-extended) Note schema,
@@ -108,7 +112,7 @@ export class NotesService {
 
     const linkFields = Note.getLinkFields();
     for (const note of notes) {
-      // TODO: filter notes to only include them if the given child is marked "present"
+      // notes count regardless of the linked record's attendance (filtering for those marked "present" could be added here)
 
       // ids of other entity types are ignored, as they are not in the results map
       const linkedIds = linkFields.flatMap((field) => note[field] ?? []);
