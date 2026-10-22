@@ -4,7 +4,6 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityPage } from "../entity-mapper/entity-mapper.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { NotesService } from "../../../child-dev-project/notes/notes.service";
-import { HistoricalDataService } from "./historical-data/historical-data.service";
 import { UpdatedEntity } from "../model/entity-update";
 import { Logging } from "../../logging/logging.service";
 import { TodoService } from "#src/app/features/todos/todo.service";
@@ -14,7 +13,6 @@ export enum LoaderMethod {
   ChildrenService = "ChildrenService",
   /** audit records that involve one given record, served by a CouchDB view */
   AuditRecordsRelatedToEntity = "AuditRecordsRelatedToEntity",
-  HistoricalDataService = "HistoricalDataService",
   ChildrenServiceQueryRelations = "ChildrenServiceQueryRelations",
   NotesRelatedToEntity = "NotesRelatedToEntity",
   TodosRelatedToEntity = "TodosRelatedToEntity",
@@ -42,7 +40,6 @@ export function supportsPagination(loaderMethod?: LoaderMethod): boolean {
 export class EntitySpecialLoaderService {
   private readonly childrenService = inject(ChildrenService);
   private readonly notesService = inject(NotesService);
-  private readonly historicalDataService = inject(HistoricalDataService);
   private readonly todoService = inject(TodoService);
   private readonly auditReferenceLoader = inject(AuditReferenceLoaderService);
 
@@ -111,10 +108,6 @@ export class EntitySpecialLoaderService {
     property?: string | string[],
   ): Promise<E[]> {
     switch (loaderMethod) {
-      case LoaderMethod.HistoricalDataService:
-        return this.historicalDataService.getHistoricalDataFor(
-          entity.getId(),
-        ) as Promise<E[]>;
       case LoaderMethod.ChildrenServiceQueryRelations:
         return this.childrenService.queryRelations(
           entity.getId(false),

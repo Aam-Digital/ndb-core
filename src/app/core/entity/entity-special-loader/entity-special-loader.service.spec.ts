@@ -7,7 +7,6 @@ import {
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { NotesService } from "../../../child-dev-project/notes/notes.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { HistoricalDataService } from "./historical-data/historical-data.service";
 import type { Mock } from "vitest";
 import { TodoService } from "#src/app/features/todos/todo.service";
 import { AuditReferenceLoaderService } from "#src/app/features/change-history/audit-reference-loader.service";
@@ -20,16 +19,11 @@ type NotesServiceMock = {
   getNotesRelatedTo: Mock;
 };
 
-type HistoricalDataServiceMock = {
-  getHistoricalDataFor: Mock;
-};
-
 describe("EntitySpecialLoaderService", () => {
   let service: EntitySpecialLoaderService;
 
   let mockChildrenService: ChildrenServiceMock;
   let mockNotesService: NotesServiceMock;
-  let mockHistoricalDataService: HistoricalDataServiceMock;
   let mockTodoService: Partial<TodoService>;
   let mockAuditReferenceLoader: Partial<AuditReferenceLoaderService>;
 
@@ -39,9 +33,6 @@ describe("EntitySpecialLoaderService", () => {
     };
     mockNotesService = {
       getNotesRelatedTo: vi.fn(),
-    };
-    mockHistoricalDataService = {
-      getHistoricalDataFor: vi.fn(),
     };
     mockTodoService = {
       getTodosFor: vi.fn(),
@@ -54,7 +45,6 @@ describe("EntitySpecialLoaderService", () => {
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: NotesService, useValue: mockNotesService },
-        { provide: HistoricalDataService, useValue: mockHistoricalDataService },
         { provide: TodoService, useValue: mockTodoService },
         {
           provide: AuditReferenceLoaderService,

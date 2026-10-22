@@ -42,7 +42,4 @@ export const RELATED_ENTITY_OVERRIDES: Record<
   EducationalMaterial: {
     component: "RelatedEntitiesWithSummary",
   },
-  HistoricalEntityData: {
-    loaderMethod: "HistoricalDataService",
-  },
 };

@@ -25,6 +25,7 @@ LLMs like ChatGPT or Claude can generate report queries for you.
 ## Configuration
 
 The reports can be defined as `ReportConfig:*` entities.
+Whatever the mode, the report is defined in its `reportDefinition` field.
 
 There are different modes for `ReportConfig`:
 
