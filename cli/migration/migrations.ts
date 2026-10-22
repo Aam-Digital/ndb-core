@@ -7,6 +7,8 @@ import { setMapCountrycodes } from "./set-map-countrycodes.migration.js";
 import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.migration.js";
 import { reportQueryIsActive } from "./report-query-isactive.migration.js";
 import { restoreBackup } from "./restore-backup.migration.js";
+import { todoRouteLinks } from "./todo-route-links.migration.js";
+import { publicFormLegacyFormats } from "./public-form-legacy-formats.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
 
 export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
@@ -24,5 +26,7 @@ export const migrations: MigrationDefinition[] = [
   // permissionsKeyLegacyCleanup,
   setMapCountrycodes,
   reportQueryIsActive,
+  todoRouteLinks,
+  publicFormLegacyFormats,
   restoreBackup,
 ];
