@@ -65,30 +65,32 @@ describe("applyConfigMigrations", () => {
     });
   });
 
-  describe("migrateNotesDashboardEntity", () => {
-    it("sets the previously implicit Child entity", () => {
-      const old = {
-        "view:": { component: "NotesDashboard", config: { sinceDays: 28 } },
-      };
-      expect(applyConfigMigrations(old)).toEqual({
-        "view:": {
-          component: "NotesDashboard",
-          config: { sinceDays: 28, entityType: "Child" },
-        },
-      });
-    });
-
-    it("keeps an explicitly configured entity type, including the legacy `entity` key", () => {
-      for (const config of [{ entityType: "School" }, { entity: "School" }]) {
-        const old = { "view:": { component: "NotesDashboard", config } };
+  describe("migrateDashboardDefaultEntityType", () => {
+    it.each([
+      ["ChildrenCountDashboard", undefined, { entityType: "Child" }],
+      ["EntityCountDashboard", {}, { entityType: "Child" }],
+      [
+        "NotesDashboard",
+        { sinceDays: 28 },
+        { sinceDays: 28, entityType: "Child" },
+      ],
+      [
+        "EntityCountDashboard",
+        { entityType: "School" },
+        { entityType: "School" },
+      ],
+      ["NotesDashboard", { entityType: "School" }, { entityType: "School" }],
+      // the legacy `entity` key is renamed to `entityType` by an earlier migration
+      ["NotesDashboard", { entity: "School" }, { entityType: "School" }],
+    ])(
+      "sets the previously implicit Child entity of a %s widget unless one is configured (%j)",
+      (component, config, expectedConfig) => {
+        const old = { "view:": { component, config } };
         expect(applyConfigMigrations(old)).toEqual({
-          "view:": {
-            component: "NotesDashboard",
-            config: { entityType: "School" },
-          },
+          "view:": { component, config: expectedConfig },
         });
-      }
-    });
+      },
+    );
   });
 
   describe("migrateEntityArrayDatatype", () => {

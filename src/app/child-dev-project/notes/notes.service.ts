@@ -14,20 +14,6 @@ import { Logging } from "../../core/logging/logging.service";
 import { Note } from "./model/note";
 
 /**
- * Index view of notes by their `authors` (query key: the author's entity ID).
- *
- * Currently not registered in the `notes_index` design doc, because nothing queries it
- * and every registered view has to be built on each device.
- */
-export const NOTES_BY_AUTHORS_VIEW = {
-  map: `(doc) => {
-    if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
-    if (!Array.isArray(doc.authors)) return;
-    doc.authors.forEach(val => emit(val));
-  }`,
-};
-
-/**
  * Queries for {@link Note} records, backed by database indices that this service sets up.
  */
 @Injectable({ providedIn: "root" })
@@ -162,7 +148,6 @@ export class NotesService {
             }
           }`,
         },
-        // by_authors: NOTES_BY_AUTHORS_VIEW, // disabled for now, as nothing queries it
       },
     };
 

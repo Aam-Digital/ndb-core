@@ -164,7 +164,8 @@ export class Note extends Entity {
     label: $localize`:label for the related Entities:Related Records`,
     dataType: "entity",
     isArray: true,
-    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+    // the code definition links no entity type: systems configure the linked types as `additional` in their config
+    // (as the base configs and the CLI migration of the legacy children / schools fields do)
     additional: undefined,
     anonymize: "retain",
   })

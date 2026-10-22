@@ -80,7 +80,8 @@ function relatedEntitiesDefinition(
  * - its definition is added to `entity:Note` if the config (Note views, NotesRelatedToEntity components, ...)
  *   or a PublicFormConfig references it or it was shown by the previous default `bottomForm`,
  * - if no view shows it anymore, the operator is asked to confirm restoring it:
- *   without the field, these notes are no longer linked to the referenced records (the data itself is kept),
+ *   without the field, these notes are no longer linked to the referenced records, and the app erases the links
+ *   from a note the next time it is saved (only fields of the schema are written),
  * - if `view:note/:id` has no `bottomForm` (or does not exist), the previous default `bottomForm` is written
  *   for the legacy fields holding data, as the default now only shows `relatedEntities`.
  *
@@ -464,7 +465,7 @@ class LegacyNoteFieldsMigration {
     }
     if (!usage.typeExists) {
       this.warnings.push(
-        `Note.${field} is used (${reasons.join("; ")}) but entity:${legacy.entityType} does not exist, not restored - review manually`,
+        `Note.${field} is used (${reasons.join("; ")}) but entity:${legacy.entityType} does not exist, not restored - its data is erased the next time each note is saved, review manually`,
       );
       return;
     }
@@ -487,12 +488,12 @@ class LegacyNoteFieldsMigration {
       queryUses.length > 0 ? ` (and ${queryUses.join(", ")} use it)` : "";
     const dataCount = `${this.formatCount(field)} ${this.countedTypes} docs have data in it${usedBy}`;
     const confirmed = await this.ctx.confirm(
-      `Note.${field} is not shown in any view, but ${dataCount}. Restore the field to keep these notes linked to their ${legacy.entityType} records?`,
+      `Note.${field} is not shown in any view, but ${dataCount}. Restore the field to keep these notes linked to their ${legacy.entityType} records? Declining erases these links the next time each note is saved.`,
       `restore-${field}`,
     );
     if (!confirmed) {
       this.warnings.push(
-        `Note.${field} not restored (declined), although ${dataCount}`,
+        `Note.${field} not restored (declined), although ${dataCount} - these links are erased the next time each note is saved`,
       );
     }
     return confirmed;
