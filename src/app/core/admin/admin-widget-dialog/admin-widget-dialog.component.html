@@ -12,15 +12,17 @@
 
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Subtitle</mat-label>
-      <input matInput [(ngModel)]="commonConfig.subtitle" />
+      <app-translatable-text-input
+        [(ngModel)]="commonConfig.subtitle"
+      ></app-translatable-text-input>
     </mat-form-field>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label i18n>Explanation</mat-label>
-      <textarea
-        matInput
-        rows="2"
+      <app-translatable-text-input
         [(ngModel)]="commonConfig.explanation"
-      ></textarea>
+        [multiline]="true"
+        [rows]="2"
+      ></app-translatable-text-input>
     </mat-form-field>
   </mat-expansion-panel>
 </mat-dialog-content>
