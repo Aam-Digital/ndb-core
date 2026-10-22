@@ -78,6 +78,9 @@ logs to the browser console:
 }
 ```
 
+The default `CSP` of the Docker image allows `https://*.sentry.io`; a Sentry on another host (e.g. self-hosted)
+must be added to `CSP` (see the build README), otherwise its requests violate the Content Security Policy.
+
 The DSN is read after the deployment's settings have loaded (`src/bootstrap-environment.ts`), so errors
 before that (including a failure to load `config.json` itself) are never reported.
 

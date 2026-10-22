@@ -120,6 +120,7 @@ For the wider picture of what these headers do and do not protect against, see t
 
 Which sources the app may load code, styles and data from is whitelisted through the `CSP` environment variable.
 The default whitelist covers everything a production server needs and is defined in the [`Dockerfile`](./Dockerfile).
+It allows error reports to `https://*.sentry.io`; a deployment reporting to a Sentry on another host (`SENTRY_DSN` / `remoteLoggingDsn`) has to add that host.
 
 > This policy is currently sent as `Content-Security-Policy-Report-Only` for testing.
 > Violations are reported to `CSP_REPORT_URI` (defaulting to aam-digital's Sentry security endpoint) but scripts and connections are not yet blocked.

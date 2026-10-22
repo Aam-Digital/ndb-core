@@ -12,8 +12,16 @@ describe("initEnvironmentConfig", () => {
   let originalEnvironment: Record<string, unknown>;
   let initRemoteLogging: MockInstance;
   let alertSpy: MockInstance;
+  let originalLocation: PropertyDescriptor | undefined;
 
   beforeEach(() => {
+    // other spec files replace window.location (without a pathname) and the test runner shares it
+    originalLocation = Object.getOwnPropertyDescriptor(window, "location");
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/", reload: vi.fn() },
+      writable: true,
+      configurable: true,
+    });
     files = {};
     vi.spyOn(window, "fetch").mockImplementation(async (url) =>
       String(url) in files
@@ -42,6 +50,9 @@ describe("initEnvironmentConfig", () => {
     }
     Object.assign(environment, originalEnvironment);
     sessionStorage.removeItem("config_json_reload_attempts");
+    if (originalLocation) {
+      Object.defineProperty(window, "location", originalLocation);
+    }
     vi.restoreAllMocks();
   });
 
