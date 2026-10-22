@@ -56,7 +56,7 @@
           ><fa-icon icon="tag"></fa-icon> {{ changelog?.tag_name }}</span
         >
       </div>
-      <markdown [data]="changelog?.body"></markdown>
+      <markdown [data]="changelog?.body" dir="auto"></markdown>
       @if (showAdvancedDetails) {
         <a
           mat-stroked-button

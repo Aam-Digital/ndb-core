@@ -15,6 +15,9 @@ import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-
 /**
  * Represents a filter for date values.
  * The filter can either be one of the predefined options or two manually entered dates.
+ *
+ * For a field that holds a period (a "date-range" with a start and an end date),
+ * the filter matches the periods that overlap the selected dates.
  */
 export class DateFilter<T extends Entity> extends Filter<T> {
   override component = DateRangeFilterComponent;
@@ -23,6 +26,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     public override name: string,
     public override label: string = name,
     public rangeOptions: DateRangeFilterConfigOption[],
+    private readonly isPeriodField = false,
   ) {
     super(name, label);
     this.selectedOptionValues = [];
@@ -56,9 +60,44 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     if (range.end) {
       filterObject.$lte = moment(range.end).format("YYYY-MM-DD");
     }
-    return filterObject.$gte || filterObject.$lte
-      ? ({ [this.name]: filterObject } as DataFilter<T>)
-      : undefined;
+    if (!filterObject.$gte && !filterObject.$lte) {
+      return undefined;
+    }
+    return this.isPeriodField
+      ? this.getOverlapFilter(filterObject)
+      : ({ [this.name]: filterObject } as DataFilter<T>);
+  }
+
+  /**
+   * Periods that start before the end and end after the start of the selected dates.
+   * A period without a start or end date is open-ended, a record without a period is never matched.
+   */
+  private getOverlapFilter({
+    $gte: from,
+    $lte: to,
+  }: {
+    $gte?: string;
+    $lte?: string;
+  }): DataFilter<T> {
+    const start = `${this.name}.start`;
+    const end = `${this.name}.end`;
+    const conditions: DataFilter<T>[] = [
+      // the period has at least one date (the field itself can be a key with an undefined value)
+      {
+        $or: [{ [start]: { $exists: true } }, { [end]: { $exists: true } }],
+      } as DataFilter<T>,
+    ];
+    if (to) {
+      conditions.push({
+        $or: [{ [start]: { $exists: false } }, { [start]: { $lte: to } }],
+      } as DataFilter<T>);
+    }
+    if (from) {
+      conditions.push({
+        $or: [{ [end]: { $exists: false } }, { [end]: { $gte: from } }],
+      } as DataFilter<T>);
+    }
+    return { $and: conditions } as DataFilter<T>;
   }
 
   getSelectedOption() {

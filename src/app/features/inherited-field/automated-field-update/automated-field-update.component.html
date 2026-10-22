@@ -4,16 +4,20 @@
 <mat-dialog-content>
   <p i18n>
     You have made changes to a field that is linked to other records and can
-    automatically update them. The following records are linked through the
-    <b>
-      "{{
-        data.entities[0]?.relatedReferenceField
-          | entityFieldLabel: data.entities[0]?.relatedReferenceFieldEntityType
-      }}"
-    </b>
-    field. Please review these affected records below. You can manually change
-    the new value if the automatically suggested value is not matching what you
-    need.
+    automatically update them.
+    @if (sharedLinkEntity) {
+      The following records are linked through the
+      <b>
+        "{{
+          sharedLinkEntity.relatedReferenceField
+            | entityFieldLabel
+              : sharedLinkEntity.relatedReferenceFieldEntityType
+        }}"
+      </b>
+      field.
+    }
+    Please review these affected records below. You can manually change the new
+    value if the automatically suggested value is not matching what you need.
   </p>
 
   <table class="full-width">
@@ -21,6 +25,14 @@
       <tr>
         <td>
           <app-entity-block [entityId]="entity.id"></app-entity-block>
+          @if (!sharedLinkEntity) {
+            <div class="hint-text" i18n>
+              Linked through "{{
+                entity.relatedReferenceField
+                  | entityFieldLabel: entity.relatedReferenceFieldEntityType
+              }}"
+            </div>
+          }
         </td>
         <td>
           <app-entity-field-edit
@@ -29,6 +41,11 @@
             [form]="entity.form"
             [hideInheritButton]="true"
           ></app-entity-field-edit>
+          @if (entity.noCommonValue) {
+            <app-hint-box type="warning">
+              <app-no-common-value-hint [reason]="entity.noCommonValue" />
+            </app-hint-box>
+          }
           @if (entity.unlinked) {
             <div class="hint-text" i18n>
               The record is no longer linked. Values that no other linked record

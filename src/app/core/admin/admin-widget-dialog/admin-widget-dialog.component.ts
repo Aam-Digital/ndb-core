@@ -1,4 +1,11 @@
-import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  Signal,
+} from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { map } from "rxjs/operators";
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -47,6 +54,8 @@ export interface AdminWidgetDialogData {
 export class AdminWidgetDialogComponent {
   settingsComponentConfig: DynamicComponentConfig;
   widgetConfigForm: FormControl;
+  /** tracked as a signal, because the settings component may change validity after this view was checked */
+  widgetConfigInvalid: Signal<boolean>;
 
   commonConfig = {
     subtitle: "",
@@ -62,6 +71,12 @@ export class AdminWidgetDialogComponent {
       this.data.widgetConfig.config?.explanation ?? "";
 
     this.widgetConfigForm = new FormControl(this.data.widgetConfig.config);
+    this.widgetConfigInvalid = toSignal(
+      this.widgetConfigForm.statusChanges.pipe(
+        map((status) => status === "INVALID"),
+      ),
+      { initialValue: this.widgetConfigForm.invalid },
+    );
     this.settingsComponentConfig = {
       component: this.data.settingsComponent,
       config: {

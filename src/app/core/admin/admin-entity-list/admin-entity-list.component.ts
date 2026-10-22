@@ -50,19 +50,21 @@ export class AdminEntityListComponent {
 
   filters = linkedSignal(() => (this.config().filters ?? []).map((f) => f.id));
 
-  columnGroups = linkedSignal(
-    () =>
-      this.config().columnGroups ?? {
-        groups: [
-          {
-            name: "",
-            columns: (this.config().columns ?? []).map((c) =>
-              typeof c === "string" ? c : c.id,
-            ),
-          },
-        ],
-      },
-  );
+  columnGroups = linkedSignal(() => {
+    const configured = this.config().columnGroups;
+    return configured
+      ? { groups: configured.groups }
+      : {
+          groups: [
+            {
+              name: "",
+              columns: (this.config().columns ?? []).map((c) =>
+                typeof c === "string" ? c : c.id,
+              ),
+            },
+          ],
+        };
+  });
 
   private readonly allEmbeddedFieldRefs = computed<EmbeddedFieldRef[]>(() =>
     getEmbeddedFieldRefs(this.schemaService, this.entityConstructor()),

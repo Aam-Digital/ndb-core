@@ -25,4 +25,10 @@ describe("DateAdapterWithFormatting", () => {
     expect(date.getMonth()).toBe(7);
     expect(date.getFullYear()).toBe(2022);
   });
+
+  it("should fall back to the first day of week of a locale that was never registered", () => {
+    adapter.setLocale("ja");
+
+    expect(adapter.getFirstDayOfWeek()).toEqual(expect.any(Number));
+  });
 });
