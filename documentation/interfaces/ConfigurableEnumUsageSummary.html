@@ -218,7 +218,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/admin/config-cleanup/configurable-enum-cleanup/configurable-enum-cleanup.service.ts:16</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/app/core/admin/config-cleanup/configurable-enum-cleanup/configurable-enum-cleanup.service.ts:17</a></div>
                                 </td>
                             </tr>
 
@@ -237,6 +237,7 @@ import { EntityRegistry } from &quot;../../../entity/database-entity.decorator&q
 import { EntitySchemaService } from &quot;../../../entity/schema/entity-schema.service&quot;;
 import { EntitySchema } from &quot;../../../entity/schema/entity-schema&quot;;
 import { EntitySchemaField } from &quot;../../../entity/schema/entity-schema-field&quot;;
+import { getEmbeddedSchema } from &quot;../../../entity/schema/embedded-schema-field.util&quot;;
 
 interface ConfigurableEnumUsage {
   entityType: string;
@@ -355,8 +356,11 @@ export class ConfigurableEnumCleanupService {
       }
     }
 
-    const embeddedSchema &#x3D; this.getEmbeddedSchema(schemaField);
-    if (!embeddedSchema || embeddedSchema.size &#x3D;&#x3D;&#x3D; 0) {
+    const embeddedSchema &#x3D; getEmbeddedSchema(
+      this.entitySchemaService,
+      schemaField,
+    );
+    if (!embeddedSchema) {
       return;
     }
 
@@ -366,57 +370,6 @@ export class ConfigurableEnumCleanupService {
       fieldId,
       usageMap,
     );
-  }
-
-  private getEmbeddedSchema(
-    schemaField: EntitySchemaField,
-  ): EntitySchema | undefined {
-    // TODO: Extract shared embedded-schema expansion with SchemaEmbedDatatype.getEffectiveSchema()
-    // once a second caller appears outside config cleanup.
-    if (!schemaField?.dataType) {
-      return;
-    }
-
-    const datatype &#x3D; this.entitySchemaService.getDatatypeOrDefault(
-      schemaField.dataType,
-      true,
-    ) as { embeddedType?: { schema: EntitySchema } } | undefined;
-
-    const hasEmbeddedType &#x3D; !!datatype?.embeddedType?.schema;
-    const isSchemaEmbed &#x3D; schemaField.dataType &#x3D;&#x3D;&#x3D; &quot;schema-embed&quot;;
-
-    if (!hasEmbeddedType &amp;&amp; !isSchemaEmbed) {
-      return;
-    }
-
-    const embeddedSchema &#x3D; new Map&lt;string, EntitySchemaField&gt;();
-
-    for (const [key, value] of datatype?.embeddedType?.schema?.entries() ??
-      []) {
-      embeddedSchema.set(key, { ...value, id: key });
-    }
-
-    for (const [key, value] of Object.entries(
-      this.getAdditionalSchemaConfig(schemaField.additional),
-    )) {
-      embeddedSchema.set(key, { ...value, id: key });
-    }
-
-    return embeddedSchema;
-  }
-
-  private getAdditionalSchemaConfig(additional: unknown): {
-    [fieldId: string]: EntitySchemaField;
-  } {
-    if (
-      !additional ||
-      typeof additional !&#x3D;&#x3D; &quot;object&quot; ||
-      Array.isArray(additional)
-    ) {
-      return {};
-    }
-
-    return additional as { [fieldId: string]: EntitySchemaField };
   }
 
   private normalizeEnumId(rawId: unknown): string | undefined {

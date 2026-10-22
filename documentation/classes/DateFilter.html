@@ -875,6 +875,10 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
   /**
    * Periods that start before the end and end after the start of the selected dates.
    * A period without a start or end date is open-ended, a record without a period is never matched.
+   *
+   * Written as alternatives of plain conditions (without &#x60;$and&#x60;), so that it also works inside &#x60;$elemMatch&#x60;
+   * for a period in the entries of an embedded field. Each compared date is also required to exist,
+   * as the in-memory matching counts a comparison with a missing value as equal.
    */
   private getOverlapFilter({
     $gte: from,
@@ -885,23 +889,19 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
   }): DataFilter&lt;T&gt; {
     const start &#x3D; &#x60;${this.name}.start&#x60;;
     const end &#x3D; &#x60;${this.name}.end&#x60;;
-    const conditions: DataFilter&lt;T&gt;[] &#x3D; [
-      // the period has at least one date (the field itself can be a key with an undefined value)
-      {
-        $or: [{ [start]: { $exists: true } }, { [end]: { $exists: true } }],
-      } as DataFilter&lt;T&gt;,
-    ];
-    if (to) {
-      conditions.push({
-        $or: [{ [start]: { $exists: false } }, { [start]: { $lte: to } }],
-      } as DataFilter&lt;T&gt;);
-    }
-    if (from) {
-      conditions.push({
-        $or: [{ [end]: { $exists: false } }, { [end]: { $gte: from } }],
-      } as DataFilter&lt;T&gt;);
-    }
-    return { $and: conditions } as DataFilter&lt;T&gt;;
+    const startsBeforeEnd &#x3D; {
+      [start]: { $exists: true, ...(to &amp;&amp; { $lte: to }) },
+    };
+    const endsAfterStart &#x3D; {
+      [end]: { $exists: true, ...(from &amp;&amp; { $gte: from }) },
+    };
+    return {
+      $or: [
+        { ...startsBeforeEnd, [end]: { $exists: false } },
+        { ...startsBeforeEnd, ...endsAfterStart },
+        { [start]: { $exists: false }, ...endsAfterStart },
+      ],
+    } as DataFilter&lt;T&gt;;
   }
 
   getSelectedOption() {

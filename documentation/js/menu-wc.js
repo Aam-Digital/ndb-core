@@ -2649,6 +2649,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/EmailTemplateSelectionResult.html" data-type="entity-link" >EmailTemplateSelectionResult</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/EmbeddedFieldRef.html" data-type="entity-link" >EmbeddedFieldRef</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/EmptyDefaultValueHint.html" data-type="entity-link" >EmptyDefaultValueHint</a>
                             </li>
                             <li class="link">
@@ -3046,6 +3049,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/RuleWithConditions.html" data-type="entity-link" >RuleWithConditions</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/SchemaContext.html" data-type="entity-link" >SchemaContext</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/SchemaEmbedDatatypeAdditional.html" data-type="entity-link" >SchemaEmbedDatatypeAdditional</a>

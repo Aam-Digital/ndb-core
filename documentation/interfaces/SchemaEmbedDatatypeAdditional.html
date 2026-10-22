@@ -237,6 +237,40 @@ export interface SchemaEmbedDatatypeAdditional {
 }
 
 /**
+ * Build the inner schema of an embedded field from the embedded type&#x27;s own schema
+ * and the field&#x27;s &#x60;additional&#x60; config (a {@link SchemaEmbedDatatypeAdditional} map).
+ *
+ * An entry in &#x60;additional&#x60; only overrides what it states explicitly (e.g. restricting the
+ * allowed entity types of a reference), everything else (&#x60;dataType&#x60;, &#x60;label&#x60;, ...)
+ * is inherited from the embedded type&#x27;s field of the same id.
+ *
+ * @param baseSchema schema of the embedded type (e.g. &#x60;embeddedType.schema&#x60;), not mutated
+ * @param additional the &#x60;additional&#x60; config of the field holding the embedded object(s)
+ */
+export function mergeEmbeddedSchema(
+  baseSchema: EntitySchema | undefined,
+  additional: unknown,
+): EntitySchema {
+  const schema: EntitySchema &#x3D; new Map(baseSchema ?? []);
+  if (
+    !additional ||
+    typeof additional !&#x3D;&#x3D; &quot;object&quot; ||
+    Array.isArray(additional)
+  ) {
+    return schema;
+  }
+
+  for (const [key, value] of Object.entries(
+    additional as SchemaEmbedDatatypeAdditional,
+  )) {
+    if (value &amp;&amp; typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+      schema.set(key, { ...schema.get(key), ...value, id: key });
+    }
+  }
+  return schema;
+}
+
+/**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
  *
  * Can be used in two ways:
@@ -263,20 +297,31 @@ export class SchemaEmbedDatatype&lt;
    * Build the effective inner schema from the embedded type&#x27;s annotations
    * and/or the &#x60;additional&#x60; config.
    */
-  private getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
-    // Clone the base schema to avoid mutating the original class schema
-    const baseSchema: EntitySchema &#x3D; new Map(
-      this.embeddedType?.schema ?? new Map(),
+  getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
+    return mergeEmbeddedSchema(
+      this.embeddedType?.schema,
+      schemaField?.additional,
     );
-    const additional: SchemaEmbedDatatypeAdditional &#x3D;
-      schemaField?.additional ?? {};
+  }
 
-    // Add schema from additional config, taking precedence over baseSchema if present
-    for (const [key, value] of Object.entries(additional)) {
-      baseSchema.set(key, { ...value, id: key });
-    }
+  /**
+   * Whether the given field holds an array of embedded objects
+   * (as opposed to a single embedded object).
+   *
+   * Can be removed once {@link EventAttendanceMapDatatype} is removed.
+   */
+  holdsArray(schemaField: EntitySchemaField): boolean {
+    return schemaField.isArray &#x3D;&#x3D;&#x3D; true;
+  }
 
-    return baseSchema;
+  /**
+   * Path of an inner property within a stored embedded object, for database queries.
+   * The embedded object is stored as-is, so this is the property name itself.
+   *
+   * Can be removed once {@link EventAttendanceMapDatatype} is removed.
+   */
+  getEmbeddedFieldDbPath(innerProp: string): string {
+    return innerProp;
   }
 
   /**
@@ -284,17 +329,16 @@ export class SchemaEmbedDatatype&lt;
    * outer field - either inside an array of embedded objects or, where a single object
    * is stored, through the dotted path to the inner property.
    *
-   * The inner keys come from &#x60;additional&#x60; only (not from {@link getEffectiveSchema}),
-   * so they stay identical to the ones the in-memory post-filter inspects.
+   * The inner keys come from {@link getEffectiveSchema}.
    */
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
     referencedId: string,
   ): DataFilter&lt;any&gt;[] | undefined {
-    const innerKeys &#x3D; getInnerEntityReferenceFields(schemaField).map(
-      ([key]) &#x3D;&gt; key,
-    );
+    const innerKeys &#x3D; getInnerEntityReferenceFields(
+      this.getEffectiveSchema(schemaField),
+    ).map(([key]) &#x3D;&gt; key);
     if (innerKeys.length &#x3D;&#x3D;&#x3D; 0) {
       // nothing we could match on - let the caller load the whole type instead
       return undefined;

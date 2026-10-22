@@ -163,6 +163,10 @@
                 <p>Holds a full register of EventAttendance entries.
 Each value in the map is an <a href="../classes/AttendanceItem.html">AttendanceItem</a>, transformed
 using its schema annotations (via <a href="../injectables/EntitySchemaService.html">EntitySchemaService</a>).</p>
+<p>Unlike other <a href="../injectables/SchemaEmbedDatatype.html">SchemaEmbedDatatype</a>s, each entry is stored as a tuple
+<code>[participantId, {status, remarks}]</code> instead of the embedded object itself.
+Any method of <a href="../injectables/SchemaEmbedDatatype.html">SchemaEmbedDatatype</a> that works on the stored value
+(rather than the loaded <code>AttendanceItem[]</code>) therefore has to be overridden here.</p>
 
             </p>
 
@@ -170,10 +174,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                 <h3>Extends</h3>
             </p>
             <p class="comment">
-                        <code>DefaultDatatype&lt;
-  AttendanceItem[],
-  [string, any][]
-&gt;</code>
+                            <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
             </p>
 
 
@@ -195,10 +196,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                        <code>DefaultDatatype&lt;
-  AttendanceItem[],
-  [string, any][]
-&gt;</code>
+                                            <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
                                 </li>
                         </ul>
                 </div>
@@ -221,6 +219,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Static</span>
                                     <span class="modifier"></span>
+                                    <span class="modifier">Readonly</span>
                                 <a href="#dataType" >dataType</a>
                             </li>
                             <li>
@@ -231,7 +230,18 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
+                                <a href="#embeddedType" >embeddedType</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier"></span>
                                 <a href="#viewComponent" >viewComponent</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Protected</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#schemaService" >schemaService</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -270,7 +280,17 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
+                                <a href="#getEmbeddedFieldDbPath" >getEmbeddedFieldDbPath</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
                                 <a href="#getReferenceSelector" >getReferenceSelector</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#holdsArray" >holdsArray</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -281,6 +301,10 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#transformToObjectFormat" >transformToObjectFormat</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getEffectiveSchema" >getEffectiveSchema</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -341,6 +365,85 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getEmbeddedFieldDbPath"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getEmbeddedFieldDbPath</b></span>
+                        <a href="#getEmbeddedFieldDbPath"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEmbeddedFieldDbPath(innerProp: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:47</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Path of an <a href="../classes/AttendanceItem.html">AttendanceItem</a> property within the stored tuple
+<code>[participantId, {status, remarks}]</code> (see <a href="getReferenceSelector">getReferenceSelector</a> for why an
+integer path segment works on both query engines).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>innerProp</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getReferenceSelector"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -365,7 +468,7 @@ using its schema annotations (via <a href="../injectables/EntitySchemaService.ht
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:38</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:62</a></code>
 </div>
                         </td>
                     </tr>
@@ -449,6 +552,54 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="holdsArray"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>holdsArray</b></span>
+                        <a href="#holdsArray"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>holdsArray()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:38</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Always an array of entries, although the field does not (and, as the whole array is
+(de)serialized here at once, cannot) declare <code>isArray: true</code>.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformToDatabaseFormat"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -473,7 +624,7 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:46</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:71</a></code>
 </div>
                         </td>
                     </tr>
@@ -548,7 +699,7 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:70</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:95</a></code>
 </div>
                         </td>
                     </tr>
@@ -586,6 +737,82 @@ treats the inner <code>$elemMatch</code> as a field name.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEffectiveSchema"></a>
+                    <span class="name">
+                        <span ><b>getEffectiveSchema</b></span>
+                        <a href="#getEffectiveSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getEffectiveSchema(schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:115</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Build the effective inner schema from the embedded type&#39;s annotations
+and/or the <code>additional</code> config.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#EntitySchema" target="_self" >EntitySchema</a></code>
 
                         </div>
                             <div class="io-description">
@@ -1420,6 +1647,7 @@ raw value cannot be sorted meaningfully.</p>
                     <span class="name">
                             <span class="modifier">Static</span>
                             <span class="modifier"></span>
+                            <span class="modifier">Readonly</span>
                         <span ><b>dataType</b></span>
                         <a href="#dataType"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -1444,7 +1672,7 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:20</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:21</a></code>
 </div>
                         </td>
                     </tr>
@@ -1483,11 +1711,59 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:22</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:23</a></code>
 </div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="embeddedType"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>embeddedType</b></span>
+                        <a href="#embeddedType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>AttendanceItem</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:32</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Not used by (de)serialization here (which always hand-rolls the whole
+<code>AttendanceItem.schema</code> directly, see below), but declared so that generic tooling
+(e.g. <code>getEmbeddedSchema</code> for filters) can discover <code>AttendanceItem</code>&#39;s fields
+without requiring every one of them to be redeclared in a field&#39;s <code>additional</code> config.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1522,7 +1798,47 @@ raw value cannot be sorted meaningfully.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:23</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:24</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="schemaService"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>schemaService</b></span>
+                        <a href="#schemaService"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>inject(EntitySchemaService)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:109</a></code>
 </div>
                         </td>
                     </tr>
@@ -1714,10 +2030,9 @@ so that the suggested settings are reviewed and confirmed rather than silently s
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
 import { AttendanceItem } from &quot;../model/attendance-item&quot;;
-import { DefaultDatatype } from &quot;#src/app/core/entity/default-datatype/default.datatype&quot;;
-import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+import { SchemaEmbedDatatype } from &quot;#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype&quot;;
 import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
 import type { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
 
@@ -1726,19 +2041,44 @@ import type { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;
  * Each value in the map is an {@link AttendanceItem}, transformed
  * using its schema annotations (via {@link EntitySchemaService}).
  *
+ * Unlike other {@link SchemaEmbedDatatype}s, each entry is stored as a tuple
+ * &#x60;[participantId, {status, remarks}]&#x60; instead of the embedded object itself.
+ * Any method of {@link SchemaEmbedDatatype} that works on the stored value
+ * (rather than the loaded &#x60;AttendanceItem[]&#x60;) therefore has to be overridden here.
+ *
  * @deprecated Use the new &#x60;attendance&#x60; datatype ({@link AttendanceDatatype}) with &#x60;isArray: true&#x60; instead.
  */
 @Injectable()
-export class EventAttendanceMapDatatype extends DefaultDatatype&lt;
-  AttendanceItem[],
-  [string, any][]
-&gt; {
-  static override dataType &#x3D; &quot;event-attendance-map&quot;;
+export class EventAttendanceMapDatatype extends SchemaEmbedDatatype {
+  static override readonly dataType &#x3D; &quot;event-attendance-map&quot;;
 
   override editComponent &#x3D; &quot;EditAttendance&quot;;
   override viewComponent &#x3D; &quot;DisplayAttendance&quot;;
 
-  private readonly schemaService &#x3D; inject(EntitySchemaService);
+  /**
+   * Not used by (de)serialization here (which always hand-rolls the whole
+   * &#x60;AttendanceItem.schema&#x60; directly, see below), but declared so that generic tooling
+   * (e.g. &#x60;getEmbeddedSchema&#x60; for filters) can discover &#x60;AttendanceItem&#x60;&#x27;s fields
+   * without requiring every one of them to be redeclared in a field&#x27;s &#x60;additional&#x60; config.
+   */
+  override embeddedType &#x3D; AttendanceItem;
+
+  /**
+   * Always an array of entries, although the field does not (and, as the whole array is
+   * (de)serialized here at once, cannot) declare &#x60;isArray: true&#x60;.
+   */
+  override holdsArray(): boolean {
+    return true;
+  }
+
+  /**
+   * Path of an {@link AttendanceItem} property within the stored tuple
+   * &#x60;[participantId, {status, remarks}]&#x60; (see {@link getReferenceSelector} for why an
+   * integer path segment works on both query engines).
+   */
+  override getEmbeddedFieldDbPath(innerProp: string): string {
+    return innerProp &#x3D;&#x3D;&#x3D; &quot;participant&quot; ? &quot;0&quot; : &#x60;1.${innerProp}&#x60;;
+  }
 
   /**
    * Unlike the embedded objects of the &#x60;attendance&#x60; datatype, this one stores each entry as a
@@ -1756,7 +2096,8 @@ export class EventAttendanceMapDatatype extends DefaultDatatype&lt;
     schemaField: EntitySchemaField,
     referencedId: string,
   ): DataFilter&lt;any&gt;[] {
-    return [{ [fieldId]: { $elemMatch: { &quot;0&quot;: referencedId } } }];
+    const participantPath &#x3D; this.getEmbeddedFieldDbPath(&quot;participant&quot;);
+    return [{ [fieldId]: { $elemMatch: { [participantPath]: referencedId } } }];
   }
 
   override transformToDatabaseFormat(value: AttendanceItem[]) {

@@ -196,7 +196,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/entity/entity-actions/entity-delete.service.ts:21</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/entity/entity-actions/entity-delete.service.ts:20</a></div>
                             </td>
                         </tr>
 
@@ -231,7 +231,6 @@ import {
   UserAdminService,
 } from &quot;../../user/user-admin-service/user-admin.service&quot;;
 import { UserAccount } from &quot;../../user/user-admin-service/user-account&quot;;
-import { itemReferencesId } from &quot;../entity-mapper/entity-relations.service&quot;;
 import { firstValueFrom } from &quot;rxjs&quot;;
 import { UserAccountActionGuardService } from &quot;../../user/user-admin-service/user-account-action-guard.service&quot;;
 
@@ -372,7 +371,11 @@ export class EntityDeleteService extends CascadingEntityAction {
         refField
       ].filter(
         (item) &#x3D;&gt;
-          !itemReferencesId(item, referencedEntity.getId(), fieldSchema),
+          !this.entityRelationsService.itemReferencesId(
+            item,
+            referencedEntity.getId(),
+            fieldSchema,
+          ),
       );
     } else {
       delete relatedEntityWithReference[refField];

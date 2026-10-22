@@ -303,8 +303,20 @@ the field&#39;s <code>additional</code> config, e.g.:</p>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getEffectiveSchema" >getEffectiveSchema</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#getEmbeddedFieldDbPath" >getEmbeddedFieldDbPath</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                 <a href="#getReferenceSelector" >getReferenceSelector</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#holdsArray" >holdsArray</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -739,6 +751,159 @@ sorts before a real 0% value.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getEffectiveSchema"></a>
+                    <span class="name">
+                        <span ><b>getEffectiveSchema</b></span>
+                        <a href="#getEffectiveSchema"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getEffectiveSchema(schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:115</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Build the effective inner schema from the embedded type&#39;s annotations
+and/or the <code>additional</code> config.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/typealiases.html#EntitySchema" target="_self" >EntitySchema</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEmbeddedFieldDbPath"></a>
+                    <span class="name">
+                        <span ><b>getEmbeddedFieldDbPath</b></span>
+                        <a href="#getEmbeddedFieldDbPath"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getEmbeddedFieldDbPath(innerProp: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:138</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Path of an inner property within a stored embedded object, for database queries.
+The embedded object is stored as-is, so this is the property name itself.</p>
+<p>Can be removed once <a href="../injectables/EventAttendanceMapDatatype.html">EventAttendanceMapDatatype</a> is removed.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>innerProp</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="getReferenceSelector"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -763,7 +928,7 @@ sorts before a real 0% value.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:105</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:149</a></code>
 </div>
                         </td>
                     </tr>
@@ -774,8 +939,7 @@ sorts before a real 0% value.</p>
                         <div class="io-description"><p>The embedded object is stored as-is, so an inner reference is matched through the
 outer field - either inside an array of embedded objects or, where a single object
 is stored, through the dotted path to the inner property.</p>
-<p>The inner keys come from <code>additional</code> only (not from <a href="getEffectiveSchema">getEffectiveSchema</a>),
-so they stay identical to the ones the in-memory post-filter inspects.</p>
+<p>The inner keys come from <a href="getEffectiveSchema">getEffectiveSchema</a>.</p>
 </div>
 
                             <div class="io-description">
@@ -844,6 +1008,83 @@ so they stay identical to the ones the in-memory post-filter inspects.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="holdsArray"></a>
+                    <span class="name">
+                        <span ><b>holdsArray</b></span>
+                        <a href="#holdsArray"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>holdsArray(schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:128</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the given field holds an array of embedded objects
+(as opposed to a single embedded object).</p>
+<p>Can be removed once <a href="../injectables/EventAttendanceMapDatatype.html">EventAttendanceMapDatatype</a> is removed.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformToDatabaseFormat"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -868,7 +1109,7 @@ so they stay identical to the ones the in-memory post-filter inspects.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:129</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:173</a></code>
 </div>
                         </td>
                     </tr>
@@ -955,7 +1196,7 @@ so they stay identical to the ones the in-memory post-filter inspects.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:140</a></code>
+                                <div class="io-line">        <code><a href="../classes/DefaultDatatype.html#source" target="_self" >DefaultDatatype:184</a></code>
 </div>
                         </td>
                     </tr>
@@ -1615,7 +1856,7 @@ than one property) override this.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:75</a></code>
+                                <div class="io-line">        <code><a href="../injectables/SchemaEmbedDatatype.html#source" target="_self" >SchemaEmbedDatatype:109</a></code>
 </div>
                         </td>
                     </tr>

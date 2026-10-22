@@ -190,6 +190,10 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#itemReferencesId" >itemReferencesId</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
                                 <a href="#loadAllLinkingToEntity" >loadAllLinkingToEntity</a>
                             </li>
@@ -272,6 +276,103 @@
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>literal type[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="itemReferencesId"></a>
+                    <span class="name">
+                        <span ><b>itemReferencesId</b></span>
+                        <a href="#itemReferencesId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>itemReferencesId(item: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, refId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, field?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="180"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-relations.service.ts:180</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check whether a single value (a plain ID string or an embedded object)
+references the given entity ID.</p>
+<p>When the <code>field</code> is an embedded schema field, only its inner properties
+holding entity references (<code>dataType: &quot;entity&quot;</code>) are inspected.
+Without such schema info the function falls back to checking all object values.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>refId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>field</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                         </div>
                             <div class="io-description">
@@ -373,7 +474,7 @@ import { EntityRegistry } from &quot;../database-entity.decorator&quot;;
 import { EntityMapperService } from &quot;./entity-mapper.service&quot;;
 import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
 import { EntitySchemaService } from &quot;../schema/entity-schema.service&quot;;
-import { getInnerEntityReferenceFields } from &quot;../schema/entity-reference-fields&quot;;
+import { getEmbeddedEntityReferenceFields } from &quot;../schema/embedded-schema-field.util&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import type { DataFilter } from &quot;../../filter/filters/filters&quot;;
 
@@ -424,8 +525,8 @@ export class EntityRelationsService {
       return true;
     }
 
-    return getInnerEntityReferenceFields(field).some(([, inner]) &#x3D;&gt;
-      asArray(inner.additional).includes(type),
+    return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
+      ([, inner]) &#x3D;&gt; asArray(inner.additional).includes(type),
     );
   }
 
@@ -476,7 +577,11 @@ export class EntityRelationsService {
     const affectedEntities &#x3D; entities
       .map((entity) &#x3D;&gt; ({
         entity,
-        fields: fieldsIncludingId(entity, primaryEntity.getId(), refProperties),
+        fields: this.fieldsIncludingId(
+          entity,
+          primaryEntity.getId(),
+          refProperties,
+        ),
       }))
       .filter((affected) &#x3D;&gt; affected.fields.length &gt; 0);
 
@@ -531,55 +636,57 @@ export class EntityRelationsService {
     }
     return this.entityMapper.findAllType(refType, { $or: conditions });
   }
-}
 
-/**
- * Check whether a single value (a plain ID string or an embedded object)
- * references the given entity ID.
- *
- * When a &#x60;field&#x60; schema is provided and its &#x60;additional&#x60; defines an embedded
- * schema, only the inner properties declared as entity references
- * (&#x60;dataType: &quot;entity&quot;&#x60;) are inspected.  Without schema info the function
- * falls back to checking all object values (backward-compatible).
- */
-export function itemReferencesId(
-  item: any,
-  refId: string,
-  field?: EntitySchemaField,
-): boolean {
-  if (item &#x3D;&#x3D;&#x3D; refId) {
-    return true;
-  }
-
-  if (typeof item &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; item !&#x3D;&#x3D; null) {
-    const refFields &#x3D; getInnerEntityReferenceFields(field);
-    if (refFields.length &gt; 0) {
-      return refFields.some(([key]) &#x3D;&gt; asArray(item[key]).includes(refId));
+  /**
+   * Check whether a single value (a plain ID string or an embedded object)
+   * references the given entity ID.
+   *
+   * When the &#x60;field&#x60; is an embedded schema field, only its inner properties
+   * holding entity references (&#x60;dataType: &quot;entity&quot;&#x60;) are inspected.
+   * Without such schema info the function falls back to checking all object values.
+   */
+  itemReferencesId(
+    item: any,
+    refId: string,
+    field?: EntitySchemaField,
+  ): boolean {
+    if (item &#x3D;&#x3D;&#x3D; refId) {
+      return true;
     }
-    // Fallback when no embedded schema info is available
-    return Object.values(item).includes(refId);
+
+    if (typeof item &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; item !&#x3D;&#x3D; null) {
+      const refFields &#x3D; getEmbeddedEntityReferenceFields(
+        this.schemaService,
+        field,
+      );
+      if (refFields.length &gt; 0) {
+        return refFields.some(([key]) &#x3D;&gt; asArray(item[key]).includes(refId));
+      }
+      // Fallback when no embedded schema info is available
+      return Object.values(item).includes(refId);
+    }
+
+    return false;
   }
 
-  return false;
-}
-
-/**
- * Return the fields of entity that contain the given refId.
- * If there is no such referenced ID, the array will be empty.
- * @param entity
- * @param refId
- * @param relevantFields The entity fields to check for the refId
- */
-function fieldsIncludingId(
-  entity: Entity,
-  refId: string,
-  relevantFields: FormFieldConfig[],
-): FormFieldConfig[] {
-  return relevantFields.filter((field) &#x3D;&gt;
-    asArray(entity[field.id]).some((item) &#x3D;&gt;
-      itemReferencesId(item, refId, field),
-    ),
-  );
+  /**
+   * Return the fields of entity that contain the given refId.
+   * If there is no such referenced ID, the array will be empty.
+   * @param entity
+   * @param refId
+   * @param relevantFields The entity fields to check for the refId
+   */
+  private fieldsIncludingId(
+    entity: Entity,
+    refId: string,
+    relevantFields: FormFieldConfig[],
+  ): FormFieldConfig[] {
+    return relevantFields.filter((field) &#x3D;&gt;
+      asArray(entity[field.id]).some((item) &#x3D;&gt;
+        this.itemReferencesId(item, refId, field),
+      ),
+    );
+  }
 }
 </code></pre>
     </div>

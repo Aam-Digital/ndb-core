@@ -1,0 +1,815 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  SchemaContext</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/common-components/entities-table/data-source/paginated-data-source.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>The schema that the keys of a (nested) query object refer to.</p>
+
+            </p>
+
+
+            </div>
+
+    <div class="tab-pane fade " id="api"><section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-3">
+                    <h6><b>Properties</b></h6>
+                </td>
+                <td class="col-md-9">
+                    <ul class="index-list">
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#container" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">container</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#inElemMatch" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">inElemMatch</span>
+                                </a>
+                        </li>
+                        <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#schema" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">schema</span>
+                                </a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+    <section data-compodoc="block-properties">
+        <h3 id="inputs">Properties</h3>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="container"></a>
+                                <span class="name "><b>container</b>
+                                    <a href="#container">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>container:         <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../injectables/SchemaEmbedDatatype.html" target="_self" >SchemaEmbedDatatype</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="317" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:317</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>The datatype of the embedded field whose inner fields the keys refer to, which knows their paths in the stored value.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="inElemMatch"></a>
+                                <span class="name "><b>inElemMatch</b>
+                                    <a href="#inElemMatch">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>inElemMatch:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="319" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:319</a></div>
+                                </td>
+                            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Whether the keys are the conditions on an array entry inside <code>$elemMatch</code>.</p>
+</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-sm table-bordered">
+                <tbody>
+                        <tr>
+                            <td class="col-md-4">
+                                <a name="schema"></a>
+                                <span class="name "><b>schema</b>
+                                    <a href="#schema">
+                                        <span class="icon ion-ios-link"></span>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <code>schema:         <code><a href="../miscellaneous/typealiases.html#EntitySchema" target="_self" >EntitySchema</a></code>
+</code>
+                            </td>
+                        </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntitySchema" target="_self" >EntitySchema</a></code>
+
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <i>Optional</i>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="315" class="link-to-prism">src/app/core/common-components/entities-table/data-source/paginated-data-source.ts:315</a></div>
+                                </td>
+                            </tr>
+
+                </tbody>
+            </table>
+    </section>
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { MatSort } from &quot;@angular/material/sort&quot;;
+import { DataFilter } from &quot;#src/app/core/filter/filters/filters&quot;;
+import { MatPaginator } from &quot;@angular/material/paginator&quot;;
+import { effect, inject, signal } from &quot;@angular/core&quot;;
+import { EntityFilter } from &quot;#src/app/core/filter/filters/entityFilter&quot;;
+import { EntitiesTableDataSource } from &quot;#src/app/core/common-components/entities-table/data-source/entities-table-data-source&quot;;
+import { merge } from &quot;rxjs&quot;;
+import {
+  EntitySpecialLoaderService,
+  supportsPagination,
+} from &quot;#src/app/core/entity/entity-special-loader/entity-special-loader.service&quot;;
+import {
+  EntityPage,
+  FULL_LOAD_PAGE_SIZE,
+} from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+import { EntitySchema } from &quot;#src/app/core/entity/schema/entity-schema&quot;;
+import { EntitySchemaField } from &quot;#src/app/core/entity/schema/entity-schema-field&quot;;
+import { getSchemaEmbedDatatype } from &quot;#src/app/core/entity/schema/embedded-schema-field.util&quot;;
+import { SchemaEmbedDatatype } from &quot;#src/app/core/basic-datatypes/schema-embed/schema-embed.datatype&quot;;
+
+/** datatypes whose value is stored as the referenced id alone */
+const STORED_BY_ID_DATATYPES &#x3D; [&quot;configurable-enum&quot;, &quot;entity&quot;];
+
+export class PaginatedDataSource&lt;
+  T extends Entity,
+&gt; extends EntitiesTableDataSource&lt;T&gt; {
+  private readonly specialLoader &#x3D; inject(EntitySpecialLoaderService);
+  private readonly schemaService &#x3D; inject(EntitySchemaService);
+
+  private sortRef: MatSort;
+  private sortState: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; } &#x3D; {};
+  override set sort(sort: MatSort) {
+    this.sortRef &#x3D; sort;
+    this.updateSort(this.sortRef.active, this.sortRef.direction);
+    this.sortRef.sortChange.subscribe(({ active, direction }) &#x3D;&gt; {
+      this.updateSort(active, direction);
+    });
+  }
+  override get sort(): MatSort {
+    return this.sortRef;
+  }
+
+  private updateSort(active: string, direction: &quot;asc&quot; | &quot;desc&quot; | &quot;&quot;) {
+    if (
+      (direction &#x3D;&#x3D;&#x3D; &quot;&quot; &amp;&amp; this.sortState.dir &#x3D;&#x3D;&#x3D; undefined) ||
+      (this.sortState.prop &#x3D;&#x3D;&#x3D; active &amp;&amp; this.sortState.dir &#x3D;&#x3D;&#x3D; direction)
+    ) {
+      return;
+    }
+    if (direction &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+      this.sortState &#x3D; {};
+    } else {
+      this.sortState &#x3D; { prop: active, dir: direction };
+    }
+    this.resetPaginationCache();
+  }
+
+  private page: { size?: number; index?: number } &#x3D; {};
+  override set paginator(paginator: MatPaginator) {
+    super.paginator &#x3D; paginator;
+    merge(paginator.initialized, paginator.page).subscribe(() &#x3D;&gt; {
+      this.page.size &#x3D; paginator.pageSize;
+      this.page.index &#x3D; paginator.pageIndex;
+      this.setRecords();
+    });
+  }
+  override get paginator(): MatPaginator {
+    return super.paginator;
+  }
+
+  /**
+   * Whether the reported total is only a lower bound because there are more
+   * records than have been loaded/counted so far. In this case the paginator
+   * should indicate the total is unknown (e.g. &quot;1 - 10 of 10+&quot;).
+   */
+  readonly hasUnknownTotalCount &#x3D; signal(false);
+
+  private effectiveFilter: DataFilter&lt;T&gt; &#x3D; {};
+
+  /** The DB cursor to continue fetching right after the records already in {@link filteredRecords}. */
+  private bookmark: string | undefined;
+
+  /** Whether the last fetch returned fewer records than requested, i.e. all matching records are already loaded. */
+  private reachedEnd &#x3D; false;
+
+  constructor() {
+    super();
+    effect(() &#x3D;&gt; {
+      this.effectiveFilter &#x3D; this.processFilterForDB(this.dataFilter());
+      if (this.loadRecordConfig()) {
+        this.resetPaginationCache();
+      }
+    });
+  }
+
+  /**
+   * Discard all loaded records/cursor state and move back to the first page.
+   * Necessary whenever the query itself changes (filter, sort, page size) or
+   * the underlying data may have changed (entity update) - in all these
+   * cases the existing bookmark chain is no longer valid.
+   */
+  protected resetPaginationCache() {
+    this.filteredRecords.set([]);
+    this.bookmark &#x3D; undefined;
+    this.reachedEnd &#x3D; false;
+    if (super.paginator) {
+      // setting page index manually to not trigger the change event which would result in duplicate fetch
+      super.paginator.pageIndex &#x3D; 0;
+      this.page.index &#x3D; 0;
+      this.setRecords();
+    }
+  }
+
+  protected override async loadRecords() {
+    if (!this.loadRecordConfig() || !super.paginator) {
+      return [];
+    }
+
+    const start &#x3D; this.page.size * this.page.index;
+    // +1: a probe beyond the current page, to detect whether further pages exist
+    const requiredLength &#x3D; start + this.page.size + 1;
+    const loadedLength &#x3D; this.filteredRecords().length;
+
+    if (loadedLength &lt; requiredLength &amp;&amp; !this.reachedEnd) {
+      const deficit &#x3D; requiredLength - loadedLength;
+      const generation &#x3D; this.loadGeneration;
+      const res &#x3D; await this.fetchPage(
+        this.effectiveFilter,
+        { limit: deficit, bookmark: this.bookmark },
+        this.sortState,
+      );
+      if (generation !&#x3D;&#x3D; this.loadGeneration) {
+        // filter/sort/entity-update invalidated this request while it was in
+        // flight - a new load for the current state is already under way.
+        return [];
+      }
+      // update signal to trigger effect for data update in super-class
+      this.filteredRecords.update((records) &#x3D;&gt; [...records, ...res.records]);
+      this.bookmark &#x3D; res.bookmark;
+      this.reachedEnd &#x3D; res.records.length &lt; deficit;
+    }
+
+    const totalLoaded &#x3D; this.filteredRecords().length;
+    this.hasUnknownTotalCount.set(totalLoaded &gt; start + this.page.size);
+    // &#x60;this.allRecords&#x60; stays empty;
+  }
+
+  /**
+   * Fetch one page, continuing from &#x60;page.bookmark&#x60; when one is given.
+   *
+   * The seam for data that is paged some other way than by a Mango query: the
+   * bookmark is opaque to this class, so an override is free to put its own
+   * cursor in it as long as a short page still means the end of the data.
+   */
+  protected async fetchPage(
+    filter: DataFilter&lt;T&gt;,
+    page: { limit: number; bookmark?: string },
+    sort: { prop?: string; dir?: &quot;asc&quot; | &quot;desc&quot; },
+  ): Promise&lt;EntityPage&lt;T&gt;&gt; {
+    const config &#x3D; this.loadRecordConfig();
+    if (supportsPagination(config.loaderMethod)) {
+      // a loader that serves pages of its own: the pagination state stays here,
+      // only the fetching moves
+      return this.specialLoader.loadPageFor&lt;T&gt;(
+        config.loaderMethod,
+        config.forEntity,
+        filter,
+        page,
+      );
+    }
+    return this.entityMapper.findType(config.entityCtr, filter, page, sort);
+  }
+
+  override async getAllData(filtered &#x3D; false): Promise&lt;T[]&gt; {
+    if (!this.loadRecordConfig()) return [];
+
+    const entityCtr &#x3D; this.loadRecordConfig().entityCtr;
+    const filter &#x3D; filtered ? this.effectiveFilter : {};
+
+    // CouchDB&#x27;s _find returns only 25 documents when no limit is given, so we
+    // page through the results explicitly until a page is not completely filled.
+    const allRecords: T[] &#x3D; [];
+    let exportBookmark: string | undefined;
+    let page: T[];
+    do {
+      const res &#x3D; await this.entityMapper.findType(
+        entityCtr,
+        filter,
+        { limit: FULL_LOAD_PAGE_SIZE, bookmark: exportBookmark },
+        this.sortState,
+      );
+      page &#x3D; res.records;
+      exportBookmark &#x3D; res.bookmark;
+      allRecords.push(...page);
+    } while (page.length &#x3D;&#x3D;&#x3D; FULL_LOAD_PAGE_SIZE);
+
+    return allRecords;
+  }
+
+  protected override async processEntityUpdate() {
+    // We don&#x27;t really know how it might affect the pages -&gt; full reload
+    this.resetPaginationCache();
+  }
+
+  private processFilterForDB(filter: DataFilter&lt;T&gt;): EntityFilter&lt;T&gt; {
+    // Mango queries need &#x60;$options: &quot;i&quot;&#x60; while CouchDB only supports &#x60;$regex: &quot;(?i)...&quot;&#x60;
+    filter &#x3D; convertToCouchRegex(filter);
+    return this.toDbSelector(filter, {
+      schema: this.loadRecordConfig()?.entityCtr?.schema,
+    });
+  }
+
+  /**
+   * Rewrite a query on the entity format into one on the database format.
+   * The schema is walked alongside the query, so that fields nested inside
+   * embedded fields (in &#x60;$elemMatch&#x60; or as dotted paths) are resolved as well.
+   */
+  private toDbSelector(query: unknown, ctx: SchemaContext): any {
+    if (Array.isArray(query)) {
+      return query.map((q) &#x3D;&gt; this.toDbSelector(q, ctx));
+    }
+    if (!query || typeof query !&#x3D;&#x3D; &quot;object&quot;) {
+      return query;
+    }
+
+    const result &#x3D; {};
+    for (const [key, value] of Object.entries(query)) {
+      if (key.startsWith(&quot;$&quot;)) {
+        result[key] &#x3D; this.toDbSelector(value, ctx);
+        continue;
+      }
+      const { dbPath, field } &#x3D; this.toDbPath(key, ctx);
+      const condition &#x3D; this.toDbCondition(value, field);
+      // pouchdb-find skips implicit equality with a falsy value (e.g. &#x60;{status: &quot;&quot;}&#x60;)
+      // inside &#x60;$elemMatch&#x60; and matches every entry, an explicit &#x60;$eq&#x60; works on both engines
+      result[dbPath] &#x3D;
+        ctx.inElemMatch &amp;&amp; !isOperatorObject(condition)
+          ? { $eq: condition }
+          : condition;
+    }
+    return result;
+  }
+
+  /**
+   * Translate a (dotted) field path into its path in the database format:
+   * enum and entity references are stored as the plain id, so e.g.
+   * &quot;gender.id&quot; becomes &quot;gender&quot; and &quot;phoneNumber.type.id&quot; becomes &quot;phoneNumber.type&quot;.
+   * Only for fields that are actually stored that way, though - on any other
+   * field &quot;.id&quot; is a real path into an object value.
+   */
+  private toDbPath(
+    key: string,
+    ctx: SchemaContext,
+  ): { dbPath: string; field?: EntitySchemaField } {
+    const dbSegments: string[] &#x3D; [];
+    let current &#x3D; ctx;
+    let field: EntitySchemaField | undefined;
+    for (const segment of key.split(&quot;.&quot;)) {
+      if (
+        segment &#x3D;&#x3D;&#x3D; &quot;id&quot; &amp;&amp;
+        STORED_BY_ID_DATATYPES.includes(field?.dataType)
+      ) {
+        continue;
+      }
+      dbSegments.push(
+        current.container?.getEmbeddedFieldDbPath(segment) ?? segment,
+      );
+      field &#x3D; current.schema?.get(segment);
+      current &#x3D; this.getEmbeddedContext(field);
+    }
+    return { dbPath: dbSegments.join(&quot;.&quot;), field };
+  }
+
+  private toDbCondition(
+    condition: unknown,
+    field: EntitySchemaField | undefined,
+  ): unknown {
+    if (condition &#x3D;&#x3D;&#x3D; undefined) {
+      // &#x60;undefined&#x60; cannot be sent in a Mango query, and dropping the key
+      // would leave an empty selector that matches every document
+      return { $exists: false };
+    }
+    if (!isOperatorObject(condition)) {
+      return condition;
+    }
+
+    const result &#x3D; {};
+    for (const [operator, value] of Object.entries(condition)) {
+      if (operator &#x3D;&#x3D;&#x3D; &quot;$elemMatch&quot;) {
+        result[operator] &#x3D; this.toDbSelector(value, {
+          ...this.getEmbeddedContext(field),
+          inElemMatch: true,
+        });
+      } else if (operator &#x3D;&#x3D;&#x3D; &quot;$not&quot;) {
+        result[operator] &#x3D; this.toDbCondition(value, field);
+      } else {
+        result[operator] &#x3D; value;
+      }
+    }
+    return result;
+  }
+
+  private getEmbeddedContext(
+    field: EntitySchemaField | undefined,
+  ): SchemaContext {
+    const container &#x3D; getSchemaEmbedDatatype(this.schemaService, field);
+    return { schema: container?.getEffectiveSchema(field), container };
+  }
+}
+
+/** The schema that the keys of a (nested) query object refer to. */
+interface SchemaContext {
+  schema?: EntitySchema;
+  /** The datatype of the embedded field whose inner fields the keys refer to, which knows their paths in the stored value. */
+  container?: SchemaEmbedDatatype;
+  /** Whether the keys are the conditions on an array entry inside &#x60;$elemMatch&#x60;. */
+  inElemMatch?: boolean;
+}
+
+function isOperatorObject(condition: unknown): condition is object {
+  return (
+    !!condition &amp;&amp; typeof condition &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; !Array.isArray(condition)
+  );
+}
+
+/**
+ * Recursively converts any $regex value in an object to a CouchDB inline (?i) pattern.
+ *
+ * @param {*} node - The query object or value to transform.
+ * @returns {*} The transformed query object.
+ */
+function convertToCouchRegex(node: any): any {
+  if (node &#x3D;&#x3D;&#x3D; null || typeof node !&#x3D;&#x3D; &quot;object&quot;) {
+    return node;
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(convertToCouchRegex);
+  }
+
+  const result &#x3D; {};
+
+  for (const [key, value] of Object.entries(node)) {
+    // Strip $options completely
+    if (key &#x3D;&#x3D;&#x3D; &quot;$options&quot;) {
+      continue;
+    }
+
+    // Convert $regex patterns to inline case-insensitive format
+    if (key &#x3D;&#x3D;&#x3D; &quot;$regex&quot; &amp;&amp; typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      result[&quot;$regex&quot;] &#x3D; &#x60;(?i)${value}&#x60;;
+    } else {
+      result[key] &#x3D; convertToCouchRegex(value);
+    }
+  }
+
+  return result;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'SchemaContext.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
