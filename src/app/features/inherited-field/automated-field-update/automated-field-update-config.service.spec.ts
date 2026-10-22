@@ -25,6 +25,7 @@ import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.d
 import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
 const mockAutomationConfig = {
   mode: "inherited-field" as DefaultValueMode,
@@ -277,6 +278,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
   let entitySchemaService: EntitySchemaService;
+  let ability: { initialized: boolean; can: ReturnType<typeof vi.fn> };
 
   const TEST_MENTORSHIP_ENUM: ConfigurableEnumValue[] = [
     { id: "active", label: "Active" },
@@ -340,9 +342,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
           .filter((record) => asArray(record[field]).includes(key));
       },
     );
+    ability = { initialized: true, can: vi.fn(() => true) };
     TestBed.configureTestingModule({
       providers: [
         AutomatedFieldUpdateConfigService,
+        { provide: EntityAbility, useValue: ability },
         { provide: DatabaseIndexingService, useValue: mockIndexing },
         EntitySchemaService,
         ...mockEntityMapperProvider(),
@@ -1245,13 +1249,15 @@ describe("AutomatedFieldUpdateConfigService", () => {
     });
 
     it("does not save the record again if the dialog is confirmed without a change of its value", async () => {
-      const saveSpy = vi.spyOn(entityMapper, "save");
+      const saveSpy = vi.spyOn(entityMapper, "saveAll");
 
       await saveSchoolCategory(["secondary"], "primary", "secondary");
 
       expect(mockDialog.open).toHaveBeenCalledTimes(1);
       expect(
-        saveSpy.mock.calls.some(([e]) => e instanceof CommonValueGroup),
+        saveSpy.mock.calls
+          .flatMap(([entities]) => entities)
+          .some((e) => e instanceof CommonValueGroup),
       ).toBe(false);
     });
 
@@ -1283,8 +1289,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
     }
 
     /** change the tags of the action (which has to be added to the database) and return the suggestions of the dialog */
-    async function changeTags(action: HierarchyAction, tagsAfter: string[]) {
-      const actionBefore = action.copy();
+    async function changeTags(
+      action: HierarchyAction,
+      tagsAfter: string[],
+      actionBefore = action.copy(),
+    ) {
       action.tags = toTags(tagsAfter);
       mockDialog.open.mockClear();
 
@@ -1423,6 +1432,43 @@ describe("AutomatedFieldUpdateConfigService", () => {
         [workPackage2.getId(), []],
         [project.getId(), []],
       ]);
+    });
+
+    it("removes a value from the parent of the parent that one branch below it drops while another branch only adds values", async () => {
+      const project = createAction(["water", "health"]);
+      const workPackage1 = createAction(["water"], project);
+      const workPackage2 = createAction(["health"], project);
+      const activity = createAction(["water"], workPackage1);
+      entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+      const activityBefore = activity.copy();
+      activity.parents = [workPackage2.getId()];
+
+      const suggestions = await changeTags(
+        activity,
+        ["education"],
+        activityBefore,
+      );
+
+      expect(suggestions.map(([id, value]) => [id, value])).toEqual([
+        [workPackage2.getId(), ["health", "education"]],
+        [workPackage1.getId(), []],
+        [project.getId(), ["health", "education"]],
+      ]);
+    });
+
+    it("does not offer a record the user may not update, nor the records above it", async () => {
+      const project = createAction(["health"]);
+      const workPackage = createAction(["health"], project);
+      const activity = createAction([], workPackage);
+      entityMapper.addAll([project, workPackage, activity]);
+      ability.can.mockImplementation(
+        (action: string, entity: Entity) =>
+          entity.getId() !== workPackage.getId(),
+      );
+
+      const suggestions = await changeTags(activity, ["education"]);
+
+      expect(suggestions).toEqual([]);
     });
 
     it("suggests the shared value to a record linking to several updated parents", async () => {

@@ -5,6 +5,7 @@ import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import type {
   AffectedEntity,
+  EnteredValue,
   UpdateTrigger,
 } from "./automated-field-update.component";
 import { lastValueFrom } from "rxjs";
@@ -15,17 +16,17 @@ import {
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
-import { differenceWith, isEqual } from "lodash-es";
+import { differenceWith, isEqual, uniq } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import {
   addAndRemoveValues,
   addMissingValues,
-  getRemovedValues,
   isEmptyValue,
 } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
-import { addHigherLevels } from "./add-higher-levels";
+import { ChangeSet, ChangeSetState, isLinkedTo } from "./change-set";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -47,7 +48,36 @@ interface AffectedRule {
 interface NewValue {
   value: any;
   noCommonValue?: NoCommonValueReason;
+
+  /** whether the target is no longer linked to any of the changed records */
+  unlinked?: boolean;
 }
+
+/** An entity whose fields changed, so that the entities based on them have to be calculated (again) */
+interface QueuedChange {
+  /** the entity as it is saved */
+  entity: Entity;
+  /** how many levels above the changed entity it is (0 = the changed entity itself) */
+  level: number;
+  changedFields: string[];
+  /** only update the entities that the entity links to (not the ones linking to it) */
+  onlyLinkedEntities?: boolean;
+}
+
+/** The state of one calculation of the affected entities */
+interface SuggestionRun {
+  trigger: UpdateTrigger;
+  changeSet: ChangeSet;
+  enteredValues: EnteredValue[];
+  /** the affected entities found so far, by entity id and field */
+  affectedEntities: Map<string, AffectedEntity>;
+}
+
+/** Number of levels above the changed entity that are included in one update dialog. */
+export const MAX_HIERARCHY_LEVELS = 10;
+
+/** Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop) */
+const MAX_STEPS = 1000;
 
 /**
  * The value that the linked parent records of a record have in common.
@@ -71,6 +101,7 @@ export class AutomatedFieldUpdateConfigService {
   private readonly dialog = inject(MatDialog);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes = new Set<string>();
@@ -92,112 +123,10 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<void> {
     if (this.checkRefAlreadyProcessed(entity)) return;
 
-    const affectedEntities = await addHigherLevels(
-      await this.loadAffectedEntities(entity, entityBeforeChanges),
-      entity.getId(),
-      (affected, found) => this.loadAffectedEntitiesAbove(affected, found),
-    );
-
-    if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities, {
-        entity,
-        before: entityBeforeChanges,
-      });
-    }
-  }
-
-  /**
-   * Find the entities directly linked to the changed entity that the rules would update.
-   */
-  private async loadAffectedEntities(
-    entity: Entity,
-    entityBeforeChanges: Entity,
-    pendingEntities: Map<string, Entity> = new Map(),
-  ): Promise<AffectedEntity[]> {
-    const changedFields = this.getChangedFields(entity, entityBeforeChanges);
-    const changedFieldIds = changedFields.map((f) => f.fieldId);
-
-    const relevantDirectRules: AffectedRule[] =
-      this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
-        (r) =>
-          changedFieldIds.includes(r.rule.sourceValueField) ||
-          changedFieldIds.includes(r.rule.sourceReferenceField),
-      );
-    const relevantIndirectRules: AffectedRule[] =
-      this.getInheritanceRulesReferencingThisEntity(
-        entity.getConstructor(),
-      ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
-
-    return [
-      ...(
-        await Promise.all(
-          relevantDirectRules.map((rule) =>
-            this.loadAffectedEntitiesForRule(
-              rule,
-              entity,
-              entityBeforeChanges,
-              changedFieldIds.includes(rule.rule.sourceValueField),
-              pendingEntities,
-            ),
-          ),
-        )
-      ).flat(),
-      ...(
-        await Promise.all(
-          relevantIndirectRules.map((rule) =>
-            this.loadAffectedEntitiesForInheritanceRule(
-              rule,
-              entity,
-              pendingEntities,
-            ),
-          ),
-        )
-      ).flat(),
-    ];
-  }
-
-  /**
-   * Find the entities that would be updated next if the affected entity got its suggested value.
-   * @param affected the entity with its suggested value
-   * @param found all entities with suggested values that are not saved yet, which have to be taken into account
-   *   where the values of several linked entities are combined
-   */
-  private loadAffectedEntitiesAbove(
-    affected: AffectedEntity,
-    found: AffectedEntity[],
-  ): Promise<AffectedEntity[]> {
-    return this.loadAffectedEntities(
-      this.applySuggestedValue(affected, affected.affectedEntity.copy()),
-      affected.affectedEntity,
-      this.getPendingEntities(found),
-    );
-  }
-
-  /** Copies of the affected entities that already have their suggested values, by entity id */
-  private getPendingEntities(found: AffectedEntity[]): Map<string, Entity> {
-    const pendingEntities = new Map<string, Entity>();
-    for (const affected of found) {
-      pendingEntities.set(
-        affected.id,
-        this.applySuggestedValue(
-          affected,
-          pendingEntities.get(affected.id) ?? affected.affectedEntity.copy(),
-        ),
-      );
-    }
-    return pendingEntities;
-  }
-
-  private applySuggestedValue(
-    affected: AffectedEntity,
-    entity: Entity,
-  ): Entity {
-    entity[affected.targetFieldId] =
-      this.entitySchemaService.valueToEntityFormat(
-        affected.newValue,
-        affected.selectedField,
-      );
-    return entity;
+    await this.confirmAndSaveAffectedEntities({
+      entity,
+      before: entityBeforeChanges,
+    });
   }
 
   /**
@@ -218,29 +147,217 @@ export class AutomatedFieldUpdateConfigService {
    * regardless of whether the field was changed recently.
    * @return whether there were any linked entities to update
    */
-  public async updateLinkedRecords(
+  public updateLinkedRecords(
     entity: Entity,
     fieldId: string,
   ): Promise<boolean> {
-    const affectedEntities = await addHigherLevels(
-      (
-        await Promise.all(
-          this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
-            (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
-          ),
-        )
-      ).flat(),
-      entity.getId(),
-      (affected, found) => this.loadAffectedEntitiesAbove(affected, found),
-    );
+    return this.confirmAndSaveAffectedEntities({
+      entity,
+      before: entity,
+      fieldId,
+    });
+  }
 
-    if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities, {
-        entity,
-        before: entity,
-      });
+  /**
+   * Find the entities that the rules would update, level by level up the hierarchy
+   * (e.g. the school of a child and the parent school of that school).
+   *
+   * The value of each entity is calculated from all its linked records, with the changes found so far
+   * (see {@link ChangeSet}). Whenever an entity gets another value, the entities based on it are calculated again.
+   * So the result does not depend on the order or the number of paths over which an entity is reached.
+   * @param trigger the change that starts the update
+   * @param enteredValues values the user entered for affected entities (database format),
+   *   which the entities above are based on instead of the suggestions
+   * @return the affected entities, ordered by level
+   */
+  private async findAffectedEntities(
+    trigger: UpdateTrigger,
+    enteredValues: EnteredValue[] = [],
+  ): Promise<AffectedEntity[]> {
+    const changedFields = trigger.fieldId
+      ? [trigger.fieldId]
+      : this.getChangedFields(trigger.entity, trigger.before).map(
+          (f) => f.fieldId,
+        );
+    const changeSet = new ChangeSet(
+      trigger.entity,
+      trigger.before,
+      changedFields,
+    );
+    const run: SuggestionRun = {
+      trigger,
+      changeSet,
+      enteredValues,
+      affectedEntities: new Map(),
+    };
+    const queue: QueuedChange[] = [
+      {
+        entity: trigger.entity,
+        level: 0,
+        changedFields,
+        onlyLinkedEntities: !!trigger.fieldId,
+      },
+    ];
+
+    let steps = 0;
+    while (queue.length > 0) {
+      if (steps++ >= MAX_STEPS) {
+        Logging.warn(
+          "AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps",
+          { entityType: trigger.entity.getType() },
+        );
+        break;
+      }
+      const change = queue.shift();
+      if (change.level >= MAX_HIERARCHY_LEVELS) continue;
+
+      const source = changeSet.get(change.entity, "after");
+      const level = change.level + 1;
+      for (const rule of this.getTriggeredRules(source, change)) {
+        for (const target of await this.loadTargets(rule, source, changeSet)) {
+          if (await this.updateSuggestion(run, target, rule, source, level)) {
+            queue.push({
+              entity: target,
+              level,
+              changedFields: [rule.fieldId],
+            });
+          }
+        }
+      }
     }
-    return affectedEntities.length > 0;
+
+    return [...run.affectedEntities.values()].sort((a, b) => a.level - b.level);
+  }
+
+  /**
+   * Calculate the suggested value of the target again and use it (or the value the user entered)
+   * for the entities above.
+   * @param level how many levels above the changed entity the target is reached
+   * @return whether the target got another value, so that the entities based on it have to be calculated again
+   */
+  private async updateSuggestion(
+    { trigger, changeSet, enteredValues, affectedEntities }: SuggestionRun,
+    target: Entity,
+    rule: AffectedRule,
+    source: Entity,
+    level: number,
+  ): Promise<boolean> {
+    // the changed entity is never offered, and the chain ends at an entity the user may not update
+    if (
+      target.getId() === trigger.entity.getId() ||
+      !this.canUpdate(target, rule.fieldId)
+    ) {
+      return false;
+    }
+
+    const key = `${target.getId()}|${rule.fieldId}`;
+    const existing = affectedEntities.get(key);
+    const suggestion = await this.suggestValue(target, rule, source, changeSet);
+    if (suggestion) {
+      affectedEntities.set(key, {
+        ...suggestion,
+        level: Math.max(level, existing?.level ?? 0),
+        via: uniq([...(existing?.via ?? []), source.getId()]),
+      });
+    } else {
+      affectedEntities.delete(key);
+    }
+
+    const entered = enteredValues.find(
+      (e) => e.id === target.getId() && e.targetFieldId === rule.fieldId,
+    );
+    const value = entered
+      ? entered.value
+      : (suggestion?.newValue ?? this.getDatabaseValue(target, rule.fieldId));
+    return this.setPendingValue(changeSet, target, rule, value);
+  }
+
+  /**
+   * The rules that pass on the changed fields of the source entity.
+   */
+  private getTriggeredRules(
+    source: Entity,
+    { changedFields, onlyLinkedEntities }: QueuedChange,
+  ): AffectedRule[] {
+    const isChanged = (fieldId: string) => changedFields.includes(fieldId);
+    const directRules = this.getInheritanceRulesFromDirectEntity(
+      source.getConstructor(),
+    ).filter(
+      ({ rule }) =>
+        isChanged(rule.sourceValueField) ||
+        isChanged(rule.sourceReferenceField),
+    );
+    const indirectRules = onlyLinkedEntities
+      ? []
+      : this.getInheritanceRulesReferencingThisEntity(
+          source.getConstructor(),
+        ).filter(({ rule }) => isChanged(rule.sourceValueField));
+    return [...directRules, ...indirectRules];
+  }
+
+  /**
+   * Load the entities that the rule would update when the source entity changes.
+   * @param source the changed entity (after the change)
+   * @return the affected entities as they are saved
+   */
+  private async loadTargets(
+    { rule, entityType }: AffectedRule,
+    source: Entity,
+    changeSet: ChangeSet,
+  ): Promise<Entity[]> {
+    if (!rule.sourceReferenceEntity) {
+      return this.loadRecordsLinkingTo(
+        entityType,
+        rule.sourceReferenceField,
+        source.getId(),
+      );
+    }
+    // the entities linked before and after the change (they may lose values)
+    return this.loadEntitiesByIds(
+      entityType,
+      uniq([
+        ...this.getLinkedIds(source, rule),
+        ...this.getLinkedIds(changeSet.get(source, "before"), rule),
+      ]),
+    );
+  }
+
+  /**
+   * Whether the user may change the field of the entity.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  private canUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !this.ability?.initialized || this.ability.can("update", entity, fieldId)
+    );
+  }
+
+  /**
+   * Use the given value of the affected entity (database format) for the entities above it.
+   * @return whether the entity got another value, so that the entities based on it have to be calculated again
+   */
+  private setPendingValue(
+    changeSet: ChangeSet,
+    target: Entity,
+    { entityType, fieldId }: AffectedRule,
+    value: unknown,
+  ): boolean {
+    const pendingValue = this.getDatabaseValue(
+      changeSet.get(target, "after"),
+      fieldId,
+    );
+    if (isSameValue(pendingValue, value)) return false;
+
+    changeSet.setValue(
+      target,
+      fieldId,
+      this.entitySchemaService.valueToEntityFormat(value, {
+        ...entityType.schema.get(fieldId),
+        id: fieldId,
+      }),
+      isSameValue(this.getDatabaseValue(target, fieldId), value),
+    );
+    return true;
   }
 
   private getRulesUsingFieldAsSource(
@@ -324,163 +441,129 @@ export class AutomatedFieldUpdateConfigService {
     );
   }
 
-  /**
-   * Load affected entities for a single automation rule (direct references)
-   * Source entity has reference field pointing TO target entities
-   * @param valueChanged whether the source value changed (all linked entities are affected),
-   *   or only the link (then only newly linked entities get the value, and unlinked ones may lose it)
-   */
-  private async loadAffectedEntitiesForRule(
-    affectedRule: AffectedRule,
-    sourceEntity: Entity,
-    sourceEntityBeforeChanges: Entity,
-    valueChanged = true,
-    pendingEntities: Map<string, Entity> = new Map(),
-  ): Promise<AffectedEntity[]> {
-    const { rule, entityType } = affectedRule;
-
-    const linkedIds = this.getLinkedIds(sourceEntity, rule);
-    const previousIds = sourceEntityBeforeChanges.isNew
-      ? []
-      : this.getLinkedIds(sourceEntityBeforeChanges, rule);
-    // a changed link alone only passes on a value that is set, instead of clearing the value of the new parent
-    const idsToUpdate = valueChanged
-      ? linkedIds
-      : linkedIds.filter(
-          (id) =>
-            !previousIds.includes(id) &&
-            !isEmptyValue(this.calculateNewValue(sourceEntity, rule)),
-        );
-
-    const targetEntities = await this.loadEntitiesByIds(
-      entityType,
-      idsToUpdate,
-    );
-    const previouslyLinkedTargets = targetEntities.filter((target) =>
-      previousIds.includes(target.getId()),
-    );
-    const newValue: NewValue = {
-      value: this.calculateNewValue(sourceEntity, rule),
-    };
-
-    return [
-      ...this.processTargetEntities(
-        targetEntities,
-        affectedRule,
-        sourceEntity,
-        new Map(
-          targetEntities.map((entity): [string, NewValue] => [
-            entity.getId(),
-            newValue,
-          ]),
-        ),
-        await this.loadRemovedValues(
-          previouslyLinkedTargets,
-          affectedRule,
-          getRemovedValues(
-            sourceEntityBeforeChanges.isNew
-              ? []
-              : this.calculateNewValue(sourceEntityBeforeChanges, rule),
-            this.calculateNewValue(sourceEntity, rule),
-          ),
-          pendingEntities,
-        ),
-      ),
-      ...(await this.loadAffectedEntitiesForUnlinkedEntities(
-        affectedRule,
-        sourceEntityBeforeChanges,
-        previousIds.filter((id) => !linkedIds.includes(id)),
-      )),
-    ];
-  }
-
   private getLinkedIds(
-    entity: Entity,
+    entity: Entity | undefined,
     rule: DefaultValueConfigInheritedField,
   ): string[] {
-    const referencedIds = entity[rule.sourceReferenceField];
+    const referencedIds = entity?.[rule.sourceReferenceField];
     return referencedIds ? asArray(referencedIds) : [];
   }
 
   /**
-   * Load the entities that the source entity is no longer linked to,
-   * to suggest removing the values only the source entity contributed to their collected field.
+   * Calculate the suggested value of an affected entity from its linked records after the change.
+   * @param target the affected entity as it is saved
+   * @param source the changed entity that the affected entity is reached from (after the change)
+   * @return the affected entity with the suggested value, or undefined if its value does not change
    */
-  private async loadAffectedEntitiesForUnlinkedEntities(
+  private async suggestValue(
+    target: Entity,
     affectedRule: AffectedRule,
-    sourceEntityBeforeChanges: Entity,
-    unlinkedIds: string[],
-  ): Promise<AffectedEntity[]> {
+    source: Entity,
+    changeSet: ChangeSet,
+  ): Promise<AffectedEntity | undefined> {
     const { rule, entityType, fieldId } = affectedRule;
-    if (
-      unlinkedIds.length === 0 ||
-      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
-    ) {
-      return [];
-    }
-
-    const unlinkedTargets = await this.loadEntitiesByIds(
-      entityType,
-      unlinkedIds,
-    );
-    return this.processTargetEntities(
-      unlinkedTargets,
-      affectedRule,
-      sourceEntityBeforeChanges,
-      new Map(
-        unlinkedTargets.map((target): [string, NewValue] => [
-          target.getId(),
-          { value: [] },
-        ]),
-      ),
-      await this.loadRemovedValues(
-        unlinkedTargets,
+    let newValue: NewValue | undefined;
+    if (!rule.sourceReferenceEntity) {
+      newValue = await this.loadNewValue(
+        target,
         affectedRule,
-        getRemovedValues(
-          this.calculateNewValue(sourceEntityBeforeChanges, rule),
-          [],
-        ),
-      ),
-    ).map((affectedEntity) => ({ ...affectedEntity, unlinked: true }));
+        source,
+        changeSet,
+      );
+    } else if (isCollectingFromLinkedRecords(entityType.schema.get(fieldId))) {
+      newValue = await this.loadCollectedValue(target, affectedRule, changeSet);
+    } else {
+      newValue = this.getValueOfChangedRecord(target, rule, changeSet);
+    }
+    return newValue
+      ? this.toAffectedEntity(target, affectedRule, source, newValue)
+      : undefined;
   }
 
   /**
-   * Load affected entities for a single inheritance rule (indirect references)
-   * Target entities have reference field pointing TO source entity
+   * Get the new value of a field that collects the values of the records linking to it:
+   * the values of the changed records linking to it are added, and the values that the changed records lost
+   * are removed, unless a record linking to it still has them.
    */
-  private async loadAffectedEntitiesForInheritanceRule(
-    affectedRule: AffectedRule,
-    sourceEntity: Entity,
-    pendingEntities: Map<string, Entity> = new Map(),
-  ): Promise<AffectedEntity[]> {
-    const { rule, entityType } = affectedRule;
-
-    const targetEntities = await this.loadRecordsLinkingTo(
-      entityType,
-      rule.sourceReferenceField,
-      sourceEntity.getId(),
+  private async loadCollectedValue(
+    target: Entity,
+    { rule, fieldId }: AffectedRule,
+    changeSet: ChangeSet,
+  ): Promise<NewValue> {
+    const linkingTo = (saved: Entity[], state: ChangeSetState) =>
+      changeSet.linkingTo(
+        saved,
+        rule.sourceReferenceEntity,
+        rule.sourceReferenceField,
+        target.getId(),
+        state,
+      );
+    const changedRecords = linkingTo([], "after");
+    const lostValues = differenceWith(
+      this.collectValues(linkingTo([], "before"), rule),
+      this.collectValues(changedRecords, rule),
+      isEqual,
     );
 
-    const newValues = new Map<string, NewValue>(
-      await Promise.all(
-        targetEntities.map(async (entity): Promise<[string, NewValue]> => [
-          entity.getId(),
-          await this.loadNewValue(
-            entity,
-            affectedRule,
-            sourceEntity,
-            pendingEntities,
-          ),
-        ]),
+    let removedValues = [];
+    try {
+      if (lostValues.length > 0) {
+        const saved = await this.loadRecordsLinkingTo(
+          rule.sourceReferenceEntity,
+          rule.sourceReferenceField,
+          target.getId(),
+        );
+        removedValues = differenceWith(
+          lostValues,
+          this.collectValues(linkingTo(saved, "after"), rule),
+          isEqual,
+        );
+      }
+    } catch (error) {
+      Logging.warn(
+        "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
+        { entityType: target.getType(), fieldId },
+        error,
+      );
+    }
+
+    return {
+      value: addAndRemoveValues(
+        this.getDatabaseValue(target, fieldId),
+        this.collectValues(changedRecords, rule),
+        removedValues,
       ),
-    );
+      unlinked: changedRecords.length === 0,
+    };
+  }
 
-    return this.processTargetEntities(
-      targetEntities,
-      affectedRule,
-      sourceEntity,
-      newValues,
-    );
+  /**
+   * Get the new value of a field that takes the value of a linked record: the value of a changed record linking to it,
+   * if that value changed or the link is new (then only if there is a value, instead of clearing the existing one).
+   * @return undefined if no changed record passes on its value
+   */
+  private getValueOfChangedRecord(
+    target: Entity,
+    rule: DefaultValueConfigInheritedField,
+    changeSet: ChangeSet,
+  ): NewValue | undefined {
+    const source = changeSet
+      .changedRecordsLinkingTo(
+        rule.sourceReferenceEntity,
+        rule.sourceReferenceField,
+        target.getId(),
+      )
+      .find(
+        (record) =>
+          changeSet.isChanged(record, rule.sourceValueField) ||
+          (!isLinkedTo(
+            changeSet.get(record, "before"),
+            rule.sourceReferenceField,
+            target.getId(),
+          ) &&
+            !isEmptyValue(this.calculateNewValue(record, rule))),
+      );
+    return source ? { value: this.calculateNewValue(source, rule) } : undefined;
   }
 
   /**
@@ -489,13 +572,13 @@ export class AutomatedFieldUpdateConfigService {
    * If they have different values or some linked entities cannot be loaded,
    * the target's current value is returned.
    * If none of them has a value, the value is cleared like for a single linked entity.
-   * @param pendingEntities entities with suggested values that are not saved yet, used instead of the saved ones
+   * @param changeSet the changes, whose values are used instead of the saved ones
    */
   private async loadNewValue(
     targetEntity: Entity,
     { rule, fieldId }: AffectedRule,
     sourceEntity: Entity,
-    pendingEntities: Map<string, Entity>,
+    changeSet: ChangeSet,
   ): Promise<NewValue> {
     const otherIds = asArray(targetEntity[rule.sourceReferenceField]).filter(
       (id) => id !== sourceEntity.getId(),
@@ -510,18 +593,13 @@ export class AutomatedFieldUpdateConfigService {
       {
         parentType: sourceEntity.getConstructor(),
         loadedParents: [sourceEntity],
-        pendingEntities,
+        changeSet,
       },
     );
 
     if (noCommonValue) {
       return {
-        value: this.transformSourceValueToDatabaseFormat(
-          targetEntity[fieldId],
-          targetEntity,
-          fieldId,
-          this.entitySchemaService,
-        ),
+        value: this.getDatabaseValue(targetEntity, fieldId),
         noCommonValue,
       };
     }
@@ -529,112 +607,55 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Find the values that the source entity no longer has and that are not used by any other entity linking to the same target,
-   * for fields that collect the values of their linked entities (i.e. these values can be removed from the target).
-   * @param removedValues the values that the source entity lost for the target entities
-   * @return the values to remove by target entity id
+   * The affected entity with its new value, or undefined if the value does not change.
    */
-  private async loadRemovedValues(
-    targetEntities: Entity[],
-    { rule, entityType, fieldId }: AffectedRule,
-    removedValues: any[],
-    pendingEntities: Map<string, Entity> = new Map(),
-  ): Promise<Map<string, any[]>> {
-    if (
-      removedValues.length === 0 ||
-      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
-    ) {
-      return new Map();
-    }
-
-    try {
-      return new Map(
-        await Promise.all(
-          targetEntities.map(async (target): Promise<[string, any[]]> => [
-            target.getId(),
-            differenceWith(
-              removedValues,
-              await this.collectValuesOfLinkedRecords(
-                target,
-                rule,
-                pendingEntities,
-              ),
-              isEqual,
-            ),
-          ]),
-        ),
-      );
-    } catch (error) {
-      Logging.warn(
-        "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
-        { entityType: entityType.ENTITY_TYPE, fieldId },
-        error,
-      );
-      return new Map();
-    }
-  }
-
-  /**
-   * Common logic for processing target entities and creating AffectedEntity objects
-   */
-  private processTargetEntities(
-    targetEntities: Entity[],
+  private toAffectedEntity(
+    targetEntity: Entity,
     {
       rule,
       entityType: targetEntityType,
       fieldId: targetFieldId,
     }: AffectedRule,
     sourceEntity: Entity,
-    newValues: Map<string, NewValue>,
-    removedValues: Map<string, any[]> = new Map(),
-  ): AffectedEntity[] {
-    const affectedEntities: AffectedEntity[] = [];
-    const sourceEntityType = sourceEntity.getConstructor();
-    const relatedReferenceFieldEntityType = rule.sourceReferenceEntity
-      ? sourceEntityType
-      : targetEntityType;
-    const fieldConfig = targetEntityType.schema.get(targetFieldId);
-    const addToExisting = isCollectingFromLinkedRecords(fieldConfig);
-    const combineWithCurrentValue = addToExisting
-      ? addAndRemoveValues
-      : (_currentValue: any, newValue: any) => newValue;
-
-    for (const targetEntity of targetEntities) {
-      // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
-      const currentValue = this.transformSourceValueToDatabaseFormat(
-        targetEntity[targetFieldId],
-        targetEntity,
-        targetFieldId,
-        this.entitySchemaService,
-      );
-      const { value, noCommonValue } = newValues.get(targetEntity.getId());
-      const newValue = combineWithCurrentValue(
-        currentValue,
-        value,
-        removedValues.get(targetEntity.getId()),
-      );
-      // an existing value is kept, but the user is informed that there is nothing to suggest
-      const shownNoCommonValue = isEmptyValue(currentValue)
-        ? undefined
-        : noCommonValue;
-      if (isSameValue(currentValue, newValue) && !shownNoCommonValue) continue;
-
-      affectedEntities.push({
-        id: targetEntity.getId(),
-        newValue: newValue,
-        targetFieldId,
-        targetEntityType,
-        selectedField: { ...fieldConfig, id: targetFieldId },
-        affectedEntity: targetEntity,
-        relatedReferenceField: rule.sourceReferenceField,
-        relatedReferenceFieldEntityType,
-        sourceFieldId: rule.sourceValueField,
-        addToExisting,
-        noCommonValue: shownNoCommonValue,
-      });
+    { value: newValue, noCommonValue, unlinked }: NewValue,
+  ): AffectedEntity | undefined {
+    // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
+    const currentValue = this.getDatabaseValue(targetEntity, targetFieldId);
+    // an existing value is kept, but the user is informed that there is nothing to suggest
+    const shownNoCommonValue = isEmptyValue(currentValue)
+      ? undefined
+      : noCommonValue;
+    if (isSameValue(currentValue, newValue) && !shownNoCommonValue) {
+      return undefined;
     }
 
-    return affectedEntities;
+    const fieldConfig = targetEntityType.schema.get(targetFieldId);
+    return {
+      id: targetEntity.getId(),
+      newValue,
+      targetFieldId,
+      targetEntityType,
+      selectedField: { ...fieldConfig, id: targetFieldId },
+      affectedEntity: targetEntity,
+      relatedReferenceField: rule.sourceReferenceField,
+      relatedReferenceFieldEntityType: rule.sourceReferenceEntity
+        ? sourceEntity.getConstructor()
+        : targetEntityType,
+      sourceFieldId: rule.sourceValueField,
+      addToExisting: isCollectingFromLinkedRecords(fieldConfig),
+      noCommonValue: shownNoCommonValue,
+      unlinked: unlinked || undefined,
+    };
+  }
+
+  /** The value of the field of the entity in database format */
+  private getDatabaseValue(entity: Entity, fieldId: string): any {
+    return this.transformSourceValueToDatabaseFormat(
+      entity[fieldId],
+      entity,
+      fieldId,
+      this.entitySchemaService,
+    );
   }
 
   /**
@@ -688,8 +709,7 @@ export class AutomatedFieldUpdateConfigService {
    *   (ids of other types are not loaded, ids without type prefix are loaded as this type);
    *   if not given, each record is loaded as the type of its id prefix
    * @param options.loadedParents Further linked parents that are already loaded (not in parentIds)
-   * @param options.pendingEntities Records with suggested values that are not saved yet,
-   *   used instead of the saved records with the same id
+   * @param options.changeSet Changes that are not saved yet, used instead of the saved records
    */
   public async loadCommonValue(
     parentIds: string[],
@@ -697,7 +717,7 @@ export class AutomatedFieldUpdateConfigService {
     options: {
       parentType?: EntityConstructor;
       loadedParents?: Entity[];
-      pendingEntities?: Map<string, Entity>;
+      changeSet?: ChangeSet;
     } = {},
   ): Promise<CommonValueOfParents> {
     const loaded = await this.loadEntitiesByIds(options.parentType, parentIds);
@@ -706,10 +726,9 @@ export class AutomatedFieldUpdateConfigService {
       return { noCommonValue: "unavailable" };
     }
 
-    const parents = this.withPendingValues(
-      loaded,
-      options.pendingEntities ?? new Map(),
-    );
+    const parents = options.changeSet
+      ? loaded.map((parent) => options.changeSet.get(parent, "after"))
+      : loaded;
     const commonValue = this.calculateCommonValue(
       [...(options.loadedParents ?? []), ...parents],
       rule,
@@ -724,36 +743,31 @@ export class AutomatedFieldUpdateConfigService {
    * (e.g. the cities of all children linking to a school), skipping duplicates.
    * @param entity The record that the related records link to
    * @param rule The automation rule (with sourceReferenceEntity)
-   * @param pendingEntities records with suggested values that are not saved yet, used instead of the saved ones
    * @return the combined values in database format
    */
   public async collectValuesOfLinkedRecords(
     entity: Entity,
     rule: DefaultValueConfigInheritedField,
-    pendingEntities: Map<string, Entity> = new Map(),
   ): Promise<any[]> {
-    const linkedRecords = this.withPendingValues(
+    return this.collectValues(
       await this.loadRecordsLinkingTo(
         rule.sourceReferenceEntity,
         rule.sourceReferenceField,
         entity.getId(),
       ),
-      pendingEntities,
-    );
-    return linkedRecords.reduce(
-      (values, record) =>
-        addMissingValues(values, this.calculateNewValue(record, rule)),
-      [],
+      rule,
     );
   }
 
-  /** Replace the entities by their copy with the suggested values, if they have one. */
-  private withPendingValues(
-    entities: Entity[],
-    pendingEntities: Map<string, Entity>,
-  ): Entity[] {
-    return entities.map(
-      (entity) => pendingEntities.get(entity.getId()) ?? entity,
+  /** The values of the given records as defined by the automation rule, skipping duplicates (database format). */
+  private collectValues(
+    records: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): any[] {
+    return records.reduce(
+      (values, record) =>
+        addMissingValues(values, this.calculateNewValue(record, rule)),
+      [],
     );
   }
 
@@ -949,18 +963,21 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Opens a dialog to confirm entity updates with the user.
+   * Find the entities affected by the change and open a dialog to confirm their updates with the user.
    * Saves entities only if the user confirms the changes.
+   * @return whether there were any affected entities
    */
   private async confirmAndSaveAffectedEntities(
-    affectedEntities: AffectedEntity[],
     trigger: UpdateTrigger,
-  ): Promise<void> {
+  ): Promise<boolean> {
+    const affectedEntities = await this.findAffectedEntities(trigger);
+    if (affectedEntities.length === 0) return false;
+
     const userConfirmed = await this.showConfirmationDialog(
       affectedEntities,
       trigger,
     );
-    if (!userConfirmed) return;
+    if (!userConfirmed) return true;
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
@@ -971,7 +988,7 @@ export class AutomatedFieldUpdateConfigService {
       updatesByEntityId.set(update.id, existing);
     });
 
-    const savePromises: Promise<any>[] = [];
+    const entitiesToSave: Entity[] = [];
     updatesByEntityId.forEach((updates) => {
       const entity = updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
@@ -982,11 +999,13 @@ export class AutomatedFieldUpdateConfigService {
         changes.forEach((update) => {
           entity[update.targetFieldId] = update.newValue;
         });
-        savePromises.push(this.entityMapper.save(entity));
+        entitiesToSave.push(entity);
       }
     });
 
-    await Promise.all(savePromises);
+    // together, so that none of them is saved if the user may not save one of them
+    await this.entityMapper.saveAll(entitiesToSave);
+    return true;
   }
 
   /**
@@ -1022,8 +1041,8 @@ export class AutomatedFieldUpdateConfigService {
       data: {
         entities: entitiesToUpdate,
         trigger,
-        loadNextLevel: (affected: AffectedEntity, found: AffectedEntity[]) =>
-          this.loadAffectedEntitiesAbove(affected, found),
+        recalculate: (enteredValues: EnteredValue[]) =>
+          this.findAffectedEntities(trigger, enteredValues),
       },
     });
     return await lastValueFrom(dialogRef.afterClosed());

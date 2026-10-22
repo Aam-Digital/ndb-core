@@ -1,6 +1,5 @@
 import { TestBed } from "@angular/core/testing";
 import { isEqual } from "lodash-es";
-import { FormControl, FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "#src/app/core/common-components/entity-form/entity-form.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
@@ -8,6 +7,7 @@ import { Entity } from "#src/app/core/entity/model/entity";
 import {
   AffectedEntity,
   AutomatedFieldUpdateComponent,
+  EnteredValue,
 } from "./automated-field-update.component";
 
 /** The fields of the changed entity and the ids of the rows of each group, to compare them */
@@ -22,8 +22,7 @@ function summarizeGroups(
 
 describe("AutomatedFieldUpdateComponent", () => {
   let component: AutomatedFieldUpdateComponent;
-  let loadNextLevel: ReturnType<typeof vi.fn>;
-  let createEntityForm: ReturnType<typeof vi.fn>;
+  let recalculate: ReturnType<typeof vi.fn>;
   let dialogRef: { close: ReturnType<typeof vi.fn> };
 
   const FIRST = "Entity:first";
@@ -31,12 +30,12 @@ describe("AutomatedFieldUpdateComponent", () => {
 
   function affected(
     id: string,
-    newValue: string[],
+    newValue: unknown[],
     level: number,
   ): AffectedEntity {
     return {
       id,
-      newValue: newValue as any,
+      newValue,
       targetFieldId: "tags",
       targetEntityType: Entity,
       affectedEntity: new Entity(id.split(":")[1]),
@@ -46,26 +45,34 @@ describe("AutomatedFieldUpdateComponent", () => {
     };
   }
 
-  /** The entity above the first one is suggested the value of the first one, if that is not "none" */
-  function suggestAbove(source: AffectedEntity): Promise<AffectedEntity[]> {
-    const suggestion =
-      source.id === FIRST && !isEqual(source.newValue, ["none"]);
-    return Promise.resolve(
-      suggestion ? [affected(SECOND, source.newValue as any, 2)] : [],
-    );
+  /**
+   * The first entity keeps its suggestion, the entity above it is suggested the value of the first one
+   * (entered by the user or suggested), if that is not "none"
+   */
+  function suggestAbove(
+    enteredValues: EnteredValue[],
+  ): Promise<AffectedEntity[]> {
+    const first = component.data.entities[0];
+    const firstValue =
+      enteredValues.find((entered) => entered.id === FIRST)?.value ??
+      first.newValue;
+    return Promise.resolve([
+      affected(FIRST, first.newValue as unknown[], 1),
+      ...(isEqual(firstValue, ["none"])
+        ? []
+        : [affected(SECOND, firstValue as unknown[], 2)]),
+    ]);
   }
 
-  function valueOf(row: AffectedEntity) {
-    return row.form.formGroup.controls[row.targetFieldId].value;
+  function row(id: string) {
+    return component.rows().find((r) => r.id === id);
   }
 
-  function edit(row: AffectedEntity, value: unknown[]) {
-    const control = row.form.formGroup.controls[row.targetFieldId];
-    control.setValue(value);
-    control.markAsDirty();
+  function edit(id: string, value: unknown[]) {
+    component.onValueChange(row(id), value);
   }
 
-  async function initDialog(entities: AffectedEntity[]) {
+  function initDialog(entities: AffectedEntity[]) {
     TestBed.configureTestingModule({
       providers: [
         {
@@ -76,22 +83,19 @@ describe("AutomatedFieldUpdateComponent", () => {
               entity: new Entity("trigger"),
               before: new Entity("trigger"),
             },
-            loadNextLevel,
+            recalculate,
           },
         },
         { provide: MatDialogRef, useValue: dialogRef },
         {
           provide: EntityFormService,
-          useValue: {
-            extendFormFieldConfig: (id: string) => ({ id }),
-            createEntityForm,
-          },
+          useValue: { extendFormFieldConfig: (id: string) => ({ id }) },
         },
         {
           provide: EntitySchemaService,
           useValue: {
-            valueToEntityFormat: (value: any) => value,
-            valueToDatabaseFormat: (value: any) => value,
+            valueToEntityFormat: (value: unknown) => value,
+            valueToDatabaseFormat: (value: unknown) => value,
           },
         },
       ],
@@ -102,7 +106,6 @@ describe("AutomatedFieldUpdateComponent", () => {
     component = TestBed.createComponent(
       AutomatedFieldUpdateComponent,
     ).componentInstance;
-    await component.ngOnInit();
   }
 
   /** Wait until the suggestions of the entities above are updated after a change */
@@ -112,12 +115,7 @@ describe("AutomatedFieldUpdateComponent", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    loadNextLevel = vi.fn(suggestAbove);
-    createEntityForm = vi.fn((fieldIds: string[]) =>
-      Promise.resolve({
-        formGroup: new FormGroup({ [fieldIds[0]]: new FormControl() }),
-      }),
-    );
+    recalculate = vi.fn(suggestAbove);
     dialogRef = { close: vi.fn() };
   });
 
@@ -126,126 +124,130 @@ describe("AutomatedFieldUpdateComponent", () => {
   });
 
   it("should suggest the entities above again based on the value that the user entered", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
-    const [first, second] = component.rows();
+    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
 
-    edit(first, ["x"]);
+    edit(FIRST, ["x"]);
     expect(component.recalculating()).toBe(true);
     await waitForUpdate();
 
-    expect(loadNextLevel).toHaveBeenCalledWith(
-      expect.objectContaining({ id: FIRST, newValue: ["x"] }),
-      [expect.objectContaining({ id: FIRST, newValue: ["x"] })],
-    );
-    expect(component.rows()).toEqual([first, second]);
-    expect(valueOf(second)).toEqual(["x"]);
-    expect(second.edited).toBeFalsy();
+    expect(recalculate).toHaveBeenCalledWith([
+      { id: FIRST, targetFieldId: "tags", value: ["x"] },
+    ]);
+    expect(component.rows().map((r) => [r.id, r.value])).toEqual([
+      [FIRST, ["x"]],
+      [SECOND, ["x"]],
+    ]);
+    expect(row(SECOND).edited).toBe(false);
     expect(component.recalculating()).toBe(false);
   });
 
   it("should show an entity above that is only affected after a change and remove it when not affected any more", async () => {
-    await initDialog([affected(FIRST, ["none"], 1)]);
-    const [first] = component.rows();
+    initDialog([affected(FIRST, ["none"], 1)]);
     expect(component.rows()).toHaveLength(1);
 
-    edit(first, ["x"]);
+    edit(FIRST, ["x"]);
     await waitForUpdate();
-    expect(component.rows().map((row) => row.id)).toEqual([FIRST, SECOND]);
-    const second = component.rows()[1];
-    expect(valueOf(second)).toEqual(["x"]);
-    expect(second.level).toBe(2);
+    expect(component.rows().map((r) => r.id)).toEqual([FIRST, SECOND]);
+    expect(row(SECOND).value).toEqual(["x"]);
+    expect(row(SECOND).level).toBe(2);
 
-    edit(first, ["none"]);
+    edit(FIRST, ["none"]);
     await waitForUpdate();
-    expect(component.rows().map((row) => row.id)).toEqual([FIRST]);
+    expect(component.rows().map((r) => r.id)).toEqual([FIRST]);
   });
 
   it("should keep the value the user entered for an entity above and offer the new suggestion", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
-    const [first, second] = component.rows();
+    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
 
-    edit(second, ["mine"]);
+    edit(SECOND, ["mine"]);
     await waitForUpdate();
-    expect(second.edited).toBe(true);
-    expect(second.suggestionChanged).toBeFalsy();
+    expect(row(SECOND).edited).toBe(true);
+    expect(row(SECOND).suggestionChanged).toBe(false);
 
-    edit(first, ["y"]);
+    edit(FIRST, ["y"]);
     await waitForUpdate();
-    expect(valueOf(second)).toEqual(["mine"]);
-    expect(second.newValue).toEqual(["y"]);
-    expect(second.suggestionChanged).toBe(true);
+    expect(row(SECOND).value).toEqual(["mine"]);
+    expect(row(SECOND).newValue).toEqual(["y"]);
+    expect(row(SECOND).suggestionChanged).toBe(true);
 
-    component.useSuggestion(second);
+    component.useSuggestion(row(SECOND));
     await waitForUpdate();
-    expect(valueOf(second)).toEqual(["y"]);
-    expect(second.edited).toBe(false);
-    expect(second.suggestionChanged).toBe(false);
+    expect(row(SECOND).value).toEqual(["y"]);
+    expect(row(SECOND).edited).toBe(false);
+    expect(row(SECOND).suggestionChanged).toBe(false);
+  });
+
+  it("should keep the value the user entered for an entity above that is not suggested any more", async () => {
+    initDialog([
+      affected(FIRST, ["a"], 1),
+      { ...affected(SECOND, ["a"], 2), noCommonValue: "conflict" },
+    ]);
+    edit(SECOND, ["mine"]);
+    await waitForUpdate();
+
+    edit(FIRST, ["none"]);
+    await waitForUpdate();
+
+    expect(component.rows().map((r) => [r.id, r.value])).toEqual([
+      [FIRST, ["none"]],
+      [SECOND, ["mine"]],
+    ]);
+    // the suggestion for it is to keep its saved value
+    expect(row(SECOND).suggestionChanged).toBe(true);
+    // the hints of the earlier suggestion do not apply any more
+    expect(row(SECOND).noCommonValue).toBeUndefined();
   });
 
   it("should try again on the next change if updating the suggestions above failed", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
-    const [first, second] = component.rows();
-    loadNextLevel.mockRejectedValueOnce(new Error("could not load"));
+    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+    recalculate.mockRejectedValueOnce(new Error("could not load"));
 
-    edit(first, ["x"]);
+    edit(FIRST, ["x"]);
     await waitForUpdate();
     // saving stays disabled, as the entities above may not match the entered value
     expect(component.recalculating()).toBe(true);
     expect(component.recalculationFailed()).toBe(true);
 
-    edit(first, ["y"]);
+    edit(FIRST, ["y"]);
     await waitForUpdate();
 
-    expect(valueOf(second)).toEqual(["y"]);
+    expect(row(SECOND).value).toEqual(["y"]);
     expect(component.recalculating()).toBe(false);
     expect(component.recalculationFailed()).toBe(false);
   });
 
   it("should clear the failure hint once a later update succeeds, also if it was started with the suggestion", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
-    const [first, second] = component.rows();
-    edit(second, ["mine"]);
+    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+    edit(SECOND, ["mine"]);
     await waitForUpdate();
-    edit(first, ["y"]);
+    edit(FIRST, ["y"]);
     await waitForUpdate();
-    expect(second.suggestionChanged).toBe(true);
-    loadNextLevel.mockRejectedValueOnce(new Error("could not load"));
-    edit(first, ["z"]);
+    expect(row(SECOND).suggestionChanged).toBe(true);
+    recalculate.mockRejectedValueOnce(new Error("could not load"));
+    edit(FIRST, ["z"]);
     await waitForUpdate();
     expect(component.recalculationFailed()).toBe(true);
 
-    component.useSuggestion(second);
+    component.useSuggestion(row(SECOND));
     await waitForUpdate();
 
     expect(component.recalculationFailed()).toBe(false);
     expect(component.recalculating()).toBe(false);
   });
 
-  it("should create the forms without default value handling, which only queries linked records for the hidden inherit button", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+  it("should not keep a value the user changed back to the suggestion", async () => {
+    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
 
-    expect(createEntityForm).toHaveBeenCalledTimes(2);
-    for (const call of createEntityForm.mock.calls) {
-      // forTable, withPermissionCheck, withDefaultValues
-      expect(call.slice(3)).toEqual([false, true, false]);
-    }
-  });
-
-  it("should not count the suggested value as a change of the user", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
-    const [, second] = component.rows();
-
-    edit(second, ["mine"]);
-    edit(second, ["a"]);
+    edit(SECOND, ["mine"]);
+    edit(SECOND, ["a"]);
     await waitForUpdate();
 
-    expect(second.edited).toBe(false);
+    expect(row(SECOND).edited).toBe(false);
   });
 
-  it("should return the shown entities with the values of the form on confirm", async () => {
-    await initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
-    const [first] = component.rows();
-    edit(first, ["x"]);
+  it("should return the shown entities with the shown values on confirm", async () => {
+    initDialog([affected(FIRST, ["a"], 1), affected(SECOND, ["a"], 2)]);
+    edit(FIRST, ["x"]);
     await waitForUpdate();
 
     component.onConfirm();
@@ -261,9 +263,9 @@ describe("AutomatedFieldUpdateComponent", () => {
       return { ...row, sourceFieldId };
     }
 
-    it("should list the entities above in the group of the field that their update is based on", async () => {
+    it("should list the entities above in the group of the field that their update is based on", () => {
       const other = "Entity:other";
-      await initDialog([
+      initDialog([
         basedOn(affected(FIRST, ["a"], 1), "center"),
         basedOn(affected(other, ["m"], 1), "gender"),
         // passes on the value of the field that the first one is updated in
@@ -276,8 +278,8 @@ describe("AutomatedFieldUpdateComponent", () => {
       ]);
     });
 
-    it("should have one group if all entities are based on the same field", async () => {
-      await initDialog([
+    it("should have one group if all entities are based on the same field", () => {
+      initDialog([
         basedOn(affected(FIRST, ["a"], 1), "center"),
         basedOn(affected("Entity:other", ["a"], 1), "center"),
       ]);
@@ -286,20 +288,19 @@ describe("AutomatedFieldUpdateComponent", () => {
     });
 
     it("should add the group of an entity that is only affected after a change", async () => {
-      await initDialog([basedOn(affected(FIRST, ["none"], 1), "center")]);
-      loadNextLevel.mockImplementation((source: AffectedEntity) =>
-        Promise.resolve(
-          source.id === FIRST
-            ? [basedOn(affected(SECOND, source.newValue as any, 2), "tags")]
-            : [],
-        ),
+      initDialog([basedOn(affected(FIRST, ["none"], 1), "center")]);
+      recalculate.mockImplementation(([entered]: EnteredValue[]) =>
+        Promise.resolve([
+          basedOn(affected(FIRST, ["none"], 1), "center"),
+          basedOn(affected(SECOND, entered.value as unknown[], 2), "tags"),
+        ]),
       );
 
-      edit(component.rows()[0], ["x"]);
+      edit(FIRST, ["x"]);
       await waitForUpdate();
 
       expect(component.groups()).toHaveLength(1);
-      expect(component.groups()[0].rows.map((row) => row.id)).toEqual([
+      expect(component.groups()[0].rows.map((r) => r.id)).toEqual([
         FIRST,
         SECOND,
       ]);
@@ -310,61 +311,55 @@ describe("AutomatedFieldUpdateComponent", () => {
     const A = { id: "a", label: "A" };
     const B = { id: "b", label: "B" };
 
-    function collecting(newValue: any[], currentValue: any[]): AffectedEntity {
-      const row = affected(FIRST, newValue as any, 1);
+    function collecting(newValue: unknown[], currentValue: unknown[]) {
+      const row = affected(FIRST, newValue, 1);
       Object.assign(row.affectedEntity, { tags: currentValue });
       return { ...row, addToExisting: true };
     }
 
-    function removedValues(row: AffectedEntity) {
-      return row.removedEntity?.["tags"];
+    function removedValues() {
+      return row(FIRST).removedEntity?.["tags"];
     }
 
-    it("should show the current values that the suggested value does not have any more", async () => {
-      await initDialog([collecting([A], [A, B])]);
+    it.each([
+      [
+        "the current values that the suggested value does not have any more",
+        [A],
+        [A, B],
+        [B],
+      ],
+      ["no removed values if all current values stay", [A, B], [A], undefined],
+      [
+        "no removal for a value with another label but the same id",
+        [{ id: "a", label: "A (renamed)" }],
+        [A],
+        undefined,
+      ],
+    ])("should show %s", (_, newValue, currentValue, expected) => {
+      initDialog([collecting(newValue, currentValue)]);
 
-      expect(removedValues(component.rows()[0])).toEqual([B]);
+      expect(removedValues()).toEqual(expected);
     });
 
-    it("should not show removed values if all current values stay", async () => {
-      await initDialog([collecting([A, B], [A])]);
+    it("should update the removed values when the user changes the value or uses the suggestion again", () => {
+      initDialog([collecting([A], [A, B])]);
 
-      expect(component.rows()[0].removedEntity).toBeUndefined();
+      edit(FIRST, [A, B]);
+      expect(removedValues()).toBeUndefined();
+
+      edit(FIRST, []);
+      expect(removedValues()).toEqual([A, B]);
+
+      component.useSuggestion(row(FIRST));
+      expect(removedValues()).toEqual([B]);
     });
 
-    it("should compare values by their id, so that a changed label is not a removal", async () => {
-      await initDialog([collecting([{ id: "a", label: "A (renamed)" }], [A])]);
+    it("should not show removed values for a field that replaces the value", () => {
+      const replacing = affected(FIRST, [A], 1);
+      Object.assign(replacing.affectedEntity, { tags: [A, B] });
+      initDialog([replacing]);
 
-      expect(component.rows()[0].removedEntity).toBeUndefined();
-    });
-
-    it("should update the removed values when the user changes the value", async () => {
-      await initDialog([collecting([A], [A, B])]);
-      const [row] = component.rows();
-
-      edit(row, [A, B]);
-      expect(row.removedEntity).toBeUndefined();
-
-      edit(row, []);
-      expect(removedValues(row)).toEqual([A, B]);
-    });
-
-    it("should update the removed values when the suggestion is used again", async () => {
-      await initDialog([collecting([A], [A, B])]);
-      const [row] = component.rows();
-      edit(row, [A, B]);
-
-      component.useSuggestion(row);
-
-      expect(removedValues(row)).toEqual([B]);
-    });
-
-    it("should not show removed values for a field that replaces the value", async () => {
-      const row = affected(FIRST, [A] as any, 1);
-      Object.assign(row.affectedEntity, { tags: [A, B] });
-      await initDialog([row]);
-
-      expect(component.rows()[0].removedEntity).toBeUndefined();
+      expect(row(FIRST).removedEntity).toBeUndefined();
     });
   });
 });

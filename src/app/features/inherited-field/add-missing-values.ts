@@ -31,19 +31,6 @@ export function addMissingValues(existingValues: any, valuesToAdd: any): any {
 }
 
 /**
- * Get the values that were removed, i.e. that are in the old values but no longer in the new values.
- * @param oldValues the values before the change (database format)
- * @param newValues the values after the change (database format)
- */
-export function getRemovedValues(oldValues: any, newValues: any): any[] {
-  return differenceWith(
-    asArray(oldValues ?? []),
-    asArray(newValues ?? []),
-    isEqual,
-  );
-}
-
-/**
  * Add the given values to the existing values (skipping duplicates) and remove the values to remove.
  * @param existingValues values already set (database format)
  * @param valuesToAdd new values to be added (database format)
