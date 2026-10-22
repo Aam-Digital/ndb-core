@@ -193,25 +193,17 @@ export class AutomatedFieldUpdateComponent {
   readonly groups = computed(() => this.groupByTriggerField(this.rows()));
 
   /**
-   * The first entity directly linked to the changed entity, if all of them are linked through the same field
+   * Whether all entities directly linked to the changed entity are linked through the same field
    * (otherwise each of them shows how it is linked).
    */
-  readonly sharedLinkEntity: AffectedEntity | undefined =
-    this.getSharedLinkEntity();
-
-  private getSharedLinkEntity(): AffectedEntity | undefined {
-    const firstLevel = this.data.entities.filter(
-      (entity) => entity.level === 1,
-    );
-    return firstLevel.every(
-      (entity) =>
+  readonly allLinkedThroughSameField: boolean = this.data.entities
+    .filter((entity) => entity.level === 1)
+    .every(
+      (entity, _, firstLevel) =>
         entity.relatedReferenceField === firstLevel[0].relatedReferenceField &&
         entity.relatedReferenceFieldEntityType ===
           firstLevel[0].relatedReferenceFieldEntityType,
-    )
-      ? firstLevel[0]
-      : undefined;
-  }
+    );
 
   private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
     const groups = new Map<string, DialogRow[]>();

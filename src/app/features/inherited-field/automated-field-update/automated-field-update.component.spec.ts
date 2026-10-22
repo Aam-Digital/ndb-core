@@ -258,6 +258,37 @@ describe("AutomatedFieldUpdateComponent", () => {
     ]);
   });
 
+  it.each([
+    [
+      "the same field",
+      [affected(FIRST, ["a"], 1), affected("Entity:other", ["a"], 1)],
+      true,
+    ],
+    [
+      "different fields",
+      [
+        affected(FIRST, ["a"], 1),
+        { ...affected("Entity:other", ["a"], 1), relatedReferenceField: "x" },
+      ],
+      false,
+    ],
+    [
+      "the same field, even if the entities above are linked through another one",
+      [
+        affected(FIRST, ["a"], 1),
+        { ...affected(SECOND, ["a"], 2), relatedReferenceField: "x" },
+      ],
+      true,
+    ],
+  ])(
+    "should tell whether the directly linked entities are all linked through the same field: %s",
+    (_, entities, expected) => {
+      initDialog(entities);
+
+      expect(component.allLinkedThroughSameField).toBe(expected);
+    },
+  );
+
   describe("grouping by the field of the changed entity", () => {
     function basedOn(row: AffectedEntity, sourceFieldId: string) {
       return { ...row, sourceFieldId };

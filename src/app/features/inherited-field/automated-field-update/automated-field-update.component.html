@@ -90,7 +90,7 @@
                 }
               </div>
             }
-            @if (!sharedLinkEntity && entity.level === 1) {
+            @if (!allLinkedThroughSameField && entity.level === 1) {
               <div class="hint-text" i18n>
                 Linked through "{{
                   entity.relatedReferenceField
