@@ -484,6 +484,9 @@
           },
           {
             "id": "attendance.status"
+          },
+          {
+            "id": "attendance.remarks"
           }
         ]
       },
