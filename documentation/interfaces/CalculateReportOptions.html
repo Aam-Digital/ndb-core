@@ -228,7 +228,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="186" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:186</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="154" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:154</a></div>
                                 </td>
                             </tr>
 
@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="185" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:185</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="153" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:153</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="187" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:187</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:155</a></div>
                                 </td>
                             </tr>
 
@@ -341,41 +341,9 @@ import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { ReportEntity, reportUsesDateRange } from &quot;../../report-config&quot;;
 import { DateFilter } from &quot;app/core/filter/filters/dateFilter&quot;;
 import { DateRangeFilterComponent } from &quot;app/core/basic-datatypes/date/date-range-filter/date-range-filter.component&quot;;
+import { periodRangeOptions } from &quot;app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils&quot;;
 import { DateRangeFilterConfigOption } from &quot;app/core/entity-list/EntityListConfig&quot;;
 import { FaDynamicIconComponent } from &quot;#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
-
-export const defaultReportDateFilters: DateRangeFilterConfigOption[] &#x3D; [
-  {
-    startOffsets: [{ amount: 0, unit: &quot;months&quot; }],
-    endOffsets: [{ amount: 0, unit: &quot;months&quot; }],
-    label: $localize&#x60;:Filter label: Current month&#x60;,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: &quot;months&quot; }],
-    endOffsets: [{ amount: -1, unit: &quot;months&quot; }],
-    label: $localize&#x60;:Filter label: Last month&#x60;,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: &quot;quarter&quot; }],
-    endOffsets: [{ amount: 0, unit: &quot;quarter&quot; }],
-    label: $localize&#x60;:Filter label: Current quarter&#x60;,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: &quot;quarters&quot; }],
-    endOffsets: [{ amount: -1, unit: &quot;quarters&quot; }],
-    label: $localize&#x60;:Filter label: Last quarter&#x60;,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: &quot;years&quot; }],
-    endOffsets: [{ amount: 0, unit: &quot;years&quot; }],
-    label: $localize&#x60;:Filter label: Current year&#x60;,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: &quot;years&quot; }],
-    endOffsets: [{ amount: -1, unit: &quot;years&quot; }],
-    label: $localize&#x60;:Filter label: Last year&#x60;,
-  },
-];
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -441,7 +409,7 @@ export class SelectReportComponent {
     const options &#x3D;
       this.dateRangeOptions()?.length &gt; 0
         ? this.dateRangeOptions()
-        : defaultReportDateFilters;
+        : periodRangeOptions;
     return new DateFilter&lt;any&gt;(&quot;reportPeriod&quot;, &quot;Enter a date range&quot;, options);
   });
 

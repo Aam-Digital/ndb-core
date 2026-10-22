@@ -324,13 +324,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/CoreModule.html" data-type="entity-link" >CoreModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' }>
+                                        'data-bs-target="#injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' :
-                                        'id="xs-injectables-links-module-CoreModule-56ba6ec0189bef8433cf08ec8af0e2fa86870bd3ff748e583c68c1824e1b48fcc4a906be714d9d3f39ad94ca7789eaece13eb0f51c25811efc761ec8a781b022"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' :
+                                        'id="xs-injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' }>
                                         <li class="link">
                                             <a href="injectables/BooleanDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >BooleanDatatype</a>
                                         </li>
@@ -342,6 +342,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                         </li>
                                         <li class="link">
                                             <a href="injectables/DateOnlyDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DateOnlyDatatype</a>
+                                        </li>
+                                        <li class="link">
+                                            <a href="injectables/DateRangeDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DateRangeDatatype</a>
                                         </li>
                                         <li class="link">
                                             <a href="injectables/DateWithAgeDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >DateWithAgeDatatype</a>
@@ -1035,6 +1038,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/DisplayDateComponent.html" data-type="entity-link" >DisplayDateComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/DisplayDateRangeComponent.html" data-type="entity-link" >DisplayDateRangeComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/DisplayDescriptionOnlyComponent.html" data-type="entity-link" >DisplayDescriptionOnlyComponent</a>
                             </li>
                             <li class="link">
@@ -1096,6 +1102,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/EditDateFormatComponent.html" data-type="entity-link" >EditDateFormatComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EditDateRangeComponent.html" data-type="entity-link" >EditDateRangeComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/EditEmailComponent.html" data-type="entity-link" >EditEmailComponent</a>
@@ -2262,6 +2271,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/QueryService.html" data-type="entity-link" >QueryService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/RangePreviewStrategy.html" data-type="entity-link" >RangePreviewStrategy</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/RolePermissionsService.html" data-type="entity-link" >RolePermissionsService</a>
                                 </li>
                                 <li class="link">
@@ -2577,10 +2589,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/DatabaseRules.html" data-type="entity-link" >DatabaseRules</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/DateRangeDatabaseValue.html" data-type="entity-link" >DateRangeDatabaseValue</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/DateRangeFilterConfig.html" data-type="entity-link" >DateRangeFilterConfig</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/DateRangeFilterConfigOption.html" data-type="entity-link" >DateRangeFilterConfigOption</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/DateRangeValue.html" data-type="entity-link" >DateRangeValue</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/DbConfig.html" data-type="entity-link" >DbConfig</a>

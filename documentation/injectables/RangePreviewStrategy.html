@@ -1,0 +1,632 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search">
+    <button type="button"
+        class="search-input-clear"
+        aria-label="Clear search"
+        data-search-input-clear>&times;</button>
+</div>
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >RangePreviewStrategy</li>
+</ol>
+
+<div class="io-file io-file-path" data-compodoc="entity-file-path">
+    <span class="icon ion-ios-document" aria-hidden="true"></span>
+    <code>src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts</code>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#api" 
+                class="nav-link"
+                
+                role="tab" id="api-tab" data-bs-toggle="tab" data-link="api">API</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Shows the range up to the day that is hovered, after the start date was picked in the calendar.
+If that day is before the start date, the range is shown the other way round, as the panel orders the picked dates.</p>
+<p>Dragging the ends of a selected range is not supported, so that is not previewed either.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                        <code>DefaultMatCalendarRangeStrategy&lt;Date&gt;</code>
+            </p>
+
+
+
+                <section data-compodoc="block-relationships">
+            <h3>Relationships</h3>
+
+            <div class="row pt-3">
+                <div class="col-sm-6">
+                    <h4>Used by</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                            <code><a href="../components/DateRangeFilterPanelComponent.html" target="_self" >DateRangeFilterPanelComponent</a></code>
+                                </li>
+                        </ul>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Depends on</h4>
+                        <ul class="list-unstyled relationships-list">
+                                <li>
+                                        <code>DefaultMatCalendarRangeStrategy&lt;Date&gt;</code>
+                                </li>
+                        </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tab-pane fade " id="api">
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#createDrag" >createDrag</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier"></span>
+                                <a href="#createPreview" >createPreview</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createDrag"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>createDrag</b></span>
+                        <a href="#createDrag"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createDrag()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts:74</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createPreview"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>createPreview</b></span>
+                        <a href="#createPreview"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createPreview(activeDate: Date | null, currentRange: DateRange<Date>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activeDate</td>
+                                            <td>
+                                                        <code>Date | null</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentRange</td>
+                                            <td>
+                                                        <code>DateRange&lt;Date&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>DateRange&lt;Date&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  inject,
+  Injectable,
+  ChangeDetectionStrategy,
+  signal,
+} from &quot;@angular/core&quot;;
+import {
+  DateRange,
+  DefaultMatCalendarRangeStrategy,
+  MAT_DATE_RANGE_SELECTION_STRATEGY,
+  MatDatepickerModule,
+  MatDateSelectionModel,
+  MatRangeDateSelectionModel,
+} from &quot;@angular/material/datepicker&quot;;
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from &quot;@angular/material/dialog&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { DateRangeFilterConfigOption } from &quot;../../../../entity-list/EntityListConfig&quot;;
+import { FormsModule } from &quot;@angular/forms&quot;;
+import { dateToString } from &quot;../../../../../utils/utils&quot;;
+import { DateFilter } from &quot;app/core/filter/filters/dateFilter&quot;;
+import { calculateDateRange } from &quot;./date-range-utils&quot;;
+import { EMPTY_FILTER_OPTION_KEY } from &quot;app/core/filter/filters/filters&quot;;
+
+export const defaultDateFilters: DateRangeFilterConfigOption[] &#x3D; [
+  {
+    label: $localize&#x60;:Filter label:Today&#x60;,
+  },
+  {
+    startOffsets: [{ amount: 0, unit: &quot;weeks&quot; }],
+    endOffsets: [{ amount: 0, unit: &quot;weeks&quot; }],
+    label: $localize&#x60;:Filter label:This week&#x60;,
+  },
+  {
+    startOffsets: [{ amount: -1, unit: &quot;weeks&quot; }],
+    label: $localize&#x60;:Filter label:Since last week&#x60;,
+  },
+  {
+    startOffsets: [{ amount: 0, unit: &quot;months&quot; }],
+    endOffsets: [{ amount: 0, unit: &quot;months&quot; }],
+    label: $localize&#x60;:Filter label:This month&#x60;,
+  },
+  {
+    startOffsets: [{ amount: -1, unit: &quot;months&quot; }],
+    endOffsets: [{ amount: -1, unit: &quot;months&quot; }],
+    label: $localize&#x60;:Filter label:Last month&#x60;,
+  },
+];
+
+/**
+ * Shows the range up to the day that is hovered, after the start date was picked in the calendar.
+ * If that day is before the start date, the range is shown the other way round, as the panel orders the picked dates.
+ *
+ * Dragging the ends of a selected range is not supported, so that is not previewed either.
+ */
+@Injectable()
+export class RangePreviewStrategy extends DefaultMatCalendarRangeStrategy&lt;Date&gt; {
+  override createPreview(
+    activeDate: Date | null,
+    currentRange: DateRange&lt;Date&gt;,
+  ): DateRange&lt;Date&gt; {
+    if (!currentRange.start || currentRange.end || !activeDate) {
+      return new DateRange(null, null);
+    }
+    return activeDate &lt; currentRange.start
+      ? new DateRange(activeDate, currentRange.start)
+      : new DateRange(currentRange.start, activeDate);
+  }
+
+  override createDrag(): null {
+    return null;
+  }
+}
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: &quot;app-date-range-filter-panel&quot;,
+  templateUrl: &quot;./date-range-filter-panel.component.html&quot;,
+  styleUrls: [&quot;./date-range-filter-panel.component.scss&quot;],
+  providers: [
+    { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
+    {
+      provide: MAT_DATE_RANGE_SELECTION_STRATEGY,
+      useClass: RangePreviewStrategy,
+    },
+  ],
+  imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
+})
+export class DateRangeFilterPanelComponent {
+  readonly emptyFilterOptionKey &#x3D; EMPTY_FILTER_OPTION_KEY;
+  // Dialog input data (plain DTO) instead of full DateFilter instance
+  private readonly data &#x3D; inject&lt;any&gt;(MAT_DIALOG_DATA) as {
+    selectedOptionValues?: string[];
+    selectedOption?: DateRangeFilterConfigOption;
+    dateRange?: DateRange&lt;Date&gt;;
+    rangeOptions?: DateRangeFilterConfigOption[];
+    /**
+     * For selecting the dates of a field rather than a filter:
+     * no &quot;All&quot; option, and without given dates nothing is selected initially.
+     */
+    hideAllOption?: boolean;
+  };
+  private dialogRef &#x3D;
+    inject&lt;MatDialogRef&lt;DateRangeFilterPanelComponent&gt;&gt;(MatDialogRef);
+
+  readonly showAllOption &#x3D; !this.data?.hideAllOption;
+
+  selectedRangeValue &#x3D; signal&lt;DateRange&lt;Date&gt;&gt;(
+    this.showAllOption
+      ? new DateRange(
+          this.data?.dateRange?.start ?? new Date(&quot;1900-01-01&quot;),
+          this.data?.dateRange?.end ?? new Date(&quot;2999-12-31&quot;),
+        )
+      : new DateRange(
+          this.data?.dateRange?.start ?? null,
+          this.data?.dateRange?.end ?? null,
+        ),
+  );
+  selectedOption &#x3D; signal&lt;DateRangeFilterConfigOption | undefined&gt;(
+    this.data?.selectedOption,
+  );
+  selectedOptionValues &#x3D; signal&lt;string[]&gt;(
+    this.data?.selectedOptionValues ?? [],
+  );
+  rangeOptions &#x3D; signal&lt;DateRangeFilterConfigOption[]&gt;(
+    this.data?.rangeOptions ?? [],
+  );
+  comparisonRange &#x3D; signal&lt;DateRange&lt;Date&gt;&gt;(new DateRange(null, null));
+
+  preselectRange(dateRangeOption): void {
+    this.comparisonRange.set(calculateDateRange(dateRangeOption));
+  }
+
+  preselectAllRange(): void {
+    this.comparisonRange.set(
+      new DateRange(new Date(&quot;1900-01-01&quot;), new Date(&quot;2999-12-31&quot;)),
+    );
+  }
+
+  unselectRange() {
+    this.comparisonRange.set(new DateRange(null, null));
+  }
+
+  selectRangeAndClose(index: number | &quot;all&quot; | &quot;empty&quot;): void {
+    let result: string[] &#x3D; [];
+    if (typeof index &#x3D;&#x3D;&#x3D; &quot;number&quot;) {
+      result &#x3D; [index.toString()];
+    } else if (index &#x3D;&#x3D;&#x3D; &quot;empty&quot;) {
+      result &#x3D; [EMPTY_FILTER_OPTION_KEY];
+    } else {
+      result &#x3D; [];
+    }
+    this.selectedOptionValues.set(result);
+    this.dialogRef.close({ selectedOptionValues: result });
+  }
+
+  selectedRangeChange(selectedDate: Date) {
+    const current &#x3D; this.selectedRangeValue();
+    if (!current?.start || current?.end) {
+      this.selectedRangeValue.set(new DateRange(selectedDate, null));
+    } else {
+      const start: Date &#x3D; current.start as Date;
+      const resultValues &#x3D;
+        start &lt; selectedDate
+          ? [dateToString(start), dateToString(selectedDate)]
+          : [dateToString(selectedDate), dateToString(start)];
+      this.selectedOptionValues.set(resultValues);
+      this.dialogRef.close({ selectedOptionValues: resultValues });
+    }
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'RangePreviewStrategy.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var updateDarkModeSwitchOffset = function () {
+                    var content = document.querySelector('.content');
+                    var scrollbarWidth = 0;
+
+                    if (content) {
+                         scrollbarWidth = Math.max(0, content.offsetWidth - content.clientWidth);
+                    }
+
+                    document.documentElement.style.setProperty(
+                         '--content-scrollbar-width',
+                         scrollbarWidth + 'px'
+                    );
+               };
+
+               updateDarkModeSwitchOffset();
+               requestAnimationFrame(updateDarkModeSwitchOffset);
+               window.addEventListener('resize', updateDarkModeSwitchOffset);
+
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

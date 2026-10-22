@@ -158,6 +158,8 @@
             <p class="comment">
                 <p>Represents a filter for date values.
 The filter can either be one of the predefined options or two manually entered dates.</p>
+<p>For a field that holds a period (a &quot;date-range&quot; with a start and an end date),
+the filter matches the periods that overlap the selected dates.</p>
 
             </p>
 
@@ -281,12 +283,12 @@ The filter can either be one of the predefined options or two manually entered d
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, rangeOptions: DateRangeFilterConfigOption[])</code>
+<code>constructor(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, label: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, rangeOptions: DateRangeFilterConfigOption[], isPeriodField: unknown)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:20</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:23</a></div>
                             </td>
                         </tr>
 
@@ -339,6 +341,18 @@ The filter can either be one of the predefined options or two manually entered d
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>isPeriodField</td>
+                                                  
+                                                        <td>
+                                                                    <code>unknown</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -384,7 +398,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:20</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:23</a></code>
 </div>
                         </td>
                     </tr>
@@ -419,7 +433,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:24</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:27</a></code>
 </div>
                         </td>
                     </tr>
@@ -454,7 +468,7 @@ The filter can either be one of the predefined options or two manually entered d
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:23</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:26</a></code>
 </div>
                         </td>
                     </tr>
@@ -482,7 +496,7 @@ The filter can either be one of the predefined options or two manually entered d
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:25</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:28</a></div>
                         </td>
                     </tr>
 
@@ -601,8 +615,8 @@ The filter can either be one of the predefined options or two manually entered d
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="34"
-                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:34</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -646,7 +660,7 @@ The filter can either be one of the predefined options or two manually entered d
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:46</a></code>
+                                <div class="io-line">        <code><a href="../classes/Filter.html#source" target="_self" >Filter:50</a></code>
 </div>
                         </td>
                     </tr>
@@ -683,8 +697,8 @@ The filter can either be one of the predefined options or two manually entered d
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="64"
-                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:64</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">src/app/core/filter/filters/dateFilter.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -805,6 +819,9 @@ import { DateRangeFilterComponent } from &quot;../../basic-datatypes/date/date-r
 /**
  * Represents a filter for date values.
  * The filter can either be one of the predefined options or two manually entered dates.
+ *
+ * For a field that holds a period (a &quot;date-range&quot; with a start and an end date),
+ * the filter matches the periods that overlap the selected dates.
  */
 export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
   override component &#x3D; DateRangeFilterComponent;
@@ -813,6 +830,7 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
     public override name: string,
     public override label: string &#x3D; name,
     public rangeOptions: DateRangeFilterConfigOption[],
+    private readonly isPeriodField &#x3D; false,
   ) {
     super(name, label);
     this.selectedOptionValues &#x3D; [];
@@ -846,9 +864,44 @@ export class DateFilter&lt;T extends Entity&gt; extends Filter&lt;T&gt; {
     if (range.end) {
       filterObject.$lte &#x3D; moment(range.end).format(&quot;YYYY-MM-DD&quot;);
     }
-    return filterObject.$gte || filterObject.$lte
-      ? ({ [this.name]: filterObject } as DataFilter&lt;T&gt;)
-      : undefined;
+    if (!filterObject.$gte &amp;&amp; !filterObject.$lte) {
+      return undefined;
+    }
+    return this.isPeriodField
+      ? this.getOverlapFilter(filterObject)
+      : ({ [this.name]: filterObject } as DataFilter&lt;T&gt;);
+  }
+
+  /**
+   * Periods that start before the end and end after the start of the selected dates.
+   * A period without a start or end date is open-ended, a record without a period is never matched.
+   */
+  private getOverlapFilter({
+    $gte: from,
+    $lte: to,
+  }: {
+    $gte?: string;
+    $lte?: string;
+  }): DataFilter&lt;T&gt; {
+    const start &#x3D; &#x60;${this.name}.start&#x60;;
+    const end &#x3D; &#x60;${this.name}.end&#x60;;
+    const conditions: DataFilter&lt;T&gt;[] &#x3D; [
+      // the period has at least one date (the field itself can be a key with an undefined value)
+      {
+        $or: [{ [start]: { $exists: true } }, { [end]: { $exists: true } }],
+      } as DataFilter&lt;T&gt;,
+    ];
+    if (to) {
+      conditions.push({
+        $or: [{ [start]: { $exists: false } }, { [start]: { $lte: to } }],
+      } as DataFilter&lt;T&gt;);
+    }
+    if (from) {
+      conditions.push({
+        $or: [{ [end]: { $exists: false } }, { [end]: { $gte: from } }],
+      } as DataFilter&lt;T&gt;);
+    }
+    return { $and: conditions } as DataFilter&lt;T&gt;;
   }
 
   getSelectedOption() {

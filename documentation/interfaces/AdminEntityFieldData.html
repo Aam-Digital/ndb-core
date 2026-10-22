@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="68" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:68</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:70</a></div>
                                 </td>
                             </tr>
 
@@ -280,7 +280,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:77</a></div>
                                 </td>
                             </tr>
 
@@ -327,7 +327,7 @@ The entityType is not changed by this component.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:81</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:83</a></div>
                                 </td>
                             </tr>
 
@@ -398,7 +398,7 @@ import { uniquePropertyValidator } from &quot;app/core/common-components/entity-
 import { ConfigureEntityFieldValidatorComponent } from &quot;./configure-entity-field-validator/configure-entity-field-validator.component&quot;;
 import { FormValidatorConfig } from &quot;app/core/common-components/entity-form/dynamic-form-validators/form-validator-config&quot;;
 import { AnonymizeOptionsComponent } from &quot;./anonymize-options/anonymize-options.component&quot;;
-import { MatCheckbox } from &quot;@angular/material/checkbox&quot;;
+import { MatCheckbox, MatCheckboxChange } from &quot;@angular/material/checkbox&quot;;
 import { AdminDefaultValueComponent } from &quot;../../../default-values/admin-default-value/admin-default-value.component&quot;;
 import { EntityTypeSelectComponent } from &quot;app/core/entity/entity-type-select/entity-type-select.component&quot;;
 import { AdminSearchableCheckboxComponent } from &quot;./admin-searchable-checkbox/admin-searchable-checkbox.component&quot;;
@@ -406,6 +406,8 @@ import { SimpleDropdownValue } from &quot;app/core/common-components/basic-autoc
 import { ConfirmationDialogService } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
 import { YesNoButtons } from &quot;app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
 import { AttendanceDatatype } from &quot;#src/app/features/attendance/model/attendance.datatype&quot;;
+import { DateRangeDatatype } from &quot;../../../basic-datatypes/date-range/date-range.datatype&quot;;
+import { DateRangeFilterConfigOption } from &quot;../../../entity-list/EntityListConfig&quot;;
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -488,6 +490,11 @@ export class AdminEntityFieldComponent implements OnInit {
   dataTypes: SimpleDropdownValue[] &#x3D; [];
   entityAdditionalMultiSelect: WritableSignal&lt;boolean&gt; &#x3D; signal(false);
   attendanceParticipantTypesForm &#x3D; new FormControl&lt;string[]&gt;([]);
+
+  /** whether a &quot;date-range&quot; field offers predefined periods (&#x60;additional&#x60; is not an empty list) */
+  datePresetsOffered: WritableSignal&lt;boolean&gt; &#x3D; signal(true);
+  /** the periods that were configured for the field, to offer them again after they were switched off */
+  private customDatePresets: DateRangeFilterConfigOption[] | undefined;
 
   /**
    * dataTypes for which a field can hold multiple values (&#x60;isArray&#x60;),
@@ -759,6 +766,8 @@ export class AdminEntityFieldComponent implements OnInit {
       this.initAdditionalForEntityRef(newAdditional);
     } else if (dataType &#x3D;&#x3D;&#x3D; AttendanceDatatype.dataType) {
       this.initAdditionalForAttendance(newAdditional);
+    } else if (dataType &#x3D;&#x3D;&#x3D; DateRangeDatatype.dataType) {
+      this.initAdditionalForDateRange(newAdditional);
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
@@ -819,6 +828,8 @@ export class AdminEntityFieldComponent implements OnInit {
     this.createNewAdditionalOption &#x3D; undefined;
     this.entityAdditionalMultiSelect.set(false);
     this.attendanceParticipantTypesForm.reset([]);
+    this.datePresetsOffered.set(true);
+    this.customDatePresets &#x3D; undefined;
   }
 
   private initAdditionalForAttendance(newAdditional?: any) {
@@ -841,6 +852,24 @@ export class AdminEntityFieldComponent implements OnInit {
     setTimeout(() &#x3D;&gt; {
       this.attendanceParticipantTypesForm.setValue(validValues);
     });
+  }
+
+  private initAdditionalForDateRange(newAdditional?: unknown) {
+    if (!Array.isArray(newAdditional)) {
+      return;
+    }
+    this.additionalForm.setValue(newAdditional);
+    this.datePresetsOffered.set(newAdditional.length &gt; 0);
+    this.customDatePresets &#x3D;
+      newAdditional.length &gt; 0 ? newAdditional : undefined;
+  }
+
+  /** An empty list switches the predefined periods off, no value brings back the default (or the configured) ones. */
+  onDatePresetsChange(change: MatCheckboxChange) {
+    this.datePresetsOffered.set(change.checked);
+    this.additionalForm.setValue(
+      change.checked ? (this.customDatePresets ?? null) : [],
+    );
   }
 
   private buildAttendanceAdditional(types: string[]): object | null {

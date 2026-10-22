@@ -222,8 +222,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="59"
+                                    class="link-to-prism">src/app/core/filter/filter-generator/filter-generator.service.ts:59</a></div>
                         </td>
                     </tr>
 
@@ -365,6 +365,7 @@ import { defaultDateFilters } from &quot;../../basic-datatypes/date/date-range-f
 import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
 import { EntitySchemaField } from &quot;../../entity/schema/entity-schema-field&quot;;
 import { DateDatatype } from &quot;../../basic-datatypes/date/date.datatype&quot;;
+import { DateRangeDatatype } from &quot;../../basic-datatypes/date-range/date-range.datatype&quot;;
 import { StringDatatype } from &quot;../../basic-datatypes/string/string.datatype&quot;;
 import { LongTextDatatype } from &quot;../../basic-datatypes/string/long-text.datatype&quot;;
 import { DateFilter } from &quot;../filters/dateFilter&quot;;
@@ -477,14 +478,12 @@ export class FilterGeneratorService {
           filterConfig.label ?? label,
           filterConfig.singleSelectOnly,
         );
-      } else if (
-        this.schemaService.getDatatypeOrDefault(type, true) instanceof
-        DateDatatype
-      ) {
+      } else if (this.getDateDatatype(type)) {
         filter &#x3D; new DateFilter(
           filterConfig.id,
           label,
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
+          this.getDateDatatype(type) instanceof DateRangeDatatype,
         );
       } else if (this.isFreeTextField(type, schema)) {
         filter &#x3D; new StringFilter(filterConfig.id, label);
@@ -561,6 +560,17 @@ export class FilterGeneratorService {
         includeEmptyArray,
       ),
     };
+  }
+
+  /** The datatype if it holds a date or a period (start and end date), which are filtered by dates. */
+  private getDateDatatype(
+    type: string,
+  ): DateDatatype | DateRangeDatatype | undefined {
+    const datatype &#x3D; this.schemaService.getDatatypeOrDefault(type, true);
+    return datatype instanceof DateDatatype ||
+      datatype instanceof DateRangeDatatype
+      ? datatype
+      : undefined;
   }
 
   /**

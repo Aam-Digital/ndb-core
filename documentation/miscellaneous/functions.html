@@ -353,6 +353,9 @@
                             <a href="#enableVitestProxyZoneCompat" title="src/app/utils/test-utils/vitest-proxy-zone-compat.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>enableVitestProxyZoneCompat</b>&nbsp;&nbsp;&nbsp;(src/.../vitest-proxy-zone-compat.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#endNotBeforeStart" title="src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>endNotBeforeStart</b>&nbsp;&nbsp;&nbsp;(src/.../edit-date-range.component.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#enhanceSentryBreadcrumb" title="src/app/core/logging/logging.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>enhanceSentryBreadcrumb</b>&nbsp;&nbsp;&nbsp;(src/.../logging.service.ts)</span></a>
                         </li>
                         <li>
@@ -435,6 +438,9 @@
                         </li>
                         <li>
                             <a href="#fragmentToRule" title="src/app/core/admin/admin-role-permissions/permission-matrix.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>fragmentToRule</b>&nbsp;&nbsp;&nbsp;(src/.../permission-matrix.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#fromDateString" title="src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>fromDateString</b>&nbsp;&nbsp;&nbsp;(src/.../edit-date-range.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#generateActivity" title="src/app/features/attendance/demo-data/demo-activity-generator.service.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>generateActivity</b>&nbsp;&nbsp;&nbsp;(src/.../demo-activity-generator.service.ts)</span></a>
@@ -741,6 +747,9 @@
                         </li>
                         <li>
                             <a href="#isRtlLocale" title="src/app/core/language/language-statics.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isRtlLocale</b>&nbsp;&nbsp;&nbsp;(src/.../language-statics.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isSameDate" title="src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isSameDate</b>&nbsp;&nbsp;&nbsp;(src/.../edit-date-range.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#isSameValue" title="src/app/features/inherited-field/get-common-value.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isSameValue</b>&nbsp;&nbsp;&nbsp;(src/.../get-common-value.ts)</span></a>
@@ -1065,6 +1074,9 @@
                         </li>
                         <li>
                             <a href="#splitNegation" title="src/app/core/common-components/conditions-editor/condition-negation.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>splitNegation</b>&nbsp;&nbsp;&nbsp;(src/.../condition-negation.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#startOfDay" title="src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>startOfDay</b>&nbsp;&nbsp;&nbsp;(src/.../edit-date-range.component.ts)</span></a>
                         </li>
                         <li>
                             <a href="#statsToEntityWithRecentNoteInfo" title="src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>statsToEntityWithRecentNoteInfo</b>&nbsp;&nbsp;&nbsp;(src/.../notes-dashboard.component.ts)</span></a>
@@ -12269,6 +12281,262 @@ form and a field moved from there is simply added.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>ValidationErrors | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/basic-datatypes/date-range/edit-date-range/edit-date-range.component.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="endNotBeforeStart"></a>
+                    <span class="name">
+                        <span ><b>endNotBeforeStart</b></span>
+                        <a href="#endNotBeforeStart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>endNotBeforeStart(control: <a href="https://angular.dev/api/forms/AbstractControl" target="_blank">AbstractControl</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validator for the value of the field: the end must not be before the start.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>control</td>
+                                            <td>
+                                                            <code><a href="https://angular.dev/api/forms/AbstractControl" target="_blank" >AbstractControl</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>ValidationErrors | null</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fromDateString"></a>
+                    <span class="name">
+                        <span ><b>fromDateString</b></span>
+                        <a href="#fromDateString"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>fromDateString(value: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>a date as &quot;YYYY-MM-DD&quot; (as the panel returns the picked dates), in local time</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSameDate"></a>
+                    <span class="name">
+                        <span ><b>isSameDate</b></span>
+                        <a href="#isSameDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isSameDate(a?, b?)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>a</td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>b</td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startOfDay"></a>
+                    <span class="name">
+                        <span ><b>startOfDay</b></span>
+                        <a href="#startOfDay"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>startOfDay(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
 
                         </div>
                             <div class="io-description">
