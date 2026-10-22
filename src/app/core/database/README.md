@@ -75,54 +75,17 @@ resultEntities = result.rows.map(loadedRow => {
 
 ## Local database: PouchDB adapter and migration
 
-In synced mode (`session_type: "synced"`) each user's data is stored in a local PouchDB in the browser's IndexedDB.
-By default this uses PouchDB's newer `indexeddb` adapter, with database names based on the user's Keycloak UUID
-(`<uuid>-app`, `<uuid>-notifications`, see `db-name-helpers.ts`).
-Older installations used the legacy `idb` adapter with username-based names (`<username>-app`, `notifications_<uuid>`).
+In synced mode, each user's data is stored in a local PouchDB.
+By default it uses PouchDB's `indexeddb` adapter, with database names based on the user's Keycloak UUID (`<uuid>-app`).
+Older installations used the legacy `idb` adapter with username-based names.
+A deployment can keep the legacy adapter with `"use_indexeddb_adapter": false` in its `assets/config.json`.
 
-The environment flag `use_indexeddb_adapter` (default `true`) controls this.
-A deployment can opt out and keep the legacy adapter by setting `"use_indexeddb_adapter": false` in its `assets/config.json`,
-which overrides the values of `environment.ts` at startup (see `bootstrap-environment.ts`).
-Opting out also removes the `DB_MIGRATED_<uuid>` flag (see below), so enabling the flag again re-runs the migration with its final sync,
-continuing from its replication checkpoint, and no change made on the legacy database in the meantime is left behind.
-Rolling back to the legacy adapter itself has no final sync, though: changes still unsynced in the new database stay behind there,
-so only roll back while users are online and synced.
-
-`IndexeddbMigrationService.resolveDbConfig()` decides at login which database to open, and tracks the scenario as a usage analytics event (category `indexeddb_adapter_migration`):
-
-| Scenario                                          | Database opened                     | Analytics event                 |
-| ------------------------------------------------- | ----------------------------------- | ------------------------------- |
-| flag disabled                                     | legacy names, `idb`                 | `idb_indexeddb-disabled-config` |
-| no legacy database for this user (fresh install)  | new names, `indexeddb`              | `indexeddb_fresh-install`       |
-| migration completed before (`DB_MIGRATED_<uuid>`) | new names, `indexeddb`              | `indexeddb_after-migration`     |
-| legacy database exists, not migrated yet          | legacy names, `idb` (migration due) | `idb_migration-pending`         |
-
-For an existing user, the migration does not copy the local database. It runs in the background while the user keeps working on the old database:
-
-1. If online, `runBackgroundMigration()` replicates the "app" database from the server into the new local database.
-   The old database keeps syncing as usual.
-   The replication uses a connection of its own (`SyncedPouchDatabase.openRemoteReplicationSource()`), closed when it ends:
-   replicating from scratch, the server reports every document the user may not read as a lost permission,
-   which would otherwise make the old database's next sync purge each of them before completing.
-2. When both this replication and the old database's sync have completed, the user is asked to reload.
-3. Only when the user confirms, a final sync pushes all local changes of the old database to the server,
-   while a modal progress dialog keeps the user from making further changes.
-   If that succeeds, the `DB_MIGRATED_<uuid>` flag is set in `localStorage` and the app reloads into the new database,
-   whose regular sync then also pulls those last changes from the server.
-
-The app therefore does not switch away from a database that still holds unsynced changes
-(except changes the server rejects, e.g. for lack of permission, and changes made in another tab still open on the old database while offline).
-If anything fails (offline, replication error, failed final sync) or the user postpones the reload, the flag stays unset,
-the app keeps using the old database, and the migration is retried on the next app start, continuing from its replication checkpoint.
-Failures are tracked as the analytics events `migration_replication-failed` and `migration_final-sync-failed`, a postponed reload as `migration_reload-postponed`.
-A failed replication is also reported as a warning to remote logging (e.g. a storage quota exceeded on the device), unless the device was offline or the session expired; a failed final sync is reported by the sync itself.
-
-The notifications database is not migrated: after the switch it is synced from the server into a new database.
-The legacy databases are not deleted yet (`cleanupLegacyDatabases()` is not called), so until then the device stores the data twice.
-
-Online-only mode (`session_type: "online"`) has no local database and is not affected.
-In demo mode (`session_type: "mock"`) the database is in-memory whatever adapter the config resolves to,
-so `DatabaseResolverService.isIndexedDbAdapterSupported()` checks the adapter the database actually runs on.
+Existing users are migrated automatically (`IndexeddbMigrationService`):
+the data is downloaded from the server into the new database in the background, then the user is asked to reload.
+The app only switches after a final sync of the old database has succeeded, so no unsynced changes are left behind;
+otherwise it keeps the old database and retries on the next start.
+The migration is tracked as usage analytics events (category `indexeddb_adapter_migration`).
+The legacy databases are not deleted yet ([#4570](https://github.com/Aam-Digital/ndb-core/issues/4570)).
 
 ## Key files
 

@@ -85,7 +85,7 @@ To work offline, the app stores a copy of the records a user may access in the b
 
 - The copy includes whatever that user is allowed to sync.
 - Revoking permissions server-side does not reach a device that never connects again. Local data is cleared when the server reports lost permissions during a sync, and that requires the device to come online.
-- A device that was migrated from the legacy PouchDB `idb` adapter to the `indexeddb` adapter still holds the old copy of the data, which is no longer synced or cleared, until the old database is deleted (see the [database README](../../../src/app/core/database/README.md#local-database-pouchdb-adapter-and-migration)).
+- A device that was migrated from the legacy PouchDB `idb` adapter to the `indexeddb` adapter still holds the old copy of the data, which is no longer synced or cleared, until the old database is deleted ([#4570](https://github.com/Aam-Digital/ndb-core/issues/4570)).
 
 Two settings bear on this:
 
