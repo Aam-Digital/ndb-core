@@ -56,7 +56,8 @@ ENV KEYCLOAK_REALM=""
 #
 # The default is an IP, not "localhost": nginx's `resolver` only queries DNS and
 # never reads /etc/hosts, so "localhost" would depend on the DNS server
-# answering for it.
+# answering for it. An empty value falls back to this default as well (see CMD),
+# so e.g. `API_URL: ${UNSET_VAR}` in a compose file cannot stop nginx from starting.
 ENV API_URL="http://127.0.0.1:3000"
 
 # The url to a nominatim instance, see https://nominatim.org/
@@ -89,6 +90,7 @@ ENV CSP_EXTRA_FRAME_ANCESTORS=""
 CMD export RESOLVER=$(awk '$1=="nameserver" && $2 !~ /:/ {print $2}' /etc/resolv.conf | xargs) &&\
     if [ -z "$RESOLVER" ]; then export RESOLVER=8.8.8.8; fi &&\
     export COUCHDB_DIRECT_URL="${COUCHDB_DIRECT_URL:-$COUCHDB_URL}" &&\
+    export API_URL="${API_URL:-http://127.0.0.1:3000}" &&\
     if [ -n "$KEYCLOAK_URL" ] && [ -n "$KEYCLOAK_REALM" ]; then\
       envsubst '$$KEYCLOAK_URL $$KEYCLOAK_REALM' < /etc/nginx/keycloak.json.template > /usr/share/nginx/html/assets/keycloak.json ||\
         echo 'WARN: KEYCLOAK_URL/KEYCLOAK_REALM are set but assets/keycloak.json could not be written (e.g. still bind-mounted read-only by an older deployment config) - serving the existing file unchanged' >&2;\
