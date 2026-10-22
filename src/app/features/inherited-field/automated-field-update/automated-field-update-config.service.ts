@@ -65,12 +65,14 @@ interface QueuedChange {
   /** how many levels above the changed entity it is (0 = the changed entity itself) */
   level: number;
   changedFields: string[];
+  /** the field of the changed entity that this change is based on (not set for the changed entity itself) */
+  sourceFieldId?: string;
   /** only update the entities that the entity links to (not the ones linking to it) */
   onlyLinkedEntities?: boolean;
 }
 
 /** The suggested update of an affected entity, before it is known on which path(s) and level the entity is reached */
-type Suggestion = Omit<AffectedEntity, "level" | "via">;
+type Suggestion = Omit<AffectedEntity, "level" | "via" | "sourceFieldId">;
 
 /** The state of one calculation of the affected entities */
 interface SuggestionRun {
@@ -220,12 +222,25 @@ export class AutomatedFieldUpdateConfigService {
       const source = changeSet.get(change.entity, "after");
       const level = change.level + 1;
       for (const rule of this.getTriggeredRules(source, change)) {
+        // the entities above are based on the field that the change started with
+        const sourceFieldId =
+          change.sourceFieldId ?? rule.rule.sourceValueField;
         for (const target of await this.loadTargets(rule, source, changeSet)) {
-          if (await this.updateSuggestion(run, target, rule, source, level)) {
+          if (
+            await this.updateSuggestion(
+              run,
+              target,
+              rule,
+              source,
+              level,
+              sourceFieldId,
+            )
+          ) {
             queue.push({
               entity: target,
               level,
               changedFields: [rule.fieldId],
+              sourceFieldId,
             });
           }
         }
@@ -239,6 +254,7 @@ export class AutomatedFieldUpdateConfigService {
    * Calculate the suggested value of the target again and use it (or the value the user entered)
    * for the entities above.
    * @param level how many levels above the changed entity the target is reached
+   * @param sourceFieldId the field of the changed entity that the update of the target is based on
    * @return whether the target got another value, so that the entities based on it have to be calculated again
    */
   private async updateSuggestion(
@@ -247,6 +263,7 @@ export class AutomatedFieldUpdateConfigService {
     rule: AffectedRule,
     source: Entity,
     level: number,
+    sourceFieldId: string,
   ): Promise<boolean> {
     // the changed entity is never offered, and the chain ends at an entity the user may not update
     if (
@@ -264,6 +281,8 @@ export class AutomatedFieldUpdateConfigService {
         ...suggestion,
         level: Math.max(level, existing?.level ?? 0),
         via: uniq([...(existing?.via ?? []), source.getId()]),
+        // an entity that is reached over several paths stays with the field of the first one
+        sourceFieldId: existing?.sourceFieldId ?? sourceFieldId,
       });
     } else {
       affectedEntities.delete(key);
@@ -649,7 +668,6 @@ export class AutomatedFieldUpdateConfigService {
       relatedReferenceFieldEntityType: rule.sourceReferenceEntity
         ? sourceEntity.getConstructor()
         : targetEntityType,
-      sourceFieldId: rule.sourceValueField,
       addToExisting: isCollectingFromLinkedRecords(fieldConfig),
       noCommonValue: shownNoCommonValue,
       unlinked: unlinked || undefined,

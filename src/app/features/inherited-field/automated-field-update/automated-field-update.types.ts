@@ -44,8 +44,8 @@ export interface AffectedEntity {
   /** Whether the affected entity is no longer linked to the changed entity */
   unlinked?: boolean;
 
-  /** The field of the changed entity that this update is based on */
-  sourceFieldId?: string;
+  /** The field of the changed entity that this update is based on, also for the entities of the levels above */
+  sourceFieldId: string;
 
   /** How many levels above the changed entity the affected entity is (1 = directly linked) */
   level: number;

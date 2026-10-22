@@ -186,33 +186,16 @@ export class AutomatedFieldUpdateComponent {
   private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
     const groups = new Map<string, DialogRow[]>();
     for (const row of rows) {
-      const fieldId = this.getTriggerFieldId(row, rows);
-      groups.set(fieldId, [...(groups.get(fieldId) ?? []), row]);
+      groups.set(row.sourceFieldId, [
+        ...(groups.get(row.sourceFieldId) ?? []),
+        row,
+      ]);
     }
-    return [...groups].map(([fieldId, groupRows]) => ({
-      sourceFieldId: fieldId,
-      changes: this.getTriggerChanges(fieldId, groupRows),
+    return [...groups].map(([sourceFieldId, groupRows]) => ({
+      sourceFieldId,
+      changes: this.getTriggerChanges(sourceFieldId, groupRows),
       rows: groupRows,
     }));
-  }
-
-  /** The field of the changed entity that the update of the given entity is based on, over all levels */
-  private getTriggerFieldId(
-    row: AffectedEntity,
-    rows: AffectedEntity[],
-  ): string {
-    let current = row;
-    while (current.level > 1) {
-      const below = rows.find(
-        (r) =>
-          r.level < current.level &&
-          current.via?.includes(r.id) &&
-          r.targetFieldId === current.sourceFieldId,
-      );
-      if (!below) break;
-      current = below;
-    }
-    return current.sourceFieldId;
   }
 
   /** The fields of the changed entity that caused the update of the given rows, to show what changed */

@@ -274,6 +274,49 @@ class HierarchyGroup extends Entity {
   tags: ConfigurableEnumValue[];
 }
 
+/** a record whose parent collects its "lowerTags" in "middleTags", from where the parent of the parent collects them in "upperTags" */
+@DatabaseEntity("FieldChainAction")
+class FieldChainAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "FieldChainAction" })
+  parent: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+  })
+  lowerTags: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "FieldChainAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "lowerTags",
+        aggregation: "add",
+      },
+    },
+  })
+  middleTags: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "FieldChainAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "middleTags",
+        aggregation: "add",
+      },
+    },
+  })
+  upperTags: ConfigurableEnumValue[];
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -324,6 +367,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("AggregatingAction", AggregatingAction);
     entityRegistry.set("HierarchyAction", HierarchyAction);
     entityRegistry.set("HierarchyGroup", HierarchyGroup);
+    entityRegistry.set("FieldChainAction", FieldChainAction);
     entityRegistry.set("CommonValueGroup", CommonValueGroup);
 
     mockIndexing = {
@@ -1320,6 +1364,34 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(suggestions).toEqual([
         [workPackage.getId(), ["health", "education"], 1, [activity.getId()]],
         [project.getId(), ["health", "education"], 2, [workPackage.getId()]],
+      ]);
+    });
+
+    it("bases the entities above on the changed field of the changed record, also if each level passes on another field", async () => {
+      const project = new FieldChainAction();
+      const workPackage = new FieldChainAction();
+      workPackage.parent = project.getId();
+      const activity = new FieldChainAction();
+      activity.parent = workPackage.getId();
+      [project, workPackage, activity].forEach(
+        (action) => (action._rev = "1-existing"),
+      );
+      entityMapper.addAll([project, workPackage, activity]);
+      const activityBefore = activity.copy();
+      activity.lowerTags = toTags(["health"]);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(activity, activityBefore);
+
+      expect(
+        mockDialog.open.mock.calls[0][1].data.entities.map((e) => [
+          e.id,
+          e.targetFieldId,
+          e.sourceFieldId,
+        ]),
+      ).toEqual([
+        [workPackage.getId(), "middleTags", "lowerTags"],
+        [project.getId(), "upperTags", "lowerTags"],
       ]);
     });
 

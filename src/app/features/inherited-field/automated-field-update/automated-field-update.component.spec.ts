@@ -42,6 +42,7 @@ describe("AutomatedFieldUpdateComponent", () => {
       id,
       newValue,
       savedValue: SAVED,
+      sourceFieldId: "source",
       targetFieldId: "tags",
       targetEntityType: Entity,
       affectedEntity: new Entity(id.split(":")[1]),
@@ -313,8 +314,8 @@ describe("AutomatedFieldUpdateComponent", () => {
       initDialog([
         basedOn(affected(FIRST, ["a"], 1), "center"),
         basedOn(affected(other, ["m"], 1), "gender"),
-        // passes on the value of the field that the first one is updated in
-        basedOn(affected(SECOND, ["a"], 2), "tags"),
+        // passes on the value of the first one, so it is based on the same field of the changed entity
+        basedOn(affected(SECOND, ["a"], 2), "center"),
       ]);
 
       expect(summarizeGroups(component.groups())).toEqual([
@@ -337,7 +338,7 @@ describe("AutomatedFieldUpdateComponent", () => {
       recalculate.mockImplementation(([entered]: EnteredValue[]) =>
         Promise.resolve([
           basedOn(affected(FIRST, ["none"], 1), "center"),
-          basedOn(affected(SECOND, entered.value as unknown[], 2), "tags"),
+          basedOn(affected(SECOND, entered.value as unknown[], 2), "center"),
         ]),
       );
 
