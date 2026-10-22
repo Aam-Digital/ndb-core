@@ -25,6 +25,7 @@ import {
   ConfigureTranslationsResult,
 } from "../configure-translations-popup/configure-translations-popup.component";
 import { TranslatableText } from "../multi-lingual-config";
+import { environment } from "#src/environments/environment";
 
 /**
  * Input for a configurable text that can be translated into multiple languages.
@@ -87,6 +88,12 @@ export class TranslatableTextInputComponent
 
   /** set false when the form field has its own suffix icon row, and call {@link openTranslations} from there */
   showTranslationsButton = input(true);
+
+  /**
+   * Whether this system configures texts in several languages at all.
+   * Callers rendering their own translations button read this to hide it as well.
+   */
+  readonly multiLingualConfigEnabled = environment.multiLingualConfigEnabled;
 
   private readonly dialog = inject(MatDialog);
 

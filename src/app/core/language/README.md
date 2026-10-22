@@ -68,6 +68,20 @@ field labels, menu items, tab titles, report titles — lives in the config docu
 and in internal entities, so it never passes through POEditor. Those texts can be
 stored in several languages instead.
 
+### Enabling it for a system
+
+Most systems are run in a single language, so this is off unless
+`multiLingualConfigEnabled` is set for the deployment (in `environment.ts`, or per
+system through `config.json`). It is on in dev builds.
+
+The flag only hides the editing UI — the buttons that open the translations dialog.
+Resolving is always on, so a system that has the flag turned off still displays texts
+that are already stored per language, and turning it off cannot strand data.
+
+Components that render their own translations button (rather than letting
+`TranslatableTextInputComponent` draw it) read `multiLingualConfigEnabled` off that
+component, so the flag is looked up in one place.
+
 ### The stored format
 
 A configurable text is either a plain string or a per-language map keyed by locale id:

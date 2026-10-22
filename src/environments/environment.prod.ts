@@ -30,4 +30,6 @@ export const environment = {
   default_data_source: undefined as DataSourceType | undefined,
 
   session_type_choice: true,
+
+  multiLingualConfigEnabled: false,
 };

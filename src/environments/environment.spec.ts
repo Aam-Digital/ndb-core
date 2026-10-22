@@ -24,4 +24,5 @@ export const environment = {
   translationsCdnUrl: "",
   default_data_source: undefined as DataSourceType | undefined,
   session_type_choice: true,
+  multiLingualConfigEnabled: true,
 };

@@ -90,6 +90,14 @@ export const environment = {
   default_data_source: undefined as DataSourceType | undefined,
 
   /**
+   * Whether admins can configure texts in several languages. Only about *configured*
+   * texts - the app's own UI is translated either way. Off in prod and enabled per
+   * system; turning it off only hides the editing UI, so texts already stored per
+   * language are still resolved.
+   */
+  multiLingualConfigEnabled: true,
+
+  /**
    * Whether users are allowed to choose between synced and online-only mode on the login page.
    * When false, the toggle is hidden and the session_type configured here is enforced.
    * Defaults to true (users can choose).
