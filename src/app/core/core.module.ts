@@ -8,6 +8,7 @@ import { MonthDatatype } from "./basic-datatypes/month/month.datatype";
 import { BooleanDatatype } from "./basic-datatypes/boolean/boolean.datatype";
 import { DateDatatype } from "./basic-datatypes/date/date.datatype";
 import { DateOnlyDatatype } from "./basic-datatypes/date-only/date-only.datatype";
+import { DateRangeDatatype } from "./basic-datatypes/date-range/date-range.datatype";
 import { DateWithAgeDatatype } from "./basic-datatypes/date-with-age/date-with-age.datatype";
 import { EntityDatatype } from "./basic-datatypes/entity/entity.datatype";
 import { NumberDatatype } from "./basic-datatypes/number/number.datatype";
@@ -45,6 +46,7 @@ import { EntityActionsService } from "./entity/entity-actions/entity-actions.ser
     { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
     { provide: DefaultDatatype, useClass: UpdateMetadataDatatype, multi: true },
     { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+    { provide: DefaultDatatype, useClass: DateRangeDatatype, multi: true },
     { provide: DefaultDatatype, useClass: DateWithAgeDatatype, multi: true },
     { provide: DefaultDatatype, useClass: MonthDatatype, multi: true },
     { provide: DefaultDatatype, useClass: DateDatatype, multi: true },

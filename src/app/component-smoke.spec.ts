@@ -115,6 +115,7 @@ const NEEDS_BESPOKE_SETUP = new Set([
   "EditConfigurableEnum",
   "EditDate",
   "EditDateFormat",
+  "EditDateRange",
   "EditEmail",
   "EditEntityType",
   "EditFile",
