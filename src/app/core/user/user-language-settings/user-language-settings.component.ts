@@ -57,7 +57,7 @@ export class UserLanguageSettingsComponent {
     this.saving.set(true);
     try {
       await this.userSettings.setLanguage(locale);
-      this.languageService.switchLocale(localeId);
+      this.languageService.switchToOwnLocale(localeId);
     } catch (err) {
       Logging.error(
         new Error("Failed to save the user's language", { cause: err }),

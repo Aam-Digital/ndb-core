@@ -1,11 +1,16 @@
 import { inject, Injectable, LOCALE_ID } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { isValidLocale, LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
+import {
+  isValidLocale,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+  LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+} from "./language-statics";
 import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from "../../utils/di-tokens";
 import { SiteSettings } from "../site-settings/site-settings";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { UserSettingsService } from "../site-settings/user-settings.service";
+import { UserSettings } from "../site-settings/user-settings";
 import { distinctUntilChanged, filter, firstValueFrom, map } from "rxjs";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { Logging } from "../logging/logging.service";
@@ -30,12 +35,15 @@ export class LanguageService {
   constructor() {
     this.switchLocaleOnSiteSettingsUpdate();
     this.applyOwnLanguageOnLogin();
+    this.applyOwnLanguageOnUserSettingsUpdate();
   }
 
   /**
    * A user's own language lives in the database, so it can only be read once a
-   * session exists. Resolving on every login also stops a shared browser from
-   * keeping the previous user's choice.
+   * session exists.
+   * Without one, the language picked on this device is kept - unless it was
+   * applied from another account's settings, which a shared browser must not
+   * pass on to the next user.
    */
   private applyOwnLanguageOnLogin() {
     this.sessionInfo
@@ -45,14 +53,18 @@ export class LanguageService {
         filter((userId) => !!userId),
         distinctUntilChanged(),
       )
-      .subscribe(async () => {
+      .subscribe(async (userId) => {
         const ownLanguage = await this.userSettings.getLanguage();
         if (ownLanguage) {
-          this.switchLocale(ownLanguage);
+          this.switchLocale(ownLanguage, userId);
           return;
         }
 
-        // fall back to the system default, not the previous user's choice
+        const owner = this.localStorage.getItem(
+          LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+        );
+        if (!owner || owner === userId) return;
+
         try {
           const siteDefault = await firstValueFrom(
             this.siteSettings.defaultLanguage,
@@ -62,6 +74,28 @@ export class LanguageService {
           Logging.debug("No site default language to fall back to", err);
         }
       });
+  }
+
+  /**
+   * On a new device the user's settings only arrive with the sync after login,
+   * and they may also be changed from another device, so apply them on arrival.
+   */
+  private applyOwnLanguageOnUserSettingsUpdate() {
+    this.entityMapper
+      .receiveUpdates(UserSettings)
+      .pipe(
+        untilDestroyed(this),
+        filter(({ type }) => type !== "remove"),
+        map(({ entity }) => ({
+          userId: entity.getId(true),
+          locale: entity.defaultLanguage?.id,
+        })),
+        filter(
+          ({ userId, locale }) =>
+            !!locale && userId === this.sessionInfo.value?.id,
+        ),
+      )
+      .subscribe(({ userId, locale }) => this.switchLocale(locale, userId));
   }
 
   /**
@@ -92,19 +126,35 @@ export class LanguageService {
   /**
    * Switch the current locale and persist it in this.localStorage.
    * @param newLocale
+   * @param ownerId the account whose own language setting this is;
+   *   leave empty for a language picked on this device or the system default
    */
-  switchLocale(newLocale: string): void {
+  switchLocale(newLocale: string, ownerId?: string): void {
     if (newLocale && !isValidLocale(newLocale)) {
       // storing this would stringify it and break loading translations on the next reload
       Logging.warn("Ignoring an invalid locale.", { newLocale });
       return;
     }
+    if (!newLocale) return;
+
+    if (ownerId) {
+      this.localStorage.setItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY, ownerId);
+    } else {
+      this.localStorage.removeItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY);
+    }
 
     const currentLocale = this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
-    if (newLocale === currentLocale || !newLocale) return;
+    if (newLocale === currentLocale) return;
 
     this.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
     this.window.location.reload();
+  }
+
+  /**
+   * Switch to a language the logged-in user has just saved for their own account.
+   */
+  switchToOwnLocale(newLocale: string): void {
+    this.switchLocale(newLocale, this.sessionInfo.value?.id);
   }
 
   /**

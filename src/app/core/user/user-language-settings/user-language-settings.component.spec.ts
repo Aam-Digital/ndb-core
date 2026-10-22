@@ -16,14 +16,14 @@ describe("UserLanguageSettingsComponent", () => {
   let component: UserLanguageSettingsComponent;
   let fixture: ComponentFixture<UserLanguageSettingsComponent>;
   let userSettings: { setLanguage: ReturnType<typeof vi.fn> };
-  let languageService: { switchLocale: ReturnType<typeof vi.fn> };
+  let languageService: { switchToOwnLocale: ReturnType<typeof vi.fn> };
   let alertService: { addDanger: ReturnType<typeof vi.fn> };
   let displayLanguageSelect: BehaviorSubject<boolean>;
 
   async function createComponent() {
     userSettings = { setLanguage: vi.fn().mockResolvedValue(undefined) };
     languageService = {
-      switchLocale: vi.fn(),
+      switchToOwnLocale: vi.fn(),
       getCurrentLocale: vi.fn().mockReturnValue("en-US"),
     } as any;
     alertService = { addDanger: vi.fn() };
@@ -62,7 +62,7 @@ describe("UserLanguageSettingsComponent", () => {
     expect(userSettings.setLanguage).toHaveBeenCalledWith(
       expect.objectContaining({ id: "de" }),
     );
-    expect(languageService.switchLocale).toHaveBeenCalledWith("de");
+    expect(languageService.switchToOwnLocale).toHaveBeenCalledWith("de");
   });
 
   it("should not apply the language if saving it failed", async () => {
@@ -71,7 +71,7 @@ describe("UserLanguageSettingsComponent", () => {
 
     await component.onLanguageSelected("de");
 
-    expect(languageService.switchLocale).not.toHaveBeenCalled();
+    expect(languageService.switchToOwnLocale).not.toHaveBeenCalled();
     expect(alertService.addDanger).toHaveBeenCalled();
   });
 
@@ -110,7 +110,7 @@ describe("UserLanguageSettingsComponent", () => {
     await component.onLanguageSelected("not-a-locale");
 
     expect(userSettings.setLanguage).not.toHaveBeenCalled();
-    expect(languageService.switchLocale).not.toHaveBeenCalled();
+    expect(languageService.switchToOwnLocale).not.toHaveBeenCalled();
   });
 
   it("should show the selector only when the admin enabled it", async () => {

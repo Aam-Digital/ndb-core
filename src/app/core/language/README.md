@@ -175,9 +175,13 @@ there:
 
 - **At startup** — whatever the language switcher last stored. If nothing is
   stored, `SiteSettings.defaultLanguage` (the system-wide default) is applied.
-- **On every login** — the user's own `UserSettings.defaultLanguage`, or, if they
-  have none, the site default. Resolving this on each login stops a shared browser
-  from keeping the previous user's choice.
+- **On every login** — the user's own `UserSettings.defaultLanguage`. If they have
+  none, the language already picked on this device is kept. Only a locale that was
+  applied from _another_ account's settings is reset to the site default, so a
+  shared browser does not pass one user's choice on to the next. For this, the id
+  of that account is stored next to the locale (`localeOwner`).
+- **When the user's settings change in the database** — e.g. when they arrive with
+  the first sync on a new device, or were changed on another device.
 
 `UserSettings` is a separate entity type from `SiteSettings` on purpose: permissions
 are granted per entity type, so sharing one type would mean granting every user
