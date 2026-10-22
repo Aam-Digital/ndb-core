@@ -894,6 +894,120 @@ describe("FilterGeneratorService", () => {
       expect(filter(allEntities, emptyOption)).toEqual([e2]);
     });
 
+    describe("date range nested in an embedded array field", () => {
+      @DatabaseEntity("EmbeddedPeriodTestEntity")
+      class EmbeddedPeriodTestEntity extends Entity {}
+      EmbeddedPeriodTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          period: { dataType: "date-range", label: "Period" },
+        },
+      });
+
+      const day = (month: number, date: number) =>
+        new Date(2026, month - 1, date);
+
+      async function generatePeriodFilter(selectedOptionValues: string[]) {
+        const dateFilter = (
+          await service.generate(
+            [{ id: "logEntries.period" }],
+            EmbeddedPeriodTestEntity,
+            [],
+          )
+        )[0] as DateFilter<EmbeddedPeriodTestEntity>;
+        dateFilter.selectedOptionValues = selectedOptionValues;
+        return filterService.getFilterPredicate(dateFilter.getFilter());
+      }
+
+      function entityWith(logEntries?: object[]) {
+        const entity = new EmbeddedPeriodTestEntity();
+        // like a loaded record, which has no key for a field without a value
+        if (logEntries) {
+          entity["logEntries"] = logEntries;
+        }
+        return entity;
+      }
+
+      it.each([
+        [
+          "the only entry overlaps",
+          [{ period: { start: day(3, 12), end: day(3, 18) } }],
+          true,
+        ],
+        [
+          "an entry without an end date started before",
+          [{ period: { start: day(3, 1) } }],
+          true,
+        ],
+        [
+          "a later entry overlaps",
+          [
+            { period: { start: day(1, 1), end: day(2, 1) } },
+            { period: { start: day(3, 19), end: day(6, 1) } },
+          ],
+          true,
+        ],
+        [
+          "one entry ends before, another starts after the dates",
+          [
+            { period: { start: day(1, 1), end: day(2, 1) } },
+            { period: { start: day(5, 1), end: day(6, 1) } },
+          ],
+          false,
+        ],
+        ["the entry has no period", [{}], false],
+        ["there are no entries", [], false],
+      ])(
+        "should match a record only if one of its entries overlaps the dates: %s",
+        async (_, logEntries, expected) => {
+          const matches = await generatePeriodFilter([
+            "2026-03-10",
+            "2026-03-20",
+          ]);
+
+          expect(matches(entityWith(logEntries))).toBe(expected);
+        },
+      );
+
+      it.each([
+        ["there are no entries", [], true],
+        ["the field is not set", undefined, true],
+        [
+          "an entry has no period",
+          [{ period: { start: day(3, 1) } }, {}],
+          true,
+        ],
+        ["every entry has a period", [{ period: { start: day(3, 1) } }], false],
+      ])(
+        "should match 'no date defined' like the empty option of other filters on embedded fields: %s",
+        async (_, logEntries, expected) => {
+          const matches = await generatePeriodFilter([EMPTY_FILTER_OPTION_KEY]);
+
+          expect(matches(entityWith(logEntries))).toBe(expected);
+        },
+      );
+
+      it("should filter by the selection of a copy, as the filter component copies the filter on every change", async () => {
+        const dateFilter = (
+          await service.generate(
+            [{ id: "logEntries.period" }],
+            EmbeddedPeriodTestEntity,
+            [],
+          )
+        )[0] as DateFilter<EmbeddedPeriodTestEntity>;
+        dateFilter.selectedOptionValues = ["2026-03-10", "2026-03-20"];
+
+        const copy = dateFilter.clone({
+          selectedOptionValues: [EMPTY_FILTER_OPTION_KEY],
+        });
+
+        const matches = filterService.getFilterPredicate(copy.getFilter());
+        expect(matches(entityWith([]))).toBe(true);
+      });
+    });
+
     it("should create a string filter for a property nested in a single (non-array) embedded object field, using a flat dot-path query", async () => {
       @DatabaseEntity("EmbeddedObjectTestEntity")
       class EmbeddedObjectTestEntity extends Entity {}

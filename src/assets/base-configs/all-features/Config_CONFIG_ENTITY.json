@@ -1644,6 +1644,10 @@
             "value": {
               "dataType": "number",
               "label": "embedded item value"
+            },
+            "period": {
+              "dataType": "date-range",
+              "label": "embedded item period"
             }
           },
           "isArray": true
@@ -1670,6 +1674,9 @@
           },
           {
             "id": "dateRangeField"
+          },
+          {
+            "id": "embeddedArrayOfObjects.period"
           }
         ]
       }
