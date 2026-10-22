@@ -229,34 +229,7 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     // additional output for debugging
     if (result?.status >= 400) {
-      const response = describeResponse(result, method);
-      if (this.isNotificationsDatabase() && result.status === 404) {
-        Logging.debug(
-          "Notifications database not found (404) - may be expected",
-        );
-      } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
-        // expired session (401), permission-filtered doc (403) and missing doc (404)
-        // are part of normal operation and handled by callers
-        Logging.debug("Expected 4XX response from DB", response);
-      } else if (result.status === HttpStatusCode.Conflict) {
-        // A 409 is CouchDB rejecting a write whose revision is out of date. This
-        // layer cannot tell whether that cost anyone anything, but whoever made
-        // the request always can:
-        //  - remote-only session: the write came from PouchDatabase.put(), and
-        //    PouchDatabase.resolveConflict() decides between merging,
-        //    overwriting and failing - and counts the outcome it chose.
-        //  - synced session: writes go to the local database, so the only 409s
-        //    reaching here are replication's own `PUT /_local/<checkpoint>`
-        //    races between concurrent tabs, which PouchDB retries internally.
-        // Reporting it here would therefore be an alert nobody can act on, and
-        // it is what buried the genuinely unexpected statuses in the same issue.
-        Logging.debug("Document update conflict from DB", response);
-      } else {
-        Logging.warn(unexpectedResponseMessage(result.status), {
-          ...response,
-          requestedUrl: remoteUrl,
-        });
-      }
+      this.logErrorResponse(result, method, remoteUrl);
     }
 
     if (
@@ -269,6 +242,43 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Log a 4XX response at the level it deserves:
+   * expected statuses only for debugging, unexpected ones as a warning.
+   */
+  private logErrorResponse(
+    result: Response,
+    method: string,
+    remoteUrl: string,
+  ): void {
+    const response = describeResponse(result, method);
+    if (this.isNotificationsDatabase() && result.status === 404) {
+      Logging.debug("Notifications database not found (404) - may be expected");
+    } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
+      // expired session (401), permission-filtered doc (403) and missing doc (404)
+      // are part of normal operation and handled by callers
+      Logging.debug("Expected 4XX response from DB", response);
+    } else if (result.status === HttpStatusCode.Conflict) {
+      // A 409 is CouchDB rejecting a write whose revision is out of date. This
+      // layer cannot tell whether that cost anyone anything, but whoever made
+      // the request always can:
+      //  - remote-only session: the write came from PouchDatabase.put(), and
+      //    PouchDatabase.resolveConflict() decides between merging,
+      //    overwriting and failing - and counts the outcome it chose.
+      //  - synced session: writes go to the local database, so the only 409s
+      //    reaching here are replication's own `PUT /_local/<checkpoint>`
+      //    races between concurrent tabs, which PouchDB retries internally.
+      // Reporting it here would therefore be an alert nobody can act on, and
+      // it is what buried the genuinely unexpected statuses in the same issue.
+      Logging.debug("Document update conflict from DB", response);
+    } else {
+      Logging.warn(unexpectedResponseMessage(result.status), {
+        ...response,
+        requestedUrl: remoteUrl,
+      });
+    }
+  }
 
   /**
    * Retry idempotent reads that fail with a transient network error
