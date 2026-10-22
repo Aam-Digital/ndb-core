@@ -51,6 +51,14 @@ fully-qualified service name (e.g. `couchdb.<namespace>.svc.cluster.local`),
 not the bare service name — a plain docker-compose service name works fine as
 is.
 
+Settings of the app itself (e.g. `session_type` or `remoteLoggingDsn` for
+error reporting to Sentry) are not environment variables of the image: they
+come from `assets/config.json`, which a deployment mounts into the container at
+`/usr/share/nginx/html/assets/config.json` (see `src/environments/environment.ts`
+for the available keys, and the
+[logging README](../src/app/core/logging/README.md#remote-logging) for remote
+logging, which is off unless `remoteLoggingDsn` is set).
+
 ## How does the release process work?
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) to automatically create new versions.
