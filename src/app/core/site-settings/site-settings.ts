@@ -33,6 +33,15 @@ export class SiteSettings extends Entity {
   defaultLanguage: ConfigurableEnumValue;
 
   @DatabaseField({
+    label: $localize`Languages offered`,
+    description: $localize`The languages admins can configure texts in and users can switch the app to. Leave empty to offer all of them.`,
+    dataType: "configurable-enum",
+    additional: LOCALE_ENUM_ID,
+    isArray: true,
+  })
+  availableLocales: ConfigurableEnumValue[];
+
+  @DatabaseField({
     label: $localize`Display language select`,
   })
   displayLanguageSelect: boolean = true;

@@ -10,6 +10,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { availableLocales } from "../../language/languages";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 import {
   getActiveLocale,
   isLocaleTranslationMap,
@@ -55,15 +57,35 @@ interface TranslationRow {
   ],
 })
 export class ConfigureTranslationsPopupComponent {
+  private readonly siteSettings = inject(SiteSettingsService);
   readonly data = inject<ConfigureTranslationsDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef =
     inject<MatDialogRef<ConfigureTranslationsPopupComponent>>(MatDialogRef);
 
-  rows: TranslationRow[] = availableLocales.values.map((locale) => ({
+  rows: TranslationRow[] = this.offeredLocales().map((locale) => ({
     locale: locale.id,
     localeLabel: locale.label,
     text: this.initialTextFor(locale.id),
   }));
+
+  /**
+   * The languages this system offers, plus any this text is already translated
+   * into: {@link buildValue} rebuilds the value from these rows, so leaving one
+   * out would delete that translation on save.
+   */
+  private offeredLocales(): ConfigurableEnumValue[] {
+    const offered = this.siteSettings.enabledLocales();
+    const value = this.data?.value;
+    if (!isLocaleTranslationMap(value)) {
+      return offered;
+    }
+
+    const alreadyTranslated = availableLocales.values.filter(
+      (locale) =>
+        !!value[locale.id] && !offered.some(({ id }) => id === locale.id),
+    );
+    return [...offered, ...alreadyTranslated];
+  }
 
   private initialTextFor(locale: string): string {
     const value = this.data?.value;

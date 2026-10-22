@@ -1,13 +1,14 @@
+import { signal, WritableSignal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../alerts/alert.service";
-import { BehaviorSubject } from "rxjs";
 
 import { By } from "@angular/platform-browser";
 
 import { UserLanguageSettingsComponent } from "./user-language-settings.component";
 import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
 import { LanguageService } from "../../language/language.service";
+import { availableLocales } from "../../language/languages";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { UserSettingsService } from "../../site-settings/user-settings.service";
 import { Logging } from "../../logging/logging.service";
@@ -18,7 +19,7 @@ describe("UserLanguageSettingsComponent", () => {
   let userSettings: { setLanguage: ReturnType<typeof vi.fn> };
   let languageService: { switchLocale: ReturnType<typeof vi.fn> };
   let alertService: { addDanger: ReturnType<typeof vi.fn> };
-  let displayLanguageSelect: BehaviorSubject<boolean>;
+  let showLanguageSelect: WritableSignal<boolean>;
 
   async function createComponent() {
     userSettings = { setLanguage: vi.fn().mockResolvedValue(undefined) };
@@ -27,7 +28,7 @@ describe("UserLanguageSettingsComponent", () => {
       getCurrentLocale: vi.fn().mockReturnValue("en-US"),
     } as any;
     alertService = { addDanger: vi.fn() };
-    displayLanguageSelect = new BehaviorSubject(true);
+    showLanguageSelect = signal(true);
 
     await TestBed.configureTestingModule({
       imports: [UserLanguageSettingsComponent, NoopAnimationsModule],
@@ -37,7 +38,11 @@ describe("UserLanguageSettingsComponent", () => {
         { provide: AlertService, useValue: alertService },
         {
           provide: SiteSettingsService,
-          useValue: { displayLanguageSelect },
+          useValue: {
+            showLanguageSelect,
+            // the service resolves "not narrowed down" to every locale
+            enabledLocales: signal(availableLocales.values),
+          },
         },
       ],
     }).compileComponents();
@@ -116,7 +121,7 @@ describe("UserLanguageSettingsComponent", () => {
   it("should show the selector only when the admin enabled it", async () => {
     expect(component.displayLanguageSelect()).toBe(true);
 
-    displayLanguageSelect.next(false);
+    showLanguageSelect.set(false);
     fixture.detectChanges();
 
     expect(component.displayLanguageSelect()).toBe(false);

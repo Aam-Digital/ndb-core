@@ -1,4 +1,5 @@
 import { inject, Injectable } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
 import { distinctUntilChanged, map, shareReplay, take } from "rxjs/operators";
@@ -11,6 +12,7 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 import { environment } from "../../../environments/environment";
 import { hasRemoteSession } from "../session/session-type";
@@ -41,6 +43,30 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
   dateFormat = this.getPropertyObservable("dateFormat");
+
+  /**
+   * Whether users may switch the app's language themselves. Not
+   * `getPropertyObservable`, which skips falsy values and so can never emit `false`.
+   */
+  readonly showLanguageSelect = toSignal(
+    this.siteSettings.pipe(
+      map((settings) => settings?.displayLanguageSelect ?? true),
+      distinctUntilChanged(),
+    ),
+    { initialValue: true },
+  );
+
+  /** The languages this system offers, all of them until an admin narrows it down. */
+  readonly enabledLocales = toSignal(
+    this.siteSettings.pipe(
+      map((settings) =>
+        settings?.availableLocales?.length
+          ? settings.availableLocales
+          : availableLocales.values,
+      ),
+    ),
+    { initialValue: availableLocales.values as ConfigurableEnumValue[] },
+  );
 
   private entityConfigReady = inject(EntityConfigReadyService);
 
@@ -117,7 +143,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   init() {
-    this.initAvailableLocales();
+    this.cacheLocalesEnum();
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
     this.subscribeFontChanges();
@@ -132,11 +158,11 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   /**
-   * Making locales enum available at runtime
-   * so that UI can show dropdown options
-   * @private
+   * Cache the full locales enum, so dropdowns can render their options.
+   * Deliberately unfiltered: the admin picks from it which ones to offer, so
+   * narrowing it here would make the choice impossible to widen again.
    */
-  private initAvailableLocales() {
+  private cacheLocalesEnum() {
     this.enumService["cacheEnum"](availableLocales);
   }
 

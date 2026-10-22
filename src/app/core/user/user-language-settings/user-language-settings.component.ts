@@ -5,7 +5,6 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { AlertService } from "../../alerts/alert.service";
 import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
 import { LanguageService } from "../../language/language.service";
@@ -32,13 +31,12 @@ export class UserLanguageSettingsComponent {
 
   readonly availableLocales = availableLocales.values;
 
+  readonly enabledLocales = this.siteSettings.enabledLocales;
+
   readonly languageHint = $localize`:User Profile - language setting hint:Only applies to your account. The app reloads when you change it.`;
 
   /** admins can hide the language selector for their system */
-  readonly displayLanguageSelect = toSignal(
-    this.siteSettings.displayLanguageSelect,
-    { initialValue: false },
-  );
+  readonly displayLanguageSelect = this.siteSettings.showLanguageSelect;
 
   readonly saving = signal(false);
 

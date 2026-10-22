@@ -1,6 +1,7 @@
 @if (displayLanguageSelect()) {
   <app-language-select
     [availableLocales]="availableLocales"
+    [enabledLocales]="enabledLocales()"
     [applyImmediately]="false"
     [disabled]="saving()"
     [hint]="languageHint"

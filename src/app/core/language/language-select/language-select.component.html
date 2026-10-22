@@ -7,8 +7,14 @@
     (selectionChange)="changeLocale($event.value)"
   >
     @for (locale of availableLocales(); track locale.id) {
-      <mat-option [value]="locale.id">
-        {{ locale.label }}
+      <mat-option [value]="locale.id" [disabled]="!isEnabled(locale.id)">
+        @if (isEnabled(locale.id)) {
+          {{ locale.label }}
+        } @else {
+          <span class="disabled-option" [matTooltip]="notOfferedHint">
+            {{ locale.label }}
+          </span>
+        }
       </mat-option>
     }
   </mat-select>

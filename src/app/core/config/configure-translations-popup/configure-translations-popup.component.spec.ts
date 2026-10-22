@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -9,6 +10,8 @@ import {
 } from "../../language/active-locale";
 import { AVAILABLE_LOCALE_IDS } from "../../language/available-locales";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
+import { availableLocales } from "../../language/languages";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { TranslatableText } from "../multi-lingual-config";
 import {
   ConfigureTranslationsDialogData,
@@ -32,6 +35,10 @@ describe("ConfigureTranslationsPopupComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: dialogRef },
+        {
+          provide: SiteSettingsService,
+          useValue: { enabledLocales: signal(availableLocales.values) },
+        },
       ],
     }).compileComponents();
 
