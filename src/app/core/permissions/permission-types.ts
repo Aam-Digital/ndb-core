@@ -68,8 +68,8 @@ export const RESERVED_RULE_CONFIG_KEYS: string[] = [
 /**
  * Whether a key in {@link DatabaseRules} carries special semantics instead of
  * naming a user role, so it must neither be resolved as a role nor rewritten by
- * a per-role UI. Covers the reserved underscore prefix as well as the legacy
- * (non-prefixed) spellings of not yet migrated configs.
+ * a per-role UI. Covers the reserved underscore prefix as well as the explicitly
+ * listed {@link RESERVED_RULE_CONFIG_KEYS}.
  */
 export function isReservedRuleConfigKey(key: string): boolean {
   return (

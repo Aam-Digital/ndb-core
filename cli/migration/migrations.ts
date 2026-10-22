@@ -1,11 +1,8 @@
 import { codoAddEventType } from "./codo-add-event-type.migration.js";
 import { latestConfigFormats } from "./latest-config-formats.migration.js";
 import { consolidateReportDefinition } from "./consolidate-report-definition.migration.js";
-import { reportConfigSafeIds } from "./reportconfig-safe-ids.migration.js";
-import { permissionsKeyRename } from "./permissions-key-rename.migration.js";
 import { setMapCountrycodes } from "./set-map-countrycodes.migration.js";
 import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.migration.js";
-import { reportQueryIsActive } from "./report-query-isactive.migration.js";
 import { restoreBackup } from "./restore-backup.migration.js";
 import { todoRouteLinks } from "./todo-route-links.migration.js";
 import { publicFormLegacyFormats } from "./public-form-legacy-formats.migration.js";
@@ -21,11 +18,8 @@ export const migrations: MigrationDefinition[] = [
   latestConfigFormats,
   codoAddEventType,
   consolidateReportDefinition,
-  reportConfigSafeIds,
-  permissionsKeyRename,
-  // permissionsKeyLegacyCleanup,
+  permissionsKeyLegacyCleanup,
   setMapCountrycodes,
-  reportQueryIsActive,
   todoRouteLinks,
   publicFormLegacyFormats,
   restoreBackup,
