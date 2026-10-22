@@ -12,7 +12,10 @@ import { DateAdapter, MatNativeDateModule } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { DateRange } from "@angular/material/datepicker";
+import {
+  DateRange,
+  MatDateRangeSelectionStrategy,
+} from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
@@ -143,6 +146,20 @@ describe("DateRangeFilterPanelComponent", () => {
         ).toEqual(expected);
       },
     );
+
+    it("should not preview a drag of the selected range, as the panel does not move the selected dates", () => {
+      // as the calendar uses the strategy
+      const calendarStrategy: MatDateRangeSelectionStrategy<Date> = strategy();
+
+      expect(
+        calendarStrategy.createDrag?.(
+          day(10),
+          new DateRange(day(10), day(15)),
+          day(12),
+          new Event("mousemove"),
+        ),
+      ).toBeNull();
+    });
 
     it.each([
       ["both dates are selected", new DateRange(day(10), day(15))],

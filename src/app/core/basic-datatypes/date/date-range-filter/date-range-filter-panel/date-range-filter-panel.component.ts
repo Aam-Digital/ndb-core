@@ -54,6 +54,8 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
 /**
  * Shows the range up to the day that is hovered, after the start date was picked in the calendar.
  * If that day is before the start date, the range is shown the other way round, as the panel orders the picked dates.
+ *
+ * Dragging the ends of a selected range is not supported, so that is not previewed either.
  */
 @Injectable()
 export class RangePreviewStrategy extends DefaultMatCalendarRangeStrategy<Date> {
@@ -67,6 +69,10 @@ export class RangePreviewStrategy extends DefaultMatCalendarRangeStrategy<Date> 
     return activeDate < currentRange.start
       ? new DateRange(activeDate, currentRange.start)
       : new DateRange(currentRange.start, activeDate);
+  }
+
+  override createDrag(): null {
+    return null;
   }
 }
 

@@ -1,14 +1,21 @@
 @if (value(); as range) {
   @if (range.start && range.end) {
-    {{ range.start | customDate: "shortDate" }} -
-    {{ range.end | customDate: "shortDate" }}
+    {{ range.start | customDate: format() }} -
+    {{ range.end | customDate: format() }}
   } @else if (range.start) {
     <ng-container i18n
-      >from {{ range.start | customDate: "shortDate" }}</ng-container
+      >from {{ range.start | customDate: format() }}</ng-container
     >
   } @else if (range.end) {
     <ng-container i18n
-      >until {{ range.end | customDate: "shortDate" }}</ng-container
+      >until {{ range.end | customDate: format() }}</ng-container
     >
+  }
+  @if (isPartiallyAnonymized()) {
+    <app-fa-dynamic-icon
+      icon="warning"
+      matTooltip="This data has been partially anonymized."
+      i18n-matTooltip
+    ></app-fa-dynamic-icon>
   }
 }

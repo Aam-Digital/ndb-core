@@ -102,12 +102,10 @@ export class DateRangeDatatype extends DefaultDatatype<
   }
 
   override async anonymize(value: DateRangeValue): Promise<DateRangeValue> {
-    // like other dates, only keep the year (set to 1 July)
-    const anonymizeDate = (date?: Date) =>
-      date && new Date(date.getFullYear(), 6, 1);
-    return {
-      ...(value?.start && { start: anonymizeDate(value.start) }),
-      ...(value?.end && { end: anonymizeDate(value.end) }),
-    };
+    const [start, end] = await Promise.all([
+      value?.start && this.dateOnly.anonymize(value.start),
+      value?.end && this.dateOnly.anonymize(value.end),
+    ]);
+    return { ...(start && { start }), ...(end && { end }) };
   }
 }
