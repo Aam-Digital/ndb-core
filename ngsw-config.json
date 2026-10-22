@@ -24,6 +24,7 @@
           "/assets/**",
           "!/assets/icons/*",
           "!**/config.json",
+          "!**/env-config.json",
           "!**/keycloak.json"
         ]
       }
@@ -45,10 +46,11 @@
       "name": "config",
       "urls": [
         "**/assets/config.json",
+        "**/assets/env-config.json",
         "**/assets/keycloak.json"
       ],
       "cacheConfig": {
-        "maxSize": 1,
+        "maxSize": 3,
         "maxAge": "30d",
         "strategy": "freshness"
       }

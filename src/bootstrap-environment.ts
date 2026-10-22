@@ -6,7 +6,8 @@ import { SessionType } from "./app/core/session/session-type";
 import { PUBLIC_FORM_ROUTE } from "./app/features/public-form/public-form-route";
 
 /**
- * Overwrite environment settings with the settings from the `config.json` if present.
+ * Overwrite environment settings with the settings of the deployment
+ * (`env-config.json` and `config.json`, see initConfigJsonToEnvironment) if present.
  * If no file is found, the environment settings are kept.
  **/
 export async function initEnvironmentConfig() {
@@ -45,21 +46,34 @@ export async function initEnvironmentConfig() {
 const CONFIG_JSON_RELOAD_ATTEMPTS_KEY = "config_json_reload_attempts";
 const CONFIG_JSON_MAX_RELOAD_ATTEMPTS = 1;
 
+const CONFIG_FILE = "assets/config.json";
 /**
- * Load basic config values from assets/keycloak.json into environment
+ * The settings given as environment variables of the Docker image, written at container start
+ * (see `build/generate-env-config.sh`). Shipped as `{}` (`src/assets/env-config.json`).
+ */
+const ENV_CONFIG_FILE = "assets/env-config.json";
+
+/**
+ * Load the settings of the deployment into environment:
+ * those given as environment variables of the Docker image (`assets/env-config.json`),
+ * then those of `assets/config.json`, so that config.json wins for a setting in both.
  */
 async function initConfigJsonToEnvironment() {
-  const CONFIG_FILE = "assets/config.json";
+  // requested at once, so that the second file does not delay the startup
+  const [envConfig, configJson] = await Promise.all([
+    loadEnvConfigJson(),
+    loadConfigJson(),
+  ]);
 
-  let config: Object;
-  try {
-    const configResponse = await fetch(CONFIG_FILE);
-    config = await configResponse.json();
-    if (typeof config !== "object") {
-      throw new Error("config.json must be an object");
-    }
+  Object.assign(environment, envConfig);
+
+  if ("config" in configJson) {
+    Object.assign(environment, configJson.config);
     sessionStorage.removeItem(CONFIG_JSON_RELOAD_ATTEMPTS_KEY);
-  } catch (err) {
+  } else if (configJson.notFound && "session_type" in envConfig) {
+    // a deployment configured through environment variables alone needs no config.json
+    sessionStorage.removeItem(CONFIG_JSON_RELOAD_ATTEMPTS_KEY);
+  } else {
     if (
       !environment.production ||
       environment.appVersion?.startsWith("pr-") ||
@@ -73,7 +87,7 @@ async function initConfigJsonToEnvironment() {
     // if offline, the config.json should be served by the service worker
     // if we cannot get a valid config.json, we won't be able to switch to session_type "synced" and load client data
 
-    Logging.error("failed to load config.json", err);
+    Logging.error("failed to load config.json", configJson.error);
 
     const attempts = Number(
       sessionStorage.getItem(CONFIG_JSON_RELOAD_ATTEMPTS_KEY) ?? "0",
@@ -94,10 +108,49 @@ async function initConfigJsonToEnvironment() {
     }
   }
 
-  Object.assign(environment, config);
-
   // Apply user's online-only preference from localStorage (before Angular DI creates databases)
   applyOnlineOnlyPreference();
+}
+
+async function loadConfigJson(): Promise<
+  { config: object } | { error: unknown; notFound: boolean }
+> {
+  let configResponse: Response | undefined;
+  try {
+    configResponse = await fetch(CONFIG_FILE);
+    const config = await configResponse.json();
+    if (typeof config !== "object") {
+      throw new Error("config.json must be an object");
+    }
+    return { config };
+  } catch (error) {
+    return { error, notFound: configResponse?.status === 404 };
+  }
+}
+
+/**
+ * Load the settings given as environment variables of the Docker image.
+ * Unlike config.json, this file is optional: if it is missing or invalid, it is skipped.
+ */
+async function loadEnvConfigJson(): Promise<object> {
+  try {
+    const envConfigResponse = await fetch(ENV_CONFIG_FILE);
+    if (!envConfigResponse.ok) {
+      throw new Error(`HTTP ${envConfigResponse.status}`);
+    }
+    const envConfig = await envConfigResponse.json();
+    if (
+      typeof envConfig !== "object" ||
+      envConfig === null ||
+      Array.isArray(envConfig)
+    ) {
+      throw new Error("env-config.json must be an object");
+    }
+    return envConfig;
+  } catch (err) {
+    Logging.debug("skipped loading env-config.json", err);
+    return {};
+  }
 }
 
 /**

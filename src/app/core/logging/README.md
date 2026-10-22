@@ -65,10 +65,12 @@ and "Log a failure once" below):
 
 Higher log levels (`warn` and `error`) are forwarded to our remote monitoring service, [Sentry](https://sentry.io/).
 
-Remote logging is off unless the deployment sets the DSN of its Sentry project as `remoteLoggingDsn` in
-its `assets/config.json` (the file that overrides the `environment` at startup, see
-`src/bootstrap-environment.ts`). No build ships a default DSN, so a deployment without it reports
-nothing and only logs to the browser console:
+Remote logging is off unless the deployment sets the DSN of its Sentry project, either as the
+environment variable `SENTRY_DSN` of the Docker image or as `remoteLoggingDsn` in its
+`assets/config.json` (`config.json` wins if both are set, see
+["Settings of the app"](../../../../build/README.md#settings-of-the-app-configjson-and-environment-variables)
+in the build README). No build ships a default DSN, so a deployment without it reports nothing and only
+logs to the browser console:
 
 ```json
 {
@@ -76,12 +78,13 @@ nothing and only logs to the browser console:
 }
 ```
 
-The DSN is read after `config.json` has loaded, so errors before that (including a failure to load
-`config.json` itself) are never reported.
+The DSN is read after the deployment's settings have loaded (`src/bootstrap-environment.ts`), so errors
+before that (including a failure to load `config.json` itself) are never reported.
 
 Events are filed under the Sentry `environment` "production" for every production build. Deployments
 that are not used in production (internal test instances, demos, PR previews) should set
-`remoteLoggingEnvironment` in their `config.json`, so that their events can be filtered out of triage.
+`SENTRY_ENVIRONMENT` (or `remoteLoggingEnvironment` in their `config.json`), so that their events can be
+filtered out of triage.
 
 ### Keep message strings static
 
@@ -216,8 +219,8 @@ deliberately carry no user identity, as data minimization under the GDPR.
 - Issues from one browser session (same `trace` id in the event's context) usually share one root
   cause even when their titles differ: compare trace ids before treating them separately.
 - The `environment` tag reads `production` for every production build, including internal test
-  instances and PR preview builds, unless their `config.json` sets `remoteLoggingEnvironment` (see
-  above). Check the `url` and `release` tags (`pr-…`, `…-master.N`) before treating an issue as
+  instances and PR preview builds, unless they set `SENTRY_ENVIRONMENT` or `remoteLoggingEnvironment`
+  (see above). Check the `url` and `release` tags (`pr-…`, `…-master.N`) before treating an issue as
   customer-facing.
 - Grouping and filtering run in the client, so a change to them only applies to events from clients
   that loaded the new release: cached older app versions keep reporting under the old titles. Check
