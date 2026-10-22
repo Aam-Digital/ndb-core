@@ -1,6 +1,7 @@
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 
 /**
  * Represents an entity that will be affected by a status update.
@@ -91,4 +92,24 @@ export interface EnteredValue {
 
   /** in database format */
   value: unknown;
+}
+
+/**
+ * Represents a rule with its associated entity type and field information
+ */
+export interface AffectedRule {
+  rule: DefaultValueConfigInheritedField;
+  entityType: EntityConstructor;
+  fieldId: string;
+}
+
+/**
+ * The value that the linked parent records of a record have in common.
+ */
+export interface CommonValueOfParents {
+  /** the value the parent records have in common (in database format) */
+  value?: unknown;
+
+  /** why the parent records provide no value in common, if they don't */
+  noCommonValue?: NoCommonValueReason;
 }
