@@ -52,8 +52,7 @@ export class AdminSectionHeaderComponent {
 
   /**
    * Whether this title may be configured in several languages.
-   * Off by default: a title that is referenced elsewhere may only become a map
-   * once that reference matches any language (see `columnGroups.default`).
+   * Opt-in, so callers whose titles are only ever plain strings are unaffected.
    */
   translatable = input<boolean>(false);
 

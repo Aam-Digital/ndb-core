@@ -67,7 +67,7 @@ export class AdminTabsComponent<
 
   /**
    * Whether tab titles may be configured in several languages.
-   * Off by default - a list view's column group name doubles as its identifier.
+   * Opt-in, so callers whose titles are only ever plain strings are unaffected.
    */
   translatableTitle = input<boolean>(false);
   newTabFactory = input<() => E>(
