@@ -58,7 +58,7 @@ describe("applyConfigMigrations", () => {
           component: "RelatedEntities",
           config: {
             entityType: "HistoricalEntityData",
-            loaderMethod: "HistoricalDataService",
+            property: "relatedEntity",
           },
         },
       });
