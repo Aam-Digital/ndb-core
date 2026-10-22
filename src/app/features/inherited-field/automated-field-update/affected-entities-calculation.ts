@@ -223,11 +223,11 @@ export class AffectedEntitiesCalculation {
     source: Entity,
     { level, sourceFieldId }: Pick<QueuedChange, "level" | "sourceFieldId">,
   ): Promise<boolean> {
-    // the changed entity is never offered, and the chain ends at an entity the user may not update
-    if (
-      target.getId() === this.trigger.entity.getId() ||
-      !this.context.canUpdate(target, rule.fieldId)
-    ) {
+    // the field that was changed is never offered again, and the chain ends at an entity the user may not update
+    const isChangedField =
+      target.getId() === this.trigger.entity.getId() &&
+      this.changedFields.includes(rule.fieldId);
+    if (isChangedField || !this.context.canUpdate(target, rule.fieldId)) {
       return false;
     }
 

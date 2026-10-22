@@ -317,6 +317,48 @@ class FieldChainAction extends Entity {
   upperTags: ConfigurableEnumValue[];
 }
 
+/** a record whose "value" is collected in the "total" of its parent, from where it comes back down to all sub-records */
+@DatabaseEntity("CycleAction")
+class CycleAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "CycleAction" })
+  parent: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "total" },
+    },
+  })
+  value: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "CycleAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "value",
+        aggregation: "add",
+      },
+    },
+  })
+  total: ConfigurableEnumValue[];
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "total" },
+    },
+  })
+  inheritedTotal: ConfigurableEnumValue[];
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -368,6 +410,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("HierarchyAction", HierarchyAction);
     entityRegistry.set("HierarchyGroup", HierarchyGroup);
     entityRegistry.set("FieldChainAction", FieldChainAction);
+    entityRegistry.set("CycleAction", CycleAction);
     entityRegistry.set("CommonValueGroup", CommonValueGroup);
 
     mockIndexing = {
@@ -815,11 +858,11 @@ describe("AutomatedFieldUpdateConfigService", () => {
       return { previousParent, newParent };
     }
 
+    /** the suggestions for the tags that the parents collect (not for the other fields of the saved record) */
     const suggestions = () =>
-      mockDialog.open.mock.calls[0]?.[1].data.entities.map((e) => [
-        e.id,
-        e.newValue,
-      ]);
+      mockDialog.open.mock.calls[0]?.[1].data.entities
+        .filter((e) => e.targetFieldId === "tags")
+        .map((e) => [e.id, e.newValue]);
 
     it.each([
       [["health"], [], ["education"], [], ["health", "education"]],
@@ -1407,6 +1450,38 @@ describe("AutomatedFieldUpdateConfigService", () => {
         project.getId(),
       );
       expect(savedProject.tags).toEqual(toTags(["health", "education"]));
+    });
+
+    it("also offers the fields of the changed record that are based on the changed values above, but not the field that was changed", async () => {
+      const project = new CycleAction();
+      const activity = new CycleAction();
+      const otherActivity = new CycleAction();
+      [activity, otherActivity].forEach((action) => {
+        action.parent = project.getId();
+        action.value = [];
+        action.inheritedTotal = [];
+      });
+      [project, activity, otherActivity].forEach(
+        (action) => (action._rev = "1-existing"),
+      );
+      entityMapper.addAll([project, activity, otherActivity]);
+      const activityBefore = activity.copy();
+      activity.value = toTags(["health"]);
+      mockDialog.open.mockClear();
+
+      await service.applyRulesToDependentEntities(activity, activityBefore);
+
+      const offered = mockDialog.open.mock.calls[0][1].data.entities.map(
+        (e) => `${e.id}|${e.targetFieldId}`,
+      );
+      expect(offered.sort()).toEqual(
+        [
+          `${project.getId()}|total`,
+          `${otherActivity.getId()}|value`,
+          `${otherActivity.getId()}|inheritedTotal`,
+          `${activity.getId()}|inheritedTotal`,
+        ].sort(),
+      );
     });
 
     it("stops at the level where nothing changes", async () => {
