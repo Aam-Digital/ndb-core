@@ -59,8 +59,6 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ImportMetadata } from "../../import/import-metadata";
 import { EntityBulkActionsComponent } from "../../entity-details/entity-bulk-actions/entity-bulk-actions.component";
 import { resolveLocaleText } from "../../language/active-locale";
-import { TranslatableText } from "../../config/multi-lingual-config";
-import { DEFAULT_LANGUAGE } from "../../language/language-statics";
 import {
   FeaturePermissionDialogComponent,
   FeaturePermissionDialogData,
@@ -69,6 +67,18 @@ import { PermissionsConfigService } from "../../permissions/permissions-config.s
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 import { resolveDataSource } from "#src/app/core/common-components/entities-table/data-source/data-source-resolver";
 import { InMemoryDataSource } from "#src/app/core/common-components/entities-table/data-source/in-memory-data-source";
+
+/**
+ * The column group shown on small screens: the one with the fewest columns
+ * (the first of them if several have the same number).
+ */
+function indexOfGroupWithFewestColumns(groups: GroupConfig[]): number {
+  return groups.reduce(
+    (fewest, group, index) =>
+      group.columns.length < groups[fewest].columns.length ? index : fewest,
+    0,
+  );
+}
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -194,12 +204,19 @@ export class EntityListComponent<T extends Entity> implements OnInit {
 
   title = model<string>("");
   columns = input<(FormFieldConfig | string)[]>([]);
+
+  /** Analytics event name for the "Add New" button; `title` comes from config and may not be a string. */
+  protected addNewAnalyticsAction = computed(
+    () =>
+      String(this.title() ?? "")
+        .toLowerCase()
+        .replace(" ", "_") + "_add_new",
+  );
+
   columnGroups = input<ColumnGroupsConfig>();
   groups: GroupConfig[] = [];
   /** the same groups with their names resolved, for the tab labels */
   displayGroups: { name: string; columns: string[] }[] = [];
-  defaultColumnGroup = "";
-  mobileColumnGroup = "";
   filters = input<FilterConfig[]>([]);
 
   /**
@@ -256,13 +273,14 @@ export class EntityListComponent<T extends Entity> implements OnInit {
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => {
-        if (!isDesktop) {
-          this.displayColumnGroupByName(this.mobileColumnGroup);
-        } else if (
-          this.selectedColumnGroupIndex ===
-          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
-        ) {
-          this.displayColumnGroupByName(this.defaultColumnGroup);
+        // groups are not set yet on the initial emit during construction
+        if (this.groups.length > 0) {
+          const mobileIndex = indexOfGroupWithFewestColumns(this.groups);
+          if (!isDesktop) {
+            this.selectedColumnGroupIndex = mobileIndex;
+          } else if (this.selectedColumnGroupIndex === mobileIndex) {
+            this.selectedColumnGroupIndex = 0;
+          }
         }
 
         this.isDesktop = isDesktop;
@@ -319,12 +337,9 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     }
 
     this.initColumnGroups(this.columnGroups());
-
-    this.displayColumnGroupByName(
-      this.screenWidthObserver.isDesktop()
-        ? this.defaultColumnGroup
-        : this.mobileColumnGroup,
-    );
+    this.selectedColumnGroupIndex = this.screenWidthObserver.isDesktop()
+      ? 0
+      : indexOfGroupWithFewestColumns(this.groups);
 
     if (!this.title()) {
       this.title.set(this.entityConstructor()?.labelPlural);
@@ -334,17 +349,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
-      // the fallback needs a text that matches the first group in some language
-      const firstGroup = resolveLocaleText(columnGroup.groups[0].name) ?? "";
-      this.defaultColumnGroup =
-        columnGroup.default && this.configuredTabExists(columnGroup.default)
-          ? columnGroup.default
-          : firstGroup;
-
-      this.mobileColumnGroup =
-        columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
-          ? columnGroup.mobile
-          : firstGroup;
     } else {
       this.groups = [
         {
@@ -354,8 +358,6 @@ export class EntityListComponent<T extends Entity> implements OnInit {
           ),
         },
       ];
-      this.defaultColumnGroup = "default";
-      this.mobileColumnGroup = "default";
     }
 
     this.displayGroups = this.groups.map((group) => ({
@@ -364,44 +366,8 @@ export class EntityListComponent<T extends Entity> implements OnInit {
     }));
   }
 
-  private configuredTabExists(groupName: string): boolean {
-    return this.groups.some((group) =>
-      this.groupNameMatches(group.name, groupName),
-    );
-  }
-
-  /** Whether a group's name is the text `columnGroups.default`/`.mobile` references, in any language. */
-  private groupNameMatches(name: TranslatableText, reference: string): boolean {
-    if (typeof name === "string" || name == null) {
-      return name === reference;
-    }
-    return Object.values(name).includes(reference);
-  }
-
   applyFilter(filterValue: string) {
     this.recordsDataSource().filter = filterValue.trim().toLowerCase();
-  }
-
-  private displayColumnGroupByName(columnGroupName: string) {
-    const selectedColumnIndex =
-      this.getSelectedColumnIndexByName(columnGroupName);
-    if (selectedColumnIndex !== -1) {
-      this.selectedColumnGroupIndex = selectedColumnIndex;
-    }
-  }
-
-  private getSelectedColumnIndexByName(columnGroupName: string) {
-    // prefer the default language, so another group's translation cannot win
-    const exact = this.groups.findIndex(
-      (c) =>
-        (typeof c.name === "string" ? c.name : c.name?.[DEFAULT_LANGUAGE]) ===
-        columnGroupName,
-    );
-    if (exact !== -1) return exact;
-
-    return this.groups.findIndex((c) =>
-      this.groupNameMatches(c.name, columnGroupName),
-    );
   }
 
   /**
@@ -466,7 +432,7 @@ export class EntityListComponent<T extends Entity> implements OnInit {
         exportConfig: allAvailableColumns,
         preselectedExportConfig,
         columnGroups: this.columnGroups(),
-        filename: (this.title() ?? "").replaceAll(" ", ""),
+        filename: String(this.title() ?? "").replaceAll(" ", ""),
       },
     });
   }

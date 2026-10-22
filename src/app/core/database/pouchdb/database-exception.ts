@@ -1,7 +1,9 @@
+import { NamedError } from "../../logging/reported-errors";
+
 /**
  * This overwrites PouchDB's error class which only logs limited information
  */
-export class DatabaseException extends Error {
+export class DatabaseException extends NamedError {
   entityId?: string;
 
   /**
@@ -18,7 +20,7 @@ export class DatabaseException extends Error {
     error: PouchDB.Core.Error | { message: string; [key: string]: any },
     entityId?: string,
   ) {
-    super(error?.message || "Database error");
+    super("DatabaseException", error?.message || "Database error");
 
     this.entityId = entityId;
     // Capture the wrapped error's name before Object.assign / `this.name` erase it.

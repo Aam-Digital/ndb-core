@@ -3,6 +3,7 @@ import { enableProdMode } from "@angular/core";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { initEnvironmentConfig } from "./bootstrap-environment";
 import { Logging } from "./app/core/logging/logging.service";
+import { NamedError } from "./app/core/logging/reported-errors";
 import { registerPWAInstallListener } from "./bootstrap-pwa-install";
 import { initLanguage } from "./bootstrap-i18n";
 import { runPendingReset } from "./bootstrap-reset";
@@ -11,7 +12,13 @@ import { runPendingReset } from "./bootstrap-reset";
 registerPWAInstallListener();
 
 bootstrap().catch((reason) => {
-  Logging.error("Application Bootstrap failed", reason);
+  // a named error, so that a bootstrap failure keeps an issue of its own even
+  // when caused by a network failure (e.g. a code chunk that could not be loaded)
+  Logging.error(
+    new NamedError("AppBootstrapError", "Application Bootstrap failed", {
+      cause: reason,
+    }),
+  );
 }); // top-level await not possible here yet, therefore wrapped in `bootstrap()` function
 
 async function bootstrap() {

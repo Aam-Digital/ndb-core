@@ -34,6 +34,10 @@ import { SetupWizardService } from "../setup-wizard/setup-wizard.service";
 import { SETUP_WIZARD_ROUTE } from "../setup-wizard/setup-wizard-config";
 import { WarningNotOptimizedForSmallScreenComponent } from "#src/app/core/common-components/warning-not-optimized-for-small-screen/warning-not-optimized-for-small-screen.component";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { ApiClientService } from "#src/app/features/api-client/api-client.service";
+import { SessionSubject } from "#src/app/core/session/auth/session-info";
+import { UserAdminService } from "#src/app/core/user/user-admin-service/user-admin.service";
+import { ADMIN_APP_ROLE } from "#src/app/core/permissions/permission-types";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -69,6 +73,16 @@ export class AdminOverviewComponent {
   private entityMapper = inject(EntityMapperService);
   private readonly sectionStateService = inject(AdminSectionStateService);
   private readonly setupWizardService = inject(SetupWizardService);
+
+  private readonly apiClientService = inject(ApiClientService);
+  private readonly userRoles = inject(SessionSubject).value?.roles ?? [];
+  private readonly hasApiAccessRoles = [
+    ADMIN_APP_ROLE,
+    UserAdminService.ACCOUNT_MANAGER_ROLE,
+  ].every((role) => this.userRoles.includes(role));
+  protected readonly isApiAccessAvailable = computed(
+    () => this.hasApiAccessRoles && this.apiClientService.isAvailable(),
+  );
 
   public templates: MenuItem[] = [];
 

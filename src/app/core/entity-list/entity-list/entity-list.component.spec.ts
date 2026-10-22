@@ -20,6 +20,7 @@ import { SessionType } from "#src/app/core/session/session-type";
 import { PaginatedDataSource } from "#src/app/core/common-components/entities-table/data-source/paginated-data-source";
 import { DatabaseResolverService } from "#src/app/core/database/database-resolver.service";
 import { Database } from "#src/app/core/database/database";
+import { ScreenWidthObserver } from "#src/app/utils/media/screen-size-observer.service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -29,8 +30,6 @@ describe("EntityListComponent", () => {
     title: "Children List",
     columns: [{ viewComponent: "DisplayText", label: "Age", id: "age" }],
     columnGroups: {
-      default: "School Info",
-      mobile: "School Info",
       groups: [
         {
           name: "Basic Info",
@@ -118,6 +117,16 @@ describe("EntityListComponent", () => {
     expect(component.publicForms[0].config.route).toBe("register");
   });
 
+  it("should not fail if the configured title is not a string", () => {
+    createComponent();
+    initComponentInputs();
+    component.title.set(123 as any);
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    // @ts-ignore
+    expect(component.addNewAnalyticsAction()).toBe("123_add_new");
+  });
+
   it("should create columns from config", async () => {
     vi.useFakeTimers();
     try {
@@ -130,25 +139,62 @@ describe("EntityListComponent", () => {
     }
   });
 
-  it("should create column groups from config and set correct one", async () => {
-    vi.useFakeTimers();
-    try {
-      createComponent();
-      initComponentInputs();
-      await vi.advanceTimersByTimeAsync(0);
+  it.each([
+    {
+      screen: "desktop",
+      rule: "the first group",
+      groupColumns: [["name", "other", "category"], ["name"]],
+      expectedGroup: 0,
+    },
+    {
+      screen: "mobile",
+      rule: "the first of several groups with the fewest columns",
+      groupColumns: [["name", "other", "category"], ["name"], ["other"]],
+      expectedGroup: 1,
+    },
+    {
+      screen: "mobile",
+      rule: "the group with the fewest columns",
+      groupColumns: [["name", "other"], ["name", "category"], ["name"]],
+      expectedGroup: 2,
+    },
+    {
+      screen: "mobile",
+      rule: "the first group if it shares the fewest columns",
+      groupColumns: [["name"], ["other"], ["name", "other", "category"]],
+      expectedGroup: 0,
+    },
+  ])(
+    "initially selects $rule on $screen and offers all groups as tabs",
+    async ({ screen, groupColumns, expectedGroup }) => {
+      const isDesktop = screen === "desktop";
+      TestBed.overrideProvider(ScreenWidthObserver, {
+        useValue: { isDesktop: () => isDesktop, platform: () => of(isDesktop) },
+      });
+      const groups = groupColumns.map((columns, i) => ({
+        name: `Group ${i}`,
+        columns,
+      }));
 
-      expect(component.groups).toEqual(testConfig.columnGroups.groups);
-      const defaultGroup = testConfig.columnGroups.groups.findIndex(
-        (g) => g.name === testConfig.columnGroups.default,
-      );
-      expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
-      expect(component.columnsToDisplay).toEqual(
-        testConfig.columnGroups.groups[defaultGroup].columns,
-      );
-    } finally {
-      vi.useRealTimers();
-    }
-  });
+      vi.useFakeTimers();
+      try {
+        createComponent();
+        fixture.componentRef.setInput("columnGroups", { groups });
+        fixture.detectChanges();
+        await vi.advanceTimersByTimeAsync(0);
+
+        expect(component.columnsToDisplay).toEqual(
+          groups[expectedGroup].columns,
+        );
+        // users can switch to the other groups on any screen size
+        expect(
+          fixture.nativeElement.querySelectorAll('[role="tab"]'),
+        ).toHaveLength(groups.length);
+      } finally {
+        vi.useRealTimers();
+      }
+    },
+  );
 
   it("should set the clicked column group", async () => {
     vi.useFakeTimers();
@@ -158,14 +204,14 @@ describe("EntityListComponent", () => {
       component.isDesktop = true;
       initComponentInputs();
       await vi.advanceTimersByTimeAsync(0);
-      expect(component.selectedColumnGroupIndex).toBe(1);
+      expect(component.selectedColumnGroupIndex).toBe(0);
 
-      const clickedColumnGroup = testConfig.columnGroups.groups[0];
+      const clickedColumnGroup = testConfig.columnGroups.groups[1];
 
-      // Simulate selecting the first tab group and verify table columns update.
-      component.selectedColumnGroupIndex = 0;
+      // Simulate selecting the second tab group and verify table columns update.
+      component.selectedColumnGroupIndex = 1;
 
-      expect(component.selectedColumnGroupIndex).toEqual(0);
+      expect(component.selectedColumnGroupIndex).toEqual(1);
       expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
     } finally {
       vi.useRealTimers();
@@ -257,34 +303,6 @@ describe("EntityListComponent", () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(component.recordsDataSource().allRecords()).toEqual([]);
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("should fallback to the first group if default and mobile group does not exist", async () => {
-    vi.useFakeTimers();
-    try {
-      createComponent();
-      fixture.componentRef.setInput("columns", [
-        "name",
-        "age",
-        "category",
-        "other",
-      ]);
-      fixture.componentRef.setInput("columnGroups", {
-        default: "Overview",
-        mobile: "Overview",
-        groups: [
-          { name: "Basic Info", columns: ["name", "age", "category"] },
-          { name: "School Info", columns: ["name", "age", "other"] },
-        ],
-      });
-      fixture.detectChanges();
-      await vi.advanceTimersByTimeAsync(0);
-
-      expect(component.defaultColumnGroup).toEqual("Basic Info");
-      expect(component.mobileColumnGroup).toEqual("Basic Info");
     } finally {
       vi.useRealTimers();
     }

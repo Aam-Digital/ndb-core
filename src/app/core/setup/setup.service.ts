@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { BaseConfig } from "./base-config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
@@ -30,6 +30,12 @@ export class SetupService {
   private readonly configService = inject(ConfigService);
   private readonly syncState = inject(SyncStateSubject);
 
+  /**
+   * Template sources (config descriptor URLs) that could not be loaded
+   * during the last {@link getAvailableBaseConfig} call, to hint at it in the setup wizard.
+   */
+  readonly unavailableSources = signal<string[]>([]);
+
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
     const externalSourceUrlsRaw = await firstValueFrom(
       this.httpClient
@@ -55,6 +61,7 @@ export class SetupService {
       ...validatedExternalSourceUrls,
     ];
 
+    this.unavailableSources.set([]);
     const results = await Promise.all(
       descriptorUrls.map((url) => this.loadConfigDescriptor(url)),
     );
@@ -70,16 +77,32 @@ export class SetupService {
 
   private async loadConfigDescriptor(url: string): Promise<BaseConfig[]> {
     const baseUrl = url.substring(0, url.lastIndexOf("/") + 1);
+    let error: any;
     const entries = await firstValueFrom(
       this.httpClient
         .get<BaseConfig | BaseConfig[]>(url, { responseType: "json" })
         .pipe(
           retry(2),
-          catchError(() => of(null)),
+          catchError((err) => {
+            error = err;
+            return of(null);
+          }),
         ),
     );
     if (!entries) {
-      Logging.warn("Failed to load config descriptor", { url });
+      const context = {
+        url,
+        status: error?.status,
+        statusText: error?.statusText,
+      };
+      if (url.startsWith(this.BASE_CONFIGS_FOLDER)) {
+        // part of our own deployment
+        Logging.warn("Failed to load config descriptor", error, context);
+      } else {
+        // an external template source configured for this instance (or the source is down)
+        Logging.debug("Failed to load external config descriptor", context);
+      }
+      this.unavailableSources.update((sources) => [...sources, url]);
       return [];
     }
     return asArray(entries).map((entry) => ({ ...entry, baseUrl }));

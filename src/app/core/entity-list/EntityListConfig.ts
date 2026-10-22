@@ -52,21 +52,14 @@ export interface EntityListConfig {
 }
 
 export interface ColumnGroupsConfig {
+  /**
+   * The groups of columns the user can switch between (shown as tabs).
+   *
+   * The first group is selected initially.
+   * On a small screen (mobile), the group with the fewest columns is selected initially instead
+   * (the first of them if several have the same number of columns).
+   */
   groups: GroupConfig[];
-
-  /**
-   * The name of the group that should be selected by default.
-   * Default is the name of the first group.
-   * For a multi-lingual name this may hold the text of any configured language.
-   */
-  default?: string;
-
-  /**
-   * The name of the group that should be selected by default on a mobile device.
-   * Default is the name of the first group.
-   * Referenced by text, like {@link default}.
-   */
-  mobile?: string;
 }
 
 export interface GroupConfig {

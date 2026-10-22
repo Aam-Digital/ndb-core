@@ -49,7 +49,7 @@ export class LanguageModule {
         },
       });
     } catch (e) {
-      Logging.warn("Could not determine first day of week for locale", {
+      Logging.debug("Could not determine first day of week for locale", {
         locale,
       });
     }

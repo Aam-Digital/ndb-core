@@ -49,7 +49,6 @@ describe("DialogButtonsComponent", () => {
       entity: new Entity(),
       fieldConfigs: [],
       watcher: new Map(),
-      inheritedParentValues: new Map(),
     };
 
     const entity = new Entity();

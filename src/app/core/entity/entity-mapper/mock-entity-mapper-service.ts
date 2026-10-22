@@ -146,6 +146,16 @@ export class MockEntityMapperService extends EntityMapperService {
     return this.getAll(type);
   }
 
+  /**
+   * Always false, so code that only queries as an optimisation stays on the `loadType`
+   * path here: {@link findType} below evaluates selectors against deserialized entity
+   * instances, which is not what the real database does with the stored format.
+   * Spy on this where a spec means to exercise the query path.
+   */
+  override supportsFind(): boolean {
+    return false;
+  }
+
   override async findType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     filter: DataFilter<T> = {},

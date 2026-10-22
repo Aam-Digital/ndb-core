@@ -49,11 +49,11 @@ describe("FaDynamicIconComponent", () => {
     expect(component._icon()).toEqual(faCoffee);
   });
 
-  it("should show the fallback icon and warn when it is neither in the map nor exists as icon definition", () => {
-    vi.spyOn(Logging, "warn");
+  it("should show the fallback icon and log at debug level when it is neither in the map nor exists as icon definition", () => {
+    vi.spyOn(Logging, "debug");
     fixture.componentRef.setInput("icon", "I do not exist");
     expect(component._icon()).toEqual(FaDynamicIconComponent.fallbackIcon);
-    expect(Logging.warn).toHaveBeenCalled();
+    expect(Logging.debug).toHaveBeenCalled();
   });
 
   it("should set an icon if a different prefix is specified", () => {

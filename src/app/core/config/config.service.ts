@@ -1,15 +1,17 @@
-import { inject, Injectable, LOCALE_ID } from "@angular/core";
+import { inject, Injectable, Injector, LOCALE_ID } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { shareReplay } from "rxjs/operators";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { Logging } from "../logging/logging.service";
+import { NamedError } from "../logging/reported-errors";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
 import { resolveTranslatableConfig } from "./multi-lingual-config";
 import { DEFAULT_LANGUAGE } from "../language/language-statics";
 import { availableLocales } from "../language/languages";
+import { ConfigValidationService } from "./config-validation/config-validation.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -45,6 +47,9 @@ export class ConfigService extends LatestEntityLoader<Config> {
   private readonly locale = inject(LOCALE_ID);
   private readonly validLocaleIds = availableLocales.values.map((v) => v.id);
 
+  // resolved lazily: the validation checks services that themselves depend on the ConfigService
+  private readonly injector = inject(Injector);
+
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
   constructor(
@@ -66,6 +71,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
         return;
       }
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
+      const previousConfig = this.currentConfig;
       this.currentConfig = this.applyMigrations(config);
       this.resolvedConfigData = resolveTranslatableConfig(
         this.currentConfig.data,
@@ -74,6 +80,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
         this.validLocaleIds,
       );
       this.logConfigRev();
+      if (previousConfig && previousConfig._rev !== this.currentConfig._rev) {
+        // the config was just saved (by this or another admin)
+        this.warnAboutConfigProblems();
+      }
     });
 
     this.startLoading();
@@ -97,9 +107,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private abortWithError(message: string, cause?: unknown) {
-    const error = new Error(message, { cause });
-    error.name = "ConfigLoadError";
-    Logging.error(error);
+    Logging.error(new NamedError("ConfigLoadError", message, { cause }));
 
     if (this.registerReloadAttempt()) {
       alert(
@@ -130,6 +138,17 @@ export class ConfigService extends LatestEntityLoader<Config> {
       String(attempts + 1),
     );
     return true;
+  }
+
+  private warnAboutConfigProblems() {
+    try {
+      this.injector
+        .get(ConfigValidationService)
+        .warnAdminAboutProblems(this.currentConfig.data);
+    } catch (err) {
+      // a bug in the validation must never break loading the config
+      Logging.warn("Could not validate config", err);
+    }
   }
 
   private logConfigRev() {

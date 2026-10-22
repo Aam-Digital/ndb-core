@@ -69,8 +69,6 @@ const eventListView = {
   config: {
     entityType: "event",
     columnGroups: {
-      default: "Overview",
-      mobile: "Overview",
       groups: [
         {
           name: "Übersicht",

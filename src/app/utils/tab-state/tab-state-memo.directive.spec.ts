@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabsModule } from "@angular/material/tabs";
 import { RouterTestingModule } from "@angular/router/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Component } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { TabStateModule } from "./tab-state.module";
@@ -49,6 +49,34 @@ describe("TabStateService", () => {
     const selected = await tabGroupHarness.getSelectedTab();
     expect(await selected.getLabel()).toBe("C");
   });
+
+  it("updates a two-way bound selectedIndex to the tab restored from the URL", async () => {
+    const router = TestBed.inject(Router);
+    await router.navigate([], { queryParams: { tabIndex: 2 } });
+
+    // initial load of a page whose URL already holds a tabIndex (e.g. navigating back)
+    const boundFixture = TestBed.createComponent(TwoWayBoundTestComponent);
+    boundFixture.detectChanges();
+    await boundFixture.whenStable();
+    expect(boundFixture.componentInstance.selectedIndex()).toBe(2);
+    boundFixture.detectChanges();
+
+    // later in-app navigation that only changes the query param
+    await router.navigate([], { queryParams: { tabIndex: 1 } });
+    boundFixture.detectChanges();
+    await boundFixture.whenStable();
+    expect(boundFixture.componentInstance.selectedIndex()).toBe(1);
+  });
+
+  it("clamps a restored tabIndex beyond the last tab before passing it to a two-way binding", async () => {
+    await TestBed.inject(Router).navigate([], { queryParams: { tabIndex: 9 } });
+
+    const boundFixture = TestBed.createComponent(TwoWayBoundTestComponent);
+    boundFixture.detectChanges();
+    await boundFixture.whenStable();
+
+    expect(boundFixture.componentInstance.selectedIndex()).toBe(2);
+  });
 });
 
 @Component({
@@ -63,3 +91,15 @@ describe("TabStateService", () => {
   standalone: true,
 })
 class TestAppComponent {}
+
+@Component({
+  imports: [MatTabsModule, TabStateModule],
+  template: `<mat-tab-group [(selectedIndex)]="selectedIndex" appTabStateMemo>
+    <mat-tab label="A">A</mat-tab>
+    <mat-tab label="B">B</mat-tab>
+    <mat-tab label="C">C</mat-tab>
+  </mat-tab-group>`,
+})
+class TwoWayBoundTestComponent {
+  selectedIndex = signal(0);
+}

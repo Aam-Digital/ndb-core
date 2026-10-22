@@ -20,7 +20,8 @@ import { NotificationTimePipe } from "../../notification/notification-time.pipe"
   template: `
     @if (value()) {
       <div class="flex-column">
-        <span>{{ value() | customDate: "short" }}</span>
+        <!-- bdi: date and time are separate digit runs that RTL would reorder -->
+        <bdi>{{ value() | customDate: "short" }}</bdi>
         <!-- quieter than the date, so the two read apart rather than as one -->
         <span class="elapsed text-secondary">{{
           value() | notificationTime | async

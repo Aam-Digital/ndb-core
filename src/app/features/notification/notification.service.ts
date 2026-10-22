@@ -91,6 +91,13 @@ export class NotificationService {
   }
 
   private init() {
+    if (!environment.notificationsConfig) {
+      // push notifications are not set up for this deployment. A device may still
+      // have granted the browser permission (e.g. for another app on the domain,
+      // or while notifications were set up earlier), but without a Firebase config
+      // both the service worker and the message listener can only fail.
+      return;
+    }
     if (!this.hasNotificationPermissionGranted()) {
       // push notifications cannot have been enabled on this device
       return;
@@ -310,8 +317,12 @@ export class NotificationService {
           NotificationEvent.DATABASE,
         );
         if (db instanceof SyncedPouchDatabase) {
+          // sync() already logs its failures
           db.sync().catch((err) =>
-            Logging.warn("Failed sync notifications db upon push message", err),
+            Logging.debug(
+              "Failed sync notifications db upon push message",
+              err,
+            ),
           );
         }
 
