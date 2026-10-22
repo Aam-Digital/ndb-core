@@ -108,6 +108,7 @@ The app therefore does not switch away from a database that still holds unsynced
 If anything fails (offline, replication error, failed final sync) or the user postpones the reload, the flag stays unset,
 the app keeps using the old database, and the migration is retried on the next app start, continuing from its replication checkpoint.
 Failures are tracked as the analytics events `migration_replication-failed` and `migration_final-sync-failed`, a postponed reload as `migration_reload-postponed`.
+A failed replication is also reported as a warning to remote logging (e.g. a storage quota exceeded on the device), unless the device was offline or the session expired; a failed final sync is reported by the sync itself.
 
 The notifications database is not migrated: after the switch it is synced from the server into a new database.
 The legacy databases are not deleted yet (`cleanupLegacyDatabases()` is not called), so until then the device stores the data twice.

@@ -14,9 +14,12 @@ import { filter, first } from "rxjs/operators";
 import PouchDB from "pouchdb-browser";
 import { environment } from "../../../environments/environment";
 import { Database } from "./database";
-import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
+import {
+  isReplicationConnectivityError,
+  isReplicationUnauthorizedError,
+  SyncedPouchDatabase,
+} from "./pouchdb/synced-pouch-database";
 import type { AnalyticsService } from "../analytics/analytics.service";
-import { isConnectivityError } from "../../utils/connectivity-error";
 
 export interface DbConfig {
   dbNames: { app: string; notifications: string };
@@ -185,13 +188,17 @@ export class IndexeddbMigrationService {
         checkBothComplete();
       })
       .catch(async (err) => {
-        if (isConnectivityError(err)) {
-          // the device went offline: nothing to fix, retried on next app start
+        if (
+          isReplicationConnectivityError(err) ||
+          isReplicationUnauthorizedError(err)
+        ) {
+          // offline or session expired: nothing to fix, retried on next app start
           Logging.debug(
-            "IndexeddbMigration: replication into new db failed (connectivity)",
+            "IndexeddbMigration: replication into new db failed (offline or session expired)",
             err,
           );
         } else {
+          // e.g. storage quota exceeded on the device: reported to keep track of failing migrations
           Logging.warn(
             "IndexeddbMigration: replication into new db failed",
             { newDbName },
@@ -268,10 +275,10 @@ export class IndexeddbMigrationService {
         "IndexeddbMigration: final sync of old db failed; keeping old db",
         err,
       );
-      await this.trackMigrationEvent("migration_final-sync-failed");
       this.alertService.addWarning(
         $localize`:Migration failed alert:The database upgrade could not be completed because your latest changes could not be synced to the server. Please check your internet connection. The upgrade will be tried again the next time you open the app.`,
       );
+      await this.trackMigrationEvent("migration_final-sync-failed");
       return;
     } finally {
       progressRef.close();
@@ -294,11 +301,16 @@ export class IndexeddbMigrationService {
     );
   }
 
+  /** Never rejects: usage analytics must not interrupt the migration. */
   private async trackMigrationEvent(action: string): Promise<void> {
-    const analytics = await this.getAnalyticsService();
-    analytics?.eventTrack(action, {
-      category: "indexeddb_adapter_migration",
-    });
+    try {
+      const analytics = await this.getAnalyticsService();
+      analytics?.eventTrack(action, {
+        category: "indexeddb_adapter_migration",
+      });
+    } catch (err) {
+      Logging.debug("IndexeddbMigration: failed to track event", err);
+    }
   }
 
   /**

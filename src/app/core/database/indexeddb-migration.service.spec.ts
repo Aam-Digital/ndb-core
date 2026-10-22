@@ -298,22 +298,62 @@ describe("IndexeddbMigrationService", () => {
       },
     );
 
-    it("keeps the old db if the replication into the new db fails", async () => {
+    it.each([
+      {
+        scenario: "storage quota exceeded",
+        error: new DOMException("quota exceeded", "QuotaExceededError"),
+        reported: true,
+      },
+      {
+        scenario: "offline",
+        error: new TypeError("Failed to fetch"),
+        reported: false,
+      },
+      {
+        scenario: "session expired",
+        error: { status: 401, name: "unauthorized" },
+        reported: false,
+      },
+    ])(
+      "keeps the old db if the replication into the new db fails: $scenario",
+      async ({ error, reported }) => {
+        service.migrationPending = true;
+        const { mockDb, localSyncState, mockNewDb } = mockPouchDbCreation();
+        mockNewDb.replicate.from.mockRejectedValue(error);
+        const warnSpy = vi
+          .spyOn(Logging, "warn")
+          .mockImplementation(() => undefined);
+
+        service.runBackgroundMigration(session, mockDb);
+        localSyncState.next(SyncState.COMPLETED);
+        await flushPromises();
+
+        expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
+        expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
+        expect(warnSpy).toHaveBeenCalledTimes(reported ? 1 : 0);
+        expect(eventTrackSpy).toHaveBeenCalledWith(
+          "migration_replication-failed",
+          { category: "indexeddb_adapter_migration" },
+        );
+      },
+    );
+
+    it("warns the user about a failed final sync even if usage analytics fails", async () => {
       service.migrationPending = true;
-      const { mockDb, localSyncState, mockNewDb } = mockPouchDbCreation();
-      mockNewDb.replicate.from.mockRejectedValue(new Error("quota exceeded"));
-      vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+      confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
+      const { mockDb, localSyncState } = mockPouchDbCreation();
+      localSyncState.next(SyncState.COMPLETED);
+      vi.spyOn(mockDb, "ensureSynced").mockRejectedValue(new Error("offline"));
+      eventTrackSpy.mockImplementation(() => {
+        throw new Error("analytics broken");
+      });
+      const errorSpy = vi.spyOn(Logging, "error");
 
       service.runBackgroundMigration(session, mockDb);
-      localSyncState.next(SyncState.COMPLETED);
       await flushPromises();
 
-      expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
-      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
-      expect(eventTrackSpy).toHaveBeenCalledWith(
-        "migration_replication-failed",
-        { category: "indexeddb_adapter_migration" },
-      );
+      expect(alertServiceSpy.addWarning).toHaveBeenCalledTimes(1);
+      expect(errorSpy).not.toHaveBeenCalled();
     });
   });
 

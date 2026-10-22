@@ -324,13 +324,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
         "sync failed: likely multi-tab IndexedDB corruption",
         { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
       );
-    } else if (
-      this.isSyncConnectivityError(err) ||
-      err instanceof SyncStalledError
-    ) {
+    } else if (isReplicationConnectivityError(err)) {
       Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-    } else if (err?.status === 401 || err?.statusCode === 401) {
-      // expired session; the fetch layer already triggers re-login
+    } else if (isReplicationUnauthorizedError(err)) {
       Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
     } else {
       Logging.warn(`sync failed`, { db: this.dbName }, err);
@@ -372,12 +368,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       message.includes("IDBObjectStore") ||
       message.includes("Failed to execute")
     );
-  }
-
-  private isSyncConnectivityError(err: any): boolean {
-    if (isConnectivityError(err)) return true;
-    const message = err?.message || err?.reason || String(err);
-    return message.includes("getCheckpoint");
   }
 
   /**
@@ -572,4 +562,22 @@ class SyncStalledError extends NamedError {
   constructor() {
     super("SyncStalledError", "Sync cancelled after making no progress");
   }
+}
+
+/**
+ * Whether a replication with the server failed only because of the connection
+ * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
+ */
+export function isReplicationConnectivityError(err: any): boolean {
+  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
+  const message = err?.message || err?.reason || String(err);
+  return message.includes("getCheckpoint");
+}
+
+/**
+ * Whether a replication with the server failed because the session expired:
+ * the fetch layer already triggers a re-login.
+ */
+export function isReplicationUnauthorizedError(err: any): boolean {
+  return err?.status === 401 || err?.statusCode === 401;
 }
