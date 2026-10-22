@@ -2190,9 +2190,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/GroupParticipantResolverService.html" data-type="entity-link" class="deprecated-name">GroupParticipantResolverService</a>
                                 </li>
                                 <li class="link">
-                                    <a href="injectables/HistoricalDataService.html" data-type="entity-link" class="deprecated-name">HistoricalDataService</a>
-                                </li>
-                                <li class="link">
                                     <a href="injectables/ImportAdditionalService.html" data-type="entity-link" >ImportAdditionalService</a>
                                 </li>
                                 <li class="link">

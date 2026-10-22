@@ -242,8 +242,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="55"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:55</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -329,8 +329,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="47"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:47</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -404,8 +404,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -517,8 +517,8 @@ Each loader decides for itself whether and how it needs this.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="82"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:82</a></div>
                         </td>
                     </tr>
 
@@ -624,7 +624,6 @@ import { Entity } from &quot;../model/entity&quot;;
 import { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import { EntityPage } from &quot;../entity-mapper/entity-mapper.service&quot;;
 import { ChildrenService } from &quot;../../../child-dev-project/children/children.service&quot;;
-import { HistoricalDataService } from &quot;./historical-data/historical-data.service&quot;;
 import { UpdatedEntity } from &quot;../model/entity-update&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { TodoService } from &quot;#src/app/features/todos/todo.service&quot;;
@@ -634,7 +633,6 @@ export enum LoaderMethod {
   ChildrenService &#x3D; &quot;ChildrenService&quot;,
   /** audit records that involve one given record, served by a CouchDB view */
   AuditRecordsRelatedToEntity &#x3D; &quot;AuditRecordsRelatedToEntity&quot;,
-  HistoricalDataService &#x3D; &quot;HistoricalDataService&quot;,
   ChildrenServiceQueryRelations &#x3D; &quot;ChildrenServiceQueryRelations&quot;,
   NotesRelatedToEntity &#x3D; &quot;NotesRelatedToEntity&quot;,
   TodosRelatedToEntity &#x3D; &quot;TodosRelatedToEntity&quot;,
@@ -661,7 +659,6 @@ export function supportsPagination(loaderMethod?: LoaderMethod): boolean {
 })
 export class EntitySpecialLoaderService {
   private readonly childrenService &#x3D; inject(ChildrenService);
-  private readonly historicalDataService &#x3D; inject(HistoricalDataService);
   private readonly todoService &#x3D; inject(TodoService);
   private readonly auditReferenceLoader &#x3D; inject(AuditReferenceLoaderService);
 
@@ -730,10 +727,6 @@ export class EntitySpecialLoaderService {
     property?: string | string[],
   ): Promise&lt;E[]&gt; {
     switch (loaderMethod) {
-      case LoaderMethod.HistoricalDataService:
-        return this.historicalDataService.getHistoricalDataFor(
-          entity.getId(),
-        ) as Promise&lt;E[]&gt;;
       case LoaderMethod.ChildrenServiceQueryRelations:
         return this.childrenService.queryRelations(
           entity.getId(false),

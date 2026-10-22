@@ -4399,7 +4399,6 @@ or the <code>prefilter</code> of a matching view&#39;s side.</p>
     configPart[&quot;config&quot;] &#x3D; { columns: configPart[&quot;config&quot;] };
   }
   configPart[&quot;config&quot;][&quot;entityType&quot;] &#x3D; &quot;HistoricalEntityData&quot;;
-  configPart[&quot;config&quot;][&quot;loaderMethod&quot;] &#x3D; &quot;HistoricalDataService&quot;; // inlined: LoaderMethod.HistoricalDataService
 
   return configPart;
 }</code>
@@ -11188,9 +11187,6 @@ dependencies while doing so.</p>
                         <i>Default value : </i><code>{
   EducationalMaterial: {
     component: &quot;RelatedEntitiesWithSummary&quot;,
-  },
-  HistoricalEntityData: {
-    loaderMethod: &quot;HistoricalDataService&quot;,
   },
 }</code>
                     </td>
