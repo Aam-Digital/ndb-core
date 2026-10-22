@@ -143,5 +143,33 @@
         ]
       }
     ]
+  },
+  {
+    "_id": "ReportConfig:sql-students-anonymized",
+    "title": "Schüler:innen (anonymisiert, SQL)",
+    "mode": "sql",
+    "reportDefinition": [
+      {
+        "query": "SELECT substr(c._id, length('Child:') + 1) AS uuid, COALESCE(g.label, c.gender) AS geschlecht, CASE WHEN c.age IS NULL THEN 'unbekannt' WHEN c.age < 6 THEN '0-5' WHEN c.age <= 10 THEN '6-10' WHEN c.age <= 14 THEN '11-14' WHEN c.age <= 17 THEN '15-17' ELSE '18+' END AS altersgruppe, c.motherTongue AS muttersprache, CASE WHEN c.inactive = 1 OR COALESCE(c.dropoutDate, '') <> '' THEN 'inaktiv' ELSE 'aktiv' END AS status FROM (SELECT *, (strftime('%Y', 'now') - strftime('%Y', dateOfBirth)) - (strftime('%m-%d', 'now') < strftime('%m-%d', dateOfBirth)) AS age FROM Child) c LEFT JOIN ConfigurableEnumOption g ON g.enum_id = 'genders' AND g.option_id = c.gender ORDER BY uuid"
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:sql-attendance-raw",
+    "title": "Anwesenheit Rohdaten (SQL)",
+    "mode": "sql",
+    "transformations": {
+      "startDate": [
+        "SQL_FROM_DATE"
+      ],
+      "endDate": [
+        "SQL_TO_DATE"
+      ]
+    },
+    "reportDefinition": [
+      {
+        "query": "SELECT substr(e._id, length('Event:') + 1) AS termin_id, e.date AS datum, a.title AS aktivitaet, COALESCE(cat.label, e.category) AS kategorie, substr(json_extract(p.value, '$.participant'), length('Child:') + 1) AS teilnehmer_uuid, COALESCE(st.label, json_extract(p.value, '$.status')) AS anwesenheitsstatus, st.countAs AS gezaehlt_als FROM Event e, json_each(e.participants) p LEFT JOIN RecurringActivity a ON a._id = e.parentActivity LEFT JOIN ConfigurableEnumOption cat ON cat.enum_id = 'interaction-type' AND cat.option_id = e.category LEFT JOIN (SELECT json_extract(o.value, '$.id') AS id, json_extract(o.value, '$.label') AS label, json_extract(o.value, '$.countAs') AS countAs FROM ConfigurableEnum ec, json_each(ec.\"values\") o WHERE ec._id = 'ConfigurableEnum:attendance-status') st ON st.id = json_extract(p.value, '$.status') WHERE json_extract(p.value, '$.participant') LIKE 'Child:%' AND e.date BETWEEN $startDate AND $endDate ORDER BY e.date, termin_id, teilnehmer_uuid"
+      }
+    ]
   }
 ]
