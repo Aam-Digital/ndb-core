@@ -502,9 +502,10 @@ export class AutomatedFieldUpdateConfigService {
         state,
       );
     const changedRecords = linkingTo([], "after");
+    const changedValues = this.collectValues(changedRecords, rule);
     const lostValues = differenceWith(
       this.collectValues(linkingTo([], "before"), rule),
-      this.collectValues(changedRecords, rule),
+      changedValues,
       isEqual,
     );
 
@@ -533,7 +534,7 @@ export class AutomatedFieldUpdateConfigService {
     return {
       value: addAndRemoveValues(
         this.getDatabaseValue(target, fieldId),
-        this.collectValues(changedRecords, rule),
+        changedValues,
         removedValues,
       ),
       unlinked: changedRecords.length === 0,
