@@ -86,6 +86,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EditDateRange",
+    () =>
+      import("./basic-datatypes/date-range/edit-date-range/edit-date-range.component").then(
+        (c) => c.EditDateRangeComponent,
+      ),
+  ],
+  [
     "EditMonth",
     () =>
       import("./basic-datatypes/month/edit-month/edit-month.component").then(
@@ -161,6 +168,13 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./entity/display-entity-type/display-entity-type.component").then(
         (c) => c.DisplayEntityTypeComponent,
+      ),
+  ],
+  [
+    "DisplayDateRange",
+    () =>
+      import("./basic-datatypes/date-range/display-date-range/display-date-range.component").then(
+        (c) => c.DisplayDateRangeComponent,
       ),
   ],
   [

@@ -22,43 +22,11 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ReportEntity, reportUsesDateRange } from "../../report-config";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter.component";
+import { periodRangeOptions } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { resolveLocaleText } from "app/core/language/active-locale";
 import { LocaleTextPipe } from "app/core/language/locale-text.pipe";
-
-export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
-  {
-    startOffsets: [{ amount: 0, unit: "months" }],
-    endOffsets: [{ amount: 0, unit: "months" }],
-    label: $localize`:Filter label: Current month`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "months" }],
-    endOffsets: [{ amount: -1, unit: "months" }],
-    label: $localize`:Filter label: Last month`,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: "quarter" }],
-    endOffsets: [{ amount: 0, unit: "quarter" }],
-    label: $localize`:Filter label: Current quarter`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "quarters" }],
-    endOffsets: [{ amount: -1, unit: "quarters" }],
-    label: $localize`:Filter label: Last quarter`,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: "years" }],
-    endOffsets: [{ amount: 0, unit: "years" }],
-    label: $localize`:Filter label: Current year`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "years" }],
-    endOffsets: [{ amount: -1, unit: "years" }],
-    label: $localize`:Filter label: Last year`,
-  },
-];
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -129,7 +97,7 @@ export class SelectReportComponent {
     const options =
       this.dateRangeOptions()?.length > 0
         ? this.dateRangeOptions()
-        : defaultReportDateFilters;
+        : periodRangeOptions;
     return new DateFilter<any>("reportPeriod", "Enter a date range", options);
   });
 

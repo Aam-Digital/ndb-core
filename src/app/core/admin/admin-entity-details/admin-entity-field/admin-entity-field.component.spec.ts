@@ -9,6 +9,7 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatFormFieldHarness } from "@angular/material/form-field/testing";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { MatCheckboxHarness } from "@angular/material/checkbox/testing";
+import { provideNativeDateAdapter } from "@angular/material/core";
 import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
@@ -65,6 +66,8 @@ describe("AdminEntityFieldComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
+        // the preview of the field type in the dialog can be a date picker
+        provideNativeDateAdapter(),
         {
           provide: MAT_DIALOG_DATA,
           useValue: dialogData,
@@ -431,6 +434,74 @@ describe("AdminEntityFieldComponent", () => {
     component.attendanceParticipantTypesForm.setValue([]);
     await fixture.whenStable();
     expect(component.additionalForm.value).toBeNull();
+  });
+
+  describe("predefined periods of a date range", () => {
+    const customPeriods = [
+      {
+        label: "Project phase",
+        endOffsets: [{ amount: 2, unit: "years" as const }],
+      },
+    ];
+
+    async function findPeriodsCheckbox() {
+      const checkboxes = await loader.getAllHarnesses(
+        MatCheckboxHarness.with({ label: /Offer predefined periods/ }),
+      );
+      return checkboxes[0];
+    }
+
+    async function recreateDateRangeField(additional?: unknown) {
+      await recreateComponentWithData({
+        label: "Period",
+        dataType: "date-range",
+        additional,
+      } as EntitySchemaField);
+    }
+
+    it.each([
+      ["is not configured", undefined, true],
+      ["is an empty list", [], false],
+      ["is a list of periods", customPeriods, true],
+    ])(
+      "should show the predefined periods as offered=%3$s if 'additional' %s",
+      async (_, additional, offered) => {
+        await recreateDateRangeField(additional);
+
+        expect(await (await findPeriodsCheckbox()).isChecked()).toBe(offered);
+      },
+    );
+
+    it("should store an empty list as 'additional' for no predefined periods, and remove it for the default ones", async () => {
+      await recreateDateRangeField();
+      const checkbox = await findPeriodsCheckbox();
+
+      await checkbox.uncheck();
+      expect(dialogData.entitySchemaField.additional).toEqual([]);
+
+      await checkbox.check();
+      expect(dialogData.entitySchemaField.additional).toBeUndefined();
+    });
+
+    it("should offer the configured periods again when they are switched on after being off", async () => {
+      await recreateDateRangeField(customPeriods);
+      const checkbox = await findPeriodsCheckbox();
+
+      await checkbox.uncheck();
+      expect(dialogData.entitySchemaField.additional).toEqual([]);
+
+      await checkbox.check();
+      expect(dialogData.entitySchemaField.additional).toEqual(customPeriods);
+    });
+
+    it("should offer the option only for date range fields", async () => {
+      await recreateComponentWithData({
+        label: "Period",
+        dataType: LongTextDatatype.dataType,
+      } as EntitySchemaField);
+
+      expect(await findPeriodsCheckbox()).toBeUndefined();
+    });
   });
 
   it("should validate that label is unique", async () => {

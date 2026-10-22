@@ -477,6 +477,17 @@
           "title",
           "authors",
           "attendance"
+        ],
+        "filters": [
+          {
+            "id": "attendance.participant"
+          },
+          {
+            "id": "attendance.status"
+          },
+          {
+            "id": "attendance.remarks"
+          }
         ]
       },
       "_id": "view:event"
@@ -1522,6 +1533,48 @@
           "label": "Date Field",
           "dataType": "date"
         },
+        "dateRangeField": {
+          "id": "dateRangeField",
+          "label": "Date Range Field",
+          "dataType": "date-range"
+        },
+        "dateRangeFieldOwnPeriods": {
+          "id": "dateRangeFieldOwnPeriods",
+          "label": "Date Range Field (own periods)",
+          "dataType": "date-range",
+          "additional": [
+            {
+              "label": "This year and the next 2 years",
+              "startOffsets": [
+                {
+                  "amount": 0,
+                  "unit": "years"
+                }
+              ],
+              "endOffsets": [
+                {
+                  "amount": 2,
+                  "unit": "years"
+                }
+              ]
+            },
+            {
+              "label": "Current year",
+              "startOffsets": [
+                {
+                  "amount": 0,
+                  "unit": "years"
+                }
+              ],
+              "endOffsets": [
+                {
+                  "amount": 0,
+                  "unit": "years"
+                }
+              ]
+            }
+          ]
+        },
         "entityField": {
           "id": "entityField",
           "label": "Entity Field",
@@ -1597,6 +1650,10 @@
             "value": {
               "dataType": "number",
               "label": "embedded item value"
+            },
+            "period": {
+              "dataType": "date-range",
+              "label": "embedded item period"
             }
           },
           "isArray": true
@@ -1614,11 +1671,18 @@
             "id": "DisplayParticipantsCount",
             "viewComponent": "DisplayParticipantsCount",
             "label": "Participants"
-          }
+          },
+          "dateRangeField"
         ],
         "filters": [
           {
             "id": "checkboxField"
+          },
+          {
+            "id": "dateRangeField"
+          },
+          {
+            "id": "embeddedArrayOfObjects.period"
           }
         ]
       }
@@ -1652,7 +1716,9 @@
                         "longTextField",
                         "percentageField",
                         "emailField",
-                        "website"
+                        "website",
+                        "dateRangeField",
+                        "dateRangeFieldOwnPeriods"
                       ]
                     },
                     {

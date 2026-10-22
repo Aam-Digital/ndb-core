@@ -59,7 +59,7 @@ import { uniquePropertyValidator } from "app/core/common-components/entity-form/
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
-import { MatCheckbox } from "@angular/material/checkbox";
+import { MatCheckbox, MatCheckboxChange } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { AdminSearchableCheckboxComponent } from "./admin-searchable-checkbox/admin-searchable-checkbox.component";
@@ -67,6 +67,8 @@ import { SimpleDropdownValue } from "app/core/common-components/basic-autocomple
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { DateRangeDatatype } from "../../../basic-datatypes/date-range/date-range.datatype";
+import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 
 /**
  * Dialog data for AdminEntityFieldComponent
@@ -157,6 +159,11 @@ export class AdminEntityFieldComponent implements OnInit {
   dataTypes: SimpleDropdownValue[] = [];
   entityAdditionalMultiSelect: WritableSignal<boolean> = signal(false);
   attendanceParticipantTypesForm = new FormControl<string[]>([]);
+
+  /** whether a "date-range" field offers predefined periods (`additional` is not an empty list) */
+  datePresetsOffered: WritableSignal<boolean> = signal(true);
+  /** the periods that were configured for the field, to offer them again after they were switched off */
+  private customDatePresets: DateRangeFilterConfigOption[] | undefined;
 
   /**
    * dataTypes for which a field can hold multiple values (`isArray`),
@@ -437,6 +444,8 @@ export class AdminEntityFieldComponent implements OnInit {
       this.initAdditionalForEntityRef(newAdditional);
     } else if (dataType === AttendanceDatatype.dataType) {
       this.initAdditionalForAttendance(newAdditional);
+    } else if (dataType === DateRangeDatatype.dataType) {
+      this.initAdditionalForDateRange(newAdditional);
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
@@ -498,6 +507,8 @@ export class AdminEntityFieldComponent implements OnInit {
     this.createNewAdditionalOption = undefined;
     this.entityAdditionalMultiSelect.set(false);
     this.attendanceParticipantTypesForm.reset([]);
+    this.datePresetsOffered.set(true);
+    this.customDatePresets = undefined;
   }
 
   private initAdditionalForAttendance(newAdditional?: any) {
@@ -520,6 +531,24 @@ export class AdminEntityFieldComponent implements OnInit {
     setTimeout(() => {
       this.attendanceParticipantTypesForm.setValue(validValues);
     });
+  }
+
+  private initAdditionalForDateRange(newAdditional?: unknown) {
+    if (!Array.isArray(newAdditional)) {
+      return;
+    }
+    this.additionalForm.setValue(newAdditional);
+    this.datePresetsOffered.set(newAdditional.length > 0);
+    this.customDatePresets =
+      newAdditional.length > 0 ? newAdditional : undefined;
+  }
+
+  /** An empty list switches the predefined periods off, no value brings back the default (or the configured) ones. */
+  onDatePresetsChange(change: MatCheckboxChange) {
+    this.datePresetsOffered.set(change.checked);
+    this.additionalForm.setValue(
+      change.checked ? (this.customDatePresets ?? null) : [],
+    );
   }
 
   private buildAttendanceAdditional(types: string[]): object | null {
