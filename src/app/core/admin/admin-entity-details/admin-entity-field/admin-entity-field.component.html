@@ -223,6 +223,20 @@
                 ></app-entity-type-select>
               </mat-form-field>
             }
+
+            <!-- "additional" for date-range datatype -->
+            @if (formDataType.value === "date-range") {
+              <mat-checkbox
+                [checked]="datePresetsOffered()"
+                [disabled]="additionalForm.disabled"
+                (change)="onDatePresetsChange($event)"
+                matTooltip="Check this to offer predefined periods (like the current month or the last quarter) when selecting the dates. Uncheck it if they do not fit this field, for example for multi-year project periods."
+                i18n-matTooltip
+                i18n
+              >
+                Offer predefined periods
+              </mat-checkbox>
+            }
           </div>
         </div>
       </mat-tab>
