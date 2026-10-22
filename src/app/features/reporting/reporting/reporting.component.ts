@@ -98,7 +98,7 @@ export class ReportingComponent {
       this.entityMapper
         .loadType(ReportEntity)
         .then((res) =>
-          res.sort((a, b) =>
+          res.toSorted((a, b) =>
             resolveLocaleText(a.title)?.localeCompare(
               resolveLocaleText(b.title),
             ),

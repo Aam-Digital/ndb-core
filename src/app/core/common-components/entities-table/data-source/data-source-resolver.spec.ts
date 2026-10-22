@@ -16,11 +16,11 @@ import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text
 import { TranslatableText } from "#src/app/core/config/multi-lingual-config";
 
 class InternalTestEntity extends Entity {
-  static override isInternalEntity = true;
+  static override readonly isInternalEntity = true;
 }
 
 class InternalTranslatedTestEntity extends Entity {
-  static override isInternalEntity = true;
+  static override readonly isInternalEntity = true;
 
   @DatabaseField({ dataType: TranslatableTextDatatype.dataType })
   title: TranslatableText;
