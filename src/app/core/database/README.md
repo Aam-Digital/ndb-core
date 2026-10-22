@@ -85,7 +85,7 @@ the data is downloaded from the server into the new database in the background, 
 The app only switches after a final sync of the old database has succeeded, so no unsynced changes are left behind;
 otherwise it keeps the old database and retries on the next start.
 The migration is tracked as usage analytics events (category `indexeddb_adapter_migration`).
-The legacy databases are not deleted yet ([#4570](https://github.com/Aam-Digital/ndb-core/issues/4570)).
+The legacy databases are not deleted yet ([#4571](https://github.com/Aam-Digital/ndb-core/issues/4571)).
 
 ## Key files
 
