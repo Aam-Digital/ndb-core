@@ -76,10 +76,10 @@
         entity of group.rows;
         track entity.id + "|" + entity.targetFieldId
       ) {
-        <tr [class]="'level-' + (entity.level ?? 1)">
+        <tr [class]="'level-' + entity.level">
           <td>
             <app-entity-block [entityId]="entity.id"></app-entity-block>
-            @if ((entity.level ?? 1) > 1) {
+            @if (entity.level > 1) {
               <div class="hint-text via">
                 <span i18n>via</span>
                 @for (viaId of entity.via; track viaId; let last = $last) {
@@ -90,7 +90,7 @@
                 }
               </div>
             }
-            @if (!sharedLinkEntity && (entity.level ?? 1) === 1) {
+            @if (!sharedLinkEntity && entity.level === 1) {
               <div class="hint-text" i18n>
                 Linked through "{{
                   entity.relatedReferenceField

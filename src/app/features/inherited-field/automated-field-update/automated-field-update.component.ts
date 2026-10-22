@@ -201,7 +201,7 @@ export class AutomatedFieldUpdateComponent {
 
   private getSharedLinkEntity(): AffectedEntity | undefined {
     const firstLevel = this.data.entities.filter(
-      (entity) => (entity.level ?? 1) === 1,
+      (entity) => entity.level === 1,
     );
     return firstLevel.every(
       (entity) =>
@@ -232,10 +232,10 @@ export class AutomatedFieldUpdateComponent {
     rows: AffectedEntity[],
   ): string {
     let current = row;
-    while ((current.level ?? 1) > 1) {
+    while (current.level > 1) {
       const below = rows.find(
         (r) =>
-          (r.level ?? 1) < current.level &&
+          r.level < current.level &&
           current.via?.includes(r.id) &&
           r.targetFieldId === current.sourceFieldId,
       );
@@ -257,7 +257,7 @@ export class AutomatedFieldUpdateComponent {
     const isChanged = (fieldId: string) =>
       JSON.stringify(trigger.before[fieldId]) !==
       JSON.stringify(trigger.entity[fieldId]);
-    const firstLevel = groupRows.filter((entity) => (entity.level ?? 1) === 1);
+    const firstLevel = groupRows.filter((entity) => entity.level === 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds = uniq([
       sourceFieldId,

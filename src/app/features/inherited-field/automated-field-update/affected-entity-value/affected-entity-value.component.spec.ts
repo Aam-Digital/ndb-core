@@ -24,6 +24,7 @@ describe("AffectedEntityValueComponent", () => {
       targetEntityType: Entity,
       affectedEntity: new Entity("1"),
       relatedReferenceField: "parent",
+      level: 1,
       edited: false,
       suggestionChanged: false,
     };

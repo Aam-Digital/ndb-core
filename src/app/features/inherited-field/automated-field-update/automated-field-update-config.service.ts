@@ -64,6 +64,9 @@ interface QueuedChange {
   onlyLinkedEntities?: boolean;
 }
 
+/** The suggested update of an affected entity, before it is known on which path(s) and level the entity is reached */
+type Suggestion = Omit<AffectedEntity, "level" | "via">;
+
 /** The state of one calculation of the affected entities */
 interface SuggestionRun {
   trigger: UpdateTrigger;
@@ -460,7 +463,7 @@ export class AutomatedFieldUpdateConfigService {
     affectedRule: AffectedRule,
     source: Entity,
     changeSet: ChangeSet,
-  ): Promise<AffectedEntity | undefined> {
+  ): Promise<Suggestion | undefined> {
     const { rule, entityType, fieldId } = affectedRule;
     let newValue: NewValue | undefined;
     if (!rule.sourceReferenceEntity) {
@@ -618,7 +621,7 @@ export class AutomatedFieldUpdateConfigService {
     }: AffectedRule,
     sourceEntity: Entity,
     { value: newValue, noCommonValue, unlinked }: NewValue,
-  ): AffectedEntity | undefined {
+  ): Suggestion | undefined {
     // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
     const currentValue = this.getDatabaseValue(targetEntity, targetFieldId);
     // an existing value is kept, but the user is informed that there is nothing to suggest
