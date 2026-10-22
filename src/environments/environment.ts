@@ -68,11 +68,13 @@ export const environment = {
   userSupportEnabled: false,
 
   /**
-   * Use the newer "indexeddb" PouchDB adapter instead of the legacy "idb" adapter.
-   * When false (default), the old adapter is used. Set to true via config.json
-   * to opt into the new adapter for gradual rollout.
+   * Use the newer "indexeddb" PouchDB adapter (and Keycloak-UUID-based local database names)
+   * instead of the legacy "idb" adapter.
+   * When true (default), existing local databases on the old adapter are migrated in the background
+   * (see IndexeddbMigrationService).
+   * Set to false via config.json to opt out and keep using the legacy adapter.
    */
-  use_indexeddb_adapter: false,
+  use_indexeddb_adapter: true,
 
   /** CDN URL for loading translation files at runtime. Empty string disables CDN loading. */
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",

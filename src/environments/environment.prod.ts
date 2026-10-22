@@ -24,7 +24,7 @@ export const environment = {
   notificationsConfig: undefined,
   SaaS: false,
   userSupportEnabled: false,
-  use_indexeddb_adapter: false,
+  use_indexeddb_adapter: true,
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 
   default_data_source: undefined as DataSourceType | undefined,

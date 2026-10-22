@@ -8,11 +8,15 @@ import { environment } from "../../../environments/environment";
 import { SyncStateSubject } from "../session/session-type";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
+import { AlertService } from "../alerts/alert.service";
+import { Logging } from "../logging/logging.service";
+import { mockConfirmationDialog } from "../../utils/test-utils/dialog-mocks";
 
 describe("IndexeddbMigrationService", () => {
   let service: IndexeddbMigrationService;
-  let confirmationDialogSpy: any;
+  let confirmationDialogSpy: ReturnType<typeof mockConfirmationDialog>;
   let eventTrackSpy: ReturnType<typeof vi.fn>;
+  let alertServiceSpy: { addWarning: Mock };
   let mockWindow: {
     location: {
       reload: Mock;
@@ -53,7 +57,7 @@ describe("IndexeddbMigrationService", () => {
       replicate: {
         from: vi.fn().mockResolvedValue({ ok: true }),
       },
-      close: vi.fn(),
+      close: vi.fn().mockResolvedValue(undefined),
     };
     const createPouchDbSpy = vi
       .spyOn(service as any, "createPouchDb")
@@ -64,13 +68,9 @@ describe("IndexeddbMigrationService", () => {
 
   beforeEach(() => {
     originalUseIndexeddbAdapter = environment.use_indexeddb_adapter;
-    confirmationDialogSpy = {
-      getConfirmation: vi
-        .fn()
-        .mockName("ConfirmationDialogService.getConfirmation"),
-    };
-    confirmationDialogSpy.getConfirmation.mockResolvedValue(false);
+    confirmationDialogSpy = mockConfirmationDialog(false);
     eventTrackSpy = vi.fn();
+    alertServiceSpy = { addWarning: vi.fn() };
     mockWindow = {
       location: { reload: vi.fn() },
       indexedDB: {
@@ -87,6 +87,7 @@ describe("IndexeddbMigrationService", () => {
           provide: ConfirmationDialogService,
           useValue: confirmationDialogSpy,
         },
+        { provide: AlertService, useValue: alertServiceSpy },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
       ],
@@ -101,64 +102,94 @@ describe("IndexeddbMigrationService", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     environment.use_indexeddb_adapter = originalUseIndexeddbAdapter;
     localStorage.removeItem("DB_MIGRATED_abc-123-uuid");
   });
 
   describe("resolveDbConfig", () => {
-    it("should return legacy config when use_indexeddb_adapter is disabled", async () => {
-      environment.use_indexeddb_adapter = false;
+    it.each([
+      {
+        scenario: "flag disabled (deployment opted out)",
+        useIndexeddbAdapter: false,
+        migrated: false,
+        existingDbs: ["_pouch_testuser-app"],
+        adapter: "idb",
+        dbNames: {
+          app: "testuser-app",
+          notifications: "notifications_abc-123-uuid",
+        },
+        migrationPending: false,
+        trackedEvent: "idb_indexeddb-disabled-config",
+      },
+      {
+        scenario: "already migrated",
+        useIndexeddbAdapter: true,
+        migrated: true,
+        existingDbs: ["_pouch_testuser-app", "_pouch_abc-123-uuid-app"],
+        adapter: "indexeddb",
+        dbNames: {
+          app: "abc-123-uuid-app",
+          notifications: "abc-123-uuid-notifications",
+        },
+        migrationPending: false,
+        trackedEvent: "indexeddb_after-migration",
+      },
+      {
+        scenario: "fresh install (only another user's old DB)",
+        useIndexeddbAdapter: true,
+        migrated: false,
+        existingDbs: [
+          "_pouch_otheruser-app",
+          "_pouch_notifications_other-user-id",
+        ],
+        adapter: "indexeddb",
+        dbNames: {
+          app: "abc-123-uuid-app",
+          notifications: "abc-123-uuid-notifications",
+        },
+        migrationPending: false,
+        trackedEvent: "indexeddb_fresh-install",
+      },
+      {
+        scenario: "existing user on the old adapter",
+        useIndexeddbAdapter: true,
+        migrated: false,
+        existingDbs: ["_pouch_testuser-app"],
+        adapter: "idb",
+        dbNames: {
+          app: "testuser-app",
+          notifications: "notifications_abc-123-uuid",
+        },
+        migrationPending: true,
+        trackedEvent: "idb_migration-pending",
+      },
+    ])(
+      "resolves the db config and tracks the scenario: $scenario",
+      async (c) => {
+        environment.use_indexeddb_adapter = c.useIndexeddbAdapter;
+        if (c.migrated) {
+          localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
+        }
+        mockWindow.indexedDB.databases.mockResolvedValue(
+          c.existingDbs.map((name) => ({ name, version: 1 })),
+        );
 
-      const config = await service.resolveDbConfig(session);
+        const config = await service.resolveDbConfig(session);
 
-      expect(config.adapter).toBe("idb");
-      expect(config.dbNames.app).toBe("testuser-app");
-      expect(config.dbNames.notifications).toBe("notifications_abc-123-uuid");
-      expect(service.migrationPending).toBe(false);
-    });
-
-    it("should return new config when migration flag is set", async () => {
-      environment.use_indexeddb_adapter = true;
-      localStorage.setItem("DB_MIGRATED_abc-123-uuid", "true");
-
-      const config = await service.resolveDbConfig(session);
-
-      expect(config.adapter).toBe("indexeddb");
-      expect(config.dbNames.app).toBe("abc-123-uuid-app");
-      expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
-      expect(service.migrationPending).toBe(false);
-    });
-
-    it("should return new config for fresh install (no old DB for that user)", async () => {
-      environment.use_indexeddb_adapter = true;
-      mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: "_pouch_otheruser-app", version: 1 },
-        { name: "_pouch_notifications_other-user-id", version: 1 },
-      ]);
-
-      const config = await service.resolveDbConfig(session);
-
-      expect(config.adapter).toBe("indexeddb");
-      expect(config.dbNames.app).toBe("abc-123-uuid-app");
-      expect(config.dbNames.notifications).toBe("abc-123-uuid-notifications");
-      expect(service.migrationPending).toBe(false);
-    });
-
-    it("should return legacy config with migrationPending when old DB exists", async () => {
-      environment.use_indexeddb_adapter = true;
-      mockWindow.indexedDB.databases.mockResolvedValue([
-        { name: "_pouch_testuser-app", version: 1 },
-      ]);
-
-      const config = await service.resolveDbConfig(session);
-
-      expect(config.adapter).toBe("idb");
-      expect(config.dbNames.app).toBe("testuser-app");
-      expect(service.migrationPending).toBe(true);
-    });
+        expect(config).toEqual({ adapter: c.adapter, dbNames: c.dbNames });
+        expect(service.migrationPending).toBe(c.migrationPending);
+        expect(eventTrackSpy).toHaveBeenCalledWith(c.trackedEvent, {
+          category: "indexeddb_adapter_migration",
+        });
+      },
+    );
   });
 
   describe("runBackgroundMigration", () => {
+    /** let pending promise callbacks (dialog, final sync, analytics) run */
+    const flushPromises = () => new Promise((resolve) => setTimeout(resolve));
+
     it("should skip migration when migrationPending is false", () => {
       service.migrationPending = false;
       const mockDb = {} as any;
@@ -177,35 +208,13 @@ describe("IndexeddbMigrationService", () => {
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
     });
 
-    it("should set migration flag when both replication and sync complete", async () => {
+    it("offers to switch only after both the replication into the new db and the sync of the old db completed", async () => {
       service.migrationPending = true;
       const { mockDb, localSyncState, mockNewDb, createPouchDbSpy } =
         mockPouchDbCreation();
 
-      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
-
       service.runBackgroundMigration(session, mockDb);
-      await Promise.resolve();
-      expect(createPouchDbSpy).toHaveBeenCalledWith("abc-123-uuid-app");
-      expect(mockNewDb.replicate.from).toHaveBeenCalledWith(
-        mockDb.getRemotePouchDB(),
-        { batch_size: 500 },
-      );
-      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
-
-      localSyncState.next(SyncState.COMPLETED);
-
-      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBe("true");
-    });
-
-    it("should prompt user to reload after migration completes", async () => {
-      service.migrationPending = true;
-      confirmationDialogSpy.getConfirmation.mockResolvedValue(true);
-      const { mockDb, localSyncState, mockNewDb, createPouchDbSpy } =
-        mockPouchDbCreation();
-
-      service.runBackgroundMigration(session, mockDb);
-      await Promise.resolve();
+      await flushPromises();
       expect(createPouchDbSpy).toHaveBeenCalledWith("abc-123-uuid-app");
       expect(mockNewDb.replicate.from).toHaveBeenCalledWith(
         mockDb.getRemotePouchDB(),
@@ -214,10 +223,97 @@ describe("IndexeddbMigrationService", () => {
       expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
 
       localSyncState.next(SyncState.COMPLETED);
-      await Promise.resolve();
+      await flushPromises();
 
       expect(confirmationDialogSpy.getConfirmation).toHaveBeenCalledTimes(1);
-      expect(mockWindow.location.reload).toHaveBeenCalledTimes(1);
+    });
+
+    it.each([
+      {
+        scenario: "user confirms and final sync succeeds",
+        confirmed: true,
+        finalSyncFails: false,
+        switched: true,
+      },
+      {
+        scenario: "user postpones the reload",
+        confirmed: false,
+        finalSyncFails: false,
+        switched: false,
+      },
+      {
+        scenario: "final sync of the old db fails (e.g. offline)",
+        confirmed: true,
+        finalSyncFails: true,
+        switched: false,
+      },
+    ])(
+      "switches to the new db only once all local changes of the old db are synced: $scenario",
+      async ({ confirmed, finalSyncFails, switched }) => {
+        service.migrationPending = true;
+        confirmationDialogSpy.getConfirmation.mockResolvedValue(confirmed);
+        const { mockDb, localSyncState } = mockPouchDbCreation();
+        localSyncState.next(SyncState.COMPLETED);
+        const progressDialog = { close: vi.fn() };
+        confirmationDialogSpy.showProgressDialog.mockReturnValue(
+          progressDialog,
+        );
+        let duringFinalSync: { migratedFlag: string; blocked: boolean };
+        const ensureSynced = vi
+          .spyOn(mockDb, "ensureSynced")
+          .mockImplementation(async () => {
+            duringFinalSync = {
+              migratedFlag: localStorage.getItem("DB_MIGRATED_abc-123-uuid"),
+              blocked:
+                confirmationDialogSpy.showProgressDialog.mock.calls.length ===
+                  1 && progressDialog.close.mock.calls.length === 0,
+            };
+            if (finalSyncFails) {
+              throw new Error("offline");
+            }
+          });
+
+        service.runBackgroundMigration(session, mockDb);
+        await flushPromises();
+
+        expect(confirmationDialogSpy.getConfirmation).toHaveBeenCalledTimes(1);
+        expect(ensureSynced).toHaveBeenCalledTimes(confirmed ? 1 : 0);
+        if (confirmed) {
+          // switching only after the push, and the user cannot edit data during it
+          expect(duringFinalSync).toEqual({
+            migratedFlag: null,
+            blocked: true,
+          });
+          expect(progressDialog.close).toHaveBeenCalled();
+        }
+        expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBe(
+          switched ? "true" : null,
+        );
+        expect(mockWindow.location.reload).toHaveBeenCalledTimes(
+          switched ? 1 : 0,
+        );
+        expect(alertServiceSpy.addWarning).toHaveBeenCalledTimes(
+          finalSyncFails ? 1 : 0,
+        );
+      },
+    );
+
+    it("keeps the old db if the replication into the new db fails", async () => {
+      service.migrationPending = true;
+      const { mockDb, localSyncState, mockNewDb } = mockPouchDbCreation();
+      mockNewDb.replicate.from.mockRejectedValue(new Error("quota exceeded"));
+      vi.spyOn(Logging, "warn").mockImplementation(() => undefined);
+
+      service.runBackgroundMigration(session, mockDb);
+      localSyncState.next(SyncState.COMPLETED);
+      await flushPromises();
+
+      expect(confirmationDialogSpy.getConfirmation).not.toHaveBeenCalled();
+      expect(localStorage.getItem("DB_MIGRATED_abc-123-uuid")).toBeNull();
+      expect(eventTrackSpy).toHaveBeenCalledWith(
+        "migration_replication-failed",
+        { category: "indexeddb_adapter_migration" },
+      );
     });
   });
 
