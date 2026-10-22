@@ -98,9 +98,13 @@ export const reportDefinitionLegacyCleanup: MigrationDefinition = {
       return { changed: false, status: "no-change" };
     }
 
+    let status: MigrationResult["status"] = ctx.dryRun ? "dry-run" : "ok";
+    if (skipped > 0) {
+      status = "partial";
+    }
     return {
       changed: intended > 0,
-      status: skipped > 0 ? "partial" : ctx.dryRun ? "dry-run" : "ok",
+      status,
       warnings: warnings.length > 0 ? warnings : undefined,
     };
   },
@@ -125,44 +129,71 @@ function cleanUpReportConfig(original: LegacyReportConfig): CleanupOutcome {
   if (!isNonEmptyArray(doc.reportDefinition)) {
     consolidateReportDefinition(doc);
   }
-  const hasDefinition = isNonEmptyArray(doc.reportDefinition);
 
-  let warning: string | undefined;
-  if (doc.mode !== "sql") {
-    const legacy = original.aggregationDefinitions;
-    if (!hasDefinition && isNonEmpty(legacy)) {
-      return {
-        skipReason:
-          "its aggregationDefinitions is not a list of definitions and there is no reportDefinition",
-      };
-    }
-    if (
-      isNonEmptyArray(legacy) &&
-      !isDeepStrictEqual(legacy, doc.reportDefinition)
-    ) {
-      warning =
-        "removed aggregationDefinitions that differed from reportDefinition (kept reportDefinition, which the app uses)";
-    }
-  } else {
-    if (!hasDefinition && isNonEmpty(original.aggregationDefinition)) {
-      return {
-        skipReason:
-          "its aggregationDefinition is not an SQL query string and there is no reportDefinition",
-      };
-    }
-    if (isNonEmpty(original.aggregationDefinitions)) {
-      warning = "removed aggregationDefinitions, which SQL reports do not use";
-    }
-    const skipReason = convertPositionalArgs(doc);
-    if (skipReason) {
-      return { skipReason };
-    }
+  const check =
+    doc.mode === "sql"
+      ? checkSqlReport(original, doc)
+      : checkAggregationReport(original, doc);
+  if (check.skipReason) {
+    return { skipReason: check.skipReason };
   }
 
   for (const field of LEGACY_FIELDS) {
     delete doc[field];
   }
-  return { doc, warning };
+  return { doc, warning: check.warning };
+}
+
+type LegacyCheck = { skipReason?: string; warning?: string };
+
+/** reporting/exporting: the definition was `aggregationDefinitions` */
+function checkAggregationReport(
+  original: LegacyReportConfig,
+  doc: LegacyReportConfig,
+): LegacyCheck {
+  const legacy = original.aggregationDefinitions;
+  if (!isNonEmptyArray(doc.reportDefinition) && isNonEmpty(legacy)) {
+    return {
+      skipReason:
+        "its aggregationDefinitions is not a list of definitions and there is no reportDefinition",
+    };
+  }
+  if (
+    isNonEmptyArray(legacy) &&
+    !isDeepStrictEqual(legacy, doc.reportDefinition)
+  ) {
+    return {
+      warning:
+        "removed aggregationDefinitions that differed from reportDefinition (kept reportDefinition, which the app uses)",
+    };
+  }
+  return {};
+}
+
+/** SQL v1: the definition was a single query string with positional args */
+function checkSqlReport(
+  original: LegacyReportConfig,
+  doc: LegacyReportConfig,
+): LegacyCheck {
+  if (
+    !isNonEmptyArray(doc.reportDefinition) &&
+    isNonEmpty(original.aggregationDefinition)
+  ) {
+    return {
+      skipReason:
+        "its aggregationDefinition is not an SQL query string and there is no reportDefinition",
+    };
+  }
+  const skipReason = convertPositionalArgs(doc);
+  if (skipReason) {
+    return { skipReason };
+  }
+  if (isNonEmpty(original.aggregationDefinitions)) {
+    return {
+      warning: "removed aggregationDefinitions, which SQL reports do not use",
+    };
+  }
+  return {};
 }
 
 /**
@@ -222,29 +253,42 @@ function collectQueryItems(node: unknown): { query: string }[] {
   return [...own, ...collectQueryItems(item.items)];
 }
 
+/** quoted strings and comments, whose `?` are not placeholders: [start, end] */
+const SKIPPED_SPANS: [string, string][] = [
+  ["'", "'"],
+  ['"', '"'],
+  ["`", "`"],
+  ["--", "\n"],
+  ["/*", "*/"],
+];
+
 /** Indices of the positional `?` placeholders, ignoring those in quoted strings and comments. */
 function findPositionalPlaceholders(query: string): number[] {
   const positions: number[] = [];
   let i = 0;
   while (i < query.length) {
-    const char = query[i];
-    if (char === "'" || char === '"' || char === "`") {
-      const end = query.indexOf(char, i + 1);
-      i = end === -1 ? query.length : end + 1;
-    } else if (query.startsWith("--", i)) {
-      const end = query.indexOf("\n", i);
-      i = end === -1 ? query.length : end + 1;
-    } else if (query.startsWith("/*", i)) {
-      const end = query.indexOf("*/", i + 2);
-      i = end === -1 ? query.length : end + 2;
-    } else {
-      if (char === "?") {
-        positions.push(i);
-      }
-      i++;
+    const skipTo = endOfSkippedSpan(query, i);
+    if (skipTo !== undefined) {
+      i = skipTo;
+      continue;
     }
+    if (query[i] === "?") {
+      positions.push(i);
+    }
+    i++;
   }
   return positions;
+}
+
+/** the index after a quoted string or comment starting at `i`, if one starts there */
+function endOfSkippedSpan(query: string, i: number): number | undefined {
+  for (const [start, end] of SKIPPED_SPANS) {
+    if (query.startsWith(start, i)) {
+      const close = query.indexOf(end, i + start.length);
+      return close === -1 ? query.length : close + end.length;
+    }
+  }
+  return undefined;
 }
 
 function isNonEmptyArray(value: unknown): value is unknown[] {
