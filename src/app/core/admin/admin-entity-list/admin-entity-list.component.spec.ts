@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminEntityListComponent } from "./admin-entity-list.component";
 import { Entity } from "../../entity/model/entity";
 import {
@@ -30,6 +30,7 @@ describe("AdminEntityListComponent", () => {
   });
 
   let component: AdminEntityListComponent;
+  let fixture: ComponentFixture<AdminEntityListComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -42,7 +43,7 @@ describe("AdminEntityListComponent", () => {
       ],
     });
 
-    const fixture = TestBed.createComponent(AdminEntityListComponent);
+    fixture = TestBed.createComponent(AdminEntityListComponent);
     component = fixture.componentInstance;
     fixture.componentRef.setInput("entityConstructor", TestEvent);
     fixture.componentRef.setInput("config", {
@@ -69,5 +70,20 @@ describe("AdminEntityListComponent", () => {
         "participants.remarks",
       ]),
     );
+  });
+
+  it("keeps offering a configured nested filter after its embedded field is removed from the columns", () => {
+    fixture.componentRef.setInput("config", {
+      entityType: "AdminEntityListTestEvent",
+      columns: ["date", "category"],
+      filters: [{ id: "participants.participant" }],
+    } as EntityListConfig);
+
+    const ids = component
+      .filterAdditionalFields()
+      .map((f) => (typeof f === "string" ? f : f.id));
+
+    expect(ids).toContain("participants.participant");
+    expect(ids).not.toContain("participants.status");
   });
 });

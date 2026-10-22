@@ -76,13 +76,21 @@ export class AdminEntityListComponent {
    * themselves currently displayed as a column, mirroring how a custom (non-schema) column
    * is only offered as a filter option once it has been added as a column (see
    * `filterAdditionalFields`).
+   * Nested properties that are already configured as filters are always offered, so that
+   * they are not silently dropped from the config once their embedded field is no longer
+   * displayed as a column.
    */
   private readonly embeddedFilterFields = computed<ColumnConfig[]>(() => {
     const displayedColumnIds = new Set(
       this.columnGroups().groups.flatMap((g) => g.columns),
     );
+    const configuredFilterIds = new Set(this.filters());
     return this.allEmbeddedFieldRefs()
-      .filter((ref) => displayedColumnIds.has(ref.outerProp))
+      .filter(
+        (ref) =>
+          displayedColumnIds.has(ref.outerProp) ||
+          configuredFilterIds.has(getEmbeddedFieldId(ref)),
+      )
       .map((ref) => ({
         id: getEmbeddedFieldId(ref),
         label: getEmbeddedFieldLabel(ref),
