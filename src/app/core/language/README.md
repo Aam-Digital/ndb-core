@@ -177,9 +177,10 @@ there:
   stored, `SiteSettings.defaultLanguage` (the system-wide default) is applied.
 - **On every login** — the user's own `UserSettings.defaultLanguage`. If they have
   none, the language already picked on this device is kept. Only a locale that was
-  applied from _another_ account's settings is reset to the site default, so a
-  shared browser does not pass one user's choice on to the next. For this, the id
-  of that account is stored next to the locale (`localeOwner`).
+  applied from _another_ account's settings is reset to the site default (or to
+  `en-US` if the site has none), so a shared browser does not pass one user's
+  choice on to the next. For this, the id of that account is stored next to the
+  locale (`localeOwner`).
 - **When the user's settings change in the database** — e.g. when they arrive with
   the first sync on a new device, or were changed on another device.
 

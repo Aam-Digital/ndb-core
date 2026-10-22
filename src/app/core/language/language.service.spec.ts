@@ -156,6 +156,29 @@ describe("LanguageService", () => {
     },
   );
 
+  it("should reset another account's locale to the app default when the site has no default language", async () => {
+    vi.useFakeTimers();
+    try {
+      window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "de");
+      window.localStorage.setItem(
+        LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+        "other-user",
+      );
+
+      logIn();
+      await vi.advanceTimersByTimeAsync(LanguageService.SITE_DEFAULT_WAIT_MS);
+
+      expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+        "en-US",
+      );
+      expect(
+        window.localStorage.getItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY),
+      ).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("should apply the user's own language once their settings arrive later through sync", async () => {
     logIn();
     await new Promise((resolve) => setTimeout(resolve));

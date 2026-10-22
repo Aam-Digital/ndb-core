@@ -1,6 +1,7 @@
 import { inject, Injectable, LOCALE_ID } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
+  DEFAULT_LANGUAGE,
   isValidLocale,
   LANGUAGE_LOCAL_STORAGE_KEY,
   LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
@@ -11,7 +12,14 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { UserSettingsService } from "../site-settings/user-settings.service";
 import { UserSettings } from "../site-settings/user-settings";
-import { distinctUntilChanged, filter, firstValueFrom, map } from "rxjs";
+import {
+  distinctUntilChanged,
+  filter,
+  firstValueFrom,
+  map,
+  of,
+  timeout,
+} from "rxjs";
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { Logging } from "../logging/logging.service";
 import { SessionSubject } from "../session/auth/session-info";
@@ -24,6 +32,9 @@ import { SessionSubject } from "../session/auth/session-info";
 })
 @UntilDestroy()
 export class LanguageService {
+  /** how long to wait for a site default before falling back to {@link DEFAULT_LANGUAGE} */
+  static readonly SITE_DEFAULT_WAIT_MS = 3000;
+
   private readonly localStorage = inject(LOCAL_STORAGE_TOKEN);
   private baseLocale = inject(LOCALE_ID);
   private window = inject<Window>(WINDOW_TOKEN);
@@ -65,14 +76,18 @@ export class LanguageService {
         );
         if (!owner || owner === userId) return;
 
-        try {
-          const siteDefault = await firstValueFrom(
-            this.siteSettings.defaultLanguage,
-          );
-          this.switchLocale(siteDefault?.id);
-        } catch (err) {
-          Logging.debug("No site default language to fall back to", err);
-        }
+        // the site settings are cached from the previous session, so a configured
+        // default is available right away - only wait briefly for one that is not set
+        const siteDefault = await firstValueFrom(
+          this.siteSettings.defaultLanguage.pipe(
+            map((language) => language?.id),
+            timeout({
+              first: LanguageService.SITE_DEFAULT_WAIT_MS,
+              with: () => of(undefined),
+            }),
+          ),
+        );
+        this.switchLocale(siteDefault || DEFAULT_LANGUAGE);
       });
   }
 
