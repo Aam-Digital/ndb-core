@@ -72,17 +72,20 @@ describe("AutomatedFieldUpdateComponent", () => {
     component.onValueChange(row(id), value);
   }
 
-  function initDialog(entities: AffectedEntity[]) {
+  function initDialog(
+    entities: AffectedEntity[],
+    trigger = {
+      entity: new Entity("trigger"),
+      before: new Entity("trigger"),
+    },
+  ) {
     TestBed.configureTestingModule({
       providers: [
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
             entities,
-            trigger: {
-              entity: new Entity("trigger"),
-              before: new Entity("trigger"),
-            },
+            trigger,
             recalculate,
           },
         },
@@ -304,6 +307,61 @@ describe("AutomatedFieldUpdateComponent", () => {
         FIRST,
         SECOND,
       ]);
+    });
+  });
+
+  describe("removed and added values of the changed entity", () => {
+    const A = { id: "a", label: "A" };
+    const B = { id: "b", label: "B" };
+    const C = { id: "c", label: "C" };
+
+    function change(before: unknown, after: unknown) {
+      const trigger = {
+        entity: new Entity("trigger"),
+        before: new Entity("trigger"),
+      };
+      Object.assign(trigger.before, { center: before });
+      Object.assign(trigger.entity, { center: after });
+      initDialog(
+        [{ ...affected(FIRST, ["a"], 1), sourceFieldId: "center" }],
+        trigger,
+      );
+      const { isChanged, removed, added } = component.groups()[0].changes[0];
+      return {
+        isChanged,
+        removed: removed?.["center"],
+        added: added?.["center"],
+      };
+    }
+
+    it.each([
+      ["a value of a list", [A, B], [B, C], [A], [C]],
+      [
+        "a value that only has another label, as the same one",
+        [A],
+        [{ id: "a", label: "A (renamed)" }],
+        undefined,
+        undefined,
+      ],
+      ["all values of a list", [A], [], [A], undefined],
+      ["a single value that is replaced", "old", "new", "old", "new"],
+      ["a single value that is cleared", "old", undefined, "old", undefined],
+      ["a single value that is set", undefined, "new", undefined, "new"],
+    ])("should show %s", (_, before, after, expectedRemoved, expectedAdded) => {
+      const result = change(before, after);
+
+      expect(result.removed).toEqual(expectedRemoved);
+      expect(result.added).toEqual(expectedAdded);
+    });
+
+    it("should show neither removed nor added values if the field did not change", () => {
+      const result = change([A], [A]);
+
+      expect(result).toEqual({
+        isChanged: false,
+        removed: undefined,
+        added: undefined,
+      });
     });
   });
 

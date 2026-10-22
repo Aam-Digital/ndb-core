@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
 import { MatButton } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -37,6 +38,7 @@ import {
 import { Logging } from "#src/app/core/logging/logging.service";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
+import { isEmptyValue } from "../add-missing-values";
 import { isSameValue } from "../get-common-value";
 import { AffectedEntityValueComponent } from "./affected-entity-value/affected-entity-value.component";
 
@@ -144,6 +146,12 @@ export interface EnteredValue {
 interface TriggerChange {
   field: FormFieldConfig;
   isChanged: boolean;
+
+  /** The old values that the change removed, as an entity with only these values (to display them) */
+  removed?: Entity;
+
+  /** The values that the change added, as an entity with only these values (to display them) */
+  added?: Entity;
 }
 
 /** The affected entities that are based on the same field of the changed entity */
@@ -158,6 +166,29 @@ const RECALCULATION_DELAY_MS = 300;
 
 function getRowKey(row: AffectedEntity): string {
   return `${row.id}|${row.targetFieldId}`;
+}
+
+/** The values that the other values do not have (values like configurable enums are objects, the same if they have the same id) */
+function getMissingValues(values: unknown[], other: unknown[]): unknown[] {
+  type Value = { id?: unknown } | undefined;
+  return differenceWith(
+    values as Value[],
+    other as Value[],
+    (a, b) => isEqual(a, b) || (a?.id !== undefined && a.id === b?.id),
+  );
+}
+
+/** A copy of the entity that has only the given values in the field, or undefined if there are none */
+function withOnlyValues(
+  entity: Entity,
+  fieldId: string,
+  values: unknown[],
+  isMultiValue: boolean,
+): Entity | undefined {
+  if (values.length === 0) return undefined;
+  const copy = entity.copy();
+  copy[fieldId] = isMultiValue ? values : values[0];
+  return copy;
 }
 
 /**
@@ -184,6 +215,7 @@ function getRowKey(row: AffectedEntity): string {
     HintBoxComponent,
     MatButton,
     MatDialogModule,
+    MatTooltipModule,
   ],
   templateUrl: "./automated-field-update.component.html",
   styleUrl: "./automated-field-update.component.scss",
@@ -320,7 +352,37 @@ export class AutomatedFieldUpdateComponent {
     return fieldIds.map((fieldId) => ({
       field: this.entityFormService.extendFormFieldConfig(fieldId, entityType),
       isChanged: isChanged(fieldId),
+      ...this.getRemovedAndAdded(trigger, fieldId),
     }));
+  }
+
+  /** What a change of the changed entity removed from the old value of the field, and what it added */
+  private getRemovedAndAdded(
+    trigger: UpdateTrigger,
+    fieldId: string,
+  ): Pick<TriggerChange, "removed" | "added"> {
+    const oldValue = trigger.before[fieldId];
+    const newValue = trigger.entity[fieldId];
+    const isMultiValue = Array.isArray(oldValue) || Array.isArray(newValue);
+    const toValues = (value: unknown) =>
+      isEmptyValue(value) ? [] : asArray<unknown>(value);
+    const oldValues = toValues(oldValue);
+    const newValues = toValues(newValue);
+
+    return {
+      removed: withOnlyValues(
+        trigger.before,
+        fieldId,
+        getMissingValues(oldValues, newValues),
+        isMultiValue,
+      ),
+      added: withOnlyValues(
+        trigger.entity,
+        fieldId,
+        getMissingValues(newValues, oldValues),
+        isMultiValue,
+      ),
+    };
   }
 
   constructor() {
@@ -349,23 +411,16 @@ export class AutomatedFieldUpdateComponent {
       return undefined;
     }
 
-    // values like configurable enums are objects that are the same value if they have the same id
-    type Value = { id?: unknown } | undefined;
-    const shown = asArray<Value>(
+    const shown = asArray<unknown>(
       this.entitySchemaService.valueToEntityFormat(value, row.selectedField) ??
         [],
     );
-    const removed = differenceWith(
-      current as Value[],
-      shown,
-      (a, b) => isEqual(a, b) || (a?.id !== undefined && a.id === b?.id),
+    return withOnlyValues(
+      row.affectedEntity,
+      row.targetFieldId,
+      getMissingValues(current, shown),
+      true,
     );
-    if (removed.length === 0) {
-      return undefined;
-    }
-    const removedEntity = row.affectedEntity.copy();
-    removedEntity[row.targetFieldId] = removed;
-    return removedEntity;
   }
 
   /** The saved value of the affected entity (database format) */

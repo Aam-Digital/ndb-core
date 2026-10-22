@@ -28,6 +28,26 @@
     align-items: center;
     gap: sizes.$small;
   }
+
+  // the change as removed and added values, in the style of the values that the suggestions add and remove
+  .trigger-removed,
+  .trigger-added {
+    display: inline-flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
+
+  .trigger-removed {
+    color: colors.$error;
+
+    app-entity-field-view {
+      text-decoration: line-through;
+    }
+  }
+
+  .trigger-added app-fa-dynamic-icon {
+    color: colors.$success;
+  }
 }
 
 // a further group is set apart from the table of the group above
