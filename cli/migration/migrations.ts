@@ -1,6 +1,6 @@
 import { codoAddEventType } from "./codo-add-event-type.migration.js";
 import { latestConfigFormats } from "./latest-config-formats.migration.js";
-import { consolidateReportDefinition } from "./consolidate-report-definition.migration.js";
+import { reportDefinitionLegacyCleanup } from "./report-definition-legacy-cleanup.migration.js";
 import { reportConfigSafeIds } from "./reportconfig-safe-ids.migration.js";
 import { permissionsKeyRename } from "./permissions-key-rename.migration.js";
 import { setMapCountrycodes } from "./set-map-countrycodes.migration.js";
@@ -19,7 +19,7 @@ export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
 export const migrations: MigrationDefinition[] = [
   latestConfigFormats,
   codoAddEventType,
-  consolidateReportDefinition,
+  reportDefinitionLegacyCleanup,
   reportConfigSafeIds,
   permissionsKeyRename,
   // permissionsKeyLegacyCleanup,
