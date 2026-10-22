@@ -11,7 +11,7 @@ $history-open-bg: #f1f6fb;
   font-size: 0.8em;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--letter-spacing-wide);
   color: colors.$muted;
   margin: 0 0 sizes.$x-small;
 }
