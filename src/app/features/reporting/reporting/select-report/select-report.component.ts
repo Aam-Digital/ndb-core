@@ -75,11 +75,8 @@ export class SelectReportComponent {
     if (!report) return false;
     // Primary signal: whether the report's queries actually use date placeholders.
     if (reportUsesDateRange(report)) return true;
-    // Fallback for legacy configs that declared the date args explicitly:
-    // v1 configs use neededArgs; v2/canonical use transformations.
+    // Fallback: configs that declare the date args explicitly as transformations.
     return (
-      !!report.neededArgs?.find((a) => a === "from" || a === "startDate") ||
-      !!report.neededArgs?.find((a) => a === "to" || a === "endDate") ||
       !!report.transformations?.["startDate"] ||
       !!report.transformations?.["endDate"]
     );

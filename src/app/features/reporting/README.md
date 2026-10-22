@@ -25,6 +25,13 @@ LLMs like ChatGPT or Claude can generate report queries for you.
 ## Configuration
 
 The reports can be defined as `ReportConfig:*` entities.
+Whatever the mode, the report is defined in its `reportDefinition` field.
+
+The app no longer reads the legacy fields `aggregationDefinitions` (reporting/exporting)
+and, for SQL reports, `aggregationDefinition`, `neededArgs` and `version`.
+Convert existing configs with the CLI migration
+`npm run cli -- migrate run oneoff-20261022-report-definition-legacy-cleanup` (see the [CLI README](https://github.com/Aam-Digital/ndb-core/blob/master/cli/README.md)),
+which moves them into `reportDefinition` and turns positional `?` placeholders into `$startDate`/`$endDate`.
 
 There are different modes for `ReportConfig`:
 

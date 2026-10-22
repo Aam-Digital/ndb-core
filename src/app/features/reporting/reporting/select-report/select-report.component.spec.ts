@@ -84,10 +84,13 @@ describe("SelectReportComponent", () => {
     expect(component.isDateRangeReport()).toBe(true);
   });
 
-  it("should display date range filter when sql report supports it", () => {
+  it("should display date range filter when a sql report declares date transformations", () => {
     const report = new ReportEntity();
     report.mode = "sql";
-    report.neededArgs = ["from", "to"];
+    report.transformations = {
+      startDate: ["SQL_FROM_DATE"],
+      endDate: ["SQL_TO_DATE"],
+    };
     fixture.componentRef.setInput("reports", [report]);
     fixture.detectChanges();
 
@@ -125,7 +128,10 @@ describe("SelectReportComponent", () => {
     const report = new ReportEntity();
     report.mode = "sql";
     fixture.componentRef.setInput("reports", [report]);
-    report.neededArgs = ["from", "to"];
+    report.transformations = {
+      startDate: ["SQL_FROM_DATE"],
+      endDate: ["SQL_TO_DATE"],
+    };
     fixture.detectChanges();
     component.fromDate.set(new Date());
     component.toDate.set(new Date());
