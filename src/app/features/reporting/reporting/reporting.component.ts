@@ -12,7 +12,6 @@ import {
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { JsonPipe } from "@angular/common";
 import { CustomDatePipe } from "../../../core/basic-datatypes/date/custom-date.pipe";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
@@ -32,6 +31,7 @@ import {
 } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 import { ConfigService } from "app/core/config/config.service";
 import { resolveLocaleText } from "app/core/language/active-locale";
@@ -66,7 +66,6 @@ const STALE_THRESHOLD_SECONDS = 60; // 1 minute
     ReportRowComponent,
     ObjectTableComponent,
     CustomDatePipe,
-    JsonPipe,
     SqlV2TableComponent,
     FaIconComponent,
     ViewActionsComponent,
@@ -219,14 +218,9 @@ export class ReportingComponent {
       selectedReport,
       fromDate,
       toDate,
-    ).catch((reason: ReportCalculationError | Error) => {
+    ).catch((reason: ReportCalculationError | HttpErrorResponse | Error) => {
       this.isError.set(true);
-      this.errorDetails.set(
-        (reason.message ?? reason) +
-          " " +
-          ((reason as ReportCalculationError)?.reportCalculation
-            ?.errorDetails ?? ""),
-      );
+      this.errorDetails.set(this.getErrorDetails(reason));
       Logging.debug(reason.message ?? "Report Calculation Error", reason);
       return { data: [] as any[], calculation: undefined };
     });
@@ -245,6 +239,30 @@ export class ReportingComponent {
         token,
       );
     }
+  }
+
+  /**
+   * The details of a failed calculation for the user. For a failed request, this is the message
+   * the backend sends (e.g. naming the invalid entry of a report definition), if any,
+   * rather than the generic "Http failure response for …".
+   */
+  private getErrorDetails(
+    reason: ReportCalculationError | HttpErrorResponse | Error,
+  ): string {
+    const backendMessage: string | undefined =
+      reason instanceof HttpErrorResponse
+        ? reason.error?.errorMessage
+        : undefined;
+    const calculationDetails =
+      reason instanceof ReportCalculationError
+        ? reason.reportCalculation?.errorDetails
+        : undefined;
+    return [
+      backendMessage ?? reason.message ?? String(reason),
+      calculationDetails,
+    ]
+      .filter((part) => !!part)
+      .join(" ");
   }
 
   /**
@@ -274,7 +292,13 @@ export class ReportingComponent {
       this.data.set(reportData.data);
       this.reportCalculation.set(calculation);
     } catch (reason) {
-      Logging.warn("Background report refresh failed", reason);
+      if (reason instanceof ReportCalculationError) {
+        // the calculation itself failed (e.g. a problem in the report definition),
+        // which the user is shown when they calculate the report explicitly
+        Logging.debug("Background report refresh failed", reason);
+      } else {
+        Logging.warn("Background report refresh failed", reason);
+      }
       // keep showing the stale data + warning
     } finally {
       if (token === this.refreshToken) this.isRefreshing.set(false);

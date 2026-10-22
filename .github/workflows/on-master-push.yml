@@ -6,13 +6,10 @@ on:
       - master
 
 permissions:
-  contents: write  # needed for semantic-release and gh-pages
-  id-token: write  # required for _qa-unit.yaml (QLTY code coverage)
+  contents: read
+  id-token: write # required for _qa-unit.yaml (QLTY code coverage)
 
 jobs:
-  toolchain:
-    uses: ./.github/workflows/_node-toolchain.yml
-
   qa:
     uses: ./.github/workflows/_qa-unit.yaml
 
@@ -25,6 +22,8 @@ jobs:
 
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # push to gh-pages
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v7
@@ -42,33 +41,47 @@ jobs:
           publish_dir: doc/compodoc
           destination_dir: documentation
 
-  pre-release:
-    runs-on: ubuntu-latest
+  # Edge build of every master push (see Aam-Digital/.github): version `X.Y.Z-edge.N` (the last release with the patch
+  # number bumped, plus the commits since), no tag and no GitHub release. Full releases: create-release.yml.
+  edge-version:
     needs:
       - qa
       - qa-e2e
-      - toolchain
-    steps:
-      - name: Checkout repository files
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
+    uses: Aam-Digital/.github/.github/workflows/edge-version.yml@v1
+    permissions:
+      contents: read
 
-      - name: Set up node
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ needs.toolchain.outputs.node-version }}
-          cache: npm
+  # Image `X.Y.Z-edge.N`, plus `edge` if this is still the newest master commit. A newer push cancels an older edge
+  # build, so that `edge` never moves back.
+  edge-build:
+    needs: edge-version
+    concurrency:
+      group: edge-build
+      cancel-in-progress: true
+    uses: ./.github/workflows/_build.yaml
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    permissions:
+      contents: read
+      packages: write
+    with:
+      build_name: ${{ needs.edge-version.outputs.version }}
+      version: ${{ needs.edge-version.outputs.version }}
+      tags: ${{ needs.edge-version.outputs.is-head == 'true' && 'edge' || '' }}
 
-      - name: Set up npm
-        run: npm i -g npm@${{ needs.toolchain.outputs.npm-version }}
-
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@1989a0fefc4aea321e07f717680ed8e345925dc1 # v7.1.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          extra_plugins: |
-            semantic-release-replace-plugin@1.2.6
-            @semantic-release/git
+  # Translations for the edge version (`locale/X.Y.Z-edge.N`), to check new texts before a release. They are removed
+  # again by the next full release. After compodoc, which also pushes to gh-pages.
+  edge-translations:
+    needs:
+      - edge-version
+      - create-and-deploy-compodoc
+    uses: ./.github/workflows/i18n-publish-translations.yml
+    secrets:
+      POEDITOR_API_TOKEN: ${{ secrets.POEDITOR_API_TOKEN }}
+      POEDITOR_PROJECT_ID: ${{ secrets.POEDITOR_PROJECT_ID }}
+    permissions:
+      contents: write # push to gh-pages
+    with:
+      version: ${{ needs.edge-version.outputs.version }}
+      update-latest: false

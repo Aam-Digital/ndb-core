@@ -183,8 +183,6 @@ export class AdminEntityTypesComponent implements OnInit {
       config: {
         entityType: entityType,
         columnGroups: {
-          default: "Overview",
-          mobile: "Overview",
           groups: [
             {
               name: "Overview",

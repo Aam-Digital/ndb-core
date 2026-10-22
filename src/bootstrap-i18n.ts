@@ -1,5 +1,6 @@
 import {
   DEFAULT_LANGUAGE,
+  isRtlLocale,
   isValidLocale,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "./app/core/language/language-statics";
@@ -28,6 +29,11 @@ export async function initLanguage(locale?: string): Promise<void> {
     return;
   }
 
+  // deliberately before the fetch below: direction and locale data describe the
+  // language itself, so they still apply when its translations are unavailable
+  applyDocumentLanguage(locale);
+  await registerLocaleDataFor(locale);
+
   if (locale === DEFAULT_LANGUAGE) {
     return;
   }
@@ -40,13 +46,29 @@ export async function initLanguage(locale?: string): Promise<void> {
 
   loadTranslations(json);
   $localize.locale = locale;
-  // This is needed for locale-aware components & pipes to work.
-  // Add the required locales to `webpackInclude` to keep the bundle size small
+}
+
+/**
+ * Must run before Angular bootstraps: the CDK's `Directionality` reads `dir` once when
+ * constructed, and all Angular Material components take their direction from it.
+ */
+function applyDocumentLanguage(locale: string): void {
+  document.documentElement.lang = locale;
+  document.documentElement.dir = isRtlLocale(locale) ? "rtl" : "ltr";
+}
+
+/**
+ * Needed for locale-aware components & pipes (date formats, first day of week, numbers).
+ * Imports are listed explicitly so only the locales we offer end up in the bundle.
+ */
+async function registerLocaleDataFor(locale: string): Promise<void> {
   let localeModule;
   if (locale == "de") {
     localeModule = await import("@angular/common/locales/de");
   } else if (locale == "fr") {
     localeModule = await import("@angular/common/locales/fr");
+  } else if (locale == "ar") {
+    localeModule = await import("@angular/common/locales/ar");
   }
 
   if (localeModule) {
@@ -62,16 +84,42 @@ async function fetchTranslations(
     const versionedUrl = `${cdnUrl}/${environment.appVersion}/messages.${locale}.json`;
     const latestUrl = `${cdnUrl}/latest/messages.${locale}.json`;
 
+    const failedResponses: number[] = [];
     for (const url of [versionedUrl, latestUrl]) {
       try {
         const response = await fetch(url);
         if (response.ok) {
           return await response.json();
         }
+        failedResponses.push(response.status);
       } catch (e) {
         Logging.debug(`CDN fetch failed for '${url}':`, e);
       }
     }
+
+    if (failedResponses.length === 0) {
+      // no response at all: the device is offline or has a flaky connection, not a fault to report
+      Logging.debug(
+        "Could not reach the translations CDN, falling back to the default language.",
+        { locale },
+      );
+      return undefined;
+    }
+    if (environment.appVersion?.startsWith("pr-")) {
+      // preview builds of pull requests have no published translations
+      Logging.debug("No translations published for this preview build", {
+        locale,
+        appVersion: environment.appVersion,
+      });
+      return undefined;
+    }
+    Logging.warn(
+      // the locale is context, not part of the message: interpolated it would
+      // open a separate remote-monitoring issue per locale (see logging/README.md)
+      "Could not load translations for the requested locale, falling back to the default language.",
+      { locale, responseStatus: failedResponses },
+    );
+    return undefined;
   }
 
   Logging.warn(

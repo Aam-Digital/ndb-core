@@ -49,7 +49,7 @@
         @if (formDescription()) {
           <!-- needs the @if wrapper because <markdown> doesn't seem to do good change detection -->
           <mat-card-subtitle>
-            <markdown>{{ formDescription() }}</markdown>
+            <markdown dir="auto">{{ formDescription() }}</markdown>
           </mat-card-subtitle>
         }
       </div>

@@ -27,15 +27,6 @@ body {
   @include mat-elevation.elevation(2);
 }
 
-.search-field {
-  /*
-   * Use a fixed width here because
-   * the form field does not work with
-   * relative / computed sizes
-   */
-  width: 450px;
-}
-
 .header-icon {
   color: white;
   font-size: 15pt;

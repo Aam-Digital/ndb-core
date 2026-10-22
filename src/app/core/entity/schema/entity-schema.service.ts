@@ -270,7 +270,8 @@ export class EntitySchemaService {
       return;
     }
     this.warnedUnresolvedDataTypes.add(datatypeName);
-    Logging.warn(
+    // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+    Logging.debug(
       "Unknown dataType for a field - falling back to default (no-op) transformation." +
         " Further occurrences of the same dataType will not be logged again this session.",
       { dataType: datatypeName },

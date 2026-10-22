@@ -4,11 +4,16 @@
   min-height: 65px;
   min-width: 120px;
   border-radius: 0;
+  // cuts off the bottom corner facing the content; `clip-path` has no logical form
   clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%);
+
+  :host-context([dir="rtl"]) & {
+    clip-path: polygon(0 0, 100% 0, calc(100% - 30px) 100%, 0 100%);
+  }
 
   ::ng-deep .mdc-button__label {
     width: 100%;
-    line-height: 16px;
+    line-height: calc(16px * var(--line-height-scale));
     display: flex;
     flex-direction: column;
     align-items: end;

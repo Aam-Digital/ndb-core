@@ -130,6 +130,20 @@ describe("UserListComponent", () => {
     fixture.detectChanges();
   });
 
+  it("should flag accounts without a linked profile", () => {
+    mockSessionSubject.next({
+      name: "admin",
+      email: "admin@example.com",
+      roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
+    });
+    fixture = TestBed.createComponent(UserListComponent);
+    fixture.detectChanges();
+
+    const hints = fixture.nativeElement.querySelectorAll(".no-profile-hint");
+    const usersWithoutProfile = mockUsers.filter((u) => !u.userEntityId);
+    expect(hints.length).toBe(usersWithoutProfile.length);
+  });
+
   it("should format role names correctly", () => {
     const roleNames = component.getRoleNames(mockUsers[0]);
     expect(roleNames).toBe("user_app");

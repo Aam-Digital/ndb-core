@@ -41,6 +41,19 @@ The `EntitySchemaField` interface (`entity-schema-field.ts`) shows all configura
 If the `editComponent` and the `viewComponent` are not set, the default components of this property's datatype will be used.
 The `description` field allows adding further explanation which will be displayed as a tooltip.
 
+The most common options:
+
+```ts
+@DatabaseField({
+  label: "Field Label",          // display label (translatable)
+  dataType: "configurable-enum", // dataType identifier (default: inferred from the TypeScript type)
+  additional: "genders",         // extra config of the dataType (e.g. enum id, entity type)
+  isArray: true,                 // array of values
+  description: "Tooltip text",   // help text
+  anonymize: "retain",           // kept when anonymizing: "retain" | "retain-anonymized"
+})
+```
+
 ## Generic Entity functionalities
 
 ### Metadata (created, updated)

@@ -72,7 +72,7 @@
   }
   <div style="color: gray; padding: 10px">
     <span i18n>This report was calculated at:</span>
-    {{ localTime() | customDate: "short" }} <br />
+    <bdi>{{ localTime() | customDate: "short" }}</bdi> <br />
     <span i18n
       >Click again on "Calculate" to re-calculate the report including any
       changes of records since then.</span
@@ -90,7 +90,7 @@
       </p>
       <p i18n>Error details:</p>
       <code>
-        {{ errorDetails() | json }}
+        {{ errorDetails() }}
       </code>
     </div>
   </div>

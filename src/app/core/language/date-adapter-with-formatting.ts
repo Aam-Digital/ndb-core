@@ -44,7 +44,13 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
   }
 
   override getFirstDayOfWeek(): number {
-    return getLocaleFirstDayOfWeek(this.locale);
+    try {
+      return getLocaleFirstDayOfWeek(this.locale);
+    } catch {
+      // throws for a locale whose data was never registered; the base adapter
+      // falls back to `Intl`, which needs no registration
+      return super.getFirstDayOfWeek();
+    }
   }
 
   override format(date: Date, displayFormat: any): string {

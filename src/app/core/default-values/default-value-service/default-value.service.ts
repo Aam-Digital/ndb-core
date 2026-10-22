@@ -28,7 +28,6 @@ export class DefaultValueService {
     for (const strategy of this.defaultValueStrategies) {
       await strategy.initEntityForm(form);
     }
-    this.enableChangeListener(form);
 
     for (const fieldConfig of form.fieldConfigs) {
       if (!fieldConfig.defaultValue) {
@@ -52,10 +51,11 @@ export class DefaultValueService {
       if (strategy) {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {
-        Logging.warn(
-          "DefaultValue strategy not found",
-          fieldConfig.defaultValue?.mode,
-        );
+        // a config problem, not a bug: admins are warned when saving the config (see ConfigValidationService)
+        Logging.debug("DefaultValue strategy not found", {
+          field: fieldConfig.id,
+          mode: fieldConfig.defaultValue?.mode,
+        });
       }
     }
   }
@@ -88,15 +88,6 @@ export class DefaultValueService {
     return true;
   }
 
-  private enableChangeListener<T extends Entity>(form: EntityForm<T>) {
-    form.watcher.set(
-      "formGroupValueChanges",
-      form.formGroup.valueChanges.subscribe(async (change) =>
-        this.defaultValueStrategies.forEach((s) => s.onFormValueChanges(form)),
-      ),
-    );
-  }
-
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     fieldId: string,
@@ -117,6 +108,13 @@ export class DefaultValueService {
 export type DefaultValueHint = FullDefaultValueHint | EmptyDefaultValueHint;
 
 /**
+ * Why linked records provide no value to inherit:
+ * - "conflict": they have different values
+ * - "unavailable": some of them could not be loaded (e.g. no permission to read them)
+ */
+export type NoCommonValueReason = "conflict" | "unavailable";
+
+/**
  * Details of the source for an "inherited" default value in a field,
  * used to display context to the user about this.
  */
@@ -127,7 +125,17 @@ export interface FullDefaultValueHint {
 
   syncFromParentField: () => void;
 
-  isEmpty?: undefined | false;
+  /**
+   * The value is collected from all records of the inheritedFromType
+   * that link to this record in their inheritedFromField
+   * (rather than inherited from a single parent record selected in this record's inheritedFromField).
+   */
+  isCollectedFromLinkedRecords?: boolean;
+
+  noCommonValue?: undefined;
+
+  isEmpty?: false;
+  isLoading?: false;
 }
 
 /**
@@ -137,7 +145,18 @@ export interface EmptyDefaultValueHint {
   inheritedFromField: string;
   isEmpty: true;
 
+  /**
+   * Parent records are linked but they provide no value in common to inherit.
+   */
+  noCommonValue?: NoCommonValueReason;
+
+  /**
+   * Parent records are linked but still being loaded.
+   */
+  isLoading?: boolean;
+
   isInSync?: undefined;
   inheritedFromType?: undefined;
   syncFromParentField?: undefined;
+  isCollectedFromLinkedRecords?: false;
 }

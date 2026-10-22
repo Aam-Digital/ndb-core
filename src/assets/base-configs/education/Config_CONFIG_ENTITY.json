@@ -310,8 +310,6 @@
           "fr": "Observations & Rapports"
         },
         "columnGroups": {
-          "default": "Standard",
-          "mobile": "Mobile",
           "groups": [
             {
               "name": "Standard",
@@ -497,8 +495,6 @@
           }
         ],
         "columnGroups": {
-          "default": "Basic Info",
-          "mobile": "Short Overview (mobile)",
           "groups": [
             {
               "name": {
