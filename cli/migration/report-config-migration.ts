@@ -1,6 +1,5 @@
 /**
- * A minimal shape of a ReportConfig doc/entity relevant to the definition migration.
- * Kept structural (no @angular imports) so this file can be reused by the migration CLI.
+ * A minimal shape of a ReportConfig doc relevant to the definition migrations.
  */
 export interface MigratableReportConfig {
   mode?: string;
@@ -24,8 +23,8 @@ export interface MigratableReportConfig {
  *
  * **Non-destructive:** the legacy fields are intentionally kept, so this migration is safe to run
  * before the code that reads `reportDefinition` is deployed (both coexist; old code keeps reading
- * the old fields). A follow-up migration removes the legacy fields once every environment runs the
- * new code. Idempotent and safe to re-run.
+ * the old fields). The follow-up migration `oneoff-20261022-report-definition-legacy-cleanup`
+ * removes the legacy fields. Idempotent and safe to re-run.
  */
 export function migrateReportConfig<T extends MigratableReportConfig>(
   report: T,

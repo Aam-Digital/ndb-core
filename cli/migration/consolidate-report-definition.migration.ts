@@ -1,7 +1,7 @@
 import {
   migrateReportConfig,
   type MigratableReportConfig,
-} from "../../src/app/features/reporting/report-config-migration.js";
+} from "./report-config-migration.js";
 import type {
   MigrationDefinition,
   MigrationResult,
@@ -13,8 +13,9 @@ import type {
  *
  * Non-destructive: the legacy fields are intentionally kept, so this can be run together with (or
  * before) the deploy that starts reading `reportDefinition` — both coexist, so old code keeps
- * working. A separate follow-up migration removes the legacy fields once every environment runs
- * the new code. Idempotent — safe to re-run.
+ * working. The follow-up migration `oneoff-20261022-report-definition-legacy-cleanup` removes the
+ * legacy fields (and consolidates any doc this migration has not handled yet).
+ * Idempotent — safe to re-run.
  */
 export const consolidateReportDefinition: MigrationDefinition = {
   id: "consolidate-report-definition",

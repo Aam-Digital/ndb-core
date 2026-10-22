@@ -1,4 +1,4 @@
-import { migrateReportConfig } from "./report-config-migration";
+import { migrateReportConfig } from "./report-config-migration.js";
 
 describe("migrateReportConfig", () => {
   it("copies aggregationDefinitions into reportDefinition for reporting/exporting reports and keeps the old field", () => {
