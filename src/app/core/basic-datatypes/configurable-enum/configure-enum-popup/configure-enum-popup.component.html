@@ -31,8 +31,10 @@
             (click)="labelInput.openTranslations($event)"
             matTooltip="Configure this text in other languages"
             i18n-matTooltip
+            aria-label="Configure this text in other languages"
+            i18n-aria-label
           >
-            <fa-icon icon="language"></fa-icon>
+            <app-fa-dynamic-icon icon="language"></app-fa-dynamic-icon>
           </button>
         }
 

@@ -10,7 +10,6 @@ import { resolveLocaleText } from "../../language/active-locale";
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-display-translatable-text",
   template: `{{ displayText() }}`,
-  standalone: true,
 })
 export class DisplayTranslatableTextComponent extends ViewDirective<TranslatableText> {
   readonly displayText = computed(() => resolveLocaleText(this.value()));

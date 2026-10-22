@@ -22,4 +22,19 @@ export class UserSettings extends Entity {
     additional: LOCALE_ENUM_ID,
   })
   defaultLanguage: ConfigurableEnumValue;
+
+  /**
+   * The user account id these settings belong to, i.e. the id of this document.
+   *
+   * Persisted so that permission rules can grant each user their own document
+   * only (`"conditions": { "userId": "${user.id}" }`): rule variables replace a
+   * whole value, so they cannot be matched against a part of the `_id`.
+   */
+  @DatabaseField() get userId(): string {
+    return this.getId(true);
+  }
+
+  set userId(value: string) {
+    // do not set manually, this is inferred from _id only
+  }
 }

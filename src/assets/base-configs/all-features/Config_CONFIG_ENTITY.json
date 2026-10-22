@@ -477,6 +477,17 @@
           "title",
           "authors",
           "attendance"
+        ],
+        "filters": [
+          {
+            "id": "attendance.participant"
+          },
+          {
+            "id": "attendance.status"
+          },
+          {
+            "id": "attendance.remarks"
+          }
         ]
       },
       "_id": "view:event"
@@ -1639,6 +1650,10 @@
             "value": {
               "dataType": "number",
               "label": "embedded item value"
+            },
+            "period": {
+              "dataType": "date-range",
+              "label": "embedded item period"
             }
           },
           "isArray": true
@@ -1665,6 +1680,9 @@
           },
           {
             "id": "dateRangeField"
+          },
+          {
+            "id": "embeddedArrayOfObjects.period"
           }
         ]
       }

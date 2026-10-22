@@ -4,7 +4,10 @@ import { TestBed } from "@angular/core/testing";
 import { LanguageService } from "./language.service";
 import { LOCALE_ID } from "@angular/core";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
+import {
+  LANGUAGE_LOCAL_STORAGE_KEY,
+  LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+} from "./language-statics";
 import { ReplaySubject, Subject } from "rxjs";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
@@ -12,6 +15,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { UpdatedEntity } from "#src/app/core/entity/model/entity-update";
 import { SiteSettings } from "#src/app/core/site-settings/site-settings";
 import { UserSettingsService } from "../site-settings/user-settings.service";
+import { UserSettings } from "../site-settings/user-settings";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 
 describe("LanguageService", () => {
@@ -19,6 +23,7 @@ describe("LanguageService", () => {
   let reloadSpy: Mock;
   let languageSubject: ReplaySubject<ConfigurableEnumValue>;
   let mockEntityMapperUpdates: Subject<UpdatedEntity<SiteSettings>>;
+  let userSettingsUpdates: Subject<UpdatedEntity<UserSettings>>;
   let mockUserSettings: { getLanguage: Mock };
   let sessionInfo: SessionSubject;
   let ownLanguage: string | undefined;
@@ -31,6 +36,7 @@ describe("LanguageService", () => {
     };
     languageSubject = new ReplaySubject(1);
     mockEntityMapperUpdates = new Subject();
+    userSettingsUpdates = new Subject();
     // starts empty, exactly as at bootstrap before any login
     sessionInfo = new SessionSubject();
     // by default the user has not chosen a language for their own account
@@ -55,7 +61,12 @@ describe("LanguageService", () => {
         },
         {
           provide: EntityMapperService,
-          useValue: { receiveUpdates: () => mockEntityMapperUpdates },
+          useValue: {
+            receiveUpdates: (type) =>
+              type === UserSettings
+                ? userSettingsUpdates
+                : mockEntityMapperUpdates,
+          },
         },
         { provide: UserSettingsService, useValue: mockUserSettings },
         { provide: SessionSubject, useValue: sessionInfo },
@@ -66,6 +77,7 @@ describe("LanguageService", () => {
 
   afterEach(() => {
     window.localStorage.removeItem(LANGUAGE_LOCAL_STORAGE_KEY);
+    window.localStorage.removeItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY);
   });
 
   function logIn() {
@@ -122,18 +134,76 @@ describe("LanguageService", () => {
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
   });
 
-  it("should fall back to the site default for a user without their own language", async () => {
-    // user A left German behind; user B has chosen nothing and must not inherit it
-    window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "de");
-    languageSubject.next({ id: "en-US", label: "en" });
-    ownLanguage = undefined;
+  it.each([
+    ["picked on this device", "de", null],
+    ["applied from this user's settings before", "de", "demo"],
+    ["applied from another account's settings", "en-US", "other-user"],
+  ])(
+    "for a user without their own language, a locale %s should lead to %s",
+    async (_, expected, owner) => {
+      window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "de");
+      if (owner) {
+        window.localStorage.setItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY, owner);
+      }
+      languageSubject.next({ id: "en-US", label: "en" });
 
+      logIn();
+      await new Promise((resolve) => setTimeout(resolve));
+
+      expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+        expected,
+      );
+    },
+  );
+
+  it("should reset another account's locale to the app default when the site has no default language", async () => {
+    vi.useFakeTimers();
+    try {
+      window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "de");
+      window.localStorage.setItem(
+        LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+        "other-user",
+      );
+
+      logIn();
+      await vi.advanceTimersByTimeAsync(LanguageService.SITE_DEFAULT_WAIT_MS);
+
+      expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+        "en-US",
+      );
+      expect(
+        window.localStorage.getItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY),
+      ).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should apply the user's own language once their settings arrive later through sync", async () => {
     logIn();
     await new Promise((resolve) => setTimeout(resolve));
+    expect(reloadSpy).not.toHaveBeenCalled();
 
-    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
-      "en-US",
+    userSettingsUpdates.next({
+      entity: Object.assign(new UserSettings("other-user"), {
+        defaultLanguage: { id: "de", label: "de" },
+      }),
+      type: "new",
+    });
+    expect(reloadSpy).not.toHaveBeenCalled();
+
+    userSettingsUpdates.next({
+      entity: Object.assign(new UserSettings("demo"), {
+        defaultLanguage: { id: "fr", label: "fr" },
+      }),
+      type: "new",
+    });
+
+    expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
+    expect(window.localStorage.getItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY)).toBe(
+      "demo",
     );
+    expect(reloadSpy).toHaveBeenCalled();
   });
 
   it("should not override a user's own language when the system default changes", async () => {

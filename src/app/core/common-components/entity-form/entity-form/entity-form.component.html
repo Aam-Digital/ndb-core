@@ -2,7 +2,7 @@
   @for (group of filteredFieldGroups(); track $index) {
     <div class="entity-form-cell">
       @if (group.header) {
-        <h2>{{ group.header }}</h2>
+        <h2>{{ group.header | localeText }}</h2>
       }
       @for (
         field of group.fields;

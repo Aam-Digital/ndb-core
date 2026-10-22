@@ -37,6 +37,12 @@ import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynami
 import { todoDueStatusFilter } from "../../../features/todos/add-default-todo-views";
 import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
 import { UrlDatatype } from "../../basic-datatypes/string/url.datatype";
+import { asArray } from "app/utils/asArray";
+import {
+  EmbeddedFieldRef,
+  getEmbeddedFieldLabel,
+  resolveEmbeddedField,
+} from "../../entity/schema/embedded-schema-field.util";
 
 @Injectable({
   providedIn: "root",
@@ -64,9 +70,21 @@ export class FilterGeneratorService {
   ): Promise<Filter<T>[]> {
     const filters: Filter<T>[] = [];
     for (let filterConfig of filterConfigs) {
-      const schema = entityConstructor.schema.get(filterConfig.id) || {};
+      const embedded = resolveEmbeddedField(
+        this.schemaService,
+        entityConstructor,
+        filterConfig.id,
+      );
+      const schema =
+        embedded?.innerSchema ??
+        entityConstructor.schema.get(filterConfig.id) ??
+        {};
       let filter: Filter<T>;
-      const label = filterConfig.label ?? schema.labelShort ?? schema.label;
+      const label =
+        filterConfig.label ??
+        (embedded
+          ? getEmbeddedFieldLabel(embedded)
+          : (schema.labelShort ?? schema.label));
       const type = filterConfig.type ?? schema.dataType;
       if (type == "configurable-enum") {
         // Add invalid and empty options
@@ -82,15 +100,9 @@ export class FilterGeneratorService {
 
         const dataValues = [
           ...new Set(
-            (data ?? []).flatMap((e) => {
-              const v = e?.[filterConfig.id];
-              // Handle array values (multi-select fields)
-              if (Array.isArray(v)) {
-                return v.map(extractId);
-              }
-              // Handle single object value
-              return extractId(v);
-            }),
+            (data ?? []).flatMap((e) =>
+              this.getFieldValues(e, filterConfig.id, embedded).map(extractId),
+            ),
           ),
         ];
 
@@ -115,9 +127,9 @@ export class FilterGeneratorService {
           invalidOptions,
         );
         filter = enumFilter;
-        const isArrayField = schema.isArray === true;
+        const isArrayField = !embedded && schema.isArray === true;
         enumFilter.options.unshift(
-          this.createEmptyOption(filterConfig.id, true, isArrayField),
+          this.createEmptyOption(filterConfig.id, true, isArrayField, embedded),
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(
@@ -145,33 +157,61 @@ export class FilterGeneratorService {
       } else if (this.isFreeTextField(type, schema)) {
         filter = new StringFilter(filterConfig.id, label);
       } else if (
-        // type: entity reference
+        // type: entity reference (a field can allow referencing several entity types at once,
+        // in which case `additional` is an array rather than a single type name)
         this.entities.has(filterConfig.type) ||
-        this.entities.has(schema.additional)
+        asArray(schema.additional).some((t) => this.entities.has(t))
       ) {
-        const entityType = filterConfig.type || schema.additional;
-        const filterEntities =
-          await this.entityMapperService.loadType(entityType);
+        const entityTypes = filterConfig.type
+          ? [filterConfig.type]
+          : asArray(schema.additional).filter((t) => this.entities.has(t));
+        const filterEntities = (
+          await Promise.all(
+            entityTypes.map((t) => this.entityMapperService.loadType(t)),
+          )
+        ).flat();
         const entityFilter = new EntityFilter(
           filterConfig.id,
           label,
           filterEntities,
         );
         filter = entityFilter;
-        const isArrayField = schema.isArray === true;
+        const isArrayField = !embedded && schema.isArray === true;
         entityFilter.options.unshift(
-          this.createEmptyOption(filterConfig.id, false, isArrayField),
+          this.createEmptyOption(
+            filterConfig.id,
+            false,
+            isArrayField,
+            embedded,
+          ),
         );
       } else {
-        const options = [...new Set(data.map((c) => c[filterConfig.id]))];
+        const options = embedded
+          ? [
+              ...new Set(
+                (data ?? []).flatMap((e) =>
+                  this.getEmbeddedFieldValues(e, embedded),
+                ),
+              ),
+            ]
+          : [...new Set(data.map((c) => c[filterConfig.id]))];
         const fSO: FilterSelectionOption<T>[] =
           SelectableFilter.generateOptions(options, filterConfig.id);
-        const isArrayField = schema.isArray === true;
+        const isArrayField = !embedded && schema.isArray === true;
         fSO.unshift(
-          this.createEmptyOption(filterConfig.id, false, isArrayField),
+          this.createEmptyOption(
+            filterConfig.id,
+            false,
+            isArrayField,
+            embedded,
+          ),
         );
 
         filter = new SelectableFilter<T>(filterConfig.id, fSO, label);
+      }
+
+      if (embedded) {
+        this.wrapFilterForEmbeddedField(filter, filterConfig.id, embedded);
       }
 
       if (filterConfig.hasOwnProperty("default")) {
@@ -206,16 +246,44 @@ export class FilterGeneratorService {
     fieldName: string,
     includeNestedId = false,
     includeEmptyArray = false,
+    embedded?: EmbeddedFieldRef,
   ): FilterSelectionOption<T> {
+    let filter: DataFilter<T>;
+    if (embedded) {
+      const innerIsArray = embedded.innerSchema.isArray === true;
+      const innerEmpty = createEmptyValueFilter<T>(
+        embedded.innerProp,
+        includeNestedId,
+        innerIsArray,
+      );
+      filter = embedded.isArray
+        ? ({
+            // an entry counts as "not defined" if there are no embedded items at all,
+            // or if at least one of the items does not have a value for this property
+            $or: [
+              { [embedded.outerProp]: { $exists: false } },
+              { [embedded.outerProp]: { $size: 0 } },
+              this.wrapInElemMatch<T>(innerEmpty, embedded.outerProp),
+            ],
+          } as DataFilter<T>)
+        : createEmptyValueFilter<T>(
+            `${embedded.outerProp}.${embedded.innerProp}`,
+            includeNestedId,
+            innerIsArray,
+          );
+    } else {
+      filter = createEmptyValueFilter(
+        fieldName,
+        includeNestedId,
+        includeEmptyArray,
+      );
+    }
+
     return {
       key: EMPTY_FILTER_OPTION_KEY,
       label: $localize`:filter option:not defined`,
       isEmpty: true,
-      filter: createEmptyValueFilter(
-        fieldName,
-        includeNestedId,
-        includeEmptyArray,
-      ),
+      filter,
     };
   }
 
@@ -228,6 +296,163 @@ export class FilterGeneratorService {
       datatype instanceof DateRangeDatatype
       ? datatype
       : undefined;
+  }
+
+  /**
+   * Adapt the filter built for a property nested inside an embedded field
+   * (built as if `filterId` were a normal, flat field) so that its query actually matches
+   * against the outer, embedding field - see {@link wrapEmbeddedDataFilter}.
+   *
+   * This works generically for any {@link Filter} produced by {@link generate}, regardless of its
+   * concrete type: for a {@link SelectableFilter} (and its subclasses), each option's query is
+   * adapted; for any other filter type, its `getFilter()` is wrapped to adapt its result.
+   */
+  private wrapFilterForEmbeddedField<T extends Entity>(
+    filter: Filter<T>,
+    filterId: string,
+    embedded: EmbeddedFieldRef,
+  ): void {
+    const rewrap = (query: DataFilter<T> | undefined) =>
+      this.wrapEmbeddedDataFilter(query, filterId, embedded);
+
+    if (filter instanceof SelectableFilter) {
+      // the empty/"not defined" option is already built directly against the embedded
+      // field by createEmptyOption and must not be wrapped again
+      filter.options = filter.options.map((option) =>
+        option.key === EMPTY_FILTER_OPTION_KEY
+          ? option
+          : { ...option, filter: rewrap(option.filter) },
+      );
+    } else {
+      const originalGetFilter = filter.getFilter;
+      // e.g. "no date defined" of a date filter, which has to match like the empty option of the other filters
+      const emptyFilter = this.createEmptyOption<T>(
+        filterId,
+        false,
+        false,
+        embedded,
+      ).filter;
+      // reads the filter it is called on (not the one wrapped here), as the filter component copies a filter on each change
+      filter.getFilter = function (this: Filter<T>) {
+        return this.selectedOptionValues[0] === EMPTY_FILTER_OPTION_KEY
+          ? emptyFilter
+          : rewrap(originalGetFilter.call(this));
+      };
+    }
+  }
+
+  /**
+   * Adapt a query built for the full id of a property nested inside an embedded field
+   * (e.g. "childrenAttendance.participant") into a query that matches against the outer,
+   * embedding field instead:
+   * - if the outer field holds an array of embedded objects, using `$elemMatch`
+   *   (e.g. `{ childrenAttendance: { $elemMatch: { participant: id } } }`,
+   *   matching if *any* of the entries has this value)
+   * - if the outer field holds a single embedded object, using a flat dot-path query
+   *   (e.g. `{ "phoneNumber.type": "mobile" }`)
+   */
+  private wrapEmbeddedDataFilter<T extends Entity>(
+    query: DataFilter<T> | undefined,
+    filterId: string,
+    embedded: EmbeddedFieldRef,
+  ): DataFilter<T> | undefined {
+    if (!query || Object.keys(query).length === 0) {
+      return query;
+    }
+
+    if (!embedded.isArray) {
+      return this.rewriteEmbeddedKeys(
+        query,
+        filterId,
+        `${embedded.outerProp}.${embedded.innerProp}`,
+      ) as DataFilter<T>;
+    }
+
+    const rewritten = this.rewriteEmbeddedKeys(
+      query,
+      filterId,
+      embedded.innerProp,
+    );
+    return this.wrapInElemMatch<T>(rewritten, embedded.outerProp);
+  }
+
+  /**
+   * Wrap a per-item query in `$elemMatch` to match against an array field, matching if *any*
+   * item satisfies it - hoisting a top-level `$or` out of `$elemMatch` first (e.g. turning
+   * `{ $elemMatch: { $or: [A, B] } }` into `{ $or: [{ $elemMatch: A }, { $elemMatch: B }] }`),
+   * since a compound operator like `$or` directly inside `$elemMatch` is not supported by the
+   * mongo2js query parser used here. Both forms are logically equivalent for `$elemMatch`
+   * (an item matching A-or-B exists iff an item matching A exists, or one matching B exists).
+   * The same goes for `$and`, which cannot be hoisted that way: a filter with several conditions on one item
+   * has to state them as keys of one object instead (see the overlap query of {@link DateFilter}).
+   */
+  private wrapInElemMatch<T extends Entity>(
+    query: any,
+    outerProp: string,
+  ): DataFilter<T> {
+    if (query && typeof query === "object" && Array.isArray(query.$or)) {
+      return {
+        $or: query.$or.map((branch: any) =>
+          this.wrapInElemMatch<T>(branch, outerProp),
+        ),
+      } as DataFilter<T>;
+    }
+    return { [outerProp]: { $elemMatch: query } } as DataFilter<T>;
+  }
+
+  /**
+   * Recursively replace `fromKey` with `toKey` in the keys of a DataFilter query object,
+   * also where it starts a path into the value (e.g. `fromKey + ".id"` of configurable-enum values,
+   * or `fromKey + ".start"` of a date range).
+   */
+  private rewriteEmbeddedKeys(query: any, fromKey: string, toKey: string): any {
+    if (Array.isArray(query)) {
+      return query.map((q) => this.rewriteEmbeddedKeys(q, fromKey, toKey));
+    }
+    if (query && typeof query === "object") {
+      const result: any = {};
+      for (const [key, value] of Object.entries(query)) {
+        const newKey =
+          key === fromKey || key.startsWith(`${fromKey}.`)
+            ? toKey + key.substring(fromKey.length)
+            : key;
+        result[newKey] = this.rewriteEmbeddedKeys(value, fromKey, toKey);
+      }
+      return result;
+    }
+    return query;
+  }
+
+  /**
+   * Extract the values of a property nested inside an embedded field from a single entity
+   * (e.g. the "participant" of every entry of a Note's "childrenAttendance").
+   */
+  private getEmbeddedFieldValues<T extends Entity>(
+    entity: T,
+    embedded: EmbeddedFieldRef,
+  ): any[] {
+    const rawValue = entity?.[embedded.outerProp];
+    const items = embedded.isArray
+      ? Array.isArray(rawValue)
+        ? rawValue
+        : []
+      : [rawValue];
+    return items.map((item) => item?.[embedded.innerProp]);
+  }
+
+  /**
+   * The single values of a field (flat or nested inside an embedded field) of one entity,
+   * flattening the values of multi-value (`isArray`) fields.
+   */
+  private getFieldValues<T extends Entity>(
+    entity: T,
+    fieldId: string,
+    embedded?: EmbeddedFieldRef,
+  ): unknown[] {
+    const values = embedded
+      ? this.getEmbeddedFieldValues(entity, embedded)
+      : [entity?.[fieldId]];
+    return values.flatMap((value) => asArray(value));
   }
 
   /**

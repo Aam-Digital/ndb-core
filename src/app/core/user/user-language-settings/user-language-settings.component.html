@@ -3,8 +3,8 @@
     [availableLocales]="availableLocales"
     [enabledLocales]="enabledLocales()"
     [applyImmediately]="false"
-    [disabled]="saving()"
-    [hint]="languageHint"
+    [disabled]="saving() || !mayChangeLanguage()"
+    [hint]="mayChangeLanguage() ? languageHint : missingPermissionText"
     (localeChange)="onLanguageSelected($event)"
   ></app-language-select>
 }

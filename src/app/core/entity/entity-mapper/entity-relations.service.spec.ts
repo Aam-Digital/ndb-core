@@ -1,9 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import {
-  EntityRelationsService,
-  itemReferencesId,
-} from "./entity-relations.service";
+import { EntityRelationsService } from "./entity-relations.service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import {
   mockEntityMapperProvider,
@@ -16,6 +13,8 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
+import { DefaultDatatype } from "../default-datatype/default.datatype";
+import { AttendanceDatatype } from "../../../features/attendance/model/attendance.datatype";
 
 describe("EntityRelationsService", () => {
   let service: EntityRelationsService;
@@ -44,7 +43,10 @@ describe("EntityRelationsService", () => {
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [...mockEntityMapperProvider([primaryEntity])],
+      providers: [
+        ...mockEntityMapperProvider([primaryEntity]),
+        { provide: DefaultDatatype, useClass: AttendanceDatatype, multi: true },
+      ],
     });
     service = TestBed.inject(EntityRelationsService);
   });
@@ -154,16 +156,32 @@ describe("EntityRelationsService", () => {
       { entity: eTestRef, fields: [expect.objectContaining({ id: "ref" })] },
     ]);
   });
-});
 
-describe("itemReferencesId", () => {
-  it("should match a plain string ID", () => {
-    expect(itemReferencesId("Child:1", "Child:1")).toBe(true);
-    expect(itemReferencesId("Child:2", "Child:1")).toBe(false);
+  it("discovers an embedded reference whose override only restricts the entity types, inheriting dataType 'entity'", () => {
+    @DatabaseEntity("EntityWithPartialAttendanceOverride")
+    class EntityWithPartialAttendanceOverride extends Entity {}
+    EntityWithPartialAttendanceOverride.schema.set("attendance", {
+      dataType: "attendance",
+      additional: { participant: { additional: ["Child"] } },
+    });
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    vi.spyOn(entityRegistry, "values").mockImplementation(() =>
+      [EntityWithPartialAttendanceOverride][Symbol.iterator](),
+    );
+
+    const result = service.getEntityTypesReferencingType("Child");
+
+    expect(result).toEqual([
+      {
+        entityType: EntityWithPartialAttendanceOverride,
+        referencingProperties: [expect.objectContaining({ id: "attendance" })],
+      },
+    ]);
   });
 
-  it("should match an embedded object by checking only declared entity-reference keys", () => {
-    const field: EntitySchemaField = {
+  describe("itemReferencesId", () => {
+    const attendanceField: EntitySchemaField = {
+      dataType: "schema-embed",
       additional: {
         participant: { dataType: "entity", additional: ["Child"] },
         status: { dataType: "configurable-enum", additional: "att-status" },
@@ -171,34 +189,44 @@ describe("itemReferencesId", () => {
       },
     };
 
-    const item = { participant: "Child:1", status: "PRESENT", remarks: "" };
-    expect(itemReferencesId(item, "Child:1", field)).toBe(true);
-  });
-
-  it("should NOT match when a non-reference property happens to equal the ID", () => {
-    const field: EntitySchemaField = {
-      additional: {
-        participant: { dataType: "entity", additional: ["Child"] },
-        remarks: { dataType: "string" },
-      },
-    };
-
-    const item = { participant: "Child:2", remarks: "Child:1" };
-    expect(itemReferencesId(item, "Child:1", field)).toBe(false);
-  });
-
-  it("should fall back to checking all values when no schema field is provided", () => {
-    const item = { participant: "Child:1", remarks: "some text" };
-    expect(itemReferencesId(item, "Child:1")).toBe(true);
-  });
-
-  it("should fall back to checking all values when field has no embedded schema", () => {
-    const field: EntitySchemaField = {
-      dataType: "entity",
-      additional: "Child",
-    };
-
-    const item = { participant: "Child:1", remarks: "text" };
-    expect(itemReferencesId(item, "Child:1", field)).toBe(true);
+    it.each<[string, unknown, EntitySchemaField | undefined, boolean]>([
+      ["a plain matching id", "Child:1", undefined, true],
+      ["a plain other id", "Child:2", undefined, false],
+      [
+        "an embedded object referencing it in a declared reference key",
+        { participant: "Child:1", status: "PRESENT", remarks: "" },
+        attendanceField,
+        true,
+      ],
+      [
+        "an embedded object where only a non-reference property equals the id",
+        { participant: "Child:2", remarks: "Child:1" },
+        attendanceField,
+        false,
+      ],
+      [
+        "an embedded object of a partially overridden reference, where only a non-reference property equals the id",
+        { participant: "Child:2", remarks: "Child:1" },
+        {
+          dataType: "attendance",
+          additional: { participant: { additional: ["Child"] } },
+        },
+        false,
+      ],
+      [
+        "an object without a schema field (checking all values)",
+        { participant: "Child:1", remarks: "some text" },
+        undefined,
+        true,
+      ],
+      [
+        "an object for a field without embedded schema (checking all values)",
+        { participant: "Child:1", remarks: "text" },
+        { dataType: "entity", additional: "Child" },
+        true,
+      ],
+    ])("detects a reference correctly for %s", (_, item, field, expected) => {
+      expect(service.itemReferencesId(item, "Child:1", field)).toBe(expected);
+    });
   });
 });

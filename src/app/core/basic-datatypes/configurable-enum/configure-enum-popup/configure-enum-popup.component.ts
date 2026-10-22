@@ -21,6 +21,7 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -51,6 +52,7 @@ import { TranslatableTextInputComponent } from "#src/app/core/config/translatabl
     CdkDropList,
     CdkDrag,
     FontAwesomeModule,
+    FaDynamicIconComponent,
     MatButtonModule,
     MatTooltipModule,
     ColorInputComponent,

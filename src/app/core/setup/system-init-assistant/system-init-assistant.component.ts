@@ -6,7 +6,7 @@ import {
   signal,
 } from "@angular/core";
 import { SetupService } from "../setup.service";
-import { BaseConfig } from "../base-config";
+import { BaseConfig, isOfferedInLocale } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "./choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
@@ -14,7 +14,6 @@ import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 import { availableLocales } from "app/core/language/languages";
-import { asArray } from "app/utils/asArray";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
 import { MatCheckbox } from "@angular/material/checkbox";
@@ -86,15 +85,15 @@ export class SystemInitAssistantComponent implements OnInit {
     this.dialogRef.disableClose = true;
   }
 
+  /**
+   * Offers a language only if some use case can be set up in it.
+   * A use case without a locale is offered in every language, so all of them can be chosen then.
+   */
   private getAvailableLocalesForUseCases() {
-    const availableDemoLocale = new Set(
-      this.availableUseCases().flatMap((useCase) =>
-        useCase.locale ? asArray(useCase.locale) : [],
-      ),
-    );
-
     return availableLocales.values.filter((locale) =>
-      availableDemoLocale.has(locale.id),
+      this.availableUseCases().some((useCase) =>
+        isOfferedInLocale(useCase, locale.id),
+      ),
     );
   }
 
@@ -144,7 +143,7 @@ export class SystemInitAssistantComponent implements OnInit {
     }
   }
 
-  onUseCaseSelected(selected: BaseConfig) {
+  onUseCaseSelected(selected: BaseConfig | null) {
     this.selectedUseCase.set(selected);
   }
 
