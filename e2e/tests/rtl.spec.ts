@@ -23,6 +23,10 @@ import "#src/app/features/public-form/public-form-config.js";
  * project would rename every existing baseline as well as doubling CI time.
  */
 
+// `loadAppInRtl` aborts the translations request on purpose, which the browser
+// reports as a failed resource. Everything else must still fail the test.
+test.use({ allowedConsoleErrors: [/messages.ar.json/] });
+
 const CHILD_NAME = "RTL Test Child";
 const FORM_TITLE = "RTL Registration Form";
 

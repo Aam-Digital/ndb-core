@@ -9,6 +9,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from "@angular/core";
+import { HintBoxComponent } from "#src/app/core/common-components/hint-box/hint-box.component";
+import { NoCommonValueHintComponent } from "../no-common-value-hint/no-common-value-hint.component";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -21,6 +23,7 @@ import { EntityFormService } from "#src/app/core/common-components/entity-form/e
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { NoCommonValueReason } from "#src/app/core/default-values/default-value-service/default-value.service";
 
 /**
  * Represents an entity that will be affected by a status update.
@@ -56,6 +59,9 @@ export interface AffectedEntity {
   /** Whether the new value is merged into the existing values instead of replacing them completely */
   addToExisting?: boolean;
 
+  /** Why the entities linked to the affected entity provide no value in common, so the current value is kept */
+  noCommonValue?: NoCommonValueReason;
+
   /** Whether the affected entity is no longer linked to the changed entity */
   unlinked?: boolean;
 }
@@ -75,8 +81,10 @@ export interface AffectedEntity {
     EntityFieldEditComponent,
     EntityBlockComponent,
     EntityFieldLabelPipe,
+    HintBoxComponent,
     MatButton,
     MatDialogModule,
+    NoCommonValueHintComponent,
   ],
   templateUrl: "./automated-field-update.component.html",
   styleUrl: "./automated-field-update.component.scss",
@@ -94,6 +102,21 @@ export class AutomatedFieldUpdateComponent implements OnInit {
 
   entityConstructor: EntityConstructor;
 
+  /**
+   * The first affected entity, if all affected entities are linked through the same field
+   * (otherwise each entity shows how it is linked).
+   */
+  readonly sharedLinkEntity: AffectedEntity | undefined =
+    this.data.entities.every(
+      (entity) =>
+        entity.relatedReferenceField ===
+          this.data.entities[0].relatedReferenceField &&
+        entity.relatedReferenceFieldEntityType ===
+          this.data.entities[0].relatedReferenceFieldEntityType,
+    )
+      ? this.data.entities[0]
+      : undefined;
+
   async ngOnInit(): Promise<void> {
     for (const entity of this.data.entities) {
       const fieldId = entity.targetFieldId;
@@ -104,10 +127,15 @@ export class AutomatedFieldUpdateComponent implements OnInit {
         entityConstructor,
       );
 
+      // without default value handling: for existing records it only loads linked records
+      // for the inherit button, which is not shown here (one query per row)
       const entityForm = await this.entityFormService.createEntityForm(
         [fieldId],
         entity.affectedEntity,
         this.destroyRef,
+        false,
+        true,
+        false,
       );
 
       entity.form = entityForm;
