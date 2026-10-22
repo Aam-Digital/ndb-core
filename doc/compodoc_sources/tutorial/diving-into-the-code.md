@@ -13,7 +13,7 @@
 ---
 
 Next, let's actually add something:
-[**> Add your first field to the Child Details**]()
+[**> Add your first field to the Child Details**](<>)
 
 > TODO: a short tutorial section on how to add an additional field to the Child class and the ChildDetails form?
 
