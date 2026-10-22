@@ -783,6 +783,43 @@ describe("FilterGeneratorService", () => {
       expect(filter(allEntities, emptyOption)).toEqual([e3]);
     });
 
+    it("offers the single enum values of a multi-value property nested in an embedded array field, not the arrays", async () => {
+      @DatabaseEntity("EmbeddedMultiEnumTestEntity")
+      class EmbeddedMultiEnumTestEntity extends Entity {}
+      EmbeddedMultiEnumTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          tags: {
+            dataType: "configurable-enum",
+            isArray: true,
+            label: "Tags",
+            additional: Note.schema.get("category").additional,
+          },
+        },
+      });
+
+      const [typeA, typeB, typeC] = defaultInteractionTypes.slice(1, 4);
+      const e1 = new EmbeddedMultiEnumTestEntity();
+      e1["logEntries"] = [{ tags: [typeA, typeB] }];
+      const e2 = new EmbeddedMultiEnumTestEntity();
+      e2["logEntries"] = [{ tags: [typeC] }, { tags: [] }];
+      const allEntities = [e1, e2];
+
+      const enumFilter = (
+        await service.generate(
+          [{ id: "logEntries.tags" }],
+          EmbeddedMultiEnumTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedMultiEnumTestEntity>;
+
+      expect(enumFilter.options.filter((opt) => opt.isInvalid)).toEqual([]);
+      const optionB = enumFilter.options.find((opt) => opt.key === typeB.id);
+      expect(filter(allEntities, optionB)).toEqual([e1]);
+    });
+
     it("should create a string filter for a property nested in a single (non-array) embedded object field, using a flat dot-path query", async () => {
       @DatabaseEntity("EmbeddedObjectTestEntity")
       class EmbeddedObjectTestEntity extends Entity {}

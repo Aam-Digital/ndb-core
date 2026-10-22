@@ -99,18 +99,9 @@ export class FilterGeneratorService {
 
         const dataValues = [
           ...new Set(
-            (data ?? []).flatMap((e) => {
-              if (embedded) {
-                return this.getEmbeddedFieldValues(e, embedded).map(extractId);
-              }
-              const v = e?.[filterConfig.id];
-              // Handle array values (multi-select fields)
-              if (Array.isArray(v)) {
-                return v.map(extractId);
-              }
-              // Handle single object value
-              return extractId(v);
-            }),
+            (data ?? []).flatMap((e) =>
+              this.getFieldValues(e, filterConfig.id, embedded).map(extractId),
+            ),
           ),
         ];
 
@@ -423,6 +414,21 @@ export class FilterGeneratorService {
         : []
       : [rawValue];
     return items.map((item) => item?.[embedded.innerProp]);
+  }
+
+  /**
+   * The single values of a field (flat or nested inside an embedded field) of one entity,
+   * flattening the values of multi-value (`isArray`) fields.
+   */
+  private getFieldValues<T extends Entity>(
+    entity: T,
+    fieldId: string,
+    embedded?: EmbeddedFieldRef,
+  ): unknown[] {
+    const values = embedded
+      ? this.getEmbeddedFieldValues(entity, embedded)
+      : [entity?.[fieldId]];
+    return values.flatMap((value) => asArray(value));
   }
 
   /**
