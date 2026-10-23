@@ -13,6 +13,7 @@ import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
+import { LanguageService } from "app/core/language/language.service";
 import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -46,6 +47,7 @@ export class SystemInitAssistantComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<SystemInitAssistantComponent>>(MatDialogRef);
   private route = inject(ActivatedRoute);
+  private readonly languageService = inject(LanguageService);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   protected readonly setupService = inject(SetupService);
@@ -88,12 +90,19 @@ export class SystemInitAssistantComponent implements OnInit {
   /**
    * Offers a language only if some use case can be set up in it.
    * A use case without a locale is offered in every language, so all of them can be chosen then.
+   *
+   * The language the app currently runs in is always listed, even if no use case
+   * exists for it (or none could be loaded): otherwise the selector would show
+   * nothing selected. The use case list handles that case itself, see ChooseUseCaseComponent.
    */
   private getAvailableLocalesForUseCases() {
-    return availableLocales.values.filter((locale) =>
-      this.availableUseCases().some((useCase) =>
-        isOfferedInLocale(useCase, locale.id),
-      ),
+    const current = this.languageService.getCurrentLocale();
+    return availableLocales.values.filter(
+      (locale) =>
+        locale.id === current ||
+        this.availableUseCases().some((useCase) =>
+          isOfferedInLocale(useCase, locale.id),
+        ),
     );
   }
 

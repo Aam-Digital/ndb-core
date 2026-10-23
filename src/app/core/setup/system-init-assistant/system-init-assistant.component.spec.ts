@@ -16,7 +16,7 @@ describe("SystemInitAssistantComponent", () => {
     initSystemWithBaseConfig: ReturnType<typeof vi.fn>;
   };
 
-  async function configureComponent() {
+  async function configureComponent(currentLocale?: string) {
     mockSetupService = {
       getAvailableBaseConfig: vi
         .fn()
@@ -39,7 +39,7 @@ describe("SystemInitAssistantComponent", () => {
         {
           provide: LanguageService,
           useValue: {
-            getCurrentLocale: vi.fn(),
+            getCurrentLocale: vi.fn().mockReturnValue(currentLocale),
             initDefaultLanguage: vi.fn(),
           },
         },
@@ -90,6 +90,28 @@ describe("SystemInitAssistantComponent", () => {
       expectedLocales,
     );
   });
+
+  it.each([
+    [
+      "only use cases in other languages exist",
+      [{ locale: "de" }],
+      ["en-US", "de"],
+    ],
+    ["no use case could be loaded", [], ["en-US"]],
+    ["the current language has use cases", [{ locale: "en-US" }], ["en-US"]],
+  ])(
+    "always lists the current language, also if %s",
+    async (_, useCases, expectedLocales) => {
+      await configureComponent("en-US");
+      mockSetupService.getAvailableBaseConfig.mockResolvedValue(useCases);
+
+      await component.ngOnInit();
+
+      expect(component.availableLocales().map((l) => l.id)).toEqual(
+        expectedLocales,
+      );
+    },
+  );
 
   it("does not show the profile step before a base config was imported successfully", async () => {
     await configureComponent();
