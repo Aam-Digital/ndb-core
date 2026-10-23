@@ -182,8 +182,11 @@ export interface WithinParentConfig {
   /** field of this record that links to the parent record(s) */
   parentReferenceField: string;
 
-  /** field of the parent record holding the range this value should lie within */
-  parentValueField: string;
+  /**
+   * field of the parent record holding the range this value should lie within
+   * (default: the same field id as this field, e.g. for a hierarchy of records of the same type)
+   */
+  parentValueField?: string;
 }
 
 /**

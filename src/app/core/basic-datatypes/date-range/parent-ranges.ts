@@ -17,13 +17,14 @@ export interface ParentRange {
  * Loads the ranges of the parent records that a record links to.
  * Must be called in an injection context (e.g. as a field initializer of a component).
  *
- * @param params the parent link (one or several ids) and the config of the field, or undefined if there is nothing to check
+ * @param params the parent link (one or several ids), the config and the id of the field, or undefined if there is nothing to check
  */
 export function parentRangesResource(
   params: () =>
     | {
         parentReference: string | string[] | null | undefined;
         config: WithinParentConfig;
+        fieldId: string;
       }
     | undefined,
 ) {
@@ -43,18 +44,21 @@ export function parentRangesResource(
       const current = params();
       const parentIds = asArray(current?.parentReference ?? []);
       return parentIds.length
-        ? { parentIds, config: current.config }
+        ? {
+            parentIds,
+            valueField: current.config.parentValueField ?? current.fieldId,
+          }
         : undefined;
     },
     loader: async ({
-      params: { parentIds, config },
+      params: { parentIds, valueField },
     }): Promise<ParentRange[]> => {
       const parents = await Promise.all(parentIds.map((id) => load(id)));
       return parents
         .filter((parent) => !!parent)
         .map((parent) => ({
           name: parent.toString(),
-          range: parent[config.parentValueField],
+          range: parent[valueField],
         }));
     },
   });

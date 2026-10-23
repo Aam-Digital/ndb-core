@@ -26,9 +26,14 @@ export class DisplayDateRangeComponent extends ViewDirective<DateRangeValue> {
 
   private readonly parents = parentRangesResource(() => {
     const entity = this.entity();
-    const config = entity?.getSchema()?.get(this.id())?.withinParent;
+    const fieldId = this.id();
+    const config = entity?.getSchema()?.get(fieldId)?.withinParent;
     return (
-      config && { parentReference: entity[config.parentReferenceField], config }
+      config && {
+        parentReference: entity[config.parentReferenceField],
+        config,
+        fieldId,
+      }
     );
   });
 

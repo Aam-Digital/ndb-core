@@ -36,6 +36,7 @@ class EditDateRangeTestAction extends Entity {
   @DatabaseField() name: string;
   @DatabaseField() parent: string;
   @DatabaseField({ dataType: "date-range" }) period: DateRangeValue;
+  @DatabaseField({ dataType: "date-range" }) plannedPeriod: DateRangeValue;
 }
 
 describe("EditDateRangeComponent", () => {
@@ -47,7 +48,7 @@ describe("EditDateRangeComponent", () => {
   const end = new Date(2026, 4, 31);
   const parentAction = Object.assign(new EditDateRangeTestAction("1"), {
     name: "Training",
-    period: { start, end },
+    plannedPeriod: { start, end },
   });
 
   beforeEach(async () => {
@@ -279,7 +280,7 @@ describe("EditDateRangeComponent", () => {
         {
           withinParent: {
             parentReferenceField: "parent",
-            parentValueField: "period",
+            parentValueField: "plannedPeriod",
           },
         },
         parentFixture,
