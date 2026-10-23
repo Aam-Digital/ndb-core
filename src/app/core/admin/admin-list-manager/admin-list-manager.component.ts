@@ -56,6 +56,19 @@ export class AdminListManagerComponent {
   /** custom fields that will be added in addition to schema fields for users to select from */
   additionalFields = input<ColumnConfig[]>([]);
 
+  /**
+   * ids of schema fields to leave out of the selectable list (e.g. because a more specific
+   * alternative is offered instead via `additionalFields`). Does not affect `items` -
+   * a field already selected stays visible/removable even if also excluded here.
+   */
+  excludedFields = input<string[]>([]);
+
+  /** `excludedFields` without the currently selected ones, so that these are not dropped */
+  protected readonly unselectedExcludedFields = computed(() => {
+    const selectedIds = new Set((this.items() ?? []).map(this.getFieldId));
+    return (this.excludedFields() ?? []).filter((id) => !selectedIds.has(id));
+  });
+
   /** emits changes to the selected fields as field config objects or IDs */
   itemsChange = output<ColumnConfig[]>();
   /** emits changes to the selected fields only as field IDs (custom field configs are mapped to their ID only) */

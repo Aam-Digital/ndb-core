@@ -23,18 +23,20 @@
           no date defined
         </span>
       </button>
-      <button
-        class="button"
-        mat-button
-        color="primary"
-        (mouseenter)="preselectAllRange()"
-        (mouseleave)="unselectRange()"
-        (click)="selectRangeAndClose('all')"
-        [class.selected-option]="selectedOptionValues().length === 0"
-        i18n
-      >
-        All
-      </button>
+      @if (showAllOption) {
+        <button
+          class="button"
+          mat-button
+          color="primary"
+          (mouseenter)="preselectAllRange()"
+          (mouseleave)="unselectRange()"
+          (click)="selectRangeAndClose('all')"
+          [class.selected-option]="selectedOptionValues().length === 0"
+          i18n
+        >
+          All
+        </button>
+      }
       @for (
         item of rangeOptions();
         track item;

@@ -520,8 +520,10 @@ describe("EntitiesTableComponent", () => {
     fixture.componentRef.setInput("entityType", Note);
     fixture.detectChanges();
 
+    // uses `relatedEntities` as an example isArray/entity field; this exercises
+    // generic column sorting behavior, not anything Note-specific
     expect(
-      component._columns().find((c) => c.id === "children").noSorting,
+      component._columns().find((c) => c.id === "relatedEntities").noSorting,
     ).toBe(true);
   });
 

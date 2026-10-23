@@ -132,7 +132,7 @@
         "file": "../../src/app/core/logging/README.md"
       },
       {
-        "title": "Use Queries and Indices",
+        "title": "Database: Queries and Local Storage",
         "file": "../../src/app/core/database/README.md"
       },
       {

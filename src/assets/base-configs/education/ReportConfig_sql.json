@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "ReportConfig:sql-students-anonymized",
+    "title": "Students (anonymized, SQL)",
+    "mode": "sql",
+    "reportDefinition": [
+      {
+        "query": "SELECT substr(c._id, length('Child:') + 1) AS uuid, COALESCE(g.label, c.gender) AS gender, CASE WHEN c.age IS NULL THEN 'unknown' WHEN c.age < 6 THEN '0-5' WHEN c.age <= 10 THEN '6-10' WHEN c.age <= 14 THEN '11-14' WHEN c.age <= 17 THEN '15-17' ELSE '18+' END AS age_group, c.motherTongue AS mother_tongue, CASE WHEN c.inactive = 1 OR COALESCE(c.dropoutDate, '') <> '' THEN 'inactive' ELSE 'active' END AS status FROM (SELECT *, (strftime('%Y', 'now') - strftime('%Y', dateOfBirth)) - (strftime('%m-%d', 'now') < strftime('%m-%d', dateOfBirth)) AS age FROM Child) c LEFT JOIN ConfigurableEnumOption g ON g.enum_id = 'genders' AND g.option_id = c.gender ORDER BY uuid"
+      }
+    ]
+  },
+  {
+    "_id": "ReportConfig:sql-attendance-raw",
+    "title": "Attendance Raw Data (SQL)",
+    "mode": "sql",
+    "transformations": {
+      "startDate": [
+        "SQL_FROM_DATE"
+      ],
+      "endDate": [
+        "SQL_TO_DATE"
+      ]
+    },
+    "reportDefinition": [
+      {
+        "query": "SELECT substr(e._id, length('Event:') + 1) AS event_id, e.date AS date, a.title AS activity, COALESCE(cat.label, e.category) AS category, substr(json_extract(p.value, '$.participant'), length('Child:') + 1) AS participant_uuid, COALESCE(st.label, json_extract(p.value, '$.status')) AS attendance_status, st.countAs AS counted_as FROM Event e, json_each(e.participants) p LEFT JOIN RecurringActivity a ON a._id = e.parentActivity LEFT JOIN ConfigurableEnumOption cat ON cat.enum_id = 'interaction-type' AND cat.option_id = e.category LEFT JOIN (SELECT json_extract(o.value, '$.id') AS id, json_extract(o.value, '$.label') AS label, json_extract(o.value, '$.countAs') AS countAs FROM ConfigurableEnum ec, json_each(ec.\"values\") o WHERE ec._id = 'ConfigurableEnum:attendance-status') st ON st.id = json_extract(p.value, '$.status') WHERE json_extract(p.value, '$.participant') LIKE 'Child:%' AND e.date BETWEEN $startDate AND $endDate ORDER BY e.date, event_id, participant_uuid"
+      }
+    ]
+  }
+]

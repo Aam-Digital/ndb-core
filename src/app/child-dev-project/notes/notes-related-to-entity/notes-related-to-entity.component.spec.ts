@@ -9,6 +9,10 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { FilterService } from "../../../core/filter/filter.service";
+import {
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "../deprecated/legacy-note-link-fields.testing";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -65,13 +69,13 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(matchesFilter(unrelatedNote)).toBe(false);
   });
 
-  it("should use the attendance color function when passing a child", () => {
-    const note = new Note();
-    vi.spyOn(note, "getColorForId");
-    const entity = createEntityOfType("Child");
+  it("should color notes by the related entity's attendance, whatever its type", () => {
+    const entity = createEntityOfType("School");
     fixture.componentRef.setInput("entity", entity);
     fixture.detectChanges();
 
+    const note = new Note();
+    vi.spyOn(note, "getColorForId");
     component.getColor()(note);
 
     expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
@@ -84,8 +88,7 @@ describe("NotesRelatedToEntityComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     let note = component.createNewRecordFactory()();
-    expect(note.children).toEqual([entity.getId()]);
-    expect(note.relatedEntities).not.toContain(entity.getId());
+    expect(note.relatedEntities).toContain(entity.getId());
 
     entity = createEntityOfType("School");
     fixture.componentRef.setInput("entity", entity);
@@ -93,8 +96,7 @@ describe("NotesRelatedToEntityComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
     note = component.createNewRecordFactory()();
-    expect(note.schools).toEqual([entity.getId()]);
-    expect(note.relatedEntities).not.toContain(entity.getId());
+    expect(note.relatedEntities).toContain(entity.getId());
 
     entity = createEntityOfType("User");
     fixture.componentRef.setInput("entity", entity);
@@ -104,34 +106,71 @@ describe("NotesRelatedToEntityComponent", () => {
     note = component.createNewRecordFactory()();
     expect(note.authors).toContain(entity.getId());
     expect(note.relatedEntities).not.toContain(entity.getId());
-
-    entity = new ChildSchoolRelation();
-    entity["childId"] = `Child:someChild`;
-    entity["schoolId"] = `School:someSchool`;
-    fixture.componentRef.setInput("entity", entity);
-    fixture.componentRef.setInput("filter", undefined);
-    fixture.detectChanges();
-    await fixture.whenStable();
-    note = component.createNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId()]);
-    expect(note.children).toEqual([`Child:someChild`]);
-    expect(note.schools).toEqual([`School:someSchool`]);
   });
 
-  it("should handle ChildSchoolRelation links also if they are arrays", async () => {
-    const relation = new ChildSchoolRelation();
-    relation.schoolId = ["School:1"] as any; // assume entity config was overwritten to hold array
-    relation.childId = ["Child:1", "Child:2"] as any; // assume entity config was overwritten to hold array
+  describe("with the legacy children and schools fields configured", () => {
+    // only systems still using these fields have them in their config
+    beforeEach(() => addLegacyNoteFieldsToSchema());
+    afterEach(() => removeLegacyNoteFieldsFromSchema());
 
+    it("should link a ChildSchoolRelation's child and school in the legacy fields", async () => {
+      const relation = new ChildSchoolRelation();
+      relation.childId = `Child:someChild`;
+      relation.schoolId = `School:someSchool`;
+      fixture.componentRef.setInput("entity", relation);
+      fixture.componentRef.setInput("filter", undefined);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const note = component.createNewRecordFactory()();
+
+      expect(note.relatedEntities).toEqual([relation.getId()]);
+      expect(note["children"]).toEqual([`Child:someChild`]);
+      expect(note["schools"]).toEqual([`School:someSchool`]);
+    });
+
+    it("should handle ChildSchoolRelation links also if they are arrays", async () => {
+      const relation = new ChildSchoolRelation();
+      relation.schoolId = ["School:1"] as any; // assume entity config was overwritten to hold array
+      relation.childId = ["Child:1", "Child:2"] as any; // assume entity config was overwritten to hold array
+
+      fixture.componentRef.setInput("entity", relation);
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const newNote = component.createNewRecordFactory()();
+
+      expect(newNote.relatedEntities).toContain(relation.getId());
+      expect(newNote["children"]).toEqual(relation.childId);
+      expect(newNote["schools"]).toEqual(relation.schoolId);
+    });
+  });
+
+  it("should link a ChildSchoolRelation's child and school in relatedEntities if the legacy fields are not configured", async () => {
+    const relation = new ChildSchoolRelation();
+    relation.childId = `Child:someChild`;
+    relation.schoolId = `School:someSchool`;
     fixture.componentRef.setInput("entity", relation);
     fixture.detectChanges();
     await fixture.whenStable();
+    // re-apply after the mocked config load reset Note's core schema fields (see above)
+    Note.schema.get("relatedEntities").additional = [
+      ChildSchoolRelation.ENTITY_TYPE,
+      "Child",
+      "School",
+    ];
 
-    const newNote = component.createNewRecordFactory()();
+    const note = component.createNewRecordFactory()();
 
-    expect(newNote.relatedEntities).toContain(relation.getId());
-    expect(newNote.children).toEqual(relation.childId);
-    expect(newNote.schools).toEqual(relation.schoolId);
+    expect(note["children"]).toBeUndefined();
+    expect(note["schools"]).toBeUndefined();
+    expect(note.relatedEntities).toEqual(
+      expect.arrayContaining([
+        relation.getId(),
+        `Child:someChild`,
+        `School:someSchool`,
+      ]),
+    );
   });
 
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {

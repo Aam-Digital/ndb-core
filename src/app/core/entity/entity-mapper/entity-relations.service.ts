@@ -6,7 +6,7 @@ import { EntityRegistry } from "../database-entity.decorator";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { getInnerEntityReferenceFields } from "../schema/entity-reference-fields";
+import { getEmbeddedEntityReferenceFields } from "../schema/embedded-schema-field.util";
 import { Logging } from "../../logging/logging.service";
 import type { DataFilter } from "../../filter/filters/filters";
 
@@ -57,8 +57,8 @@ export class EntityRelationsService {
       return true;
     }
 
-    return getInnerEntityReferenceFields(field).some(([, inner]) =>
-      asArray(inner.additional).includes(type),
+    return getEmbeddedEntityReferenceFields(this.schemaService, field).some(
+      ([, inner]) => asArray(inner.additional).includes(type),
     );
   }
 
@@ -109,7 +109,11 @@ export class EntityRelationsService {
     const affectedEntities = entities
       .map((entity) => ({
         entity,
-        fields: fieldsIncludingId(entity, primaryEntity.getId(), refProperties),
+        fields: this.fieldsIncludingId(
+          entity,
+          primaryEntity.getId(),
+          refProperties,
+        ),
       }))
       .filter((affected) => affected.fields.length > 0);
 
@@ -164,53 +168,55 @@ export class EntityRelationsService {
     }
     return this.entityMapper.findAllType(refType, { $or: conditions });
   }
-}
 
-/**
- * Check whether a single value (a plain ID string or an embedded object)
- * references the given entity ID.
- *
- * When a `field` schema is provided and its `additional` defines an embedded
- * schema, only the inner properties declared as entity references
- * (`dataType: "entity"`) are inspected.  Without schema info the function
- * falls back to checking all object values (backward-compatible).
- */
-export function itemReferencesId(
-  item: any,
-  refId: string,
-  field?: EntitySchemaField,
-): boolean {
-  if (item === refId) {
-    return true;
-  }
-
-  if (typeof item === "object" && item !== null) {
-    const refFields = getInnerEntityReferenceFields(field);
-    if (refFields.length > 0) {
-      return refFields.some(([key]) => asArray(item[key]).includes(refId));
+  /**
+   * Check whether a single value (a plain ID string or an embedded object)
+   * references the given entity ID.
+   *
+   * When the `field` is an embedded schema field, only its inner properties
+   * holding entity references (`dataType: "entity"`) are inspected.
+   * Without such schema info the function falls back to checking all object values.
+   */
+  itemReferencesId(
+    item: any,
+    refId: string,
+    field?: EntitySchemaField,
+  ): boolean {
+    if (item === refId) {
+      return true;
     }
-    // Fallback when no embedded schema info is available
-    return Object.values(item).includes(refId);
+
+    if (typeof item === "object" && item !== null) {
+      const refFields = getEmbeddedEntityReferenceFields(
+        this.schemaService,
+        field,
+      );
+      if (refFields.length > 0) {
+        return refFields.some(([key]) => asArray(item[key]).includes(refId));
+      }
+      // Fallback when no embedded schema info is available
+      return Object.values(item).includes(refId);
+    }
+
+    return false;
   }
 
-  return false;
-}
-
-/**
- * Return the fields of entity that contain the given refId.
- * If there is no such referenced ID, the array will be empty.
- * @param entity
- * @param refId
- * @param relevantFields The entity fields to check for the refId
- */
-function fieldsIncludingId(
-  entity: Entity,
-  refId: string,
-  relevantFields: FormFieldConfig[],
-): FormFieldConfig[] {
-  return relevantFields.filter((field) =>
-    asArray(entity[field.id]).some((item) =>
-      itemReferencesId(item, refId, field),
-    ),
-  );
+  /**
+   * Return the fields of entity that contain the given refId.
+   * If there is no such referenced ID, the array will be empty.
+   * @param entity
+   * @param refId
+   * @param relevantFields The entity fields to check for the refId
+   */
+  private fieldsIncludingId(
+    entity: Entity,
+    refId: string,
+    relevantFields: FormFieldConfig[],
+  ): FormFieldConfig[] {
+    return relevantFields.filter((field) =>
+      asArray(entity[field.id]).some((item) =>
+        this.itemReferencesId(item, refId, field),
+      ),
+    );
+  }
 }

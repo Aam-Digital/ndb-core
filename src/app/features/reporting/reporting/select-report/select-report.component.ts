@@ -22,41 +22,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ReportEntity, reportUsesDateRange } from "../../report-config";
 import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter.component";
+import { periodRangeOptions } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-
-export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
-  {
-    startOffsets: [{ amount: 0, unit: "months" }],
-    endOffsets: [{ amount: 0, unit: "months" }],
-    label: $localize`:Filter label: Current month`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "months" }],
-    endOffsets: [{ amount: -1, unit: "months" }],
-    label: $localize`:Filter label: Last month`,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: "quarter" }],
-    endOffsets: [{ amount: 0, unit: "quarter" }],
-    label: $localize`:Filter label: Current quarter`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "quarters" }],
-    endOffsets: [{ amount: -1, unit: "quarters" }],
-    label: $localize`:Filter label: Last quarter`,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: "years" }],
-    endOffsets: [{ amount: 0, unit: "years" }],
-    label: $localize`:Filter label: Current year`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "years" }],
-    endOffsets: [{ amount: -1, unit: "years" }],
-    label: $localize`:Filter label: Last year`,
-  },
-];
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -102,27 +70,16 @@ export class SelectReportComponent {
   fromDate = signal<Date | undefined>(undefined);
   toDate = signal<Date | undefined>(undefined);
   /** whether the currently selected report includes filter parameters for a "from" - "to" date range */
-  isDateRangeReport = computed<boolean>(() => {
-    const report = this.selectedReport();
-    if (!report) return false;
-    // Primary signal: whether the report's queries actually use date placeholders.
-    if (reportUsesDateRange(report)) return true;
-    // Fallback for legacy configs that declared the date args explicitly:
-    // v1 configs use neededArgs; v2/canonical use transformations.
-    return (
-      !!report.neededArgs?.find((a) => a === "from" || a === "startDate") ||
-      !!report.neededArgs?.find((a) => a === "to" || a === "endDate") ||
-      !!report.transformations?.["startDate"] ||
-      !!report.transformations?.["endDate"]
-    );
-  });
+  isDateRangeReport = computed<boolean>(() =>
+    reportUsesDateRange(this.selectedReport()),
+  );
 
   dateRangeFilterConfig = computed<DateFilter<any> | undefined>(() => {
     if (!this.isDateRangeReport()) return undefined;
     const options =
       this.dateRangeOptions()?.length > 0
         ? this.dateRangeOptions()
-        : defaultReportDateFilters;
+        : periodRangeOptions;
     return new DateFilter<any>("reportPeriod", "Enter a date range", options);
   });
 

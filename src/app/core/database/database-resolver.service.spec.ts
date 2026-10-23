@@ -173,6 +173,30 @@ describe("DatabaseResolverService", () => {
     expect(defaultDb.init).toHaveBeenCalledWith("test-user-app");
   });
 
+  it.each([
+    // in demo mode the database is in-memory, although the resolved config asks for "indexeddb"
+    ["memory", false],
+    ["idb", false],
+    ["indexeddb", true],
+  ])(
+    "supports purging local docs only if the app database actually runs on the indexeddb adapter (%s)",
+    async (actualAdapter, expected) => {
+      const appDb = service.getDatabase() as MemoryPouchDatabase;
+      await service.initDatabasesForSession({
+        name: "test-user",
+        id: "test-uuid",
+        roles: [],
+      } as SessionInfo);
+      if (actualAdapter !== "memory") {
+        vi.spyOn(appDb, "getPouchDB").mockReturnValue({
+          adapter: actualAdapter,
+        } as unknown as PouchDB.Database);
+      }
+
+      expect(service.isIndexedDbAdapterSupported()).toBe(expected);
+    },
+  );
+
   describe("remote-only databases", () => {
     const REMOTE_ONLY_DB = "test-remote-only";
     const TEST_TYPE = "RemoteOnlyTestEntity";
