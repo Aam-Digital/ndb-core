@@ -15,7 +15,8 @@
           @if (row.enabled) {
             {{ row.localeLabel }}
           } @else {
-            <ng-container i18n>{{ row.localeLabel }} (disabled)</ng-container>
+            {{ row.localeLabel }}
+            <span class="disabled-marker" i18n>(disabled)</span>
           }
         </mat-label>
         <input matInput [(ngModel)]="row.text" [name]="row.locale" />
