@@ -1,5 +1,12 @@
 import { TestBed } from "@angular/core/testing";
-import { DatabaseEntity } from "../../../entity/database-entity.decorator";
+import { By } from "@angular/platform-browser";
+import { MatTooltip } from "@angular/material/tooltip";
+import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { CustomDatePipe } from "../../date/custom-date.pipe";
@@ -9,6 +16,28 @@ import { DisplayDateRangeComponent } from "./display-date-range.component";
 @DatabaseEntity("DisplayDateRangeTestEntity")
 class DisplayDateRangeTestEntity extends Entity {
   @DatabaseField({ dataType: "date-range", anonymize: "retain-anonymized" })
+  period: DateRangeValue;
+}
+
+@DatabaseEntity("DisplayDateRangeTestAction")
+class DisplayDateRangeTestAction extends Entity {
+  static override toStringAttributes = ["name"];
+
+  @DatabaseField() name: string;
+
+  @DatabaseField({
+    dataType: "entity",
+    additional: "DisplayDateRangeTestAction",
+  })
+  parent: string;
+
+  @DatabaseField({
+    dataType: "date-range",
+    withinParent: {
+      parentReferenceField: "parent",
+      parentValueField: "period",
+    },
+  })
   period: DateRangeValue;
 }
 
@@ -29,7 +58,19 @@ describe("DisplayDateRangeComponent", () => {
     );
   }
 
-  beforeEach(() => TestBed.configureTestingModule({}));
+  const parentAction = Object.assign(new DisplayDateRangeTestAction("1"), {
+    name: "Training",
+    period: { start, end },
+  });
+
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [
+        ...mockEntityMapperProvider([parentAction]),
+        { provide: EntityRegistry, useValue: entityRegistry },
+      ],
+    }),
+  );
 
   function renderOfRecord(value: DateRangeValue, anonymized: boolean) {
     const entity = new DisplayDateRangeTestEntity();
@@ -81,5 +122,50 @@ describe("DisplayDateRangeComponent", () => {
 
     expect(result.text).toBe(`${formatted(start)} - ${formatted(end)}`);
     expect(result.hasWarning).toBe(false);
+  });
+
+  async function warningOfLinkedRecord(
+    period: DateRangeValue,
+    parent: string | undefined,
+  ): Promise<string | undefined> {
+    const action = Object.assign(new DisplayDateRangeTestAction(), {
+      parent,
+      period,
+    });
+    const fixture = TestBed.createComponent(DisplayDateRangeComponent);
+    fixture.componentRef.setInput("entity", action);
+    fixture.componentRef.setInput("id", "period");
+    fixture.componentRef.setInput("value", period);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture.debugElement
+      .query(By.directive(MatTooltip))
+      ?.injector.get(MatTooltip).message;
+  }
+
+  it("warns when the period goes beyond the period of the linked parent record", async () => {
+    const warning = await warningOfLinkedRecord(
+      { start: new Date(2026, 4, 20), end: new Date(2026, 5, 15) },
+      parentAction.getId(),
+    );
+
+    expect(warning).toContain("Training");
+  });
+
+  it.each([
+    [
+      "lies within the parent's period",
+      { start: new Date(2026, 2, 10), end: new Date(2026, 2, 20) },
+      parentAction.getId(),
+    ],
+    ["has no parent linked", { start: new Date(2025, 0, 1) }, undefined],
+    [
+      "links a parent that does not exist",
+      { start: new Date(2025, 0, 1) },
+      "DisplayDateRangeTestAction:missing",
+    ],
+  ])("shows no warning for a period that %s", async (_, period, parent) => {
+    expect(await warningOfLinkedRecord(period, parent)).toBeUndefined();
   });
 });

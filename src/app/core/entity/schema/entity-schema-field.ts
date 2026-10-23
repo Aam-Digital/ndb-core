@@ -167,6 +167,23 @@ export interface EntitySchemaField {
    * from validation (e.g. a "required" validator is skipped while hidden).
    */
   displayCondition?: DataFilter<any>;
+
+  /**
+   * (Optional) Highlight the value when it goes beyond the value of a linked "parent" record,
+   * e.g. a sub-action's planned period outside of its parent action's period.
+   *
+   * Only supported for "date-range" fields.
+   */
+  withinParent?: WithinParentConfig;
+}
+
+/** see {@link EntitySchemaField.withinParent} */
+export interface WithinParentConfig {
+  /** field of this record that links to the parent record(s) */
+  parentReferenceField: string;
+
+  /** field of the parent record holding the range this value should lie within */
+  parentValueField: string;
 }
 
 /**

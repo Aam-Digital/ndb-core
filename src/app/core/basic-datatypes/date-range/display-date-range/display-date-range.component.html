@@ -18,4 +18,11 @@
       i18n-matTooltip
     ></app-fa-dynamic-icon>
   }
+  @if (outsideParent(); as parentName) {
+    <app-fa-dynamic-icon
+      icon="warning"
+      matTooltip="Outside the period of {{ parentName }}"
+      i18n-matTooltip
+    ></app-fa-dynamic-icon>
+  }
 }
