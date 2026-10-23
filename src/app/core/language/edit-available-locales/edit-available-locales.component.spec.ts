@@ -6,8 +6,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { availableLocales, LOCALE_ENUM_ID } from "../languages";
 import { EditAvailableLocalesComponent } from "./edit-available-locales.component";
-import { By } from "@angular/platform-browser";
-import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 
 describe("EditAvailableLocalesComponent", () => {
   const DE = { id: "de", label: "German" };
@@ -103,16 +101,19 @@ describe("EditAvailableLocalesComponent", () => {
     );
   });
 
-  it("opens the options to pick from when the form field is clicked", () => {
+  it("opens the options to pick from when clicking anywhere in the field", async () => {
     create(true, [DE]);
-    const autocomplete = fixture.debugElement.query(
-      By.directive(BasicAutocompleteComponent),
-    ).componentInstance as BasicAutocompleteComponent<unknown, unknown>;
-    const showAutocomplete = vi.spyOn(autocomplete, "showAutocomplete");
+    const field = fixture.nativeElement.querySelector(
+      "app-basic-autocomplete",
+    ) as HTMLElement;
 
-    fixture.componentInstance.onContainerClick(new MouseEvent("click"));
+    field.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
 
-    expect(showAutocomplete).toHaveBeenCalled();
+    expect(document.querySelectorAll('[role="option"]').length).toBeGreaterThan(
+      1,
+    );
   });
 
   it("should add a changed system language to the list", () => {

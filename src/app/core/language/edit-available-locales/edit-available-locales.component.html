@@ -2,6 +2,7 @@
   <div class="flex-row gap-small">
     <app-basic-autocomplete
       #autocomplete
+      (click)="onContainerClick($event)"
       class="locales-select flex-grow"
       [formControl]="formControl"
       [multi]="true"

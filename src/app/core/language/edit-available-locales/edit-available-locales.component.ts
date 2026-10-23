@@ -108,7 +108,12 @@ export class EditAvailableLocalesComponent
     this.formControl.setValue([...enabled, systemLanguage]);
   }
 
-  /** open the options when clicking anywhere in the surrounding form field */
+  /**
+   * Open the options when clicking anywhere in the field.
+   * Bound to the click of the autocomplete in the template: the surrounding `mat-form-field`
+   * only calls `onContainerClick` of its direct control (the generic dynamic-edit wrapper,
+   * where it is a no-op), so it never reaches this component.
+   */
   override onContainerClick(event: MouseEvent) {
     this.autocomplete()?.onContainerClick(event);
   }
