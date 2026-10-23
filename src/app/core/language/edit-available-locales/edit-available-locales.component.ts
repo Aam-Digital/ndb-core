@@ -10,13 +10,15 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { environment } from "#src/environments/environment";
+import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { FeatureDisabledInfoComponent } from "../../common-components/feature-disabled-info/feature-disabled-info.component";
-import { EditConfigurableEnumComponent } from "../../basic-datatypes/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
+import { availableLocales } from "../languages";
 import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 
 /**
@@ -25,16 +27,18 @@ import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-
  * Only available if the system is set up as multi-language (`multiLingualConfigEnabled`),
  * otherwise it points to that feature being disabled.
  * The system language (`defaultLanguage` in the same form) always stays in a
- * non-empty list, because it is always offered.
+ * non-empty list, because it is always offered. It is marked among the options.
  */
 @DynamicComponent("EditAvailableLocales")
 @Component({
   selector: "app-edit-available-locales",
   templateUrl: "./edit-available-locales.component.html",
+  styleUrl: "./edit-available-locales.component.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    EditConfigurableEnumComponent,
+    BasicAutocompleteComponent,
+    MatTooltipModule,
     FeatureDisabledInfoComponent,
   ],
   providers: [
@@ -51,6 +55,10 @@ export class EditAvailableLocalesComponent
   formFieldConfig = input<FormFieldConfig>();
 
   private readonly destroyRef = inject(DestroyRef);
+
+  /** all selectable locales (not user-editable, so no "create option") */
+  readonly options: ConfigurableEnumValue[] = availableLocales.values;
+  readonly localeToString = (locale: ConfigurableEnumValue) => locale?.label;
 
   readonly multiLingualConfigEnabled = environment.multiLingualConfigEnabled;
 

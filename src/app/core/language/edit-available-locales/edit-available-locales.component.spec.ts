@@ -4,7 +4,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { environment } from "#src/environments/environment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { LOCALE_ENUM_ID } from "../languages";
+import { availableLocales, LOCALE_ENUM_ID } from "../languages";
 import { EditAvailableLocalesComponent } from "./edit-available-locales.component";
 
 describe("EditAvailableLocalesComponent", () => {
@@ -56,7 +56,7 @@ describe("EditAvailableLocalesComponent", () => {
       expect(el.querySelectorAll("app-feature-disabled-info")).toHaveLength(
         infos,
       );
-      expect(el.querySelectorAll("app-edit-configurable-enum")).toHaveLength(
+      expect(el.querySelectorAll("app-basic-autocomplete")).toHaveLength(
         selects,
       );
     },
@@ -69,6 +69,36 @@ describe("EditAvailableLocalesComponent", () => {
     create(true, stored);
 
     expect(form.value.availableLocales).toEqual(expected);
+  });
+
+  it("should mark only the system language chip with an explanation", async () => {
+    create(true, [FR, DE]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const chips: HTMLElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll("mat-chip-row, mat-chip"),
+    );
+    const marked = chips.filter((chip) =>
+      chip.querySelector(".system-language-marker"),
+    );
+    expect(chips).toHaveLength(2);
+    expect(marked).toHaveLength(1);
+    expect(marked[0].textContent).toContain("Deutsch / German (de)");
+    expect(marked[0].textContent).toContain("system language");
+  });
+
+  it("should store the same value format as the enum select", () => {
+    create(true, [FR]);
+    const component = fixture.componentInstance;
+
+    const option = component.options.find(({ id }) => id === "de");
+    expect(option).toEqual(
+      expect.objectContaining({ id: "de", label: "Deutsch / German (de)" }),
+    );
+    expect(component.options.map(({ id }) => id)).toEqual(
+      availableLocales.values.map(({ id }) => id),
+    );
   });
 
   it("should re-add the system language if it is removed", () => {
