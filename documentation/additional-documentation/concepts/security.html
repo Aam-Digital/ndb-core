@@ -194,6 +194,7 @@ Deploying either mode is described in <a href="https://github.com/Aam-Digital/nd
 <ul>
 <li>The copy includes whatever that user is allowed to sync.</li>
 <li>Revoking permissions server-side does not reach a device that never connects again. Local data is cleared when the server reports lost permissions during a sync, and that requires the device to come online.</li>
+<li>A device that was migrated from the legacy PouchDB <code>idb</code> adapter to the <code>indexeddb</code> adapter still holds the old copy of the data, which is no longer synced or cleared, until the old database is deleted.</li>
 </ul>
 <p>Two settings bear on this:</p>
 <ul>

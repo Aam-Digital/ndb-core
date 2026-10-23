@@ -156,7 +156,9 @@
 and from username-based DB names to Keycloak-UUID-based DB names.</p>
 <p>The migration is non-blocking: the app continues to work on the old DB while a background
 replication populates the new DB. Once both old-DB sync and new-DB replication are complete,
-a migration flag is set and the user is prompted to reload.</p>
+the user is prompted to reload. Only when the user confirms and a final sync has pushed all
+local changes of the old DB to the server, the migration flag is set and the app reloads
+into the new DB - so that no unsynced change is left behind in the old DB.</p>
 
             </p>
 
@@ -259,8 +261,8 @@ a migration flag is set and the user is prompted to reload.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="298"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:298</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="386"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:386</a></div>
                         </td>
                     </tr>
 
@@ -336,8 +338,8 @@ Only runs if the migration flag is set for the given session.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="59"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:59</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -347,7 +349,7 @@ Only runs if the migration flag is set for the given session.</p>
                         <div class="io-description"><p>Determine the database configuration (names + adapter) for the current session.</p>
 <p>Decision logic:</p>
 <ol>
-<li>use_indexeddb_adapter disabled → legacy names + &quot;idb&quot; adapter (no migration)</li>
+<li>use_indexeddb_adapter disabled → legacy names + &quot;idb&quot; adapter (no migration; resets the migration flag)</li>
 <li>Migration flag set → new names + &quot;indexeddb&quot;</li>
 <li>No old DB exists (fresh install) → new names + &quot;indexeddb&quot;</li>
 <li>Old DB exists, no flag → legacy names + &quot;idb&quot; (migration pending)</li>
@@ -412,8 +414,8 @@ Only runs if the migration flag is set for the given session.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="123"
-                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:123</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:135</a></div>
                         </td>
                     </tr>
 
@@ -424,7 +426,9 @@ Only runs if the migration flag is set for the given session.</p>
 the database is a SyncedPouchDatabase, and we are online.</p>
 <p>Replicates all data from the remote CouchDB into a new local DB with the
 &quot;indexeddb&quot; adapter and new naming scheme. Once both old-DB sync and new-DB
-replication complete, the migration flag is set and the user is prompted to reload.</p>
+replication complete, the user is prompted to reload and switch to the new DB.
+If anything fails, the migration flag stays unset and the app keeps using the old DB;
+the migration is retried (continuing from its checkpoint) on the next app start.</p>
 </div>
 
                             <div class="io-description">
@@ -468,7 +472,7 @@ replication complete, the migration flag is set and the user is prompted to relo
 
 
                                             <td>
-                                                    <p>The database instance to migrate from</p>
+                                                    <p>The database instance to migrate from (the &quot;app&quot; database)</p>
 
                                             </td>
                                         </tr>
@@ -517,7 +521,7 @@ replication complete, the migration flag is set and the user is prompted to relo
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:48</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/database/indexeddb-migration.service.ts:55</a></div>
                         </td>
                     </tr>
 
@@ -536,12 +540,12 @@ replication complete, the migration flag is set and the user is prompted to relo
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Injector } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, Injector, signal } from &quot;@angular/core&quot;;
 import { SessionInfo, SessionSubject } from &quot;../session/auth/session-info&quot;;
-import { SyncStateSubject } from &quot;../session/session-type&quot;;
 import { SyncState } from &quot;../session/session-states/sync-state.enum&quot;;
 import { computeDbNames, computeLegacyDbNames } from &quot;./db-name-helpers&quot;;
 import { ConfirmationDialogService } from &quot;../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { AlertService } from &quot;../alerts/alert.service&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
 import {
   NAVIGATOR_TOKEN,
@@ -552,7 +556,11 @@ import { filter, first } from &quot;rxjs/operators&quot;;
 import PouchDB from &quot;pouchdb-browser&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
 import { Database } from &quot;./database&quot;;
-import { SyncedPouchDatabase } from &quot;./pouchdb/synced-pouch-database&quot;;
+import {
+  isReplicationConnectivityError,
+  isReplicationUnauthorizedError,
+  SyncedPouchDatabase,
+} from &quot;./pouchdb/synced-pouch-database&quot;;
 import type { AnalyticsService } from &quot;../analytics/analytics.service&quot;;
 
 export interface DbConfig {
@@ -568,12 +576,15 @@ const DB_MIGRATED_PREFIX &#x3D; &quot;DB_MIGRATED_&quot;;
  *
  * The migration is non-blocking: the app continues to work on the old DB while a background
  * replication populates the new DB. Once both old-DB sync and new-DB replication are complete,
- * a migration flag is set and the user is prompted to reload.
+ * the user is prompted to reload. Only when the user confirms and a final sync has pushed all
+ * local changes of the old DB to the server, the migration flag is set and the app reloads
+ * into the new DB - so that no unsynced change is left behind in the old DB.
  */
 @Injectable({ providedIn: &quot;root&quot; })
 export class IndexeddbMigrationService {
   private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
+  private readonly alertService &#x3D; inject(AlertService);
   private readonly navigator &#x3D; inject&lt;Navigator&gt;(NAVIGATOR_TOKEN, {
     optional: true,
   });
@@ -589,7 +600,7 @@ export class IndexeddbMigrationService {
    * Determine the database configuration (names + adapter) for the current session.
    *
    * Decision logic:
-   * 1. use_indexeddb_adapter disabled → legacy names + &quot;idb&quot; adapter (no migration)
+   * 1. use_indexeddb_adapter disabled → legacy names + &quot;idb&quot; adapter (no migration; resets the migration flag)
    * 2. Migration flag set → new names + &quot;indexeddb&quot;
    * 3. No old DB exists (fresh install) → new names + &quot;indexeddb&quot;
    * 4. Old DB exists, no flag → legacy names + &quot;idb&quot; (migration pending)
@@ -598,7 +609,11 @@ export class IndexeddbMigrationService {
     this.migrationPending &#x3D; false; // reset pending flag on each resolve attempt
 
     if (!environment.use_indexeddb_adapter) {
-      await this.trackResolveScenario(&quot;idb_indexeddb-disabled-config&quot;);
+      // The user works on the legacy DB from now on. If the flag is enabled again, the migration
+      // (continuing from its checkpoint) and its final sync have to run again before switching back,
+      // otherwise changes made on the legacy DB in the meantime and not yet synced would be left behind.
+      this.localStorage.removeItem(DB_MIGRATED_PREFIX + session.id);
+      await this.trackMigrationEvent(&quot;idb_indexeddb-disabled-config&quot;);
       Logging.debug(
         &quot;IndexeddbMigration: use_indexeddb_adapter disabled; using legacy DB config&quot;,
       );
@@ -611,7 +626,7 @@ export class IndexeddbMigrationService {
     const oldDbExists &#x3D; await this.legacyDbExists(session);
     if (!oldDbExists &amp;&amp; !this.isMigrated(session)) {
       this.localStorage.setItem(DB_MIGRATED_PREFIX + session.id, &quot;true&quot;);
-      await this.trackResolveScenario(&quot;indexeddb_fresh-install&quot;);
+      await this.trackMigrationEvent(&quot;indexeddb_fresh-install&quot;);
       Logging.debug(
         &quot;IndexeddbMigration: no legacy DB found; assuming fresh install and setting &#x27;migrated&#x27; flag&quot;,
       );
@@ -624,7 +639,7 @@ export class IndexeddbMigrationService {
 
     // Already migrated or fresh install (no old DB exists)
     if (this.isMigrated(session)) {
-      await this.trackResolveScenario(&quot;indexeddb_after-migration&quot;);
+      await this.trackMigrationEvent(&quot;indexeddb_after-migration&quot;);
       Logging.debug(
         &quot;IndexeddbMigration: using new DB config (migration flag set)&quot;,
       );
@@ -636,7 +651,7 @@ export class IndexeddbMigrationService {
 
     // Old DB exists, not yet migrated → use old DB, migration pending
     this.migrationPending &#x3D; true;
-    await this.trackResolveScenario(&quot;idb_migration-pending&quot;);
+    await this.trackMigrationEvent(&quot;idb_migration-pending&quot;);
     Logging.debug(
       &quot;IndexeddbMigration: using legacy DB config (migration pending)&quot;,
     );
@@ -652,11 +667,12 @@ export class IndexeddbMigrationService {
    *
    * Replicates all data from the remote CouchDB into a new local DB with the
    * &quot;indexeddb&quot; adapter and new naming scheme. Once both old-DB sync and new-DB
-   * replication complete, the migration flag is set and the user is prompted to reload.
+   * replication complete, the user is prompted to reload and switch to the new DB.
+   * If anything fails, the migration flag stays unset and the app keeps using the old DB;
+   * the migration is retried (continuing from its checkpoint) on the next app start.
    *
    * @param session Current user session
-   * @param db The database instance to migrate from
-   * @param dbKey Which database to migrate: &quot;app&quot; or &quot;notifications&quot;
+   * @param db The database instance to migrate from (the &quot;app&quot; database)
    */
   runBackgroundMigration(session: SessionInfo, db: Database): void {
     if (!this.migrationPending) {
@@ -665,8 +681,11 @@ export class IndexeddbMigrationService {
     if (!(db instanceof SyncedPouchDatabase)) {
       return;
     }
-    const remotePouchDB &#x3D; db.getRemotePouchDB();
-    if (!remotePouchDB || !this.navigator?.onLine) {
+    // check for connectivity first, so that no remote connection is opened (and left open) when offline
+    const remotePouchDB &#x3D; this.navigator?.onLine
+      ? db.openRemoteReplicationSource()
+      : undefined;
+    if (!remotePouchDB) {
       Logging.debug(
         &quot;IndexeddbMigration: skipping background migration (offline or no remote)&quot;,
       );
@@ -676,18 +695,17 @@ export class IndexeddbMigrationService {
     const newDbNames &#x3D; computeDbNames(session);
 
     // we only migrate the &quot;app&quot; database; logic to track completed migration is simplified!
-    this.migrateDatabase(
-      newDbNames[&quot;app&quot;],
-      remotePouchDB,
-      db.localSyncState,
-      session,
-    );
+    this.migrateDatabase(newDbNames[&quot;app&quot;], remotePouchDB, db, session);
   }
 
+  /**
+   * @param remotePouchDB a connection of its own to the remote database (closed here once the replication ended),
+   *                      so that the replication from scratch does not report lost permissions to the old DB&#x27;s sync
+   */
   private migrateDatabase(
     newDbName: string,
     remotePouchDB: PouchDB.Database,
-    oldDbSyncState: SyncStateSubject,
+    oldDb: SyncedPouchDatabase,
     session: SessionInfo,
   ): void {
     Logging.debug(
@@ -701,32 +719,54 @@ export class IndexeddbMigrationService {
 
     const checkBothComplete &#x3D; () &#x3D;&gt; {
       if (replicationDone &amp;&amp; oldSyncDone) {
+        this.closePouchDb(newDb);
         // we only migrate &quot;app&quot; DB for simplicity (no need to track separate migration states for all DBs)
-        this.setMigrated(session);
-        newDb.close();
-        this.promptReload();
+        this.switchToNewDb(session, oldDb).catch((err) &#x3D;&gt;
+          Logging.error(
+            &quot;IndexeddbMigration: failed to switch to the new database&quot;,
+            err,
+          ),
+        );
       }
     };
 
     // Background replication from remote → new local DB
+    // (PouchDB&#x27;s replication is only a thenable without &#x60;finally()&#x60;, so the source is closed in both handlers)
     newDb.replicate
       .from(remotePouchDB, { batch_size: 500 })
       .then(() &#x3D;&gt; {
+        this.closePouchDb(remotePouchDB);
         Logging.debug(
           &#x60;IndexeddbMigration: replication into &quot;${newDbName}&quot; completed&#x60;,
         );
         replicationDone &#x3D; true;
         checkBothComplete();
       })
-      .catch((err) &#x3D;&gt; {
-        Logging.warn(&quot;IndexeddbMigration: replication into new db failed&quot;, {
-          newDbName,
-          error: err,
-        });
-        newDb.close();
+      .catch(async (err) &#x3D;&gt; {
+        this.closePouchDb(remotePouchDB);
+        if (
+          isReplicationConnectivityError(err) ||
+          isReplicationUnauthorizedError(err)
+        ) {
+          // offline or session expired: nothing to fix, retried on next app start
+          Logging.debug(
+            &quot;IndexeddbMigration: replication into new db failed (offline or session expired)&quot;,
+            err,
+          );
+        } else {
+          // e.g. storage quota exceeded on the device: reported to keep track of failing migrations
+          Logging.warn(
+            &quot;IndexeddbMigration: replication into new db failed&quot;,
+            { newDbName },
+            err,
+          );
+        }
+        this.closePouchDb(newDb);
+        await this.trackMigrationEvent(&quot;migration_replication-failed&quot;);
       });
 
     // Wait for old DB to complete its initial sync
+    const oldDbSyncState &#x3D; oldDb.localSyncState;
     if (oldDbSyncState.value &#x3D;&#x3D;&#x3D; SyncState.COMPLETED) {
       oldSyncDone &#x3D; true;
     } else {
@@ -746,15 +786,62 @@ export class IndexeddbMigrationService {
     return new PouchDB(newDbName, { adapter: &quot;indexeddb&quot; });
   }
 
-  private async promptReload(): Promise&lt;void&gt; {
+  private closePouchDb(db: PouchDB.Database): void {
+    db.close().catch((err) &#x3D;&gt;
+      Logging.debug(&quot;IndexeddbMigration: failed to close db&quot;, err),
+    );
+  }
+
+  /**
+   * Ask the user to reload into the new database.
+   *
+   * The migration flag (which makes the next app start use the new DB) is only set
+   * after a final sync has pushed all local changes of the old DB to the server,
+   * immediately before reloading. Otherwise, changes made on the old DB after the
+   * migration completed (e.g. while working offline after postponing the reload)
+   * would be left behind in the old DB, which is no longer synced after the switch.
+   */
+  private async switchToNewDb(
+    session: SessionInfo,
+    oldDb: SyncedPouchDatabase,
+  ): Promise&lt;void&gt; {
     const confirmed &#x3D; await this.confirmationDialog.getConfirmation(
       $localize&#x60;:Migration dialog title:Database Upgrade Ready&#x60;,
       $localize&#x60;:Migration dialog text:Your database has been upgraded for improved performance. Reload now to start using it?&#x60;,
     );
-
-    if (confirmed) {
-      this.window?.location.reload();
+    if (!confirmed) {
+      Logging.debug(
+        &quot;IndexeddbMigration: switch to new db postponed by user; will be offered again on next app start&quot;,
+      );
+      await this.trackMigrationEvent(&quot;migration_reload-postponed&quot;);
+      return;
     }
+
+    // modal (cannot be closed), so that no further change is made on the old DB during this final sync
+    const progressRef &#x3D; this.confirmationDialog.showProgressDialog(
+      signal(
+        $localize&#x60;:Migration final sync progress:Syncing your latest changes before the upgrade ...&#x60;,
+      ),
+    );
+    try {
+      await oldDb.ensureSynced();
+    } catch (err) {
+      // a failed sync has already been logged by the database itself
+      Logging.debug(
+        &quot;IndexeddbMigration: final sync of old db failed; keeping old db&quot;,
+        err,
+      );
+      this.alertService.addWarning(
+        $localize&#x60;:Migration failed alert:The database upgrade could not be completed because your latest changes could not be synced to the server. Please check your internet connection. The upgrade will be tried again the next time you open the app.&#x60;,
+      );
+      await this.trackMigrationEvent(&quot;migration_final-sync-failed&quot;);
+      return;
+    } finally {
+      progressRef.close();
+    }
+
+    this.setMigrated(session);
+    this.window?.location.reload();
   }
 
   private isMigrated(session: SessionInfo): boolean {
@@ -770,11 +857,16 @@ export class IndexeddbMigrationService {
     );
   }
 
-  private async trackResolveScenario(scenario: string): Promise&lt;void&gt; {
-    const analytics &#x3D; await this.getAnalyticsService();
-    analytics?.eventTrack(scenario, {
-      category: &quot;indexeddb_adapter_migration&quot;,
-    });
+  /** Never rejects: usage analytics must not interrupt the migration. */
+  private async trackMigrationEvent(action: string): Promise&lt;void&gt; {
+    try {
+      const analytics &#x3D; await this.getAnalyticsService();
+      analytics?.eventTrack(action, {
+        category: &quot;indexeddb_adapter_migration&quot;,
+      });
+    } catch (err) {
+      Logging.debug(&quot;IndexeddbMigration: failed to track event&quot;, err);
+    }
   }
 
   /**

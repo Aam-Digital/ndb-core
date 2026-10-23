@@ -273,6 +273,10 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#openSeparateConnection" >openSeparateConnection</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier"></span>
                                     <span class="modifier">Async</span>
                                 <a href="#put" >put</a>
@@ -866,8 +870,8 @@ This change can come from the current user or remotely from the (live) synchroni
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="445"
-                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:445</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="455"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:455</a></div>
                         </td>
                     </tr>
 
@@ -917,7 +921,7 @@ and resets the internal list.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:468</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:498</a></code>
 </div>
                         </td>
                     </tr>
@@ -1090,6 +1094,48 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="openSeparateConnection"></a>
+                    <span class="name">
+                        <span ><b>openSeparateConnection</b></span>
+                        <a href="#openSeparateConnection"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>openSeparateConnection()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="468"
+                                    class="link-to-prism">src/app/core/database/pouchdb/remote-pouch-database.ts:468</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Open a separate connection to the same remote database, authenticated the same way,
+whose requests do not affect the state of this one: it does not track lost permissions.</p>
+<p>Close it with <code>close()</code> once done - never with <code>destroy()</code>,
+which would delete the database on the server.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Database.html" target="_self" >PouchDB.Database</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="put"></a>
                     <span class="name">
                             <span class="modifier"></span>
@@ -1115,7 +1161,7 @@ See <a href="https://pouchdb.com/adapters.html#pouchdb_over_http">https://pouchd
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:516</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:546</a></code>
 </div>
                         </td>
                     </tr>
@@ -1215,7 +1261,7 @@ writes immediately in both session types.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:526</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:556</a></code>
 </div>
                         </td>
                     </tr>
@@ -1312,7 +1358,7 @@ into one (see <a href="../miscellaneous/functions.html#writeInBatchedRequests">w
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:559</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:589</a></code>
 </div>
                         </td>
                     </tr>
@@ -1393,7 +1439,7 @@ subscribers read to tell a removal apart from an update.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:496</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:526</a></code>
 </div>
                         </td>
                     </tr>
@@ -1470,7 +1516,7 @@ subscribers read to tell a removal apart from an update.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:641</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:671</a></code>
 </div>
                         </td>
                     </tr>
@@ -1524,7 +1570,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:451</a></code>
+                                <div class="io-line">        <code><a href="../classes/Database.html#source" target="_self" >Database:481</a></code>
 </div>
                         </td>
                     </tr>
@@ -1571,7 +1617,7 @@ Changes are fetched at regular intervals rather than maintaining a persistent co
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:287</a></code>
+                                <div class="io-line">        <code><a href="../classes/PouchDatabase.html#source" target="_self" >PouchDatabase:297</a></code>
 </div>
                         </td>
                     </tr>
@@ -3052,34 +3098,7 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     // additional output for debugging
     if (result?.status &gt;&#x3D; 400) {
-      const response &#x3D; describeResponse(result, method);
-      if (this.isNotificationsDatabase() &amp;&amp; result.status &#x3D;&#x3D;&#x3D; 404) {
-        Logging.debug(
-          &quot;Notifications database not found (404) - may be expected&quot;,
-        );
-      } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
-        // expired session (401), permission-filtered doc (403) and missing doc (404)
-        // are part of normal operation and handled by callers
-        Logging.debug(&quot;Expected 4XX response from DB&quot;, response);
-      } else if (result.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Conflict) {
-        // A 409 is CouchDB rejecting a write whose revision is out of date. This
-        // layer cannot tell whether that cost anyone anything, but whoever made
-        // the request always can:
-        //  - remote-only session: the write came from PouchDatabase.put(), and
-        //    PouchDatabase.resolveConflict() decides between merging,
-        //    overwriting and failing - and counts the outcome it chose.
-        //  - synced session: writes go to the local database, so the only 409s
-        //    reaching here are replication&#x27;s own &#x60;PUT /_local/&lt;checkpoint&gt;&#x60;
-        //    races between concurrent tabs, which PouchDB retries internally.
-        // Reporting it here would therefore be an alert nobody can act on, and
-        // it is what buried the genuinely unexpected statuses in the same issue.
-        Logging.debug(&quot;Document update conflict from DB&quot;, response);
-      } else {
-        Logging.warn(unexpectedResponseMessage(result.status), {
-          ...response,
-          requestedUrl: remoteUrl,
-        });
-      }
+      this.logErrorResponse(result, method, remoteUrl);
     }
 
     if (
@@ -3092,6 +3111,43 @@ export class RemotePouchDatabase extends PouchDatabase {
 
     return result;
   };
+
+  /**
+   * Log a 4XX response at the level it deserves:
+   * expected statuses only for debugging, unexpected ones as a warning.
+   */
+  private logErrorResponse(
+    result: Response,
+    method: string,
+    remoteUrl: string,
+  ): void {
+    const response &#x3D; describeResponse(result, method);
+    if (this.isNotificationsDatabase() &amp;&amp; result.status &#x3D;&#x3D;&#x3D; 404) {
+      Logging.debug(&quot;Notifications database not found (404) - may be expected&quot;);
+    } else if (EXPECTED_4XX_STATUSES.includes(result.status)) {
+      // expired session (401), permission-filtered doc (403) and missing doc (404)
+      // are part of normal operation and handled by callers
+      Logging.debug(&quot;Expected 4XX response from DB&quot;, response);
+    } else if (result.status &#x3D;&#x3D;&#x3D; HttpStatusCode.Conflict) {
+      // A 409 is CouchDB rejecting a write whose revision is out of date. This
+      // layer cannot tell whether that cost anyone anything, but whoever made
+      // the request always can:
+      //  - remote-only session: the write came from PouchDatabase.put(), and
+      //    PouchDatabase.resolveConflict() decides between merging,
+      //    overwriting and failing - and counts the outcome it chose.
+      //  - synced session: writes go to the local database, so the only 409s
+      //    reaching here are replication&#x27;s own &#x60;PUT /_local/&lt;checkpoint&gt;&#x60;
+      //    races between concurrent tabs, which PouchDB retries internally.
+      // Reporting it here would therefore be an alert nobody can act on, and
+      // it is what buried the genuinely unexpected statuses in the same issue.
+      Logging.debug(&quot;Document update conflict from DB&quot;, response);
+    } else {
+      Logging.warn(unexpectedResponseMessage(result.status), {
+        ...response,
+        requestedUrl: remoteUrl,
+      });
+    }
+  }
 
   /**
    * Retry idempotent reads that fail with a transient network error
@@ -3269,6 +3325,26 @@ export class RemotePouchDatabase extends PouchDatabase {
     const collected &#x3D; this.pendingLostPermissions;
     this.pendingLostPermissions &#x3D; [];
     return collected;
+  }
+
+  /**
+   * Open a separate connection to the same remote database, authenticated the same way,
+   * whose requests do not affect the state of this one: it does not track lost permissions.
+   *
+   * Close it with &#x60;close()&#x60; once done - never with &#x60;destroy()&#x60;,
+   * which would delete the database on the server.
+   */
+  openSeparateConnection(): PouchDB.Database {
+    const connection &#x3D; new RemotePouchDatabase(
+      this.dbName,
+      this.authService,
+      undefined,
+      this.ngZone,
+    );
+    connection.init(undefined, {
+      unauthenticatedSession: this.unauthenticatedSession,
+    });
+    return connection.getPouchDB();
   }
 
   override supportsFind(): boolean {

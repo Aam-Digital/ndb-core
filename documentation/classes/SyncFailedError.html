@@ -232,7 +232,7 @@ The sync has already logged the failure: callers only need to tell the user.</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="564" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:564</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="567" class="link-to-prism">src/app/core/database/pouchdb/synced-pouch-database.ts:567</a></div>
                             </td>
                         </tr>
 
@@ -408,11 +408,24 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
-   * Get the underlying remote PouchDB instance.
-   * Can be used as a replication source for background migration.
+   * Open a separate connection to this database&#x27;s remote database,
+   * as the replication source of the background migration (see &#x60;IndexeddbMigrationService&#x60;).
+   *
+   * Unlike the connection this database syncs through, it does not collect the documents
+   * the server reports as no longer permitted: a replication from scratch gets all documents
+   * the user may not read reported, and this database&#x27;s next sync would purge each of them
+   * before completing.
+   *
+   * The caller has to close it with &#x60;close()&#x60; once done (never &#x60;destroy()&#x60;,
+   * which would delete the database on the server).
+   *
+   * @returns undefined if the database is not initialized yet
    */
-  getRemotePouchDB(): PouchDB.Database {
-    return this.remoteDatabase?.getPouchDB();
+  openRemoteReplicationSource(): PouchDB.Database | undefined {
+    if (!this.remoteDatabase.isInitialized()) {
+      return undefined;
+    }
+    return this.remoteDatabase.openSeparateConnection();
   }
 
   constructor(
@@ -654,13 +667,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
         &quot;sync failed: likely multi-tab IndexedDB corruption&quot;,
         { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
       );
-    } else if (
-      this.isSyncConnectivityError(err) ||
-      err instanceof SyncStalledError
-    ) {
+    } else if (isReplicationConnectivityError(err)) {
       Logging.debug(&#x60;sync failed (connectivity)&#x60;, { db: this.dbName }, err);
-    } else if (err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401) {
-      // expired session; the fetch layer already triggers re-login
+    } else if (isReplicationUnauthorizedError(err)) {
       Logging.debug(&#x60;sync failed (unauthorized)&#x60;, { db: this.dbName }, err);
     } else {
       Logging.warn(&#x60;sync failed&#x60;, { db: this.dbName }, err);
@@ -702,12 +711,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       message.includes(&quot;IDBObjectStore&quot;) ||
       message.includes(&quot;Failed to execute&quot;)
     );
-  }
-
-  private isSyncConnectivityError(err: any): boolean {
-    if (isConnectivityError(err)) return true;
-    const message &#x3D; err?.message || err?.reason || String(err);
-    return message.includes(&quot;getCheckpoint&quot;);
   }
 
   /**
@@ -902,6 +905,24 @@ class SyncStalledError extends NamedError {
   constructor() {
     super(&quot;SyncStalledError&quot;, &quot;Sync cancelled after making no progress&quot;);
   }
+}
+
+/**
+ * Whether a replication with the server failed only because of the connection
+ * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
+ */
+export function isReplicationConnectivityError(err: any): boolean {
+  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
+  const message &#x3D; err?.message || err?.reason || String(err);
+  return message.includes(&quot;getCheckpoint&quot;);
+}
+
+/**
+ * Whether a replication with the server failed because the session expired:
+ * the fetch layer already triggers a re-login.
+ */
+export function isReplicationUnauthorizedError(err: any): boolean {
+  return err?.status &#x3D;&#x3D;&#x3D; 401 || err?.statusCode &#x3D;&#x3D;&#x3D; 401;
 }
 </code></pre>
     </div>

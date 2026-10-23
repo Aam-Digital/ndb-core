@@ -127,7 +127,7 @@
 
 
 
-<h1>How to use queries and indices to get data</h1>
+<h1>Database: queries, indices and local storage</h1>
 <p>The <code>EntityMapperService</code> gives you an easy way to access
 all entities of an Entity type or an individual entity by its ID (see <a href="../entity/README.md#loading-saving-and-deleting-data">Loading, saving and deleting data</a> for these basics).
 However, for more advance features this will not be enough and you may need more powerful ways to load certain data.
@@ -176,9 +176,23 @@ resultEntities = result.rows.map(loadedRow =&gt; {
     const entity = new Note(&#39;&#39;);
     this.entitySchemaService.loadDataIntoEntity(entity, loadedRow.doc);
     return entity;
-});</code></pre></div><h2>Key files</h2>
+});</code></pre></div><h2>Local database: PouchDB adapter and migration</h2>
+<p>In synced mode, each user&#39;s data is stored in a local PouchDB.
+By default it uses PouchDB&#39;s <code>indexeddb</code> adapter, with database names based on the user&#39;s Keycloak UUID (<code>&lt;uuid&gt;-app</code>).
+Older installations used the legacy <code>idb</code> adapter with username-based names.
+A deployment can keep the legacy adapter with <code>&quot;use_indexeddb_adapter&quot;: false</code> in its <code>assets/config.json</code>.</p>
+<p>Existing users are migrated automatically (<code>IndexeddbMigrationService</code>):
+the data is downloaded from the server into the new database in the background, then the user is asked to reload.
+The app only switches after a final sync of the old database has succeeded, so no unsynced changes are left behind;
+otherwise it keeps the old database and retries on the next start.
+The migration is tracked as usage analytics events (category <code>indexeddb_adapter_migration</code>).
+The legacy databases are not deleted yet.</p>
+<h2>Key files</h2>
 <ul>
 <li><code>database.ts</code> — the abstract <code>Database</code> service, including <code>query()</code> and <code>saveDatabaseIndex()</code></li>
+<li><code>database-resolver.service.ts</code> — opens the databases of the current session</li>
+<li><code>indexeddb-migration.service.ts</code> — chooses the local database&#39;s adapter and names, and migrates from the legacy <code>idb</code> adapter</li>
+<li><code>db-name-helpers.ts</code> — the new and the legacy names of the local databases</li>
 <li><code>pouchdb/pouch-database.ts</code> — <code>PouchDatabase</code>, the PouchDB-backed implementation</li>
 <li><code>query-data-source.ts</code> — data source that runs a query and exposes its results</li>
 <li><code>../entity/schema/entity-schema.service.ts</code> — <code>loadDataIntoEntity()</code> used to turn raw query rows into entity instances</li>
@@ -210,7 +224,7 @@ resultEntities = result.rows.map(loadedRow =&gt; {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 2;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
-            var COMPODOC_CURRENT_PAGE_URL = 'use-queries-and-indices.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'database:-queries-and-local-storage.html';
             var MAX_SEARCH_RESULTS = 15;
        </script>
 

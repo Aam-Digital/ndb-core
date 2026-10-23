@@ -761,6 +761,12 @@
                             <a href="#isRemoteOnlyDatabase" title="src/app/core/database/remote-only-databases.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isRemoteOnlyDatabase</b>&nbsp;&nbsp;&nbsp;(src/.../remote-only-databases.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#isReplicationConnectivityError" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isReplicationConnectivityError</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#isReplicationUnauthorizedError" title="src/app/core/database/pouchdb/synced-pouch-database.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isReplicationUnauthorizedError</b>&nbsp;&nbsp;&nbsp;(src/.../synced-pouch-database.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#isReservedRuleConfigKey" title="src/app/core/permissions/permission-types.ts" class="reference-link "><span class="reference-badge reference-badge--function" aria-hidden="true">F</span><span class="reference-link-label"><b>isReservedRuleConfigKey</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</span></a>
                         </li>
                         <li>
@@ -21488,6 +21494,200 @@ dependency on the entity layer&#39;s DI graph.</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/database/pouchdb/synced-pouch-database.ts</h3>
+    <section data-compodoc="block-methods">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isReplicationConnectivityError"></a>
+                    <span class="name">
+                        <span ><b>isReplicationConnectivityError</b></span>
+                        <a href="#isReplicationConnectivityError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isReplicationConnectivityError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether a replication with the server failed only because of the connection
+(offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isReplicationUnauthorizedError"></a>
+                    <span class="name">
+                        <span ><b>isReplicationUnauthorizedError</b></span>
+                        <a href="#isReplicationUnauthorizedError"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>isReplicationUnauthorizedError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether a replication with the server failed because the session expired:
+the fetch layer already triggers a re-login.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>err</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="lastSyncedBatchContext"></a>
+                    <span class="name">
+                        <span ><b>lastSyncedBatchContext</b></span>
+                        <a href="#lastSyncedBatchContext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>lastSyncedBatchContext(docIds)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>What of the last synced batch can be reported when a sync fails right after
+it: how much was in flight and which record types, but never the document
+ids themselves - those identify records and have no place in remote
+monitoring (see #4174), while as part of a message they would also open a
+separate issue per batch.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>docIds</td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/session/auth/keycloak/keycloak-auth.service.ts</h3>
     <section data-compodoc="block-methods">
     <h3></h3>    <table class="table table-sm table-bordered">
@@ -22454,72 +22654,6 @@ a request failed as a whole after an earlier one had stored documents.</p>
                             </div>
                         <div class="io-description">
                             <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-    <h3>src/app/core/database/pouchdb/synced-pouch-database.ts</h3>
-    <section data-compodoc="block-methods">
-    <h3></h3>    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="lastSyncedBatchContext"></a>
-                    <span class="name">
-                        <span ><b>lastSyncedBatchContext</b></span>
-                        <a href="#lastSyncedBatchContext"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>lastSyncedBatchContext(docIds)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>What of the last synced batch can be reported when a sync fails right after
-it: how much was in flight and which record types, but never the document
-ids themselves - those identify records and have no place in remote
-monitoring (see #4174), while as part of a message they would also open a
-separate issue per batch.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>docIds</td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Record&lt;string, unknown&gt;</code>
 
                         </div>
                             <div class="io-description">

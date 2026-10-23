@@ -194,7 +194,7 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                                 <a href="additional-documentation/how-to-guides/log-errors.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Log Errors</a>
                                             </li>
                                             <li class="link for-chapter2">
-                                                <a href="additional-documentation/how-to-guides/use-queries-and-indices.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Use Queries and Indices</a>
+                                                <a href="additional-documentation/how-to-guides/database:-queries-and-local-storage.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Database: Queries and Local Storage</a>
                                             </li>
                                             <li class="link for-chapter2">
                                                 <a href="additional-documentation/how-to-guides/generate-demo-data.html" data-type="entity-link" data-context="sub-entity" data-context-id="additional">Generate Demo Data</a>

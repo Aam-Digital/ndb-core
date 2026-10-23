@@ -406,8 +406,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="299"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:299</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="309"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:309</a></div>
                         </td>
                     </tr>
 
@@ -445,8 +445,8 @@ as data may be stored across multiple different instances.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="153"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:153</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="163"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:163</a></div>
                         </td>
                     </tr>
 
@@ -518,8 +518,8 @@ i.e. configuring the access for that account after login
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="275"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:275</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:285</a></div>
                         </td>
                     </tr>
 
@@ -589,8 +589,8 @@ to avoid flooding to console with errors.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="129"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:129</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -601,6 +601,9 @@ to avoid flooding to console with errors.</p>
 On this adapter, <code>PouchDatabase.purge()</code> is supported so targeted document
 removal is available. When false (legacy <code>idb</code> adapter), callers must fall
 back to <code>destroyDatabases()</code> for full data hygiene.</p>
+<p>Checks the adapter the local app database actually runs on, not only the
+resolved config: in demo mode (<code>session_type: mock</code>) the database is in-memory
+whatever the config says, and the in-memory adapter does not support <code>purge()</code> either.</p>
 </div>
 
                         <div class="io-description">
@@ -672,8 +675,8 @@ back to <code>destroyDatabases()</code> for full data hygiene.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="140"
-                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:140</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/core/database/database-resolver.service.ts:150</a></div>
                         </td>
                     </tr>
 
@@ -867,9 +870,19 @@ export class DatabaseResolverService {
    * On this adapter, &#x60;PouchDatabase.purge()&#x60; is supported so targeted document
    * removal is available. When false (legacy &#x60;idb&#x60; adapter), callers must fall
    * back to &#x60;destroyDatabases()&#x60; for full data hygiene.
+   *
+   * Checks the adapter the local app database actually runs on, not only the
+   * resolved config: in demo mode (&#x60;session_type: mock&#x60;) the database is in-memory
+   * whatever the config says, and the in-memory adapter does not support &#x60;purge()&#x60; either.
    */
   isIndexedDbAdapterSupported(): boolean {
-    return this.dbConfig?.adapter &#x3D;&#x3D;&#x3D; &quot;indexeddb&quot;;
+    const db &#x3D; this.databases.get(Entity.DATABASE);
+    if (!(db instanceof PouchDatabase)) {
+      return false;
+    }
+    // PouchDB sets the adapter it runs on as a property, missing from its typings
+    const pouchDB &#x3D; db.getPouchDB() as unknown as { adapter?: string };
+    return pouchDB?.adapter &#x3D;&#x3D;&#x3D; &quot;indexeddb&quot;;
   }
 
   /**
