@@ -224,8 +224,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="22"
-                                    class="link-to-prism">src/app/features/reporting/data-aggregation.service.ts:22</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/app/features/reporting/data-aggregation.service.ts:24</a></div>
                         </td>
                     </tr>
 
@@ -306,11 +306,13 @@
 import { QueryService } from &quot;../../core/export/query.service&quot;;
 import { GroupByDescription, ReportRow } from &quot;./report-row&quot;;
 import { groupBy } from &quot;../../utils/utils&quot;;
+import { resolveLocaleText } from &quot;../../core/language/active-locale&quot;;
+import { TranslatableText } from &quot;../../core/config/multi-lingual-config&quot;;
 
 export interface Aggregation {
   query: string;
   groupBy?: string[];
-  label?: string;
+  label?: TranslatableText;
   aggregations?: Aggregation[];
 }
 
@@ -364,7 +366,7 @@ export class DataAggregationService {
       if (aggregation.label) {
         const newRow &#x3D; {
           header: {
-            label: aggregation.label,
+            label: resolveLocaleText(aggregation.label),
             groupedBy: additionalValues,
             result: queryResult?.length,
           },
@@ -400,7 +402,7 @@ export class DataAggregationService {
   private calculateGroupBy(
     properties: string[],
     aggregations: any[],
-    label: string,
+    label: TranslatableText,
     data: any[],
     additionalValues: GroupByDescription[],
   ): ReportRow[] {
@@ -416,7 +418,7 @@ export class DataAggregationService {
         });
         const newRow: ReportRow &#x3D; {
           header: {
-            label: label,
+            label: resolveLocaleText(label),
             groupedBy: groupingValues,
             result: entries.length,
           },

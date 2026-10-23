@@ -247,8 +247,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="98"
-                                    class="link-to-prism">src/app/core/ui/search/search.service.ts:98</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/app/core/ui/search/search.service.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -387,11 +387,25 @@ export class SearchService {
   private getSearchIndexDesignDoc() {
     let searchIndex &#x3D; &#x60;(doc) &#x3D;&gt; {\n&#x60;;
     searchIndex +&#x3D; &#x60;const splitTokens &#x3D; (value) &#x3D;&gt; value.toLowerCase().split(/[\\s/.:,]+/).filter((val) &#x3D;&gt; !!val)\n&#x60;;
+    // A plain object (e.g. a translation map) is indexed with the texts of all its languages.
+    // Primitives and arrays (which have a length) keep being indexed through toString().
+    // This function also runs in CouchDB&#x27;s JavaScript engine: no Object.values or other newer APIs.
+    searchIndex +&#x3D; &#x60;const emitTokens &#x3D; (value) &#x3D;&gt; {\n&#x60;;
+    searchIndex +&#x3D; &#x60;if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot; &amp;&amp; typeof value.length &#x3D;&#x3D;&#x3D; &quot;undefined&quot;) {\n&#x60;;
+    searchIndex +&#x3D; &#x60;for (const key in value) {\n&#x60;;
+    searchIndex +&#x3D; &#x60;if (typeof value[key] &#x3D;&#x3D;&#x3D; &quot;string&quot;) {\n&#x60;;
+    searchIndex +&#x3D; &#x60;splitTokens(value[key]).forEach((val) &#x3D;&gt; emit(val))\n&#x60;;
+    searchIndex +&#x3D; &#x60;}\n&#x60;;
+    searchIndex +&#x3D; &#x60;}\n&#x60;;
+    searchIndex +&#x3D; &#x60;} else {\n&#x60;;
+    searchIndex +&#x3D; &#x60;splitTokens(value.toString()).forEach((val) &#x3D;&gt; emit(val))\n&#x60;;
+    searchIndex +&#x3D; &#x60;}\n&#x60;;
+    searchIndex +&#x3D; &#x60;}\n&#x60;;
     this.searchableEntities.forEach(([type, attributes]) &#x3D;&gt; {
       searchIndex +&#x3D; &#x60;if (doc._id.startsWith(&quot;${type}:&quot;)) {\n&#x60;;
       attributes.forEach((attr) &#x3D;&gt; {
         searchIndex +&#x3D; &#x60;if (doc[&quot;${attr}&quot;] !&#x3D;&#x3D; undefined &amp;&amp; doc[&quot;${attr}&quot;] !&#x3D;&#x3D; null) {\n&#x60;;
-        searchIndex +&#x3D; &#x60;splitTokens(doc[&quot;${attr}&quot;].toString()).forEach((val) &#x3D;&gt; emit(val))\n&#x60;;
+        searchIndex +&#x3D; &#x60;emitTokens(doc[&quot;${attr}&quot;])\n&#x60;;
         searchIndex +&#x3D; &#x60;}\n&#x60;;
       });
       searchIndex +&#x3D; &#x60;return\n&#x60;;
@@ -442,7 +456,8 @@ export class SearchService {
 
   /**
    * Converts a search value into lowercase tokens used for indexing and matching.
-   * Supports primitive values and arrays; splits tokens by whitespace, &quot;/&quot;, &quot;:&quot;, &quot;.&quot;, and &quot;,&quot;.
+   * Supports primitive values, arrays and the string values of plain objects (e.g. translation maps);
+   * splits tokens by whitespace, &quot;/&quot;, &quot;:&quot;, &quot;.&quot;, and &quot;,&quot;.
    */
   private tokenizeSearchTerm(value: unknown): string[] {
     if (value &#x3D;&#x3D;&#x3D; null || value &#x3D;&#x3D;&#x3D; undefined) {
@@ -450,6 +465,11 @@ export class SearchService {
     }
     if (Array.isArray(value)) {
       return value.flatMap((entry) &#x3D;&gt; this.tokenizeSearchTerm(entry));
+    }
+    if (typeof value &#x3D;&#x3D;&#x3D; &quot;object&quot;) {
+      return Object.values(value).flatMap((entry) &#x3D;&gt;
+        typeof entry &#x3D;&#x3D;&#x3D; &quot;string&quot; ? this.tokenizeSearchTerm(entry) : [],
+      );
     }
     if (
       typeof value !&#x3D;&#x3D; &quot;string&quot; &amp;&amp;

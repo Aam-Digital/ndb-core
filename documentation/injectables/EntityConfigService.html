@@ -235,6 +235,11 @@ and their schemas to existing entities</p>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#getRawEntityConfig" >getRawEntityConfig</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#setupEntities" >setupEntities</a>
                             </li>
                             <li>
@@ -264,7 +269,7 @@ and their schemas to existing entities</p>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/entity/entity-config.service.ts:50</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/entity/entity-config.service.ts:51</a></div>
                             </td>
                         </tr>
 
@@ -299,8 +304,8 @@ and their schemas to existing entities</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="144"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:144</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="145"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:145</a></div>
                         </td>
                     </tr>
 
@@ -398,8 +403,8 @@ If no arguments are provided, they will be loaded from the config</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="208"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:208</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:223</a></div>
                         </td>
                     </tr>
 
@@ -467,8 +472,8 @@ If no arguments are provided, they will be loaded from the config</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="45"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:45</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -536,8 +541,8 @@ If no arguments are provided, they will be loaded from the config</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="202"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:202</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="203"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:203</a></div>
                         </td>
                     </tr>
 
@@ -611,8 +616,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="215"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:215</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="230"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:230</a></div>
                         </td>
                     </tr>
 
@@ -680,8 +685,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="49"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -731,6 +736,80 @@ fields for a certain entity</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getRawEntityConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getRawEntityConfig</b></span>
+                        <a href="#getRawEntityConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getRawEntityConfig(entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="215"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:215</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Like <a href="getEntityConfig">getEntityConfig</a>, but with raw values: any multi-lingual texts
+are returned as their full per-language map rather than resolved to the
+active language. Required when editing config values that are saved back
+to the config document.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/EntityConfig.html" target="_self" >RawConfig&lt;EntityConfig&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="setupEntities"></a>
                     <span class="name">
                         <span ><b>setupEntities</b></span>
@@ -747,8 +826,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="89"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:89</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -814,8 +893,8 @@ fields for a certain entity</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="76"
-                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:76</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/core/entity/entity-config.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -874,7 +953,7 @@ trigger an error message</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/entity/entity-config.service.ts:39</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/entity/entity-config.service.ts:40</a></div>
                         </td>
                     </tr>
 
@@ -909,6 +988,7 @@ import { EntityListConfig } from &quot;../entity-list/EntityListConfig&quot;;
 import { EntitySchemaService } from &quot;./schema/entity-schema.service&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
 import { EntityConfigReadyService } from &quot;./entity-config-ready.service&quot;;
+import { RawConfig } from &quot;../config/multi-lingual-config&quot;;
 
 /**
  * A service that allows to work with configuration-objects
@@ -1092,6 +1172,20 @@ export class EntityConfigService {
     const configName &#x3D;
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig&lt;EntityConfig&gt;(configName);
+  }
+
+  /**
+   * Like {@link getEntityConfig}, but with raw values: any multi-lingual texts
+   * are returned as their full per-language map rather than resolved to the
+   * active language. Required when editing config values that are saved back
+   * to the config document.
+   */
+  public getRawEntityConfig(
+    entityType: EntityConstructor,
+  ): RawConfig&lt;EntityConfig&gt; {
+    const configName &#x3D;
+      EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
+    return this.configService.getRawConfig&lt;EntityConfig&gt;(configName);
   }
 
   getDetailsViewConfig(

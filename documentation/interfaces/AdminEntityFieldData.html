@@ -235,7 +235,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:78</a></div>
                                 </td>
                             </tr>
 
@@ -280,7 +280,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:77</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:85</a></div>
                                 </td>
                             </tr>
 
@@ -327,7 +327,7 @@ The entityType is not changed by this component.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="83" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:83</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="91" class="link-to-prism">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.ts:91</a></div>
                                 </td>
                             </tr>
 
@@ -347,6 +347,7 @@ Use to prevent changes to config that are required to be consistent across all u
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
   Component,
+  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -390,6 +391,13 @@ import { ConfigurableEnumService } from &quot;../../../basic-datatypes/configura
 import { EntityRegistry } from &quot;../../../entity/database-entity.decorator&quot;;
 import { ConfigureEnumPopupComponent } from &quot;../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component&quot;;
 import { ConfigurableEnum } from &quot;../../../basic-datatypes/configurable-enum/configurable-enum&quot;;
+import { EntityConfigService } from &quot;../../../entity/entity-config.service&quot;;
+import { TranslatableTextInputComponent } from &quot;../../../config/translatable-text-input/translatable-text-input.component&quot;;
+import { TranslatableText } from &quot;../../../config/multi-lingual-config&quot;;
+import {
+  mergeLocaleTranslations,
+  resolveLocaleText,
+} from &quot;../../../language/active-locale&quot;;
 import { generateIdFromLabel } from &quot;../../../../utils/generate-id-from-label/generate-id-from-label&quot;;
 import { merge } from &quot;rxjs&quot;;
 import { filter } from &quot;rxjs/operators&quot;;
@@ -460,6 +468,7 @@ export interface AdminEntityFieldData {
     AdminDefaultValueComponent,
     EntityTypeSelectComponent,
     AdminSearchableCheckboxComponent,
+    TranslatableTextInputComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
@@ -472,6 +481,13 @@ export class AdminEntityFieldComponent implements OnInit {
   private dialog &#x3D; inject(MatDialog);
   private readonly confirmationDialog &#x3D; inject(ConfirmationDialogService);
   private readonly destroyRef &#x3D; inject(DestroyRef);
+  private readonly entityConfigService &#x3D; inject(EntityConfigService);
+  private readonly labelValue &#x3D; signal&lt;TranslatableText | undefined&gt;(undefined);
+
+  /** the label text of the active language, for display outside the form field */
+  readonly resolvedLabel &#x3D; computed(
+    () &#x3D;&gt; resolveLocaleText(this.labelValue()) ?? &quot;&quot;,
+  );
 
   private readonly validatorConfig &#x3D; viewChild(
     ConfigureEntityFieldValidatorComponent,
@@ -555,13 +571,15 @@ export class AdminEntityFieldComponent implements OnInit {
     );
 
     const labelFormControl &#x3D; this.fb.control(
-      this.data.entitySchemaField.label,
+      // the raw value (plain string or per-language map) - the input component
+      // displays only the active language of it
+      this.rawSchemaValue(&quot;label&quot;),
       {
         validators: [Validators.required],
         asyncValidators: [
           uniquePropertyValidator({
             getExistingValues: async () &#x3D;&gt; {
-              const labels: string[] &#x3D; [];
+              const labels: TranslatableText[] &#x3D; [];
               for (const [
                 key,
                 field,
@@ -583,14 +601,14 @@ export class AdminEntityFieldComponent implements OnInit {
     this.schemaFieldsForm &#x3D; this.fb.group({
       id: this.fieldIdForm,
       label: labelFormControl,
-      labelShort: [this.data.entitySchemaField.labelShort],
+      labelShort: [this.rawSchemaValue(&quot;labelShort&quot;)],
       displayFullLengthLabel: [
         this.data.entitySchemaField.displayFullLengthLabel ?? false,
       ],
       displayFullLengthOptionLabel: [
         this.data.entitySchemaField.displayFullLengthOptionLabel ?? false,
       ],
-      description: [this.data.entitySchemaField.description],
+      description: [this.rawSchemaValue(&quot;description&quot;)],
 
       dataType: [this.data.entitySchemaField.dataType, Validators.required],
       isArray: [this.data.entitySchemaField.isArray],
@@ -610,6 +628,12 @@ export class AdminEntityFieldComponent implements OnInit {
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
     });
+
+    const labelControl &#x3D; this.schemaFieldsForm.get(&quot;label&quot;);
+    this.labelValue.set(labelControl.value);
+    labelControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) &#x3D;&gt; this.labelValue.set(value));
 
     this.schemaFieldsForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -692,9 +716,10 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
-    const label &#x3D;
+    const label &#x3D; resolveLocaleText(
       this.schemaFieldsForm.get(&quot;labelShort&quot;).value ??
-      this.schemaFieldsForm.get(&quot;label&quot;).value;
+        this.schemaFieldsForm.get(&quot;label&quot;).value,
+    );
     const generatedId &#x3D; generateIdFromLabel(label);
     this.fieldIdForm.setValue(generatedId, { emitEvent: false });
   }
@@ -794,7 +819,8 @@ export class AdminEntityFieldComponent implements OnInit {
     } else if (this.schemaFieldsForm.get(&quot;label&quot;).value) {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
       const newOption &#x3D; this.createNewAdditionalOption(
-        this.schemaFieldsForm.get(&quot;label&quot;).value,
+        // resolve first: &#x60;generateIdFromLabel&#x60; returns undefined for a per-language map
+        resolveLocaleText(this.schemaFieldsForm.get(&quot;label&quot;).value),
       );
       this.typeAdditionalOptions.push(newOption);
       this.additionalForm.setValue(newOption.value);
@@ -963,6 +989,40 @@ export class AdminEntityFieldComponent implements OnInit {
 
   resetToBaseFieldSettings() {
     this.dialogRef.close(this.fieldIdForm.getRawValue());
+  }
+  /**
+   * The raw, unresolved value of a schema field property, taken from the config
+   * document so that all configured languages are available for editing.
+   * The runtime schema only holds the text of the currently active language.
+   */
+  private rawSchemaValue(property: string): TranslatableText | undefined {
+    const value &#x3D; this.data.entitySchemaField[property];
+    if (
+      this.data.overwriteLocally &amp;&amp;
+      value !&#x3D;&#x3D;
+        this.entityType.schema.get(this.data.entitySchemaField.id)?.[property]
+    ) {
+      // a text of this view&#x27;s own field config, which is stored raw already.
+      // Otherwise it is the global schema&#x27;s text, resolved to the active language:
+      // take it from the config document below, or saving this view would keep
+      // only the admin&#x27;s language of it
+      return value;
+    }
+
+    const entityConfig &#x3D; this.entityConfigService.getRawEntityConfig(
+      this.entityType,
+    );
+    const rawValue &#x3D;
+      entityConfig?.attributes?.[this.data.entitySchemaField.id]?.[property];
+
+    // The config document only has what was saved, the runtime schema also has the
+    // edits applied on this page since. Combine them the way saving does: that keeps
+    // the translations of other languages, but not an outdated text. A field that is
+    // not in the config yet (newly added) has no raw value, so the schema&#x27;s wins.
+    return mergeLocaleTranslations(
+      { [property]: rawValue },
+      { [property]: this.data.entitySchemaField[property] },
+    )[property];
   }
 }
 </code></pre>

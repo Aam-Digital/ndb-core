@@ -133,10 +133,12 @@ extracted automatically, translated in an external tool and loaded into the app 
 <p>This document covers the full picture:</p>
 <ol>
 <li><a href="#how-translations-work">How translations work</a> — the pipeline from source string to translated app.</li>
+<li><a href="#multi-lingual-configuration">Multi-lingual configuration</a> — texts admins configure, stored per language.</li>
 <li><a href="#marking-text-for-translation">Marking text for translation</a> — how to write localizable components (developer guide).</li>
 <li><a href="#formatting-dates-numbers-and-other-data">Formatting dates, numbers and other data</a>.</li>
 <li><a href="#pluralization-and-selection-icu">Pluralization and selection (ICU)</a>.</li>
 <li><a href="#dos-and-donts">Do&#39;s and don&#39;ts</a>.</li>
+<li><a href="#right-to-left-rtl-languages">Right-to-left (RTL) languages</a>.</li>
 <li><a href="#adding-a-new-language">Adding a new language</a>.</li>
 </ol>
 <hr>
@@ -176,6 +178,144 @@ See the do&#39;s and don&#39;ts below for how to write it instead.</p>
 specific version. Verify that the source terms in POEditor still match the release version
 before triggering (terms may have changed on <code>master</code> since the release).</p>
 <hr>
+<h2>Multi-lingual configuration</h2>
+<p>Everything above is about text in the <em>source code</em>. Text that admins configure —
+field labels, menu items, tab titles, report titles — lives in the config document
+and in internal entities, so it never passes through POEditor. Those texts can be
+stored in several languages instead.</p>
+<h3>Enabling it for a system</h3>
+<p>Most systems are run in a single language, so this is off unless
+<code>multiLingualConfigEnabled</code> is set for the deployment (in <code>environment.ts</code>, or per
+system through <code>config.json</code>). It is on in dev builds.</p>
+<p>The flag also decides whether users can switch the app&#39;s language at all (see
+<a href="#which-language-a-user-sees">Which language a user sees</a>).</p>
+<p>For configured texts it only hides the editing UI — the buttons that open the translations dialog.
+The buttons are also hidden while only one language is enabled (the default language, see
+<code>SiteSettingsService.enabledLocales</code>), because there is nothing to translate into. Both
+conditions are combined in <code>SiteSettingsService.translationsEnabled</code>.
+Resolving is always on, so a system that has the flag turned off still displays texts
+that are already stored per language, and turning it off cannot strand data.</p>
+<p>Components that render their own translations button (rather than letting
+<code>TranslatableTextInputComponent</code> draw it) read <code>translationsEnabled</code> off that
+component, so the condition is looked up in one place.</p>
+<h3>The stored format</h3>
+<p>A configurable text is either a plain string or a per-language map keyed by locale id:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{ &quot;label&quot;: &quot;First name&quot; }</code></pre></div><b>Example :</b><div><pre class="line-numbers"><code class="language-json">{ &quot;label&quot;: { &quot;en-US&quot;: &quot;First name&quot;, &quot;de&quot;: &quot;Vorname&quot; } }</code></pre></div><p>Both are valid anywhere a text is configured, so single-language configs keep
+working untouched. The type is <code>TranslatableText</code> in
+<a href="../config/multi-lingual-config.ts"><code>multi-lingual-config.ts</code></a>.</p>
+<p>A value only counts as a translation map if <strong>every</strong> key is a known locale id
+(or the base language of one, e.g. <code>en</code> for <code>en-US</code>) <strong>and</strong> every value is a
+string. That deliberately conservative check keeps ordinary config objects from
+being mistaken for translations.</p>
+<p>Resolution falls back in this order: the active locale → its base language → the
+default language (<code>en-US</code>) → the default&#39;s base language → the first non-empty
+entry. A missing translation therefore shows <em>some</em> text rather than nothing.</p>
+<blockquote>
+<p><strong>Register a new locale before any config ships text in it.</strong> Until a locale id
+is listed in <code>AVAILABLE_LOCALES</code> (<a href="./available-locales.ts"><code>available-locales.ts</code></a>),
+a map containing that key is not recognised as a translation map and renders as
+<code>[object Object]</code>.</p>
+</blockquote>
+<h3>Reading config: resolved vs raw</h3>
+<p><code>ConfigService</code> exposes two views of the same document:</p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr><th>Use</th><th>Method</th><th>Returns</th></tr>
+</thead>
+<tbody>
+<tr><td>Displaying something</td><td><code>getConfig()</code> / <code>getAllConfigs()</code></td><td>texts resolved to the active language</td></tr>
+<tr><td>Reading it in order to save it back</td><td><code>getRawConfig()</code> / <code>getAllRawConfigs()</code></td><td>the stored value, translation maps intact</td></tr>
+</tbody>
+</table>
+<p><strong>Every read-modify-save flow must use the raw accessors.</strong> Saving a resolved
+value would replace the map with the single language the editing admin happens to
+be using, silently dropping every other translation.</p>
+<p>The raw accessors return <code>RawConfig&lt;T&gt;</code>, which widens the known display properties
+(<code>label</code>, <code>labelShort</code>, <code>labelPlural</code>, <code>description</code>, <code>title</code>, <code>header</code>) to
+<code>TranslatableText</code>. Code that treats such a text as a plain <code>string</code> then fails to
+compile — that is the point of the type.</p>
+<p>When saving, merge the edited object back onto the raw one with
+<code>mergeLocaleTranslations()</code>. It keeps the other languages and only overwrites the
+active language&#39;s entry, and only where the text actually changed.</p>
+<h3>Resolving a text in code</h3>
+<p>These all come from <a href="./active-locale.ts"><code>active-locale.ts</code></a> and use the active
+locale, so no component needs to inject <code>LOCALE_ID</code> or know the list of locales:</p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr><th>Helper</th><th>Use</th></tr>
+</thead>
+<tbody>
+<tr><td><code>resolveLocaleText(value)</code></td><td>one text; anything that is not a map is returned unchanged</td></tr>
+<tr><td><code>resolveLocaleConfig(value)</code></td><td>a whole config tree, deep-resolved into a new object</td></tr>
+<tr><td><code>mergeLocaleTranslations(raw, edited)</code></td><td>merge an edited object back onto its raw counterpart</td></tr>
+<tr><td><code>isLocaleTranslationMap(value)</code></td><td>whether a value is a per-language map</td></tr>
+<tr><td><code>getActiveLocale()</code></td><td>the active locale id, e.g. to store a text edited in the UI</td></tr>
+</tbody>
+</table>
+<p>In templates use the <code>localeText</code> pipe instead:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">{{ report.title | localeText }}</code></pre></div><p><code>Entity.toString()</code> already resolves <code>toStringAttributes</code>, so an entity whose
+title is a map prints correctly with no extra work.</p>
+<blockquote>
+<p><code>active-locale.ts</code> intentionally has no <code>@angular/*</code> imports and reads the locale
+from module state rather than DI, because <code>Entity</code> itself needs it and DI would
+create a circular import.</p>
+</blockquote>
+<h3>Multi-lingual fields on an entity</h3>
+<p>An internal entity&#39;s own texts (e.g. <code>ReportConfig.title</code>,
+<code>PublicFormConfig.description</code>) use the <code>translatable-text</code> datatype:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-ts">&#64;DatabaseField({
+  label: $localize`:ReportConfig:Title`,
+  dataType: TranslatableTextDatatype.dataType,
+})
+title: TranslatableText;</code></pre></div><p>That one line gives the field a translations editor, sorting and filtering by the
+displayed text, and resolved CSV exports. The datatype&#39;s transforms are the
+identity on purpose: the entity holds the raw value, because resolving on save
+would drop the other languages.</p>
+<p>Admins edit these through <code>TranslatableTextInputComponent</code>, which shows the active
+language inline and opens <code>ConfigureTranslationsPopupComponent</code> for the full
+per-language list.</p>
+<h3>Which language a user sees</h3>
+<p>The active locale is stored in <code>localStorage</code> and read at bootstrap.</p>
+<p><strong>Without <code>multiLingualConfigEnabled</code></strong> nobody can switch: everyone uses the <em>system
+language</em> (<code>SiteSettings.defaultLanguage</code>). A user&#39;s own language
+and a language picked on the device earlier are ignored (the saved <code>UserSettings</code>
+stay untouched, the locale stored on the device is overwritten with the system
+language). The default language is only enforced when one is actually set: on a fresh
+system, or while the site settings have not arrived (waiting up to
+<code>LanguageService.SITE_DEFAULT_WAIT_MS</code>), the current locale is left as it is instead
+of falling back to <code>en-US</code>. The language picked in the setup assistant is saved as
+the default language (<code>SiteSettingsService.setDefaultLanguage()</code>), with or without the flag. The profile shows the language selector disabled with an explanation,
+and public forms hide it. The &quot;Enabled languages&quot; site setting shows that the
+feature is disabled (<code>EditAvailableLocalesComponent</code>).</p>
+<p><strong>With the flag</strong> users can switch among <code>SiteSettingsService.enabledLocales</code>: the
+default language plus the &quot;Enabled languages&quot; (<code>availableLocales</code>); the stored
+selection comes first, the default language is appended if missing, so an empty
+selection enables only the default language. Only a system without any system
+language and selection (not set up yet, or settings not loaded) has all languages
+enabled. What puts the locale into <code>localStorage</code>:</p>
+<ul>
+<li><strong>At startup</strong> — whatever the language switcher last stored. If nothing is
+stored, <code>SiteSettings.defaultLanguage</code> (the system-wide default) is applied.</li>
+<li><strong>On every login</strong> — the user&#39;s own <code>UserSettings.defaultLanguage</code>. If they have
+none, the language already picked on this device is kept. Only a locale that was
+applied from <em>another</em> account&#39;s settings is reset to the site default (or to
+<code>en-US</code> if the site has none), so a shared browser does not pass one user&#39;s
+choice on to the next. For this, the id of that account is stored next to the
+locale (<code>localeOwner</code>).</li>
+<li><strong>When the user&#39;s settings change in the database</strong> — e.g. when they arrive with
+the first sync on a new device, or were changed on another device.</li>
+</ul>
+<p><code>UserSettings</code> is a separate entity type from <code>SiteSettings</code> on purpose: permissions
+are granted per entity type, so sharing one type would mean granting every user
+write access to the site branding.</p>
+<p>Users can only pick their own language where <code>Config:Permissions</code> grants them their
+own document, e.g. in <code>_default</code>:
+<code>{ &quot;subject&quot;: &quot;UserSettings&quot;, &quot;action&quot;: &quot;manage&quot;, &quot;conditions&quot;: { &quot;userId&quot;: &quot;${user.id}&quot; } }</code>.
+<code>UserSettings.userId</code> is persisted for this purpose, because rule variables cannot be
+matched against a part of the <code>_id</code>. Without such a rule the profile shows the
+selector disabled with an explanation, and a rejected save is not reported to Sentry.</p>
+<p>Switching the language reloads the page, because the <code>$localize</code> translations and
+the active locale are both fixed at bootstrap.</p>
 <h2>Marking text for translation</h2>
 <p>To make a component&#39;s text translatable, mark it in the code so <code>extract-i18n</code> can pick it up.</p>
 <h3>Short answer</h3>

@@ -249,7 +249,7 @@ Supports multiple entity types in one public form submission.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/features/public-form/public-form-config.ts:23</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/features/public-form/public-form-config.ts:24</a></div>
                                 </td>
                             </tr>
 
@@ -294,7 +294,7 @@ Supports multiple entity types in one public form submission.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/features/public-form/public-form-config.ts:18</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/features/public-form/public-form-config.ts:19</a></div>
                                 </td>
                             </tr>
 
@@ -346,7 +346,7 @@ and you can select only fields of your &quot;Note&quot; data structure for this 
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/features/public-form/public-form-config.ts:36</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="37" class="link-to-prism">src/app/features/public-form/public-form-config.ts:37</a></div>
                                 </td>
                             </tr>
 
@@ -398,7 +398,7 @@ by other forms in the same submission or passed as URL parameters.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/features/public-form/public-form-config.ts:42</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/public-form/public-form-config.ts:43</a></div>
                                 </td>
                             </tr>
 
@@ -449,7 +449,7 @@ Uses schema metadata to decide which form&#39;s entity ID to apply.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/features/public-form/public-form-config.ts:29</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/features/public-form/public-form-config.ts:30</a></div>
                                 </td>
                             </tr>
 
@@ -470,9 +470,10 @@ Key is the field ID, value is the default value configuration.</p>
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;../../core/entity/model/entity&quot;;
 import { DatabaseEntity } from &quot;../../core/entity/database-entity.decorator&quot;;
 import { DatabaseField } from &quot;../../core/entity/database-field.decorator&quot;;
-import { LongTextDatatype } from &quot;app/core/basic-datatypes/string/long-text.datatype&quot;;
 import { FieldGroup } from &quot;app/core/entity-details/form/field-group&quot;;
 import { DefaultValueConfig } from &quot;#src/app/core/default-values/default-value-config&quot;;
+import { TranslatableTextDatatype } from &quot;#src/app/core/config/translatable-text.datatype&quot;;
+import { TranslatableText } from &quot;#src/app/core/config/multi-lingual-config&quot;;
 
 /**
  * Configuration for a single entity form within a public form.
@@ -534,8 +535,9 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize&#x60;:PublicFormConfig:Title&#x60;,
+    dataType: TranslatableTextDatatype.dataType,
   })
-  title: string;
+  title: TranslatableText;
 
   @DatabaseField({
     label: $localize&#x60;:PublicFormConfig:Form Link ID&#x60;,
@@ -548,9 +550,12 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize&#x60;:PublicFormConfig:Description&#x60;,
-    dataType: LongTextDatatype.dataType,
+    dataType: TranslatableTextDatatype.dataType,
+    // long text: keep the truncating display
+    viewComponent: &quot;DisplayLongText&quot;,
+    additional: { multiline: true, rows: 5 },
   })
-  description: string;
+  description: TranslatableText;
 
   /** @deprecated Use &#x60;forms&#x60; array instead for multi-form support */
   @DatabaseField({

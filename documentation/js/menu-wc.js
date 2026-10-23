@@ -324,13 +324,13 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="modules/CoreModule.html" data-type="entity-link" >CoreModule</a>
                                 <li class="chapter inner">
                                     <div class="simple menu-toggler" data-bs-toggle="collapse" ${ isNormalMode ?
-                                        'data-bs-target="#injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' }>
+                                        'data-bs-target="#injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' : 'data-bs-target="#xs-injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' }>
                                         <span class="icon ion-md-arrow-round-down"></span>
                                         <span>Injectables</span>
                                         <span class="icon ion-ios-arrow-down"></span>
                                     </div>
-                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' :
-                                        'id="xs-injectables-links-module-CoreModule-b552e3ff08964638f3ee5161dba9433f92a27e3f4f9096af54ad2e8f0ead11ec31638a4e2d11e0a5aaa9613a599e30dbe1a50d456f3d6a1e8222febee5f07ee7"' }>
+                                    <ul class="links collapse" ${ isNormalMode ? 'id="injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' :
+                                        'id="xs-injectables-links-module-CoreModule-47b3c4a5fd7fa6666cd76f840707bd76870ca5e13b0291fc1b57fea98c8ab52e4a151552da5efcb2e455c85f448ece114115abd0ac94e5e0ee60b24edb6daa8f"' }>
                                         <li class="link">
                                             <a href="injectables/BooleanDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >BooleanDatatype</a>
                                         </li>
@@ -375,6 +375,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                         </li>
                                         <li class="link">
                                             <a href="injectables/StringDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >StringDatatype</a>
+                                        </li>
+                                        <li class="link">
+                                            <a href="injectables/TranslatableTextDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >TranslatableTextDatatype</a>
                                         </li>
                                         <li class="link">
                                             <a href="injectables/UpdateMetadataDatatype.html" data-type="entity-link" data-context="sub-entity" data-context-id="modules" >UpdateMetadataDatatype</a>
@@ -951,6 +954,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ConfigureEnumPopupComponent.html" data-type="entity-link" >ConfigureEnumPopupComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/ConfigureTranslationsPopupComponent.html" data-type="entity-link" >ConfigureTranslationsPopupComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/ConfirmationDialogComponent.html" data-type="entity-link" >ConfirmationDialogComponent</a>
                             </li>
                             <li class="link">
@@ -1077,6 +1083,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/DisplayTodoCompletionComponent.html" data-type="entity-link" >DisplayTodoCompletionComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/DisplayTranslatableTextComponent.html" data-type="entity-link" >DisplayTranslatableTextComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/DisplayUnitComponent.html" data-type="entity-link" >DisplayUnitComponent</a>
                             </li>
                             <li class="link">
@@ -1090,6 +1099,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="components/EditAttendanceComponent.html" data-type="entity-link" >EditAttendanceComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/EditAvailableLocalesComponent.html" data-type="entity-link" >EditAvailableLocalesComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/EditBooleanComponent.html" data-type="entity-link" >EditBooleanComponent</a>
@@ -1581,10 +1593,16 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/TodosRelatedToEntityComponent.html" data-type="entity-link" >TodosRelatedToEntityComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/TranslatableTextInputComponent.html" data-type="entity-link" >TranslatableTextInputComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/UiComponent.html" data-type="entity-link" >UiComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/UserDetailsComponent.html" data-type="entity-link" >UserDetailsComponent</a>
+                            </li>
+                            <li class="link">
+                                <a href="components/UserLanguageSettingsComponent.html" data-type="entity-link" >UserLanguageSettingsComponent</a>
                             </li>
                             <li class="link">
                                 <a href="components/UserListComponent.html" data-type="entity-link" >UserListComponent</a>
@@ -1956,6 +1974,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/UserAdminService.html" data-type="entity-link" >UserAdminService</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/UserSettings.html" data-type="entity-link" >UserSettings</a>
                             </li>
                             <li class="link">
                                 <a href="classes/ViewComponentContext.html" data-type="entity-link" >ViewComponentContext</a>
@@ -2333,6 +2354,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <li class="link">
                                     <a href="injectables/UserAccountActionGuardService.html" data-type="entity-link" >UserAccountActionGuardService</a>
                                 </li>
+                                <li class="link">
+                                    <a href="injectables/UserSettingsService.html" data-type="entity-link" >UserSettingsService</a>
+                                </li>
                             </ul>
                         </li>
                     <li class="chapter">
@@ -2554,6 +2578,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/ConfigurableEnumValue.html" data-type="entity-link" >ConfigurableEnumValue</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ConfigureTranslationsDialogData.html" data-type="entity-link" >ConfigureTranslationsDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ConfigureTranslationsResult.html" data-type="entity-link" >ConfigureTranslationsResult</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ConfirmationDialogButton.html" data-type="entity-link" >ConfirmationDialogButton</a>
@@ -3105,6 +3135,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/TodoCompletion.html" data-type="entity-link" >TodoCompletion</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/TranslationRow.html" data-type="entity-link" >TranslationRow</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/UniquePropertyValidatorConfig.html" data-type="entity-link" >UniquePropertyValidatorConfig</a>
                             </li>
                             <li class="link">
@@ -3115,6 +3148,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UsageAnalyticsConfig.html" data-type="entity-link" >UsageAnalyticsConfig</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UseCaseOption.html" data-type="entity-link" >UseCaseOption</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/UserAccount.html" data-type="entity-link" >UserAccount</a>
@@ -3179,6 +3215,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 </li>
                                 <li class="link">
                                     <a href="pipes/FlattenArrayPipe.html" data-type="entity-link" >FlattenArrayPipe</a>
+                                </li>
+                                <li class="link">
+                                    <a href="pipes/LocaleTextPipe.html" data-type="entity-link" >LocaleTextPipe</a>
                                 </li>
                                 <li class="link">
                                     <a href="pipes/NotificationTimePipe.html" data-type="entity-link" >NotificationTimePipe</a>

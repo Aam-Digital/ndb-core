@@ -173,7 +173,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="226" class="link-to-prism">src/app/core/export/data-transformation-service/data-transformation.service.ts:226</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="231" class="link-to-prism">src/app/core/export/data-transformation-service/data-transformation.service.ts:231</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -192,6 +192,8 @@ import {
 import { ExportColumnConfig } from &quot;./export-column-config&quot;;
 import { QueryService } from &quot;../query.service&quot;;
 import { groupBy } from &quot;../../../utils/utils&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
+import { TranslatableText } from &quot;../../config/multi-lingual-config&quot;;
 
 /**
  * Prepare data for export or analysis
@@ -224,7 +226,7 @@ export class DataTransformationService {
           )),
         );
       } else {
-        totalRow[c.label] &#x3D; baseData;
+        totalRow[resolveLocaleText(c.label)] &#x3D; baseData;
       }
 
       combinedResults.push(...result);
@@ -255,7 +257,7 @@ export class DataTransformationService {
     config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
-    groupByProperty?: { label: string; property: string },
+    groupByProperty?: { label: TranslatableText; property: string },
   ): Promise&lt;ExportRow[]&gt; {
     const fullQuery &#x3D; config.map((c) &#x3D;&gt; this.concatQueries(c)).join(&quot;&quot;);
     await this.queryService.cacheRequiredData(fullQuery, from, to);
@@ -269,7 +271,7 @@ export class DataTransformationService {
     config: ExportColumnConfig[],
     from: Date,
     to: Date,
-    groupByProperty?: { label: string; property: string },
+    groupByProperty?: { label: TranslatableText; property: string },
   ) {
     const result: ExportRow[] &#x3D; [];
     if (groupByProperty) {
@@ -342,8 +344,11 @@ export class DataTransformationService {
     from: Date,
     to: Date,
   ): ExportRow[] {
+    // a configured label may be a per-language map, but it is used as the column
+    // key here and in the downloaded file, so it has to be plain text
     const label &#x3D;
-      exportColumnConfig.label ?? exportColumnConfig.query.replace(&quot;.&quot;, &quot;&quot;);
+      resolveLocaleText(exportColumnConfig.label) ??
+      exportColumnConfig.query.replace(&quot;.&quot;, &quot;&quot;);
     const value &#x3D; this.getValueForQuery(exportColumnConfig, data, from, to);
 
     if (!exportColumnConfig.subQueries) {

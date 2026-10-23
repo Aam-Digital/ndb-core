@@ -348,8 +348,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="212"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:212</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="213"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:213</a></div>
                         </td>
                     </tr>
 
@@ -469,8 +469,8 @@ just forwards the request:</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="188"
-                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:188</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="189"
+                                    class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:189</a></div>
                         </td>
                     </tr>
 
@@ -569,7 +569,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:100</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:101</a></code>
 </div>
                         </td>
                     </tr>
@@ -654,7 +654,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:107</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:108</a></code>
 </div>
                         </td>
                     </tr>
@@ -739,7 +739,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:118</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:119</a></code>
 </div>
                         </td>
                     </tr>
@@ -812,7 +812,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:112</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:113</a></code>
 </div>
                         </td>
                     </tr>
@@ -897,7 +897,7 @@ just forwards the request:</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:79</a></code>
+                                <div class="io-line">        <code><a href="../injectables/FileService.html#source" target="_self" >FileService:80</a></code>
 </div>
                         </td>
                     </tr>
@@ -1193,7 +1193,7 @@ just forwards the request:</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:66</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/features/template-export/template-export-api/template-export-api.service.ts:67</a></div>
                         </td>
                     </tr>
 
@@ -1530,6 +1530,7 @@ import { NotAvailableOfflineError } from &quot;../../../core/session/not-availab
 import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
 import { switchMap } from &quot;rxjs/operators&quot;;
 import { TemplateExport } from &quot;../template-export.entity&quot;;
+import { resolveLocaleText } from &quot;../../../core/language/active-locale&quot;;
 import { Logging } from &quot;../../../core/logging/logging.service&quot;;
 import { environment } from &quot;../../../../environments/environment&quot;;
 import {
@@ -1714,7 +1715,7 @@ export class TemplateExportApiService extends FileService {
     return this.renderTemplate(
       this.API_URL + &quot;/render/&quot; + template.getId(),
       data,
-      template.title,
+      resolveLocaleText(template.title),
     );
   }
 
@@ -1739,7 +1740,8 @@ export class TemplateExportApiService extends FileService {
     return this.renderTemplate(
       this.API_URL + &quot;/render-batch/&quot; + template.getId() + &quot;?mode&#x3D;&quot; + mode,
       dataList,
-      template.title + (mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;),
+      resolveLocaleText(template.title) +
+        (mode &#x3D;&#x3D;&#x3D; &quot;combined&quot; ? &quot;.pdf&quot; : &quot;.zip&quot;),
     );
   }
 }

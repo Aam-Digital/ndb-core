@@ -227,8 +227,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="106"
-                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:106</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:107</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="43"
-                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:43</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/app/features/email-client/email-client.service.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -433,6 +433,7 @@ import { lastValueFrom } from &quot;rxjs&quot;;
 import { FormDialogService } from &quot;#src/app/core/form-dialog/form-dialog.service&quot;;
 import { Note } from &quot;#src/app/child-dev-project/notes/model/note&quot;;
 import { EmailTemplate } from &quot;./email-template.entity&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogConfig,
@@ -499,8 +500,8 @@ export class EmailClientService {
       isBulk
         ? asArray(recipients).join(sendSemicolonSeparated ? &quot;;&quot; : &quot;,&quot;)
         : recipients[0],
-      template.subject,
-      template.body,
+      resolveLocaleText(template.subject),
+      resolveLocaleText(template.body),
       sendAsBCC,
     );
 
@@ -572,8 +573,9 @@ export class EmailClientService {
   private prefilledNote(entities: Entity[], template: EmailTemplate): Note {
     const note &#x3D; new Note();
 
-    note.subject &#x3D; template.subject;
-    note.text &#x3D; template.body;
+    // the note records what was sent, so it stores plain text, not the language map
+    note.subject &#x3D; resolveLocaleText(template.subject);
+    note.text &#x3D; resolveLocaleText(template.body);
     note.category &#x3D; template.category;
 
     const entityType &#x3D; (Array.isArray(entities) ? entities[0] : entities)

@@ -247,7 +247,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:34</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:35</a></div>
                                 </td>
                             </tr>
 
@@ -297,7 +297,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:43</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:44</a></div>
                                 </td>
                             </tr>
 
@@ -341,7 +341,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:40</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:41</a></div>
                                 </td>
                             </tr>
 
@@ -380,7 +380,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:42</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:43</a></div>
                                 </td>
                             </tr>
 
@@ -424,7 +424,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:39</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:40</a></div>
                                 </td>
                             </tr>
 
@@ -475,7 +475,7 @@ When omitted, the scope selector is hidden and allEntities are exported directly
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:41</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/export/export-dialog/export-dialog.component.ts:42</a></div>
                                 </td>
                             </tr>
 
@@ -516,6 +516,7 @@ import {
   normalizeQueryKey,
 } from &quot;../data-transformation-service/export-column-config&quot;;
 import { ColumnGroupsConfig } from &quot;../../entity-list/EntityListConfig&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 export interface ExportDialogData {
   /** Resolves with all records (unfiltered, permissions-limited) */
@@ -572,19 +573,22 @@ export class ExportDialogComponent {
     ),
   );
 
-  /** Column groups passed from the list (admin-configured) */
-  columnGroups &#x3D; this.data.columnGroups;
+  /** Column groups from the list (admin-configured), names resolved for display and selection */
+  columnGroupOptions: { name: string; columns: string[] }[] &#x3D; (
+    this.data.columnGroups?.groups ?? []
+  ).map((group) &#x3D;&gt; ({
+    ...group,
+    name: resolveLocaleText(group.name) ?? &quot;&quot;,
+  }));
 
   /** Currently selected column group name (if any) */
   selectedGroupName &#x3D; signal&lt;string | undefined&gt;(
-    this.columnGroups &amp;&amp; this.columnGroups.groups.length &gt; 0
-      ? this.columnGroups.groups[0].name
-      : undefined,
+    this.columnGroupOptions[0]?.name,
   );
 
   applyColumnGroup(groupName?: string) {
-    if (!groupName || !this.columnGroups) return;
-    const grp &#x3D; this.columnGroups.groups.find((g) &#x3D;&gt; g.name &#x3D;&#x3D;&#x3D; groupName);
+    if (!groupName) return;
+    const grp &#x3D; this.columnGroupOptions.find((g) &#x3D;&gt; g.name &#x3D;&#x3D;&#x3D; groupName);
     if (!grp) return;
     // Map group columns to normalized keys and set selection
     this.selectedColumnKeys.set(grp.columns.map((c) &#x3D;&gt; normalizeQueryKey(c)));
@@ -598,7 +602,8 @@ export class ExportDialogComponent {
     return this.availableColumns.length;
   });
 
-  columnToString &#x3D; (col: ExportColumnConfig) &#x3D;&gt; col.label ?? col.query;
+  columnToString &#x3D; (col: ExportColumnConfig) &#x3D;&gt;
+    resolveLocaleText(col.label) ?? col.query;
   columnToValue &#x3D; (col: ExportColumnConfig) &#x3D;&gt; normalizeQueryKey(col.query);
 
   clearSelection() {

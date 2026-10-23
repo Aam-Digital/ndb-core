@@ -228,7 +228,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:28</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:30</a></div>
                                 </td>
                             </tr>
 
@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:29</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:31</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:27</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/admin/admin-widget-dialog/admin-widget-dialog.component.ts:29</a></div>
                                 </td>
                             </tr>
 
@@ -334,13 +334,15 @@ import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { DynamicComponentConfig } from &quot;../../config/dynamic-components/dynamic-component-config.interface&quot;;
 import { DynamicComponentDirective } from &quot;../../config/dynamic-components/dynamic-component.directive&quot;;
 import { FormControl, FormsModule } from &quot;@angular/forms&quot;;
-import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { MatFormFieldModule } from &quot;@angular/material/form-field&quot;;
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
   MatExpansionPanelTitle,
 } from &quot;@angular/material/expansion&quot;;
+import { TranslatableText } from &quot;../../config/multi-lingual-config&quot;;
+import { TranslatableTextInputComponent } from &quot;../../config/translatable-text-input/translatable-text-input.component&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 export interface AdminWidgetDialogData {
   widgetConfig: DynamicComponentConfig;
@@ -360,12 +362,12 @@ export interface AdminWidgetDialogData {
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule,
     FormsModule,
     DynamicComponentDirective,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
+    TranslatableTextInputComponent,
   ],
   templateUrl: &quot;./admin-widget-dialog.component.html&quot;,
   styleUrls: [&quot;./admin-widget-dialog.component.scss&quot;],
@@ -376,18 +378,18 @@ export class AdminWidgetDialogComponent {
   /** tracked as a signal, because the settings component may change validity after this view was checked */
   widgetConfigInvalid: Signal&lt;boolean&gt;;
 
-  commonConfig &#x3D; {
-    subtitle: &quot;&quot;,
-    explanation: &quot;&quot;,
-  };
+  /** raw values, so that translations into other languages are kept on save */
+  commonConfig: {
+    subtitle?: TranslatableText;
+    explanation?: TranslatableText;
+  } &#x3D; {};
 
   dialogRef &#x3D; inject(MatDialogRef&lt;AdminWidgetDialogComponent&gt;);
   data &#x3D; inject(MAT_DIALOG_DATA) as AdminWidgetDialogData;
 
   constructor() {
-    this.commonConfig.subtitle &#x3D; this.data.widgetConfig.config?.subtitle ?? &quot;&quot;;
-    this.commonConfig.explanation &#x3D;
-      this.data.widgetConfig.config?.explanation ?? &quot;&quot;;
+    this.commonConfig.subtitle &#x3D; this.data.widgetConfig.config?.subtitle;
+    this.commonConfig.explanation &#x3D; this.data.widgetConfig.config?.explanation;
 
     this.widgetConfigForm &#x3D; new FormControl(this.data.widgetConfig.config);
     this.widgetConfigInvalid &#x3D; toSignal(
@@ -416,11 +418,12 @@ export class AdminWidgetDialogComponent {
       ...(this.widgetConfigForm.value ?? {}),
     };
 
-    if (this.commonConfig.subtitle?.trim()) {
-      config.subtitle &#x3D; this.commonConfig.subtitle;
-    }
-    if (this.commonConfig.explanation?.trim()) {
-      config.explanation &#x3D; this.commonConfig.explanation;
+    for (const key of [&quot;subtitle&quot;, &quot;explanation&quot;] as const) {
+      if (hasText(this.commonConfig[key])) {
+        config[key] &#x3D; this.commonConfig[key];
+      } else {
+        delete config[key];
+      }
     }
 
     const updatedConfig &#x3D; {
@@ -433,6 +436,12 @@ export class AdminWidgetDialogComponent {
   onCancel() {
     this.dialogRef.close();
   }
+}
+
+/** whether a plain or multi-lingual text has any non-blank text in some language */
+function hasText(value: TranslatableText | undefined): boolean {
+  const text &#x3D; resolveLocaleText(value);
+  return typeof text &#x3D;&#x3D;&#x3D; &quot;string&quot; &amp;&amp; text.trim().length &gt; 0;
 }
 </code></pre>
     </div>

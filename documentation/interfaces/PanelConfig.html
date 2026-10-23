@@ -244,7 +244,7 @@ the panel components.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:80</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:81</a></div>
                                 </td>
                             </tr>
 
@@ -294,7 +294,7 @@ the panel components.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:75</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:76</a></div>
                                 </td>
                             </tr>
 
@@ -339,7 +339,7 @@ the panel components.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:70</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="71" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:71</a></div>
                                 </td>
                             </tr>
 
@@ -357,6 +357,7 @@ the panel components.</p>
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;../entity/model/entity&quot;;
+import { TranslatableText } from &quot;../config/multi-lingual-config&quot;;
 
 /**
  * The configuration for an entity details page
@@ -381,7 +382,7 @@ export interface Panel {
   /**
    * The title of this panel. This should group the contained components.
    */
-  title: string;
+  title: TranslatableText;
 
   /**
    * The configurations for the components in this panel.
@@ -401,7 +402,7 @@ export interface PanelComponent {
   /**
    * An optional second title for only this component.
    */
-  title?: string;
+  title?: TranslatableText;
 
   /**
    * The name of the component. When registered, this usually is the name of the

@@ -238,7 +238,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/basic-datatypes/string/display-long-text/display-long-text.component.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/basic-datatypes/string/display-long-text/display-long-text.component.ts:16</a></div>
                                 </td>
                             </tr>
 
@@ -288,7 +288,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/core/basic-datatypes/string/display-long-text/display-long-text.component.ts:11</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/core/basic-datatypes/string/display-long-text/display-long-text.component.ts:13</a></div>
                                 </td>
                             </tr>
 
@@ -308,6 +308,8 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, computed, ChangeDetectionStrategy } from &quot;@angular/core&quot;;
 import { ViewDirective } from &quot;#src/app/core/entity/default-datatype/view.directive&quot;;
 import { DynamicComponent } from &quot;app/core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { TranslatableText } from &quot;#src/app/core/config/multi-lingual-config&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
 
 /**
  * Config for details of how a long-text field should be displayed.
@@ -329,11 +331,11 @@ export interface LongTextFieldConfig {
   standalone: true,
 })
 export class DisplayLongTextComponent extends ViewDirective&lt;
-  string,
+  TranslatableText,
   LongTextFieldConfig
 &gt; {
   readonly formattedValue &#x3D; computed(() &#x3D;&gt; {
-    const value &#x3D; this.value();
+    const value &#x3D; resolveLocaleText(this.value());
     if (value &#x3D;&#x3D;&#x3D; undefined) return &quot;&quot;;
 
     const config &#x3D; this.config();

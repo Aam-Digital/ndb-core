@@ -290,9 +290,9 @@ export class ImportantNotesDashboardSettingsComponent implements OnInit {
       warningLevels: this.formControl.value?.warningLevels ?? [],
     };
 
-    // Get all options from the enum service
+    // Get all options from the enum service (labels resolved for display)
     const allOptions: ConfigurableEnumValue[] &#x3D;
-      this.enumService.getEnum(&quot;warning-levels&quot;)?.values ?? [];
+      this.enumService.getEnumValues(&quot;warning-levels&quot;);
 
     // Map stored IDs to option objects for the dropdown
     const selectedObjects &#x3D; allOptions.filter((opt) &#x3D;&gt;

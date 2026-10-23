@@ -175,6 +175,25 @@
     <div class="tab-pane fade " id="api">
             <section data-compodoc="block-index">
     <h3 id="index">Index</h3>
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#SITE_DEFAULT_WAIT_MS" >SITE_DEFAULT_WAIT_MS</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         <table class="table table-sm table-bordered index-table">
             <tbody>
@@ -195,6 +214,10 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#switchLocale" >switchLocale</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#switchToOwnLocale" >switchToOwnLocale</a>
                             </li>
                         </ul>
                     </td>
@@ -219,7 +242,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/language/language.service.ts:24</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/language/language.service.ts:44</a></div>
                             </td>
                         </tr>
 
@@ -252,8 +275,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="83"
-                                    class="link-to-prism">src/app/core/language/language.service.ts:83</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="244"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:244</a></div>
                         </td>
                     </tr>
 
@@ -292,14 +315,19 @@ First tries to read the value from localStorage, otherwise falls back to base lo
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="67"
-                                    class="link-to-prism">src/app/core/language/language.service.ts:67</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="221"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:221</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Apply the system default at startup. A user&#39;s own language is applied on
+login instead (see <a href="applyOwnLanguageOnLogin">applyOwnLanguageOnLogin</a>).
+If language switching is disabled, a configured default language always wins over
+a language stored on this device. Without a configured one, the stored language stays.</p>
+</div>
 
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
@@ -322,22 +350,112 @@ First tries to read the value from localStorage, otherwise falls back to base lo
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>switchLocale(newLocale: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>switchLocale(newLocale: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, ownerId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/core/language/language.service.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="187"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:187</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Switch the current locale and persist it in this.localStorage.</p>
+                        <div class="io-description"><p>Switch the current locale and persist it in this.localStorage.
+  leave empty for a language picked on this device or the system default</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>newLocale</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>ownerId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the account whose own language setting this is;
+leave empty for a language picked on this device or the system default</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="switchToOwnLocale"></a>
+                    <span class="name">
+                        <span ><b>switchToOwnLocale</b></span>
+                        <a href="#switchToOwnLocale"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>switchToOwnLocale(newLocale: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="211"
+                                    class="link-to-prism">src/app/core/language/language.service.ts:211</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Switch to a language the logged-in user has just saved for their own account.</p>
 </div>
 
                             <div class="io-description">
@@ -380,6 +498,51 @@ First tries to read the value from localStorage, otherwise falls back to base lo
     </table>
 </section>
 
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SITE_DEFAULT_WAIT_MS"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>SITE_DEFAULT_WAIT_MS</b></span>
+                        <a href="#SITE_DEFAULT_WAIT_MS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>3000</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/language/language.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>how long to wait for a site default before falling back to <a href="../miscellaneous/variables.html#DEFAULT_LANGUAGE">DEFAULT_LANGUAGE</a></p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
 
     </div>
 
@@ -387,14 +550,29 @@ First tries to read the value from localStorage, otherwise falls back to base lo
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable, LOCALE_ID } from &quot;@angular/core&quot;;
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
-import { isValidLocale, LANGUAGE_LOCAL_STORAGE_KEY } from &quot;./language-statics&quot;;
+import {
+  DEFAULT_LANGUAGE,
+  isValidLocale,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+  LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+} from &quot;./language-statics&quot;;
 import { WINDOW_TOKEN, LOCAL_STORAGE_TOKEN } from &quot;../../utils/di-tokens&quot;;
 import { SiteSettings } from &quot;../site-settings/site-settings&quot;;
 import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
 import { SiteSettingsService } from &quot;../site-settings/site-settings.service&quot;;
-import { filter } from &quot;rxjs&quot;;
+import { UserSettingsService } from &quot;../site-settings/user-settings.service&quot;;
+import { UserSettings } from &quot;../site-settings/user-settings&quot;;
+import {
+  distinctUntilChanged,
+  filter,
+  firstValueFrom,
+  map,
+  of,
+  timeout,
+} from &quot;rxjs&quot;;
 import { UpdatedEntity } from &quot;#src/app/core/entity/model/entity-update&quot;;
 import { Logging } from &quot;../logging/logging.service&quot;;
+import { SessionSubject } from &quot;../session/auth/session-info&quot;;
 
 /**
  * Service that provides the currently active locale and applies a newly selected one.
@@ -404,14 +582,119 @@ import { Logging } from &quot;../logging/logging.service&quot;;
 })
 @UntilDestroy()
 export class LanguageService {
+  /** how long to wait for a site default before falling back to {@link DEFAULT_LANGUAGE} */
+  static readonly SITE_DEFAULT_WAIT_MS &#x3D; 3000;
+
   private readonly localStorage &#x3D; inject(LOCAL_STORAGE_TOKEN);
   private baseLocale &#x3D; inject(LOCALE_ID);
   private window &#x3D; inject&lt;Window&gt;(WINDOW_TOKEN);
   private siteSettings &#x3D; inject(SiteSettingsService);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly userSettings &#x3D; inject(UserSettingsService);
+  private readonly sessionInfo &#x3D; inject(SessionSubject);
 
   constructor() {
     this.switchLocaleOnSiteSettingsUpdate();
+    this.applyOwnLanguageOnLogin();
+    this.applyOwnLanguageOnUserSettingsUpdate();
+  }
+
+  /**
+   * A user&#x27;s own language lives in the database, so it can only be read once a
+   * session exists.
+   * Without one, the language picked on this device is kept - unless it was
+   * applied from another account&#x27;s settings, which a shared browser must not
+   * pass on to the next user.
+   */
+  private applyOwnLanguageOnLogin() {
+    this.sessionInfo
+      .pipe(
+        untilDestroyed(this),
+        map((session) &#x3D;&gt; session?.id),
+        filter((userId) &#x3D;&gt; !!userId),
+        distinctUntilChanged(),
+      )
+      .subscribe(async (userId) &#x3D;&gt; {
+        if (!this.siteSettings.languageSwitchingEnabled) {
+          // everyone uses the default language, so the account&#x27;s own one is ignored
+          this.applyDefaultLanguage(await this.getDefaultLanguage());
+          return;
+        }
+
+        const ownLanguage &#x3D; await this.userSettings.getLanguage();
+        if (ownLanguage) {
+          this.switchLocale(ownLanguage, userId);
+          return;
+        }
+
+        const owner &#x3D; this.localStorage.getItem(
+          LANGUAGE_OWNER_LOCAL_STORAGE_KEY,
+        );
+        if (!owner || owner &#x3D;&#x3D;&#x3D; userId) return;
+
+        // the site settings are cached from the previous session, so a configured
+        // default is available right away - only wait briefly for one that is not set
+        this.switchLocale(
+          (await this.getDefaultLanguage()) ?? DEFAULT_LANGUAGE,
+        );
+      });
+  }
+
+  /**
+   * The language configured for the whole system,
+   * or undefined if the site settings do not set one (within {@link SITE_DEFAULT_WAIT_MS}).
+   * Callers must not assume a language then: a fresh system has none yet
+   * and site settings may arrive after the wait on a slow connection.
+   */
+  private async getDefaultLanguage(): Promise&lt;string | undefined&gt; {
+    const siteDefault &#x3D; await firstValueFrom(
+      this.siteSettings.defaultLanguage.pipe(
+        map((language) &#x3D;&gt; language?.id),
+        timeout({
+          first: LanguageService.SITE_DEFAULT_WAIT_MS,
+          with: () &#x3D;&gt; of(undefined),
+        }),
+      ),
+    );
+    return siteDefault || undefined;
+  }
+
+  /**
+   * Make the default language the active one if language switching is disabled.
+   * Does nothing if no default language is configured, so the current locale
+   * (e.g. one picked in the setup assistant of a fresh system) stays as it is.
+   * Unlike {@link switchLocale} this does not reload if the language is already
+   * in effect, e.g. through the app default without anything stored.
+   */
+  private applyDefaultLanguage(language: string | undefined) {
+    if (!language) return;
+    this.localStorage.removeItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY);
+    if (language &#x3D;&#x3D;&#x3D; this.getCurrentLocale()) return;
+    this.switchLocale(language);
+  }
+
+  /**
+   * On a new device the user&#x27;s settings only arrive with the sync after login,
+   * and they may also be changed from another device, so apply them on arrival.
+   */
+  private applyOwnLanguageOnUserSettingsUpdate() {
+    this.entityMapper
+      .receiveUpdates(UserSettings)
+      .pipe(
+        untilDestroyed(this),
+        filter(({ type }) &#x3D;&gt; type !&#x3D;&#x3D; &quot;remove&quot;),
+        map(({ entity }) &#x3D;&gt; ({
+          userId: entity.getId(true),
+          locale: entity.defaultLanguage?.id,
+        })),
+        filter(
+          ({ userId, locale }) &#x3D;&gt;
+            !!locale &amp;&amp;
+            this.siteSettings.languageSwitchingEnabled &amp;&amp;
+            userId &#x3D;&#x3D;&#x3D; this.sessionInfo.value?.id,
+        ),
+      )
+      .subscribe(({ userId, locale }) &#x3D;&gt; this.switchLocale(locale, userId));
   }
 
   /**
@@ -427,8 +710,20 @@ export class LanguageService {
         untilDestroyed(this),
         filter((u) &#x3D;&gt; u?.entity.getId(true) &#x3D;&#x3D;&#x3D; SiteSettings.ENTITY_ID),
       )
-      .subscribe((updatedSettings: UpdatedEntity&lt;SiteSettings&gt;) &#x3D;&gt; {
+      .subscribe(async (updatedSettings: UpdatedEntity&lt;SiteSettings&gt;) &#x3D;&gt; {
         const updatedLanguage &#x3D; updatedSettings?.entity?.defaultLanguage?.id;
+
+        if (!this.siteSettings.languageSwitchingEnabled) {
+          this.applyDefaultLanguage(updatedLanguage);
+          return;
+        }
+
+        if (!updatedLanguage) return;
+
+        // users who picked a language for their own account keep it
+        const ownLanguage &#x3D; await this.userSettings.getLanguage();
+        if (ownLanguage) return;
+
         this.switchLocale(updatedLanguage);
       });
   }
@@ -436,31 +731,60 @@ export class LanguageService {
   /**
    * Switch the current locale and persist it in this.localStorage.
    * @param newLocale
+   * @param ownerId the account whose own language setting this is;
+   *   leave empty for a language picked on this device or the system default
    */
-  switchLocale(newLocale: string): void {
+  switchLocale(newLocale: string, ownerId?: string): void {
     if (newLocale &amp;&amp; !isValidLocale(newLocale)) {
       // storing this would stringify it and break loading translations on the next reload
       Logging.warn(&quot;Ignoring an invalid locale.&quot;, { newLocale });
       return;
     }
+    if (!newLocale) return;
+
+    if (ownerId) {
+      this.localStorage.setItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY, ownerId);
+    } else {
+      this.localStorage.removeItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY);
+    }
 
     const currentLocale &#x3D; this.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
-    if (newLocale &#x3D;&#x3D;&#x3D; currentLocale || !newLocale) return;
+    if (newLocale &#x3D;&#x3D;&#x3D; currentLocale) return;
 
     this.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, newLocale);
     this.window.location.reload();
   }
 
+  /**
+   * Switch to a language the logged-in user has just saved for their own account.
+   */
+  switchToOwnLocale(newLocale: string): void {
+    this.switchLocale(newLocale, this.sessionInfo.value?.id);
+  }
+
+  /**
+   * Apply the system default at startup. A user&#x27;s own language is applied on
+   * login instead (see {@link applyOwnLanguageOnLogin}).
+   * If language switching is disabled, a configured default language always wins over
+   * a language stored on this device. Without a configured one, the stored language stays.
+   */
   initDefaultLanguage(): void {
+    if (!this.siteSettings.languageSwitchingEnabled) {
+      // a language picked on this device earlier must not outlast the switch being disabled
+      this.getDefaultLanguage()
+        .then((language) &#x3D;&gt; this.applyDefaultLanguage(language))
+        .catch((err) &#x3D;&gt; Logging.error(err));
+      return;
+    }
+
     const languageSelected &#x3D; this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
+    if (languageSelected) return;
 
-    if (!languageSelected) {
-      this.siteSettings.defaultLanguage.subscribe(({ id }) &#x3D;&gt; {
-        this.switchLocale(id);
-      });
-    }
+    this.siteSettings.defaultLanguage.subscribe(({ id }) &#x3D;&gt; {
+      this.switchLocale(id);
+    });
   }
 
   /**

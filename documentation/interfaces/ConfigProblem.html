@@ -237,7 +237,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:22</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:23</a></div>
                                 </td>
                             </tr>
 
@@ -287,7 +287,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:24</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:25</a></div>
                                 </td>
                             </tr>
 
@@ -332,7 +332,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:26</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="27" class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:27</a></div>
                                 </td>
                             </tr>
 
@@ -363,6 +363,7 @@ import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quo
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { Config } from &quot;../config&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -520,7 +521,7 @@ export class ConfigValidationService {
         ? [
             {
               configId,
-              message: $localize&#x60;:config validation:Unknown icon &quot;${item.icon}:icon:&quot; for menu item &quot;${item.label}:label:&quot;. A default icon is shown instead.&#x60;,
+              message: $localize&#x60;:config validation:Unknown icon &quot;${item.icon}:icon:&quot; for menu item &quot;${resolveLocaleText(item.label)}:label:&quot;. A default icon is shown instead.&#x60;,
             },
           ]
         : []),

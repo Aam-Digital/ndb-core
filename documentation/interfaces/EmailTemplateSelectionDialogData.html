@@ -236,7 +236,7 @@ with the relevant context.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts:42</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts:43</a></div>
                                 </td>
                             </tr>
 
@@ -275,7 +275,7 @@ with the relevant context.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts:43</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts:44</a></div>
                                 </td>
                             </tr>
 
@@ -314,7 +314,7 @@ with the relevant context.</p>
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts:44</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/features/email-client/email-template-selection-dialog/email-template-selection-dialog.component.ts:45</a></div>
                                 </td>
                             </tr>
 
@@ -355,6 +355,7 @@ import { MatInputModule } from &quot;@angular/material/input&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { RouterLink } from &quot;@angular/router&quot;;
 import { EmailTemplate } from &quot;../email-template.entity&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
 import { getEntityRuntimeRoute } from &quot;#src/app/core/entity/entity-config.service&quot;;
 import { HelpButtonComponent } from &quot;#src/app/core/common-components/help-button/help-button.component&quot;;
 import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
@@ -450,9 +451,10 @@ export class EmailTemplateSelectionDialogComponent implements OnInit {
       .subscribe((template: EmailTemplate | null) &#x3D;&gt; {
         this.selectedTemplate &#x3D; template;
         if (template) {
+          // the one resolution point: these plain strings flow on to the mail client and the note
           this.emailContentForm.patchValue({
-            subject: template.subject,
-            body: template.body,
+            subject: resolveLocaleText(template.subject),
+            body: resolveLocaleText(template.body),
           });
         } else {
           this.emailContentForm.patchValue({

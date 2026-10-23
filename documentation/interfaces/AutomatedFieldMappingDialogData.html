@@ -240,7 +240,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="217" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:217</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="216" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:216</a></div>
                                 </td>
                             </tr>
 
@@ -279,7 +279,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="218" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:218</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="217" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:217</a></div>
                                 </td>
                             </tr>
 
@@ -318,7 +318,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="219" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:219</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="218" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:218</a></div>
                                 </td>
                             </tr>
 
@@ -357,7 +357,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="220" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:220</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="219" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-mapping/automated-field-mapping.component.ts:219</a></div>
                                 </td>
                             </tr>
 
@@ -467,11 +467,10 @@ export class AutomatedFieldMappingComponent {
       return [];
     }
 
-    const enumEntity &#x3D; this.configurableEnumService.getEnum(
+    // labels resolved for display; the option ids stay untouched below
+    const values &#x3D; this.configurableEnumService.getEnumValues(
       this.sourceValueFieldSchema().additional,
     );
-
-    const values &#x3D; enumEntity?.values ?? [];
     return values.map((sourceValue) &#x3D;&gt; {
       const sourceValueRaw &#x3D; sourceValue.id; // database format of the source value
 

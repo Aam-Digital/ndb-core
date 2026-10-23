@@ -203,7 +203,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="84" class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.ts:84</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="85" class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.ts:85</a></div>
                             </td>
                         </tr>
 
@@ -259,6 +259,11 @@ import { DatabaseField } from &quot;../../entity/database-field.decorator&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { ConfigurableEnumValue } from &quot;./configurable-enum.types&quot;;
 import { generateIdFromLabel } from &quot;../../../utils/generate-id-from-label/generate-id-from-label&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
+
+function displayLabel(label: ConfigurableEnumValue[&quot;label&quot;]): string {
+  return (resolveLocaleText(label) ?? &quot;&quot;).trim().toLowerCase();
+}
 
 @DatabaseEntity(&quot;ConfigurableEnum&quot;)
 export class ConfigurableEnum extends Entity {
@@ -293,13 +298,9 @@ export class ConfigurableEnum extends Entity {
       return;
     }
 
-    // check for duplicates
-    if (
-      this.values.some(
-        (v) &#x3D;&gt;
-          v.label.trim().toLowerCase() &#x3D;&#x3D;&#x3D; option.label.trim().toLowerCase(),
-      )
-    ) {
+    // check for duplicates by the text of the active language
+    const newLabel &#x3D; displayLabel(option.label);
+    if (this.values.some((v) &#x3D;&gt; displayLabel(v.label) &#x3D;&#x3D;&#x3D; newLabel)) {
       throw new DuplicateEnumOptionException(newOptionInput);
     }
     if (this.values.some((v) &#x3D;&gt; v.id &#x3D;&#x3D;&#x3D; option.id)) {

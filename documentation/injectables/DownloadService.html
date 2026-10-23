@@ -270,8 +270,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="155"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:155</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:156</a></div>
                         </td>
                     </tr>
 
@@ -361,8 +361,8 @@ Depending on the browser and the setting this might open a popup or directly dow
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="180"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:180</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:181</a></div>
                         </td>
                     </tr>
 
@@ -448,8 +448,8 @@ handling so the same data can be exported to both CSV and XLSX.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="224"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:224</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="225"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:225</a></div>
                         </td>
                     </tr>
 
@@ -533,8 +533,8 @@ For plain objects: the first row contains the object keys as headers.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="86"
-                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:86</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="87"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:87</a></div>
                         </td>
                     </tr>
 
@@ -668,7 +668,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/export/download-service/download.service.ts:77</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/export/download-service/download.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -707,7 +707,7 @@ For plain objects: the first row contains the object keys as headers.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/export/download-service/download.service.ts:75</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="76" class="link-to-prism">src/app/core/export/download-service/download.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -728,6 +728,7 @@ For plain objects: the first row contains the object keys as headers.</p>
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 import {
   ExportColumnConfig,
   normalizeQueryKey,
@@ -959,7 +960,8 @@ export class DownloadService {
     );
     const labelOverrides &#x3D; new Map&lt;string, string&gt;();
     for (const c of selectedColumns ?? []) {
-      if (c.label) labelOverrides.set(normalizeQueryKey(c.query), c.label);
+      const label &#x3D; resolveLocaleText(c.label);
+      if (label) labelOverrides.set(normalizeQueryKey(c.query), label);
     }
 
     let entityConstructor: EntityConstructor | undefined;

@@ -228,7 +228,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="143" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:143</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="151" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:151</a></div>
                                 </td>
                             </tr>
 
@@ -267,7 +267,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="142" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:142</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="150" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:150</a></div>
                                 </td>
                             </tr>
 
@@ -306,7 +306,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:144</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="152" class="link-to-prism">src/app/features/reporting/reporting/select-report/select-report.component.ts:152</a></div>
                                 </td>
                             </tr>
 
@@ -344,6 +344,8 @@ import { DateRangeFilterComponent } from &quot;app/core/basic-datatypes/date/dat
 import { periodRangeOptions } from &quot;app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils&quot;;
 import { DateRangeFilterConfigOption } from &quot;app/core/entity-list/EntityListConfig&quot;;
 import { FaDynamicIconComponent } from &quot;#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
+import { resolveLocaleText } from &quot;app/core/language/active-locale&quot;;
+import { LocaleTextPipe } from &quot;app/core/language/locale-text.pipe&quot;;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -362,6 +364,7 @@ import { FaDynamicIconComponent } from &quot;#src/app/core/common-components/fa-
     MatTooltipModule,
     DateRangeFilterComponent,
     FaDynamicIconComponent,
+    LocaleTextPipe,
   ],
 })
 export class SelectReportComponent {
@@ -386,6 +389,10 @@ export class SelectReportComponent {
     computation: (reports, previous) &#x3D;&gt;
       reports?.length &#x3D;&#x3D;&#x3D; 1 ? reports[0] : previous?.value,
   });
+  readonly selectedReportTitle &#x3D; computed(() &#x3D;&gt;
+    resolveLocaleText(this.selectedReport()?.title),
+  );
+
   fromDate &#x3D; signal&lt;Date | undefined&gt;(undefined);
   toDate &#x3D; signal&lt;Date | undefined&gt;(undefined);
   /** whether the currently selected report includes filter parameters for a &quot;from&quot; - &quot;to&quot; date range */
@@ -435,9 +442,10 @@ export class SelectReportComponent {
   }
 
   get baseExportFileName(): string {
+    const title &#x3D; this.selectedReportTitle();
     const reportName &#x3D;
-      this.selectedReport()
-        ?.title?.replace(/[^\w\s-]/g, &quot;&quot;)
+      title
+        ?.replace(/[^\w\s-]/g, &quot;&quot;)
         .replace(/\s+/g, &quot; &quot;)
         .trim() || &quot;report&quot;;
     const datePart &#x3D; this.getDatePart();

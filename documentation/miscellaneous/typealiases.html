@@ -212,6 +212,9 @@
                             <a href="#DynamicValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>DynamicValidator</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#EditableMenuItem" title="src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>EditableMenuItem</b>&nbsp;&nbsp;&nbsp;(src/.../menu-item-for-admin-ui.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#EntityAbilityTuple" title="src/app/core/permissions/ability/entity-ability.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>EntityAbilityTuple</b>&nbsp;&nbsp;&nbsp;(src/.../entity-ability.ts)</span></a>
                         </li>
                         <li>
@@ -314,6 +317,12 @@
                             <a href="#QueryOptions" title="src/app/core/database/database.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>QueryOptions</b>&nbsp;&nbsp;&nbsp;(src/.../database.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#RawConfig" title="src/app/core/config/multi-lingual-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>RawConfig</b>&nbsp;&nbsp;&nbsp;(src/.../multi-lingual-config.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#RawText" title="src/app/core/config/multi-lingual-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>RawText</b>&nbsp;&nbsp;&nbsp;(src/.../multi-lingual-config.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#ReadSignal" title="src/app/core/common-components/entities-table/entities-table-selection.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ReadSignal</b>&nbsp;&nbsp;&nbsp;(src/.../entities-table-selection.ts)</span></a>
                         </li>
                         <li>
@@ -366,6 +375,12 @@
                         </li>
                         <li>
                             <a href="#Transformations" title="src/app/features/reporting/edit-report-period-toggle/edit-report-period-toggle.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>Transformations</b>&nbsp;&nbsp;&nbsp;(src/.../edit-report-period-toggle.component.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#TranslatableText" title="src/app/core/config/multi-lingual-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>TranslatableText</b>&nbsp;&nbsp;&nbsp;(src/.../multi-lingual-config.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#TranslatableTextProperty" title="src/app/core/config/multi-lingual-config.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>TranslatableTextProperty</b>&nbsp;&nbsp;&nbsp;(src/.../multi-lingual-config.ts)</span></a>
                         </li>
                         <li>
                             <a href="#TypedFormGroup" title="src/app/core/common-components/entity-form/entity-form.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>TypedFormGroup</b>&nbsp;&nbsp;&nbsp;(src/.../entity-form.ts)</span></a>
@@ -1128,6 +1143,33 @@ to display a custom error message when validation fails:</p>
         </tbody>
     </table>
 </section>
+    <h3>src/app/core/admin/admin-menu/menu-item-for-admin-ui.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EditableMenuItem"></a>
+                    <span class="name "><b>EditableMenuItem</b><a href="#EditableMenuItem"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A menu item as edited in the Admin UI, where the label may be multi-lingual.
+The displayed <a href="../interfaces/MenuItem.html">MenuItem</a> keeps <code>label: string</code>, because the navigation
+only receives config that ConfigService already resolved.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../interfaces/MenuItem.html" target="_self" >Omit&lt;MenuItem &amp; &quot;label&quot; | &quot;subMenu&quot;&gt; &amp; literal type</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
     <h3>src/app/core/permissions/ability/entity-ability.ts</h3>
     <section data-compodoc="block-typealias">
     <table class="table table-sm table-bordered">
@@ -1838,6 +1880,95 @@ pseudo-prior state.</p>
             <tr>
                 <td class="col-md-4">
                     <code>    <code>&quot;left&quot; | &quot;center&quot; | &quot;right&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/core/config/multi-lingual-config.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RawConfig"></a>
+                    <span class="name "><b>RawConfig</b><a href="#RawConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Config as it is stored, before it is resolved to the active language: every
+display text may also be a per-language map. Matched by property name only, so
+a <code>title</code> holding e.g. a field id is widened too.</p>
+<p>Use for config read in order to save it back, so that code treating such a text
+as a plain string is flagged.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>unknown</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="RawText"></a>
+                    <span class="name "><b>RawText</b><a href="#RawText"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>unknown</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TranslatableText"></a>
+                    <span class="name "><b>TranslatableText</b><a href="#TranslatableText"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A config text that may be a plain string or a per-locale translation map.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>string | Record&lt;string | string&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TranslatableTextProperty"></a>
+                    <span class="name "><b>TranslatableTextProperty</b><a href="#TranslatableTextProperty"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Names of the config properties that hold a user-facing text.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;label&quot; | &quot;labelShort&quot; | &quot;labelPlural&quot; | &quot;description&quot; | &quot;title&quot; | &quot;header&quot;</code>
 </code>
                 </td>
             </tr>

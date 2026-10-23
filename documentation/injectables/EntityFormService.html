@@ -247,8 +247,8 @@ new changes correctly to the entity.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="112"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:112</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="129"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:129</a></div>
                         </td>
                     </tr>
 
@@ -424,8 +424,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="49"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -525,8 +525,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="386"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:386</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="403"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:403</a></div>
                         </td>
                     </tr>
 
@@ -615,8 +615,8 @@ caller&#39;s lifecycle (so its unsaved-changes state is cleared when the caller 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="283"
-                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:283</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="300"
+                                    class="link-to-prism">src/app/core/common-components/entity-form/entity-form.service.ts:300</a></div>
                         </td>
                     </tr>
 
@@ -726,6 +726,7 @@ import {
   TypedFormGroup,
 } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -800,7 +801,23 @@ export class EntityFormService {
         fullField.label || fullField.label || fullField.labelShort;
     }
 
+    this.resolveTranslatableLabels(fullField);
+
     return fullField;
+  }
+
+  /**
+   * Config loaded through ConfigService is already resolved, but the runtime
+   * schema can hold a translation map while an admin has configured
+   * translations that are not saved to the config document yet.
+   */
+  private resolveTranslatableLabels(field: FormFieldConfig) {
+    for (const property of [&quot;label&quot;, &quot;labelShort&quot;, &quot;description&quot;]) {
+      if (field[property] &#x3D;&#x3D;&#x3D; undefined) {
+        continue;
+      }
+      field[property] &#x3D; resolveLocaleText(field[property]);
+    }
   }
 
   /**

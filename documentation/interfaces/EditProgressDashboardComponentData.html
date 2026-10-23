@@ -223,7 +223,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.ts:32</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.ts:34</a></div>
                                 </td>
                             </tr>
 
@@ -243,7 +243,7 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>title:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                <code>title:         <code><a href="../miscellaneous/typealiases.html#TranslatableText" target="_self" >TranslatableText</a></code>
 </code>
                             </td>
                         </tr>
@@ -251,7 +251,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#TranslatableText" target="_self" >TranslatableText</a></code>
 
                                 </td>
                             </tr>
@@ -262,7 +262,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.ts:31</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.ts:33</a></div>
                                 </td>
                             </tr>
 
@@ -301,9 +301,11 @@ import { MatButtonModule } from &quot;@angular/material/button&quot;;
 import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
 import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { TypedFormGroup } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
+import { TranslatableText } from &quot;#src/app/core/config/multi-lingual-config&quot;;
+import { TranslatableTextInputComponent } from &quot;#src/app/core/config/translatable-text-input/translatable-text-input.component&quot;;
 
 export interface EditProgressDashboardComponentData {
-  title: string;
+  title: TranslatableText;
   parts: ProgressDashboardPart[];
 }
 
@@ -321,6 +323,7 @@ export interface EditProgressDashboardComponentData {
     MatButtonModule,
     FontAwesomeModule,
     MatTooltipModule,
+    TranslatableTextInputComponent,
   ],
 })
 export class EditProgressDashboardComponent implements OnInit {

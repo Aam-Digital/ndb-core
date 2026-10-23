@@ -441,7 +441,13 @@ This allows to change a text like <em>Participants with unhealthy BMI</em> to <e
 To achieve this a <code>label</code> and <code>labelPlural</code> can be defined in the entity config.
 Additionally, the <code>icon</code> property allows to exchange the icon to another one from
 the <a href="https://fontawesome.com/search?o=r&m=free">FontAwesome Icon Library</a>.</p>
-<p>This also has to be adjusted when configuring in a different language.</p>
+<p>Such a text can also be configured in several languages at once, by storing a
+per-language map instead of a plain string:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
+  &quot;label&quot;: { &quot;en-US&quot;: &quot;Patient&quot;, &quot;de&quot;: &quot;Patient:in&quot; },
+  ...
+}</code></pre></div><p>See <a href="../language/README.md#multi-lingual-configuration">Multi-lingual configuration</a>
+for the format, the resolved vs. raw accessors and the rules for editing such texts.</p>
 <p>E.g.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
 &quot;label&quot;: &quot;Patient&quot;,

@@ -239,7 +239,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:14</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="28" class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:28</a></div>
                             </td>
                         </tr>
 
@@ -272,8 +272,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="38"
-                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:38</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -339,8 +339,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="31"
-                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:31</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -355,6 +355,10 @@
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>The options with their labels resolved to the active language, as copies so the
+cached entity keeps every language. Use <a href="getEnum">getEnum</a> to edit and save.</p>
+<p>Cached per enum: this is a per-record hot path, and switching language reloads.</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -414,8 +418,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -453,8 +457,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="22"
-                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:22</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/app/core/basic-datatypes/configurable-enum/configurable-enum.service.ts:36</a></div>
                         </td>
                     </tr>
 
@@ -484,6 +488,14 @@ import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapp
 import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quot;;
 import { Entity } from &quot;../../entity/model/entity&quot;;
 import { ConfigurableEnumValue } from &quot;./configurable-enum.types&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
+
+function sameOptions(
+  a: readonly ConfigurableEnumValue[],
+  b: readonly ConfigurableEnumValue[],
+): boolean {
+  return a.length &#x3D;&#x3D;&#x3D; b.length &amp;&amp; a.every((option, i) &#x3D;&gt; option &#x3D;&#x3D;&#x3D; b[i]);
+}
 
 @Injectable({ providedIn: &quot;root&quot; })
 export class ConfigurableEnumService {
@@ -491,6 +503,12 @@ export class ConfigurableEnumService {
   private ability &#x3D; inject(EntityAbility);
 
   private enums &#x3D; new Map&lt;string, ConfigurableEnum&gt;();
+
+  /** resolved options per enum, with the raw list they were built from */
+  private resolvedValues &#x3D; new Map&lt;
+    string,
+    { source: ConfigurableEnumValue[]; resolved: ConfigurableEnumValue[] }
+  &gt;();
 
   constructor() {
     this.entityMapper
@@ -507,11 +525,34 @@ export class ConfigurableEnumService {
     return this.enums.set(entity.getId(), entity);
   }
 
+  /**
+   * The options with their labels resolved to the active language, as copies so the
+   * cached entity keeps every language. Use {@link getEnum} to edit and save.
+   *
+   * Cached per enum: this is a per-record hot path, and switching language reloads.
+   */
   getEnumValues&lt;T extends ConfigurableEnumValue &#x3D; ConfigurableEnumValue&gt;(
     id: string,
   ): T[] {
     const configurableEnum &#x3D; this.getEnum(id);
-    return configurableEnum ? (configurableEnum.values as T[]) : [];
+    if (!configurableEnum) {
+      return [];
+    }
+
+    const key &#x3D; configurableEnum.getId();
+    const options &#x3D; configurableEnum.values;
+    const cached &#x3D; this.resolvedValues.get(key);
+    if (cached &amp;&amp; sameOptions(cached.source, options)) {
+      return cached.resolved as T[];
+    }
+
+    const resolved &#x3D; options.map((option) &#x3D;&gt; ({
+      ...option,
+      label: resolveLocaleText(option.label),
+    }));
+    // snapshot, because editing an enum mutates the live list in place
+    this.resolvedValues.set(key, { source: [...options], resolved });
+    return resolved as T[];
   }
 
   getEnum(id: string): ConfigurableEnum | undefined {

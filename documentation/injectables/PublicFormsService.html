@@ -252,8 +252,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="72"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:72</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:74</a></div>
                         </td>
                     </tr>
 
@@ -342,8 +342,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="135"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:135</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:137</a></div>
                         </td>
                     </tr>
 
@@ -383,8 +383,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="149"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:149</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="151"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:151</a></div>
                         </td>
                     </tr>
 
@@ -455,8 +455,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:36</a></div>
                         </td>
                     </tr>
 
@@ -504,8 +504,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="139"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:139</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:141</a></div>
                         </td>
                     </tr>
 
@@ -585,8 +585,8 @@ generates the base public form URL (list-level) without any query parameters.</l
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="219"
-                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:219</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="221"
+                                    class="link-to-prism">src/app/features/public-form/public-forms.service.ts:221</a></div>
                         </td>
                     </tr>
 
@@ -659,6 +659,7 @@ import {
   PublicFormEntityFormConfig,
 } from &quot;./public-form-config&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import { resolveLocaleText } from &quot;#src/app/core/language/active-locale&quot;;
 import { AdminEntityService } from &quot;app/core/admin/admin-entity.service&quot;;
 import { EntityRegistry } from &quot;app/core/entity/database-entity.decorator&quot;;
 import { EntityConfigService } from &quot;app/core/entity/entity-config.service&quot;;
@@ -693,6 +694,7 @@ export class PublicFormsService {
     );
     this.entityActionsMenuService.unregisterActions(actionKeys);
     for (const config of matchingForms) {
+      const formTitle &#x3D; resolveLocaleText(config.title) ?? &quot;&quot;;
       this.entityActionsMenuService.registerActions([
         {
           action: &#x60;copy-form-${config.getId()}&#x60;,
@@ -702,8 +704,8 @@ export class PublicFormsService {
           },
           permission: &quot;read&quot;,
           icon: &quot;link&quot;,
-          label: $localize&#x60;Copy Custom Form (${config.title})&#x60;,
-          tooltip: $localize&#x60;Copy link to public form &quot;${config.title}&quot; that will connect submissions to this individual record.&#x60;,
+          label: $localize&#x60;Copy Custom Form (${formTitle})&#x60;,
+          tooltip: $localize&#x60;Copy link to public form &quot;${formTitle}&quot; that will connect submissions to this individual record.&#x60;,
           visible: (entity) &#x3D;&gt;
             this.isEntityTypeLinkedToConfig(config, asArray(entity)[0]),
           availableFor: &quot;individual-only&quot;,

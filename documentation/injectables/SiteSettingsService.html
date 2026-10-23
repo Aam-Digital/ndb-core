@@ -223,7 +223,13 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#displayLanguageSelect" >displayLanguageSelect</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#defaultLocale" >defaultLocale</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#enabledLocales" >enabledLocales</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -237,6 +243,11 @@
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#siteSettings" >siteSettings</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#translationsEnabled" >translationsEnabled</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -273,6 +284,11 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Async</span>
+                                <a href="#setDefaultLanguage" >setDefaultLanguage</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Async</span>
                                 <a href="#loadOnce" >loadOnce</a>
                             </li>
                             <li>
@@ -295,6 +311,23 @@
 
 
 
+        <table class="table table-sm table-bordered index-table">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <h6><b>Accessors</b></h6>
+                    </td>
+                    <td class="col-md-9">
+                        <ul class="index-list">
+                            <li>
+                                <span class="reference-badge reference-badge--accessor" aria-hidden="true">A</span>
+                                <a href="#languageSwitchingEnabled" >languageSwitchingEnabled</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 </section>
 
             <section data-compodoc="block-constructor">
@@ -308,7 +341,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="45" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:45</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="96" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:96</a></div>
                             </td>
                         </tr>
 
@@ -341,8 +374,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="228"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:228</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="291"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:291</a></div>
                         </td>
                     </tr>
 
@@ -416,8 +449,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="119"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:119</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:170</a></div>
                         </td>
                     </tr>
 
@@ -429,6 +462,79 @@
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setDefaultLanguage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>setDefaultLanguage</b></span>
+                        <a href="#setDefaultLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setDefaultLanguage(locale: <a href="../interfaces/ConfigurableEnumValue.html" target="_self">ConfigurableEnumValue</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Make the given language the default language for all users,
+keeping the other site settings (a new settings document is created if none exists yet).
+Resolves once saved.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>locale</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ConfigurableEnumValue.html" target="_self" >ConfigurableEnumValue</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -610,7 +716,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:43</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:44</a></div>
                         </td>
                     </tr>
 
@@ -642,7 +748,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:32</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:34</a></div>
                         </td>
                     </tr>
 
@@ -673,7 +779,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:41</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="43" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:43</a></div>
                         </td>
                     </tr>
 
@@ -684,10 +790,11 @@ through the <code>entityUpdated</code> property</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="displayLanguageSelect"></a>
+                    <a name="defaultLocale"></a>
                     <span class="name">
-                        <span ><b>displayLanguageSelect</b></span>
-                        <a href="#displayLanguageSelect"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>defaultLocale</b></span>
+                        <a href="#defaultLocale"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
@@ -699,15 +806,81 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>this.getPropertyObservable(&quot;displayLanguageSelect&quot;)</code>
+                        <i>Default value : </i><code>toSignal(
+    this.siteSettings.pipe(map((settings) &#x3D;&gt; settings?.defaultLanguage)),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:42</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:56</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The site&#39;s default language (system-wide), if one is set.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="enabledLocales"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>enabledLocales</b></span>
+                        <a href="#enabledLocales"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>toSignal(
+    this.siteSettings.pipe(
+      map((settings) &#x3D;&gt; {
+        const selected &#x3D; settings?.availableLocales ?? [];
+        const defaultLanguage &#x3D; settings?.defaultLanguage;
+        if (!defaultLanguage?.id) {
+          return selected.length ? selected : availableLocales.values;
+        }
+        return selected.some(({ id }) &#x3D;&gt; id &#x3D;&#x3D;&#x3D; defaultLanguage.id)
+          ? selected
+          : [...selected, defaultLanguage];
+      }),
+    ),
+    { initialValue: availableLocales.values },
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:70</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The enabled languages of this system: the default language (<a href="defaultLanguage">defaultLanguage</a>)
+plus the admin&#39;s selection (<code>availableLocales</code>). Order: the stored selection first,
+the default language appended if it is not part of it. It is added here at read time,
+so changing the default language needs no data fix-up.</p>
+<p>So an empty selection enables only the default language. Only if neither a selection
+nor a default language is set (system not set up yet, or settings not loaded yet)
+are all languages enabled. Never returns an empty list.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -739,7 +912,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:33</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="35" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:35</a></div>
                         </td>
                     </tr>
 
@@ -770,7 +943,7 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -801,10 +974,53 @@ through the <code>entityUpdated</code> property</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="38" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:38</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:40</a></div>
                         </td>
                     </tr>
 
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="translationsEnabled"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>translationsEnabled</b></span>
+                        <a href="#translationsEnabled"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; this.languageSwitchingEnabled &amp;&amp; this.enabledLocales().length &gt; 1,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="92" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:92</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the UI to configure texts in several languages is shown (the translations
+buttons of admin forms). Requires the <code>multiLingualConfigEnabled</code> flag AND more than
+one enabled language: if only the default language is enabled, there is nothing to
+translate into. Texts already stored per language are resolved and kept as always.</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -903,11 +1119,52 @@ process&#39;s lifetime.</p>
     </table>
 </section>
 
+            <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="languageSwitchingEnabled"></a>
+                        <span class="name"><b>languageSwitchingEnabled</b><a href="#languageSwitchingEnabled"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>languageSwitchingEnabled()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:51</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>Whether users may switch the app&#39;s language themselves. If not, everyone uses
+the default language (<a href="defaultLanguage">defaultLanguage</a>). Bound to the deployment&#39;s
+<code>multiLingualConfigEnabled</code> flag, read at runtime because <code>config.json</code> overwrites it.</p>
+</div>
+
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+</section>
     </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { computed, inject, Injectable } from &quot;@angular/core&quot;;
+import { toSignal } from &quot;@angular/core/rxjs-interop&quot;;
 import { SiteSettings } from &quot;./site-settings&quot;;
 import { Observable, skipWhile } from &quot;rxjs&quot;;
 import { distinctUntilChanged, map, shareReplay, take } from &quot;rxjs/operators&quot;;
@@ -919,6 +1176,7 @@ import { Logging } from &quot;../logging/logging.service&quot;;
 import { Entity } from &quot;../entity/model/entity&quot;;
 import { EntitySchemaService } from &quot;../entity/schema/entity-schema.service&quot;;
 import { availableLocales } from &quot;../language/languages&quot;;
+import { ConfigurableEnumValue } from &quot;../basic-datatypes/configurable-enum/configurable-enum.types&quot;;
 import { ConfigurableEnumService } from &quot;../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
 import { EntityConfigReadyService } from &quot;../entity/entity-config-ready.service&quot;;
 import { environment } from &quot;../../../environments/environment&quot;;
@@ -948,8 +1206,57 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
 
   siteName &#x3D; this.getPropertyObservable(&quot;siteName&quot;);
   defaultLanguage &#x3D; this.getPropertyObservable(&quot;defaultLanguage&quot;);
-  displayLanguageSelect &#x3D; this.getPropertyObservable(&quot;displayLanguageSelect&quot;);
   dateFormat &#x3D; this.getPropertyObservable(&quot;dateFormat&quot;);
+
+  /**
+   * Whether users may switch the app&#x27;s language themselves. If not, everyone uses
+   * the default language ({@link defaultLanguage}). Bound to the deployment&#x27;s
+   * &#x60;multiLingualConfigEnabled&#x60; flag, read at runtime because &#x60;config.json&#x60; overwrites it.
+   */
+  get languageSwitchingEnabled(): boolean {
+    return !!environment.multiLingualConfigEnabled;
+  }
+
+  /** The site&#x27;s default language (system-wide), if one is set. */
+  readonly defaultLocale &#x3D; toSignal(
+    this.siteSettings.pipe(map((settings) &#x3D;&gt; settings?.defaultLanguage)),
+  );
+
+  /**
+   * The enabled languages of this system: the default language ({@link defaultLanguage})
+   * plus the admin&#x27;s selection (&#x60;availableLocales&#x60;). Order: the stored selection first,
+   * the default language appended if it is not part of it. It is added here at read time,
+   * so changing the default language needs no data fix-up.
+   *
+   * So an empty selection enables only the default language. Only if neither a selection
+   * nor a default language is set (system not set up yet, or settings not loaded yet)
+   * are all languages enabled. Never returns an empty list.
+   */
+  readonly enabledLocales &#x3D; toSignal(
+    this.siteSettings.pipe(
+      map((settings) &#x3D;&gt; {
+        const selected &#x3D; settings?.availableLocales ?? [];
+        const defaultLanguage &#x3D; settings?.defaultLanguage;
+        if (!defaultLanguage?.id) {
+          return selected.length ? selected : availableLocales.values;
+        }
+        return selected.some(({ id }) &#x3D;&gt; id &#x3D;&#x3D;&#x3D; defaultLanguage.id)
+          ? selected
+          : [...selected, defaultLanguage];
+      }),
+    ),
+    { initialValue: availableLocales.values },
+  );
+
+  /**
+   * Whether the UI to configure texts in several languages is shown (the translations
+   * buttons of admin forms). Requires the &#x60;multiLingualConfigEnabled&#x60; flag AND more than
+   * one enabled language: if only the default language is enabled, there is nothing to
+   * translate into. Texts already stored per language are resolved and kept as always.
+   */
+  readonly translationsEnabled &#x3D; computed(
+    () &#x3D;&gt; this.languageSwitchingEnabled &amp;&amp; this.enabledLocales().length &gt; 1,
+  );
 
   private entityConfigReady &#x3D; inject(EntityConfigReadyService);
 
@@ -1026,7 +1333,7 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
   }
 
   init() {
-    this.initAvailableLocales();
+    this.cacheLocalesEnum();
 
     this.siteName.subscribe((name) &#x3D;&gt; this.title.setTitle(name));
     this.subscribeFontChanges();
@@ -1041,11 +1348,23 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
   }
 
   /**
-   * Making locales enum available at runtime
-   * so that UI can show dropdown options
-   * @private
+   * Make the given language the default language for all users,
+   * keeping the other site settings (a new settings document is created if none exists yet).
+   * Resolves once saved.
    */
-  private initAvailableLocales() {
+  async setDefaultLanguage(locale: ConfigurableEnumValue): Promise&lt;void&gt; {
+    // a failure other than &quot;does not exist&quot; must not end up replacing the existing settings
+    const settings &#x3D; (await this.loadOnce()) ?? new SiteSettings();
+    settings.defaultLanguage &#x3D; locale;
+    await this.entityMapper.save(settings);
+  }
+
+  /**
+   * Cache the full locales enum, so dropdowns can render their options.
+   * Deliberately unfiltered: the admin picks from it which ones to enable, so
+   * narrowing it here would make the choice impossible to widen again.
+   */
+  private cacheLocalesEnum() {
     this.enumService[&quot;cacheEnum&quot;](availableLocales);
   }
 

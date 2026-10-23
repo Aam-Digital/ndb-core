@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:11</a></div>
                                 </td>
                             </tr>
 
@@ -275,7 +275,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:15</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/app/core/entity-details/EntityDetailsConfig.ts:16</a></div>
                                 </td>
                             </tr>
 
@@ -293,6 +293,7 @@
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Entity } from &quot;../entity/model/entity&quot;;
+import { TranslatableText } from &quot;../config/multi-lingual-config&quot;;
 
 /**
  * The configuration for an entity details page
@@ -317,7 +318,7 @@ export interface Panel {
   /**
    * The title of this panel. This should group the contained components.
    */
-  title: string;
+  title: TranslatableText;
 
   /**
    * The configurations for the components in this panel.
@@ -337,7 +338,7 @@ export interface PanelComponent {
   /**
    * An optional second title for only this component.
    */
-  title?: string;
+  title?: TranslatableText;
 
   /**
    * The name of the component. When registered, this usually is the name of the

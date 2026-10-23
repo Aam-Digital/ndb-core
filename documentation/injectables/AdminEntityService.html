@@ -246,15 +246,15 @@
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>setAndSaveEntityConfig(entityConstructor: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, configEntitySettings?: <a href="../interfaces/EntityConfig.html" target="_self">EntityConfig</a>, configListView?: <a href="../miscellaneous/variables.html#DynamicComponent" target="_self">DynamicComponentConfig&lt;EntityListConfig&gt;</a>, configDetailsView?: <a href="../miscellaneous/variables.html#DynamicComponent" target="_self">DynamicComponentConfig&lt;EntityDetailsConfig | NoteDetailsConfig&gt;</a>, additionalEntityConstructors?: <a href="../classes/Entity.html" target="_self">EntityConstructor[]</a>)</code>
+                    <code>setAndSaveEntityConfig(entityConstructor: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, configEntitySettings?: <a href="../interfaces/EntityConfig.html" target="_self">RawConfig&lt;EntityConfig&gt;</a>, configListView?: <a href="../miscellaneous/variables.html#DynamicComponent" target="_self">DynamicComponentConfig&lt;EntityListConfig&gt;</a>, configDetailsView?: <a href="../miscellaneous/variables.html#DynamicComponent" target="_self">DynamicComponentConfig&lt;EntityDetailsConfig | NoteDetailsConfig&gt;</a>, additionalEntityConstructors?: <a href="../classes/Entity.html" target="_self">EntityConstructor[]</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="47"
-                                    class="link-to-prism">src/app/core/admin/admin-entity.service.ts:47</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="49"
+                                    class="link-to-prism">src/app/core/admin/admin-entity.service.ts:49</a></div>
                         </td>
                     </tr>
 
@@ -297,7 +297,7 @@ of the EntityConstructor and persist them to the config doc.</p>
                                         <tr>
                                                 <td>configEntitySettings</td>
                                             <td>
-                                                            <code><a href="../interfaces/EntityConfig.html" target="_self" >EntityConfig</a></code>
+                                                            <code><a href="../interfaces/EntityConfig.html" target="_self" >RawConfig&lt;EntityConfig&gt;</a></code>
                                             </td>
 
                                             <td>
@@ -392,8 +392,8 @@ of the EntityConstructor and persist them to the config doc.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="28"
-                                    class="link-to-prism">src/app/core/admin/admin-entity.service.ts:28</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="30"
+                                    class="link-to-prism">src/app/core/admin/admin-entity.service.ts:30</a></div>
                         </td>
                     </tr>
 
@@ -497,7 +497,7 @@ of the EntityConstructor and persist them to the config doc.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/admin/admin-entity.service.ts:19</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/admin/admin-entity.service.ts:21</a></div>
                         </td>
                     </tr>
 
@@ -520,6 +520,8 @@ import { EntityListConfig } from &quot;../entity-list/EntityListConfig&quot;;
 import { EntityDetailsConfig } from &quot;../entity-details/EntityDetailsConfig&quot;;
 import { DynamicComponentConfig } from &quot;../config/dynamic-components/dynamic-component-config.interface&quot;;
 import { NoteDetailsConfig } from &quot;#src/app/child-dev-project/notes/note-details/note-details-config.interface&quot;;
+import { RawConfig } from &quot;../config/multi-lingual-config&quot;;
+import { mergeLocaleTranslations } from &quot;../language/active-locale&quot;;
 
 /**
  * Simply service to centralize updates between various admin components in the form builder.
@@ -558,7 +560,7 @@ export class AdminEntityService {
    */
   public async setAndSaveEntityConfig(
     entityConstructor: EntityConstructor,
-    configEntitySettings?: EntityConfig,
+    configEntitySettings?: RawConfig&lt;EntityConfig&gt;,
     configListView?: DynamicComponentConfig&lt;EntityListConfig&gt;,
     configDetailsView?: DynamicComponentConfig&lt;
       EntityDetailsConfig | NoteDetailsConfig
@@ -600,7 +602,7 @@ export class AdminEntityService {
   private updateConfigWithEntitySchema(
     newConfig: Config,
     entityConstructor: EntityConstructor,
-    configEntitySettings?: EntityConfig,
+    configEntitySettings?: RawConfig&lt;EntityConfig&gt;,
   ) {
     let entitySchemaConfig: EntityConfig &#x3D;
       this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
@@ -612,12 +614,20 @@ export class AdminEntityService {
       if (field.isInternalField) {
         continue;
       }
-      entitySchemaConfig.attributes[fieldId] &#x3D; field;
+      // the runtime schema holds values resolved to the active language, so merge
+      // onto the raw config to keep translations of other languages
+      entitySchemaConfig.attributes[fieldId] &#x3D; mergeLocaleTranslations(
+        entitySchemaConfig.attributes[fieldId],
+        field,
+      );
     }
 
     // Add additional general settings if available
     if (configEntitySettings) {
-      Object.assign(entitySchemaConfig, configEntitySettings);
+      Object.assign(
+        entitySchemaConfig,
+        mergeLocaleTranslations(entitySchemaConfig, configEntitySettings),
+      );
     }
   }
 

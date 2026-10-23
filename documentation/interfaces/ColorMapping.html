@@ -230,7 +230,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/entity/model/entity.ts:54</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/entity/model/entity.ts:55</a></div>
                                 </td>
                             </tr>
 
@@ -269,7 +269,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/core/entity/model/entity.ts:53</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/entity/model/entity.ts:54</a></div>
                                 </td>
                             </tr>
 
@@ -289,6 +289,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { v4 as uuid } from &quot;uuid&quot;;
 import { EntitySchema } from &quot;../schema/entity-schema&quot;;
 import { DatabaseField } from &quot;../database-field.decorator&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -639,6 +640,9 @@ export class Entity {
         if (value?.label) {
           value &#x3D; value.label;
         }
+        // a configured text may be a per-language map; anything else
+        // is returned unchanged
+        value &#x3D; resolveLocaleText(value);
         if (value instanceof Date) {
           value &#x3D; value.toLocaleDateString();
         }

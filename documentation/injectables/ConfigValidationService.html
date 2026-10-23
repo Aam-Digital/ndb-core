@@ -233,8 +233,8 @@ not bugs in our code (see &quot;Error Handling &amp; Remote Logging&quot; in AGE
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="75"
-                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:75</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -303,8 +303,8 @@ not bugs in our code (see &quot;Error Handling &amp; Remote Logging&quot; in AGE
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/app/core/config/config-validation/config-validation.service.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -375,6 +375,7 @@ import { EntityAbility } from &quot;../../permissions/ability/entity-ability&quo
 import { AlertService } from &quot;../../alerts/alert.service&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { Config } from &quot;../config&quot;;
+import { resolveLocaleText } from &quot;../../language/active-locale&quot;;
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -532,7 +533,7 @@ export class ConfigValidationService {
         ? [
             {
               configId,
-              message: $localize&#x60;:config validation:Unknown icon &quot;${item.icon}:icon:&quot; for menu item &quot;${item.label}:label:&quot;. A default icon is shown instead.&#x60;,
+              message: $localize&#x60;:config validation:Unknown icon &quot;${item.icon}:icon:&quot; for menu item &quot;${resolveLocaleText(item.label)}:label:&quot;. A default icon is shown instead.&#x60;,
             },
           ]
         : []),

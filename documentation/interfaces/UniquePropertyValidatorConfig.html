@@ -229,7 +229,7 @@
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts:19</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts:20</a></div>
                                 </td>
                             </tr>
 
@@ -275,7 +275,7 @@ The error message will be: &quot;A record with this {fieldLabel} already exists.
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="10" class="link-to-prism">src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts:10</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts:11</a></div>
                                 </td>
                             </tr>
 
@@ -325,7 +325,7 @@ The error message will be: &quot;A record with this {fieldLabel} already exists.
 
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts:14</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">src/app/core/common-components/entity-form/unique-property-validator/unique-property-validator.ts:15</a></div>
                                 </td>
                             </tr>
 
@@ -344,6 +344,7 @@ The error message will be: &quot;A record with this {fieldLabel} already exists.
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { FormControl, ValidationErrors } from &quot;@angular/forms&quot;;
 import { AsyncPromiseValidatorFn } from &quot;../dynamic-form-validators/validator-types&quot;;
+import { resolveLocaleText } from &quot;../../../language/active-locale&quot;;
 
 export const UNIQUE_PROPERTY_ERROR_KEY &#x3D; &quot;uniqueProperty&quot;;
 
@@ -371,17 +372,24 @@ function normalizeValue(value: unknown): unknown {
   return value.trim().toLowerCase();
 }
 
+/**
+ * A multi-lingual text is a per-language map, which no two maps compare equal as.
+ * Compare the text of the active language instead, i.e. what the admin actually sees.
+ * Anything that is not such a map is returned unchanged.
+ */
+function comparableValue(value: unknown, shouldNormalize: boolean): unknown {
+  const resolved &#x3D; resolveLocaleText(value);
+  return shouldNormalize ? normalizeValue(resolved) : resolved;
+}
+
 function isDuplicate(
   currentValue: unknown,
   existingValues: unknown[],
   shouldNormalize: boolean,
 ): boolean {
-  if (shouldNormalize) {
-    currentValue &#x3D; normalizeValue(currentValue);
-    existingValues &#x3D; existingValues.map(normalizeValue);
-  }
-
-  return existingValues.includes(currentValue);
+  return existingValues
+    .map((value) &#x3D;&gt; comparableValue(value, shouldNormalize))
+    .includes(comparableValue(currentValue, shouldNormalize));
 }
 
 /**
