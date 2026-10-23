@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminSectionHeaderComponent } from "./admin-section-header.component";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -22,6 +24,10 @@ describe("AdminSectionHeaderComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,

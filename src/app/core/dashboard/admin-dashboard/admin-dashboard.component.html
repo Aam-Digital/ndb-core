@@ -55,7 +55,7 @@
 
       <mat-card-content class="widget-preview-section">
         <!-- Widget Content with Overlay Edit Button -->
-        <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+        <ng-template [appDynamicComponent]="previewWidgets()[i]"></ng-template>
 
         <!-- Centered Edit Button Overlay -->
         <div class="field-hover-buttons">

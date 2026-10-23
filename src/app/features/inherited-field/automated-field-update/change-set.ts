@@ -61,7 +61,8 @@ export class ChangeSet {
   constructor(entity: Entity, before: Entity, changedFields: string[]) {
     this.records.set(entity.getId(), {
       before: before.isNew ? undefined : before,
-      after: entity,
+      // a copy, as suggested values for fields of the changed record are set here, and the record may be shown
+      after: entity.copy(),
       changedFields: new Set(changedFields),
     });
   }

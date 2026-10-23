@@ -96,6 +96,20 @@ export const environment = {
   default_data_source: undefined as DataSourceType | undefined,
 
   /**
+   * Whether the system is multi-language: admins can configure texts in several
+   * languages, and users can switch the app's language (in their profile and on public
+   * forms). Off in prod and enabled per system.
+   *
+   * If off, the translation editing UI is hidden (texts already stored per language are
+   * still resolved), and everyone uses the default language from the site settings:
+   * a user's own language and one picked on the device are ignored.
+   *
+   * If on, the translation editing UI is still hidden while only the default language
+   * is enabled in the site settings (see `SiteSettingsService.translationsEnabled`).
+   */
+  multiLingualConfigEnabled: true,
+
+  /**
    * Whether users are allowed to choose between synced and online-only mode on the login page.
    * When false, the toggle is hidden and the session_type configured here is enforced.
    * Defaults to true (users can choose).

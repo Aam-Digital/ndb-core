@@ -1,24 +1,27 @@
 <!-- Color Picker Button -->
 <ng-template #colorPickerButton>
-  <button
-    mat-icon-button
-    type="button"
-    [style.color]="colorPickerValue"
-    (click)="colorInput.click()"
-    tabindex="-1"
-    matTooltip="Pick color"
-    i18n-matTooltip
-  >
-    <fa-icon icon="palette"></fa-icon>
-  </button>
-  <input
-    #colorInput
-    type="color"
-    class="color-input-overlay"
-    [value]="colorPickerValue"
-    (input)="onColorPickerChange($any($event.target).value)"
-    (click)="$event.stopPropagation()"
-  />
+  <!-- positioned wrapper, so the invisible native picker overlays only this button -->
+  <span class="color-picker-button">
+    <button
+      mat-icon-button
+      type="button"
+      [style.color]="colorPickerValue"
+      (click)="colorInput.click()"
+      tabindex="-1"
+      matTooltip="Pick color"
+      i18n-matTooltip
+    >
+      <fa-icon icon="palette"></fa-icon>
+    </button>
+    <input
+      #colorInput
+      type="color"
+      class="color-input-overlay"
+      [value]="colorPickerValue"
+      (input)="onColorPickerChange($any($event.target).value)"
+      (click)="$event.stopPropagation()"
+    />
+  </span>
 </ng-template>
 
 @if (ngControl) {

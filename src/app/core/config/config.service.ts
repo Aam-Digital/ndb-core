@@ -8,6 +8,8 @@ import { NamedError } from "../logging/reported-errors";
 import { Config } from "./config";
 import { DefaultConfigMigrationRegistryService } from "./default-config-migration-registry.service";
 import { applyConfigMigrations } from "./config-migrations";
+import { resolveLocaleConfig } from "../language/active-locale";
+import { RawConfig } from "./multi-lingual-config";
 import { ConfigValidationService } from "./config-validation/config-validation.service";
 
 /**
@@ -32,6 +34,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
   private readonly defaultConfigMigrations = inject(
     DefaultConfigMigrationRegistryService,
   );
+
+  /**
+   * The display view returned by getConfig()/getAllConfigs().
+   * `currentConfig` stays raw, as the persisted source of truth.
+   */
+  private resolvedConfigData: Record<string, any>;
 
   // resolved lazily: the validation checks services that themselves depend on the ConfigService
   private readonly injector = inject(Injector);
@@ -59,6 +67,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       sessionStorage.removeItem(ConfigService.RELOAD_ATTEMPTS_KEY);
       const previousConfig = this.currentConfig;
       this.currentConfig = this.applyMigrations(config);
+      this.resolvedConfigData = resolveLocaleConfig(this.currentConfig.data);
       this.logConfigRev();
       if (previousConfig && previousConfig._rev !== this.currentConfig._rev) {
         // the config was just saved (by this or another admin)
@@ -159,25 +168,59 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return rawObject ? JSON.parse(value) : value;
   }
 
+  /**
+   * Get a config item, with multi-lingual values resolved to the active locale.
+   * Use getRawConfig() if you will save it back, or other languages are lost.
+   */
   public getConfig<T>(id: string): T | undefined {
+    return this.resolvedConfigData?.[id];
+  }
+
+  /**
+   * Get a config item with its raw values, for any read-modify-save flow.
+   * Its display texts may be translation maps, so resolve them where displayed.
+   */
+  public getRawConfig<T>(id: string): RawConfig<T> | undefined {
     return this.currentConfig?.data?.[id];
   }
 
   /**
    * Return all config items of the given "type"
-   * (determined by the given prefix of their id).
+   * (determined by the given prefix of their id),
+   * with any multi-lingual values resolved to the active locale.
    *
    * @param prefix The prefix of config items to return (e.g. "view:" or "entity:")
    */
   public getAllConfigs<T>(prefix: string): T[] {
-    if (!this.currentConfig?.data) {
+    return ConfigService.collectConfigsByPrefix<T>(
+      this.resolvedConfigData,
+      prefix,
+    );
+  }
+
+  /**
+   * Like getAllConfigs(), but with raw values (multi-lingual maps left intact).
+   * Required for any read-modify-save flow.
+   */
+  public getAllRawConfigs<T>(prefix: string): RawConfig<T>[] {
+    return ConfigService.collectConfigsByPrefix<RawConfig<T>>(
+      this.currentConfig?.data,
+      prefix,
+    );
+  }
+
+  private static collectConfigsByPrefix<T>(
+    data: Record<string, any> | undefined,
+    prefix: string,
+  ): T[] {
+    if (!data) {
       return [];
     }
-    const matchingConfigs = [];
-    for (const id of Object.keys(this.currentConfig.data)) {
+    const matchingConfigs: T[] = [];
+    for (const id of Object.keys(data)) {
       if (id.startsWith(prefix)) {
-        this.currentConfig.data[id]._id = id;
-        matchingConfigs.push(this.currentConfig.data[id]);
+        data[id]._id = id;
+        matchingConfigs.push(data[id]);
       }
     }
     return matchingConfigs;

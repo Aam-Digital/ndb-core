@@ -27,7 +27,7 @@
               ></app-admin-section-header>
             } @else {
               <!-- only current tab can be renamed -->
-              {{ tab[tabTitleProperty()] }}
+              {{ tab[tabTitleProperty()] | localeText }}
             }
           </div>
         </div>

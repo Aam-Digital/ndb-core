@@ -10,6 +10,7 @@ import { ShortcutDashboardConfig } from "../shortcut-dashboard-config";
 import { DynamicFormControlComponent } from "#src/app/core/admin/admin-widget-dialog/dynamic-form-control.interface";
 import { MenuItemListEditorComponent } from "../../../../core/ui/menu-item-list-editor/menu-item-list-editor.component";
 import { MenuItemForAdminUi } from "../../../../core/admin/admin-menu/menu-item-for-admin-ui";
+import { MenuItem } from "#src/app/core/ui/navigation/menu-item";
 
 @DynamicComponent("ShortcutDashboardSettings")
 @Component({
@@ -38,7 +39,8 @@ export class ShortcutDashboardSettingsComponent implements DynamicFormControlCom
     );
     this.formControl().setValue({
       ...(this.formControl().value ?? ({} as ShortcutDashboardConfig)),
-      shortcuts: plainMenuItems,
+      // the shortcuts keep their raw labels (plain string or per-language map)
+      shortcuts: plainMenuItems as MenuItem[],
     });
     this.formControl().markAsDirty();
   }

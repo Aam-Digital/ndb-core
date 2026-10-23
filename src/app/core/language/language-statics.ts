@@ -1,4 +1,9 @@
 export const LANGUAGE_LOCAL_STORAGE_KEY = "locale";
+/**
+ * Id of the account whose own language setting put the current locale in place.
+ * Absent if the locale was picked on this device or is the system default.
+ */
+export const LANGUAGE_OWNER_LOCAL_STORAGE_KEY = "localeOwner";
 export const DEFAULT_LANGUAGE = "en-US";
 
 /**

@@ -1,4 +1,6 @@
 import { asArray } from "../../utils/asArray";
+import { TranslatableText } from "../config/multi-lingual-config";
+
 /**
  * Describes a base configuration that can be used with the SetupService
  * to initialize a system with predefined settings.
@@ -12,13 +14,13 @@ export interface BaseConfig {
   /**
    * Human-readable name
    */
-  name: string;
+  name: TranslatableText;
 
   /**
    * Description of the scenario of this base configuration
    * (can contain Markdown formatting).
    */
-  description: string;
+  description: TranslatableText;
 
   /**
    * Names of json files that should be imported during the setup process.

@@ -7,6 +7,7 @@ import {
   output,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { resolveLocaleText } from "../../../language/active-locale";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -62,7 +63,13 @@ export class AdminMenuItemComponent {
     if (!item) {
       return undefined;
     }
-    const plainItem = this.menuService.generateMenuItemForEntityType(item);
+    // subMenu is dropped below anyway and its items are not plain MenuItems
+    const { subMenu: _subMenu, ...itemWithoutSubMenu } = item;
+    const plainItem = this.menuService.generateMenuItemForEntityType({
+      ...itemWithoutSubMenu,
+      // this preview displays the label, so show the active language's text
+      label: resolveLocaleText(item.label),
+    });
     delete plainItem.link;
     delete plainItem.subMenu;
     return plainItem;

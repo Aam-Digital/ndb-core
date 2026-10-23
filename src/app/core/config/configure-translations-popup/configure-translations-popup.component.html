@@ -1,0 +1,65 @@
+<h1 matDialogTitle i18n="title of the translations popup dialog">
+  Configure translations
+</h1>
+<app-dialog-close (click)="onCancel()"></app-dialog-close>
+
+<mat-dialog-content class="dialog-content">
+  @if (data.fieldLabel) {
+    <p i18n>Translations for "{{ data.fieldLabel }}"</p>
+  }
+
+  @for (row of rows; track row.locale) {
+    @if (row.enabled || showDisabled()) {
+      <mat-form-field class="full-width">
+        <mat-label>
+          @if (row.enabled) {
+            {{ row.localeLabel }}
+          } @else {
+            {{ row.localeLabel }}
+            <span class="disabled-marker" i18n>(disabled)</span>
+          }
+        </mat-label>
+        @if (data.multiline) {
+          <textarea
+            matInput
+            [(ngModel)]="row.text"
+            [name]="row.locale"
+            [rows]="data.rows ?? 3"
+          ></textarea>
+        } @else {
+          <input matInput [(ngModel)]="row.text" [name]="row.locale" />
+        }
+      </mat-form-field>
+    }
+  }
+
+  @if (disabledCount > 0) {
+    <button
+      mat-button
+      type="button"
+      class="toggle-disabled"
+      (click)="showDisabled.set(!showDisabled())"
+    >
+      @if (showDisabled()) {
+        <span i18n>{disabledCount, plural,
+          =1 {Hide 1 disabled language}
+          other {Hide {{ disabledCount }} disabled languages}
+        }</span>
+      } @else {
+        <span i18n>{disabledCount, plural,
+          =1 {Show 1 disabled language}
+          other {Show {{ disabledCount }} disabled languages}
+        }</span>
+      }
+    </button>
+  }
+
+  <p class="hint-text" i18n>
+    Languages left empty fall back to the text of the default language.
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="onSave()" i18n>Save</button>
+  <button mat-raised-button (click)="onCancel()" i18n>Cancel</button>
+</mat-dialog-actions>

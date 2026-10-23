@@ -62,4 +62,19 @@ describe("MarkdownPageComponent", () => {
     expect(fixture.nativeElement.querySelector("em")).toBeNull();
     expect(fixture.nativeElement.querySelector("div[markdown]")).toBeTruthy();
   });
+
+  it("shows the active language of a multi-lingual content, keeping the entity raw", async () => {
+    const entity = new MarkdownContent("test-entity-2");
+    entity.content = { "en-US": "# Help", de: "# Hilfe" };
+    mockEntityMapper.load.mockResolvedValue(entity);
+
+    fixture.componentRef.setInput("markdownEntityId", "test-entity-2");
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    // the active locale in tests is en-US
+    expect(component.markdownContent()).toBe("# Help");
+    // the entity itself still holds every configured language
+    expect(entity.content).toEqual({ "en-US": "# Help", de: "# Hilfe" });
+  });
 });

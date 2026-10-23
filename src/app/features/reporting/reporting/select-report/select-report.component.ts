@@ -25,6 +25,8 @@ import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-ran
 import { periodRangeOptions } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeFilterConfigOption } from "app/core/entity-list/EntityListConfig";
 import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { resolveLocaleText } from "app/core/language/active-locale";
+import { LocaleTextPipe } from "app/core/language/locale-text.pipe";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +45,7 @@ import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynam
     MatTooltipModule,
     DateRangeFilterComponent,
     FaDynamicIconComponent,
+    LocaleTextPipe,
   ],
 })
 export class SelectReportComponent {
@@ -67,6 +70,10 @@ export class SelectReportComponent {
     computation: (reports, previous) =>
       reports?.length === 1 ? reports[0] : previous?.value,
   });
+  readonly selectedReportTitle = computed(() =>
+    resolveLocaleText(this.selectedReport()?.title),
+  );
+
   fromDate = signal<Date | undefined>(undefined);
   toDate = signal<Date | undefined>(undefined);
   /** whether the currently selected report includes filter parameters for a "from" - "to" date range */
@@ -116,9 +123,10 @@ export class SelectReportComponent {
   }
 
   get baseExportFileName(): string {
+    const title = this.selectedReportTitle();
     const reportName =
-      this.selectedReport()
-        ?.title?.replace(/[^\w\s-]/g, "")
+      title
+        ?.replace(/[^\w\s-]/g, "")
         .replace(/\s+/g, " ")
         .trim() || "report";
     const datePart = this.getDatePart();

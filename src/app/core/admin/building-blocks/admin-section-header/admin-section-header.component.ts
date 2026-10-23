@@ -7,11 +7,11 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { TranslatableText } from "../../../config/multi-lingual-config";
+import { TranslatableTextInputComponent } from "../../../config/translatable-text-input/translatable-text-input.component";
 
 /**
  * Simple building block for UI Builder for a section title including button to remove the section.
@@ -28,10 +28,9 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
   selector: "app-admin-section-header",
   imports: [
     FaIconComponent,
-    FormsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule,
+    TranslatableTextInputComponent,
   ],
   templateUrl: "./admin-section-header.component.html",
   styleUrl: "./admin-section-header.component.scss",
@@ -39,7 +38,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 export class AdminSectionHeaderComponent {
   private confirmationDialog = inject(ConfirmationDialogService);
 
-  title = model<string>("");
+  title = model<TranslatableText>("");
 
   /** supports two-way data binding for the editable title: `<app-admin-section-header [(title)]="section.title"` */
   remove = output();

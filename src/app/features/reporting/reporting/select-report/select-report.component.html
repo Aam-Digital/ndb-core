@@ -23,11 +23,11 @@
         >
           @for (report of reports(); track report.getId()) {
             <mat-option [value]="report">
-              {{ report.title }}
+              {{ report.title | localeText }}
             </mat-option>
           }
         </mat-select>
-        <mat-hint>{{ selectedReport()?.description }}</mat-hint>
+        <mat-hint>{{ selectedReport()?.description | localeText }}</mat-hint>
       </mat-form-field>
 
       @if (isDateRangeReport()) {
@@ -53,7 +53,7 @@
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="calculate"
-        [angularticsLabel]="selectedReport()?.title"
+        [angularticsLabel]="selectedReportTitle()"
         matTooltip="Please select a report and a date range"
         i18n-matTooltip
         [matTooltipDisabled]="!calculateButton.disabled"
@@ -70,7 +70,7 @@
         angulartics2On="click"
         angularticsCategory="Reporting"
         angularticsAction="export"
-        [angularticsLabel]="selectedReport()?.title"
+        [angularticsLabel]="selectedReportTitle()"
       >
         <app-fa-dynamic-icon
           icon="download"

@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -25,6 +27,8 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { AttendanceDatatype } from "#src/app/features/attendance/model/attendance.datatype";
+import { EntityConfigService } from "../../../entity/entity-config.service";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -42,6 +46,7 @@ describe("AdminEntityFieldComponent", () => {
   beforeEach(() => {
     mockEnumService = {
       getEnum: vi.fn(),
+      getEnumValues: vi.fn().mockReturnValue([]),
       listEnums: vi.fn(),
       preLoadEnums: vi.fn(),
     };
@@ -65,6 +70,10 @@ describe("AdminEntityFieldComponent", () => {
       providers: [
         // the preview of the field type in the dialog can be a date picker
         provideNativeDateAdapter(),
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
         {
           provide: MAT_DIALOG_DATA,
           useValue: dialogData,
@@ -633,5 +642,185 @@ describe("AdminEntityFieldComponent", () => {
     component.fieldIdForm.setValue("valid_id");
     await fixture.whenStable();
     expect(component.fieldIdForm.errors).toBeNull();
+  });
+
+  describe("multi-lingual config", () => {
+    const TRANSLATIONS = { "en-US": "Name", de: "Vorname" };
+
+    it("should keep configured translations when other settings are edited afterwards", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: "Name",
+        dataType: "string",
+      } as EntitySchemaField);
+
+      // the translatable input writes the full value (all languages) to the control
+      component.schemaFieldsForm.get("label").setValue(TRANSLATIONS);
+      await fixture.whenStable();
+
+      // editing any other setting writes the whole form back onto the schema
+      // field - the translations must not be lost by that
+      component.schemaFieldsForm
+        .get("description")
+        .setValue("Some description");
+      await fixture.whenStable();
+
+      await component.save();
+
+      expect(dialogData.entitySchemaField.label).toEqual(TRANSLATIONS);
+      expect(dialogData.entitySchemaField.description).toBe("Some description");
+    });
+
+    it("should show the text of the active language outside the form field", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: "Name",
+        dataType: "string",
+      } as EntitySchemaField);
+
+      component.schemaFieldsForm.get("label").setValue(TRANSLATIONS);
+      await fixture.whenStable();
+
+      // tests run in the default language
+      expect(component.resolvedLabel()).toBe("Name");
+    });
+
+    it("should show the active language's text already when the dialog opens", async () => {
+      await recreateComponentWithData({
+        id: "name",
+        label: TRANSLATIONS,
+        dataType: "string",
+      } as unknown as EntitySchemaField);
+
+      expect(component.resolvedLabel()).toBe("Name");
+    });
+
+    it("should generate the field id from the text, not from a translation map", async () => {
+      await recreateComponentWithData({
+        dataType: "string",
+      } as EntitySchemaField);
+
+      component.schemaFieldsForm
+        .get("label")
+        .setValue({ "en-US": "My New Field", de: "Mein neues Feld" });
+      await fixture.whenStable();
+
+      expect(component.fieldIdForm.value).toBe(
+        generateIdFromLabel("My New Field"),
+      );
+    });
+  });
+
+  describe("reopening a field that was applied but not saved yet", () => {
+    /** the config document still holds the field as it was before this page was edited */
+    function mockSavedLabel(saved: TranslatableText | undefined) {
+      vi.spyOn(
+        TestBed.inject(EntityConfigService),
+        "getRawEntityConfig",
+      ).mockReturnValue({ attributes: { name: { label: saved } } } as any);
+    }
+
+    it.each<{
+      invariant: string;
+      saved: TranslatableText | undefined;
+      inMemory: TranslatableText;
+      expected: TranslatableText;
+    }>([
+      {
+        invariant: "the text that was applied, not the saved one",
+        saved: "Old label",
+        inMemory: "New label",
+        expected: "New label",
+      },
+      {
+        invariant: "the translations that were applied, not the saved ones",
+        saved: { "en-US": "Name", de: "Vorname" },
+        inMemory: { "en-US": "Full name", de: "Vorname" },
+        expected: { "en-US": "Full name", de: "Vorname" },
+      },
+      {
+        invariant: "all saved translations while their text is unchanged",
+        saved: { "en-US": "Name", de: "Vorname" },
+        inMemory: "Name",
+        expected: { "en-US": "Name", de: "Vorname" },
+      },
+      {
+        invariant: "only the active language updated once its text was edited",
+        saved: { "en-US": "Name", de: "Vorname" },
+        inMemory: "Full name",
+        expected: { "en-US": "Full name", de: "Vorname" },
+      },
+      {
+        invariant: "the applied text for a field that is not saved yet",
+        saved: undefined,
+        inMemory: "New label",
+        expected: "New label",
+      },
+    ])("should show $invariant", async ({ saved, inMemory, expected }) => {
+      mockSavedLabel(saved);
+
+      await recreateComponentWithData({
+        id: "name",
+        label: inMemory,
+        dataType: "string",
+      } as unknown as EntitySchemaField);
+
+      expect(component.schemaFieldsForm.get("label").value).toEqual(expected);
+    });
+
+    it("should not revert the applied label when applying other changes", async () => {
+      mockSavedLabel("Old label");
+      await recreateComponentWithData({
+        id: "name",
+        label: "New label",
+        dataType: "string",
+      } as EntitySchemaField);
+
+      // any change writes the whole form back onto the schema field
+      component.schemaFieldsForm
+        .get("description")
+        .setValue("Some description");
+      await fixture.whenStable();
+      await component.save();
+
+      expect(dialogData.entitySchemaField.label).toBe("New label");
+    });
+  });
+
+  describe("editing a field only for one view (e.g. a public form)", () => {
+    it.each<{
+      invariant: string;
+      localLabel: TranslatableText | undefined;
+      expected: TranslatableText;
+    }>([
+      {
+        invariant: "all translations of a label inherited from the entity type",
+        localLabel: undefined,
+        expected: { "en-US": "Name", de: "Vorname" },
+      },
+      {
+        invariant: "a label of the view's own field config unchanged",
+        localLabel: { "en-US": "Your name", de: "Ihr Name" },
+        expected: { "en-US": "Your name", de: "Ihr Name" },
+      },
+    ])("should keep $invariant", async ({ localLabel, expected }) => {
+      vi.spyOn(
+        TestBed.inject(EntityConfigService),
+        "getRawEntityConfig",
+      ).mockReturnValue({
+        attributes: { name: { label: { "en-US": "Name", de: "Vorname" } } },
+      } as any);
+      dialogData.overwriteLocally = true;
+
+      // the form builder passes the runtime schema field (resolved) merged with the view's own config
+      const runtimeField = TestEntity.schema.get("name");
+      await recreateComponentWithData({
+        ...runtimeField,
+        ...(localLabel ? { label: localLabel } : {}),
+        id: "name",
+      } as EntitySchemaField);
+
+      expect(component.schemaFieldsForm.get("label").value).toEqual(expected);
+    });
   });
 });

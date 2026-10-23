@@ -1,7 +1,8 @@
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
-import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
+import { TranslatableTextDatatype } from "../../core/config/translatable-text.datatype";
+import { TranslatableText } from "../../core/config/multi-lingual-config";
 import { FileFieldConfig } from "../file/file.datatype";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
 import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
@@ -29,18 +30,22 @@ export class TemplateExport extends Entity {
    */
   @DatabaseField({
     label: $localize`:TemplateExport:Title`,
+    dataType: TranslatableTextDatatype.dataType,
     validators: { required: true },
   })
-  title: string;
+  title: TranslatableText;
 
   /**
    * Additional description to guide users
    */
   @DatabaseField({
     label: $localize`:TemplateExport:Description`,
-    dataType: LongTextDatatype.dataType,
+    dataType: TranslatableTextDatatype.dataType,
+    // long text: keep the truncating display
+    viewComponent: "DisplayLongText",
+    additional: { multiline: true, rows: 5 },
   })
-  description: string;
+  description: TranslatableText;
 
   /**
    * The entity type(s) this template can be used with (i.e. placeholders matching the entity type)

@@ -28,6 +28,7 @@ import {
 } from "../../admin/admin-widget-dialog/admin-widget-dialog.component";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
+import { resolveLocaleConfig } from "../../language/active-locale";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
@@ -66,15 +67,37 @@ export class AdminDashboardComponent {
     () => PREFIX_VIEW_CONFIG + this.dashboardViewId(),
   );
 
-  private readonly dashboardViewConfig = computed(
-    () =>
-      this.configService.getConfig(this.dashboardViewConfigKey()) as
-        DynamicComponentConfig<DashboardConfig> | undefined,
+  // raw, because save() writes this back to the config document - a resolved
+  // value would drop every other configured language
+  private readonly dashboardViewConfig = computed(() =>
+    this.configService.getRawConfig<DynamicComponentConfig<DashboardConfig>>(
+      this.dashboardViewConfigKey(),
+    ),
   );
 
   dashboardConfig = linkedSignal(() =>
     structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
   );
+
+  /**
+   * resolved copies, for the live widget preview only.
+   * Cached per widget, because a preview gets rebuilt (and reloads its data)
+   * whenever it is passed a new object: editing one widget must not rebuild all.
+   */
+  readonly previewWidgets = computed(() =>
+    this.dashboardConfig().widgets.map((widget) => {
+      let resolved = this.resolvedWidgets.get(widget);
+      if (!resolved) {
+        resolved = resolveLocaleConfig(widget);
+        this.resolvedWidgets.set(widget, resolved);
+      }
+      return resolved;
+    }),
+  );
+  private readonly resolvedWidgets = new WeakMap<
+    DynamicComponentConfig,
+    DynamicComponentConfig
+  >();
 
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);

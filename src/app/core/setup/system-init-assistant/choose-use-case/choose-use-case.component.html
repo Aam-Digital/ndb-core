@@ -8,10 +8,10 @@
         (selectionChange)="onSelectionChange()"
         [disabled]="startFromScratch()"
       >
-        @for (useCase of availableUseCases(); track useCase.id) {
+        @for (useCase of availableUseCases(); track useCase.config.id) {
           <mat-option
             [value]="useCase"
-            [class.greyed-out]="!offeredInCurrentLocale().has(useCase)"
+            [class.greyed-out]="!offeredInCurrentLocale().has(useCase.config)"
           >
             {{ useCase.name }}
           </mat-option>

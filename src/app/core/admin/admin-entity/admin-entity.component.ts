@@ -20,6 +20,7 @@ import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/e
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ConfigService } from "../../config/config.service";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { RawConfig } from "../../config/multi-lingual-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityConfig } from "../../entity/entity-config";
@@ -57,6 +58,7 @@ export class AdminEntityComponent {
   private configService = inject(ConfigService);
   private location = inject(Location);
   private adminEntityService = inject(AdminEntityService);
+  private entityConfigService = inject(EntityConfigService);
   private entityActionsService = inject(EntityActionsService);
   private routes = inject(ActivatedRoute);
   private readonly queryParams = toSignal(this.routes.queryParams, {
@@ -104,9 +106,12 @@ export class AdminEntityComponent {
   private getEntitySettingsFromConstructor(
     entityCtr: EntityConstructor,
   ): EntityConfig {
-    const config: EntityConfig = {
-      label: entityCtr.label,
-      labelPlural: entityCtr.labelPlural,
+    // labels come from the raw config (not the resolved constructor statics)
+    // so that all configured languages remain editable
+    const rawConfig = this.entityConfigService.getRawEntityConfig(entityCtr);
+    const config: RawConfig<EntityConfig> = {
+      label: rawConfig?.label ?? entityCtr.label,
+      labelPlural: rawConfig?.labelPlural ?? entityCtr.labelPlural,
       icon: entityCtr.icon,
       color: entityCtr.color,
       toStringAttributes: [...entityCtr.toStringAttributes],
@@ -125,7 +130,9 @@ export class AdminEntityComponent {
       config.toBlockDetailsAttributes = entityCtr.toBlockDetailsAttributes;
     }
 
-    return config;
+    // the general settings editor keeps the other languages of these texts intact,
+    // but still declares them as plain strings
+    return config as EntityConfig;
   }
 
   private loadViewConfig(
@@ -136,8 +143,10 @@ export class AdminEntityComponent {
       viewType === "details"
         ? EntityConfigService.getDetailsViewId(entityType)
         : EntityConfigService.getListViewId(entityType);
-    const viewConfig: DynamicComponentConfig =
-      this.configService.getConfig(viewId);
+    // raw, because this editor saves the view config back to the config
+    // document - resolving here would drop all other languages
+    const viewConfig =
+      this.configService.getRawConfig<DynamicComponentConfig>(viewId);
 
     if (!viewConfig) {
       // return default view config
@@ -154,14 +163,23 @@ export class AdminEntityComponent {
       }
     }
 
-    viewConfig.config = viewConfig.config ?? { entityType: this.entityType() };
+    // `getRawConfig` hands back the config document's own object - edit a copy
+    const editableConfig: DynamicComponentConfig = JSON.parse(
+      JSON.stringify(viewConfig),
+    );
+
+    editableConfig.config = editableConfig.config ?? {
+      entityType: this.entityType(),
+    };
 
     // cleanup note details config, which should not have an entity instance assigned
-    if (viewConfig.config.entity && viewConfig.component === "NoteDetails") {
-      delete viewConfig.config.entity;
+    if (
+      editableConfig.config.entity &&
+      editableConfig.component === "NoteDetails"
+    ) {
+      delete editableConfig.config.entity;
     }
-    // work on a deep copy as we are editing in place (for titles, sections, etc.)
-    return JSON.parse(JSON.stringify(viewConfig));
+    return editableConfig;
   }
 
   cancel() {

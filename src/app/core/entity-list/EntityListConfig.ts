@@ -2,6 +2,7 @@ import { FilterSelectionOption } from "../filter/filters/filters";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";
+import { TranslatableText } from "../config/multi-lingual-config";
 import { DataSourceType } from "#src/app/core/common-components/entities-table/data-source/available-data-sources";
 
 export interface EntityListConfig {
@@ -62,7 +63,7 @@ export interface ColumnGroupsConfig {
 }
 
 export interface GroupConfig {
-  name: string;
+  name: TranslatableText;
   columns: string[];
 }
 

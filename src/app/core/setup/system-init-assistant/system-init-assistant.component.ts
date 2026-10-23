@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
 } from "@angular/core";
 import { SetupService } from "../setup.service";
 import { BaseConfig, isOfferedInLocale } from "../base-config";
@@ -13,6 +14,7 @@ import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
+import { LanguageService } from "app/core/language/language.service";
 import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -22,6 +24,9 @@ import { environment } from "#src/environments/environment";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-setup.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 
 /**
  * UI for initial system setup and use case selection,
@@ -46,6 +51,10 @@ export class SystemInitAssistantComponent implements OnInit {
   private dialogRef =
     inject<MatDialogRef<SystemInitAssistantComponent>>(MatDialogRef);
   private route = inject(ActivatedRoute);
+  private readonly languageService = inject(LanguageService);
+  private readonly siteSettings = inject(SiteSettingsService);
+  private readonly alertService = inject(AlertService);
+  private readonly languageSelect = viewChild(LanguageSelectComponent);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   protected readonly setupService = inject(SetupService);
@@ -60,6 +69,7 @@ export class SystemInitAssistantComponent implements OnInit {
   demoInitialized = signal<boolean>(false);
   generatingData = signal<boolean>(false);
   availableLocales = signal<ConfigurableEnumValue[]>([]);
+  savingLanguage = signal<boolean>(false);
 
   /** Whether the "create your profile" step has run its course (shown or not). */
   profileStepDone = signal<boolean>(false);
@@ -88,13 +98,50 @@ export class SystemInitAssistantComponent implements OnInit {
   /**
    * Offers a language only if some use case can be set up in it.
    * A use case without a locale is offered in every language, so all of them can be chosen then.
+   *
+   * The language the app currently runs in is always listed, even if no use case
+   * exists for it (or none could be loaded): otherwise the selector would show
+   * nothing selected. The use case list handles that case itself, see ChooseUseCaseComponent.
    */
   private getAvailableLocalesForUseCases() {
-    return availableLocales.values.filter((locale) =>
-      this.availableUseCases().some((useCase) =>
-        isOfferedInLocale(useCase, locale.id),
-      ),
+    const current = this.languageService.getCurrentLocale();
+    return availableLocales.values.filter(
+      (locale) =>
+        locale.id === current ||
+        this.availableUseCases().some((useCase) =>
+          isOfferedInLocale(useCase, locale.id),
+        ),
     );
+  }
+
+  /**
+   * The language picked here becomes the default language for all users
+   * (also if users can not switch languages themselves later).
+   * It is saved before applying it, because applying it reloads the app.
+   */
+  async onLanguageSelected(localeId: string) {
+    const locale = this.availableLocales().find((l) => l.id === localeId);
+    if (!locale || this.savingLanguage()) {
+      return;
+    }
+
+    this.savingLanguage.set(true);
+    try {
+      await this.siteSettings.setDefaultLanguage(locale);
+      this.languageService.switchLocale(localeId);
+    } catch (err) {
+      this.languageSelect()?.resetToCurrent();
+      if (isConnectivityError(err)) {
+        Logging.debug("Could not save the default language", err);
+      } else {
+        Logging.warn("Failed to save the default language", err);
+      }
+      this.alertService.addDanger(
+        $localize`The language could not be saved. Please try again.`,
+      );
+    } finally {
+      this.savingLanguage.set(false);
+    }
   }
 
   /**
@@ -128,6 +175,7 @@ export class SystemInitAssistantComponent implements OnInit {
 
     try {
       await this.setupService.initSystemWithBaseConfig(this.selectedUseCase()!);
+      await this.saveSelectedLanguageAsDefaultLanguage();
 
       if (this.generateDemoData()) {
         await this.demoDataInitializer.generateDemoData();
@@ -140,6 +188,18 @@ export class SystemInitAssistantComponent implements OnInit {
       Logging.error("Error initializing demo data:", error);
     } finally {
       this.generatingData.set(false);
+    }
+  }
+
+  /**
+   * The language selected here always becomes the default language, also if it was
+   * only preselected and over a language the imported site settings define.
+   */
+  private async saveSelectedLanguageAsDefaultLanguage() {
+    const currentLocale = this.languageService.getCurrentLocale();
+    const locale = availableLocales.values.find((l) => l.id === currentLocale);
+    if (locale) {
+      await this.siteSettings.setDefaultLanguage(locale);
     }
   }
 
