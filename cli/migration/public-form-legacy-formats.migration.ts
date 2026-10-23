@@ -112,7 +112,7 @@ function migrateDataType(field: any): void {
  * Without this, a legacy default value is silently dropped from submissions of the form.
  */
 export const publicFormLegacyFormats: MigrationDefinition = {
-  id: "oneoff-20261022-public-form-legacy-formats",
+  id: "v4-upgrade-public-form-legacy-formats",
   description:
     "Convert legacy defaultValue and dataType formats in PublicFormConfig docs to their latest formats. Safe to re-run.",
 

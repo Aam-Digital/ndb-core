@@ -93,7 +93,7 @@ function migrateShortcut(shortcut: any): any {
  * Without this, such a link opens the "not found" page.
  */
 export const todoRouteLinks: MigrationDefinition = {
-  id: "oneoff-20261022-todo-route-links",
+  id: "v4-upgrade-todo-route-links",
   description:
     "Point navigation menu items and dashboard shortcuts linking to /todo to the Todo entity route. Safe to re-run.",
 

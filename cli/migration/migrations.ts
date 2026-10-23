@@ -15,16 +15,21 @@ export const CONFIG_DOC_PATH = "/app/Config:CONFIG_ENTITY";
 /**
  * All registered migrations.
  * One-off migrations follow the naming convention: oneoff-YYYYMMDD-<slug>
+ * One-off migrations needed only to upgrade a system to a new major version
+ * are named <major>-upgrade-<slug> (e.g. v4-upgrade-<slug>)
+ * and removed once all systems run that version.
  */
 export const migrations: MigrationDefinition[] = [
   latestConfigFormats,
   codoAddEventType,
+  setMapCountrycodes,
+  restoreBackup,
+
+  // v4 upgrade
   reportDefinitionLegacyCleanup,
   permissionsKeyLegacyCleanup,
-  setMapCountrycodes,
   todoRouteLinks,
   publicFormLegacyFormats,
   noteLegacyChildSchoolFields,
   historicalDataLoader,
-  restoreBackup,
 ];

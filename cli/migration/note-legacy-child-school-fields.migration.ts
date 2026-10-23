@@ -118,7 +118,7 @@ function relatedEntitiesDefinition(
  * Idempotent: re-running does not change anything anymore, and new systems hold no data in these fields.
  */
 export const noteLegacyChildSchoolFields: MigrationDefinition = {
-  id: "oneoff-20261008-note-legacy-child-school-fields",
+  id: "v4-upgrade-note-legacy-child-school-fields",
   description:
     "Write the legacy Note children/schools/childrenAttendance fields (previously defined in code) and the previous default NoteDetails bottomForm into the config of systems using them, and remove them (with their references) where they hold no data. Safe to re-run.",
 

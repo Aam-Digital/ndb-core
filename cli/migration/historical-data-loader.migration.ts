@@ -34,7 +34,7 @@ export function migrateHistoricalDataLoader(value: unknown): unknown {
  * (The legacy `HistoricalDataComponent` is migrated by `latest-config-formats`.)
  */
 export const historicalDataLoader: MigrationDefinition = {
-  id: "oneoff-20261022-historical-data-loader",
+  id: "v4-upgrade-historical-data-loader",
   description:
     'Remove the removed "HistoricalDataService" loaderMethod from the config. Safe to re-run.',
 

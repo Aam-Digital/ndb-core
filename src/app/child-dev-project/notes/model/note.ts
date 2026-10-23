@@ -40,7 +40,7 @@ import { asArray } from "../../../utils/asArray";
  *
  * `Note` therefore no longer declares the legacy `children`, `schools` and `childrenAttendance` fields.
  * Systems that still hold data in them have the definitions written into their own `entity:Note` config
- * by the `oneoff-20261008-note-legacy-child-school-fields` CLI migration
+ * by the `v4-upgrade-note-legacy-child-school-fields` CLI migration
  * (see `deprecated/legacy-note-fields.ts`).
  */
 @DatabaseEntity("Note")

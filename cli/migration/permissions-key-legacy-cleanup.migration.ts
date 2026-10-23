@@ -32,7 +32,7 @@ const LEGACY_KEYS: { legacy: string; renamed: string }[] = [
  * no-op.
  */
 export const permissionsKeyLegacyCleanup: MigrationDefinition = {
-  id: "oneoff-20260804-permissions-key-legacy-cleanup",
+  id: "v4-upgrade-permissions-key-legacy-cleanup",
   description:
     "Move/remove legacy Config:Permissions sections default/public so only _default/_public remain. Safe to re-run.",
 
