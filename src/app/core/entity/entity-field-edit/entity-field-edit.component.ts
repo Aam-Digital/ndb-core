@@ -67,10 +67,10 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
    * without the wider EntityForm context (`entity`, `fieldConfigs`, `inheritedParentValues`, ...).
    *
    * Side effect: since that wider context is required to inherit/default values, the inherit
-   * value button is never shown for this field while only `formGroup` is set, regardless of
-   * `hideInheritButton`. If both `form` and `formGroup` are set, `form` takes precedence.
+   * value button is never shown for this field while only `fieldFormGroup` is set, regardless of
+   * `hideInheritButton`. If both `form` and `fieldFormGroup` are set, `form` takes precedence.
    */
-  formGroup = input<FormGroup>();
+  fieldFormGroup = input<FormGroup>();
 
   /** Whether to display the field in a limited space, hiding details like the help description button. */
   compactMode = input<boolean>();
@@ -101,9 +101,9 @@ export class EntityFieldEditComponent<T extends Entity = Entity> {
     return result;
   });
 
-  /** The FormGroup to actually use, from whichever of `form`/`formGroup` was set. */
+  /** The FormGroup to actually use, from whichever of `form`/`fieldFormGroup` was set. */
   readonly effectiveFormGroup = computed<FormGroup | undefined>(
-    () => this.form()?.formGroup ?? this.formGroup(),
+    () => this.form()?.formGroup ?? this.fieldFormGroup(),
   );
 
   readonly formControl = computed<FormControl | null>(() => {

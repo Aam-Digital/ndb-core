@@ -9,8 +9,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "#src/app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "#src/app/core/entity/entity-field-edit/dynamic-edit/edit-component.interface";
@@ -39,7 +39,7 @@ import { DisplaySchemaEmbedArrayComponent } from "../display-schema-embed-array/
   imports: [
     MatButtonModule,
     MatTooltipModule,
-    FontAwesomeModule,
+    FaDynamicIconComponent,
     DisplaySchemaEmbedArrayComponent,
   ],
   templateUrl: "./edit-schema-embed-array.component.html",

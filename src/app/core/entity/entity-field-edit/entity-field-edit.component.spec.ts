@@ -115,7 +115,7 @@ describe("EntityFieldEditComponent", () => {
     ).toBeFalsy();
   });
 
-  it("resolves the formControl from a bare formGroup input when no form is set", () => {
+  it("resolves the formControl from a bare fieldFormGroup input when no form is set", () => {
     mockFormService.extendFormFieldConfig.mockReturnValue({
       id: "testField",
       editComponent: "EditText",
@@ -123,14 +123,14 @@ describe("EntityFieldEditComponent", () => {
     fixture.componentRef.setInput("field", "testField");
     fixture.componentRef.setInput("entity", new Entity());
     fixture.componentRef.setInput(
-      "formGroup",
+      "fieldFormGroup",
       new FormGroup({ testField: new FormControl("") }),
     );
 
     expect(component.formControl()).toBeTruthy();
   });
 
-  it("never shows the inherit button when only formGroup is set, regardless of hideInheritButton", () => {
+  it("never shows the inherit button when only fieldFormGroup is set, regardless of hideInheritButton", () => {
     mockFormService.extendFormFieldConfig.mockReturnValue({
       id: "testField",
       editComponent: "EditText",
@@ -138,7 +138,7 @@ describe("EntityFieldEditComponent", () => {
     fixture.componentRef.setInput("field", "testField");
     fixture.componentRef.setInput("entity", new Entity());
     fixture.componentRef.setInput(
-      "formGroup",
+      "fieldFormGroup",
       new FormGroup({ testField: new FormControl("") }),
     );
     fixture.componentRef.setInput("hideInheritButton", false);

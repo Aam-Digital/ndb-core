@@ -6,7 +6,7 @@
       <div class="entry-form-cell">
         <app-entity-field-edit
           [field]="column"
-          [formGroup]="form"
+          [fieldFormGroup]="form"
         ></app-entity-field-edit>
       </div>
     }
@@ -39,7 +39,11 @@
       aria-label="more actions"
       i18n-aria-label
     >
-      <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+      <app-fa-dynamic-icon
+        aria-hidden="true"
+        icon="ellipsis-v"
+        class="standard-icon"
+      ></app-fa-dynamic-icon>
     </button>
 
     <mat-menu #additional>

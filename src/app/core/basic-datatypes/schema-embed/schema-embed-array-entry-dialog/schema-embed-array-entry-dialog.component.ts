@@ -14,7 +14,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatMenuModule } from "@angular/material/menu";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AlertService } from "#src/app/core/alerts/alert.service";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
@@ -79,7 +78,6 @@ export interface SchemaEmbedArrayEntryDialogData {
     MatDialogModule,
     MatButtonModule,
     MatMenuModule,
-    FontAwesomeModule,
     DialogCloseComponent,
     EntityFieldEditComponent,
     FaDynamicIconComponent,
