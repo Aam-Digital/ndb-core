@@ -13,6 +13,43 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatSelectHarness } from "@angular/material/select/testing";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../../../entity/database-entity.decorator";
+import { DatabaseField } from "../../../../entity/database-field.decorator";
+import { Entity } from "../../../../entity/model/entity";
+import {
+  EntitySchemaField,
+  WithinParentConfig,
+} from "../../../../entity/schema/entity-schema-field";
+
+@DatabaseEntity("ValidatorTestProject")
+class ValidatorTestProject extends Entity {
+  @DatabaseField({ dataType: "date-range", label: "Planned period" })
+  plannedPeriod: unknown;
+  @DatabaseField({ dataType: "date", label: "Start" }) start: Date;
+}
+
+@DatabaseEntity("ValidatorTestAction")
+class ValidatorTestAction extends Entity {
+  @DatabaseField({
+    dataType: "entity",
+    additional: "ValidatorTestAction",
+    label: "Parent",
+  })
+  parent: string;
+  @DatabaseField({
+    dataType: "entity",
+    additional: "ValidatorTestProject",
+    label: "Project",
+  })
+  project: string;
+  @DatabaseField({ dataType: "date-range", label: "Period" }) period: unknown;
+}
 
 describe("ConfigureEntityFieldValidatorComponent", () => {
   let component: ConfigureEntityFieldValidatorComponent;
@@ -31,7 +68,10 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         BrowserAnimationsModule,
         FontAwesomeTestingModule,
       ],
-      providers: [FormBuilder],
+      providers: [
+        FormBuilder,
+        { provide: EntityRegistry, useValue: entityRegistry },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConfigureEntityFieldValidatorComponent);
@@ -133,5 +173,82 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     expect(patternControl.hasError("invalidPattern")).toBe(true);
     expect(emitted).toEqual({});
     expect(messageControl.enabled).toBe(true); // editable as soon as user types a pattern
+  });
+
+  describe("period of a linked record", () => {
+    async function renderDateRangeField(withinParent?: WithinParentConfig) {
+      const field: EntitySchemaField = {
+        ...ValidatorTestAction.schema.get("period"),
+        withinParent,
+      };
+      fixture.componentRef.setInput("entityType", ValidatorTestAction);
+      fixture.componentRef.setInput("entitySchemaField", field);
+      fixture.detectChanges();
+
+      const emitted: Partial<EntitySchemaField>[] = [];
+      component.entitySchemaFieldChanges.subscribe((c) => emitted.push(c));
+      const select =
+        await TestbedHarnessEnvironment.loader(fixture).getHarness(
+          MatSelectHarness,
+        );
+      return { select, emitted };
+    }
+
+    it("offers the date range fields of the linked record types, and this field for a link to the same type", async () => {
+      const { select } = await renderDateRangeField();
+      await select.open();
+
+      const options = await select.getOptions();
+      expect(await Promise.all(options.map((o) => o.getText()))).toEqual([
+        "none",
+        "Parent › Period",
+        "Project › Planned period",
+      ]);
+    });
+
+    it.each<[string, WithinParentConfig | undefined]>([
+      ["Parent › Period", { parentReferenceField: "parent" }],
+      [
+        "Project › Planned period",
+        { parentReferenceField: "project", parentValueField: "plannedPeriod" },
+      ],
+      ["none", undefined],
+    ])(
+      "sets the field's withinParent when selecting %s",
+      async (text, expected) => {
+        const { select, emitted } = await renderDateRangeField({
+          parentReferenceField: "somethingElse",
+        });
+
+        await select.clickOptions({ text });
+
+        expect(emitted.at(-1)).toEqual({ withinParent: expected });
+      },
+    );
+
+    it("offers this field for a link to the same type while the new field has no label yet", async () => {
+      fixture.componentRef.setInput("entityType", ValidatorTestAction);
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "date-range",
+      });
+      fixture.detectChanges();
+      const select =
+        await TestbedHarnessEnvironment.loader(fixture).getHarness(
+          MatSelectHarness,
+        );
+      await select.open();
+
+      const options = await select.getOptions({ text: /^Parent/ });
+      expect(await options[0].getText()).toBe("Parent › this field");
+    });
+
+    it("shows the saved setting", async () => {
+      const { select } = await renderDateRangeField({
+        parentReferenceField: "project",
+        parentValueField: "plannedPeriod",
+      });
+
+      expect(await select.getValueText()).toBe("Project › Planned period");
+    });
   });
 });

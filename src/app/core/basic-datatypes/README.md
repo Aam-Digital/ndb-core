@@ -91,7 +91,8 @@ parent action's period) with the `withinParent` option of the field: `parentRefe
 the parent, `parentValueField` the date range field of the parent (by default the field with the same id, as in a
 hierarchy of records of the same type). A range that goes beyond the parent's range shows a warning in lists, forms
 and detail pages, without blocking saving; a missing date leaves the range open on that side (e.g. no end date =
-ongoing). See [`parent-ranges.ts`](date-range/parent-ranges.ts).
+ongoing). See [`parent-ranges.ts`](date-range/parent-ranges.ts). In the Admin UI, the "Validation" tab of a date range
+field sets it ("Must lie within the period of a linked record").
 
 ## Customizing how values are sorted in tables
 
