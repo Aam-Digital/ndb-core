@@ -7777,9 +7777,7 @@ them all at once exhausts the browser&#39;s resources on large lists
   appVersion: &quot;0.0.0&quot;, // replaced automatically during docker build
   repositoryId: &quot;Aam-Digital/ndb-core&quot;,
 
-  // add via config.json overwrite. Default DSN value will be removed in future
-  remoteLoggingDsn:
-    &quot;https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399&quot;,
+  remoteLoggingDsn: undefined as string | undefined,
   remoteLoggingEnvironment: undefined as string | undefined,
   demo_mode: true,
   session_type: SessionType.mock,
@@ -7837,7 +7835,11 @@ them all at once exhausts the browser&#39;s resources on large lists
   production: false,
   appVersion: &quot;0.0.0&quot;, // replaced automatically during docker build
   repositoryId: &quot;Aam-Digital/ndb-core&quot;,
-  remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  /**
+   * The DSN of the remote monitoring (Sentry) project to report warnings and errors to.
+   * Not set by default, so remote logging is off: deployments set it in their &#x60;config.json&#x60;.
+   */
+  remoteLoggingDsn: undefined as string | undefined,
   /**
    * The &#x60;environment&#x60; that remote monitoring files this deployment&#x27;s events under.
    * Defaults to &quot;production&quot; for production builds - set it in the &#x60;config.json&#x60;
