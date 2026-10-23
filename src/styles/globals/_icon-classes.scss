@@ -1,5 +1,15 @@
 @use "../variables/sizes";
 
+/**
+ * A denser icon button for inside a form field, where Material's default 40px
+ * state layer would dictate the height of the whole field.
+ */
+.input-embedded-icon-button {
+  --mat-icon-button-state-layer-size: 28px;
+  --mat-icon-button-icon-size: 16px;
+  flex: 0 0 auto;
+}
+
 .standard-icon-with-text {
   margin-inline-end: sizes.$small;
   vertical-align: baseline;

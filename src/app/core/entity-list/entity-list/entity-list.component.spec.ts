@@ -95,6 +95,28 @@ describe("EntityListComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("should resolve public form titles for the active language", async () => {
+    vi.spyOn(
+      TestBed.inject(PublicFormsService),
+      "getAllPublicFormConfigs",
+    ).mockResolvedValue([
+      {
+        route: "register",
+        entity: TestEntity.ENTITY_TYPE,
+        title: { "en-US": "Register", de: "Anmelden" },
+      },
+      { route: "other", entity: "SomeOtherType", title: "Other" },
+    ] as any);
+
+    createComponent();
+    initComponentInputs();
+    await fixture.whenStable();
+
+    // tests run in the default language
+    expect(component.publicForms.map((f) => f.title)).toEqual(["Register"]);
+    expect(component.publicForms[0].config.route).toBe("register");
+  });
+
   it("should not fail if the configured title is not a string", () => {
     createComponent();
     initComponentInputs();

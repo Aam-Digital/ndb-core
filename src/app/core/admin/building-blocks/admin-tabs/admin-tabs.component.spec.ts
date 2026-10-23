@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AdminTabsComponent } from "./admin-tabs.component";
@@ -19,6 +21,12 @@ describe("AdminTabsComponent", () => {
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
+      providers: [
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminTabsComponent);
@@ -34,6 +42,28 @@ describe("AdminTabsComponent", () => {
 
     expect(component.tabs().length).toBe(3);
   });
+
+  it("should show a renamed tab's title on the non-selected tab label", () => {
+    tabs[1].title = "Renamed";
+    fixture.detectChanges();
+
+    // tab 0 is selected and renders the editable header instead of plain text
+    expect(labelTexts()[1]).toBe("Renamed");
+  });
+
+  it("should show the active language's text of a multi-lingual tab title", () => {
+    tabs[1].title = { de: "Zwei", "en-US": "Two" };
+    fixture.detectChanges();
+
+    expect(labelTexts()[1]).toBe("Two");
+  });
+
+  /** the rendered text of every tab label */
+  function labelTexts(): string[] {
+    return Array.from(fixture.nativeElement.querySelectorAll(".drop-item")).map(
+      (el: HTMLElement) => el.textContent.trim(),
+    );
+  }
 
   it("should detect whether tab title is 'title' or 'name' property", () => {
     // default

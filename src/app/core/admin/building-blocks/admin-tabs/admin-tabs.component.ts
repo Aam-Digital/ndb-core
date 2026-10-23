@@ -25,6 +25,8 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import { LocaleTextPipe } from "../../../language/locale-text.pipe";
+import { TranslatableText } from "../../../config/multi-lingual-config";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -54,14 +56,16 @@ import {
     MatTabLabel,
     MatTooltip,
     DragDropModule,
+    LocaleTextPipe,
   ],
   templateUrl: "./admin-tabs.component.html",
   styleUrl: "./admin-tabs.component.scss",
 })
 export class AdminTabsComponent<
-  E extends { title: string } | { name: string },
+  E extends { title: TranslatableText } | { name: TranslatableText },
 > {
   tabs = model<E[]>([]);
+
   newTabFactory = input<() => E>(
     () => ({ [this.tabTitleProperty()]: "" }) as E,
   );

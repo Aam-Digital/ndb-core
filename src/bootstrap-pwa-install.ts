@@ -5,7 +5,7 @@
  * `initLanguage()` has loaded any translations. Like `bootstrap-i18n.ts` and
  * `bootstrap-environment.ts` it must not import anything from `src/app/`, so
  * that bootstrapping does not pull the application's dependency graph into the
- * pre-i18n phase (see doc/compodoc_sources/concepts/i18n.md).
+ * pre-i18n phase (see app/core/language/README.md).
  *
  * The app-facing API for this is `PwaInstallService`.
  */

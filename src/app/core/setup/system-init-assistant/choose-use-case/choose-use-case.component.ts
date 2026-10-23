@@ -10,11 +10,18 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { BaseConfig, isOfferedInLocale } from "../../base-config";
+import { resolveLocaleText } from "app/core/language/active-locale";
 import { MatSelectModule } from "@angular/material/select";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MarkdownComponent } from "ngx-markdown";
 import { FormsModule } from "@angular/forms";
 import { LanguageService } from "app/core/language/language.service";
+
+export interface UseCaseOption {
+  config: BaseConfig;
+  name: string;
+  description: string;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,10 +34,6 @@ export class ChooseUseCaseComponent {
   private readonly languageService = inject(LanguageService);
 
   useCases: InputSignal<BaseConfig[]> = input([]);
-
-  startFromScratchUseCase: Signal<BaseConfig | undefined> = computed(() =>
-    this.useCases().find((uc) => uc.startFromScratch),
-  );
 
   private readonly scenarios = computed(() =>
     this.useCases().filter((uc) => !uc.startFromScratch),
@@ -60,20 +63,33 @@ export class ChooseUseCaseComponent {
    * for them - they came here in the language they want to work in. The ones from
    * another language are greyed out, so the mismatch is visible rather than silent.
    */
-  availableUseCases: Signal<BaseConfig[]> = computed(() => {
+  availableUseCases: Signal<UseCaseOption[]> = computed(() => {
     const offered = this.offeredInCurrentLocale();
-    return this.scenarios().filter(
-      (uc) => offered.has(uc) || this.hasNoUseCaseInCurrentLocale(),
-    );
+    return this.scenarios()
+      .filter((uc) => offered.has(uc) || this.hasNoUseCaseInCurrentLocale())
+      .map((config) => this.toOption(config));
   });
+
+  startFromScratchUseCase: Signal<UseCaseOption | undefined> = computed(() => {
+    const config = this.useCases().find((uc) => uc.startFromScratch);
+    return config ? this.toOption(config) : undefined;
+  });
+
+  private toOption(config: BaseConfig): UseCaseOption {
+    return {
+      config,
+      name: resolveLocaleText(config.name) ?? "",
+      description: resolveLocaleText(config.description) ?? "",
+    };
+  }
 
   selectionChanged = output<BaseConfig | null>();
 
-  selectedUseCase: BaseConfig;
+  selectedUseCase: UseCaseOption;
   startFromScratch = signal(false);
 
   onSelectionChange() {
-    this.selectionChanged.emit(this.selectedUseCase);
+    this.selectionChanged.emit(this.selectedUseCase.config);
   }
 
   /**
@@ -83,7 +99,9 @@ export class ChooseUseCaseComponent {
   onStartFromScratchChange(checked: boolean) {
     this.startFromScratch.set(checked);
     this.selectionChanged.emit(
-      checked ? this.startFromScratchUseCase() : (this.selectedUseCase ?? null),
+      checked
+        ? (this.startFromScratchUseCase()?.config ?? null)
+        : (this.selectedUseCase?.config ?? null),
     );
   }
 }

@@ -9,12 +9,17 @@
   flex: 1;
 }
 
+.color-picker-button {
+  position: relative;
+  display: inline-flex;
+}
+
 .color-input-overlay {
   position: absolute;
   top: 0;
   inset-inline-start: 0;
-  width: 36px;
-  height: 36px;
+  width: 100%;
+  height: 100%;
   opacity: 0;
   cursor: pointer;
   border: none;

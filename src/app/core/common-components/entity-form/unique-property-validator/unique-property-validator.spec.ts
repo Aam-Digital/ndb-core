@@ -1,6 +1,7 @@
 import { waitForAsync } from "@angular/core/testing";
 import { uniquePropertyValidator } from "./unique-property-validator";
 import { AsyncValidatorFn, FormControl } from "@angular/forms";
+import { DEFAULT_LANGUAGE } from "../../../language/language-statics";
 
 describe("UniquePropertyValidator", () => {
   let validator: AsyncValidatorFn;
@@ -53,6 +54,25 @@ describe("UniquePropertyValidator", () => {
     const validationResult = await validator(formControl);
 
     expect(validationResult).toEqual({ uniqueProperty: expect.any(String) });
+  });
+
+  it("should compare multi-lingual texts by the active language, not as raw maps", async () => {
+    validator = uniquePropertyValidator({
+      getExistingValues: async () => [
+        { [DEFAULT_LANGUAGE]: "Existing Label", de: "Vorhandenes Label" },
+      ],
+      normalize: true,
+      fieldLabel: "label",
+    });
+
+    // a different map holding the same text of the active language is a duplicate
+    formControl.setValue({ [DEFAULT_LANGUAGE]: "existing label" });
+    expect(await validator(formControl)).toEqual({
+      uniqueProperty: expect.any(String),
+    });
+
+    formControl.setValue({ [DEFAULT_LANGUAGE]: "Another Label" });
+    expect(await validator(formControl)).toBeNull();
   });
 
   it("should allow keeping unchanged value via defaultValue", async () => {

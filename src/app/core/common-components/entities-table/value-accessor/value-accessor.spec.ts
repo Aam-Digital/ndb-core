@@ -1,3 +1,5 @@
+import { configureActiveLocale } from "#src/app/core/language/active-locale";
+import { AVAILABLE_LOCALE_IDS } from "#src/app/core/language/available-locales";
 import { getReadableValue } from "./value-accessor";
 
 describe("getReadableValue", () => {
@@ -64,5 +66,36 @@ describe("getReadableValue", () => {
     ];
     const readableValue = getReadableValue(object);
     expect(readableValue).toEqual(["Label1", "Label2"]);
+  });
+
+  describe("translation maps", () => {
+    afterEach(() => {
+      configureActiveLocale("en-US", AVAILABLE_LOCALE_IDS);
+    });
+
+    it.each([
+      ["en-US", "Subject"],
+      ["de", "Betreff"],
+      ["fr", "Sujet"],
+    ])(
+      "should return the text of the active language %s",
+      (locale, expected) => {
+        configureActiveLocale(locale, AVAILABLE_LOCALE_IDS);
+
+        const accessed = getReadableValue({
+          "en-US": "Subject",
+          de: "Betreff",
+          fr: "Sujet",
+        });
+
+        expect(accessed).toBe(expected);
+      },
+    );
+
+    it("should return an object unchanged if it only contains some locale keys", () => {
+      const object = { de: "Betreff", other: "Subject" };
+
+      expect(getReadableValue(object)).toBe(object);
+    });
   });
 });

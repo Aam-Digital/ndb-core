@@ -1,7 +1,8 @@
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
-import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
+import { TranslatableTextDatatype } from "../../core/config/translatable-text.datatype";
+import { TranslatableText } from "../../core/config/multi-lingual-config";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
   INTERACTION_TYPE_CONFIG_ID,
@@ -28,19 +29,23 @@ export class EmailTemplate extends Entity {
    */
   @DatabaseField({
     label: $localize`:EmailTemplate:Subject`,
+    dataType: TranslatableTextDatatype.dataType,
     validators: { required: true },
   })
-  subject: string;
+  subject: TranslatableText;
 
   /**
    * Body content for the email.
    */
   @DatabaseField({
     label: $localize`:EmailTemplate:Body`,
-    dataType: LongTextDatatype.dataType,
+    dataType: TranslatableTextDatatype.dataType,
+    // long text: keep the truncating display
+    viewComponent: "DisplayLongText",
+    additional: { multiline: true, rows: 5 },
     validators: { required: true },
   })
-  body: string;
+  body: TranslatableText;
 
   /**
    * Optional entity types this template is available for.

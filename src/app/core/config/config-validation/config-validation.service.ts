@@ -12,6 +12,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { AlertService } from "../../alerts/alert.service";
 import { Logging } from "../../logging/logging.service";
 import { Config } from "../config";
+import { resolveLocaleText } from "../../language/active-locale";
 
 /**
  * A problem in the config that the app can work around at runtime
@@ -169,7 +170,7 @@ export class ConfigValidationService {
         ? [
             {
               configId,
-              message: $localize`:config validation:Unknown icon "${item.icon}:icon:" for menu item "${item.label}:label:". A default icon is shown instead.`,
+              message: $localize`:config validation:Unknown icon "${item.icon}:icon:" for menu item "${resolveLocaleText(item.label)}:label:". A default icon is shown instead.`,
             },
           ]
         : []),

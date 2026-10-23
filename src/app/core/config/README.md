@@ -410,7 +410,18 @@ To achieve this a `label` and `labelPlural` can be defined in the entity config.
 Additionally, the `icon` property allows to exchange the icon to another one from
 the [FontAwesome Icon Library](https://fontawesome.com/search?o=r&m=free).
 
-This also has to be adjusted when configuring in a different language.
+Such a text can also be configured in several languages at once, by storing a
+per-language map instead of a plain string:
+
+```json
+"entity:Child": {
+  "label": { "en-US": "Patient", "de": "Patient:in" },
+  ...
+}
+```
+
+See [Multi-lingual configuration](../language/README.md#multi-lingual-configuration)
+for the format, the resolved vs. raw accessors and the rules for editing such texts.
 
 E.g.
 
