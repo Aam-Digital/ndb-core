@@ -40,7 +40,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
   siteName = this.getPropertyObservable("siteName");
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
-  displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
   dateFormat = this.getPropertyObservable("dateFormat");
 
   /**
