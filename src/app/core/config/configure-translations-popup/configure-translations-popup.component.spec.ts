@@ -195,6 +195,24 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(component.rows.find((r) => r.locale === "en-US").text).toBe("");
   });
 
+  it("keeps the line breaks typed into a multi-line text", async () => {
+    await createComponent({ value: "Line 1\nLine 2", multiline: true });
+
+    const fields: HTMLTextAreaElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll("textarea"),
+    );
+    expect(fields.length).toBe(component.rows.length);
+    const germanField =
+      fields[component.rows.findIndex((r) => r.locale === "de")];
+    germanField.value = "Zeile 1\nZeile 2";
+    germanField.dispatchEvent(new Event("input"));
+    component.onSave();
+
+    expect(dialogRef.close).toHaveBeenCalledWith({
+      value: { "en-US": "Line 1\nLine 2", de: "Zeile 1\nZeile 2" },
+    });
+  });
+
   it("should close without a value when cancelled, leaving the config untouched", async () => {
     await createComponent({ value: { "en-US": "Name", de: "Vorname" } });
     setText("de", "changed");

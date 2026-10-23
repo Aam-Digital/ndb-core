@@ -1,7 +1,6 @@
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
-import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { DefaultValueConfig } from "#src/app/core/default-values/default-value-config";
 import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";

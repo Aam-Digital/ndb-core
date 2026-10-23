@@ -649,9 +649,17 @@ export class AdminEntityFieldComponent implements OnInit {
    * The runtime schema only holds the text of the currently active language.
    */
   private rawSchemaValue(property: string): TranslatableText | undefined {
-    if (this.data.overwriteLocally) {
-      // editing a single view's field config, which carries its own texts
-      return this.data.entitySchemaField[property];
+    const value = this.data.entitySchemaField[property];
+    if (
+      this.data.overwriteLocally &&
+      value !==
+        this.entityType.schema.get(this.data.entitySchemaField.id)?.[property]
+    ) {
+      // a text of this view's own field config, which is stored raw already.
+      // Otherwise it is the global schema's text, resolved to the active language:
+      // take it from the config document below, or saving this view would keep
+      // only the admin's language of it
+      return value;
     }
 
     const entityConfig = this.entityConfigService.getRawEntityConfig(

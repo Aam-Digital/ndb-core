@@ -21,6 +21,7 @@ import {
 } from "../../language/active-locale";
 import { DynamicComponent } from "../dynamic-components/dynamic-component.decorator";
 import {
+  ConfigureTranslationsDialogData,
   ConfigureTranslationsPopupComponent,
   ConfigureTranslationsResult,
 } from "../configure-translations-popup/configure-translations-popup.component";
@@ -154,7 +155,9 @@ export class TranslatableTextInputComponent
           value: this.valueSignal(),
           // only set on the entity-form path; the admin UIs render their own label
           fieldLabel: resolveLocaleText(this.formFieldConfig()?.label),
-        },
+          multiline: this.isMultiline(),
+          rows: this.rowCount(),
+        } satisfies ConfigureTranslationsDialogData,
         disableClose: true,
       })
       .afterClosed()

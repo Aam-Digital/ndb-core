@@ -79,10 +79,25 @@ export class AdminDashboardComponent {
     structuredClone(this.dashboardViewConfig()?.config ?? { widgets: [] }),
   );
 
-  /** resolved copies, for the live widget preview only */
+  /**
+   * resolved copies, for the live widget preview only.
+   * Cached per widget, because a preview gets rebuilt (and reloads its data)
+   * whenever it is passed a new object: editing one widget must not rebuild all.
+   */
   readonly previewWidgets = computed(() =>
-    resolveLocaleConfig(this.dashboardConfig().widgets),
+    this.dashboardConfig().widgets.map((widget) => {
+      let resolved = this.resolvedWidgets.get(widget);
+      if (!resolved) {
+        resolved = resolveLocaleConfig(widget);
+        this.resolvedWidgets.set(widget, resolved);
+      }
+      return resolved;
+    }),
   );
+  private readonly resolvedWidgets = new WeakMap<
+    DynamicComponentConfig,
+    DynamicComponentConfig
+  >();
 
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);

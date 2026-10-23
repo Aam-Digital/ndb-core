@@ -33,6 +33,10 @@ export interface ConfigureTranslationsDialogData {
   value?: TranslatableText;
   /** name of the setting being translated, shown in the dialog */
   fieldLabel?: string;
+  /** edit each language in a multi-line textarea, so line breaks are kept */
+  multiline?: boolean;
+  /** number of visible lines of a multi-line text */
+  rows?: number;
 }
 
 interface TranslationRow {

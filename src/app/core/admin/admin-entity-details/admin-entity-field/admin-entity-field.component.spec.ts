@@ -771,4 +771,41 @@ describe("AdminEntityFieldComponent", () => {
       expect(dialogData.entitySchemaField.label).toBe("New label");
     });
   });
+
+  describe("editing a field only for one view (e.g. a public form)", () => {
+    it.each<{
+      invariant: string;
+      localLabel: TranslatableText | undefined;
+      expected: TranslatableText;
+    }>([
+      {
+        invariant: "all translations of a label inherited from the entity type",
+        localLabel: undefined,
+        expected: { "en-US": "Name", de: "Vorname" },
+      },
+      {
+        invariant: "a label of the view's own field config unchanged",
+        localLabel: { "en-US": "Your name", de: "Ihr Name" },
+        expected: { "en-US": "Your name", de: "Ihr Name" },
+      },
+    ])("should keep $invariant", async ({ localLabel, expected }) => {
+      vi.spyOn(
+        TestBed.inject(EntityConfigService),
+        "getRawEntityConfig",
+      ).mockReturnValue({
+        attributes: { name: { label: { "en-US": "Name", de: "Vorname" } } },
+      } as any);
+      dialogData.overwriteLocally = true;
+
+      // the form builder passes the runtime schema field (resolved) merged with the view's own config
+      const runtimeField = TestEntity.schema.get("name");
+      await recreateComponentWithData({
+        ...runtimeField,
+        ...(localLabel ? { label: localLabel } : {}),
+        id: "name",
+      } as EntitySchemaField);
+
+      expect(component.schemaFieldsForm.get("label").value).toEqual(expected);
+    });
+  });
 });

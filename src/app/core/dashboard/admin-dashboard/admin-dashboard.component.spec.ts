@@ -85,6 +85,30 @@ describe("AdminDashboardComponent", () => {
     ).toEqual(label);
   });
 
+  it("rebuilds only the preview of the widget that was changed", () => {
+    const unchanged = {
+      component: "ShortcutDashboard",
+      config: { shortcuts: [{ label: { "en-US": "Notes", de: "Notizen" } }] },
+    };
+    component.dashboardConfig.set({
+      widgets: [unchanged, { component: "ShortcutDashboard", config: {} }],
+    });
+    const before = component.previewWidgets();
+
+    component.dashboardConfig.update((config) => ({
+      ...config,
+      widgets: [
+        unchanged,
+        { component: "ShortcutDashboard", config: { x: 1 } },
+      ],
+    }));
+    const after = component.previewWidgets();
+
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).not.toBe(before[1]);
+    expect(after[0].config.shortcuts[0].label).toBe("Notes");
+  });
+
   it("should add a new widget", async () => {
     const newWidget = { component: "ShortcutDashboard", config: {} };
     mockDialog.open.mockReturnValue({
