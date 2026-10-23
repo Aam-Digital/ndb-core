@@ -4,6 +4,8 @@ import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { of } from "rxjs";
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
 
 import { TranslatableTextInputComponent } from "./translatable-text-input.component";
 
@@ -11,9 +13,11 @@ describe("TranslatableTextInputComponent", () => {
   let component: TranslatableTextInputComponent;
   let fixture: ComponentFixture<TranslatableTextInputComponent>;
   let mockDialog: { open: ReturnType<typeof vi.fn> };
+  const translationsEnabled = signal(true);
 
   beforeEach(async () => {
     mockDialog = { open: vi.fn() };
+    translationsEnabled.set(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -21,7 +25,10 @@ describe("TranslatableTextInputComponent", () => {
         FontAwesomeTestingModule,
         NoopAnimationsModule,
       ],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: MatDialog, useValue: mockDialog },
+        { provide: SiteSettingsService, useValue: { translationsEnabled } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TranslatableTextInputComponent);
@@ -46,6 +53,26 @@ describe("TranslatableTextInputComponent", () => {
     // tests run in the default language
     expect(component.displayText()).toBe("Name");
     expect(component.isMultiLingual()).toBe(true);
+  });
+
+  it("shows the translations button only while translations are enabled", () => {
+    const button = () =>
+      fixture.nativeElement.querySelector(".translations-button");
+    expect(button()).toBeTruthy();
+
+    translationsEnabled.set(false);
+    fixture.detectChanges();
+
+    expect(button()).toBeNull();
+  });
+
+  it("keeps other languages when edited while the translations button is hidden", () => {
+    translationsEnabled.set(false);
+    component.value = { "en-US": "Name", de: "Vorname" };
+
+    component.onTextInput("Full Name");
+
+    expect(component.value).toEqual({ "en-US": "Full Name", de: "Vorname" });
   });
 
   it("should show a plain string as-is", () => {

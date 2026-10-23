@@ -1,4 +1,8 @@
-<mat-form-field appearance="fill" class="language-select-dropdown">
+<mat-form-field
+  appearance="fill"
+  class="language-select-dropdown"
+  [class.full-width-dropdown]="fullWidth()"
+>
   <mat-label i18n>Choose your language</mat-label>
 
   <mat-select
@@ -6,14 +10,19 @@
     [disabled]="disabled()"
     (selectionChange)="changeLocale($event.value)"
   >
-    @for (locale of availableLocales(); track locale.id) {
-      <mat-option [value]="locale.id">
-        {{ locale.label }}
+    @for (locale of options(); track locale.id) {
+      <mat-option [value]="locale.id" [disabled]="!locale.enabled">
+        @if (locale.enabled) {
+          {{ locale.label }}
+        } @else {
+          <span class="disabled-option" [matTooltip]="disabledHint">
+            {{ locale.label }} ({{ notAvailableMarker }})
+          </span>
+        }
       </mat-option>
     }
   </mat-select>
 
-  @if (hint()) {
-    <mat-hint>{{ hint() }}</mat-hint>
-  }
+  <!-- optional explanation, like other form fields' hints: project an element with a "hint" attribute -->
+  <mat-hint><ng-content select="[hint]"></ng-content></mat-hint>
 </mat-form-field>

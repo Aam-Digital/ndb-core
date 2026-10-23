@@ -1,9 +1,21 @@
-@if (displayLanguageSelect()) {
-  <app-language-select
-    [availableLocales]="availableLocales"
-    [applyImmediately]="false"
-    [disabled]="saving() || !mayChangeLanguage()"
-    [hint]="mayChangeLanguage() ? languageHint : missingPermissionText"
-    (localeChange)="onLanguageSelected($event)"
-  ></app-language-select>
-}
+<app-language-select
+  [availableLocales]="availableLocales"
+  [enabledLocales]="enabledLocales()"
+  [applyImmediately]="false"
+  [fullWidth]="true"
+  [disabled]="saving() || !switchingEnabled || !mayChangeLanguage()"
+  (localeChange)="onLanguageSelected($event)"
+>
+  @if (!switchingEnabled) {
+    <span hint i18n="User Profile - language switching disabled hint"
+      >Language switching is not enabled for this system. Your administrator can
+      enable more languages.</span
+    >
+  } @else if (mayChangeLanguage()) {
+    <span hint i18n="User Profile - language setting hint"
+      >Only applies to your account. The app reloads when you change it.</span
+    >
+  } @else {
+    <span hint>{{ missingPermissionText }}</span>
+  }
+</app-language-select>

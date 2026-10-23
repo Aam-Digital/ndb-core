@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -9,6 +10,9 @@ import {
 } from "../../language/active-locale";
 import { AVAILABLE_LOCALE_IDS } from "../../language/available-locales";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
+import { availableLocales } from "../../language/languages";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { TranslatableText } from "../multi-lingual-config";
 import {
   ConfigureTranslationsDialogData,
@@ -20,7 +24,11 @@ describe("ConfigureTranslationsPopupComponent", () => {
   let fixture: ComponentFixture<ConfigureTranslationsPopupComponent>;
   let dialogRef: { close: ReturnType<typeof vi.fn> };
 
-  async function createComponent(data: ConfigureTranslationsDialogData) {
+  async function createComponent(
+    data: ConfigureTranslationsDialogData,
+    enabledLocales: ConfigurableEnumValue[] = availableLocales.values,
+    defaultLocale?: ConfigurableEnumValue,
+  ) {
     dialogRef = { close: vi.fn() };
 
     await TestBed.configureTestingModule({
@@ -32,6 +40,13 @@ describe("ConfigureTranslationsPopupComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: dialogRef },
+        {
+          provide: SiteSettingsService,
+          useValue: {
+            enabledLocales: signal(enabledLocales),
+            defaultLocale: signal(defaultLocale),
+          },
+        },
       ],
     }).compileComponents();
 
@@ -55,6 +70,15 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(component.rows.length).toBeGreaterThan(1);
     expect(component.rows.map((r) => r.locale)).toContain("en-US");
     expect(component.rows.map((r) => r.locale)).toContain("de");
+  });
+
+  it("should show the default language first, even if it is not first in the enabled list", async () => {
+    const en = availableLocales.values.find((l) => l.id === "en-US");
+    const de = availableLocales.values.find((l) => l.id === "de");
+    const fr = availableLocales.values.find((l) => l.id === "fr");
+    await createComponent({}, [de, fr, en], en);
+
+    expect(component.rows.map((r) => r.locale)).toEqual(["en-US", "de", "fr"]);
   });
 
   it("should pre-fill each language from an existing translation map", async () => {
@@ -178,5 +202,98 @@ describe("ConfigureTranslationsPopupComponent", () => {
     component.onCancel();
 
     expect(dialogRef.close).toHaveBeenCalledWith(undefined);
+  });
+
+  describe("texts in languages that are disabled", () => {
+    const en = availableLocales.values.find((l) => l.id === "en-US");
+    const de = availableLocales.values.find((l) => l.id === "de");
+
+    it.each<{
+      name: string;
+      value: TranslatableText;
+      enEnabled: boolean;
+      expected: TranslatableText;
+    }>(
+      [
+        { name: "plain string", value: "Name", expected: "Name" },
+        {
+          name: "map with exact keys",
+          value: { "en-US": "Name", de: "Vorname" },
+          expected: { "en-US": "Name", de: "Vorname" },
+        },
+        {
+          name: "map with a base-language key",
+          value: { en: "Name", de: "Vorname" },
+          expected: { "en-US": "Name", de: "Vorname" },
+        },
+      ].flatMap((c) => [
+        { ...c, enEnabled: true },
+        { ...c, enEnabled: false },
+      ]),
+    )(
+      "should keep the existing texts on save: $name, active language enabled: $enEnabled",
+      async ({ value, enEnabled, expected }) => {
+        configureActiveLocale("en-US", AVAILABLE_LOCALE_IDS);
+        await createComponent({ value }, enEnabled ? [en, de] : [de]);
+
+        component.onSave();
+
+        expect(dialogRef.close).toHaveBeenCalledWith({ value: expected });
+      },
+    );
+
+    it("should not show a row for a language that is neither enabled nor translated", async () => {
+      await createComponent({ value: { de: "Vorname" } }, [de]);
+
+      expect(component.rows.map((r) => r.locale)).toEqual(["de"]);
+    });
+
+    it("should mark rows of disabled languages", async () => {
+      await createComponent({ value: { "en-US": "Name", de: "Vorname" } }, [
+        de,
+      ]);
+
+      expect(component.rows.map((r) => [r.locale, r.enabled])).toEqual([
+        ["de", true],
+        ["en-US", false],
+      ]);
+    });
+
+    function findToggle(): HTMLButtonElement | undefined {
+      return Array.from<HTMLButtonElement>(
+        fixture.nativeElement.querySelectorAll("button"),
+      ).find((b) => /disabled languages?/.test(b.textContent));
+    }
+
+    it("should hide rows of disabled languages until the toggle is used, and still save them", async () => {
+      await createComponent({ value: { "en-US": "Name", de: "Vorname" } }, [
+        de,
+      ]);
+
+      const labels = () => fixture.nativeElement.textContent;
+      expect(labels()).not.toContain("(disabled)");
+      expect(findToggle().textContent).toContain("Show 1 disabled language");
+
+      // saving without expanding keeps the hidden translation
+      component.onSave();
+      expect(dialogRef.close).toHaveBeenCalledWith({
+        value: { "en-US": "Name", de: "Vorname" },
+      });
+
+      findToggle().click();
+      fixture.detectChanges();
+      expect(labels()).toContain("(disabled)");
+      expect(findToggle().textContent).toContain("Hide 1 disabled language");
+
+      findToggle().click();
+      fixture.detectChanges();
+      expect(labels()).not.toContain("(disabled)");
+    });
+
+    it("should not show the toggle if all languages are enabled", async () => {
+      await createComponent({ value: { "en-US": "Name", de: "Vorname" } });
+
+      expect(findToggle()).toBeUndefined();
+    });
   });
 });

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -10,6 +15,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { availableLocales } from "../../language/languages";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 import {
   getActiveLocale,
   isLocaleTranslationMap,
@@ -31,6 +38,8 @@ export interface ConfigureTranslationsDialogData {
 interface TranslationRow {
   locale: string;
   localeLabel: string;
+  /** false if this language is disabled for the system, and only keeps existing text */
+  enabled: boolean;
   text: string;
 }
 
@@ -55,15 +64,54 @@ interface TranslationRow {
   ],
 })
 export class ConfigureTranslationsPopupComponent {
+  private readonly siteSettings = inject(SiteSettingsService);
   readonly data = inject<ConfigureTranslationsDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef =
     inject<MatDialogRef<ConfigureTranslationsPopupComponent>>(MatDialogRef);
 
-  rows: TranslationRow[] = availableLocales.values.map((locale) => ({
-    locale: locale.id,
-    localeLabel: locale.label,
-    text: this.initialTextFor(locale.id),
-  }));
+  rows: TranslationRow[] = this.buildRows();
+
+  /** number of rows of disabled languages (hidden until expanded) */
+  readonly disabledCount = this.rows.filter((r) => !r.enabled).length;
+
+  /** whether rows of disabled languages are shown; they are hidden by default */
+  readonly showDisabled = signal(false);
+
+  /**
+   * One row per enabled language (the default language first, then in their order), followed by every
+   * other language this text already holds text for. {@link buildValue} rebuilds
+   * the value from the rows, so leaving one out would delete that text on save.
+   * Rows of disabled languages are only hidden in the template
+   * (see {@link showDisabled}), never left out of the rows.
+   *
+   * Existing text means: a key of a translation map (a base-language key like `en`
+   * counts for `en-US`), or, for a plain string, the active language, which
+   * {@link initialTextFor} files it under (so both cases are one check). A disabled language that holds
+   * no text gets no row, so admins are not invited to write texts in it.
+   */
+  private buildRows(): TranslationRow[] {
+    const defaultId = this.siteSettings.defaultLocale()?.id;
+    // the default language always comes first, the others keep their order
+    const enabled = [...this.siteSettings.enabledLocales()].sort(
+      (a, b) => Number(b.id === defaultId) - Number(a.id === defaultId),
+    );
+    const isEnabled = (locale: ConfigurableEnumValue) =>
+      enabled.some(({ id }) => id === locale.id);
+
+    const existing = availableLocales.values.filter(
+      (locale) => !isEnabled(locale) && !!this.initialTextFor(locale.id),
+    );
+
+    return [
+      ...enabled.map((locale) => ({ locale, enabled: true })),
+      ...existing.map((locale) => ({ locale, enabled: false })),
+    ].map(({ locale, enabled }) => ({
+      locale: locale.id,
+      localeLabel: locale.label,
+      enabled,
+      text: this.initialTextFor(locale.id),
+    }));
+  }
 
   private initialTextFor(locale: string): string {
     const value = this.data?.value;

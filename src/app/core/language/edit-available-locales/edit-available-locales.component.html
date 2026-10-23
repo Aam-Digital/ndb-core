@@ -1,0 +1,42 @@
+@if (multiLingualConfigEnabled) {
+  <div class="flex-row gap-small">
+    <app-basic-autocomplete
+      #autocomplete
+      (click)="onContainerClick($event)"
+      class="locales-select flex-grow"
+      [formControl]="formControl"
+      [multi]="true"
+      [options]="options"
+      [optionToString]="localeToString"
+      display="chips"
+    >
+      <ng-template let-option>
+        {{ option.label }}
+        @if (option.id === defaultLanguage()?.id) {
+          <span
+            class="default-language-marker"
+            matTooltip="The default language is always enabled."
+            i18n-matTooltip
+            i18n
+            >(default language)</span
+          >
+        }
+      </ng-template>
+    </app-basic-autocomplete>
+
+    @if (enabled()) {
+      <app-fa-dynamic-icon
+        icon="caret-down"
+        class="form-field-icon-suffix"
+        (click)="autocomplete.showAutocomplete()"
+      ></app-fa-dynamic-icon>
+    }
+  </div>
+} @else {
+  <app-feature-disabled-info
+    featureName="multiple languages"
+    i18n-featureName
+    [featureEnabled]="false"
+    [compactView]="true"
+  ></app-feature-disabled-info>
+}

@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MenuItemFormComponent } from "./menu-item-form.component";
 import { MenuItem } from "../../../ui/navigation/menu-item";
@@ -17,6 +19,12 @@ describe("MenuItemFormComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MenuItemFormComponent, FontAwesomeTestingModule],
+      providers: [
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MenuItemFormComponent);

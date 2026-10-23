@@ -1,13 +1,15 @@
+import { signal } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { AlertService } from "../../alerts/alert.service";
-import { BehaviorSubject } from "rxjs";
 
 import { By } from "@angular/platform-browser";
 
 import { UserLanguageSettingsComponent } from "./user-language-settings.component";
 import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
 import { LanguageService } from "../../language/language.service";
+import { availableLocales } from "../../language/languages";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { UserSettingsService } from "../../site-settings/user-settings.service";
 import { Logging } from "../../logging/logging.service";
@@ -22,8 +24,8 @@ describe("UserLanguageSettingsComponent", () => {
   let userSettings: { setLanguage: ReturnType<typeof vi.fn> };
   let languageService: { switchToOwnLocale: ReturnType<typeof vi.fn> };
   let alertService: { addDanger: ReturnType<typeof vi.fn> };
-  let displayLanguageSelect: BehaviorSubject<boolean>;
   let ability: EntityAbility;
+  let switchingEnabled = true;
 
   async function createComponent() {
     userSettings = { setLanguage: vi.fn().mockResolvedValue(undefined) };
@@ -32,7 +34,6 @@ describe("UserLanguageSettingsComponent", () => {
       getCurrentLocale: vi.fn().mockReturnValue("en-US"),
     } as any;
     alertService = { addDanger: vi.fn() };
-    displayLanguageSelect = new BehaviorSubject(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -50,7 +51,11 @@ describe("UserLanguageSettingsComponent", () => {
         { provide: AlertService, useValue: alertService },
         {
           provide: SiteSettingsService,
-          useValue: { displayLanguageSelect },
+          useValue: {
+            languageSwitchingEnabled: switchingEnabled,
+            // the service resolves "not narrowed down" to every locale
+            enabledLocales: signal(availableLocales.values),
+          },
         },
       ],
     }).compileComponents();
@@ -65,7 +70,17 @@ describe("UserLanguageSettingsComponent", () => {
 
   beforeEach(() => createComponent());
 
-  afterEach(() => TestBed.resetTestingModule());
+  afterEach(() => {
+    switchingEnabled = true;
+    // spies on Logging persist between tests otherwise, so a later test sees
+    // the calls of an earlier one
+    vi.restoreAllMocks();
+    TestBed.resetTestingModule();
+  });
+
+  function hintText(): string {
+    return fixture.nativeElement.querySelector("mat-hint")?.textContent.trim();
+  }
 
   function languageSelect(): LanguageSelectComponent {
     return fixture.debugElement.query(By.directive(LanguageSelectComponent))
@@ -122,14 +137,14 @@ describe("UserLanguageSettingsComponent", () => {
     fixture.detectChanges();
 
     expect(languageSelect().disabled()).toBe(true);
-    expect(languageSelect().hint()).toBe(component.missingPermissionText);
+    expect(hintText()).toBe(component.missingPermissionText);
 
     // the rules can change at runtime, e.g. when an admin grants the permission
     ability.update([{ subject: "UserSettings", action: "manage" }]);
     fixture.detectChanges();
 
     expect(languageSelect().disabled()).toBe(false);
-    expect(languageSelect().hint()).toBe(component.languageHint);
+    expect(hintText()).toContain("Only applies to your account");
   });
 
   it("should check the permission against the user's own settings document", () => {
@@ -192,12 +207,12 @@ describe("UserLanguageSettingsComponent", () => {
     expect(languageService.switchToOwnLocale).not.toHaveBeenCalled();
   });
 
-  it("should show the selector only when the admin enabled it", async () => {
-    expect(component.displayLanguageSelect()).toBe(true);
+  it("should keep the selector but disable it if language switching is disabled", async () => {
+    TestBed.resetTestingModule();
+    switchingEnabled = false;
+    await createComponent();
 
-    displayLanguageSelect.next(false);
-    fixture.detectChanges();
-
-    expect(component.displayLanguageSelect()).toBe(false);
+    expect(languageSelect().disabled()).toBe(true);
+    expect(hintText()).toContain("Language switching is not enabled");
   });
 });

@@ -22,19 +22,21 @@
       ></app-translatable-text-input>
 
       <div matSuffix class="flex-row gap-small">
-        <button
-          mat-icon-button
-          type="button"
-          class="translations-button input-embedded-icon-button"
-          [class.is-multi-lingual]="labelInput.isMultiLingual()"
-          (click)="labelInput.openTranslations($event)"
-          matTooltip="Configure this text in other languages"
-          i18n-matTooltip
-          aria-label="Configure this text in other languages"
-          i18n-aria-label
-        >
-          <app-fa-dynamic-icon icon="language"></app-fa-dynamic-icon>
-        </button>
+        @if (labelInput.translationsEnabled()) {
+          <button
+            mat-icon-button
+            type="button"
+            class="translations-button input-embedded-icon-button"
+            [class.is-multi-lingual]="labelInput.isMultiLingual()"
+            (click)="labelInput.openTranslations($event)"
+            matTooltip="Configure this text in other languages"
+            i18n-matTooltip
+            aria-label="Configure this text in other languages"
+            i18n-aria-label
+          >
+            <app-fa-dynamic-icon icon="language"></app-fa-dynamic-icon>
+          </button>
+        }
 
         <app-color-input
           [value]="v.color"

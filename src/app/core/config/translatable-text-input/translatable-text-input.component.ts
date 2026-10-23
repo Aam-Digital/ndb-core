@@ -25,6 +25,7 @@ import {
   ConfigureTranslationsResult,
 } from "../configure-translations-popup/configure-translations-popup.component";
 import { TranslatableText } from "../multi-lingual-config";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
 
 /**
  * Input for a configurable text that can be translated into multiple languages.
@@ -87,6 +88,14 @@ export class TranslatableTextInputComponent
 
   /** set false when the form field has its own suffix icon row, and call {@link openTranslations} from there */
   showTranslationsButton = input(true);
+
+  /**
+   * Whether texts can be configured in several languages in this system
+   * ({@link SiteSettingsService.translationsEnabled}).
+   * Callers rendering their own translations button read this to hide it as well.
+   */
+  readonly translationsEnabled =
+    inject(SiteSettingsService).translationsEnabled;
 
   private readonly dialog = inject(MatDialog);
 

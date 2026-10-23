@@ -65,6 +65,12 @@ export class LanguageService {
         distinctUntilChanged(),
       )
       .subscribe(async (userId) => {
+        if (!this.siteSettings.languageSwitchingEnabled) {
+          // everyone uses the default language, so the account's own one is ignored
+          this.applyDefaultLanguage(await this.getDefaultLanguage());
+          return;
+        }
+
         const ownLanguage = await this.userSettings.getLanguage();
         if (ownLanguage) {
           this.switchLocale(ownLanguage, userId);
@@ -78,17 +84,43 @@ export class LanguageService {
 
         // the site settings are cached from the previous session, so a configured
         // default is available right away - only wait briefly for one that is not set
-        const siteDefault = await firstValueFrom(
-          this.siteSettings.defaultLanguage.pipe(
-            map((language) => language?.id),
-            timeout({
-              first: LanguageService.SITE_DEFAULT_WAIT_MS,
-              with: () => of(undefined),
-            }),
-          ),
+        this.switchLocale(
+          (await this.getDefaultLanguage()) ?? DEFAULT_LANGUAGE,
         );
-        this.switchLocale(siteDefault || DEFAULT_LANGUAGE);
       });
+  }
+
+  /**
+   * The language configured for the whole system,
+   * or undefined if the site settings do not set one (within {@link SITE_DEFAULT_WAIT_MS}).
+   * Callers must not assume a language then: a fresh system has none yet
+   * and site settings may arrive after the wait on a slow connection.
+   */
+  private async getDefaultLanguage(): Promise<string | undefined> {
+    const siteDefault = await firstValueFrom(
+      this.siteSettings.defaultLanguage.pipe(
+        map((language) => language?.id),
+        timeout({
+          first: LanguageService.SITE_DEFAULT_WAIT_MS,
+          with: () => of(undefined),
+        }),
+      ),
+    );
+    return siteDefault || undefined;
+  }
+
+  /**
+   * Make the default language the active one if language switching is disabled.
+   * Does nothing if no default language is configured, so the current locale
+   * (e.g. one picked in the setup assistant of a fresh system) stays as it is.
+   * Unlike {@link switchLocale} this does not reload if the language is already
+   * in effect, e.g. through the app default without anything stored.
+   */
+  private applyDefaultLanguage(language: string | undefined) {
+    if (!language) return;
+    this.localStorage.removeItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY);
+    if (language === this.getCurrentLocale()) return;
+    this.switchLocale(language);
   }
 
   /**
@@ -107,7 +139,9 @@ export class LanguageService {
         })),
         filter(
           ({ userId, locale }) =>
-            !!locale && userId === this.sessionInfo.value?.id,
+            !!locale &&
+            this.siteSettings.languageSwitchingEnabled &&
+            userId === this.sessionInfo.value?.id,
         ),
       )
       .subscribe(({ userId, locale }) => this.switchLocale(locale, userId));
@@ -128,6 +162,12 @@ export class LanguageService {
       )
       .subscribe(async (updatedSettings: UpdatedEntity<SiteSettings>) => {
         const updatedLanguage = updatedSettings?.entity?.defaultLanguage?.id;
+
+        if (!this.siteSettings.languageSwitchingEnabled) {
+          this.applyDefaultLanguage(updatedLanguage);
+          return;
+        }
+
         if (!updatedLanguage) return;
 
         // users who picked a language for their own account keep it
@@ -175,8 +215,18 @@ export class LanguageService {
   /**
    * Apply the system default at startup. A user's own language is applied on
    * login instead (see {@link applyOwnLanguageOnLogin}).
+   * If language switching is disabled, a configured default language always wins over
+   * a language stored on this device. Without a configured one, the stored language stays.
    */
   initDefaultLanguage(): void {
+    if (!this.siteSettings.languageSwitchingEnabled) {
+      // a language picked on this device earlier must not outlast the switch being disabled
+      this.getDefaultLanguage()
+        .then((language) => this.applyDefaultLanguage(language))
+        .catch((err) => Logging.error(err));
+      return;
+    }
+
     const languageSelected = this.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,
     );
