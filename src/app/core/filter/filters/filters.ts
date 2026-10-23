@@ -55,6 +55,113 @@ export function combineFilterConditions<T>(
   return { $and: relevant } as DataFilter<T>;
 }
 
+/**
+ * Prefix of a placeholder in a condition value that stands for the value of a field
+ * of the record currently being edited, e.g. `"$current_record.location"`.
+ */
+export const CURRENT_RECORD_PLACEHOLDER_PREFIX = "$current_record.";
+
+export function isCurrentRecordPlaceholder(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    value.startsWith(CURRENT_RECORD_PLACEHOLDER_PREFIX)
+  );
+}
+
+/** operators combining a list of conditions, each of which is a condition on its own */
+const CONDITION_LIST_OPERATORS = ["$or", "$and", "$nor"];
+
+/** marks a value that cannot be resolved, because it references an empty field */
+const UNRESOLVED = Symbol("unresolved");
+
+/**
+ * Replace all `$current_record.<fieldId>` placeholders in the given condition
+ * with the value of that field of the current record.
+ * A placeholder inside a list (e.g. of `$in`) is replaced by all values of a multi-value field.
+ *
+ * A row (a field with its value, or one of the alternatives of `$or`) that references an empty field
+ * cannot be applied and is left out. All other rows still apply.
+ *
+ * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
+ * @param getValue Returns the value of the given field of the current record (in database format).
+ * @returns The resolved condition, which is empty if no row is left to apply.
+ */
+export function resolveCurrentRecordPlaceholders<T>(
+  condition: DataFilter<T>,
+  getValue: (fieldId: string) => unknown,
+): DataFilter<T> {
+  const resolveValue = (value: unknown): unknown => {
+    if (isCurrentRecordPlaceholder(value)) {
+      const fieldValue = getValue(
+        value.substring(CURRENT_RECORD_PLACEHOLDER_PREFIX.length),
+      );
+      return isEmptyValue(fieldValue) ? UNRESOLVED : fieldValue;
+    }
+    if (Array.isArray(value)) {
+      const items = value.map((item) => [item, resolveValue(item)]);
+      if (items.some(([, resolved]) => resolved === UNRESOLVED)) {
+        return UNRESOLVED;
+      }
+      return items.flatMap(([item, resolved]) =>
+        isCurrentRecordPlaceholder(item) && Array.isArray(resolved)
+          ? resolved
+          : [resolved],
+      );
+    }
+    if (value && typeof value === "object") {
+      const entries = Object.entries(value).map(([key, v]) => [
+        key,
+        resolveValue(v),
+      ]);
+      return entries.some(([, resolved]) => resolved === UNRESOLVED)
+        ? UNRESOLVED
+        : Object.fromEntries(entries);
+    }
+    return value;
+  };
+
+  const resolveCondition = (cond: object): object => {
+    const resolved = {};
+    for (const [key, value] of Object.entries(cond)) {
+      if (CONDITION_LIST_OPERATORS.includes(key) && Array.isArray(value)) {
+        const alternatives = value
+          .map((alternative) => ({
+            alternative,
+            resolved: resolveCondition(alternative),
+          }))
+          // an alternative is left out if none of its rows can be applied
+          .filter(
+            ({ alternative, resolved: r }) =>
+              Object.keys(r).length > 0 ||
+              Object.keys(alternative).length === 0,
+          )
+          .map(({ resolved: r }) => r);
+        if (alternatives.length > 0) {
+          resolved[key] = alternatives;
+        }
+        continue;
+      }
+
+      const resolvedValue = resolveValue(value);
+      if (resolvedValue !== UNRESOLVED) {
+        resolved[key] = resolvedValue;
+      }
+    }
+    return resolved;
+  };
+
+  return resolveCondition(condition ?? {}) as DataFilter<T>;
+}
+
+function isEmptyValue(value: unknown): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0)
+  );
+}
+
 export function createEmptyValueFilter<T extends Entity>(
   fieldName: string,
   includeNestedId = false,

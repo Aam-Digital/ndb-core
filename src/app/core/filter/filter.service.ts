@@ -81,6 +81,17 @@ export class FilterService {
           entity,
           true,
         );
+      } else if (isSingleOptionList(value?.["$in"])) {
+        // e.g. { category: { $in: ["GUARDIAN_TALK"] } } (as saved by the conditions editor)
+        this.assignValueToEntity(key, value["$in"][0], schema, entity);
+      } else if (isSingleOptionList(value?.["$elemMatch"]?.["$in"])) {
+        this.assignValueToEntity(
+          key,
+          value["$elemMatch"]["$in"][0],
+          schema,
+          entity,
+          true,
+        );
       }
     });
   }
@@ -128,6 +139,12 @@ export class FilterService {
 
   private parseConfigurableEnumValue(property: EntitySchemaField, value) {
     const enumValues = this.enumService.getEnumValues(property.additional);
-    return enumValues.find(({ id }) => id === value["id"]);
+    const valueId = typeof value === "string" ? value : value["id"];
+    return enumValues.find(({ id }) => id === valueId);
   }
+}
+
+/** a list with exactly one option, which can be applied as plain value */
+function isSingleOptionList(value: unknown): value is [unknown] {
+  return Array.isArray(value) && value.length === 1;
 }

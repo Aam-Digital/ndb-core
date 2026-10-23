@@ -1,4 +1,9 @@
-import { combineFilterConditions, Filter, SelectableFilter } from "./filters";
+import {
+  combineFilterConditions,
+  Filter,
+  resolveCurrentRecordPlaceholders,
+  SelectableFilter,
+} from "./filters";
 import { FilterService } from "../filter.service";
 import { BooleanFilter } from "./booleanFilter";
 import { StringFilter } from "./stringFilter";
@@ -167,5 +172,119 @@ describe("Filters", () => {
       combineFilterConditions(a, {}, b),
       "empty condition in between",
     ).toEqual({ $and: [a, b] });
+  });
+
+  describe("resolveCurrentRecordPlaceholders", () => {
+    const record: Record<string, unknown> = {
+      location: "BERLIN",
+      locations: ["BERLIN", "HAMBURG"],
+      name: "Anna",
+    };
+    const getValue = (fieldId: string) => record[fieldId];
+
+    it.each([
+      [
+        "keeps a condition without placeholders",
+        { level: { $in: ["COUNTRY"] } },
+        { level: { $in: ["COUNTRY"] } },
+      ],
+      [
+        "replaces a placeholder in an $in list",
+        { primaryLocation: { $in: ["$current_record.location"] } },
+        { primaryLocation: { $in: ["BERLIN"] } },
+      ],
+      [
+        "spreads the values of a multi-value field into the list",
+        { primaryLocation: { $in: ["OTHER", "$current_record.locations"] } },
+        { primaryLocation: { $in: ["OTHER", "BERLIN", "HAMBURG"] } },
+      ],
+      [
+        "replaces a plain placeholder value",
+        { name: "$current_record.name" },
+        { name: "Anna" },
+      ],
+      [
+        "replaces placeholders nested in $or, $elemMatch and negations",
+        {
+          $or: [
+            { tags: { $elemMatch: { $in: ["$current_record.location"] } } },
+            { region: { $not: { $in: ["$current_record.location"] } } },
+          ],
+        },
+        {
+          $or: [
+            { tags: { $elemMatch: { $in: ["BERLIN"] } } },
+            { region: { $not: { $in: ["BERLIN"] } } },
+          ],
+        },
+      ],
+    ])("%s", (_, condition, expected) => {
+      const original = structuredClone(condition);
+
+      expect(resolveCurrentRecordPlaceholders(condition, getValue)).toEqual(
+        expected,
+      );
+      // the condition usually is shared config, so it must not be changed in place
+      expect(condition).toEqual(original);
+    });
+
+    it.each([[undefined], [null], [""], [[]]])(
+      "leaves out the row referencing an empty field (%j)",
+      (emptyValue) => {
+        const condition = {
+          level: { $in: ["COUNTRY"] },
+          primaryLocation: { $in: ["$current_record.location"] },
+        };
+
+        expect(
+          resolveCurrentRecordPlaceholders(condition, () => emptyValue),
+        ).toEqual({ level: { $in: ["COUNTRY"] } });
+      },
+    );
+
+    it.each([
+      [
+        "a row among the alternatives",
+        {
+          $or: [{ level: "COUNTRY" }, { location: "$current_record.location" }],
+        },
+        { $or: [{ level: "COUNTRY" }] },
+      ],
+      [
+        "only the unresolved part of an alternative",
+        {
+          $or: [
+            { level: "COUNTRY", location: "$current_record.location" },
+            { name: "A" },
+          ],
+        },
+        { $or: [{ level: "COUNTRY" }, { name: "A" }] },
+      ],
+      [
+        "all alternatives, together with the list of alternatives",
+        {
+          level: "COUNTRY",
+          $or: [{ location: "$current_record.location" }],
+        },
+        { level: "COUNTRY" },
+      ],
+      [
+        "a placeholder nested anywhere in a row's value",
+        {
+          level: "COUNTRY",
+          location: { $not: { $in: ["OTHER", "$current_record.location"] } },
+        },
+        { level: "COUNTRY" },
+      ],
+      [
+        "every row (nothing is left to apply)",
+        { location: "$current_record.location" },
+        {},
+      ],
+    ])("leaves out %s", (_, condition, expected) => {
+      expect(
+        resolveCurrentRecordPlaceholders(condition, () => undefined),
+      ).toEqual(expected);
+    });
   });
 });

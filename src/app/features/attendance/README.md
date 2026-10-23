@@ -14,6 +14,11 @@ Any entity type can be set up to serve as a "recurring activity" (i.e. a kind of
 An "Event" entity represents one specific session at a concrete point in time.
 This is the smallest unit and for each "Event" participants have a specific attendance status.
 
+An `attendance` field can limit which records are offered when adding participants,
+with a `selectionCondition` in the config of its embedded `participant` field
+(`additional.participant.selectionCondition`, e.g. only children of the event's center),
+the same as an entity reference field. There is no admin UI for this yet.
+
 ### Attendance Status
 
 The attendance status options are a configurable enum.
