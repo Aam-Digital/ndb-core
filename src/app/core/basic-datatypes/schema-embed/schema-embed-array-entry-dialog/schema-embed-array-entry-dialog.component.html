@@ -15,13 +15,14 @@
 
 <mat-dialog-actions>
   @if (!data.readonly) {
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="save()"
-      i18n="Form save button"
-    >
-      Save
+    <button mat-raised-button color="accent" (click)="save()">
+      @if (data.deferSave) {
+        <ng-container i18n="Button for closing popup and applying changes"
+          >Apply</ng-container
+        >
+      } @else {
+        <ng-container i18n="Form save button">Save</ng-container>
+      }
     </button>
   }
 

@@ -6,7 +6,7 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormGroup, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -52,6 +52,11 @@ export interface SchemaEmbedArrayEntryDialogData {
   readonly?: boolean;
   /** Called with the changed list of entries when saving or deleting the entry */
   applyChange: SchemaEmbedArrayApplyChange;
+  /**
+   * Whether `applyChange` only passes the changes on to be saved later (e.g. with a surrounding form),
+   * labelling the save button "Apply" instead of "Save".
+   */
+  deferSave?: boolean;
 }
 
 /**
@@ -69,6 +74,7 @@ export interface SchemaEmbedArrayEntryDialogData {
   // no encapsulation to style the mat-form-fields nested in the field components, like EntityFormComponent does
   encapsulation: ViewEncapsulation.None,
   imports: [
+    FormsModule, // importing FormsModule prevents native form submission / page reload (e.g. pressing Enter in a field)
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
@@ -138,7 +144,8 @@ export class SchemaEmbedArrayEntryDialogComponent {
     if (this.isNew) {
       entries.push(entry);
     } else {
-      entries[this.data.index] = entry;
+      // keep values of inner fields that are not edited in this popup
+      entries[this.data.index] = { ...entries[this.data.index], ...entry };
     }
     await this.applyChange(entries);
   }

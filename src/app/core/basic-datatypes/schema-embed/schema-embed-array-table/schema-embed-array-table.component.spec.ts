@@ -1,11 +1,16 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { MatDialog } from "@angular/material/dialog";
+import { BehaviorSubject } from "rxjs";
 import { LoginState } from "#src/app/core/session/session-states/login-state.enum";
 import { MockedTestingModule } from "#src/app/utils/mocked-testing.module";
 import { DisplayTextComponent } from "#src/app/core/basic-datatypes/string/display-text/display-text.component";
 import { DisplayDateComponent } from "#src/app/core/basic-datatypes/date/display-date/display-date.component";
 import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
+import {
+  ScreenSize,
+  ScreenWidthObserver,
+} from "#src/app/utils/media/screen-size-observer.service";
 import { SchemaEmbedArrayTableComponent } from "./schema-embed-array-table.component";
 import {
   SchemaEmbedArrayEntryDialogComponent,
@@ -15,6 +20,7 @@ import {
 describe("SchemaEmbedArrayTableComponent", () => {
   let fixture: ComponentFixture<SchemaEmbedArrayTableComponent>;
   let mockDialog: { open: ReturnType<typeof vi.fn> };
+  let screenSize: BehaviorSubject<ScreenSize>;
 
   const rows = [
     { documentType: "Passport", issueDate: new Date("2020-01-01") },
@@ -23,13 +29,23 @@ describe("SchemaEmbedArrayTableComponent", () => {
 
   beforeEach(async () => {
     mockDialog = { open: vi.fn() };
+    screenSize = new BehaviorSubject(ScreenSize.lg);
 
     await TestBed.configureTestingModule({
       imports: [
         SchemaEmbedArrayTableComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN),
       ],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: MatDialog, useValue: mockDialog },
+        {
+          provide: ScreenWidthObserver,
+          useValue: {
+            shared: () => screenSize.asObservable(),
+            currentScreenSize: () => screenSize.value,
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SchemaEmbedArrayTableComponent);
@@ -66,6 +82,24 @@ describe("SchemaEmbedArrayTableComponent", () => {
     expect(headerTexts()).toEqual(["Document Type", "Issue Date"]);
   });
 
+  it.each<[keyof typeof ScreenSize, string[]]>([
+    ["sm", ["Document Type"]],
+    ["md", ["Document Type", "Issue Date"]],
+  ])(
+    "on screen size %s displays only the columns visible from that size",
+    (size, expectedHeaders) => {
+      fixture.componentRef.setInput("columns", [
+        { id: "documentType", label: "Document Type" },
+        { id: "issueDate", label: "Issue Date", visibleFrom: "md" },
+        { id: "internalNote", label: "Internal Note", hideFromTable: true },
+      ]);
+      screenSize.next(ScreenSize[size]);
+      fixture.detectChanges();
+
+      expect(headerTexts()).toEqual(expectedHeaders);
+    },
+  );
+
   it("renders one row per entry through each column's resolved view component", async () => {
     fixture.detectChanges();
 
@@ -100,6 +134,7 @@ describe("SchemaEmbedArrayTableComponent", () => {
     });
 
     it("opens the popup for the clicked entry", () => {
+      fixture.componentRef.setInput("deferSave", true);
       fixture.detectChanges();
 
       tableRows()[1].click();
@@ -114,6 +149,7 @@ describe("SchemaEmbedArrayTableComponent", () => {
           entity,
           readonly: false,
           applyChange,
+          deferSave: true,
         }),
       );
       expect(lastDialogData().columns.map((c) => c.id)).toEqual([

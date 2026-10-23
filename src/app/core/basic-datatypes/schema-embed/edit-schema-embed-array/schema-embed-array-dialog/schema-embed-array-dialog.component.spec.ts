@@ -78,6 +78,8 @@ describe("SchemaEmbedArrayDialogComponent", () => {
     expect(table().columns()).toBe(dialogData.columns);
     expect(table().entity()).toBe(dialogData.entity);
     expect(table().readonly()).toBe(false);
+    // entries are saved only later with the surrounding form
+    expect(table().deferSave()).toBe(true);
   });
 
   it("writes changed entries to the field's control and lists them", async () => {

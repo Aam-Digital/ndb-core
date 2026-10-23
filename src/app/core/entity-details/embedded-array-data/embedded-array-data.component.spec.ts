@@ -146,4 +146,21 @@ describe("EmbeddedArrayDataComponent", () => {
     ]);
     await waitForRowTexts([["Visa", "C3"]]);
   });
+
+  it("keeps displaying the previous entries and passes on the error if saving fails", async () => {
+    vi.spyOn(TestBed.inject(EntityMapperService), "save").mockRejectedValue(
+      new Error("save failed"),
+    );
+    await render();
+
+    await expect(
+      table().applyChange()([{ documentType: "Visa", documentNumber: "C3" }]),
+    ).rejects.toThrow("save failed");
+
+    fixture.detectChanges();
+    await waitForRowTexts([
+      ["Passport", "A1"],
+      ["ID Card", "B2"],
+    ]);
+  });
 });

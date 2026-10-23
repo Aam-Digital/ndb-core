@@ -66,6 +66,9 @@ export class SchemaEmbedArrayTableComponent {
   /** Persist a changed list of entries; enables opening the popup of an entry if set. */
   applyChange = input<SchemaEmbedArrayApplyChange>();
 
+  /** @see SchemaEmbedArrayEntryDialogData.deferSave */
+  deferSave = input(false);
+
   /** Whether entries can only be viewed in their popup, not added, changed or deleted. */
   readonly = input(false);
 
@@ -109,6 +112,7 @@ export class SchemaEmbedArrayTableComponent {
         entity: this.entity(),
         readonly: this.readonly(),
         applyChange: this.applyChange(),
+        deferSave: this.deferSave(),
       },
     });
   }

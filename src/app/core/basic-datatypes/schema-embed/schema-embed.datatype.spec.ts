@@ -25,6 +25,7 @@ import {
   SchemaEmbedDatatypeAdditional,
 } from "./schema-embed.datatype";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { SchemaEmbedArrayDatatype } from "./schema-embed-array.datatype";
 import { NumberDatatype } from "../number/number.datatype";
 import { MonthDatatype } from "../month/month.datatype";
 import { Injectable } from "@angular/core";
@@ -335,5 +336,21 @@ describe("Schema data type: schema-embed", () => {
         expect(columns.map((c) => c.id)).toEqual(["value"]);
       });
     });
+
+    it.each([undefined, false])(
+      "always stores schema-embed-array fields as array (configured isArray: %s)",
+      (isArray) => {
+        const datatype = TestBed.runInInjectionContext(
+          () => new SchemaEmbedArrayDatatype(),
+        );
+
+        expect(
+          datatype.normalizeSchemaField({
+            dataType: SchemaEmbedArrayDatatype.dataType,
+            isArray,
+          }).isArray,
+        ).toBe(true);
+      },
+    );
   });
 });

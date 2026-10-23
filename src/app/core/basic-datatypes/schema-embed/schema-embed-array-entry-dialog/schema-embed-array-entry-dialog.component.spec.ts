@@ -126,6 +126,27 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
     },
   );
 
+  it("keeps the values of inner fields that are not edited in the popup", async () => {
+    await createDialog({ index: 1, columns: [columns[0]] });
+
+    component.form.setValue({ documentType: "Visa" });
+    await component.save();
+
+    expect(appliedEntries()[1]).toEqual({
+      documentType: "Visa",
+      documentNumber: "B2",
+    });
+  });
+
+  it("does not natively submit the form (e.g. when pressing Enter in a field)", async () => {
+    await createDialog({ index: 0 });
+
+    const submit = new Event("submit", { cancelable: true });
+    fixture.nativeElement.querySelector("form").dispatchEvent(submit);
+
+    expect(submit.defaultPrevented).toBe(true);
+  });
+
   it("starts with the values of the edited entry", async () => {
     await createDialog({ index: 1 });
 
@@ -183,6 +204,11 @@ describe("SchemaEmbedArrayEntryDialogComponent", () => {
       ["Save", "Cancel"],
     ],
     ["a read-only entry", { index: 0, readonly: true }, ["Cancel"]],
+    [
+      "an entry saved later with the surrounding form",
+      { index: 0, deferSave: true },
+      ["Apply", "Cancel", ""],
+    ],
   ])("offers the matching actions for %s", async (_, data, expectedButtons) => {
     await createDialog(data);
 
