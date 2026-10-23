@@ -6,6 +6,8 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { availableLocales, LOCALE_ENUM_ID } from "../languages";
 import { EditAvailableLocalesComponent } from "./edit-available-locales.component";
+import { By } from "@angular/platform-browser";
+import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 
 describe("EditAvailableLocalesComponent", () => {
   const DE = { id: "de", label: "German" };
@@ -99,6 +101,18 @@ describe("EditAvailableLocalesComponent", () => {
     expect(component.options.map(({ id }) => id)).toEqual(
       availableLocales.values.map(({ id }) => id),
     );
+  });
+
+  it("opens the options to pick from when the form field is clicked", () => {
+    create(true, [DE]);
+    const autocomplete = fixture.debugElement.query(
+      By.directive(BasicAutocompleteComponent),
+    ).componentInstance as BasicAutocompleteComponent<unknown, unknown>;
+    const showAutocomplete = vi.spyOn(autocomplete, "showAutocomplete");
+
+    fixture.componentInstance.onContainerClick(new MouseEvent("click"));
+
+    expect(showAutocomplete).toHaveBeenCalled();
   });
 
   it("should re-add the system language if it is removed", () => {

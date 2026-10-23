@@ -6,6 +6,7 @@ import {
   input,
   OnInit,
   signal,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -15,6 +16,7 @@ import { environment } from "#src/environments/environment";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FeatureDisabledInfoComponent } from "../../common-components/feature-disabled-info/feature-disabled-info.component";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
@@ -40,6 +42,7 @@ import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-
     BasicAutocompleteComponent,
     MatTooltipModule,
     FeatureDisabledInfoComponent,
+    FaDynamicIconComponent,
   ],
   providers: [
     {
@@ -55,6 +58,8 @@ export class EditAvailableLocalesComponent
   formFieldConfig = input<FormFieldConfig>();
 
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly autocomplete = viewChild(BasicAutocompleteComponent);
 
   /** all selectable locales (not user-editable, so no "create option") */
   readonly options: ConfigurableEnumValue[] = availableLocales.values;
@@ -98,5 +103,10 @@ export class EditAvailableLocalesComponent
       return;
     }
     this.formControl.setValue([...offered, systemLanguage]);
+  }
+
+  /** open the options when clicking anywhere in the surrounding form field */
+  override onContainerClick(event: MouseEvent) {
+    this.autocomplete()?.onContainerClick(event);
   }
 }
