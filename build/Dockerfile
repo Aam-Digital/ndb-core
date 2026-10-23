@@ -6,15 +6,13 @@ COPY ./build/default.conf /etc/nginx/templates/default.conf
 # CMD runs - wrong destination, uncurated substitution. Handled explicitly in
 # CMD instead.
 COPY ./build/keycloak.json.template /etc/nginx/keycloak.json.template
-COPY ./build/generate-env-config.sh /etc/nginx/generate-env-config.sh
 COPY ./dist/ /usr/share/nginx/html
 
-# assets/keycloak.json and assets/env-config.json are generated at container
-# start (see KEYCLOAK_URL and generate-env-config.sh below). COPY always writes as root
-# regardless of USER, so briefly switch back to hand them to the unprivileged
-# nginx user (101), then drop back down.
+# assets/keycloak.json is generated at container start (see KEYCLOAK_URL
+# below). COPY always writes as root regardless of USER, so briefly switch
+# back to hand it to the unprivileged nginx user (101), then drop back down.
 USER root
-RUN chown 101:101 /usr/share/nginx/html/assets/keycloak.json /usr/share/nginx/html/assets/env-config.json
+RUN chown 101:101 /usr/share/nginx/html/assets/keycloak.json
 USER 101
 
 # The port on which the app will run in the Docker container
@@ -50,17 +48,6 @@ ENV COUCHDB_DIRECT_URL=""
 # this image's unprivileged nginx user).
 ENV KEYCLOAK_URL=""
 ENV KEYCLOAK_REALM=""
-
-# Settings of the app itself (e.g. SENTRY_DSN to switch on error reporting,
-# SESSION_TYPE) can be given as environment variables too: at container start,
-# generate-env-config.sh writes those set to a non-empty value into
-# assets/env-config.json, which the app loads before assets/config.json. The
-# supported variables are listed in that script, the single source of truth
-# (and documented in build/README.md), so they are not declared here. A setting
-# in a mounted config.json wins over the same setting given as a variable. The
-# image ships the file as "{}", which is served unchanged if no such variable
-# is set or if it cannot be written (warning only); an invalid value (e.g.
-# DEMO_MODE="yes") fails the container start instead.
 
 # The url to the backend API, see https://github.com/Aam-Digital/aam-services
 # Target for the app's /api (and deprecated /query) path. Only scheme, host and
@@ -116,6 +103,5 @@ CMD export RESOLVER=$(awk '$1=="nameserver" && $2 !~ /:/ {print $2}' /etc/resolv
       envsubst '$$KEYCLOAK_URL $$KEYCLOAK_REALM' < /etc/nginx/keycloak.json.template > /usr/share/nginx/html/assets/keycloak.json ||\
         echo 'WARN: KEYCLOAK_URL/KEYCLOAK_REALM are set but assets/keycloak.json could not be written (e.g. still bind-mounted read-only by an older deployment config) - serving the existing file unchanged' >&2;\
     fi &&\
-    sh /etc/nginx/generate-env-config.sh /usr/share/nginx/html/assets/env-config.json &&\
     envsubst '$$PORT $$COUCHDB_URL $$COUCHDB_DIRECT_URL $$API_URL $$NOMINATIM_URL $$RESOLVER $$CSP $$CSP_REPORT_URI $$CSP_EXTRA_FRAME_ANCESTORS' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     exec nginx -g 'daemon off;'

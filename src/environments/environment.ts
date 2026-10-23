@@ -21,9 +21,7 @@ import type { DataSourceType } from "../app/core/common-components/entities-tabl
 
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
- * For deployments, the `assets/config.json` can be used to override these settings as well,
- * and some of them can be given as environment variables of the Docker image instead
- * (see "Settings of the app" in `build/README.md`).
+ * For deployments, the `assets/config.json` can be used to override these settings as well.
  *
  * The file contents for the current environment will overwrite these during build.
  * The build system defaults to the dev environment which uses `environment.ts`, but if you do
@@ -36,8 +34,7 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   /**
    * The DSN of the remote monitoring (Sentry) project to report warnings and errors to.
-   * Not set by default, so remote logging is off: deployments set it in their `config.json`
-   * or as the environment variable `SENTRY_DSN` of the Docker image.
+   * Not set by default, so remote logging is off: deployments set it in their `config.json`.
    */
   remoteLoggingDsn: undefined as string | undefined,
   /**

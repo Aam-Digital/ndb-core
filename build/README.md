@@ -40,7 +40,6 @@ anything left unset keeps the default below.
 | `QUERY_URL`                                          | unset                                 | **Deprecated**, renamed to `API_URL` — still honoured (and still serving the deprecated `/query` path) so that a deployment pulling a newer image without updating its config keeps working. Where both are set explicitly, `API_URL` wins, so adding it is enough to migrate. Will be removed in the next major release. |
 | `NOMINATIM_URL`                                      | `https://nominatim.openstreetmap.org` | Proxy target for the app's `/nominatim` path, used for geocoding.                                                                                                                                                                                                                                                         |
 | `CSP`, `CSP_REPORT_URI`, `CSP_EXTRA_FRAME_ANCESTORS` | see below                             | Content Security Policy headers — see [Content Security Policy (CSP)](#content-security-policy-csp) below.                                                                                                                                                                                                                |
-| `SENTRY_DSN`, `SESSION_TYPE`, …                      | unset                                 | Settings of the app itself, as an alternative to `config.json` — see [Settings of the app](#settings-of-the-app-configjson-and-environment-variables) below.                                                                                                                                                              |
 
 The app's `/query` path is a deprecated alias of `/api` and proxies to the same
 target. It is kept only for callers that have not migrated yet and will be
@@ -52,48 +51,13 @@ fully-qualified service name (e.g. `couchdb.<namespace>.svc.cluster.local`),
 not the bare service name — a plain docker-compose service name works fine as
 is.
 
-### Settings of the app (`config.json` and environment variables)
-
-Settings of the app itself (e.g. `session_type`, or `remoteLoggingDsn` for
-error reporting to Sentry) override the defaults of the build's `environment`
-(see `src/environments/environment.ts` for the available keys) at startup. A
-deployment gives them in either or both of two ways:
-
-- **`assets/config.json`**, mounted into the container at
-  `/usr/share/nginx/html/assets/config.json`. It can hold any key of the
-  `environment`.
-- **Environment variables** of the container, for the settings in the table
-  below. At container start, [`generate-env-config.sh`](./generate-env-config.sh)
-  writes those set to a non-empty value into `assets/env-config.json`
-  (a separate file, as `config.json` is often mounted read-only).
-
-The app loads `env-config.json` first and `config.json` on top of it, so
-**`config.json` wins for a setting given in both**; a setting given only as a
-variable still applies.
-
-| Variable                | `config.json` key          | Type                                    |
-| ----------------------- | -------------------------- | --------------------------------------- |
-| `SENTRY_DSN`            | `remoteLoggingDsn`         | string                                  |
-| `SENTRY_ENVIRONMENT`    | `remoteLoggingEnvironment` | string                                  |
-| `SESSION_TYPE`          | `session_type`             | string (`synced`, `online`, `local`, …) |
-| `DEMO_MODE`             | `demo_mode`                | boolean                                 |
-| `USE_INDEXEDDB_ADAPTER` | `use_indexeddb_adapter`    | boolean                                 |
-| `WEBMASTER_EMAIL`       | `webmaster_email`          | string                                  |
-
-The script is the single source of truth for this table: to support another
-setting, add a line there (and here). A boolean must be `true` or `false`; an
-invalid value, or one containing a line break, fails the container start. If
-none of the variables is set, the image serves `env-config.json` as shipped
-(`{}`); if it cannot be written, a warning is printed and the shipped file is
-served.
-
-A production build (a release, not a PR preview) shows an error and reloads
-instead of starting without a valid `config.json`, unless `SESSION_TYPE` is
-set: a deployment configured through environment variables alone does not need
-to mount one (a missing file is fine then, an invalid one still is not).
-
-Remote logging is off unless `SENTRY_DSN` (or `remoteLoggingDsn`) is set, see
-the [logging README](../src/app/core/logging/README.md#remote-logging).
+Settings of the app itself (e.g. `session_type` or `remoteLoggingDsn` for
+error reporting to Sentry) are not environment variables of the image: they
+come from `assets/config.json`, which a deployment mounts into the container at
+`/usr/share/nginx/html/assets/config.json` (see `src/environments/environment.ts`
+for the available keys, and the
+[logging README](../src/app/core/logging/README.md#remote-logging) for remote
+logging, which is off unless `remoteLoggingDsn` is set).
 
 ## How does the release process work?
 
@@ -120,7 +84,7 @@ For the wider picture of what these headers do and do not protect against, see t
 
 Which sources the app may load code, styles and data from is whitelisted through the `CSP` environment variable.
 The default whitelist covers everything a production server needs and is defined in the [`Dockerfile`](./Dockerfile).
-It allows error reports to `https://*.sentry.io`; a deployment reporting to a Sentry on another host (`SENTRY_DSN` / `remoteLoggingDsn`) has to add that host.
+It allows error reports to `https://*.sentry.io`; a deployment reporting to a Sentry on another host (`remoteLoggingDsn` in `config.json`) has to add that host.
 
 > This policy is currently sent as `Content-Security-Policy-Report-Only` for testing.
 > Violations are reported to `CSP_REPORT_URI` (defaulting to aam-digital's Sentry security endpoint) but scripts and connections are not yet blocked.
