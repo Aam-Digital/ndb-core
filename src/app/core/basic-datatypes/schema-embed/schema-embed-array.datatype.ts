@@ -27,7 +27,9 @@ export class SchemaEmbedArrayDatatype<
   DBType = any,
 > extends SchemaEmbedDatatype<EntityType, DBType> {
   static override readonly dataType: string = "schema-embed-array";
-  static override readonly label: string = $localize`:datatype-label:embedded table (multiple entries with several fields)`;
+  // TODO: enable again once the Admin UI can configure the inner fields (https://github.com/Aam-Digital/ndb-core/issues/3840)
+  //   - without its own label, the datatype inherits the default label and is hidden in the Admin UI
+  // static override readonly label: string = $localize`:datatype-label:embedded table (multiple entries with several fields)`;
 
   override editComponent = "EditSchemaEmbedArray";
   override viewComponent = "DisplaySchemaEmbedArray";

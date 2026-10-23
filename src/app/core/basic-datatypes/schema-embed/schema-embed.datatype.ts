@@ -211,8 +211,9 @@ export class SchemaEmbedDatatype<
       const config = toFormFieldConfig(column);
       const innerField = allColumns.find((c) => c.id === config?.id);
       if (!innerField) {
-        // a dangling column id must not block the other columns from rendering
-        Logging.error("Could not display an unknown embedded table column", {
+        // an instance config mistake (not a bug in our code): must not block the other columns
+        // from rendering, and is not reported (this runs in computed()s, so it would repeat)
+        Logging.debug("Could not display an unknown embedded table column", {
           column,
           field: schemaField?.id,
         });
