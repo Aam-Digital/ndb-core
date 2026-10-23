@@ -400,7 +400,7 @@ export interface LegacyNoteField {
  * (in the order of the previous default &#x60;bottomForm&#x60;).
  *
  * &#x60;Note&#x60; no longer defines these in code. Systems that still rely on them have the definitions
- * written into their own &#x60;entity:Note&#x60; config by the &#x60;oneoff-20261008-note-legacy-child-school-fields&#x60;
+ * written into their own &#x60;entity:Note&#x60; config by the &#x60;v4-upgrade-note-legacy-child-school-fields&#x60;
  * CLI migration, which is the only production code using this snapshot.
  *
  * (This module must stay free of runtime imports, as it is shared with the CLI -
@@ -442,7 +442,7 @@ export const LEGACY_NOTE_FIELDS: LegacyNoteField[] &#x3D; [
  * and read by the roll-call UI of event types based on &#x60;Note&#x60;.
  *
  * Systems that still rely on it have the definition written into their own &#x60;entity:Note&#x60; config
- * by the &#x60;oneoff-20261008-note-legacy-child-school-fields&#x60; CLI migration.
+ * by the &#x60;v4-upgrade-note-legacy-child-school-fields&#x60; CLI migration.
  */
 export const LEGACY_NOTE_ATTENDANCE_FIELD: {
   field: string;

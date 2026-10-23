@@ -162,7 +162,7 @@ That functionality is getting generalized and decoupled from this specific entit
 Add a &quot;attendance&quot; type field to any entity type instead.</p>
 <p><code>Note</code> therefore no longer declares the legacy <code>children</code>, <code>schools</code> and <code>childrenAttendance</code> fields.
 Systems that still hold data in them have the definitions written into their own <code>entity:Note</code> config
-by the <code>oneoff-20261008-note-legacy-child-school-fields</code> CLI migration
+by the <code>v4-upgrade-note-legacy-child-school-fields</code> CLI migration
 (see <code>deprecated/legacy-note-fields.ts</code>).</p>
 
             </p>
@@ -2770,7 +2770,7 @@ import { asArray } from &quot;../../../utils/asArray&quot;;
  *
  * &#x60;Note&#x60; therefore no longer declares the legacy &#x60;children&#x60;, &#x60;schools&#x60; and &#x60;childrenAttendance&#x60; fields.
  * Systems that still hold data in them have the definitions written into their own &#x60;entity:Note&#x60; config
- * by the &#x60;oneoff-20261008-note-legacy-child-school-fields&#x60; CLI migration
+ * by the &#x60;v4-upgrade-note-legacy-child-school-fields&#x60; CLI migration
  * (see &#x60;deprecated/legacy-note-fields.ts&#x60;).
  */
 @DatabaseEntity(&quot;Note&quot;)

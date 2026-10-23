@@ -286,7 +286,7 @@ JOIN Child c ON c._id = json_extract(value, &#39;$.participant&#39;)
 WHERE e.category IN (&#39;LEARNING_GROUP&#39;, &#39;PIC&#39;) AND e.date BETWEEN $startDate AND $endDate
 GROUP BY c._id, e.category</code></pre></div><blockquote>
 <p><strong>Legacy format:</strong> the deprecated <code>event-attendance-map</code> datatype (<code>Note.childrenAttendance</code>, only
-present in systems the <code>oneoff-20261008-note-legacy-child-school-fields</code> migration restored it for)
+present in systems the <code>v4-upgrade-note-legacy-child-school-fields</code> migration restored it for)
 instead stores one <code>[participantId, {status, remarks}]</code> pair per participant, so it is unpacked with
 <code>json_extract(value, &#39;$[0]&#39;)</code> for the participant and <code>json_extract(value, &#39;$[1].status&#39;)</code> for the status.</p>
 </blockquote>

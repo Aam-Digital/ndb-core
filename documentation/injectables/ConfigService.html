@@ -1387,9 +1387,7 @@ export class ConfigService extends LatestEntityLoader&lt;Config&gt; {
 
   public applyMigrations&lt;E&gt;(doc: E): E {
     // default migrations that are not only temporary but will remain in the codebase
-    // run first so the config-migrations.ts pipeline (which includes
-    // migrateShortcutDashboardLinks/migrateNavigationMenuEntityLinks) sees these
-    // default-added view configs too.
+    // run first so the config-migrations.ts pipeline sees these default-added view configs too.
     const defaultConfigs &#x3D; this.defaultConfigMigrations.getAll();
 
     const withDefaults &#x3D; JSON.parse(JSON.stringify(doc), (_that, rawValue) &#x3D;&gt; {
