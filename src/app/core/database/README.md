@@ -1,4 +1,4 @@
-# How to use queries and indices to get data
+# Database: queries, indices and local storage
 
 The `EntityMapperService` gives you an easy way to access
 all entities of an Entity type or an individual entity by its ID (see [Loading, saving and deleting data](../entity/README.md#loading-saving-and-deleting-data) for these basics).
@@ -73,9 +73,26 @@ resultEntities = result.rows.map(loadedRow => {
 });
 ```
 
+## Local database: PouchDB adapter and migration
+
+In synced mode, each user's data is stored in a local PouchDB.
+By default it uses PouchDB's `indexeddb` adapter, with database names based on the user's Keycloak UUID (`<uuid>-app`).
+Older installations used the legacy `idb` adapter with username-based names.
+A deployment can keep the legacy adapter with `"use_indexeddb_adapter": false` in its `assets/config.json`.
+
+Existing users are migrated automatically (`IndexeddbMigrationService`):
+the data is downloaded from the server into the new database in the background, then the user is asked to reload.
+The app only switches after a final sync of the old database has succeeded, so no unsynced changes are left behind;
+otherwise it keeps the old database and retries on the next start.
+The migration is tracked as usage analytics events (category `indexeddb_adapter_migration`).
+The legacy databases are not deleted yet.
+
 ## Key files
 
 - `database.ts` — the abstract `Database` service, including `query()` and `saveDatabaseIndex()`
+- `database-resolver.service.ts` — opens the databases of the current session
+- `indexeddb-migration.service.ts` — chooses the local database's adapter and names, and migrates from the legacy `idb` adapter
+- `db-name-helpers.ts` — the new and the legacy names of the local databases
 - `pouchdb/pouch-database.ts` — `PouchDatabase`, the PouchDB-backed implementation
 - `query-data-source.ts` — data source that runs a query and exposes its results
 - `../entity/schema/entity-schema.service.ts` — `loadDataIntoEntity()` used to turn raw query rows into entity instances

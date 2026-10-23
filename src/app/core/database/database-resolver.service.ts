@@ -125,9 +125,19 @@ export class DatabaseResolverService {
    * On this adapter, `PouchDatabase.purge()` is supported so targeted document
    * removal is available. When false (legacy `idb` adapter), callers must fall
    * back to `destroyDatabases()` for full data hygiene.
+   *
+   * Checks the adapter the local app database actually runs on, not only the
+   * resolved config: in demo mode (`session_type: mock`) the database is in-memory
+   * whatever the config says, and the in-memory adapter does not support `purge()` either.
    */
   isIndexedDbAdapterSupported(): boolean {
-    return this.dbConfig?.adapter === "indexeddb";
+    const db = this.databases.get(Entity.DATABASE);
+    if (!(db instanceof PouchDatabase)) {
+      return false;
+    }
+    // PouchDB sets the adapter it runs on as a property, missing from its typings
+    const pouchDB = db.getPouchDB() as unknown as { adapter?: string };
+    return pouchDB?.adapter === "indexeddb";
   }
 
   /**

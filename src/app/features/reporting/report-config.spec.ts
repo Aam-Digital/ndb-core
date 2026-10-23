@@ -25,7 +25,7 @@ describe("isHierarchicalReport", () => {
     expect(isHierarchicalReport(undefined)).toBe(false);
   });
 
-  it("returns false when the report has no reportDefinition (legacy v1)", () => {
+  it("returns false when the report has no reportDefinition", () => {
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 

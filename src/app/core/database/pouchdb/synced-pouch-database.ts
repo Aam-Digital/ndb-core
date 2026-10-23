@@ -78,11 +78,24 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
-   * Get the underlying remote PouchDB instance.
-   * Can be used as a replication source for background migration.
+   * Open a separate connection to this database's remote database,
+   * as the replication source of the background migration (see `IndexeddbMigrationService`).
+   *
+   * Unlike the connection this database syncs through, it does not collect the documents
+   * the server reports as no longer permitted: a replication from scratch gets all documents
+   * the user may not read reported, and this database's next sync would purge each of them
+   * before completing.
+   *
+   * The caller has to close it with `close()` once done (never `destroy()`,
+   * which would delete the database on the server).
+   *
+   * @returns undefined if the database is not initialized yet
    */
-  getRemotePouchDB(): PouchDB.Database {
-    return this.remoteDatabase?.getPouchDB();
+  openRemoteReplicationSource(): PouchDB.Database | undefined {
+    if (!this.remoteDatabase.isInitialized()) {
+      return undefined;
+    }
+    return this.remoteDatabase.openSeparateConnection();
   }
 
   constructor(
@@ -324,13 +337,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
         "sync failed: likely multi-tab IndexedDB corruption",
         { db: this.dbName, ...lastSyncedBatchContext(lastSyncedDocIds) },
       );
-    } else if (
-      this.isSyncConnectivityError(err) ||
-      err instanceof SyncStalledError
-    ) {
+    } else if (isReplicationConnectivityError(err)) {
       Logging.debug(`sync failed (connectivity)`, { db: this.dbName }, err);
-    } else if (err?.status === 401 || err?.statusCode === 401) {
-      // expired session; the fetch layer already triggers re-login
+    } else if (isReplicationUnauthorizedError(err)) {
       Logging.debug(`sync failed (unauthorized)`, { db: this.dbName }, err);
     } else {
       Logging.warn(`sync failed`, { db: this.dbName }, err);
@@ -372,12 +381,6 @@ export class SyncedPouchDatabase extends PouchDatabase {
       message.includes("IDBObjectStore") ||
       message.includes("Failed to execute")
     );
-  }
-
-  private isSyncConnectivityError(err: any): boolean {
-    if (isConnectivityError(err)) return true;
-    const message = err?.message || err?.reason || String(err);
-    return message.includes("getCheckpoint");
   }
 
   /**
@@ -572,4 +575,22 @@ class SyncStalledError extends NamedError {
   constructor() {
     super("SyncStalledError", "Sync cancelled after making no progress");
   }
+}
+
+/**
+ * Whether a replication with the server failed only because of the connection
+ * (offline, cut off while reading the checkpoint, stalled): nothing to fix, it is retried later.
+ */
+export function isReplicationConnectivityError(err: any): boolean {
+  if (isConnectivityError(err) || err instanceof SyncStalledError) return true;
+  const message = err?.message || err?.reason || String(err);
+  return message.includes("getCheckpoint");
+}
+
+/**
+ * Whether a replication with the server failed because the session expired:
+ * the fetch layer already triggers a re-login.
+ */
+export function isReplicationUnauthorizedError(err: any): boolean {
+  return err?.status === 401 || err?.statusCode === 401;
 }
