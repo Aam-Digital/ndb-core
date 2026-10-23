@@ -1551,6 +1551,19 @@ describe("AutomatedFieldUpdateConfigService", () => {
         return mockDialog.open.mock.calls[0][1].data.entities;
       }
 
+      it("loads the sub-records of a record only once, also if each of its changed sub-records updates it", async () => {
+        const suggestions = await changeMainTag();
+
+        expect(
+          suggestions.find((e) => e.targetFieldId === "subTags").newValue,
+        ).toEqual(["education"]);
+        expect(
+          mockIndexing.queryIndexDocs.mock.calls.filter(
+            ([, , key]) => key === project.getId(),
+          ),
+        ).toHaveLength(1);
+      });
+
       it("does not set the suggested value of a field of the changed record before the user confirms it", async () => {
         await changeMainTag(() => undefined);
 

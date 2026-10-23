@@ -140,6 +140,12 @@ export class AffectedEntitiesCalculation {
   private readonly affectedEntities = new Map<string, AffectedEntity>();
 
   /**
+   * The saved records loaded so far, by what was loaded. The saved records do not change during the calculation,
+   * so they are loaded only once, also if many changed records lead to the same entity (e.g. all children of a school).
+   */
+  private readonly loadedRecords = new Map<string, Promise<Entity[]>>();
+
+  /**
    * @param context the rules, records and permissions that the calculation works with
    * @param trigger the change that starts the update
    * @param enteredValues values the user entered for affected entities (database format),
@@ -266,20 +272,45 @@ export class AffectedEntitiesCalculation {
     source: Entity,
   ): Promise<Entity[]> {
     if (!rule.sourceReferenceEntity) {
-      return this.context.loadRecordsLinkingTo(
+      return this.loadRecordsLinkingTo(
         entityType,
         rule.sourceReferenceField,
         source.getId(),
       );
     }
     // the entities linked before and after the change (they may lose values)
-    return this.context.loadEntitiesByIds(
-      entityType,
-      uniq([
-        ...getLinkedIds(source, rule),
-        ...getLinkedIds(this.changeSet.get(source, "before"), rule),
-      ]),
+    const ids = uniq([
+      ...getLinkedIds(source, rule),
+      ...getLinkedIds(this.changeSet.get(source, "before"), rule),
+    ]);
+    return this.loadOnce(`ids|${entityType.ENTITY_TYPE}|${ids.join(",")}`, () =>
+      this.context.loadEntitiesByIds(entityType, ids),
     );
+  }
+
+  /** The saved records of the type that reference the entity in the field (see {@link loadedRecords}) */
+  private loadRecordsLinkingTo(
+    entityType: string | EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise<Entity[]> {
+    const typeName =
+      typeof entityType === "string" ? entityType : entityType.ENTITY_TYPE;
+    return this.loadOnce(
+      `linking|${typeName}|${referenceField}|${entityId}`,
+      () =>
+        this.context.loadRecordsLinkingTo(entityType, referenceField, entityId),
+    );
+  }
+
+  private loadOnce(
+    key: string,
+    load: () => Promise<Entity[]>,
+  ): Promise<Entity[]> {
+    if (!this.loadedRecords.has(key)) {
+      this.loadedRecords.set(key, load());
+    }
+    return this.loadedRecords.get(key);
   }
 
   /**
@@ -359,7 +390,7 @@ export class AffectedEntitiesCalculation {
     let removedValues = [];
     try {
       if (lostValues.length > 0) {
-        const saved = await this.context.loadRecordsLinkingTo(
+        const saved = await this.loadRecordsLinkingTo(
           rule.sourceReferenceEntity,
           rule.sourceReferenceField,
           target.getId(),
