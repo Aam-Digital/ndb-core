@@ -7,6 +7,8 @@ import { ActivatedRoute } from "@angular/router";
 import { LanguageService } from "app/core/language/language.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SetupService } from "../setup.service";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { AlertService } from "../../alerts/alert.service";
 
 describe("SystemInitAssistantComponent", () => {
   let component: SystemInitAssistantComponent;
@@ -15,6 +17,14 @@ describe("SystemInitAssistantComponent", () => {
     getAvailableBaseConfig: ReturnType<typeof vi.fn>;
     initSystemWithBaseConfig: ReturnType<typeof vi.fn>;
   };
+
+  let languageService: {
+    getCurrentLocale: ReturnType<typeof vi.fn>;
+    switchLocale: ReturnType<typeof vi.fn>;
+    initDefaultLanguage: ReturnType<typeof vi.fn>;
+  };
+  let siteSettings: { setDefaultLanguage: ReturnType<typeof vi.fn> };
+  let alertService: { addDanger: ReturnType<typeof vi.fn> };
 
   async function configureComponent(currentLocale?: string) {
     mockSetupService = {
@@ -27,6 +37,13 @@ describe("SystemInitAssistantComponent", () => {
         .mockName("SetupService.initSystemWithBaseConfig")
         .mockResolvedValue(undefined),
     };
+    languageService = {
+      getCurrentLocale: vi.fn().mockReturnValue(currentLocale),
+      switchLocale: vi.fn(),
+      initDefaultLanguage: vi.fn(),
+    };
+    siteSettings = { setDefaultLanguage: vi.fn().mockResolvedValue(undefined) };
+    alertService = { addDanger: vi.fn() };
     await TestBed.configureTestingModule({
       imports: [SystemInitAssistantComponent, MockedTestingModule.withState()],
       providers: [
@@ -36,13 +53,9 @@ describe("SystemInitAssistantComponent", () => {
           provide: ActivatedRoute,
           useValue: { snapshot: { queryParamMap: new Map() } },
         },
-        {
-          provide: LanguageService,
-          useValue: {
-            getCurrentLocale: vi.fn().mockReturnValue(currentLocale),
-            initDefaultLanguage: vi.fn(),
-          },
-        },
+        { provide: LanguageService, useValue: languageService },
+        { provide: SiteSettingsService, useValue: siteSettings },
+        { provide: AlertService, useValue: alertService },
         { provide: LOCATION_TOKEN, useValue: { pathname: "/some/path" } },
         { provide: SetupService, useValue: mockSetupService },
       ],
@@ -112,6 +125,38 @@ describe("SystemInitAssistantComponent", () => {
       );
     },
   );
+
+  it("saves the picked language as system language before switching to it", async () => {
+    await configureComponent("en-US");
+    mockSetupService.getAvailableBaseConfig.mockResolvedValue([
+      { locale: "de" },
+    ]);
+    await component.ngOnInit();
+
+    await component.onLanguageSelected("de");
+
+    expect(siteSettings.setDefaultLanguage).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "de" }),
+    );
+    expect(languageService.switchLocale).toHaveBeenCalledWith("de");
+    expect(
+      siteSettings.setDefaultLanguage.mock.invocationCallOrder[0],
+    ).toBeLessThan(languageService.switchLocale.mock.invocationCallOrder[0]);
+  });
+
+  it("does not switch the language and tells the user if it could not be saved", async () => {
+    await configureComponent("en-US");
+    mockSetupService.getAvailableBaseConfig.mockResolvedValue([
+      { locale: "de" },
+    ]);
+    await component.ngOnInit();
+    siteSettings.setDefaultLanguage.mockRejectedValue(new Error("failed"));
+
+    await component.onLanguageSelected("de");
+
+    expect(languageService.switchLocale).not.toHaveBeenCalled();
+    expect(alertService.addDanger).toHaveBeenCalled();
+  });
 
   it("does not show the profile step before a base config was imported successfully", async () => {
     await configureComponent();

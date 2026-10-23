@@ -227,4 +227,20 @@ describe("SiteSettingsService", () => {
       environment.session_type = originalSessionType;
     }
   });
+  it("saves a new system language without losing other settings", async () => {
+    entityMapper.add(SiteSettings.create({ siteName: "My site" }));
+
+    await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
+
+    const saved = await entityMapper.load(SiteSettings, SiteSettings.ENTITY_ID);
+    expect(saved.defaultLanguage.id).toBe("de");
+    expect(saved.siteName).toBe("My site");
+  });
+
+  it("creates the site settings to save the system language on a fresh system", async () => {
+    await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
+
+    const saved = await entityMapper.load(SiteSettings, SiteSettings.ENTITY_ID);
+    expect(saved.defaultLanguage.id).toBe("de");
+  });
 });

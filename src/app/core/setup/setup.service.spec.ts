@@ -12,6 +12,7 @@ import {
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { BaseConfig } from "./base-config";
+import { SiteSettings } from "../site-settings/site-settings";
 import type { Mock } from "vitest";
 
 type DemoDataInitializerMock = Pick<
@@ -265,5 +266,26 @@ describe("SetupService", () => {
       Config.CONFIG_KEY,
     );
     expect(actualConfig).toBeTruthy();
+  });
+  it("keeps the system language picked before the import if the imported site settings set none", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(
+      SiteSettings.create({ defaultLanguage: { id: "de", label: "Deutsch" } }),
+    );
+    const baseConfig = {
+      id: "basic_setup",
+      entitiesToImport: ["SiteSettings_global.json"],
+      baseUrl: "assets/base-configs/",
+    } as BaseConfig;
+
+    const result = service.initSystemWithBaseConfig(baseConfig);
+    httpTesting
+      .expectOne("assets/base-configs/SiteSettings_global.json")
+      .flush({ _id: "SiteSettings:global", siteName: "Imported" });
+    await result;
+
+    const settings = await entityMapper.load(SiteSettings, "global");
+    expect(settings.siteName).toBe("Imported");
+    expect(settings.defaultLanguage?.id).toBe("de");
   });
 });

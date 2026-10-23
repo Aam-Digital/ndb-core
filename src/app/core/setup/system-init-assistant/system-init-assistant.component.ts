@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
 } from "@angular/core";
 import { SetupService } from "../setup.service";
 import { BaseConfig, isOfferedInLocale } from "../base-config";
@@ -23,6 +24,9 @@ import { environment } from "#src/environments/environment";
 import { AssistantService } from "#src/app/core/setup/assistant.service";
 import { UserProfileSetupComponent } from "./user-profile-setup/user-profile-setup.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
+import { isConnectivityError } from "#src/app/utils/connectivity-error";
 
 /**
  * UI for initial system setup and use case selection,
@@ -48,6 +52,9 @@ export class SystemInitAssistantComponent implements OnInit {
     inject<MatDialogRef<SystemInitAssistantComponent>>(MatDialogRef);
   private route = inject(ActivatedRoute);
   private readonly languageService = inject(LanguageService);
+  private readonly siteSettings = inject(SiteSettingsService);
+  private readonly alertService = inject(AlertService);
+  private readonly languageSelect = viewChild(LanguageSelectComponent);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   protected readonly setupService = inject(SetupService);
@@ -62,6 +69,7 @@ export class SystemInitAssistantComponent implements OnInit {
   demoInitialized = signal<boolean>(false);
   generatingData = signal<boolean>(false);
   availableLocales = signal<ConfigurableEnumValue[]>([]);
+  savingLanguage = signal<boolean>(false);
 
   /** Whether the "create your profile" step has run its course (shown or not). */
   profileStepDone = signal<boolean>(false);
@@ -104,6 +112,36 @@ export class SystemInitAssistantComponent implements OnInit {
           isOfferedInLocale(useCase, locale.id),
         ),
     );
+  }
+
+  /**
+   * The language picked here becomes the system language for all users
+   * (also if users can not switch languages themselves later).
+   * It is saved before applying it, because applying it reloads the app.
+   */
+  async onLanguageSelected(localeId: string) {
+    const locale = this.availableLocales().find((l) => l.id === localeId);
+    if (!locale || this.savingLanguage()) {
+      return;
+    }
+
+    this.savingLanguage.set(true);
+    try {
+      await this.siteSettings.setDefaultLanguage(locale);
+      this.languageService.switchLocale(localeId);
+    } catch (err) {
+      this.languageSelect()?.resetToCurrent();
+      if (isConnectivityError(err)) {
+        Logging.debug("Could not save the system language", err);
+      } else {
+        Logging.warn("Failed to save the system language", err);
+      }
+      this.alertService.addDanger(
+        $localize`The language could not be saved. Please try again.`,
+      );
+    } finally {
+      this.savingLanguage.set(false);
+    }
   }
 
   /**

@@ -11,6 +11,7 @@ import { Logging } from "../logging/logging.service";
 import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
+import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityConfigReadyService } from "../entity/entity-config-ready.service";
 import { environment } from "../../../environments/environment";
@@ -159,6 +160,18 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     // Apply cached branding early so login/setup screens use the latest known theme.
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
+  }
+
+  /**
+   * Make the given language the system language for all users,
+   * keeping the other site settings (a new settings document is created if none exists yet).
+   * Resolves once saved.
+   */
+  async setDefaultLanguage(locale: ConfigurableEnumValue): Promise<void> {
+    // a failure other than "does not exist" must not end up replacing the existing settings
+    const settings = (await this.loadOnce()) ?? new SiteSettings();
+    settings.defaultLanguage = locale;
+    await this.entityMapper.save(settings);
   }
 
   /**

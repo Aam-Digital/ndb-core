@@ -12,6 +12,7 @@ import { ConfigService } from "../config/config.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { catchError, retry, switchMap } from "rxjs/operators";
 import { asArray } from "../../utils/asArray";
+import { SiteSettings } from "../site-settings/site-settings";
 
 /**
  * Loads available "scenarios" of base configs
@@ -128,6 +129,9 @@ export class SetupService {
       for (const doc of asArray(docs)) {
         const entity = this.parseObjectToEntity(doc);
         if (entity) {
+          if (entity instanceof SiteSettings) {
+            await this.keepSystemLanguage(entity);
+          }
           await this.entityMapper.save(entity, true);
         } else {
           Logging.warn(
@@ -137,6 +141,22 @@ export class SetupService {
           );
         }
       }
+    }
+  }
+
+  /**
+   * The system language may already have been picked (in the setup assistant)
+   * before the base config is imported, which must not reset it
+   * when the imported site settings do not define one.
+   */
+  private async keepSystemLanguage(entity: SiteSettings) {
+    if (entity.defaultLanguage) return;
+
+    const existing = await this.entityMapper
+      .load(SiteSettings, entity.getId(true))
+      .catch(() => undefined);
+    if (existing?.defaultLanguage) {
+      entity.defaultLanguage = existing.defaultLanguage;
     }
   }
 
