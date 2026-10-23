@@ -297,6 +297,10 @@ export class AdminEntityFieldComponent implements OnInit {
       .subscribe((v) => {
         this.updateDataTypeAdditional(v);
         this.resetIsArrayIfUnsupported(v);
+        if (v !== DateRangeDatatype.dataType) {
+          // only offered for date ranges, so it would stay in the config without being visible anywhere
+          delete this.data.entitySchemaField.withinParent;
+        }
       });
     this.updateForNewOrExistingField();
   }
