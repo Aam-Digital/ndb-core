@@ -86,6 +86,14 @@ The `additional` config of the field can change them: a list in the format of th
 (`DateRangeFilterConfigOption`) replaces them, and an empty list offers none. In the Admin UI, a checkbox
 switches them off.
 
+A date range can be checked against the range of a linked "parent" record (e.g. a sub-action's period within its
+parent action's period) with the `withinParent` option of the field: `parentReferenceField` is the field linking to
+the parent, `parentValueField` the date range field of the parent (by default the field with the same id, as in a
+hierarchy of records of the same type). A range that goes beyond the parent's range shows a warning in lists, forms
+and detail pages, without blocking saving; a missing date leaves the range open on that side (e.g. no end date =
+ongoing). See [`parent-ranges.ts`](date-range/parent-ranges.ts). In the Admin UI, the "Validation" tab of a date range
+field sets it ("Must lie within the period of a linked record").
+
 ## Customizing how values are sorted in tables
 
 By default, table columns are sorted on the readable value of the field.

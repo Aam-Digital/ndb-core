@@ -1625,7 +1625,10 @@
         "dateRangeField": {
           "id": "dateRangeField",
           "label": "Date Range Field",
-          "dataType": "date-range"
+          "dataType": "date-range",
+          "withinParent": {
+            "parentReferenceField": "parentSchool"
+          }
         },
         "dateRangeFieldOwnPeriods": {
           "id": "dateRangeFieldOwnPeriods",
