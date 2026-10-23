@@ -242,7 +242,7 @@
           "label": {
             "en-US": "Team involved",
             "de": "Beteiligtes Team",
-            "fr": "Equipe impliquée"
+            "fr": "Équipe impliquée"
           },
           "dataType": "entity",
           "isArray": true,
@@ -259,7 +259,7 @@
           "label": {
             "en-US": "Category",
             "de": "Kategorie",
-            "fr": "Categorie"
+            "fr": "Catégorie"
           },
           "dataType": "configurable-enum",
           "additional": "interaction-type",
@@ -894,7 +894,7 @@
           "label": {
             "en-US": "Material",
             "de": "Material",
-            "fr": "Materiél"
+            "fr": "Matériel"
           },
           "dataType": "configurable-enum",
           "additional": "materials",
@@ -962,7 +962,7 @@
           "label": {
             "en-US": "Type",
             "de": "Typ",
-            "fr": "Taper"
+            "fr": "Type"
           },
           "dataType": "configurable-enum",
           "additional": "interaction-type"
@@ -1095,12 +1095,12 @@
       "label": {
         "en-US": "Student",
         "de": "Schüler:in",
-        "fr": "Étudiante"
+        "fr": "Élève"
       },
       "labelPlural": {
         "en-US": "Students",
         "de": "Schüler:innen",
-        "fr": "Étudiantes"
+        "fr": "Élèves"
       },
       "toStringAttributes": [
         "name"
@@ -1209,7 +1209,7 @@
           "dataType": "string",
           "label": {
             "en-US": "Dropout remarks",
-            "de": "Bermekungen zum Ausscheiden",
+            "de": "Bemerkungen zum Ausscheiden",
             "fr": "Commentaires sur la fin de scolarité"
           }
         },
@@ -1911,7 +1911,7 @@
           "label": {
             "en-US": "Team involved",
             "de": "Beteiligtes Team",
-            "fr": "Equipe impliquée"
+            "fr": "Équipe impliquée"
           },
           "dataType": "entity",
           "isArray": true,
@@ -1928,7 +1928,7 @@
           "label": {
             "en-US": "Category",
             "de": "Kategorie",
-            "fr": "Categorie"
+            "fr": "Catégorie"
           },
           "dataType": "configurable-enum",
           "additional": "interaction-type",
