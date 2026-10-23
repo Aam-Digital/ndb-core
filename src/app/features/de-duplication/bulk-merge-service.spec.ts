@@ -14,6 +14,10 @@ import { Entity } from "app/core/entity/model/entity";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { AttendanceItem } from "app/features/attendance/model/attendance-item";
 import { Note } from "app/child-dev-project/notes/model/note";
+import {
+  addLegacyNoteFieldsToSchema,
+  removeLegacyNoteFieldsFromSchema,
+} from "app/child-dev-project/notes/deprecated/legacy-note-link-fields.testing";
 import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
 import { UserAdminService } from "app/core/user/user-admin-service/user-admin.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -177,30 +181,37 @@ describe("BulkMergeService", () => {
     expect(updatedRelatedEntity.multiRelated).not.toContain(recordB.getId());
   });
 
-  it("should update childrenAttendance when merging Child entities", async () => {
-    const child1 = createEntityOfType("Child", "child1");
-    const child2 = createEntityOfType("Child", "child2");
+  it("should update the legacy Note childrenAttendance when merging Child entities", async () => {
+    // legacy fields that are only defined in the config of systems still using them
+    addLegacyNoteFieldsToSchema();
 
-    const note1 = new Note("note1");
-    note1.children.push(child1.getId());
+    try {
+      const child1 = createEntityOfType("Child", "child1");
+      const child2 = createEntityOfType("Child", "child2");
 
-    const note2 = new Note("note2");
-    note2.children.push(child2.getId());
+      const note1 = new Note("note1");
+      note1["children"] = [child1.getId()];
 
-    const attendance = new AttendanceItem();
-    attendance.participant = child2.getId();
-    note2.childrenAttendance.push(attendance);
+      const note2 = new Note("note2");
+      note2["children"] = [child2.getId()];
 
-    await entityMapper.saveAll([note1, note2]);
+      const attendance = new AttendanceItem();
+      attendance.participant = child2.getId();
+      note2["childrenAttendance"] = [attendance];
 
-    const mergedEntity = TestEntity.create({ ...child1, name: "A1" });
-    await service.executeMerge(mergedEntity, [child1, child2]);
+      await entityMapper.saveAll([note1, note2]);
 
-    const updatedNote = await entityMapper.load(Note, note2.getId());
-    const newAttendance = updatedNote.childrenAttendance.find(
-      (item) => item.participant === child1.getId(),
-    );
-    expect(newAttendance).toBeDefined();
+      const mergedEntity = TestEntity.create({ ...child1, name: "A1" });
+      await service.executeMerge(mergedEntity, [child1, child2]);
+
+      const updatedNote = await entityMapper.load(Note, note2.getId());
+      const newAttendance = updatedNote["childrenAttendance"].find(
+        (item) => item.participant === child1.getId(),
+      );
+      expect(newAttendance).toBeDefined();
+    } finally {
+      removeLegacyNoteFieldsFromSchema();
+    }
   });
 
   it("should update participant references in any attendance-type field when merging", async () => {

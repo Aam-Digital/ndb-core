@@ -35,7 +35,10 @@ import { CurrentRecordContext } from "../../../common-components/entity-form/cur
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import {
+  EditComponent,
+  getExistingValuesToHighlight,
+} from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
@@ -86,6 +89,14 @@ export class EditEntityComponent<
   implements OnInit, DoCheck, EditComponent
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
+
+  /** Whether to highlight the selected entities that the entity does not have yet */
+  highlightAdded = input<boolean>(false);
+
+  readonly existingValues = computed(() =>
+    getExistingValuesToHighlight<string>(this),
+  );
 
   @ViewChild(BasicAutocompleteComponent)
   autocompleteComponent: BasicAutocompleteComponent<E, T>;

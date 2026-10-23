@@ -21,11 +21,13 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
+import { resolveLocaleText } from "../../../language/active-locale";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import {
   CustomYesNoButtons,
@@ -34,6 +36,7 @@ import {
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ColorInputComponent } from "#src/app/core/common-components/color-input/color-input.component";
+import { TranslatableTextInputComponent } from "#src/app/core/config/translatable-text-input/translatable-text-input.component";
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,9 +52,11 @@ import { ColorInputComponent } from "#src/app/core/common-components/color-input
     CdkDropList,
     CdkDrag,
     FontAwesomeModule,
+    FaDynamicIconComponent,
     MatButtonModule,
     MatTooltipModule,
     ColorInputComponent,
+    TranslatableTextInputComponent,
   ],
 })
 export class ConfigureEnumPopupComponent {
@@ -179,7 +184,9 @@ export class ConfigureEnumPopupComponent {
 
   async delete(value: ConfigurableEnumValue, index: number) {
     const existingUsages = await this.getUsages(value);
-    let deletionText = $localize`Are you sure that you want to delete the option "${value.label}"?`;
+    // the popup edits raw values, so the label may be a per-language map
+    const label = resolveLocaleText(value.label);
+    let deletionText = $localize`Are you sure that you want to delete the option "${label}"?`;
     if (existingUsages.length > 0) {
       deletionText += $localize` The option is still used in ${existingUsages.join(
         ", ",

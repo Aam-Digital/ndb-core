@@ -1,4 +1,9 @@
 export const LANGUAGE_LOCAL_STORAGE_KEY = "locale";
+/**
+ * Id of the account whose own language setting put the current locale in place.
+ * Absent if the locale was picked on this device or is the system default.
+ */
+export const LANGUAGE_OWNER_LOCAL_STORAGE_KEY = "localeOwner";
 export const DEFAULT_LANGUAGE = "en-US";
 
 /**
@@ -12,4 +17,25 @@ export function isValidLocale(value: unknown): value is string {
   return (
     typeof value === "string" && /^[a-z]{2,3}(-[a-z0-9]{2,8})*$/i.test(value)
   );
+}
+
+/** Copied from CDK's `RTL_LOCALE_PATTERN` (`@angular/cdk/bidi`), which is not exported. */
+const RTL_LANGUAGES = new Set([
+  "ar",
+  "ckb",
+  "dv",
+  "fa",
+  "he",
+  "iw",
+  "nqo",
+  "ps",
+  "sd",
+  "ug",
+  "ur",
+  "yi",
+]);
+
+/** Matches on the language subtag, so regional variants like `ar-EG` are covered too. */
+export function isRtlLocale(locale: string): boolean {
+  return RTL_LANGUAGES.has(locale.split("-")[0].toLowerCase());
 }

@@ -38,7 +38,7 @@ export const Primary = {
   args: {
     entity: child,
     entityType: Note.ENTITY_TYPE,
-    property: "children",
-    columns: ["date", "subject", "children"],
+    property: "relatedEntities",
+    columns: ["date", "subject", "relatedEntities"],
   },
 };

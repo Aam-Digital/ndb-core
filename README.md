@@ -1,14 +1,16 @@
 [![Release Version](https://img.shields.io/github/release/Aam-Digital/ndb-core.svg)](https://github.com/Aam-Digital/ndb-core/releases)
 [![DPG Badge](https://img.shields.io/badge/Verified-DPG-3333AB?logo=data:image/svg%2bxml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMSAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjIwMDggMjEuMzY3OEwxMC4xNzM2IDE4LjAxMjRMMTEuNTIxOSAxNi40MDAzTDEzLjk5MjggMTguNDU5TDE5LjYyNjkgMTIuMjExMUwyMS4xOTA5IDEzLjYxNkwxNC4yMDA4IDIxLjM2NzhaTTI0LjYyNDEgOS4zNTEyN0wyNC44MDcxIDMuMDcyOTdMMTguODgxIDUuMTg2NjJMMTUuMzMxNCAtMi4zMzA4MmUtMDVMMTEuNzgyMSA1LjE4NjYyTDUuODU2MDEgMy4wNzI5N0w2LjAzOTA2IDkuMzUxMjdMMCAxMS4xMTc3TDMuODQ1MjEgMTYuMDg5NUwwIDIxLjA2MTJMNi4wMzkwNiAyMi44Mjc3TDUuODU2MDEgMjkuMTA2TDExLjc4MjEgMjYuOTkyM0wxNS4zMzE0IDMyLjE3OUwxOC44ODEgMjYuOTkyM0wyNC44MDcxIDI5LjEwNkwyNC42MjQxIDIyLjgyNzdMMzAuNjYzMSAyMS4wNjEyTDI2LjgxNzYgMTYuMDg5NUwzMC42NjMxIDExLjExNzdMMjQuNjI0MSA5LjM1MTI3WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==)](https://digitalpublicgoods.net/r/aam-digital)
-[![User Support Center](https://img.shields.io/badge/User%20Support%20Center-available-blue)](https://chatwoot.help/hc/aam-digital/en)
+[![User Support Center](https://img.shields.io/badge/User%20Support%20Center-available-blue)](https://help.aam-digital.com/)
 
-![English](https://img.shields.io/poeditor/progress/740876/en?token=56acaf6808f07eb52c5b39a3abea19a7)
-![French](https://img.shields.io/poeditor/progress/740876/fr?token=56acaf6808f07eb52c5b39a3abea19a7)
-![Italian](https://img.shields.io/poeditor/progress/740876/it?token=56acaf6808f07eb52c5b39a3abea19a7)
-![German](https://img.shields.io/poeditor/progress/740876/de?token=56acaf6808f07eb52c5b39a3abea19a7)
+![English](https://img.shields.io/poeditor/progress/740876/en?token=df0ad216f2202ce5d46358c3f27af8e1)
+![French](https://img.shields.io/poeditor/progress/740876/fr?token=df0ad216f2202ce5d46358c3f27af8e1)
+![German](https://img.shields.io/poeditor/progress/740876/de?token=df0ad216f2202ce5d46358c3f27af8e1)
+![Spanish](https://img.shields.io/poeditor/progress/740876/es?token=df0ad216f2202ce5d46358c3f27af8e1)
+![Arabic](https://img.shields.io/poeditor/progress/740876/ar?token=df0ad216f2202ce5d46358c3f27af8e1)
 
-[![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
+[<img src="https://argos-ci.com/badge-large.svg" alt="Covered by Argos Visual Testing" height="20" />](https://argos-ci.com?utm_source=aam-digital&utm_campaign=oss)
+[![Maintainability](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/maintainability.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
+[![Code Coverage](https://qlty.sh/gh/Aam-Digital/projects/ndb-core/coverage.svg)](https://qlty.sh/gh/Aam-Digital/projects/ndb-core)
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 [![Developer Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 
@@ -42,7 +44,7 @@ The overall architecture and tech stack including backend services looks like th
 
 ## Setup
 
-1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed. The Node.js version used in CI is in [`.nvmrc`](./.nvmrc) (with [nvm](https://github.com/nvm-sh/nvm): `nvm use`), the npm version in `packageManager` of `package.json`.
+1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed. The Node.js version used in CI is in [`.nvmrc`](./.nvmrc) (with [nvm](https://github.com/nvm-sh/nvm): `nvm use`); CI uses the npm that comes with it.
 2. `git clone` this repository to get all the code with its configuration and requirements.
 3. `npm install` the dependencies (external libraries and packages)
 4. `npm run start` to run your local dev server and get started.

@@ -39,6 +39,8 @@ export class EntityFieldsMenuComponent implements OnInit {
   entityType = input<EntityConstructor>();
   availableFields = input<ColumnConfig[]>([]);
   activeFields = input<ColumnConfig[]>([]);
+  /** ids of fields to leave out of the dropdown, see `EntityFieldSelectComponent.excludedFields` */
+  excludedFields = input<string[]>([]);
   activeFieldsChange = output<ColumnConfig[]>();
   selectedFieldsControl = new FormControl<string[]>([]);
 

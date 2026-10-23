@@ -2,6 +2,8 @@
 
 /* display disabled form values in black for better readability as we disable forms by default */
 .mat-mdc-input-element:disabled,
+.mat-date-range-input-inner:disabled,
+.mat-form-field-disabled .mat-date-range-input-separator,
 .mat-mdc-select-disabled .mat-mdc-select-value,
 .mat-mdc-checkbox-disabled label {
   color: colors.$text !important;

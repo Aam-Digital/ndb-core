@@ -65,6 +65,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EditTranslatableText",
+    () =>
+      import("./config/translatable-text-input/translatable-text-input.component").then(
+        (c) => c.TranslatableTextInputComponent,
+      ),
+  ],
+  [
     "EditBoolean",
     () =>
       import("./basic-datatypes/boolean/edit-boolean/edit-boolean.component").then(
@@ -76,6 +83,13 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./basic-datatypes/date/edit-date/edit-date.component").then(
         (c) => c.EditDateComponent,
+      ),
+  ],
+  [
+    "EditDateRange",
+    () =>
+      import("./basic-datatypes/date-range/edit-date-range/edit-date-range.component").then(
+        (c) => c.EditDateRangeComponent,
       ),
   ],
   [
@@ -128,6 +142,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "DisplayTranslatableText",
+    () =>
+      import("./config/display-translatable-text/display-translatable-text.component").then(
+        (c) => c.DisplayTranslatableTextComponent,
+      ),
+  ],
+  [
     "DisplayLongText",
     () =>
       import("./basic-datatypes/string/display-long-text/display-long-text.component").then(
@@ -147,6 +168,13 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./entity/display-entity-type/display-entity-type.component").then(
         (c) => c.DisplayEntityTypeComponent,
+      ),
+  ],
+  [
+    "DisplayDateRange",
+    () =>
+      import("./basic-datatypes/date-range/display-date-range/display-date-range.component").then(
+        (c) => c.DisplayDateRangeComponent,
       ),
   ],
   [
@@ -281,6 +309,13 @@ export const coreComponents: ComponentTuple[] = [
     () =>
       import("./basic-datatypes/string/display-email/display-email.component").then(
         (c) => c.DisplayEmailComponent,
+      ),
+  ],
+  [
+    "EditAvailableLocales",
+    () =>
+      import("./language/edit-available-locales/edit-available-locales.component").then(
+        (c) => c.EditAvailableLocalesComponent,
       ),
   ],
   [

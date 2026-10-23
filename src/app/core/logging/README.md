@@ -20,6 +20,13 @@ someFun() {
 The `LoggingService` has multiple log levels (`debug`, `info`, `warn`, `error`)
 that control whether log messages are sent to the remote monitoring and how they are treated there.
 
+The browser console links every message to the line in `logging.service.ts`
+that writes it. To see the code that called `Logging` instead, add
+`logging\.service\.ts$` as a custom pattern to the ignore list of the
+browser's developer tools (Chrome: DevTools Settings > Ignore list >
+Add pattern; Firefox: "Ignore source" in the Debugger).
+The expandable stack trace of the message also shows the caller.
+
 ## Deciding what to report
 
 A Sentry issue should mean "a developer has something to fix". Before adding a log call, decide
@@ -57,6 +64,23 @@ and "Log a failure once" below):
 ## Remote Logging
 
 Higher log levels (`warn` and `error`) are forwarded to our remote monitoring service, [Sentry](https://sentry.io/).
+
+Remote logging is off unless the deployment sets the DSN of its Sentry project as `remoteLoggingDsn` in
+its `assets/config.json` (the file that overrides the `environment` at startup, see
+`src/bootstrap-environment.ts`). No build ships a default DSN, so a deployment without it reports
+nothing and only logs to the browser console:
+
+```json
+{
+  "remoteLoggingDsn": "https://<key>@<org>.ingest.sentry.io/<project>"
+}
+```
+
+The default `CSP` of the Docker image allows `https://*.sentry.io`; a Sentry on another host (e.g. self-hosted)
+must be added to `CSP` (see the build README), otherwise its requests violate the Content Security Policy.
+
+The DSN is read after `config.json` has loaded, so errors before that (including a failure to load
+`config.json` itself) are never reported.
 
 Events are filed under the Sentry `environment` "production" for every production build. Deployments
 that are not used in production (internal test instances, demos, PR previews) should set

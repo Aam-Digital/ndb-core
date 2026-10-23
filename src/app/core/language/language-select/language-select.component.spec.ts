@@ -7,6 +7,7 @@ import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum
 import { availableLocales } from "../languages";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import type { Mock } from "vitest";
+import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 type LanguageServiceMock = Pick<
   LanguageService,
@@ -21,6 +22,7 @@ describe("LanguageSelectComponent", () => {
   let component: LanguageSelectComponent;
   let fixture: ComponentFixture<LanguageSelectComponent>;
   let mockLanguageService: LanguageServiceMock;
+  let mockUnsavedChanges: { checkUnsavedChanges: Mock };
 
   beforeEach(async () => {
     mockLanguageService = {
@@ -30,6 +32,9 @@ describe("LanguageSelectComponent", () => {
         .mockName("LanguageService.initDefaultLanguage"),
       switchLocale: vi.fn().mockName("LanguageService.switchLocale"),
     };
+    mockUnsavedChanges = {
+      checkUnsavedChanges: vi.fn().mockResolvedValue(true),
+    };
     await TestBed.configureTestingModule({
       imports: [
         LanguageSelectComponent,
@@ -38,6 +43,7 @@ describe("LanguageSelectComponent", () => {
       ],
       providers: [
         { provide: LanguageService, useValue: mockLanguageService },
+        { provide: UnsavedChangesService, useValue: mockUnsavedChanges },
         {
           provide: ConfigurableEnumService,
           useValue: { getEnumValues: () => availableLocales.values },
@@ -52,8 +58,66 @@ describe("LanguageSelectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should switch locale", () => {
-    component.changeLocale("de");
+  it("should switch locale", async () => {
+    await component.changeLocale("de");
     expect(mockLanguageService.switchLocale).toHaveBeenCalledWith("de");
+  });
+
+  it("should not switch locale when unsaved changes are not discarded", async () => {
+    mockUnsavedChanges.checkUnsavedChanges.mockResolvedValue(false);
+    component.currentLocale.set("en-US");
+
+    await component.changeLocale("de");
+
+    // switching reloads the page, which would discard what the user typed
+    expect(mockLanguageService.switchLocale).not.toHaveBeenCalled();
+    expect(component.currentLocale()).toBe("en-US");
+  });
+
+  it("should not report a discarded pick to the caller", async () => {
+    mockUnsavedChanges.checkUnsavedChanges.mockResolvedValue(false);
+    const emitted: string[] = [];
+    component.localeChange.subscribe((lang) => emitted.push(lang));
+
+    await component.changeLocale("de");
+
+    // a caller that persists the choice must not save one the user backed out of
+    expect(emitted).toEqual([]);
+  });
+
+  describe("options", () => {
+    const locales = [
+      { id: "en-US", label: "English" },
+      { id: "fr", label: "Français" },
+    ];
+
+    it.each([
+      ["all enabled when no restriction is set", [], [true, true]],
+      ["only the enabled ones", [locales[0]], [true, false]],
+    ])("marks %s", (_name, enabled, expected) => {
+      fixture.componentRef.setInput("availableLocales", locales);
+      fixture.componentRef.setInput("enabledLocales", enabled);
+
+      expect(component.options().map((o) => o.enabled)).toEqual(expected);
+    });
+
+    it("shows a marker in the text of a disabled option", async () => {
+      fixture.componentRef.setInput("availableLocales", locales);
+      fixture.componentRef.setInput("enabledLocales", [locales[0]]);
+      fixture.detectChanges();
+
+      fixture.nativeElement
+        .querySelector("mat-select .mat-mdc-select-trigger")
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const texts = Array.from(
+        document.querySelectorAll("mat-option") as NodeListOf<HTMLElement>,
+      ).map((o) => o.textContent);
+      expect(texts[0]).not.toContain(component.notAvailableMarker);
+      expect(texts[1]).toContain("Français");
+      expect(texts[1]).toContain(component.notAvailableMarker);
+    });
   });
 });

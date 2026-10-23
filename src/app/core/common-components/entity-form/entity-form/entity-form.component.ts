@@ -30,6 +30,7 @@ import { FilterService } from "../../../filter/filter.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "../../../alerts/alert.service";
+import { LocaleTextPipe } from "../../../language/locale-text.pipe";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -52,6 +53,7 @@ import { AlertService } from "../../../alerts/alert.service";
   imports: [
     FormsModule, // importing FormsModule ensures that buttons anywhere inside do not trigger form submission / page reload
     EntityFieldEditComponent,
+    LocaleTextPipe,
   ],
 })
 export class EntityFormComponent<T extends Entity = Entity> {

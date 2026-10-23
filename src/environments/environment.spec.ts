@@ -8,7 +8,7 @@ export const environment = {
   production: false,
   appVersion: "test",
   repositoryId: "Aam-Digital/ndb-core",
-  remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  remoteLoggingDsn: undefined as string | undefined,
   demo_mode: false,
   session_type: SessionType.mock,
   webmaster_email: undefined,
@@ -20,8 +20,9 @@ export const environment = {
   notificationsConfig: undefined,
   SaaS: false,
   userSupportEnabled: false,
-  use_indexeddb_adapter: false,
+  use_indexeddb_adapter: true,
   translationsCdnUrl: "",
   default_data_source: undefined as DataSourceType | undefined,
   session_type_choice: true,
+  multiLingualConfigEnabled: true,
 };

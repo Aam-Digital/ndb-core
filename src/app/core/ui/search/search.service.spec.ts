@@ -8,6 +8,7 @@ import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Entity } from "../../entity/model/entity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { EmailTemplate } from "../../../features/email-client/email-template.entity";
 
 describe("SearchService", () => {
   let service: SearchService;
@@ -117,5 +118,14 @@ describe("SearchService", () => {
     const child = TestEntity.create("Peter Petersilie");
 
     await runSearchTest("peter", [child], [child]);
+  });
+
+  it("should find a record by a word of any language of a translated toString attribute", async () => {
+    const template = new EmailTemplate();
+    template.subject = { "en-US": "Welcome letter", de: "Willkommensbrief" };
+
+    // the active language is "en-US" in unit tests, so "willkomm" is a word of another language
+    await runSearchTest("willkomm", [template], [template]);
+    await runSearchTest("lett", [template]);
   });
 });

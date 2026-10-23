@@ -23,9 +23,6 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Set up npm (packageManager in package.json)
-        run: npm install --global "npm@$(jq -r '.packageManager | sub("^npm@"; "") | sub("\\+.*$"; "")' package.json)"
-
       - name: Install dependencies
         run: npm ci
 

@@ -1,11 +1,10 @@
 <div style="padding: 16px">
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Period Label</mat-label>
-    <input
-      matInput
+    <app-translatable-text-input
       [ngModel]="periodLabel()"
       (ngModelChange)="periodLabel.set($event)"
-    />
+    ></app-translatable-text-input>
   </mat-form-field>
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Days Offset</mat-label>

@@ -81,7 +81,12 @@ export class RelatedEntitiesComponent<E extends Entity> {
 
   dataSource = input<DataSourceType>();
   recordsDataSource = computed(() =>
-    resolveDataSource<E>(this.injector, this.dataSource(), this.loaderMethod()),
+    resolveDataSource<E>(
+      this.injector,
+      this.dataSource(),
+      this.loaderMethod(),
+      this.entityCtr(),
+    ),
   );
 
   readonly _columns = computed(() => {

@@ -1,0 +1,43 @@
+@if (form(); as form) {
+  <app-entity-field-edit
+    [field]="field()"
+    [entity]="form.entity"
+    [form]="form"
+    [hideInheritButton]="true"
+    [highlightAdded]="row().addToExisting"
+  ></app-entity-field-edit>
+}
+@if (row().removedEntity; as removedEntity) {
+  <div class="hint-text removed-values">
+    <app-fa-dynamic-icon
+      icon="minus"
+      i18n-matTooltip="tooltip for values that are removed"
+      matTooltip="Removed"
+    ></app-fa-dynamic-icon>
+    <span
+      class="visually-hidden"
+      i18n="screen reader text for values that are removed"
+      >Removed:</span
+    >
+    <app-entity-field-view
+      [field]="field()"
+      [entity]="removedEntity"
+    ></app-entity-field-view>
+  </div>
+}
+@if (row().noCommonValue; as reason) {
+  <app-hint-box type="warning">
+    <app-no-common-value-hint [reason]="reason" />
+  </app-hint-box>
+}
+@if (row().unlinked) {
+  <div class="hint-text" i18n>No longer linked</div>
+}
+@if (row().suggestionChanged) {
+  <div class="hint-text suggestion-changed">
+    <span i18n>The suggestion changed, your value is kept.</span>
+    <button type="button" mat-button (click)="useSuggestion.emit()" i18n>
+      Use suggestion
+    </button>
+  </div>
+}

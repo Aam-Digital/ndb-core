@@ -53,8 +53,13 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    // raw, because save() writes this config back - a resolved value would drop
+    // every other configured language of the labels it carries through.
+    // The side editors still declare these labels as plain strings.
     this.originalConfig =
-      this.configService.getConfig("appConfig:matching-entities") || {};
+      (this.configService.getRawConfig<MatchingEntitiesConfig>(
+        "appConfig:matching-entities",
+      ) || {}) as MatchingEntitiesConfig;
     this.sides.left = buildMatchingSideConfig(
       this.originalConfig.leftSide,
       this.originalConfig.columns,

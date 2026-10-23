@@ -8,6 +8,8 @@ import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { DynamicComponentConfig } from "../config/dynamic-components/dynamic-component-config.interface";
 import { NoteDetailsConfig } from "#src/app/child-dev-project/notes/note-details/note-details-config.interface";
+import { RawConfig } from "../config/multi-lingual-config";
+import { mergeLocaleTranslations } from "../language/active-locale";
 
 /**
  * Simply service to centralize updates between various admin components in the form builder.
@@ -46,7 +48,7 @@ export class AdminEntityService {
    */
   public async setAndSaveEntityConfig(
     entityConstructor: EntityConstructor,
-    configEntitySettings?: EntityConfig,
+    configEntitySettings?: RawConfig<EntityConfig>,
     configListView?: DynamicComponentConfig<EntityListConfig>,
     configDetailsView?: DynamicComponentConfig<
       EntityDetailsConfig | NoteDetailsConfig
@@ -88,7 +90,7 @@ export class AdminEntityService {
   private updateConfigWithEntitySchema(
     newConfig: Config,
     entityConstructor: EntityConstructor,
-    configEntitySettings?: EntityConfig,
+    configEntitySettings?: RawConfig<EntityConfig>,
   ) {
     let entitySchemaConfig: EntityConfig =
       this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
@@ -100,12 +102,20 @@ export class AdminEntityService {
       if (field.isInternalField) {
         continue;
       }
-      entitySchemaConfig.attributes[fieldId] = field;
+      // the runtime schema holds values resolved to the active language, so merge
+      // onto the raw config to keep translations of other languages
+      entitySchemaConfig.attributes[fieldId] = mergeLocaleTranslations(
+        entitySchemaConfig.attributes[fieldId],
+        field,
+      );
     }
 
     // Add additional general settings if available
     if (configEntitySettings) {
-      Object.assign(entitySchemaConfig, configEntitySettings);
+      Object.assign(
+        entitySchemaConfig,
+        mergeLocaleTranslations(entitySchemaConfig, configEntitySettings),
+      );
     }
   }
 

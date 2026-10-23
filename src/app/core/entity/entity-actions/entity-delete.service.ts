@@ -14,7 +14,6 @@ import {
   UserAdminService,
 } from "../../user/user-admin-service/user-admin.service";
 import { UserAccount } from "../../user/user-admin-service/user-account";
-import { itemReferencesId } from "../entity-mapper/entity-relations.service";
 import { firstValueFrom } from "rxjs";
 import { UserAccountActionGuardService } from "../../user/user-admin-service/user-account-action-guard.service";
 
@@ -155,7 +154,11 @@ export class EntityDeleteService extends CascadingEntityAction {
         refField
       ].filter(
         (item) =>
-          !itemReferencesId(item, referencedEntity.getId(), fieldSchema),
+          !this.entityRelationsService.itemReferencesId(
+            item,
+            referencedEntity.getId(),
+            fieldSchema,
+          ),
       );
     } else {
       delete relatedEntityWithReference[refField];

@@ -30,26 +30,29 @@ Override any of them (e.g. via `docker run -e`, a `docker-compose.yml`
 `environment:` block, or a Helm chart's pod spec) to change that behavior;
 anything left unset keeps the default below.
 
-| Variable                                             | Default                               | Purpose                                                                                                                                                                                                                                                                                                                   |
-| ---------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PORT`                                               | `8080`                                | Port nginx listens on inside the container.                                                                                                                                                                                                                                                                               |
-| `COUCHDB_URL`                                        | `http://localhost`                    | Proxy target for the app's `/db` path — the "database entrypoint" (CouchDB directly, or whatever a deployment puts in front of it, e.g. replication-backend). See the constraint on resolvable hostnames below.                                                                                                           |
-| `COUCHDB_DIRECT_URL`                                 | same as `COUCHDB_URL`                 | Proxy target for the app's `/db/couchdb` path — always raw CouchDB, for direct admin access, bypassing whatever `COUCHDB_URL` points at. Set this explicitly whenever `COUCHDB_URL` is not CouchDB itself, or `/db/couchdb` silently becomes just another alias for `/db`.                                                |
-| `KEYCLOAK_URL`, `KEYCLOAK_REALM`                     | unset                                 | Set **both** to generate `assets/keycloak.json` at container start, so a deployment no longer has to mount that file itself. Leaving them unset serves the file as shipped in the image (this repo's dummy dev realm, or whatever a deployment mounts over it) unchanged.                                                 |
-| `API_URL`                                            | `http://127.0.0.1:3000`               | Proxy target for the app's `/api` path — the [aam-backend-service](https://github.com/Aam-Digital/aam-services). Scheme, host and port only (no path), e.g. `http://aam-backend-service:8080`. See the constraint on resolvable hostnames below.                                                                          |
-| `QUERY_URL`                                          | unset                                 | **Deprecated**, renamed to `API_URL` — still honoured (and still serving the deprecated `/query` path) so that a deployment pulling a newer image without updating its config keeps working. Where both are set explicitly, `API_URL` wins, so adding it is enough to migrate. Will be removed in the next major release. |
-| `NOMINATIM_URL`                                      | `https://nominatim.openstreetmap.org` | Proxy target for the app's `/nominatim` path, used for geocoding.                                                                                                                                                                                                                                                         |
-| `CSP`, `CSP_REPORT_URI`, `CSP_EXTRA_FRAME_ANCESTORS` | see below                             | Content Security Policy headers — see [Content Security Policy (CSP)](#content-security-policy-csp) below.                                                                                                                                                                                                                |
-
-The app's `/query` path is a deprecated alias of `/api` and proxies to the same
-target. It is kept only for callers that have not migrated yet and will be
-removed alongside `QUERY_URL`; use `/api` for anything new.
+| Variable                                             | Default                               | Purpose                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`                                               | `8080`                                | Port nginx listens on inside the container.                                                                                                                                                                                                                                      |
+| `COUCHDB_URL`                                        | `http://localhost`                    | Proxy target for the app's `/db` path — the "database entrypoint" (CouchDB directly, or whatever a deployment puts in front of it, e.g. replication-backend). See the constraint on resolvable hostnames below.                                                                  |
+| `COUCHDB_DIRECT_URL`                                 | same as `COUCHDB_URL`                 | Proxy target for the app's `/db/couchdb` path — always raw CouchDB, for direct admin access, bypassing whatever `COUCHDB_URL` points at. Set this explicitly whenever `COUCHDB_URL` is not CouchDB itself, or `/db/couchdb` silently becomes just another alias for `/db`.       |
+| `KEYCLOAK_URL`, `KEYCLOAK_REALM`                     | unset                                 | Set **both** to generate `assets/keycloak.json` at container start, so a deployment no longer has to mount that file itself. Leaving them unset serves the file as shipped in the image (this repo's dummy dev realm, or whatever a deployment mounts over it) unchanged.        |
+| `API_URL`                                            | `http://127.0.0.1:3000`               | Proxy target for the app's `/api` path — the [aam-backend-service](https://github.com/Aam-Digital/aam-services). Scheme, host and port only (no path), e.g. `http://aam-backend-service:8080`. An empty value counts as unset. See the constraint on resolvable hostnames below. |
+| `NOMINATIM_URL`                                      | `https://nominatim.openstreetmap.org` | Proxy target for the app's `/nominatim` path, used for geocoding.                                                                                                                                                                                                                |
+| `CSP`, `CSP_REPORT_URI`, `CSP_EXTRA_FRAME_ANCESTORS` | see below                             | Content Security Policy headers — see [Content Security Policy (CSP)](#content-security-policy-csp) below.                                                                                                                                                                       |
 
 `COUCHDB_URL`, `COUCHDB_DIRECT_URL` and `API_URL` must be resolvable **without
 relying on a DNS search list** (see `default.conf` for why). In Kubernetes, use the
 fully-qualified service name (e.g. `couchdb.<namespace>.svc.cluster.local`),
 not the bare service name — a plain docker-compose service name works fine as
 is.
+
+Settings of the app itself (e.g. `session_type` or `remoteLoggingDsn` for
+error reporting to Sentry) are not environment variables of the image: they
+come from `assets/config.json`, which a deployment mounts into the container at
+`/usr/share/nginx/html/assets/config.json` (see `src/environments/environment.ts`
+for the available keys, and the
+[logging README](../src/app/core/logging/README.md#remote-logging) for remote
+logging, which is off unless `remoteLoggingDsn` is set).
 
 ## How does the release process work?
 
@@ -58,7 +61,7 @@ We use [semantic-release](https://github.com/semantic-release/semantic-release) 
 The release workflows are shared by all Aam Digital repositories (see [Aam-Digital/.github](https://github.com/Aam-Digital/.github/tree/main/.github/workflows)); this repository uses the "manual" release mode:
 
 1. Every commit on `master` is built as an **edge** version `X.Y.Z-edge.N`: the last release with the patch number bumped, plus the number of commits since that release (e.g. `3.93.1-edge.39`). There is no git tag or GitHub release for it (`on-master-push.yml`).
-   Its Docker image is tagged with the version and `edge` (and, during the transition from the former `-master.N` versions, also `master`), and its translations are published for that version, so new texts can be checked before a release.
+   Its Docker image is tagged with the version and `edge`, and its translations are published for that version, so new texts can be checked before a release.
 2. To create a stable release, a core team member manually triggers the release GitHub Action (`create-release.yml` workflow dispatch). semantic-release creates the next version from the Conventional Commit messages since the last release.
    When the release is published (`release-published.yml`), its Docker image is built and tagged with the version, `stable` and `latest`, and the old edge images are deleted from ghcr.io.
 
@@ -76,6 +79,7 @@ For the wider picture of what these headers do and do not protect against, see t
 
 Which sources the app may load code, styles and data from is whitelisted through the `CSP` environment variable.
 The default whitelist covers everything a production server needs and is defined in the [`Dockerfile`](./Dockerfile).
+It allows error reports to `https://*.sentry.io`; a deployment reporting to a Sentry on another host (`remoteLoggingDsn` in `config.json`) has to add that host.
 
 > This policy is currently sent as `Content-Security-Policy-Report-Only` for testing.
 > Violations are reported to `CSP_REPORT_URI` (defaulting to aam-digital's Sentry security endpoint) but scripts and connections are not yet blocked.

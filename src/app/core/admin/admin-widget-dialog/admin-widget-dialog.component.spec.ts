@@ -20,7 +20,10 @@ describe("AdminWidgetDialogComponent", () => {
 
   beforeEach(async () => {
     const data: AdminWidgetDialogData = {
-      widgetConfig: { component: "TestWidget", config: { some: "value" } },
+      widgetConfig: {
+        component: "TestWidget",
+        config: { some: "value", subtitle: { "en-US": "A", de: "B" } },
+      },
       settingsComponent: "TestWidgetSettings",
       title: "TestWidget",
     };
@@ -47,6 +50,26 @@ describe("AdminWidgetDialogComponent", () => {
   function applyButton(): HTMLButtonElement {
     return fixture.nativeElement.querySelector("mat-dialog-actions button");
   }
+
+  it("edits only the active language of a translated subtitle", () => {
+    fixture.detectChanges();
+    const subtitleInput: HTMLInputElement = fixture.nativeElement.querySelector(
+      "mat-expansion-panel input",
+    );
+    expect(subtitleInput.value).toBe("A");
+
+    subtitleInput.value = "A2";
+    subtitleInput.dispatchEvent(new Event("input"));
+    applyButton().click();
+
+    expect(TestBed.inject(MatDialogRef).close).toHaveBeenCalledWith(
+      expect.objectContaining({
+        config: expect.objectContaining({
+          subtitle: { "en-US": "A2", de: "B" },
+        }),
+      }),
+    );
+  });
 
   it("should update the Apply button when the settings component changes the form's validity", () => {
     expect(applyButton().disabled).toBe(false);

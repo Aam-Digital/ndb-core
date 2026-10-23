@@ -25,8 +25,8 @@ Rules and patterns for unit tests. Read them before adding a spec file.
   of CI, however many tests it holds) and a reviewer's attention. Prefer adding a case to an
   existing spec over creating a new file, the same way we prefer extending an e2e scenario
   over adding a new one.
-- **Three or more tests with the same shape become one `it.each` table** (see below).
-- **Name the invariant, not the scenario.** `it("keeps the wildcard row editable when the default role only covers single record types")` beats a name that restates the setup. If a name needs "and", it is two tests or one table.
+- **Three or more tests with the same shape become one `it.each` table** (see below). Before adding tests to a spec that is already long (several hundred lines), look for existing tests to merge into a table.
+- **Name the invariant, not the scenario.** `it("keeps the wildcard row editable when the default role only covers single record types")` beats a name that restates the setup. If a name needs "and", it is two tests or one table. The same goes for `describe` blocks: name the general behavior ("record linking several parents"), not the example entities of the test ("group linking several schools").
 - **Drive the subject through its public API.** No `(component as any).privateMethod()`. If
   a behavior is only reachable through a private method, test it through the caller that
   reaches it.

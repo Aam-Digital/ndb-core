@@ -51,8 +51,8 @@ jobs:
     permissions:
       contents: read
 
-  # Image `X.Y.Z-edge.N`, plus `edge` (and `master` until the transition from `:master` is done) if this is still the
-  # newest master commit. A newer push cancels an older edge build, so that `edge` never moves back.
+  # Image `X.Y.Z-edge.N`, plus `edge` if this is still the newest master commit. A newer push cancels an older edge
+  # build, so that `edge` never moves back.
   edge-build:
     needs: edge-version
     concurrency:
@@ -68,7 +68,7 @@ jobs:
     with:
       build_name: ${{ needs.edge-version.outputs.version }}
       version: ${{ needs.edge-version.outputs.version }}
-      tags: ${{ needs.edge-version.outputs.is-head == 'true' && 'edge,master' || '' }}
+      tags: ${{ needs.edge-version.outputs.is-head == 'true' && 'edge' || '' }}
 
   # Translations for the edge version (`locale/X.Y.Z-edge.N`), to check new texts before a release. They are removed
   # again by the next full release. After compodoc, which also pushes to gh-pages.

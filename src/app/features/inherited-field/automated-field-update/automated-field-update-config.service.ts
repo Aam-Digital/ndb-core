@@ -3,23 +3,28 @@ import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import type { AffectedEntity } from "./automated-field-update.component";
-import { lastValueFrom } from "rxjs";
 import {
-  DefaultValueConfigInheritedField,
-  isCollectingFromLinkedRecords,
-} from "../inherited-field-config";
+  AffectedEntity,
+  AffectedRule,
+  CommonValueOfParents,
+  EnteredValue,
+  UpdateTrigger,
+} from "./automated-field-update.types";
+import { lastValueFrom } from "rxjs";
+import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
-import { differenceWith, isEqual } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
+import { addMissingValues } from "../add-missing-values";
+import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
+import { ChangeSet } from "./change-set";
+import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
 import {
-  addAndRemoveValues,
-  addMissingValues,
-  getRemovedValues,
-  isEmptyValue,
-} from "../add-missing-values";
+  AffectedEntitiesCalculation,
+  AffectedEntitiesContext,
+  QueuedChange,
+} from "./affected-entities-calculation";
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty = Parameters<
@@ -27,25 +32,17 @@ type IndexedProperty = Parameters<
 >[2];
 
 /**
- * Represents a rule with its associated entity type and field information
- */
-interface AffectedRule {
-  rule: DefaultValueConfigInheritedField;
-  entityType: EntityConstructor;
-  fieldId: string;
-}
-
-/**
  * Service to automatically update related entities based on configured rules.
  * It finds dependent entities and updates their fields based on changes in the source entity.
  */
 @Injectable({ providedIn: "root" })
-export class AutomatedFieldUpdateConfigService {
+export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContext {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly dialog = inject(MatDialog);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
+  private readonly ability = inject(EntityAbility, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes = new Set<string>();
@@ -67,45 +64,10 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise<void> {
     if (this.checkRefAlreadyProcessed(entity)) return;
 
-    const changedFields = this.getChangedFields(entity, entityBeforeChanges);
-    const changedFieldIds = changedFields.map((f) => f.fieldId);
-
-    const relevantDirectRules: AffectedRule[] =
-      this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
-        (r) =>
-          changedFieldIds.includes(r.rule.sourceValueField) ||
-          changedFieldIds.includes(r.rule.sourceReferenceField),
-      );
-    const relevantIndirectRules: AffectedRule[] =
-      this.getInheritanceRulesReferencingThisEntity(
-        entity.getConstructor(),
-      ).filter((r) => changedFieldIds.includes(r.rule.sourceValueField));
-
-    const affectedEntities: AffectedEntity[] = [
-      ...(
-        await Promise.all(
-          relevantDirectRules.map((rule) =>
-            this.loadAffectedEntitiesForRule(
-              rule,
-              entity,
-              entityBeforeChanges,
-              changedFieldIds.includes(rule.rule.sourceValueField),
-            ),
-          ),
-        )
-      ).flat(),
-      ...(
-        await Promise.all(
-          relevantIndirectRules.map((rule) =>
-            this.loadAffectedEntitiesForInheritanceRule(rule, entity),
-          ),
-        )
-      ).flat(),
-    ];
-
-    if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
-    }
+    await this.confirmAndSaveAffectedEntities({
+      entity,
+      before: entityBeforeChanges,
+    });
   }
 
   /**
@@ -126,22 +88,63 @@ export class AutomatedFieldUpdateConfigService {
    * regardless of whether the field was changed recently.
    * @return whether there were any linked entities to update
    */
-  public async updateLinkedRecords(
+  public updateLinkedRecords(
     entity: Entity,
     fieldId: string,
   ): Promise<boolean> {
-    const affectedEntities = (
-      await Promise.all(
-        this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
-          (rule) => this.loadAffectedEntitiesForRule(rule, entity, entity),
-        ),
-      )
-    ).flat();
+    return this.confirmAndSaveAffectedEntities({
+      entity,
+      before: entity,
+      fieldId,
+    });
+  }
 
-    if (affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
-    }
-    return affectedEntities.length > 0;
+  /**
+   * Find the entities that the rules would update, level by level up the hierarchy
+   * (see {@link AffectedEntitiesCalculation}).
+   * @param trigger the change that starts the update
+   * @param enteredValues values the user entered for affected entities (database format),
+   *   which the entities above are based on instead of the suggestions
+   * @return the affected entities, ordered by level
+   */
+  private findAffectedEntities(
+    trigger: UpdateTrigger,
+    enteredValues: EnteredValue[] = [],
+  ): Promise<AffectedEntity[]> {
+    return new AffectedEntitiesCalculation(this, trigger, enteredValues).run();
+  }
+
+  /**
+   * The rules that pass on the changed fields of the source entity.
+   */
+  public getTriggeredRules(
+    source: Entity,
+    { changedFields, onlyLinkedEntities }: QueuedChange,
+  ): AffectedRule[] {
+    const isChanged = (fieldId: string) => changedFields.includes(fieldId);
+    const directRules = this.getInheritanceRulesFromDirectEntity(
+      source.getConstructor(),
+    ).filter(
+      ({ rule }) =>
+        isChanged(rule.sourceValueField) ||
+        isChanged(rule.sourceReferenceField),
+    );
+    const indirectRules = onlyLinkedEntities
+      ? []
+      : this.getInheritanceRulesReferencingThisEntity(
+          source.getConstructor(),
+        ).filter(({ rule }) => isChanged(rule.sourceValueField));
+    return [...directRules, ...indirectRules];
+  }
+
+  /**
+   * Whether the user may change the field of the entity.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  public canUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !this.ability?.initialized || this.ability.can("update", entity, fieldId)
+    );
   }
 
   private getRulesUsingFieldAsSource(
@@ -225,233 +228,26 @@ export class AutomatedFieldUpdateConfigService {
     );
   }
 
-  /**
-   * Load affected entities for a single automation rule (direct references)
-   * Source entity has reference field pointing TO target entities
-   * @param valueChanged whether the source value changed (all linked entities are affected),
-   *   or only the link (then only newly linked entities get the value, and unlinked ones may lose it)
-   */
-  private async loadAffectedEntitiesForRule(
-    affectedRule: AffectedRule,
-    sourceEntity: Entity,
-    sourceEntityBeforeChanges: Entity,
-    valueChanged = true,
-  ): Promise<AffectedEntity[]> {
-    const { rule, entityType } = affectedRule;
-
-    const linkedIds = this.getLinkedIds(sourceEntity, rule);
-    const previousIds = sourceEntityBeforeChanges.isNew
-      ? []
-      : this.getLinkedIds(sourceEntityBeforeChanges, rule);
-    // a changed link alone only passes on a value that is set, instead of clearing the value of the new parent
-    const idsToUpdate = valueChanged
-      ? linkedIds
-      : linkedIds.filter(
-          (id) =>
-            !previousIds.includes(id) &&
-            !isEmptyValue(this.calculateNewValue(sourceEntity, rule)),
-        );
-
-    const targetEntities = await this.loadEntitiesByIds(
-      entityType,
-      idsToUpdate,
-    );
-    const previouslyLinkedTargets = targetEntities.filter((target) =>
-      previousIds.includes(target.getId()),
-    );
-
-    return [
-      ...this.processTargetEntities(
-        targetEntities,
-        affectedRule,
-        sourceEntity,
-        await this.loadRemovedValues(
-          previouslyLinkedTargets,
-          affectedRule,
-          getRemovedValues(
-            sourceEntityBeforeChanges.isNew
-              ? []
-              : this.calculateNewValue(sourceEntityBeforeChanges, rule),
-            this.calculateNewValue(sourceEntity, rule),
-          ),
-        ),
-      ),
-      ...(await this.loadAffectedEntitiesForUnlinkedEntities(
-        affectedRule,
-        sourceEntityBeforeChanges,
-        previousIds.filter((id) => !linkedIds.includes(id)),
-      )),
-    ];
-  }
-
-  private getLinkedIds(
-    entity: Entity,
-    rule: DefaultValueConfigInheritedField,
-  ): string[] {
-    const referencedIds = entity[rule.sourceReferenceField];
-    return referencedIds ? asArray(referencedIds) : [];
-  }
-
-  /**
-   * Load the entities that the source entity is no longer linked to,
-   * to suggest removing the values only the source entity contributed to their collected field.
-   */
-  private async loadAffectedEntitiesForUnlinkedEntities(
-    affectedRule: AffectedRule,
-    sourceEntityBeforeChanges: Entity,
-    unlinkedIds: string[],
-  ): Promise<AffectedEntity[]> {
-    const { rule, entityType, fieldId } = affectedRule;
-    if (
-      unlinkedIds.length === 0 ||
-      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
-    ) {
-      return [];
-    }
-
-    const unlinkedTargets = await this.loadEntitiesByIds(
-      entityType,
-      unlinkedIds,
-    );
-    return this.processTargetEntities(
-      unlinkedTargets,
-      affectedRule,
-      sourceEntityBeforeChanges,
-      await this.loadRemovedValues(
-        unlinkedTargets,
-        affectedRule,
-        getRemovedValues(
-          this.calculateNewValue(sourceEntityBeforeChanges, rule),
-          [],
-        ),
-      ),
-      [],
-    ).map((affectedEntity) => ({ ...affectedEntity, unlinked: true }));
-  }
-
-  /**
-   * Load affected entities for a single inheritance rule (indirect references)
-   * Target entities have reference field pointing TO source entity
-   */
-  private async loadAffectedEntitiesForInheritanceRule(
-    affectedRule: AffectedRule,
-    sourceEntity: Entity,
-  ): Promise<AffectedEntity[]> {
-    const { rule, entityType } = affectedRule;
-
-    // a list of references (see the rule for several parents) is not supported yet, only a single reference
-    const targetEntities = (
-      await this.loadRecordsLinkingTo(
-        entityType,
-        rule.sourceReferenceField,
-        sourceEntity.getId(),
-      )
-    ).filter(
-      (entity) => entity[rule.sourceReferenceField] === sourceEntity.getId(),
-    );
-
-    return this.processTargetEntities(
-      targetEntities,
-      affectedRule,
-      sourceEntity,
+  /** The value of the field of the entity in database format */
+  public getDatabaseValue(entity: Entity, fieldId: string): any {
+    return this.transformSourceValueToDatabaseFormat(
+      entity[fieldId],
+      entity,
+      fieldId,
+      this.entitySchemaService,
     );
   }
 
-  /**
-   * Find the values that the source entity no longer has and that are not used by any other entity linking to the same target,
-   * for fields that collect the values of their linked entities (i.e. these values can be removed from the target).
-   * @param removedValues the values that the source entity lost for the target entities
-   * @return the values to remove by target entity id
-   */
-  private async loadRemovedValues(
-    targetEntities: Entity[],
-    { rule, entityType, fieldId }: AffectedRule,
-    removedValues: any[],
-  ): Promise<Map<string, any[]>> {
-    if (
-      removedValues.length === 0 ||
-      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
-    ) {
-      return new Map();
-    }
-
-    try {
-      return new Map(
-        await Promise.all(
-          targetEntities.map(async (target): Promise<[string, any[]]> => [
-            target.getId(),
-            differenceWith(
-              removedValues,
-              await this.collectValuesOfLinkedRecords(target, rule),
-              isEqual,
-            ),
-          ]),
-        ),
-      );
-    } catch (error) {
-      Logging.warn(
-        "AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities",
-        { entityType: entityType.ENTITY_TYPE, fieldId },
-        error,
-      );
-      return new Map();
-    }
-  }
-
-  /**
-   * Common logic for processing target entities and creating AffectedEntity objects
-   */
-  private processTargetEntities(
-    targetEntities: Entity[],
-    {
-      rule,
-      entityType: targetEntityType,
-      fieldId: targetFieldId,
-    }: AffectedRule,
-    sourceEntity: Entity,
-    removedValues: Map<string, any[]> = new Map(),
-    valuesToAdd: any = this.calculateNewValue(sourceEntity, rule),
-  ): AffectedEntity[] {
-    const affectedEntities: AffectedEntity[] = [];
-    const sourceEntityType = sourceEntity.getConstructor();
-    const relatedReferenceFieldEntityType = rule.sourceReferenceEntity
-      ? sourceEntityType
-      : targetEntityType;
-    const fieldConfig = targetEntityType.schema.get(targetFieldId);
-    const addToExisting = isCollectingFromLinkedRecords(fieldConfig);
-    const combineWithCurrentValue = addToExisting
-      ? addAndRemoveValues
-      : (_currentValue: any, newValue: any) => newValue;
-
-    for (const targetEntity of targetEntities) {
-      // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
-      const currentValue = this.transformSourceValueToDatabaseFormat(
-        targetEntity[targetFieldId],
-        targetEntity,
-        targetFieldId,
-        this.entitySchemaService,
-      );
-      const newValue = combineWithCurrentValue(
-        currentValue,
-        valuesToAdd,
-        removedValues.get(targetEntity.getId()),
-      );
-      if (isEqual(currentValue, newValue)) continue;
-
-      affectedEntities.push({
-        id: targetEntity.getId(),
-        newValue: newValue,
-        targetFieldId,
-        targetEntityType,
-        selectedField: { ...fieldConfig, id: targetFieldId },
-        affectedEntity: targetEntity,
-        relatedReferenceField: rule.sourceReferenceField,
-        relatedReferenceFieldEntityType,
-        addToExisting,
-      });
-    }
-
-    return affectedEntities;
+  /** A value of a field of the entity type, converted from database format to entity format */
+  public toEntityFormat(
+    value: unknown,
+    entityType: EntityConstructor,
+    fieldId: string,
+  ): unknown {
+    return this.entitySchemaService.valueToEntityFormat(value, {
+      ...entityType.schema.get(fieldId),
+      id: fieldId,
+    });
   }
 
   /**
@@ -483,6 +279,58 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
+   * Calculate the new value that all given source entities have in common
+   * (see {@link calculateNewValue}), ignoring empty values.
+   */
+  public calculateCommonValue(
+    sourceEntities: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): CommonValue {
+    return getCommonValue(
+      sourceEntities.map((entity) => this.calculateNewValue(entity, rule)),
+    );
+  }
+
+  /**
+   * Load the linked parent records and get the value they all have in common
+   * (see {@link calculateCommonValue}).
+   * If any of them cannot be loaded (e.g. the user has no permission to read it), no common value can be determined.
+   * @param parentIds The ids of the linked parent records to load
+   * @param rule The inheritance rule
+   * @param options.parentType The entity type of the parent records
+   *   (ids of other types are not loaded, ids without type prefix are loaded as this type);
+   *   if not given, each record is loaded as the type of its id prefix
+   * @param options.loadedParents Further linked parents that are already loaded (not in parentIds)
+   * @param options.changeSet Changes that are not saved yet, used instead of the saved records
+   */
+  public async loadCommonValue(
+    parentIds: string[],
+    rule: DefaultValueConfigInheritedField,
+    options: {
+      parentType?: EntityConstructor;
+      loadedParents?: Entity[];
+      changeSet?: ChangeSet;
+    } = {},
+  ): Promise<CommonValueOfParents> {
+    const loaded = await this.loadEntitiesByIds(options.parentType, parentIds);
+    // without all linked parents available, no shared value can be determined
+    if (loaded.length !== parentIds.length) {
+      return { noCommonValue: "unavailable" };
+    }
+
+    const parents = options.changeSet
+      ? loaded.map((parent) => options.changeSet.get(parent, "after"))
+      : loaded;
+    const commonValue = this.calculateCommonValue(
+      [...(options.loadedParents ?? []), ...parents],
+      rule,
+    );
+    return commonValue.isConflict
+      ? { noCommonValue: "conflict" }
+      : { value: commonValue.value };
+  }
+
+  /**
    * Collect the values of all records that link to the given entity as defined by the automation rule
    * (e.g. the cities of all children linking to a school), skipping duplicates.
    * @param entity The record that the related records link to
@@ -493,12 +341,22 @@ export class AutomatedFieldUpdateConfigService {
     entity: Entity,
     rule: DefaultValueConfigInheritedField,
   ): Promise<any[]> {
-    const linkedRecords = await this.loadRecordsLinkingTo(
-      rule.sourceReferenceEntity,
-      rule.sourceReferenceField,
-      entity.getId(),
+    return this.collectValues(
+      await this.loadRecordsLinkingTo(
+        rule.sourceReferenceEntity,
+        rule.sourceReferenceField,
+        entity.getId(),
+      ),
+      rule,
     );
-    return linkedRecords.reduce(
+  }
+
+  /** The values of the given records as defined by the automation rule, skipping duplicates (database format). */
+  public collectValues(
+    records: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): any[] {
+    return records.reduce(
       (values, record) =>
         addMissingValues(values, this.calculateNewValue(record, rule)),
       [],
@@ -512,7 +370,7 @@ export class AutomatedFieldUpdateConfigService {
    * If the index cannot be used (e.g. it cannot be created in online-only mode),
    * all records of the type are loaded and checked instead.
    */
-  private async loadRecordsLinkingTo(
+  public async loadRecordsLinkingTo(
     entityType: string | EntityConstructor,
     referenceField: string,
     entityId: string,
@@ -609,72 +467,84 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Load entities by their IDs
+   * Load entities by their IDs, skipping those that cannot be loaded.
+   * @param entityType The type of entities to load (ids of other types are skipped);
+   *   if undefined, each entity is loaded as the type of its id prefix
+   * @param entityIds
    */
-  private async loadEntitiesByIds(
-    entityType: EntityConstructor,
+  public async loadEntitiesByIds(
+    entityType: EntityConstructor | undefined,
     entityIds: string[],
   ): Promise<Entity[]> {
     // The reference field can hold ids of several entity types. Ids without any type prefix
     // are still loaded, because the mapper adds the prefix of the given type itself.
-    const typePrefix = `${entityType.ENTITY_TYPE}:`;
-    const idsOfEntityType = entityIds.filter(
-      (id) => String(id).startsWith(typePrefix) || !String(id).includes(":"),
-    );
+    const idsToLoad = entityType
+      ? entityIds.filter(
+          (id) =>
+            String(id).startsWith(`${entityType.ENTITY_TYPE}:`) ||
+            !String(id).includes(":"),
+        )
+      : entityIds;
 
     const loadedEntities = await Promise.all(
-      idsOfEntityType.map(async (id) => {
-        try {
-          const entity = await this.entityMapper.load(entityType, id);
-          return entity;
-        } catch (error) {
-          Logging.warn(
-            "AutomatedFieldUpdateConfigService: Failed to load entity for automated field update",
-            { entityType: entityType.ENTITY_TYPE, entityId: id },
-            error,
-          );
-          return null;
-        }
-      }),
+      idsToLoad.map((id) => this.loadEntity(id, entityType)),
     );
 
     return loadedEntities.filter((entity) => entity);
   }
 
   /**
-   * Analyze which fields changed during the current editing.
-   * @param newEntity Updated entity after saving
-   * @param originalEntity Entity before changes were applied
-   * @return List of key-value pairs of all changed fields
-   *         (field ID and new value in that field)
-   * @private
+   * Load an entity, logging why it could not be loaded.
+   * @param entityId
+   * @param entityType The type of the entity; if not given, the type of the id prefix
+   * @return the entity, or undefined if it could not be loaded
    */
-  private getChangedFields(
-    newEntity: Entity,
-    originalEntity: Entity,
-  ): { fieldId: string; value: any }[] {
-    const changedFields = [];
-
-    for (const [key] of originalEntity.getSchema().entries()) {
-      if (
-        JSON.stringify(originalEntity[key]) !== JSON.stringify(newEntity[key])
-      ) {
-        changedFields.push({ fieldId: key, value: newEntity[key] });
+  private async loadEntity(
+    entityId: string,
+    entityType?: EntityConstructor,
+  ): Promise<Entity | undefined> {
+    try {
+      return await this.entityMapper.load(
+        entityType ?? Entity.extractTypeFromId(entityId),
+        entityId,
+      );
+    } catch (error) {
+      const context = { entityType: entityType?.ENTITY_TYPE, entityId };
+      const status = error?.["status"] ?? error?.["statusCode"];
+      if (status === 401 || status === 403) {
+        // the user simply has no read access to the linked entity - expected for some roles
+        Logging.debug(
+          "AutomatedFieldUpdateConfigService: No permission to load linked entity",
+          context,
+          error,
+        );
+      } else {
+        Logging.warn(
+          "AutomatedFieldUpdateConfigService: Failed to load linked entity",
+          context,
+          error,
+        );
       }
+      return undefined;
     }
-
-    return changedFields;
   }
 
   /**
-   * Opens a dialog to confirm entity updates with the user.
+   * Find the entities affected by the change and open a dialog to confirm their updates with the user.
    * Saves entities only if the user confirms the changes.
+   * @return whether there were any affected entities
    */
   private async confirmAndSaveAffectedEntities(
-    affectedEntities: AffectedEntity[],
-  ): Promise<void> {
-    const userConfirmed = await this.showConfirmationDialog(affectedEntities);
-    if (!userConfirmed) return;
+    trigger: UpdateTrigger,
+  ): Promise<boolean> {
+    const affectedEntities = await this.findAffectedEntities(trigger);
+    if (affectedEntities.length === 0) return false;
+
+    const userConfirmed = await this.showConfirmationDialog(
+      affectedEntities,
+      trigger,
+    );
+    if (!userConfirmed) return true;
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
@@ -685,18 +555,28 @@ export class AutomatedFieldUpdateConfigService {
       updatesByEntityId.set(update.id, existing);
     });
 
-    const savePromises: Promise<any>[] = [];
+    const entitiesToSave: Entity[] = [];
     updatesByEntityId.forEach((updates) => {
       const entity = updates[0].affectedEntity;
-      if (entity) {
-        updates.forEach((update) => {
-          entity[update.targetFieldId] = update.newValue;
+      // e.g. records only listed to note that their linked records have no value in common
+      const changes = updates.filter(
+        (update) => entity && !isSameValue(update.newValue, update.savedValue),
+      );
+      if (changes.length > 0) {
+        changes.forEach((update) => {
+          entity[update.targetFieldId] =
+            this.entitySchemaService.valueToEntityFormat(
+              update.newValue,
+              update.selectedField,
+            );
         });
-        savePromises.push(this.entityMapper.save(entity));
+        entitiesToSave.push(entity);
       }
     });
 
-    await Promise.all(savePromises);
+    // together, so that none of them is saved if the user may not save one of them
+    await this.entityMapper.saveAll(entitiesToSave);
+    return true;
   }
 
   /**
@@ -705,13 +585,19 @@ export class AutomatedFieldUpdateConfigService {
    */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
+    trigger: UpdateTrigger,
   ): Promise<AffectedEntity[] | null> {
     // loaded lazily to avoid a circular import (dialog -> field edit -> inherited value button -> this service)
     const { AutomatedFieldUpdateComponent } =
       await import("./automated-field-update.component");
     const dialogRef = this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: "90vh",
-      data: { entities: entitiesToUpdate },
+      data: {
+        entities: entitiesToUpdate,
+        trigger,
+        recalculate: (enteredValues: EnteredValue[]) =>
+          this.findAffectedEntities(trigger, enteredValues),
+      },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }

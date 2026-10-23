@@ -9,8 +9,9 @@
     transform: none;
   }
 
+  // the tabs slide out towards the reading direction, so the sign flips in RTL
   &.tab-left {
-    transform: translate(-110%);
+    transform: translate(calc(-110% * var(--text-x-direction, 1)));
     // If the tab is either on the left or right, we additionally add a `min-height` of 1px
     // in order to ensure that the element has a height before its state changes. This is
     // necessary because Chrome does seem to skip the transition in RTL mode if the element does
@@ -20,7 +21,7 @@
   }
 
   &.tab-right {
-    transform: translate(110%);
+    transform: translate(calc(110% * var(--text-x-direction, 1)));
     min-height: 1px;
     visibility: hidden;
   }

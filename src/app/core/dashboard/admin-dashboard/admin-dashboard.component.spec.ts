@@ -14,13 +14,16 @@ describe("AdminDashboardComponent", () => {
   let fixture: ComponentFixture<AdminDashboardComponent>;
   const mockConfigService = {
     getConfig: vi.fn().mockName("ConfigService.getConfig"),
+    getRawConfig: vi.fn().mockName("ConfigService.getRawConfig"),
+    exportConfig: vi.fn().mockName("ConfigService.exportConfig"),
+    saveConfig: vi.fn().mockName("ConfigService.saveConfig"),
   };
   const mockDialog = {
     open: vi.fn().mockName("MatDialog.open"),
   };
 
   beforeEach(async () => {
-    mockConfigService.getConfig.mockReturnValue({
+    mockConfigService.getRawConfig.mockReturnValue({
       config: {
         widgets: [],
       },
@@ -45,6 +48,65 @@ describe("AdminDashboardComponent", () => {
     component = fixture.componentInstance;
     fixture.componentRef.setInput("dashboardViewId", "Dashboard");
     fixture.detectChanges();
+  });
+
+  it("keeps a widget's other languages when saving", async () => {
+    const label = { "en-US": "Record Attendance", de: "Anwesenheit" };
+    const widgets = (shortcutLabel) => [
+      {
+        component: "ShortcutDashboard",
+        config: { shortcuts: [{ label: shortcutLabel }] },
+      },
+    ];
+    // as the real service behaves: getConfig resolves to the active language,
+    // getRawConfig keeps every language
+    mockConfigService.getRawConfig.mockReturnValue({
+      component: "Dashboard",
+      config: { widgets: widgets(label) },
+    });
+    mockConfigService.getConfig.mockReturnValue({
+      component: "Dashboard",
+      config: { widgets: widgets("Record Attendance") },
+    });
+    mockConfigService.exportConfig.mockReturnValue({});
+    mockConfigService.saveConfig.mockResolvedValue(undefined);
+
+    fixture = TestBed.createComponent(AdminDashboardComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput("dashboardViewId", "Dashboard");
+    // no detectChanges: rendering the preview needs the widget registry, and
+    // the signals read below compute lazily anyway
+
+    await component.save();
+
+    const saved = mockConfigService.saveConfig.mock.calls[0][0];
+    expect(
+      saved["view:Dashboard"].config.widgets[0].config.shortcuts[0].label,
+    ).toEqual(label);
+  });
+
+  it("rebuilds only the preview of the widget that was changed", () => {
+    const unchanged = {
+      component: "ShortcutDashboard",
+      config: { shortcuts: [{ label: { "en-US": "Notes", de: "Notizen" } }] },
+    };
+    component.dashboardConfig.set({
+      widgets: [unchanged, { component: "ShortcutDashboard", config: {} }],
+    });
+    const before = component.previewWidgets();
+
+    component.dashboardConfig.update((config) => ({
+      ...config,
+      widgets: [
+        unchanged,
+        { component: "ShortcutDashboard", config: { x: 1 } },
+      ],
+    }));
+    const after = component.previewWidgets();
+
+    expect(after[0]).toBe(before[0]);
+    expect(after[1]).not.toBe(before[1]);
+    expect(after[0].config.shortcuts[0].label).toBe("Notes");
   });
 
   it("should add a new widget", async () => {

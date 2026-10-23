@@ -1,1 +1,3 @@
-<input [formControl]="formControl" matInput type="text" />
+<!-- dir="auto": values with no strongly-typed character, like phone numbers, would
+     otherwise be reordered by the bidi algorithm -->
+<input [formControl]="formControl" matInput type="text" dir="auto" />

@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -37,6 +38,9 @@ import {
   PublicFormLinkingService,
 } from "./public-form-linking.service";
 import { UpdateMetadata } from "../../core/entity/model/update-metadata";
+import { resolveLocaleText } from "../../core/language/active-locale";
+import { SiteSettingsService } from "../../core/site-settings/site-settings.service";
+import { LanguageSelectComponent } from "../../core/language/language-select/language-select.component";
 
 @UntilDestroy()
 @Component({
@@ -51,6 +55,7 @@ import { UpdateMetadata } from "../../core/entity/model/update-metadata";
     DisplayImgComponent,
     FontAwesomeModule,
     MarkdownPageModule,
+    LanguageSelectComponent,
   ],
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
@@ -61,12 +66,38 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityFormService = inject(EntityFormService);
   private configService = inject(ConfigService);
   private readonly publicFormLinkingService = inject(PublicFormLinkingService);
+  private readonly siteSettings = inject(SiteSettingsService);
 
   private ability = inject(EntityAbility);
   private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   formConfig = signal<PublicFormConfig | undefined>(undefined);
+
+  /** display only - `formConfig` stays raw so every language is kept */
+  readonly formTitle = computed(() =>
+    resolveLocaleText(this.formConfig()?.title),
+  );
+  readonly formDescription = computed(() =>
+    resolveLocaleText(this.formConfig()?.description),
+  );
+
+  /**
+   * Visitors have no account: the choice is stored in localStorage and applied
+   * on reload by `initLanguage()`, which needs no logged-in user.
+   */
+  readonly availableLocales = this.siteSettings.enabledLocales;
+
+  /**
+   * Hidden if the system does not allow language switching, and if it is set up
+   * for one language only, which leaves nothing to choose between.
+   */
+  readonly showLanguageSelect = computed(
+    () =>
+      this.siteSettings.languageSwitchingEnabled &&
+      this.availableLocales().length > 1,
+  );
+
   entityFormEntries = signal<
     Array<
       PublicFormEntry & {

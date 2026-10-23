@@ -376,14 +376,13 @@ should move toward e2e — not toward more component specs.
 A pruning exercise is only credible if it says what not to touch. Several of these are 2026
 work, and among the best-designed tests in the repo.
 
-| Cluster                                                        |  Tests | Why it earns its place                                                                                                                                                          |
-| -------------------------------------------------------------- | -----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `system-reset.service`                                         |     17 | Every name states an invariant with its reason, on a feature that deletes all of a customer's data. Exactly what unit tests are for.                                            |
-| `config.service` + `config-migrations`                         | 34 + … | 24 of them pin individual config migrations, which run against documents written by real deployments. A regression is silent and unrecoverable. Pure functions, near-zero cost. |
-| `logging.service`                                              |     38 | Sentry fingerprinting, repeat-capping, network-error bucketing. Invisible to e2e, subtle enough that nobody would notice it breaking until an incident.                         |
-| `entities-table`, `entity-list`, `paginated-data-source`       |     51 | Combinatorial sort / filter / selection / pagination semantics. e2e can afford one path through the matrix; these cover the corners.                                            |
-| `query`, `data-aggregation`, `download`, `data-transformation` |    ~80 | Data transformation with many input shapes — csv escaping, enum labels, date formats, referenced entities. Textbook unit-test territory.                                        |
-| `*.datatype.spec.ts`                                           |    140 | 17 files, 140 tests, **2.3s total** via a shared `testDatatype()` harness. The best cost-to-coverage ratio in the codebase and the model the rest should follow.                |
+| Cluster                                                        | Tests | Why it earns its place                                                                                                                                           |
+| -------------------------------------------------------------- | ----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `system-reset.service`                                         |    17 | Every name states an invariant with its reason, on a feature that deletes all of a customer's data. Exactly what unit tests are for.                             |
+| `logging.service`                                              |    38 | Sentry fingerprinting, repeat-capping, network-error bucketing. Invisible to e2e, subtle enough that nobody would notice it breaking until an incident.          |
+| `entities-table`, `entity-list`, `paginated-data-source`       |    51 | Combinatorial sort / filter / selection / pagination semantics. e2e can afford one path through the matrix; these cover the corners.                             |
+| `query`, `data-aggregation`, `download`, `data-transformation` |   ~80 | Data transformation with many input shapes — csv escaping, enum labels, date formats, referenced entities. Textbook unit-test territory.                         |
+| `*.datatype.spec.ts`                                           |   140 | 17 files, 140 tests, **2.3s total** via a shared `testDatatype()` harness. The best cost-to-coverage ratio in the codebase and the model the rest should follow. |
 
 ### Smaller things that are simply wrong
 

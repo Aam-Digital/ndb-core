@@ -20,6 +20,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
+import { resolveLocaleConfig } from "../../language/active-locale";
 import { SetupWizardService } from "./setup-wizard.service";
 
 @Component({
@@ -52,8 +53,9 @@ export class SetupWizardComponent implements OnInit {
   readonly LOCAL_STORAGE_KEY = "SETUP_WIZARD_STATUS";
 
   readonly state = this.setupWizardService.state;
-  readonly steps = computed(
-    () => this.setupWizardService.config()?.data?.steps ?? [],
+  readonly steps = computed(() =>
+    // display only - the service's config stays raw so saving keeps all languages
+    resolveLocaleConfig(this.setupWizardService.config()?.data?.steps ?? []),
   );
 
   currentStep: number = 0;

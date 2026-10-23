@@ -18,6 +18,9 @@ exists.
 3. Importing a base config means fetching its JSON documents and saving them as entities, force-
    overwriting anything already there. `Config:CONFIG_ENTITY` is just one of these documents, alongside
    permissions, enum definitions, site settings, sample reports/forms, etc.
+   The language selected at the top of the Assistant is saved as the default language
+   (`SiteSettings.defaultLanguage`) when it is picked, and again after the import, so it always
+   overrides a language the imported `SiteSettings:global` document defines.
 4. Once the config document is saved, the app reconfigures itself reactively — routing and entity
    types are rebuilt and the current page re-renders. There's no redirect and no page reload.
 5. If the logged-in account isn't linked to any profile yet, a second step offers to create one and
@@ -65,9 +68,18 @@ userEntityId })` write path the user administration UI (`../user/user-details/`)
 
 ## Base configs
 
-A base config is a small descriptor (id, name, description, locale) plus a list of JSON documents to
-import. Configs come from two places: the ones shipped with the app, and external URLs so partners can
-offer their own use cases without a code change. The picker filters these to the current locale.
+A base config is a small descriptor (`id`, `name`, `description`, `locale`, `startFromScratch`) plus a
+list of JSON documents to import. Configs come from two places: the ones shipped with the app, and
+external URLs so partners can offer their own use cases without a code change.
+
+The picker lists the scenarios offered in the current locale. `locale` is one locale id or a list of
+them, and is matched by base language too (`en` matches `en-US`), because partners write these files
+by hand; a config without a `locale` is offered in every language. If no localised config matches the
+current locale, the picker offers all of them greyed out with a hint instead of showing an empty list.
+
+`startFromScratch` marks the config that sets up a system with no predefined record types. That is a
+categorically different choice, so it is a checkbox below the dropdown rather than one entry among
+the scenarios.
 
 ## Things worth knowing before changing this flow
 

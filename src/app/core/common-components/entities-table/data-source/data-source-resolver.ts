@@ -7,7 +7,8 @@ import { InMemoryDataSource } from "#src/app/core/common-components/entities-tab
 import { environment } from "#src/environments/environment";
 import { SessionType } from "#src/app/core/session/session-type";
 import { EntitiesTableDataSource } from "#src/app/core/common-components/entities-table/data-source/entities-table-data-source";
-import { Entity } from "#src/app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
+import { TranslatableTextDatatype } from "#src/app/core/config/translatable-text.datatype";
 import {
   LoaderMethod,
   // aliased: this file has its own `supportsPagination`, which asks whether the
@@ -21,9 +22,10 @@ export function resolveDataSource<T extends Entity>(
   injector: Injector,
   dataSource?: DataSourceType,
   loaderMethod?: LoaderMethod,
+  entityType?: EntityConstructor,
 ): EntitiesTableDataSource<T> {
   const DataSourceClass = supportsPagination(injector)
-    ? getDataSource(dataSource, loaderMethod)
+    ? getDataSource(dataSource, loaderMethod, entityType)
     : InMemoryDataSource;
   return runInInjectionContext(injector, () =>
     untracked(() => new DataSourceClass<T>()),
@@ -50,6 +52,7 @@ function supportsPagination(injector: Injector): boolean {
 function getDataSource(
   dataSource?: DataSourceType,
   loaderMethod?: LoaderMethod,
+  entityType?: EntityConstructor,
 ) {
   if (dataSource && availableDataSources[dataSource]) {
     // an explicit config for this list takes precedence over any default
@@ -59,6 +62,21 @@ function getDataSource(
   if (loaderMethod && !loaderSupportsPagination(loaderMethod)) {
     // a loader with no notion of a page loads everything it has, so the list
     // pages it in memory
+    return InMemoryDataSource;
+  }
+
+  if (
+    entityType?.isInternalEntity &&
+    !loaderMethod &&
+    TranslatableTextDatatype.detectFieldInEntity(
+      entityType,
+      TranslatableTextDatatype.dataType,
+    )
+  ) {
+    // a small admin collection with translated texts: in memory the list sorts by
+    // the displayed text, while the server-side sort of a paginated source would
+    // sort the stored per-language map. Large internal types (e.g. audit records,
+    // notifications) have no translated fields and keep paging.
     return InMemoryDataSource;
   }
 

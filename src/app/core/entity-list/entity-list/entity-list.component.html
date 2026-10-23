@@ -65,24 +65,7 @@
 
     <!-- Tab Groups-->
     <div class="mat-elevation-z1">
-      @if (groups.length > 1) {
-        <div>
-          <mat-tab-group
-            [(selectedIndex)]="selectedColumnGroupIndex"
-            appTabStateMemo
-          >
-            @for (item of groups; track item.name) {
-              <mat-tab
-                [label]="item.name"
-                angulartics2On="click"
-                [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
-                angularticsAction="list_column_view"
-                [angularticsLabel]="item.name"
-              ></mat-tab>
-            }
-          </mat-tab-group>
-        </div>
-      }
+      <ng-container *ngTemplateOutlet="columnGroupTabs"></ng-container>
       <ng-container *ngTemplateOutlet="subrecord"></ng-container>
     </div>
   </div>
@@ -111,11 +94,33 @@
       </div>
     }
 
+    <ng-container *ngTemplateOutlet="columnGroupTabs"></ng-container>
     <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
 }
 
 <!-- Templates and menus for both mobile and desktop -->
+
+<ng-template #columnGroupTabs>
+  @if (groups.length > 1) {
+    <div>
+      <mat-tab-group
+        [(selectedIndex)]="selectedColumnGroupIndex"
+        appTabStateMemo
+      >
+        @for (item of displayGroups; track item.name) {
+          <mat-tab
+            [label]="item.name"
+            angulartics2On="click"
+            [angularticsCategory]="entityConstructor()?.ENTITY_TYPE"
+            angularticsAction="list_column_view"
+            [angularticsLabel]="item.name"
+          ></mat-tab>
+        }
+      </mat-tab-group>
+    </div>
+  }
+</ng-template>
 
 <ng-template #filterDialog>
   @if (showFreetextFilter()) {
@@ -283,11 +288,11 @@
     <span i18n> Bulk Actions </span>
   </button>
 
-  @for (formConfig of publicFormConfigs; track formConfig.route) {
+  @for (form of publicForms; track form.config.route) {
     <button
       mat-menu-item
-      (click)="copyPublicFormLinkForEntityType(formConfig)"
-      [matTooltip]="formConfig.title"
+      (click)="copyPublicFormLinkForEntityType(form.config)"
+      [matTooltip]="form.title"
       i18n-matTooltip
       matTooltipPosition="before"
     >
@@ -295,7 +300,7 @@
         class="color-accent standard-icon-with-text"
         icon="link"
       ></fa-icon>
-      <span i18n>Copy Public Form Link</span> ({{ formConfig.title }})
+      <span i18n>Copy Public Form Link</span> ({{ form.title }})
     </button>
   }
 

@@ -20,6 +20,7 @@ import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { Logging } from "../logging/logging.service";
 import { EntityConfigReadyService } from "./entity-config-ready.service";
+import { RawConfig } from "../config/multi-lingual-config";
 
 /**
  * A service that allows to work with configuration-objects
@@ -203,6 +204,20 @@ export class EntityConfigService {
     const configName =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
+  }
+
+  /**
+   * Like {@link getEntityConfig}, but with raw values: any multi-lingual texts
+   * are returned as their full per-language map rather than resolved to the
+   * active language. Required when editing config values that are saved back
+   * to the config document.
+   */
+  public getRawEntityConfig(
+    entityType: EntityConstructor,
+  ): RawConfig<EntityConfig> {
+    const configName =
+      EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
+    return this.configService.getRawConfig<EntityConfig>(configName);
   }
 
   getDetailsViewConfig(
