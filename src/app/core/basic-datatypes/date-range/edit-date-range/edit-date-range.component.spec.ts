@@ -1,11 +1,22 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
+import { By } from "@angular/platform-browser";
+import { MatTooltip } from "@angular/material/tooltip";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { DateRange } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { setupCustomFormControlEditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component-test-utils";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
+import {
+  DatabaseEntity,
+  EntityRegistry,
+  entityRegistry,
+} from "../../../entity/database-entity.decorator";
+import { DatabaseField } from "../../../entity/database-field.decorator";
+import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { Entity } from "../../../entity/model/entity";
+import { DateRangeValue } from "../date-range.datatype";
 import {
   MatDialogMock,
   mockMatDialog,
@@ -18,6 +29,15 @@ import {
   endNotBeforeStart,
 } from "./edit-date-range.component";
 
+@DatabaseEntity("EditDateRangeTestAction")
+class EditDateRangeTestAction extends Entity {
+  static override toStringAttributes = ["name"];
+
+  @DatabaseField() name: string;
+  @DatabaseField() parent: string;
+  @DatabaseField({ dataType: "date-range" }) period: DateRangeValue;
+}
+
 describe("EditDateRangeComponent", () => {
   let component: EditDateRangeComponent;
   let fixture: ComponentFixture<EditDateRangeComponent>;
@@ -25,6 +45,10 @@ describe("EditDateRangeComponent", () => {
 
   const start = new Date(2026, 2, 1);
   const end = new Date(2026, 4, 31);
+  const parentAction = Object.assign(new EditDateRangeTestAction("1"), {
+    name: "Training",
+    period: { start, end },
+  });
 
   beforeEach(async () => {
     dialog = mockMatDialog();
@@ -33,6 +57,8 @@ describe("EditDateRangeComponent", () => {
       providers: [
         provideNativeDateAdapter(),
         { provide: MatDialog, useValue: dialog },
+        ...mockEntityMapperProvider([parentAction]),
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
@@ -225,5 +251,109 @@ describe("EditDateRangeComponent", () => {
     ["the end date before the start date", { start: end, end: start }, false],
   ])("validator: %s", (_, value, valid) => {
     expect(endNotBeforeStart(new FormControl(value)) === null).toBe(valid);
+  });
+
+  describe("period of a linked parent record", () => {
+    const outside = {
+      start: new Date(2026, 4, 20),
+      end: new Date(2026, 5, 15),
+    };
+    const within = {
+      start: new Date(2026, 2, 10),
+      end: new Date(2026, 2, 20),
+    };
+
+    /**
+     * @param parentInForm the parent link entered in the form; undefined if the form has no such field
+     * @param parentOfRecord the parent link saved for the record
+     */
+    async function render(
+      period: DateRangeValue,
+      parentInForm: string | null | undefined,
+      parentOfRecord?: string,
+    ) {
+      const parentFixture = TestBed.createComponent(EditDateRangeComponent);
+      const form = setupCustomFormControlEditComponent(
+        parentFixture.componentInstance,
+        "period",
+        {
+          withinParent: {
+            parentReferenceField: "parent",
+            parentValueField: "period",
+          },
+        },
+        parentFixture,
+      );
+      if (parentInForm !== undefined) {
+        form.addControl("parent", new FormControl(parentInForm));
+      }
+      parentFixture.componentRef.setInput(
+        "entity",
+        Object.assign(new EditDateRangeTestAction(), {
+          parent: parentOfRecord,
+        }),
+      );
+      form.get("period").setValue(period);
+      parentFixture.detectChanges();
+
+      const warning = async () => {
+        parentFixture.detectChanges();
+        await parentFixture.whenStable();
+        parentFixture.detectChanges();
+        return parentFixture.debugElement
+          .query(By.directive(MatTooltip))
+          ?.injector.get(MatTooltip).message;
+      };
+      return { form, warning };
+    }
+
+    it.each<{
+      period: DateRangeValue;
+      parentInForm: string | null | undefined;
+      parentOfRecord?: string;
+      warns: boolean;
+    }>([
+      { period: outside, parentInForm: parentAction.getId(), warns: true },
+      { period: within, parentInForm: parentAction.getId(), warns: false },
+      {
+        period: outside,
+        parentInForm: null,
+        parentOfRecord: parentAction.getId(),
+        warns: false,
+      },
+      {
+        period: outside,
+        parentInForm: undefined,
+        parentOfRecord: parentAction.getId(),
+        warns: true,
+      },
+    ])(
+      "uses the parent link of the form, or of the record if the form has no such field (in form: $parentInForm, saved: $parentOfRecord, warns: $warns)",
+      async ({ period, parentInForm, parentOfRecord, warns }) => {
+        const { warning } = await render(period, parentInForm, parentOfRecord);
+
+        expect(await warning()).toBe(
+          warns ? "Outside the period of Training" : undefined,
+        );
+      },
+    );
+
+    it("follows a parent link entered in the form", async () => {
+      const { form, warning } = await render(outside, null);
+      expect(await warning()).toBeUndefined();
+
+      form.get("parent").setValue(parentAction.getId());
+
+      expect(await warning()).toBe("Outside the period of Training");
+    });
+
+    it("follows the dates entered in the form", async () => {
+      const { form, warning } = await render(within, parentAction.getId());
+      expect(await warning()).toBeUndefined();
+
+      form.get("period").setValue(outside);
+
+      expect(await warning()).toBe("Outside the period of Training");
+    });
   });
 });

@@ -7,6 +7,7 @@ import {
   inject,
   input,
   OnInit,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
@@ -20,11 +21,15 @@ import { DateRange, MatDatepickerModule } from "@angular/material/datepicker";
 import { MatDialog } from "@angular/material/dialog";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import moment from "moment";
+import { startWith } from "rxjs";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
+import { Entity } from "../../../entity/model/entity";
 import { EMPTY_FILTER_OPTION_KEY } from "../../../filter/filters/filters";
 import { DateRangeFilterPanelComponent } from "../../date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import {
@@ -33,6 +38,7 @@ import {
 } from "../../date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { DateRangeFilterConfigOption } from "../../../entity-list/EntityListConfig";
 import { DateRangeValue } from "../date-range.datatype";
+import { findParentOutside, parentRangesResource } from "../parent-ranges";
 
 /** Validator for the value of the field: the end must not be before the start. */
 export function endNotBeforeStart(
@@ -51,6 +57,7 @@ export function endNotBeforeStart(
 
 /**
  * Form field to edit a {@link DateRangeValue}: the start and the end date in one range picker.
+ * If the field is configured with `withinParent`, a warning shows when the range goes beyond a linked parent's range.
  */
 @DynamicComponent("EditDateRange")
 @Component({
@@ -60,7 +67,13 @@ export function endNotBeforeStart(
   styleUrls: [
     "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
   ],
-  imports: [MatInputModule, ReactiveFormsModule, MatDatepickerModule],
+  imports: [
+    MatInputModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    FaDynamicIconComponent,
+    MatTooltipModule,
+  ],
   providers: [
     { provide: MatFormFieldControl, useExisting: EditDateRangeComponent },
   ],
@@ -70,6 +83,7 @@ export class EditDateRangeComponent
   implements EditComponent, OnInit
 {
   formFieldConfig = input<FormFieldConfig>();
+  entity = input<Entity>();
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
@@ -82,6 +96,32 @@ export class EditDateRangeComponent
     const configured = this.formFieldConfig()?.additional;
     return Array.isArray(configured) ? configured : periodRangeOptions;
   });
+
+  private readonly currentValue = signal<DateRangeValue | null>(null);
+
+  /** the parent link as entered in the form, if the form has that field (otherwise the record's saved link is used) */
+  private readonly parentReferenceInForm = signal<
+    { value: string | string[] | null } | undefined
+  >(undefined);
+
+  private readonly parents = parentRangesResource(() => {
+    const config = this.formFieldConfig()?.withinParent;
+    if (!config) {
+      return undefined;
+    }
+    const inForm = this.parentReferenceInForm();
+    return {
+      parentReference: inForm
+        ? inForm.value
+        : this.entity()?.[config.parentReferenceField],
+      config,
+    };
+  });
+
+  /** name of the first linked parent record whose range the entered range goes beyond */
+  protected readonly outsideParent = computed(() =>
+    findParentOutside(this.currentValue(), this.parents.value()),
+  );
 
   /** the two inputs of the range picker, which are kept in sync with the form control of the field */
   readonly range = new FormGroup({
@@ -126,10 +166,16 @@ export class EditDateRangeComponent
       this.formControl.updateValueAndValidity({ emitEvent: false });
     });
 
-    this.showValue(this.formControl.value);
     this.formControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.showValue(value));
+      .pipe(
+        startWith(this.formControl.value),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((value) => {
+        this.showValue(value);
+        this.currentValue.set(value);
+      });
+    this.followParentReferenceInForm();
     this.range.statusChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.formControl.updateValueAndValidity());
@@ -143,6 +189,17 @@ export class EditDateRangeComponent
         );
         this.formControl.markAsDirty();
       });
+  }
+
+  private followParentReferenceInForm() {
+    const field = this.formFieldConfig()?.withinParent?.parentReferenceField;
+    const control = field && this.formControl.parent?.get(field);
+    if (!control) {
+      return;
+    }
+    control.valueChanges
+      .pipe(startWith(control.value), takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.parentReferenceInForm.set({ value }));
   }
 
   /** Show a value that was set from outside, without resetting what the user is just typing. */
