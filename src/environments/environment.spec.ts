@@ -20,7 +20,7 @@ export const environment = {
   notificationsConfig: undefined,
   SaaS: false,
   userSupportEnabled: false,
-  use_indexeddb_adapter: false,
+  use_indexeddb_adapter: true,
   translationsCdnUrl: "",
   default_data_source: undefined as DataSourceType | undefined,
   session_type_choice: true,
