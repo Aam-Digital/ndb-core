@@ -19,11 +19,7 @@ export interface LegacyNoteField {
  * (in the order of the previous default `bottomForm`).
  *
  * `Note` no longer defines these in code. Systems that still rely on them have the definitions
- * written into their own `entity:Note` config by the `v4-upgrade-note-legacy-child-school-fields`
- * CLI migration, which is the only production code using this snapshot.
- *
- * (This module must stay free of runtime imports, as it is shared with the CLI -
- * see `cli/tsconfig.json`.)
+ * written into their own `entity:Note` config by a CLI migration of the v4 upgrade.
  */
 export const LEGACY_NOTE_FIELDS: LegacyNoteField[] = [
   {
@@ -61,7 +57,7 @@ export const LEGACY_NOTE_FIELDS: LegacyNoteField[] = [
  * and read by the roll-call UI of event types based on `Note`.
  *
  * Systems that still rely on it have the definition written into their own `entity:Note` config
- * by the `v4-upgrade-note-legacy-child-school-fields` CLI migration.
+ * by a CLI migration of the v4 upgrade.
  */
 export const LEGACY_NOTE_ATTENDANCE_FIELD: {
   field: string;

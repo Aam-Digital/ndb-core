@@ -9,7 +9,7 @@ import { asArray } from "app/utils/asArray";
  * This only applies to a ChildSchoolRelation, whose child and school used to be linked
  * in `children` / `schools` rather than in the generic `relatedEntities`.
  * The `children` / `schools` fields are now only defined in the config of systems that still
- * rely on them (see the `v4-upgrade-note-legacy-child-school-fields` CLI migration).
+ * rely on them (written there by a CLI migration of the v4 upgrade).
  * Systems without those fields link both through `relatedEntities` (if permitted there).
  *
  * @param newNote the note being created, modified in place

@@ -235,7 +235,7 @@ GROUP BY c._id, e.category
 ```
 
 > **Legacy format:** the deprecated `event-attendance-map` datatype (`Note.childrenAttendance`, only
-> present in systems the `v4-upgrade-note-legacy-child-school-fields` migration restored it for)
+> present in systems a CLI migration of the v4 upgrade restored it for)
 > instead stores one `[participantId, {status, remarks}]` pair per participant, so it is unpacked with
 > `json_extract(value, '$[0]')` for the participant and `json_extract(value, '$[1].status')` for the status.
 
