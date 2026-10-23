@@ -7,6 +7,7 @@ import { setMapCountrycodes } from "./set-map-countrycodes.migration.js";
 import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.migration.js";
 import { shortcutDashboardLinkPrefix } from "./shortcut-dashboard-link-prefix.migration.js";
 import { reportQueryIsActive } from "./report-query-isactive.migration.js";
+import { noteLegacyChildSchoolFields } from "./note-legacy-child-school-fields.migration.js";
 import { historicalDataLoader } from "./historical-data-loader.migration.js";
 import { restoreBackup } from "./restore-backup.migration.js";
 import type { MigrationDefinition } from "./migration-definition.js";
@@ -27,6 +28,7 @@ export const migrations: MigrationDefinition[] = [
   shortcutDashboardLinkPrefix,
   setMapCountrycodes,
   reportQueryIsActive,
+  noteLegacyChildSchoolFields,
   historicalDataLoader,
   restoreBackup,
 ];

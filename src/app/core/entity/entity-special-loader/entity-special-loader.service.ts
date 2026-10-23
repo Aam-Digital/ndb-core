@@ -3,6 +3,7 @@ import { Entity } from "../model/entity";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityPage } from "../entity-mapper/entity-mapper.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
+import { NotesService } from "../../../child-dev-project/notes/notes.service";
 import { UpdatedEntity } from "../model/entity-update";
 import { Logging } from "../../logging/logging.service";
 import { TodoService } from "#src/app/features/todos/todo.service";
@@ -38,6 +39,7 @@ export function supportsPagination(loaderMethod?: LoaderMethod): boolean {
 })
 export class EntitySpecialLoaderService {
   private readonly childrenService = inject(ChildrenService);
+  private readonly notesService = inject(NotesService);
   private readonly todoService = inject(TodoService);
   private readonly auditReferenceLoader = inject(AuditReferenceLoaderService);
 
@@ -111,7 +113,7 @@ export class EntitySpecialLoaderService {
           entity.getId(false),
         ) as unknown as Promise<E[]>;
       case LoaderMethod.NotesRelatedToEntity:
-        return this.childrenService.getNotesRelatedTo(
+        return this.notesService.getNotesRelatedTo(
           entity.getId(),
         ) as unknown as Promise<E[]>;
       case LoaderMethod.TodosRelatedToEntity:
