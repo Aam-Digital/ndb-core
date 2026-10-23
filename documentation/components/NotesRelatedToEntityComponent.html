@@ -461,7 +461,7 @@
                         </tr>
                 <tr>
                     <td class="col-md-4">
-                        <div class="io-description"><p>Load related notes via the ChildrenService (see EntitySpecialLoaderService).</p>
+                        <div class="io-description"><p>Load related notes via the NotesService (see EntitySpecialLoaderService).</p>
 </div>
                     </td>
                 </tr>
@@ -856,7 +856,7 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:55</a></code>
+                                <div class="io-line">        <code><a href="../components/RelatedEntitiesComponent.html#source" target="_self" >RelatedEntitiesComponent:53</a></code>
 </div>
                         </td>
                     </tr>
@@ -939,8 +939,8 @@ you can set <code>property = &quot;supervisors&quot;</code> to only list those p
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="149"
-                                    class="link-to-prism">src/app/child-dev-project/notes/notes-related-to-entity/notes-related-to-entity.component.ts:149</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/app/child-dev-project/notes/notes-related-to-entity/notes-related-to-entity.component.ts:126</a></div>
                         </td>
                     </tr>
 
@@ -1220,20 +1220,23 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
-    if (this.entity()?.getType() &#x3D;&#x3D;&#x3D; &quot;Child&quot;) {
-      return (note: Note) &#x3D;&gt; note?.getColorForId(this.entity()?.getId());
-    }
-    return (note: Note) &#x3D;&gt; note?.getColor();
-  })</code>
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; (note: Note) &#x3D;&gt; note?.getColorForId(this.entity()?.getId()),
+  )</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/child-dev-project/notes/notes-related-to-entity/notes-related-to-entity.component.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/child-dev-project/notes/notes-related-to-entity/notes-related-to-entity.component.ts:48</a></div>
                         </td>
                     </tr>
 
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>highlight notes of a meeting where this entity was marked absent (see <a href="Note.getColorForId">Note.getColorForId</a>)</p>
+</div>
+                </td>
+            </tr>
 
         </tbody>
     </table>
@@ -1261,7 +1264,7 @@ Returns dot-paths for nested references (e.g. &quot;attendance.participant&quot;
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/app/child-dev-project/notes/notes-related-to-entity/notes-related-to-entity.component.ts:53</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/child-dev-project/notes/notes-related-to-entity/notes-related-to-entity.component.ts:51</a></div>
                         </td>
                     </tr>
 
@@ -1554,7 +1557,6 @@ import { Note } from &quot;../model/note&quot;;
 import { FormDialogService } from &quot;../../../core/form-dialog/form-dialog.service&quot;;
 import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { Entity } from &quot;../../../core/entity/model/entity&quot;;
-import { ChildSchoolRelation } from &quot;../../children/model/childSchoolRelation&quot;;
 import { EntityDatatype } from &quot;../../../core/basic-datatypes/entity/entity.datatype&quot;;
 import { asArray } from &quot;app/utils/asArray&quot;;
 import { EntitiesTableComponent } from &quot;../../../core/common-components/entities-table/entities-table.component&quot;;
@@ -1563,6 +1565,7 @@ import { RelatedEntitiesComponent } from &quot;../../../core/entity-details/rela
 import { LoaderMethod } from &quot;../../../core/entity/entity-special-loader/entity-special-loader.service&quot;;
 import { CustomFormLinkButtonComponent } from &quot;app/features/public-form/custom-form-link-button/custom-form-link-button.component&quot;;
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from &quot;app/utils/related-entities-default-config&quot;;
+import { linkLegacyNoteFields } from &quot;../deprecated/legacy-note-link-fields&quot;;
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -1579,7 +1582,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent&lt;N
 
   override entityCtr &#x3D; computed(() &#x3D;&gt; Note);
 
-  /** Load related notes via the ChildrenService (see EntitySpecialLoaderService). */
+  /** Load related notes via the NotesService (see EntitySpecialLoaderService). */
   override loaderMethod &#x3D; input&lt;LoaderMethod&gt;(
     LoaderMethod.NotesRelatedToEntity,
   );
@@ -1589,12 +1592,10 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent&lt;N
     );
   }
 
-  readonly getColor &#x3D; computed(() &#x3D;&gt; {
-    if (this.entity()?.getType() &#x3D;&#x3D;&#x3D; &quot;Child&quot;) {
-      return (note: Note) &#x3D;&gt; note?.getColorForId(this.entity()?.getId());
-    }
-    return (note: Note) &#x3D;&gt; note?.getColor();
-  });
+  /** highlight notes of a meeting where this entity was marked absent (see {@link Note.getColorForId}) */
+  readonly getColor &#x3D; computed(
+    () &#x3D;&gt; (note: Note) &#x3D;&gt; note?.getColorForId(this.entity()?.getId()),
+  );
   newRecordFactory &#x3D; this.createNewRecordFactory();
 
   override createNewRecordFactory() {
@@ -1605,9 +1606,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent&lt;N
       if (!entity) {
         return newNote;
       }
-      if (entity.getType() &#x3D;&#x3D;&#x3D; ChildSchoolRelation.ENTITY_TYPE) {
-        this.specialLinkingForChildSchoolRelation(newNote);
-      }
+      linkLegacyNoteFields(newNote, entity);
 
       for (const e of [
         entity.getId(),
@@ -1620,25 +1619,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent&lt;N
 
       return newNote;
     };
-  }
-
-  private specialLinkingForChildSchoolRelation(newNote: Note) {
-    //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
-    for (const childId of asArray(
-      (this.entity() as ChildSchoolRelation).childId,
-    )) {
-      if (childId) {
-        newNote.children.push(childId);
-      }
-    }
-
-    for (const schooldId of asArray(
-      (this.entity() as ChildSchoolRelation).schoolId,
-    )) {
-      if (schooldId) {
-        newNote.schools.push(schooldId);
-      }
-    }
   }
 
   /**

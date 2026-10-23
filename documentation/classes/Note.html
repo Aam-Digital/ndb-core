@@ -159,8 +159,11 @@
                 <p>Notes are a special in-built entity type to record free-form information related to other records.</p>
 <p>Previously, <code>Note</code> has also functioned to record an event with an attendance list of participants.
 That functionality is getting generalized and decoupled from this specific entity.
-Add a &quot;attendance&quot; type field to any entity type instead.
-Attendance-related fields and methods here are currently kept (deprecated) for backwards compatibility until all existing data is migrated.</p>
+Add a &quot;attendance&quot; type field to any entity type instead.</p>
+<p><code>Note</code> therefore no longer declares the legacy <code>children</code>, <code>schools</code> and <code>childrenAttendance</code> fields.
+Systems that still hold data in them have the definitions written into their own <code>entity:Note</code> config
+by the <code>oneoff-20261008-note-legacy-child-school-fields</code> CLI migration
+(see <code>deprecated/legacy-note-fields.ts</code>).</p>
 
             </p>
 
@@ -223,16 +226,6 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
-                                <a href="#children" class="deprecated-name">children</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier"></span>
-                                <a href="#childrenAttendance" class="deprecated-name">childrenAttendance</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier"></span>
                                 <a href="#date" >date</a>
                             </li>
                             <li>
@@ -268,11 +261,6 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier"></span>
                                 <a href="#relatesTo" >relatesTo</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                    <span class="modifier"></span>
-                                <a href="#schools" class="deprecated-name">schools</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -398,12 +386,17 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
-                                <a href="#getColorForId" class="deprecated-name">getColorForId</a>
+                                <a href="#getColorForId" >getColorForId</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Static</span>
-                                <a href="#getPropertyFor" class="deprecated-name">getPropertyFor</a>
+                                <a href="#getLinkFields" >getLinkFields</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Static</span>
+                                <a href="#getPropertyFor" >getPropertyFor</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -504,7 +497,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="161" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:161</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="147" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:147</a></div>
                         </td>
                     </tr>
 
@@ -545,7 +538,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="147" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:147</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -587,116 +580,10 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:155</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="141" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:141</a></div>
                         </td>
                     </tr>
 
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="children"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span class="deprecated-name"><b>children</b></span>
-                        <a href="#children"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4 deprecated">
-                    <p>Default structure will only use a combined <code>relatedEntities</code> field</p>
-
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>string[]</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <b>Decorators : </b>
-                        <br />
-                        <code>
-                            @DatabaseField({label: undefined, dataType: &#x27;entity&#x27;, isArray: true, additional: &#x27;Child&#x27;, entityReferenceRole: &#x27;composite&#x27;, editComponent: &#x27;EditLegacyAttendance&#x27;, anonymize: &#x27;retain&#x27;})<br />
-                        </code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="94" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:94</a></div>
-                        </td>
-                    </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>IDs of Child entities linked with this note</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="childrenAttendance"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span class="deprecated-name"><b>childrenAttendance</b></span>
-                        <a href="#childrenAttendance"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4 deprecated">
-                    <p>Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an <code>attendance</code> type field.</p>
-
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../classess/AttendanceItem.html" target="_self" >AttendanceItem[]</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <b>Decorators : </b>
-                        <br />
-                        <code>
-                            @DatabaseField({anonymize: &#x27;retain&#x27;, dataType: &#x27;event-attendance-map&#x27;, additional: undefined})<br />
-                        </code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="111" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:111</a></div>
-                        </td>
-                    </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>optional additional information about attendance at this event for each of the linked children</p>
-</div>
-                </td>
-            </tr>
 
         </tbody>
     </table>
@@ -729,7 +616,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="122" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:122</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="108" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:108</a></div>
                         </td>
                     </tr>
 
@@ -768,7 +655,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:46</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:52</a></code>
 </div>
                         </td>
                     </tr>
@@ -808,7 +695,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:45</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:51</a></code>
 </div>
                         </td>
                     </tr>
@@ -848,7 +735,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:43</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:49</a></code>
 </div>
                         </td>
                     </tr>
@@ -882,7 +769,7 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:44</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:50</a></div>
                         </td>
                     </tr>
 
@@ -917,13 +804,13 @@ Attendance-related fields and methods here are currently kept (deprecated) for b
                         <b>Decorators : </b>
                         <br />
                         <code>
-                            @DatabaseField({dataType: &#x27;entity&#x27;, isArray: true, additional: undefined, anonymize: &#x27;retain&#x27;})<br />
+                            @DatabaseField({label: undefined, dataType: &#x27;entity&#x27;, isArray: true, additional: undefined, anonymize: &#x27;retain&#x27;})<br />
                         </code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="184" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:184</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="172" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:172</a></div>
                         </td>
                     </tr>
 
@@ -967,66 +854,13 @@ so that notes can be displayed linked to these entities.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="169" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:169</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="155" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:155</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>id referencing a different entity (e.g. a recurring activity) this note is related to</p>
-</div>
-                </td>
-            </tr>
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="schools"></a>
-                    <span class="name">
-                            <span class="modifier"></span>
-                        <span class="deprecated-name"><b>schools</b></span>
-                        <a href="#schools"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4 deprecated">
-                    <p>Default structure will only use a combined <code>relatedEntities</code> field</p>
-
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>string[]</code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>[]</code>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <b>Decorators : </b>
-                        <br />
-                        <code>
-                            @DatabaseField({label: undefined, dataType: &#x27;entity&#x27;, isArray: true, additional: &#x27;School&#x27;, entityReferenceRole: &#x27;composite&#x27;, anonymize: &#x27;retain&#x27;})<br />
-                        </code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="199" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:199</a></div>
-                        </td>
-                    </tr>
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>related school ids (e.g. to infer participants for event roll calls)</p>
 </div>
                 </td>
             </tr>
@@ -1062,7 +896,7 @@ so that notes can be displayed linked to these entities.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="127" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:127</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="113" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:113</a></div>
                         </td>
                     </tr>
 
@@ -1098,7 +932,7 @@ so that notes can be displayed linked to these entities.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="133" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:133</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="119" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:119</a></div>
                         </td>
                     </tr>
 
@@ -1137,7 +971,7 @@ so that notes can be displayed linked to these entities.</p>
                         </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:42</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:48</a></code>
 </div>
                         </td>
                     </tr>
@@ -1174,7 +1008,7 @@ so that notes can be displayed linked to these entities.</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="207" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:207</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="180" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:180</a></div>
                         </td>
                     </tr>
 
@@ -1832,15 +1666,15 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>create(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, subject: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, children: string[])</code>
+                    <code>create(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, subject: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, relatedEntities: string[])</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="48"
-                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:48</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -1891,7 +1725,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
 
                                         </tr>
                                         <tr>
-                                                <td>children</td>
+                                                <td>relatedEntities</td>
                                             <td>
                                                         <code>string[]</code>
                                             </td>
@@ -1948,7 +1782,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:217</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:190</a></code>
 </div>
                         </td>
                     </tr>
@@ -1972,29 +1806,23 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                     <a name="getColorForId"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
-                        <span class="deprecated-name"><b>getColorForId</b></span>
+                        <span ><b>getColorForId</b></span>
                         <a href="#getColorForId"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
-                <td class="col-md-4 deprecated">
-                    <p>Attendance logic will be decoupled from Note and only use the new <code>attendance</code> datatype</p>
-
-                </td>
-            </tr>
-            <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getColorForId(childId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                    <code>getColorForId(participantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="231"
-                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:231</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="205"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:205</a></div>
                         </td>
                     </tr>
 
@@ -2002,6 +1830,8 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Special color override to reflect the attendance status for a specific participant.</p>
+<p>Looks at whichever attendance field the (config-extended) schema has,
+i.e. the modern <code>attendance</code> datatype as well as the legacy <code>event-attendance-map</code>.</p>
 </div>
 
                             <div class="io-description">
@@ -2017,7 +1847,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>childId</td>
+                                                <td>participantId</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
@@ -2046,18 +1876,56 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="getPropertyFor"></a>
+                    <a name="getLinkFields"></a>
                     <span class="name">
                             <span class="modifier">Static</span>
-                        <span class="deprecated-name"><b>getPropertyFor</b></span>
-                        <a href="#getPropertyFor"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>getLinkFields</b></span>
+                        <a href="#getLinkFields"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
-                <td class="col-md-4 deprecated">
-                    <p>special logic for Note will be removed. Default structure will only use a combined <code>relatedEntities</code> field</p>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getLinkFields()</code>
+                </td>
+            </tr>
 
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="73"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:73</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>All Note properties that link this note to other records,
+i.e. every &quot;entity&quot; field in the (config-extended) schema except <code>authors</code>.</p>
+<p>This covers the generic <code>relatedEntities</code> as well as any custom or legacy entity fields of a system.
+(<code>authors</code> is indexed and queried separately.)</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>string[]</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPropertyFor"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>getPropertyFor</b></span>
+                        <a href="#getPropertyFor"><span class="icon ion-ios-link"></span></a>
+                    </span>
                 </td>
             </tr>
             <tr>
@@ -2070,15 +1938,17 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:66</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:88</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Returns the name of the Note property where entities of the given entity type are stored</p>
+                        <div class="io-description"><p>Returns the name of the Note property where (multiple) entities of the given entity type are stored:
+the first &quot;entity&quot; array field specifically configured for that type (e.g. a legacy <code>children</code> field),
+otherwise <code>relatedEntities</code>.</p>
 </div>
 
                             <div class="io-description">
@@ -2109,7 +1979,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>&quot;children&quot; | &quot;schools&quot; | &quot;authors&quot; | &quot;relatedEntities&quot;</code>
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 
                         </div>
                             <div class="io-description">
@@ -2147,7 +2017,7 @@ This is auto-generated from the property annotations <code>@DatabaseField()</cod
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:209</a></code>
+                                <div class="io-line">        <code><a href="../classes/Entity.html#source" target="_self" >Entity:182</a></code>
 </div>
                         </td>
                     </tr>
@@ -2884,10 +2754,12 @@ import {
 } from &quot;./interaction-type.interface&quot;;
 import { AttendanceItem } from &quot;#src/app/features/attendance/model/attendance-item&quot;;
 import { AttendanceLogicalStatus } from &quot;#src/app/features/attendance/model/attendance-status&quot;;
+import { AttendanceDatatype } from &quot;#src/app/features/attendance/model/attendance.datatype&quot;;
 import { getWarningLevelColor, WarningLevel } from &quot;../../warning-level&quot;;
 import { Ordering } from &quot;../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering&quot;;
 import { PLACEHOLDERS } from &quot;../../../core/entity/schema/entity-schema-field&quot;;
 import { IconName } from &quot;@fortawesome/fontawesome-svg-core&quot;;
+import { asArray } from &quot;../../../utils/asArray&quot;;
 
 /**
  * Notes are a special in-built entity type to record free-form information related to other records.
@@ -2895,7 +2767,11 @@ import { IconName } from &quot;@fortawesome/fontawesome-svg-core&quot;;
  * Previously, &#x60;Note&#x60; has also functioned to record an event with an attendance list of participants.
  * That functionality is getting generalized and decoupled from this specific entity.
  * Add a &quot;attendance&quot; type field to any entity type instead.
- * Attendance-related fields and methods here are currently kept (deprecated) for backwards compatibility until all existing data is migrated.
+ *
+ * &#x60;Note&#x60; therefore no longer declares the legacy &#x60;children&#x60;, &#x60;schools&#x60; and &#x60;childrenAttendance&#x60; fields.
+ * Systems that still hold data in them have the definitions written into their own &#x60;entity:Note&#x60; config
+ * by the &#x60;oneoff-20261008-note-legacy-child-school-fields&#x60; CLI migration
+ * (see &#x60;deprecated/legacy-note-fields.ts&#x60;).
  */
 @DatabaseEntity(&quot;Note&quot;)
 export class Note extends Entity {
@@ -2908,67 +2784,47 @@ export class Note extends Entity {
   static create(
     date: Date,
     subject: string &#x3D; &quot;&quot;,
-    children: string[] &#x3D; [],
+    relatedEntities: string[] &#x3D; [],
   ): Note {
     const instance &#x3D; new Note();
     instance.date &#x3D; date;
     instance.subject &#x3D; subject;
-    instance.children &#x3D; [...children];
+    instance.relatedEntities &#x3D; [...relatedEntities];
     return instance;
   }
 
   /**
-   * Returns the name of the Note property where entities of the given entity type are stored
-   * @param entityType
+   * All Note properties that link this note to other records,
+   * i.e. every &quot;entity&quot; field in the (config-extended) schema except &#x60;authors&#x60;.
    *
-   * @deprecated special logic for Note will be removed. Default structure will only use a combined &#x60;relatedEntities&#x60; field
+   * This covers the generic &#x60;relatedEntities&#x60; as well as any custom or legacy entity fields of a system.
+   * (&#x60;authors&#x60; is indexed and queried separately.)
    */
-  static getPropertyFor(entityType: string) {
-    switch (entityType) {
-      case &quot;Child&quot;:
-        return &quot;children&quot;;
-      case &quot;School&quot;:
-        return &quot;schools&quot;;
-      case &quot;User&quot;:
-        return &quot;authors&quot;;
-      default:
-        return &quot;relatedEntities&quot;;
-    }
+  static getLinkFields(): string[] {
+    return [...Note.schema.entries()]
+      .filter(
+        ([key, field]) &#x3D;&gt; field.dataType &#x3D;&#x3D;&#x3D; &quot;entity&quot; &amp;&amp; key !&#x3D;&#x3D; &quot;authors&quot;,
+      )
+      .map(([key]) &#x3D;&gt; key)
+      .sort((a, b) &#x3D;&gt; a.localeCompare(b));
   }
 
-  // TODO: remove these special properties (children, schools) and use relatedEntities instead once the attendance system is generalized (#1364)
   /**
-   * IDs of Child entities linked with this note
-   *
-   * @deprecated Default structure will only use a combined &#x60;relatedEntities&#x60; field
+   * Returns the name of the Note property where (multiple) entities of the given entity type are stored:
+   * the first &quot;entity&quot; array field specifically configured for that type (e.g. a legacy &#x60;children&#x60; field),
+   * otherwise &#x60;relatedEntities&#x60;.
+   * @param entityType
    */
-  @DatabaseField({
-    label: $localize&#x60;:Label for the participants field of a note:Participants&#x60;,
-    dataType: &quot;entity&quot;,
-    isArray: true,
-    additional: &quot;Child&quot;,
-    entityReferenceRole: &quot;composite&quot;,
-    editComponent: &quot;EditLegacyAttendance&quot;,
-    anonymize: &quot;retain&quot;,
-  })
-  children: string[] &#x3D; [];
-
-  /**
-   * optional additional information about attendance at this event for each of the linked children
-   *
-   * @deprecated Attendance logic will be decoupled from Note. By default, notes will not include attendance details anymore. Any entity type can add an &#x60;attendance&#x60; type field.
-   */
-  @DatabaseField({
-    anonymize: &quot;retain&quot;,
-    dataType: &quot;event-attendance-map&quot;,
-    additional: {
-      participant: {
-        dataType: &quot;entity&quot;,
-        additional: [&quot;Child&quot;],
-      },
-    },
-  })
-  childrenAttendance: AttendanceItem[] &#x3D; [];
+  static getPropertyFor(entityType: string): string {
+    const matchingField &#x3D; [...Note.schema.entries()].find(
+      ([key, field]) &#x3D;&gt;
+        key !&#x3D;&#x3D; &quot;relatedEntities&quot; &amp;&amp;
+        field.dataType &#x3D;&#x3D;&#x3D; &quot;entity&quot; &amp;&amp;
+        field.isArray &amp;&amp;
+        asArray(field.additional).includes(entityType),
+    );
+    return matchingField?.[0] ?? &quot;relatedEntities&quot;;
+  }
 
   @DatabaseField({
     label: $localize&#x60;:Label for the date of a note:Date&#x60;,
@@ -3035,28 +2891,15 @@ export class Note extends Entity {
    * This property saves ids including their entity type prefix.
    */
   @DatabaseField({
+    label: $localize&#x60;:label for the related Entities:Related Records&#x60;,
     dataType: &quot;entity&quot;,
     isArray: true,
-    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: &quot;ChildSchoolRelation&quot;)
+    // the code definition links no entity type: systems configure the linked types as &#x60;additional&#x60; in their config
+    // (as the base configs and the CLI migration of the legacy children / schools fields do)
     additional: undefined,
     anonymize: &quot;retain&quot;,
   })
   relatedEntities: string[] &#x3D; [];
-
-  /**
-   * related school ids (e.g. to infer participants for event roll calls)
-   *
-   * @deprecated Default structure will only use a combined &#x60;relatedEntities&#x60; field
-   */
-  @DatabaseField({
-    label: $localize&#x60;:label for the linked schools:Groups&#x60;,
-    dataType: &quot;entity&quot;,
-    isArray: true,
-    additional: &quot;School&quot;,
-    entityReferenceRole: &quot;composite&quot;,
-    anonymize: &quot;retain&quot;,
-  })
-  schools: string[] &#x3D; [];
 
   @DatabaseField({
     label: $localize&#x60;:Status of a note:Status&#x60;,
@@ -3086,18 +2929,29 @@ export class Note extends Entity {
   /**
    * Special color override to reflect the attendance status for a specific participant.
    *
-   * @deprecated Attendance logic will be decoupled from Note and only use the new &#x60;attendance&#x60; datatype
+   * Looks at whichever attendance field the (config-extended) schema has,
+   * i.e. the modern &#x60;attendance&#x60; datatype as well as the legacy &#x60;event-attendance-map&#x60;.
    */
-  public getColorForId(childId: string): string {
-    if (
-      this.category?.isMeeting &amp;&amp;
-      this.childrenAttendance.find((item) &#x3D;&gt; item.participant &#x3D;&#x3D;&#x3D; childId)
-        ?.status.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT
-    ) {
-      // child is absent, highlight the entry
+  public getColorForId(participantId: string): string {
+    if (this.category?.isMeeting &amp;&amp; this.isMarkedAbsent(participantId)) {
+      // participant is absent, highlight the entry
       return getWarningLevelColor(WarningLevel.URGENT);
     }
     return this.getColor();
+  }
+
+  // This scans the whole schema for attendance fields on every call (per row and change detection in tables).
+  // If this becomes a performance issue, resolve the attendance field ids once per entity constructor instead.
+  private isMarkedAbsent(participantId: string): boolean {
+    return AttendanceDatatype.detectAllFieldsInEntity(
+      this.getConstructor(),
+    ).some(({ fieldId }) &#x3D;&gt;
+      (this[fieldId] as AttendanceItem[] | undefined)?.some(
+        (item) &#x3D;&gt;
+          item?.participant &#x3D;&#x3D;&#x3D; participantId &amp;&amp;
+          item?.status?.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT,
+      ),
+    );
   }
 }
 </code></pre>

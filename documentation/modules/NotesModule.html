@@ -178,7 +178,7 @@ import { notesComponents } from &quot;./notes-components&quot;;
 import { Note } from &quot;./model/note&quot;;
 import { DashboardWidgetRegistryService } from &quot;../../core/dashboard/dashboard-widget-registry.service&quot;;
 import { DefaultConfigMigrationRegistryService } from &quot;../../core/config/default-config-migration-registry.service&quot;;
-import { addDefaultNoteDetailsConfig } from &quot;./add-default-note-views&quot;;
+import { addDefaultNoteViews } from &quot;./add-default-note-views&quot;;
 
 @NgModule({})
 export class NotesModule {
@@ -209,9 +209,7 @@ export class NotesModule {
 
     components.addAll(notesComponents);
 
-    inject(DefaultConfigMigrationRegistryService).register(
-      addDefaultNoteDetailsConfig,
-    );
+    inject(DefaultConfigMigrationRegistryService).register(addDefaultNoteViews);
   }
 }
 </code></pre>

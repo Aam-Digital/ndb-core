@@ -267,26 +267,30 @@ Join the referenced table to resolve it:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT c.name AS child, s.name AS school
 FROM Child c
 JOIN School s ON s._id = c.schoolId</code></pre></div><h5>Unpack a multi-select (isArray) entity-reference field</h5>
-<p>A field with <code>dataType: &quot;entity&quot;</code> and <code>isArray: true</code> stores a JSON array of ids (e.g. <code>Note.children</code>).
-Unpack it with <code>json_each()</code> and join to resolve each id to a name:</p>
+<p>A field with <code>dataType: &quot;entity&quot;</code> and <code>isArray: true</code> stores a JSON array of ids
+(e.g. <code>Note.relatedEntities</code>). Unpack it with <code>json_each()</code> and join to resolve each id to a name:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT n.subject AS note, c.name AS participant
-FROM Note n, json_each(n.children) p
-JOIN Child c ON c._id = p.value</code></pre></div><h5>Attendance status of individual participants from EventNote</h5>
-<p><code>childrenAttendance</code> stores one <code>[childId, {status, remarks}]</code> pair per participant as a JSON array,
+FROM Note n, json_each(n.relatedEntities) p
+JOIN Child c ON c._id = p.value</code></pre></div><h5>Attendance status of individual participants</h5>
+<p>A field with <code>dataType: &quot;attendance&quot;</code> stores a JSON array of <code>{participant, status, remarks}</code> objects,
 which can be unpacked with <a href="https://www.sqlite.org/json1.html#jeach">SQLite&#39;s <code>json_each()</code></a>:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$[0]&#39;) AS participant_id,
-  json_extract(value, &#39;$[1].status&#39;) AS status,
-  json_extract(e.schools, &#39;$[0]&#39;) AS team_id
-FROM EventNote e, json_each(e.childrenAttendance)
-JOIN Child AS c ON c._id = participant_id
-JOIN School AS s ON s._id = team_id</code></pre></div><p>The same pattern calculates an attendance percentage per participant, filtered by event category:</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$[0]&#39;) AS participant_id, e.category,
-  ROUND((SUM(CASE WHEN json_extract(value, &#39;$[1].status&#39;) = &#39;PRESENT&#39; THEN 1 ELSE 0 END) * 100.0
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$.participant&#39;) AS participant_id,
+  json_extract(value, &#39;$.status&#39;) AS status
+FROM Event e, json_each(e.attendance)
+JOIN Child AS c ON c._id = participant_id</code></pre></div><p>The same pattern calculates an attendance percentage per participant, filtered by event category:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT json_extract(value, &#39;$.participant&#39;) AS participant_id, e.category,
+  ROUND((SUM(CASE WHEN json_extract(value, &#39;$.status&#39;) = &#39;PRESENT&#39; THEN 1 ELSE 0 END) * 100.0
     / COUNT(e._id)), 2) AS attendance_percentage
-FROM EventNote e, json_each(e.childrenAttendance)
-JOIN Child c ON c._id = json_extract(value, &#39;$[0]&#39;)
+FROM Event e, json_each(e.attendance)
+JOIN Child c ON c._id = json_extract(value, &#39;$.participant&#39;)
 WHERE e.category IN (&#39;LEARNING_GROUP&#39;, &#39;PIC&#39;) AND e.date BETWEEN $startDate AND $endDate
-GROUP BY c._id, e.category</code></pre></div><h5>Group by each option of a multi-select dropdown</h5>
+GROUP BY c._id, e.category</code></pre></div><blockquote>
+<p><strong>Legacy format:</strong> the deprecated <code>event-attendance-map</code> datatype (<code>Note.childrenAttendance</code>, only
+present in systems the <code>oneoff-20261008-note-legacy-child-school-fields</code> migration restored it for)
+instead stores one <code>[participantId, {status, remarks}]</code> pair per participant, so it is unpacked with
+<code>json_extract(value, &#39;$[0]&#39;)</code> for the participant and <code>json_extract(value, &#39;$[1].status&#39;)</code> for the status.</p>
+</blockquote>
+<h5>Group by each option of a multi-select dropdown</h5>
 <p>A multi-select (<code>isArray</code>) field is stored as a JSON array of option ids (e.g. <code>[&quot;pizza&quot;, &quot;burger&quot;]</code>).
 To count each selected option individually (a row counts towards every option it includes):</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-sql">SELECT COALESCE(opt.label, sel.value) AS option, COUNT(*) AS count

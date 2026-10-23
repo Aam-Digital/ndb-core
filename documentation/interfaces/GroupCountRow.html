@@ -632,14 +632,20 @@ export class EntityCountDashboardComponent {
   private rawEntities &#x3D; signal&lt;Entity[]&gt;([]);
   currentGroupIndex &#x3D; signal(0);
 
-  entityType &#x3D; input(&quot;Child&quot;);
+  entityType &#x3D; input&lt;string&gt;();
   groupBy &#x3D; input&lt;string[]&gt;([&quot;center&quot;, &quot;gender&quot;]);
   subtitle &#x3D; input&lt;string&gt;();
   explanation &#x3D; input&lt;string&gt;(
     $localize&#x60;:dashboard widget explanation:Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.&#x60;,
   );
 
-  entityDefinition &#x3D; computed(() &#x3D;&gt; this.entities.get(this.entityType()));
+  /** &#x60;undefined&#x60; when unconfigured or the configured type isn&#x27;t registered, rather than throwing. */
+  entityDefinition &#x3D; computed(() &#x3D;&gt; {
+    const type &#x3D; this.entityType();
+    return type &amp;&amp; this.entities.has(type)
+      ? this.entities.get(type)
+      : undefined;
+  });
   totalEntities &#x3D; computed(
     () &#x3D;&gt; this.rawEntities().filter((entity) &#x3D;&gt; !entity.inactive).length,
   );
@@ -647,6 +653,9 @@ export class EntityCountDashboardComponent {
   entityGroupCounts &#x3D; computed&lt;Record&lt;string, GroupCountRow[]&gt;&gt;(() &#x3D;&gt; {
     const result: Record&lt;string, GroupCountRow[]&gt; &#x3D; {};
     const entityDefinition &#x3D; this.entityDefinition();
+    if (!entityDefinition) {
+      return result;
+    }
     const activeEntities &#x3D; this.rawEntities().filter(
       (entity) &#x3D;&gt; !entity.inactive,
     );
@@ -675,10 +684,15 @@ export class EntityCountDashboardComponent {
     effect((onCleanup) &#x3D;&gt; {
       const entityType &#x3D; this.entityType();
       const entityDefinition &#x3D; this.entityDefinition();
-      let isCurrent &#x3D; true;
 
       this.rawEntities.set([]);
       this.currentGroupIndex.set(0);
+
+      if (!entityType || !entityDefinition) {
+        return;
+      }
+
+      let isCurrent &#x3D; true;
 
       untracked(async () &#x3D;&gt; {
         const entities &#x3D; await this.entityMapper.loadType(entityDefinition);
@@ -723,7 +737,7 @@ export class EntityCountDashboardComponent {
   }
 
   static getRequiredEntities(config: EntityCountDashboardConfig) {
-    return config?.entityType || &quot;Child&quot;;
+    return config?.entityType;
   }
 
   private calculateGroupCounts(
@@ -844,14 +858,15 @@ export class EntityCountDashboardComponent {
 
   goToEntityList(filterId: string) {
     const field &#x3D; this.currentGroupField();
-    if (!field) {
+    const entityDefinition &#x3D; this.entityDefinition();
+    if (!field || !entityDefinition) {
       return;
     }
 
     const params &#x3D; {};
     params[field] &#x3D; encodeURIComponent(filterId);
 
-    this.router.navigate([getEntityRuntimeRoute(this.entityDefinition())], {
+    this.router.navigate([getEntityRuntimeRoute(entityDefinition)], {
       queryParams: params,
     });
   }

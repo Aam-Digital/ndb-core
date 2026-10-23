@@ -474,7 +474,7 @@
 import { Entity, EntityConstructor } from &quot;../entity/model/entity&quot;;
 import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
 import { ChildSchoolRelation } from &quot;../../child-dev-project/children/model/childSchoolRelation&quot;;
-import { ChildrenService } from &quot;../../child-dev-project/children/children.service&quot;;
+import { NotesService } from &quot;../../child-dev-project/notes/notes.service&quot;;
 import { AttendanceService } from &quot;#src/app/features/attendance/attendance.service&quot;;
 import { AttendanceItem } from &quot;#src/app/features/attendance/model/attendance-item&quot;;
 import { EventWithAttendance } from &quot;#src/app/features/attendance/model/event-with-attendance&quot;;
@@ -489,9 +489,9 @@ import { TimePeriod } from &quot;../entity-details/related-time-period-entities/
   providedIn: &quot;root&quot;,
 })
 export class QueryService {
-  private entityMapper &#x3D; inject(EntityMapperService);
-  private childrenService &#x3D; inject(ChildrenService);
-  private attendanceService &#x3D; inject(AttendanceService);
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly notesService &#x3D; inject(NotesService);
+  private readonly attendanceService &#x3D; inject(AttendanceService);
 
   private entities: { [type: string]: { [id: string]: Entity } } &#x3D; {};
 
@@ -523,7 +523,7 @@ export class QueryService {
   } &#x3D; {
     Note: {
       dataFunction: (from, to) &#x3D;&gt;
-        this.childrenService.getNotesInTimespan(from, to),
+        this.notesService.getNotesInTimespan(from, to),
     },
   };
 

@@ -171,8 +171,8 @@
                     <ul class="index-list">
                         <li>
                                     <span class="modifier">Optional</span>
-                                <a href="#entity" class="reference-link ">
-                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entity</span>
+                                <a href="#entityType" class="reference-link ">
+                                    <span class="reference-badge reference-badge--property" aria-hidden="true">P</span><span class="reference-link-label">entityType</span>
                                 </a>
                         </li>
                         <li>
@@ -208,9 +208,9 @@
                 <tbody>
                         <tr>
                             <td class="col-md-4">
-                                <a name="entity"></a>
-                                <span class="name "><b>entity</b>
-                                    <a href="#entity">
+                                <a name="entityType"></a>
+                                <span class="name "><b>entityType</b>
+                                    <a href="#entityType">
                                         <span class="icon ion-ios-link"></span>
                                     </a>
                                 </span>
@@ -218,7 +218,7 @@
                         </tr>
                         <tr>
                             <td class="col-md-4">
-                                <code>entity:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                <code>entityType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
 </code>
                             </td>
                         </tr>
@@ -395,7 +395,7 @@
   signal,
   untracked,
 } from &quot;@angular/core&quot;;
-import { ChildrenService } from &quot;../../../children/children.service&quot;;
+import { NotesService } from &quot;../../notes.service&quot;;
 import moment from &quot;moment&quot;;
 import { MatTableModule } from &quot;@angular/material/table&quot;;
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
@@ -407,7 +407,7 @@ import { Note } from &quot;../../model/note&quot;;
 import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
 
 interface NotesDashboardConfig {
-  entity?: string;
+  entityType?: string;
   sinceDays?: number;
   fromBeginningOfWeek?: boolean;
   mode?: &quot;with-recent-notes&quot; | &quot;without-recent-notes&quot;;
@@ -433,18 +433,22 @@ interface NotesDashboardConfig {
   ],
 })
 export class NotesDashboardComponent {
-  private childrenService &#x3D; inject(ChildrenService);
-  private entities &#x3D; inject(EntityRegistry);
+  private readonly notesService &#x3D; inject(NotesService);
+  private readonly entities &#x3D; inject(EntityRegistry);
 
   static getRequiredEntities(config: NotesDashboardConfig) {
-    return config?.entity || Note.ENTITY_TYPE;
+    return config?.entityType || Note.ENTITY_TYPE;
   }
 
   /** Entity for which the recent notes should be counted. */
-  entity &#x3D; input(&quot;Child&quot;);
-  readonly entityDefinition &#x3D; computed&lt;EntityConstructor&gt;(() &#x3D;&gt;
-    this.entities.get(this.entity()),
-  );
+  entityType &#x3D; input&lt;string&gt;();
+  /** &#x60;undefined&#x60; when unconfigured or the configured type isn&#x27;t registered, rather than throwing. */
+  readonly entityDefinition &#x3D; computed&lt;EntityConstructor | undefined&gt;(() &#x3D;&gt; {
+    const type &#x3D; this.entityType();
+    return type &amp;&amp; this.entities.has(type)
+      ? this.entities.get(type)
+      : undefined;
+  });
   /**
    * number of days since last note that entities should be considered having a &quot;recent&quot; note.
    */
@@ -462,6 +466,9 @@ export class NotesDashboardComponent {
 
   subtitle &#x3D; computed(() &#x3D;&gt; {
     const entity &#x3D; this.entityDefinition();
+    if (!entity) {
+      return &quot;&quot;;
+    }
     switch (this.mode()) {
       case &quot;with-recent-notes&quot;:
         return $localize&#x60;:Subtitle|Subtitle informing the user that these are the records with recent reports:${entity.labelPlural} with recent report&#x60;;
@@ -493,7 +500,7 @@ export class NotesDashboardComponent {
 
   private async loadConcernedEntities(isCurrent: () &#x3D;&gt; boolean) {
     const mode &#x3D; this.mode();
-    if (!mode) {
+    if (!mode || !this.entityDefinition()) {
       this.entries.set([]);
       return;
     }
@@ -513,7 +520,7 @@ export class NotesDashboardComponent {
         : (stat: [string, number]) &#x3D;&gt; stat[1] &gt;&#x3D; dayRangeBoundary;
 
     const recentNotesMap &#x3D;
-      await this.childrenService.getDaysSinceLastNoteOfEachEntity(
+      await this.notesService.getDaysSinceLastNoteOfEachEntity(
         this.entityDefinition().ENTITY_TYPE,
         queryRange,
       );

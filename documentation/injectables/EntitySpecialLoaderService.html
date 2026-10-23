@@ -242,8 +242,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="52"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:52</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -329,8 +329,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="44"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:44</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -404,8 +404,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="103"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:103</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:105</a></div>
                         </td>
                     </tr>
 
@@ -517,8 +517,8 @@ Each loader decides for itself whether and how it needs this.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="82"
-                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:82</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/app/core/entity/entity-special-loader/entity-special-loader.service.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -624,6 +624,7 @@ import { Entity } from &quot;../model/entity&quot;;
 import { DataFilter } from &quot;../../filter/filters/filters&quot;;
 import { EntityPage } from &quot;../entity-mapper/entity-mapper.service&quot;;
 import { ChildrenService } from &quot;../../../child-dev-project/children/children.service&quot;;
+import { NotesService } from &quot;../../../child-dev-project/notes/notes.service&quot;;
 import { UpdatedEntity } from &quot;../model/entity-update&quot;;
 import { Logging } from &quot;../../logging/logging.service&quot;;
 import { TodoService } from &quot;#src/app/features/todos/todo.service&quot;;
@@ -659,6 +660,7 @@ export function supportsPagination(loaderMethod?: LoaderMethod): boolean {
 })
 export class EntitySpecialLoaderService {
   private readonly childrenService &#x3D; inject(ChildrenService);
+  private readonly notesService &#x3D; inject(NotesService);
   private readonly todoService &#x3D; inject(TodoService);
   private readonly auditReferenceLoader &#x3D; inject(AuditReferenceLoaderService);
 
@@ -732,7 +734,7 @@ export class EntitySpecialLoaderService {
           entity.getId(false),
         ) as unknown as Promise&lt;E[]&gt;;
       case LoaderMethod.NotesRelatedToEntity:
-        return this.childrenService.getNotesRelatedTo(
+        return this.notesService.getNotesRelatedTo(
           entity.getId(),
         ) as unknown as Promise&lt;E[]&gt;;
       case LoaderMethod.TodosRelatedToEntity:

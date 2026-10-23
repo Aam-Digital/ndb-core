@@ -288,7 +288,7 @@ Builds upon the generated demo Child entities.</p>
                     </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">        <code><a href="../injectables/DemoDataGenerator.html#source" target="_self" >DemoDataGenerator:50</a></code>
+                                <div class="io-line">        <code><a href="../injectables/DemoDataGenerator.html#source" target="_self" >DemoDataGenerator:46</a></code>
 </div>
                         </td>
                     </tr>
@@ -327,8 +327,8 @@ Builds upon the generated demo Child entities.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="37"
-                                    class="link-to-prism">src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts:37</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="33"
+                                    class="link-to-prism">src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -577,11 +577,7 @@ import { faker } from &quot;../../../core/demo-data/faker&quot;;
 import { noteIndividualStories } from &quot;./notes_individual-stories&quot;;
 import { noteGroupStories } from &quot;./notes_group-stories&quot;;
 import { centersUnique } from &quot;../../children/demo-data-generators/fixtures/centers&quot;;
-import { absenceRemarks } from &quot;./remarks&quot;;
-import { AttendanceLogicalStatus } from &quot;#src/app/features/attendance/model/attendance-status&quot;;
-import { AttendanceItem } from &quot;#src/app/features/attendance/model/attendance-item&quot;;
 import { DemoUserGeneratorService } from &quot;../../../core/user/demo-user-generator.service&quot;;
-import { defaultAttendanceStatusTypes } from &quot;../../../core/config/default-config/default-attendance-status-types&quot;;
 import { warningLevels, WarningLevel } from &quot;../../warning-level&quot;;
 import { Entity } from &quot;../../../core/entity/model/entity&quot;;
 
@@ -696,7 +692,7 @@ export function generateNote(params: {
   const selectedStory &#x3D; faker.helpers.arrayElement(noteIndividualStories);
   Object.assign(note, selectedStory);
 
-  note.children.push(params.child.getId());
+  note.relatedEntities &#x3D; [params.child.getId()];
   note.authors &#x3D; [params.author.getId()];
 
   let date &#x3D; params.date;
@@ -723,23 +719,9 @@ function generateGroupNote(params: { children: Entity[]; author: Entity }) {
   const selectedStory &#x3D; faker.helpers.arrayElement(noteGroupStories);
   Object.assign(note, selectedStory);
 
-  note.children &#x3D; params.children.map((c) &#x3D;&gt; c.getId());
-  params.children.forEach((child) &#x3D;&gt; {
-    const item &#x3D; new AttendanceItem();
-    item.participant &#x3D; child.getId();
-    // get an approximate presence of 85%
-    if (faker.number.int(100) &lt;&#x3D; 15) {
-      item.status &#x3D; defaultAttendanceStatusTypes.find(
-        (t) &#x3D;&gt; t.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT,
-      );
-      item.remarks &#x3D; faker.helpers.arrayElement(absenceRemarks);
-    } else {
-      item.status &#x3D; defaultAttendanceStatusTypes.find(
-        (t) &#x3D;&gt; t.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.PRESENT,
-      );
-    }
-    note.childrenAttendance.push(item);
-  });
+  // attendance is no longer recorded on Note (see the &#x60;attendance&#x60; datatype
+  // used by the demo Event / ClassSession entities instead)
+  note.relatedEntities &#x3D; params.children.map((c) &#x3D;&gt; c.getId());
 
   note.authors &#x3D; [params.author.getId()];
 

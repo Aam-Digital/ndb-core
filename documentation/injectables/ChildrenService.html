@@ -189,23 +189,6 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Public</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#getDaysSinceLastNoteOfEachEntity" >getDaysSinceLastNoteOfEachEntity</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Public</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#getNotesInTimespan" >getNotesInTimespan</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
-                                    <span class="modifier">Async</span>
-                                <a href="#getNotesRelatedTo" >getNotesRelatedTo</a>
-                            </li>
-                            <li>
-                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#queryActiveRelationsOf" >queryActiveRelationsOf</a>
                             </li>
                             <li>
@@ -235,7 +218,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">src/app/child-dev-project/children/children.service.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/child-dev-project/children/children.service.ts:11</a></div>
                             </td>
                         </tr>
 
@@ -270,8 +253,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="43"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:43</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:36</a></div>
                         </td>
                     </tr>
 
@@ -346,8 +329,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="27"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:27</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="20"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:20</a></div>
                         </td>
                     </tr>
 
@@ -361,286 +344,6 @@
                             <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
 
                         </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getDaysSinceLastNoteOfEachEntity"></a>
-                    <span class="name">
-                            <span class="modifier">Public</span>
-                            <span class="modifier">Async</span>
-                        <span ><b>getDaysSinceLastNoteOfEachEntity</b></span>
-                        <a href="#getDaysSinceLastNoteOfEachEntity"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getDaysSinceLastNoteOfEachEntity(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, forLastNDays: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="156"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:156</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Query how many days ago the last note for each child was added.</p>
-<p>Warning: Children without any notes will be missing from this map.</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-none">    For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
-</code></pre></div></div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>entityType</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>&quot;Child&quot;</code>
-                                            </td>
-
-                                            <td>
-                                                    <p>(Optional) entity for which days since last note are calculated. Default &quot;Child&quot;.</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>forLastNDays</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>30</code>
-                                            </td>
-
-                                            <td>
-                                                    <p>(Optional) cut-off boundary how many days into the past the analysis will be done.</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Promise&lt;Map&lt;string, number&gt;&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                <p>A map of childIds as key and days since last note as value;
-For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter</p>
-
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getNotesInTimespan"></a>
-                    <span class="name">
-                            <span class="modifier">Public</span>
-                            <span class="modifier">Async</span>
-                        <span ><b>getNotesInTimespan</b></span>
-                        <a href="#getNotesInTimespan"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getNotesInTimespan(startDay: Date | Moment, endDay: Date | Moment)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="192"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:192</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Returns all notes in the timespan.
-It is only checked if the notes are on the same day als start and end day. The time is not checked.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Default value</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>startDay</td>
-                                            <td>
-                                                        <code>Date | Moment</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                            </td>
-
-                                            <td>
-                                                    <p>the first day where notes should be included</p>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                                <td>endDay</td>
-                                            <td>
-                                                        <code>Date | Moment</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-                                            <td>
-                                                    <code>moment()</code>
-                                            </td>
-
-                                            <td>
-                                                    <p>the last day where notes should be included</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Note.html" target="_self" >Promise&lt;Note[]&gt;</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getNotesRelatedTo"></a>
-                    <span class="name">
-                            <span class="modifier">Async</span>
-                        <span ><b>getNotesRelatedTo</b></span>
-                        <a href="#getNotesRelatedTo"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getNotesRelatedTo(entityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="109"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:109</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-                        <div class="io-description"><p>Query all notes that have been linked to the given other entity.</p>
-</div>
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                                <td>Description</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>entityId</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                            <td>
-                                                    <p>ID (with prefix!) of the related record</p>
-
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="../classes/Note.html" target="_self" >Promise&lt;Note[]&gt;</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
                 </td>
             </tr>
         </tbody>
@@ -665,8 +368,8 @@ It is only checked if the notes are on the same day als start and end day. The t
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="96"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:96</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="89"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:89</a></div>
                         </td>
                     </tr>
 
@@ -750,8 +453,8 @@ It is only checked if the notes are on the same day als start and end day. The t
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="83"
-                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:83</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:76</a></div>
                         </td>
                     </tr>
 
@@ -806,9 +509,7 @@ It is only checked if the notes are on the same day als start and end day. The t
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, inject } from &quot;@angular/core&quot;;
 import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
-import { Note } from &quot;../notes/model/note&quot;;
 import { ChildSchoolRelation } from &quot;./model/childSchoolRelation&quot;;
-import moment, { Moment } from &quot;moment&quot;;
 import { DatabaseIndexingService } from &quot;../../core/entity/database-indexing/database-indexing.service&quot;;
 import { Entity } from &quot;../../core/entity/model/entity&quot;;
 import { groupBy } from &quot;../../utils/utils&quot;;
@@ -819,11 +520,6 @@ export class ChildrenService {
   private dbIndexing &#x3D; inject(DatabaseIndexingService);
 
   constructor() {
-    this.createDatabaseIndices();
-  }
-
-  private createDatabaseIndices() {
-    this.createNotesIndex();
     this.createChildSchoolRelationIndex();
   }
 
@@ -906,167 +602,6 @@ export class ChildrenService {
     return this.queryRelations(id).then((relations) &#x3D;&gt;
       relations.filter((rel) &#x3D;&gt; rel.isActiveAt(date)),
     );
-  }
-
-  /**
-   * Query all notes that have been linked to the given other entity.
-   * @param entityId ID (with prefix!) of the related record
-   */
-  async getNotesRelatedTo(entityId: string): Promise&lt;Note[]&gt; {
-    let legacyLinkedNotes &#x3D; [];
-    if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
-      legacyLinkedNotes &#x3D; await this.dbIndexing.queryIndexDocs(
-        Note,
-        &#x60;notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}&#x60;,
-        entityId,
-      );
-    }
-
-    const explicitlyLinkedNotes &#x3D; await this.dbIndexing.queryIndexDocsRange(
-      Note,
-      &#x60;notes_related_index/note_by_relatedEntities&#x60;,
-      [entityId],
-      [entityId],
-    );
-
-    return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
-      // remove duplicates
-      (element, index, array) &#x3D;&gt;
-        array.findIndex((e) &#x3D;&gt; e._id &#x3D;&#x3D;&#x3D; element._id) &#x3D;&#x3D;&#x3D; index,
-    );
-  }
-
-  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
-    // TODO: rework this to check the entity schema and find the relevant field?
-    const entityType &#x3D; Entity.extractTypeFromId(entityId);
-    switch (entityType) {
-      case &quot;Child&quot;:
-        return &quot;children&quot;;
-      case &quot;School&quot;:
-        return &quot;schools&quot;;
-      case &quot;User&quot;:
-        return &quot;authors&quot;;
-    }
-  }
-
-  /**
-   * Query how many days ago the last note for each child was added.
-   *
-   * Warning: Children without any notes will be missing from this map.
-   *
-   * @param entityType (Optional) entity for which days since last note are calculated. Default &quot;Child&quot;.
-   * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
-   * @return A map of childIds as key and days since last note as value;
-   *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
-   */
-  public async getDaysSinceLastNoteOfEachEntity(
-    entityType &#x3D; &quot;Child&quot;,
-    forLastNDays: number &#x3D; 30,
-  ): Promise&lt;Map&lt;string, number&gt;&gt; {
-    const startDay &#x3D; moment().subtract(forLastNDays, &quot;days&quot;);
-
-    const notes &#x3D; await this.getNotesInTimespan(startDay);
-
-    const results &#x3D; new Map();
-    const entities &#x3D; await this.entityMapper.loadType(entityType);
-    entities
-      .filter((c) &#x3D;&gt; !c.inactive)
-      .forEach((c) &#x3D;&gt; results.set(c.getId(), Number.POSITIVE_INFINITY));
-
-    const noteProperty &#x3D; Note.getPropertyFor(entityType);
-    for (const note of notes) {
-      // TODO: filter notes to only include them if the given child is marked &quot;present&quot;
-
-      for (const entityId of note[noteProperty]) {
-        const daysSinceNote &#x3D; moment().diff(note.date, &quot;days&quot;);
-        const previousValue &#x3D; results.get(entityId);
-        if (previousValue &gt; daysSinceNote) {
-          results.set(entityId, daysSinceNote);
-        }
-      }
-    }
-
-    return results;
-  }
-
-  /**
-   * Returns all notes in the timespan.
-   * It is only checked if the notes are on the same day als start and end day. The time is not checked.
-   * @param startDay the first day where notes should be included
-   * @param endDay the last day where notes should be included
-   */
-  public async getNotesInTimespan(
-    startDay: Date | Moment,
-    endDay: Date | Moment &#x3D; moment(),
-  ): Promise&lt;Note[]&gt; {
-    return this.dbIndexing.queryIndexDocsRange(
-      Note,
-      &quot;notes_index/note_child_by_date&quot;,
-      moment(startDay).format(&quot;YYYY-MM-DD&quot;),
-      moment(endDay).format(&quot;YYYY-MM-DD&quot;),
-    );
-  }
-
-  private async createNotesIndex(): Promise&lt;any&gt; {
-    const designDoc &#x3D; {
-      _id: &quot;_design/notes_index&quot;,
-      views: {
-        note_child_by_date: {
-          map: &#x60;(doc) &#x3D;&gt; {
-            if (!doc._id.startsWith(&quot;${Note.ENTITY_TYPE}&quot;)) return;
-            if (!Array.isArray(doc.children) || !doc.date) return;
-            if (doc.date.length &#x3D;&#x3D;&#x3D; 10) {
-              emit(doc.date);
-            } else {
-              var d &#x3D; new Date(doc.date || null);
-              emit(d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;));
-            }
-          }&#x60;,
-        },
-      },
-    };
-
-    // TODO: remove these and use general note_by_relatedEntities instead --&gt; to be decided later #1501
-    // creating a by_... view for each of the following properties
-    [&quot;children&quot;, &quot;schools&quot;, &quot;authors&quot;].forEach(
-      (prop) &#x3D;&gt;
-        (designDoc.views[&#x60;by_${prop}&#x60;] &#x3D; this.createNotesByFunction(prop)),
-    );
-
-    await this.dbIndexing.createIndex(designDoc);
-
-    const newDesignDoc &#x3D; {
-      _id: &quot;_design/notes_related_index&quot;,
-      views: {
-        note_by_relatedEntities: {
-          map: &#x60;(doc) &#x3D;&gt; {
-            if (!doc._id.startsWith(&quot;${Note.ENTITY_TYPE}&quot;)) return;
-            if (!Array.isArray(doc.relatedEntities)) return;
-            var dString;
-            if (doc.date &amp;&amp; doc.date.length &#x3D;&#x3D;&#x3D; 10) {
-              dString &#x3D; doc.date;
-            } else {
-              var d &#x3D; new Date(doc.date || null);
-              dString &#x3D; d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;);
-            }
-            doc.relatedEntities.forEach((relatedEntity) &#x3D;&gt; {
-              emit([relatedEntity, dString]);
-            });
-          }&#x60;,
-        },
-      },
-    };
-    await this.dbIndexing.createIndex(newDesignDoc);
-  }
-
-  private createNotesByFunction(property: string) {
-    return {
-      map: &#x60;(doc) &#x3D;&gt; {
-        if (!doc._id.startsWith(&quot;${Note.ENTITY_TYPE}&quot;)) return;
-        if (!Array.isArray(doc.${property})) return;
-        doc.${property}.forEach(val &#x3D;&gt; emit(val));
-      }&#x60;,
-    };
   }
 }
 </code></pre>

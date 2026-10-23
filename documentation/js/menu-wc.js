@@ -2238,6 +2238,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/MultiTabDetectionService.html" data-type="entity-link" >MultiTabDetectionService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/NotesService.html" data-type="entity-link" >NotesService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/PermissionConditionValidatorsService.html" data-type="entity-link" >PermissionConditionValidatorsService</a>
                                 </li>
                                 <li class="link">
@@ -2875,6 +2878,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/InteractionType.html" data-type="entity-link" >InteractionType</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/LegacyNoteField.html" data-type="entity-link" >LegacyNoteField</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/LinkExternalProfileDialogData.html" data-type="entity-link" >LinkExternalProfileDialogData</a>

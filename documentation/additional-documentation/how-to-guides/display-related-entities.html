@@ -154,17 +154,17 @@ constructor(private entityMapper: EntityMapperService) {
 This has to be a function that returns a new entity instance:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-none">generateNewRecordFactory() {
     // define values locally because &quot;this&quot; is a different scope after passing a function as input to another component
-    const childId = this.childId;
+    const entityId = this.entityId;
 
     return () =&gt; {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      newNote.children = [childId];
+      newNote.relatedEntities = [entityId];
 
       return newNote;
     };
 }</code></pre></div><p>This gives you the power to already pre-fill certain values in the new entity
-like in this example linking the new note with the selected child automatically.
+like in this example linking the new note with the selected entity automatically.
 Unfortunately the implementation has to be a little clumsy: A method that itself returns a function again.</p>
 <p>Finally, the <code>[columns]</code> configuration allows you a lot of flexibility over
 which properties of the entities are shown and how they are formatted and edited.
@@ -189,9 +189,9 @@ By default, clicking on a row will automatically open a form popup which shows a
 What happens when a row is clicked can be overwritten with the <code>[showEntity]</code> parameter.
 This parameter expects a function that gets the clicked entity as input.</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-none">&lt;app-entity-subrecord
-    [records]=&quot;children&quot;
+    [records]=&quot;relatedEntities&quot;
     [columns]=&quot;columns&quot;
-    [showEntity]=&quot;routeToChild.bind(this)&quot;
+    [showEntity]=&quot;routeToEntity.bind(this)&quot;
     [editable]=&quot;false&quot;
   &gt;&lt;/app-entity-subrecord&gt;</code></pre></div>
                    </div><div class="search-results">

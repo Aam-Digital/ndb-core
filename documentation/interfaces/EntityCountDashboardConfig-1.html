@@ -292,7 +292,7 @@
   input,
   linkedSignal,
 } from &quot;@angular/core&quot;;
-import { FormsModule, FormControl } from &quot;@angular/forms&quot;;
+import { FormsModule, FormControl, ValidatorFn } from &quot;@angular/forms&quot;;
 import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
 import { EntityTypeSelectComponent } from &quot;../../../../core/entity/entity-type-select/entity-type-select.component&quot;;
 import { EntityFieldSelectComponent } from &quot;../../../../core/entity/entity-field-select/entity-field-select.component&quot;;
@@ -335,9 +335,17 @@ export class EntityCountDashboardSettingsComponent {
   entityType &#x3D; linkedSignal(() &#x3D;&gt; this.formControl().value?.entityType);
   groupBy &#x3D; linkedSignal(() &#x3D;&gt; [...(this.formControl().value?.groupBy ?? [])]);
 
+  /** the widget cannot count anything without an entity type, so saving is blocked until one is selected */
+  private readonly requireEntityType: ValidatorFn &#x3D; (control) &#x3D;&gt;
+    control.value?.entityType ? null : { entityTypeRequired: true };
+
   constructor() {
     effect(() &#x3D;&gt; {
-      this.formControl().setValue({
+      const control &#x3D; this.formControl();
+      if (!control.hasValidator(this.requireEntityType)) {
+        control.addValidators(this.requireEntityType);
+      }
+      control.setValue({
         entityType: this.entityType(),
         groupBy: this.groupBy(),
       });
