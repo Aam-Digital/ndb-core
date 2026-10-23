@@ -14,7 +14,8 @@ export interface ParentRange {
 }
 
 /**
- * Loads the ranges of the parent records that a record links to.
+ * Loads the ranges of the parent records that a record links to
+ * (except anonymized ones, whose dates are reduced to the year).
  * Must be called in an injection context (e.g. as a field initializer of a component).
  *
  * @param params the parent link (one or several ids), the config and the id of the field, or undefined if there is nothing to check
@@ -55,7 +56,7 @@ export function parentRangesResource(
     }): Promise<ParentRange[]> => {
       const parents = await Promise.all(parentIds.map((id) => load(id)));
       return parents
-        .filter((parent) => !!parent)
+        .filter((parent) => !!parent && !parent.anonymized)
         .map((parent) => ({
           name: parent.toString(),
           range: parent[valueField],

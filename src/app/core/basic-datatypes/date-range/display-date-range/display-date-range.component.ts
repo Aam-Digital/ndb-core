@@ -28,13 +28,14 @@ export class DisplayDateRangeComponent extends ViewDirective<DateRangeValue> {
     const entity = this.entity();
     const fieldId = this.id();
     const config = entity?.getSchema()?.get(fieldId)?.withinParent;
-    return (
-      config && {
-        parentReference: entity[config.parentReferenceField],
-        config,
-        fieldId,
-      }
-    );
+    if (!config || entity.anonymized) {
+      return undefined;
+    }
+    return {
+      parentReference: entity[config.parentReferenceField],
+      config,
+      fieldId,
+    };
   });
 
   /** name of the first linked parent record whose range this value goes beyond */

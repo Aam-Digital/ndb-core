@@ -272,6 +272,7 @@ describe("EditDateRangeComponent", () => {
       period: DateRangeValue,
       parentInForm: string | null | undefined,
       parentOfRecord?: string,
+      anonymized = false,
     ) {
       const parentFixture = TestBed.createComponent(EditDateRangeComponent);
       const form = setupCustomFormControlEditComponent(
@@ -292,6 +293,7 @@ describe("EditDateRangeComponent", () => {
         "entity",
         Object.assign(new EditDateRangeTestAction(), {
           parent: parentOfRecord,
+          anonymized,
         }),
       );
       form.get("period").setValue(period);
@@ -338,6 +340,17 @@ describe("EditDateRangeComponent", () => {
         );
       },
     );
+
+    it("shows no warning on an anonymized record, whose dates are moved to 1 July", async () => {
+      const { warning } = await render(
+        { start: new Date(2026, 6, 1), end: new Date(2026, 6, 1) },
+        parentAction.getId(),
+        undefined,
+        true,
+      );
+
+      expect(await warning()).toBeUndefined();
+    });
 
     it("follows a parent link entered in the form", async () => {
       const { form, warning } = await render(outside, null);

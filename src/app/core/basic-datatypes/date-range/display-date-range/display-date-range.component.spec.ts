@@ -59,11 +59,15 @@ describe("DisplayDateRangeComponent", () => {
     name: "Training",
     period: { start, end },
   });
+  const anonymizedParent = Object.assign(new DisplayDateRangeTestAction("2"), {
+    anonymized: true,
+    period: { start, end },
+  });
 
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [
-        ...mockEntityMapperProvider([parentAction]),
+        ...mockEntityMapperProvider([parentAction, anonymizedParent]),
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }),
@@ -124,10 +128,12 @@ describe("DisplayDateRangeComponent", () => {
   async function warningOfLinkedRecord(
     period: DateRangeValue,
     parent: string | undefined,
+    anonymized = false,
   ): Promise<string | undefined> {
     const action = Object.assign(new DisplayDateRangeTestAction(), {
       parent,
       period,
+      anonymized,
     });
     const fixture = TestBed.createComponent(DisplayDateRangeComponent);
     fixture.componentRef.setInput("entity", action);
@@ -155,14 +161,33 @@ describe("DisplayDateRangeComponent", () => {
       "lies within the parent's period",
       { start: new Date(2026, 2, 10), end: new Date(2026, 2, 20) },
       parentAction.getId(),
+      false,
     ],
-    ["has no parent linked", { start: new Date(2025, 0, 1) }, undefined],
+    ["has no parent linked", { start: new Date(2025, 0, 1) }, undefined, false],
     [
       "links a parent that does not exist",
       { start: new Date(2025, 0, 1) },
       "DisplayDateRangeTestAction:missing",
+      false,
     ],
-  ])("shows no warning for a period that %s", async (_, period, parent) => {
-    expect(await warningOfLinkedRecord(period, parent)).toBeUndefined();
-  });
+    [
+      "belongs to an anonymized record (its dates are moved to 1 July)",
+      { start: new Date(2026, 6, 1), end: new Date(2026, 6, 1) },
+      parentAction.getId(),
+      true,
+    ],
+    [
+      "links an anonymized parent",
+      { start: new Date(2025, 0, 1) },
+      anonymizedParent.getId(),
+      false,
+    ],
+  ])(
+    "shows no warning for a period that %s",
+    async (_, period, parent, anonymized) => {
+      expect(
+        await warningOfLinkedRecord(period, parent, anonymized),
+      ).toBeUndefined();
+    },
+  );
 });

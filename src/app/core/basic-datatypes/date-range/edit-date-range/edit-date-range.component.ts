@@ -107,7 +107,7 @@ export class EditDateRangeComponent
   private readonly parents = parentRangesResource(() => {
     const field = this.formFieldConfig();
     const config = field?.withinParent;
-    if (!config) {
+    if (!config || this.entity()?.anonymized) {
       return undefined;
     }
     const inForm = this.parentReferenceInForm();
