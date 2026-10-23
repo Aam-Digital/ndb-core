@@ -244,7 +244,47 @@ describe("ConfigureTranslationsPopupComponent", () => {
         ["de", true],
         ["en-US", false],
       ]);
-      expect(fixture.nativeElement.textContent).toContain("(not offered)");
+    });
+
+    function findToggle(): HTMLButtonElement | undefined {
+      return Array.from<HTMLButtonElement>(
+        fixture.nativeElement.querySelectorAll("button"),
+      ).find((b) => /languages? that (is|are) not offered/.test(b.textContent));
+    }
+
+    it("should hide rows of languages that are not offered until the toggle is used, and still save them", async () => {
+      await createComponent({ value: { "en-US": "Name", de: "Vorname" } }, [
+        de,
+      ]);
+
+      const labels = () => fixture.nativeElement.textContent;
+      expect(labels()).not.toContain("(not offered)");
+      expect(findToggle().textContent).toContain(
+        "Show 1 more language that is not offered",
+      );
+
+      // saving without expanding keeps the hidden translation
+      component.onSave();
+      expect(dialogRef.close).toHaveBeenCalledWith({
+        value: { "en-US": "Name", de: "Vorname" },
+      });
+
+      findToggle().click();
+      fixture.detectChanges();
+      expect(labels()).toContain("(not offered)");
+      expect(findToggle().textContent).toContain(
+        "Hide 1 language that is not offered",
+      );
+
+      findToggle().click();
+      fixture.detectChanges();
+      expect(labels()).not.toContain("(not offered)");
+    });
+
+    it("should not show the toggle if all languages are offered", async () => {
+      await createComponent({ value: { "en-US": "Name", de: "Vorname" } });
+
+      expect(findToggle()).toBeUndefined();
     });
   });
 });

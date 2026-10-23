@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -66,10 +71,18 @@ export class ConfigureTranslationsPopupComponent {
 
   rows: TranslationRow[] = this.buildRows();
 
+  /** number of rows of languages that are not offered (hidden until expanded) */
+  readonly notOfferedCount = this.rows.filter((r) => !r.offered).length;
+
+  /** whether rows of languages that are not offered are shown; they are hidden by default */
+  readonly showNotOffered = signal(false);
+
   /**
    * One row per language this system offers (in their order), followed by every
    * other language this text already holds text for. {@link buildValue} rebuilds
    * the value from the rows, so leaving one out would delete that text on save.
+   * Rows of languages that are not offered are only hidden in the template
+   * (see {@link showNotOffered}), never left out of the rows.
    *
    * Existing text means: a key of a translation map (a base-language key like `en`
    * counts for `en-US`), or, for a plain string, the active language, which
