@@ -190,10 +190,14 @@ per-language list.
 The active locale is stored in `localStorage` and read at bootstrap.
 
 **Without `multiLingualConfigEnabled`** nobody can switch: everyone uses the _system
-language_ (`SiteSettings.defaultLanguage`, `en-US` if unset). A user's own language
+language_ (`SiteSettings.defaultLanguage`). A user's own language
 and a language picked on the device earlier are ignored (the saved `UserSettings`
 stay untouched, the locale stored on the device is overwritten with the system
-language). The profile shows the language selector disabled with an explanation,
+language). The system language is only enforced when one is actually set: on a fresh
+system, or while the site settings have not arrived (waiting up to
+`LanguageService.SITE_DEFAULT_WAIT_MS`), the current locale is left as it is instead
+of falling back to `en-US`. The language picked in the setup assistant is saved as
+the system language (`SiteSettingsService.setDefaultLanguage()`), with or without the flag. The profile shows the language selector disabled with an explanation,
 and public forms hide it. The "Languages offered" site setting shows that the
 feature is disabled (`EditAvailableLocalesComponent`).
 

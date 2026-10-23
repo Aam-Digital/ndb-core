@@ -319,6 +319,48 @@ describe("LanguageService", () => {
       );
     });
 
+    describe("without a configured system language", () => {
+      beforeEach(() => {
+        // site settings that never set a default language
+        siteSettingsMock.defaultLanguage = new ReplaySubject(1);
+        window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "de");
+        vi.useFakeTimers();
+      });
+
+      afterEach(() => vi.useRealTimers());
+
+      it.each([
+        ["at startup", () => service.initDefaultLanguage()],
+        ["on login", () => logIn()],
+      ])(
+        "keeps the language picked on the device %s instead of forcing en-US",
+        async (_, trigger) => {
+          trigger();
+          await vi.advanceTimersByTimeAsync(
+            LanguageService.SITE_DEFAULT_WAIT_MS + 100,
+          );
+
+          expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+            "de",
+          );
+          expect(reloadSpy).not.toHaveBeenCalled();
+        },
+      );
+
+      it("keeps the current language when site settings are saved without one", async () => {
+        mockEntityMapperUpdates.next({
+          entity: new SiteSettings(),
+          type: "update",
+        });
+        await vi.advanceTimersByTimeAsync(100);
+
+        expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+          "de",
+        );
+        expect(reloadSpy).not.toHaveBeenCalled();
+      });
+    });
+
     it("should not reload if the system language is already active", async () => {
       languageSubject.next({ id: "en-US", label: "en" });
 
