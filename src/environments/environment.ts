@@ -32,7 +32,11 @@ export const environment = {
   production: false,
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
-  remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  /**
+   * The DSN of the remote monitoring (Sentry) project to report warnings and errors to.
+   * Not set by default, so remote logging is off: deployments set it in their `config.json`.
+   */
+  remoteLoggingDsn: undefined as string | undefined,
   /**
    * The `environment` that remote monitoring files this deployment's events under.
    * Defaults to "production" for production builds - set it in the `config.json`
