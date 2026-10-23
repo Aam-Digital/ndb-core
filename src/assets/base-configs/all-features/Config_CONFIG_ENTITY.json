@@ -96,7 +96,7 @@
             {
               "label": "Users",
               "icon": "users",
-              "link": "/user"
+              "entityType": "User"
             }
           ]
         }
@@ -144,7 +144,8 @@
             }
           },
           {
-            "component": "TodosDashboard"
+            "component": "TodosDashboard",
+            "config": {}
           },
           {
             "component": "NotesDashboard",
@@ -852,10 +853,9 @@
             "title": "Education",
             "components": [
               {
-                "title": "School History",
-                "component": "ChildSchoolOverview",
+                "component": "RelatedEntities",
                 "config": {
-                  "single": true,
+                  "entityType": "ChildSchoolRelation",
                   "columns": [
                     {
                       "id": "start",
@@ -868,7 +868,10 @@
                     "schoolId",
                     "schoolClass",
                     "result"
-                  ]
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations",
+                  "showInactive": true,
+                  "single": true
                 }
               },
               {
@@ -919,7 +922,8 @@
             "components": [
               {
                 "title": "",
-                "component": "GroupedChildAttendance"
+                "component": "GroupedChildAttendance",
+                "config": {}
               },
               {
                 "title": "Event Attendance",
@@ -946,11 +950,69 @@
             "components": [
               {
                 "title": "",
-                "component": "NotesRelatedToEntity"
+                "component": "NotesRelatedToEntity",
+                "config": {
+                  "entityType": "Note",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "subject",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "text",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "authors",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "warningLevel",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
               },
               {
                 "title": "Tasks",
-                "component": "TodosRelatedToEntity"
+                "component": "TodosRelatedToEntity",
+                "config": {
+                  "entityType": "Todo",
+                  "columns": [
+                    {
+                      "id": "deadline"
+                    },
+                    {
+                      "id": "subject"
+                    },
+                    {
+                      "id": "startDate"
+                    },
+                    {
+                      "id": "assignedTo"
+                    },
+                    {
+                      "id": "description",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "repetitionInterval",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "relatedEntities",
+                      "hideFromTable": true
+                    },
+                    {
+                      "id": "completed",
+                      "hideFromForm": true
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1273,7 +1335,8 @@
             "title": "Events & Attendance",
             "components": [
               {
-                "component": "ActivityAttendanceSection"
+                "component": "ActivityAttendanceSection",
+                "config": {}
               }
             ]
           }
@@ -1373,12 +1436,12 @@
           "dataType": "string",
           "label": "Status",
           "defaultValue": {
-            "mode": "updated-from-referencing-entity",
+            "mode": "inherited-field",
             "config": {
-              "relatedReferenceField": "participants",
-              "relatedEntityType": "RecurringActivity",
-              "relatedTriggerField": "status",
-              "automatedMapping": {
+              "sourceReferenceEntity": "RecurringActivity",
+              "sourceReferenceField": "participants",
+              "sourceValueField": "status",
+              "valueMapping": {
                 "PLANNED": "coaching requested",
                 "ONGOING": "in coaching",
                 "COMPLETED": "coaching completed"
@@ -1851,7 +1914,8 @@
           "dataType": "string",
           "label": "Contact"
         }
-      }
+      },
+      "enableUserAccounts": true
     },
     "appConfig:matching-entities": {
       "columns": [
@@ -1902,10 +1966,10 @@
         "prefilter": {
           "$or": [
             {
-              "center.id": "C1"
+              "center": "C1"
             },
             {
-              "center.id": "C2"
+              "center": "C2"
             }
           ]
         }

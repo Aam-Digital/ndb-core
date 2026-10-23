@@ -373,17 +373,17 @@
       }
     },
     "view:child": {
-      "component": "ChildrenList",
+      "component": "EntityList",
       "config": {
         "entityType": "Child",
         "columns": [
           {
-            "viewComponent": "ChildBlock",
+            "viewComponent": "EntityBlock",
             "label": "Name",
             "id": "name"
           },
           {
-            "viewComponent": "DisplayEntityArray",
+            "viewComponent": "DisplayEntity",
             "label": "School",
             "id": "schoolId",
             "additional": "School",
@@ -404,7 +404,8 @@
           {
             "id": "gender"
           }
-        ]
+        ],
+        "loaderMethod": "ChildrenService"
       }
     },
     "view:child/:id": {
@@ -441,10 +442,9 @@
             "title": "Groups",
             "components": [
               {
-                "title": "",
-                "component": "ChildSchoolOverview",
+                "component": "RelatedEntities",
                 "config": {
-                  "single": true,
+                  "entityType": "ChildSchoolRelation",
                   "columns": [
                     {
                       "id": "start",
@@ -455,7 +455,10 @@
                       "visibleFrom": "sm"
                     },
                     "schoolId"
-                  ]
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations",
+                  "showInactive": true,
+                  "single": true
                 }
               }
             ]
@@ -465,11 +468,69 @@
             "components": [
               {
                 "title": "",
-                "component": "NotesRelatedToEntity"
+                "component": "NotesRelatedToEntity",
+                "config": {
+                  "entityType": "Note",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "subject",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "text",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "authors",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "warningLevel",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
               },
               {
                 "title": "Tasks",
-                "component": "TodosRelatedToEntity"
+                "component": "TodosRelatedToEntity",
+                "config": {
+                  "entityType": "Todo",
+                  "columns": [
+                    {
+                      "id": "deadline"
+                    },
+                    {
+                      "id": "subject"
+                    },
+                    {
+                      "id": "startDate"
+                    },
+                    {
+                      "id": "assignedTo"
+                    },
+                    {
+                      "id": "description",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "repetitionInterval",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "relatedEntities",
+                      "hideFromTable": true
+                    },
+                    {
+                      "id": "completed",
+                      "hideFromForm": true
+                    }
+                  ]
+                }
               }
             ]
           }

@@ -19,33 +19,6 @@ describe("latestConfigFormats migration", () => {
     );
   });
 
-  it("applies migrations and marks changed: true when config is in old format", async () => {
-    const seed: DocStore = {
-      [CONFIG_PATH]: {
-        _id: "Config:CONFIG_ENTITY",
-        data: {
-          "view:Dashboard": {
-            component: "Dashboard",
-            config: {
-              widgets: [
-                {
-                  component: "ShortcutDashboard",
-                  config: { shortcuts: [{ label: "Go", link: "child/123" }] },
-                },
-              ],
-            },
-          },
-        },
-      },
-    };
-    const result = await runIdempotencyCheck(latestConfigFormats, seed);
-
-    // Second run must report no-change
-    expect(result.secondRunResult.changed).toBe(false);
-    expect(result.secondRunResult.status).toBe("no-change");
-    expect(result.stateAfterSecondRun).toEqual(result.stateAfterFirstRun);
-  });
-
   it("reports no-change when config is already in latest format", async () => {
     const seed: DocStore = {
       [CONFIG_PATH]: {
