@@ -84,26 +84,29 @@ describe("SiteSettingsService", () => {
   const EN = { id: "en-US", label: "English" };
 
   it.each([
-    ["no list: only the system language", [], DE, [DE]],
+    ["no list: only the default language", [], DE, [DE]],
     [
-      "no list and no system language: all languages",
+      "no list and no default language: all languages",
       [],
       undefined,
       availableLocales.values,
     ],
-    ["list with the system language", [DE, FR], DE, [DE, FR]],
-    ["list without the system language", [FR], DE, [FR, DE]],
-    ["list and no system language set", [FR, EN], undefined, [FR, EN]],
-  ])("should enable locales for %s", (_, enabled, systemLanguage, expected) => {
-    entityMapper.add(
-      SiteSettings.create({
-        availableLocales: enabled,
-        defaultLanguage: systemLanguage,
-      }),
-    );
+    ["list with the default language", [DE, FR], DE, [DE, FR]],
+    ["list without the default language", [FR], DE, [FR, DE]],
+    ["list and no default language set", [FR, EN], undefined, [FR, EN]],
+  ])(
+    "should enable locales for %s",
+    (_, enabled, defaultLanguage, expected) => {
+      entityMapper.add(
+        SiteSettings.create({
+          availableLocales: enabled,
+          defaultLanguage: defaultLanguage,
+        }),
+      );
 
-    expect(service.enabledLocales()).toEqual(expected);
-  });
+      expect(service.enabledLocales()).toEqual(expected);
+    },
+  );
 
   describe("translationsEnabled", () => {
     const originalFlag = environment.multiLingualConfigEnabled;
@@ -115,7 +118,7 @@ describe("SiteSettingsService", () => {
     it.each([
       ["the flag is off", false, [DE, FR], false],
       [
-        "the flag is on but only the system language is enabled",
+        "the flag is on but only the default language is enabled",
         true,
         [],
         false,
@@ -259,7 +262,7 @@ describe("SiteSettingsService", () => {
       environment.session_type = originalSessionType;
     }
   });
-  it("saves a new system language without losing other settings", async () => {
+  it("saves a new default language without losing other settings", async () => {
     entityMapper.add(SiteSettings.create({ siteName: "My site" }));
 
     await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
@@ -269,7 +272,7 @@ describe("SiteSettingsService", () => {
     expect(saved.siteName).toBe("My site");
   });
 
-  it("creates the site settings to save the system language on a fresh system", async () => {
+  it("creates the site settings to save the default language on a fresh system", async () => {
     await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
 
     const saved = await entityMapper.load(SiteSettings, SiteSettings.ENTITY_ID);

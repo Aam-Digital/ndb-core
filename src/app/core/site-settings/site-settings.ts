@@ -25,7 +25,7 @@ export class SiteSettings extends Entity {
   hideSiteNameInToolbar: boolean = false;
 
   @DatabaseField({
-    label: $localize`System language`,
+    label: $localize`Default language`,
     description: $localize`The language of the app for all users. If several languages are enabled, users can switch to another one in their profile.`,
     dataType: "configurable-enum",
     additional: LOCALE_ENUM_ID,
@@ -34,7 +34,7 @@ export class SiteSettings extends Entity {
 
   @DatabaseField({
     label: $localize`Enabled languages`,
-    description: $localize`The languages users can switch the app to and admins can configure texts in. The system language is always enabled.`,
+    description: $localize`The languages users can switch the app to and admins can configure texts in. The default language is always enabled.`,
     dataType: "configurable-enum",
     editComponent: "EditAvailableLocales",
     additional: LOCALE_ENUM_ID,

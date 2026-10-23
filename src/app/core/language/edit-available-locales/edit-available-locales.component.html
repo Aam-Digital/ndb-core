@@ -12,13 +12,13 @@
     >
       <ng-template let-option>
         {{ option.label }}
-        @if (option.id === systemLanguage()?.id) {
+        @if (option.id === defaultLanguage()?.id) {
           <span
-            class="system-language-marker"
-            matTooltip="The system language is always enabled."
+            class="default-language-marker"
+            matTooltip="The default language is always enabled."
             i18n-matTooltip
             i18n
-            >(system language)</span
+            >(default language)</span
           >
         }
       </ng-template>

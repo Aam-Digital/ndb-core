@@ -43,7 +43,7 @@ export class UserLanguageSettingsComponent {
 
   readonly enabledLocales = this.siteSettings.enabledLocales;
 
-  /** without language switching, the selector stays visible but locked to the system language */
+  /** without language switching, the selector stays visible but locked to the default language */
   readonly switchingEnabled = this.siteSettings.languageSwitchingEnabled;
 
   /** also shown as alert if saving fails for this reason */

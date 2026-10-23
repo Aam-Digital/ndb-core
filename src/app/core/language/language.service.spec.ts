@@ -259,7 +259,7 @@ describe("LanguageService", () => {
       languageSubject.next({ id: "de", label: "de" });
     });
 
-    it("should ignore a language stored on the device and apply the system language at startup", () => {
+    it("should ignore a language stored on the device and apply the default language at startup", () => {
       window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
 
       service.initDefaultLanguage();
@@ -302,7 +302,7 @@ describe("LanguageService", () => {
       expect(reloadSpy).not.toHaveBeenCalled();
     });
 
-    it("should apply a changed system language even if the user has their own", async () => {
+    it("should apply a changed default language even if the user has their own", async () => {
       mockUserSettings.getLanguage.mockResolvedValue("fr");
       window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
 
@@ -319,7 +319,7 @@ describe("LanguageService", () => {
       );
     });
 
-    describe("without a configured system language", () => {
+    describe("without a configured default language", () => {
       beforeEach(() => {
         // site settings that never set a default language
         siteSettingsMock.defaultLanguage = new ReplaySubject(1);
@@ -361,7 +361,7 @@ describe("LanguageService", () => {
       });
     });
 
-    it("should not reload if the system language is already active", async () => {
+    it("should not reload if the default language is already active", async () => {
       languageSubject.next({ id: "en-US", label: "en" });
 
       logIn();

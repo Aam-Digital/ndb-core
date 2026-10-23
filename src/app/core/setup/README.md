@@ -18,7 +18,7 @@ exists.
 3. Importing a base config means fetching its JSON documents and saving them as entities, force-
    overwriting anything already there. `Config:CONFIG_ENTITY` is just one of these documents, alongside
    permissions, enum definitions, site settings, sample reports/forms, etc.
-   The language selected at the top of the Assistant is saved as the system language
+   The language selected at the top of the Assistant is saved as the default language
    (`SiteSettings.defaultLanguage`) when it is picked, and again after the import, so it always
    overrides a language the imported `SiteSettings:global` document defines.
 4. Once the config document is saved, the app reconfigures itself reactively — routing and entity

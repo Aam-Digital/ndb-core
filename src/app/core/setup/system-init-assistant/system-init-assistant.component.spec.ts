@@ -81,7 +81,7 @@ describe("SystemInitAssistantComponent", () => {
     expect(component.initializeSystem).toHaveBeenCalled();
   });
 
-  it("makes the selected language the system language after importing the use case", async () => {
+  it("makes the selected language the default language after importing the use case", async () => {
     await configureComponent("de");
     mockSetupService.getAvailableBaseConfig.mockResolvedValue([{}]);
     await component.ngOnInit();
@@ -142,7 +142,7 @@ describe("SystemInitAssistantComponent", () => {
     },
   );
 
-  it("saves the picked language as system language before switching to it", async () => {
+  it("saves the picked language as default language before switching to it", async () => {
     await configureComponent("en-US");
     mockSetupService.getAvailableBaseConfig.mockResolvedValue([
       { locale: "de" },

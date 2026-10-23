@@ -115,7 +115,7 @@ export class SystemInitAssistantComponent implements OnInit {
   }
 
   /**
-   * The language picked here becomes the system language for all users
+   * The language picked here becomes the default language for all users
    * (also if users can not switch languages themselves later).
    * It is saved before applying it, because applying it reloads the app.
    */
@@ -132,9 +132,9 @@ export class SystemInitAssistantComponent implements OnInit {
     } catch (err) {
       this.languageSelect()?.resetToCurrent();
       if (isConnectivityError(err)) {
-        Logging.debug("Could not save the system language", err);
+        Logging.debug("Could not save the default language", err);
       } else {
-        Logging.warn("Failed to save the system language", err);
+        Logging.warn("Failed to save the default language", err);
       }
       this.alertService.addDanger(
         $localize`The language could not be saved. Please try again.`,
@@ -175,7 +175,7 @@ export class SystemInitAssistantComponent implements OnInit {
 
     try {
       await this.setupService.initSystemWithBaseConfig(this.selectedUseCase()!);
-      await this.saveSelectedLanguageAsSystemLanguage();
+      await this.saveSelectedLanguageAsDefaultLanguage();
 
       if (this.generateDemoData()) {
         await this.demoDataInitializer.generateDemoData();
@@ -192,10 +192,10 @@ export class SystemInitAssistantComponent implements OnInit {
   }
 
   /**
-   * The language selected here always becomes the system language, also if it was
+   * The language selected here always becomes the default language, also if it was
    * only preselected and over a language the imported site settings define.
    */
-  private async saveSelectedLanguageAsSystemLanguage() {
+  private async saveSelectedLanguageAsDefaultLanguage() {
     const currentLocale = this.languageService.getCurrentLocale();
     const locale = availableLocales.values.find((l) => l.id === currentLocale);
     if (locale) {

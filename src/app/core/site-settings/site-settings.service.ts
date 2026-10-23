@@ -45,7 +45,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
   /**
    * Whether users may switch the app's language themselves. If not, everyone uses
-   * the system language ({@link defaultLanguage}). Bound to the deployment's
+   * the default language ({@link defaultLanguage}). Bound to the deployment's
    * `multiLingualConfigEnabled` flag, read at runtime because `config.json` overwrites it.
    */
   get languageSwitchingEnabled(): boolean {
@@ -58,26 +58,26 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   );
 
   /**
-   * The enabled languages of this system: the system language ({@link defaultLanguage})
+   * The enabled languages of this system: the default language ({@link defaultLanguage})
    * plus the admin's selection (`availableLocales`). Order: the stored selection first,
-   * the system language appended if it is not part of it. It is added here at read time,
-   * so changing the system language needs no data fix-up.
+   * the default language appended if it is not part of it. It is added here at read time,
+   * so changing the default language needs no data fix-up.
    *
-   * So an empty selection enables only the system language. Only if neither a selection
-   * nor a system language is set (system not set up yet, or settings not loaded yet)
+   * So an empty selection enables only the default language. Only if neither a selection
+   * nor a default language is set (system not set up yet, or settings not loaded yet)
    * are all languages enabled. Never returns an empty list.
    */
   readonly enabledLocales = toSignal(
     this.siteSettings.pipe(
       map((settings) => {
         const selected = settings?.availableLocales ?? [];
-        const systemLanguage = settings?.defaultLanguage;
-        if (!systemLanguage?.id) {
+        const defaultLanguage = settings?.defaultLanguage;
+        if (!defaultLanguage?.id) {
           return selected.length ? selected : availableLocales.values;
         }
-        return selected.some(({ id }) => id === systemLanguage.id)
+        return selected.some(({ id }) => id === defaultLanguage.id)
           ? selected
-          : [...selected, systemLanguage];
+          : [...selected, defaultLanguage];
       }),
     ),
     { initialValue: availableLocales.values },
@@ -86,7 +86,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   /**
    * Whether the UI to configure texts in several languages is shown (the translations
    * buttons of admin forms). Requires the `multiLingualConfigEnabled` flag AND more than
-   * one enabled language: if only the system language is enabled, there is nothing to
+   * one enabled language: if only the default language is enabled, there is nothing to
    * translate into. Texts already stored per language are resolved and kept as always.
    */
   readonly translationsEnabled = computed(
@@ -183,7 +183,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   /**
-   * Make the given language the system language for all users,
+   * Make the given language the default language for all users,
    * keeping the other site settings (a new settings document is created if none exists yet).
    * Resolves once saved.
    */

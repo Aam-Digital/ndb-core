@@ -63,15 +63,15 @@ describe("EditAvailableLocalesComponent", () => {
   );
 
   it.each([
-    ["add a missing system language", [FR], [FR, DE]],
-    ["add the system language to an empty list", [], [DE]],
+    ["add a missing default language", [FR], [FR, DE]],
+    ["add the default language to an empty list", [], [DE]],
   ])("should %s on init", (_, stored, expected) => {
     create(true, stored);
 
     expect(form.value.availableLocales).toEqual(expected);
   });
 
-  it("should mark only the system language chip with an explanation", async () => {
+  it("should mark only the default language chip with an explanation", async () => {
     create(true, [FR, DE]);
     await fixture.whenStable();
     fixture.detectChanges();
@@ -80,12 +80,12 @@ describe("EditAvailableLocalesComponent", () => {
       fixture.nativeElement.querySelectorAll("mat-chip-row, mat-chip"),
     );
     const marked = chips.filter((chip) =>
-      chip.querySelector(".system-language-marker"),
+      chip.querySelector(".default-language-marker"),
     );
     expect(chips).toHaveLength(2);
     expect(marked).toHaveLength(1);
     expect(marked[0].textContent).toContain("Deutsch / German (de)");
-    expect(marked[0].textContent).toContain("system language");
+    expect(marked[0].textContent).toContain("default language");
   });
 
   it("should store the same value format as the enum select", () => {
@@ -116,7 +116,7 @@ describe("EditAvailableLocalesComponent", () => {
     );
   });
 
-  it("should add a changed system language to the list", () => {
+  it("should add a changed default language to the list", () => {
     create(true, [DE]);
 
     form.get("defaultLanguage").setValue(FR);
@@ -124,7 +124,7 @@ describe("EditAvailableLocalesComponent", () => {
     expect(form.value.availableLocales).toEqual([DE, FR]);
   });
 
-  it("should leave only the system language if everything else is removed", () => {
+  it("should leave only the default language if everything else is removed", () => {
     create(true, [FR, DE]);
 
     form.get("availableLocales").setValue([]);
@@ -132,7 +132,7 @@ describe("EditAvailableLocalesComponent", () => {
     expect(form.value.availableLocales).toEqual([DE]);
   });
 
-  it("should re-add the system language if it is removed", () => {
+  it("should re-add the default language if it is removed", () => {
     create(true, [FR, DE]);
 
     form.get("availableLocales").setValue([FR]);

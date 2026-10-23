@@ -28,7 +28,7 @@ import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-
  *
  * Only available if the system is set up as multi-language (`multiLingualConfigEnabled`),
  * otherwise it points to that feature being disabled.
- * The system language (`defaultLanguage` in the same form) always stays in the list,
+ * The default language (`defaultLanguage` in the same form) always stays in the list,
  * because it is always enabled (also if nothing else is selected). It is marked among the options.
  */
 @DynamicComponent("EditAvailableLocales")
@@ -67,45 +67,45 @@ export class EditAvailableLocalesComponent
 
   readonly multiLingualConfigEnabled = environment.multiLingualConfigEnabled;
 
-  /** the system language, which cannot be removed from the enabled languages */
-  readonly systemLanguage = signal<ConfigurableEnumValue | undefined>(
+  /** the default language, which cannot be removed from the enabled languages */
+  readonly defaultLanguage = signal<ConfigurableEnumValue | undefined>(
     undefined,
   );
 
   ngOnInit() {
-    const systemLanguageControl =
+    const defaultLanguageControl =
       this.formControl?.parent?.get("defaultLanguage");
-    if (!this.multiLingualConfigEnabled || !systemLanguageControl) return;
+    if (!this.multiLingualConfigEnabled || !defaultLanguageControl) return;
 
-    this.systemLanguage.set(systemLanguageControl.value);
-    this.keepSystemLanguage();
+    this.defaultLanguage.set(defaultLanguageControl.value);
+    this.keepDefaultLanguage();
 
-    systemLanguageControl.valueChanges
+    defaultLanguageControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
-        this.systemLanguage.set(value);
-        this.keepSystemLanguage();
+        this.defaultLanguage.set(value);
+        this.keepDefaultLanguage();
       });
     this.formControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.keepSystemLanguage());
+      .subscribe(() => this.keepDefaultLanguage());
   }
 
   /**
-   * Make sure the system language is part of the list, also an empty one
-   * (the enabled languages are the system language plus the selection).
+   * Make sure the default language is part of the list, also an empty one
+   * (the enabled languages are the default language plus the selection).
    * It is appended, matching the order of `SiteSettingsService.enabledLocales`.
    */
-  private keepSystemLanguage() {
-    const systemLanguage = this.systemLanguage();
+  private keepDefaultLanguage() {
+    const defaultLanguage = this.defaultLanguage();
     const enabled: ConfigurableEnumValue[] = this.formControl.value ?? [];
     if (
-      !systemLanguage?.id ||
-      enabled.some(({ id }) => id === systemLanguage.id)
+      !defaultLanguage?.id ||
+      enabled.some(({ id }) => id === defaultLanguage.id)
     ) {
       return;
     }
-    this.formControl.setValue([...enabled, systemLanguage]);
+    this.formControl.setValue([...enabled, defaultLanguage]);
   }
 
   /**

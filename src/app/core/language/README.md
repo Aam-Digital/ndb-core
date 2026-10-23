@@ -78,7 +78,7 @@ The flag also decides whether users can switch the app's language at all (see
 [Which language a user sees](#which-language-a-user-sees)).
 
 For configured texts it only hides the editing UI — the buttons that open the translations dialog.
-The buttons are also hidden while only one language is enabled (the system language, see
+The buttons are also hidden while only one language is enabled (the default language, see
 `SiteSettingsService.enabledLocales`), because there is nothing to translate into. Both
 conditions are combined in `SiteSettingsService.translationsEnabled`.
 Resolving is always on, so a system that has the flag turned off still displays texts
@@ -196,18 +196,18 @@ The active locale is stored in `localStorage` and read at bootstrap.
 language_ (`SiteSettings.defaultLanguage`). A user's own language
 and a language picked on the device earlier are ignored (the saved `UserSettings`
 stay untouched, the locale stored on the device is overwritten with the system
-language). The system language is only enforced when one is actually set: on a fresh
+language). The default language is only enforced when one is actually set: on a fresh
 system, or while the site settings have not arrived (waiting up to
 `LanguageService.SITE_DEFAULT_WAIT_MS`), the current locale is left as it is instead
 of falling back to `en-US`. The language picked in the setup assistant is saved as
-the system language (`SiteSettingsService.setDefaultLanguage()`), with or without the flag. The profile shows the language selector disabled with an explanation,
+the default language (`SiteSettingsService.setDefaultLanguage()`), with or without the flag. The profile shows the language selector disabled with an explanation,
 and public forms hide it. The "Enabled languages" site setting shows that the
 feature is disabled (`EditAvailableLocalesComponent`).
 
 **With the flag** users can switch among `SiteSettingsService.enabledLocales`: the
-system language plus the "Enabled languages" (`availableLocales`); the stored
-selection comes first, the system language is appended if missing, so an empty
-selection enables only the system language. Only a system without any system
+default language plus the "Enabled languages" (`availableLocales`); the stored
+selection comes first, the default language is appended if missing, so an empty
+selection enables only the default language. Only a system without any system
 language and selection (not set up yet, or settings not loaded) has all languages
 enabled. What puts the locale into `localStorage`:
 
