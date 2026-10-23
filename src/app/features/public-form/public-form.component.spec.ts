@@ -77,7 +77,7 @@ describe("PublicFormComponent", () => {
       [true, true],
       [false, false],
     ])(
-      "is shown for multiple offered languages only if switching is enabled (%s)",
+      "is shown for multiple enabled languages only if switching is enabled (%s)",
       (switchingEnabled, expected) => {
         environment.multiLingualConfigEnabled = switchingEnabled;
 

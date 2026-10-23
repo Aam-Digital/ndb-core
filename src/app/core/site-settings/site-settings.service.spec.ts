@@ -84,14 +84,14 @@ describe("SiteSettingsService", () => {
   const EN = { id: "en-US", label: "English" };
 
   it.each([
-    ["no list offered: all languages", [], DE, availableLocales.values],
+    ["no list enabled: all languages", [], DE, availableLocales.values],
     ["list with the system language", [DE, FR], DE, [DE, FR]],
     ["list without the system language", [FR], DE, [FR, DE]],
     ["list and no system language set", [FR, EN], undefined, [FR, EN]],
-  ])("should offer locales for %s", (_, offered, systemLanguage, expected) => {
+  ])("should enable locales for %s", (_, enabled, systemLanguage, expected) => {
     entityMapper.add(
       SiteSettings.create({
-        availableLocales: offered,
+        availableLocales: enabled,
         defaultLanguage: systemLanguage,
       }),
     );

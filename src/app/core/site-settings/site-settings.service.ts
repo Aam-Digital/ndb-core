@@ -53,21 +53,21 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   /**
-   * The languages this system offers: all of them until an admin narrows it down.
+   * The enabled languages of this system: all of them until an admin narrows it down.
    * A narrowed list always includes the system language ({@link defaultLanguage}),
    * added here at read time so changing the system language needs no data fix-up.
    */
   readonly enabledLocales = toSignal(
     this.siteSettings.pipe(
       map((settings) => {
-        const offered = settings?.availableLocales;
-        if (!offered?.length) return availableLocales.values;
+        const enabled = settings?.availableLocales;
+        if (!enabled?.length) return availableLocales.values;
 
         const systemLanguage = settings.defaultLanguage;
         return systemLanguage?.id &&
-          !offered.some(({ id }) => id === systemLanguage.id)
-          ? [...offered, systemLanguage]
-          : offered;
+          !enabled.some(({ id }) => id === systemLanguage.id)
+          ? [...enabled, systemLanguage]
+          : enabled;
       }),
     ),
     { initialValue: availableLocales.values },
@@ -176,7 +176,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
   /**
    * Cache the full locales enum, so dropdowns can render their options.
-   * Deliberately unfiltered: the admin picks from it which ones to offer, so
+   * Deliberately unfiltered: the admin picks from it which ones to enable, so
    * narrowing it here would make the choice impossible to widen again.
    */
   private cacheLocalesEnum() {

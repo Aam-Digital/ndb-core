@@ -24,12 +24,12 @@ import { availableLocales } from "../languages";
 import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 
 /**
- * Edit component for the languages a system offers (site settings `availableLocales`).
+ * Edit component for the enabled languages of a system (site settings `availableLocales`).
  *
  * Only available if the system is set up as multi-language (`multiLingualConfigEnabled`),
  * otherwise it points to that feature being disabled.
  * The system language (`defaultLanguage` in the same form) always stays in a
- * non-empty list, because it is always offered. It is marked among the options.
+ * non-empty list, because it is always enabled. It is marked among the options.
  */
 @DynamicComponent("EditAvailableLocales")
 @Component({
@@ -67,7 +67,7 @@ export class EditAvailableLocalesComponent
 
   readonly multiLingualConfigEnabled = environment.multiLingualConfigEnabled;
 
-  /** the system language, which cannot be removed from the offered languages */
+  /** the system language, which cannot be removed from the enabled languages */
   readonly systemLanguage = signal<ConfigurableEnumValue | undefined>(
     undefined,
   );
@@ -94,15 +94,15 @@ export class EditAvailableLocalesComponent
   /** An empty list means "all languages", so only a narrowed list is amended. */
   private keepSystemLanguage() {
     const systemLanguage = this.systemLanguage();
-    const offered = this.formControl.value;
+    const enabled = this.formControl.value;
     if (
       !systemLanguage?.id ||
-      !offered?.length ||
-      offered.some(({ id }) => id === systemLanguage.id)
+      !enabled?.length ||
+      enabled.some(({ id }) => id === systemLanguage.id)
     ) {
       return;
     }
-    this.formControl.setValue([...offered, systemLanguage]);
+    this.formControl.setValue([...enabled, systemLanguage]);
   }
 
   /** open the options when clicking anywhere in the surrounding form field */

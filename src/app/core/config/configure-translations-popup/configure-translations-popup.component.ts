@@ -38,8 +38,8 @@ export interface ConfigureTranslationsDialogData {
 interface TranslationRow {
   locale: string;
   localeLabel: string;
-  /** false if the system does not offer this language, and only keeps existing text */
-  offered: boolean;
+  /** false if this language is disabled for the system, and only keeps existing text */
+  enabled: boolean;
   text: string;
 }
 
@@ -71,40 +71,40 @@ export class ConfigureTranslationsPopupComponent {
 
   rows: TranslationRow[] = this.buildRows();
 
-  /** number of rows of languages that are not offered (hidden until expanded) */
-  readonly notOfferedCount = this.rows.filter((r) => !r.offered).length;
+  /** number of rows of disabled languages (hidden until expanded) */
+  readonly disabledCount = this.rows.filter((r) => !r.enabled).length;
 
-  /** whether rows of languages that are not offered are shown; they are hidden by default */
-  readonly showNotOffered = signal(false);
+  /** whether rows of disabled languages are shown; they are hidden by default */
+  readonly showDisabled = signal(false);
 
   /**
-   * One row per language this system offers (in their order), followed by every
+   * One row per enabled language (in their order), followed by every
    * other language this text already holds text for. {@link buildValue} rebuilds
    * the value from the rows, so leaving one out would delete that text on save.
-   * Rows of languages that are not offered are only hidden in the template
-   * (see {@link showNotOffered}), never left out of the rows.
+   * Rows of disabled languages are only hidden in the template
+   * (see {@link showDisabled}), never left out of the rows.
    *
    * Existing text means: a key of a translation map (a base-language key like `en`
    * counts for `en-US`), or, for a plain string, the active language, which
-   * {@link initialTextFor} files it under (so both cases are one check). A language that is not offered and holds
+   * {@link initialTextFor} files it under (so both cases are one check). A disabled language that holds
    * no text gets no row, so admins are not invited to write texts in it.
    */
   private buildRows(): TranslationRow[] {
-    const offered = this.siteSettings.enabledLocales();
-    const isOffered = (locale: ConfigurableEnumValue) =>
-      offered.some(({ id }) => id === locale.id);
+    const enabled = this.siteSettings.enabledLocales();
+    const isEnabled = (locale: ConfigurableEnumValue) =>
+      enabled.some(({ id }) => id === locale.id);
 
     const existing = availableLocales.values.filter(
-      (locale) => !isOffered(locale) && !!this.initialTextFor(locale.id),
+      (locale) => !isEnabled(locale) && !!this.initialTextFor(locale.id),
     );
 
     return [
-      ...offered.map((locale) => ({ locale, offered: true })),
-      ...existing.map((locale) => ({ locale, offered: false })),
-    ].map(({ locale, offered }) => ({
+      ...enabled.map((locale) => ({ locale, enabled: true })),
+      ...existing.map((locale) => ({ locale, enabled: false })),
+    ].map(({ locale, enabled }) => ({
       locale: locale.id,
       localeLabel: locale.label,
-      offered,
+      enabled,
       text: this.initialTextFor(locale.id),
     }));
   }

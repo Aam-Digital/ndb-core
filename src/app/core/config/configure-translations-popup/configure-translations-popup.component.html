@@ -9,15 +9,13 @@
   }
 
   @for (row of rows; track row.locale) {
-    @if (row.offered || showNotOffered()) {
+    @if (row.enabled || showDisabled()) {
       <mat-form-field class="full-width">
         <mat-label>
-          @if (row.offered) {
+          @if (row.enabled) {
             {{ row.localeLabel }}
           } @else {
-            <ng-container i18n
-              >{{ row.localeLabel }} (not offered)</ng-container
-            >
+            <ng-container i18n>{{ row.localeLabel }} (disabled)</ng-container>
           }
         </mat-label>
         <input matInput [(ngModel)]="row.text" [name]="row.locale" />
@@ -25,22 +23,22 @@
     }
   }
 
-  @if (notOfferedCount > 0) {
+  @if (disabledCount > 0) {
     <button
       mat-button
       type="button"
-      class="toggle-not-offered"
-      (click)="showNotOffered.set(!showNotOffered())"
+      class="toggle-disabled"
+      (click)="showDisabled.set(!showDisabled())"
     >
-      @if (showNotOffered()) {
-        <span i18n>{notOfferedCount, plural,
-          =1 {Hide 1 language that is not offered}
-          other {Hide {{ notOfferedCount }} languages that are not offered}
+      @if (showDisabled()) {
+        <span i18n>{disabledCount, plural,
+          =1 {Hide 1 disabled language}
+          other {Hide {{ disabledCount }} disabled languages}
         }</span>
       } @else {
-        <span i18n>{notOfferedCount, plural,
-          =1 {Show 1 more language that is not offered}
-          other {Show {{ notOfferedCount }} more languages that are not offered}
+        <span i18n>{disabledCount, plural,
+          =1 {Show 1 disabled language}
+          other {Show {{ disabledCount }} disabled languages}
         }</span>
       }
     </button>

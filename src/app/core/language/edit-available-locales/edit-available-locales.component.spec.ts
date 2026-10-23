@@ -16,7 +16,7 @@ describe("EditAvailableLocalesComponent", () => {
   let fixture: ComponentFixture<EditAvailableLocalesComponent>;
   let form: FormGroup;
 
-  function create(flag: boolean, offered: unknown[]) {
+  function create(flag: boolean, enabled: unknown[]) {
     environment.multiLingualConfigEnabled = flag;
     TestBed.configureTestingModule({
       imports: [
@@ -28,7 +28,7 @@ describe("EditAvailableLocalesComponent", () => {
     });
     form = new FormGroup({
       defaultLanguage: new FormControl(DE),
-      availableLocales: new FormControl(offered),
+      availableLocales: new FormControl(enabled),
     });
     fixture = TestBed.createComponent(EditAvailableLocalesComponent);
     fixture.componentInstance.ngControl = {

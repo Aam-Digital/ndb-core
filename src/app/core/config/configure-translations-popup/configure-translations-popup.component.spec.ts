@@ -26,7 +26,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
 
   async function createComponent(
     data: ConfigureTranslationsDialogData,
-    offeredLocales: ConfigurableEnumValue[] = availableLocales.values,
+    enabledLocales: ConfigurableEnumValue[] = availableLocales.values,
   ) {
     dialogRef = { close: vi.fn() };
 
@@ -41,7 +41,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
         { provide: MatDialogRef, useValue: dialogRef },
         {
           provide: SiteSettingsService,
-          useValue: { enabledLocales: signal(offeredLocales) },
+          useValue: { enabledLocales: signal(enabledLocales) },
         },
       ],
     }).compileComponents();
@@ -191,14 +191,14 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(dialogRef.close).toHaveBeenCalledWith(undefined);
   });
 
-  describe("texts in languages the system does not offer", () => {
+  describe("texts in languages that are disabled", () => {
     const en = availableLocales.values.find((l) => l.id === "en-US");
     const de = availableLocales.values.find((l) => l.id === "de");
 
     it.each<{
       name: string;
       value: TranslatableText;
-      enOffered: boolean;
+      enEnabled: boolean;
       expected: TranslatableText;
     }>(
       [
@@ -214,14 +214,14 @@ describe("ConfigureTranslationsPopupComponent", () => {
           expected: { "en-US": "Name", de: "Vorname" },
         },
       ].flatMap((c) => [
-        { ...c, enOffered: true },
-        { ...c, enOffered: false },
+        { ...c, enEnabled: true },
+        { ...c, enEnabled: false },
       ]),
     )(
-      "should keep the existing texts on save: $name, active language offered: $enOffered",
-      async ({ value, enOffered, expected }) => {
+      "should keep the existing texts on save: $name, active language enabled: $enEnabled",
+      async ({ value, enEnabled, expected }) => {
         configureActiveLocale("en-US", AVAILABLE_LOCALE_IDS);
-        await createComponent({ value }, enOffered ? [en, de] : [de]);
+        await createComponent({ value }, enEnabled ? [en, de] : [de]);
 
         component.onSave();
 
@@ -229,18 +229,18 @@ describe("ConfigureTranslationsPopupComponent", () => {
       },
     );
 
-    it("should not offer a row for a language that is neither offered nor translated", async () => {
+    it("should not show a row for a language that is neither enabled nor translated", async () => {
       await createComponent({ value: { de: "Vorname" } }, [de]);
 
       expect(component.rows.map((r) => r.locale)).toEqual(["de"]);
     });
 
-    it("should mark rows of languages that are not offered", async () => {
+    it("should mark rows of disabled languages", async () => {
       await createComponent({ value: { "en-US": "Name", de: "Vorname" } }, [
         de,
       ]);
 
-      expect(component.rows.map((r) => [r.locale, r.offered])).toEqual([
+      expect(component.rows.map((r) => [r.locale, r.enabled])).toEqual([
         ["de", true],
         ["en-US", false],
       ]);
@@ -249,19 +249,17 @@ describe("ConfigureTranslationsPopupComponent", () => {
     function findToggle(): HTMLButtonElement | undefined {
       return Array.from<HTMLButtonElement>(
         fixture.nativeElement.querySelectorAll("button"),
-      ).find((b) => /languages? that (is|are) not offered/.test(b.textContent));
+      ).find((b) => /disabled languages?/.test(b.textContent));
     }
 
-    it("should hide rows of languages that are not offered until the toggle is used, and still save them", async () => {
+    it("should hide rows of disabled languages until the toggle is used, and still save them", async () => {
       await createComponent({ value: { "en-US": "Name", de: "Vorname" } }, [
         de,
       ]);
 
       const labels = () => fixture.nativeElement.textContent;
-      expect(labels()).not.toContain("(not offered)");
-      expect(findToggle().textContent).toContain(
-        "Show 1 more language that is not offered",
-      );
+      expect(labels()).not.toContain("(disabled)");
+      expect(findToggle().textContent).toContain("Show 1 disabled language");
 
       // saving without expanding keeps the hidden translation
       component.onSave();
@@ -271,17 +269,15 @@ describe("ConfigureTranslationsPopupComponent", () => {
 
       findToggle().click();
       fixture.detectChanges();
-      expect(labels()).toContain("(not offered)");
-      expect(findToggle().textContent).toContain(
-        "Hide 1 language that is not offered",
-      );
+      expect(labels()).toContain("(disabled)");
+      expect(findToggle().textContent).toContain("Hide 1 disabled language");
 
       findToggle().click();
       fixture.detectChanges();
-      expect(labels()).not.toContain("(not offered)");
+      expect(labels()).not.toContain("(disabled)");
     });
 
-    it("should not show the toggle if all languages are offered", async () => {
+    it("should not show the toggle if all languages are enabled", async () => {
       await createComponent({ value: { "en-US": "Name", de: "Vorname" } });
 
       expect(findToggle()).toBeUndefined();

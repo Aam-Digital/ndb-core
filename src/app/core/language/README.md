@@ -198,11 +198,11 @@ system, or while the site settings have not arrived (waiting up to
 `LanguageService.SITE_DEFAULT_WAIT_MS`), the current locale is left as it is instead
 of falling back to `en-US`. The language picked in the setup assistant is saved as
 the system language (`SiteSettingsService.setDefaultLanguage()`), with or without the flag. The profile shows the language selector disabled with an explanation,
-and public forms hide it. The "Languages offered" site setting shows that the
+and public forms hide it. The "Enabled languages" site setting shows that the
 feature is disabled (`EditAvailableLocalesComponent`).
 
 **With the flag** users can switch among `SiteSettingsService.enabledLocales`: the
-"Languages offered" (`availableLocales`, all if empty), always including the system
+"Enabled languages" (`availableLocales`, all if empty), always including the system
 language. What puts the locale into `localStorage`:
 
 - **At startup** — whatever the language switcher last stored. If nothing is

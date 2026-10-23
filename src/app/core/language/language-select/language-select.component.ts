@@ -31,7 +31,7 @@ export class LanguageSelectComponent {
 
   /**
    * Which of {@link availableLocales} can actually be picked. The rest stay visible
-   * but disabled, so it is clear the system could offer them. Empty means all.
+   * but disabled, so it is clear the system could enable them. Empty means all.
    */
   enabledLocales = input<ConfigurableEnumValue[]>([]);
 
@@ -56,7 +56,7 @@ export class LanguageSelectComponent {
   /** short marker in the option text, so keyboard and touch users see why it is disabled */
   readonly notAvailableMarker = $localize`:Language select - marker for a disabled option:not available`;
 
-  readonly notOfferedHint = $localize`:Language select - disabled option tooltip:Your administrator has not enabled this language for this system.`;
+  readonly disabledHint = $localize`:Language select - disabled option tooltip:Your administrator has not enabled this language for this system.`;
 
   /** {@link availableLocales} with a flag whether each can be picked */
   readonly options = computed(() => {

@@ -11,7 +11,7 @@
         @if (locale.enabled) {
           {{ locale.label }}
         } @else {
-          <span class="disabled-option" [matTooltip]="notOfferedHint">
+          <span class="disabled-option" [matTooltip]="disabledHint">
             {{ locale.label }} ({{ notAvailableMarker }})
           </span>
         }
