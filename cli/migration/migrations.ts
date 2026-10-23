@@ -3,6 +3,7 @@ import { latestConfigFormats } from "./latest-config-formats.migration.js";
 import { reportDefinitionLegacyCleanup } from "./report-definition-legacy-cleanup.migration.js";
 import { setMapCountrycodes } from "./set-map-countrycodes.migration.js";
 import { permissionsKeyLegacyCleanup } from "./permissions-key-legacy-cleanup.migration.js";
+import { noteLegacyChildSchoolFields } from "./note-legacy-child-school-fields.migration.js";
 import { historicalDataLoader } from "./historical-data-loader.migration.js";
 import { restoreBackup } from "./restore-backup.migration.js";
 import { todoRouteLinks } from "./todo-route-links.migration.js";
@@ -23,6 +24,7 @@ export const migrations: MigrationDefinition[] = [
   setMapCountrycodes,
   todoRouteLinks,
   publicFormLegacyFormats,
+  noteLegacyChildSchoolFields,
   historicalDataLoader,
   restoreBackup,
 ];

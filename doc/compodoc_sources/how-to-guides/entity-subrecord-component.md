@@ -46,12 +46,12 @@ This has to be a function that returns a new entity instance:
 ```
 generateNewRecordFactory() {
     // define values locally because "this" is a different scope after passing a function as input to another component
-    const childId = this.childId;
+    const entityId = this.entityId;
 
     return () => {
       const newNote = new Note(Date.now().toString());
       newNote.date = new Date();
-      newNote.children = [childId];
+      newNote.relatedEntities = [entityId];
 
       return newNote;
     };
@@ -59,7 +59,7 @@ generateNewRecordFactory() {
 ```
 
 This gives you the power to already pre-fill certain values in the new entity
-like in this example linking the new note with the selected child automatically.
+like in this example linking the new note with the selected entity automatically.
 Unfortunately the implementation has to be a little clumsy: A method that itself returns a function again.
 
 Finally, the `[columns]` configuration allows you a lot of flexibility over
@@ -92,9 +92,9 @@ This parameter expects a function that gets the clicked entity as input.
 
 ```
 <app-entity-subrecord
-    [records]="children"
+    [records]="relatedEntities"
     [columns]="columns"
-    [showEntity]="routeToChild.bind(this)"
+    [showEntity]="routeToEntity.bind(this)"
     [editable]="false"
   ></app-entity-subrecord>
 ```

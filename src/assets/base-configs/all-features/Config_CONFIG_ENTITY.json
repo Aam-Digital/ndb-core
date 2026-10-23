@@ -130,7 +130,9 @@
           },
           {
             "component": "EntityCountDashboard",
-            "config": {}
+            "config": {
+              "entityType": "Child"
+            }
           },
           {
             "component": "ImportantNotesDashboard",
@@ -148,6 +150,7 @@
           {
             "component": "NotesDashboard",
             "config": {
+              "entityType": "Child",
               "sinceDays": 28,
               "fromBeginningOfWeek": false,
               "mode": "with-recent-notes"
@@ -156,6 +159,7 @@
           {
             "component": "NotesDashboard",
             "config": {
+              "entityType": "Child",
               "sinceDays": 28,
               "fromBeginningOfWeek": false,
               "mode": "without-recent-notes"
@@ -210,14 +214,6 @@
       "labelPlural": "Notes",
       "hasPII": true,
       "attributes": {
-        "children": {
-          "label": "Children",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "Child",
-          "entityReferenceRole": "composite",
-          "anonymize": "retain"
-        },
         "date": {
           "label": "Date",
           "dataType": "date-only",
@@ -268,14 +264,11 @@
         "relatedEntities": {
           "label": "Related Records",
           "dataType": "entity",
+          "additional": [
+            "Child",
+            "School"
+          ],
           "isArray": true,
-          "anonymize": "retain"
-        },
-        "schools": {
-          "label": "Groups",
-          "dataType": "entity",
-          "isArray": true,
-          "additional": "School",
           "entityReferenceRole": "composite",
           "anonymize": "retain"
         },
@@ -302,7 +295,7 @@
                 "subject",
                 "category",
                 "authors",
-                "children"
+                "relatedEntities"
               ]
             },
             {
@@ -310,7 +303,7 @@
               "columns": [
                 "date",
                 "subject",
-                "children"
+                "relatedEntities"
               ]
             }
           ]

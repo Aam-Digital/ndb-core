@@ -11,6 +11,9 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SyncedPouchDatabase, SyncFailedError } from "./synced-pouch-database";
 import { NotAvailableOfflineError } from "../../session/not-available-offline.error";
 import { Logging } from "../../logging/logging.service";
+import PouchDB from "pouchdb-browser";
+import memory from "pouchdb-adapter-memory";
+import { environment } from "../../../../environments/environment";
 
 describe("SyncedPouchDatabase", () => {
   let service: SyncedPouchDatabase;
@@ -608,5 +611,54 @@ describe("SyncedPouchDatabase", () => {
       // tracking should be re-enabled for subsequent syncs
       expect(service["remoteDatabase"].trackLostPermissions).toBe(true);
     });
+
+    describe("remote replication source (background migration)", () => {
+      let fetchSpy: Mock;
+
+      beforeEach(() => {
+        PouchDB.plugin(memory);
+        service.adapter = "memory";
+        fetchSpy = vi
+          .spyOn(PouchDB, "fetch")
+          .mockImplementation(fakeRemoteFetch) as unknown as Mock;
+      });
+
+      afterEach(async () => {
+        fetchSpy.mockRestore();
+        await service["pouchDB"].destroy();
+      });
+
+      it("does not make the next sync purge what replicating from it reports as not permitted", async () => {
+        service.init("unit-test-db", "app");
+
+        const source = service.openRemoteReplicationSource();
+        await source.changes({ since: 0 });
+        await source.close();
+        await service.sync();
+
+        // the same remote database, with the user's authentication ...
+        expect(fetchSpy).toHaveBeenCalledWith(
+          expect.stringContaining(
+            `${environment.DB_PROXY_PREFIX}/app/_changes`,
+          ),
+          expect.anything(),
+        );
+        expect(mockAuthService.addAuthHeader).toHaveBeenCalled();
+        // ... but its lost permissions are not passed on to the sync
+        expect(purgeSpy).not.toHaveBeenCalled();
+      });
+    });
   });
 });
+
+/** A remote database, whose every `_changes` page (of a replication from scratch) reports all docs the user may not read */
+async function fakeRemoteFetch(url: string): Promise<Response> {
+  const body = url.includes("_changes")
+    ? {
+        results: [],
+        last_seq: "1-seq",
+        lostPermissions: ["Child:not-permitted"],
+      }
+    : {};
+  return new Response(JSON.stringify(body));
+}

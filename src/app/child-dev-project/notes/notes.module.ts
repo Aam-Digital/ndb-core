@@ -4,7 +4,7 @@ import { notesComponents } from "./notes-components";
 import { Note } from "./model/note";
 import { DashboardWidgetRegistryService } from "../../core/dashboard/dashboard-widget-registry.service";
 import { DefaultConfigMigrationRegistryService } from "../../core/config/default-config-migration-registry.service";
-import { addDefaultNoteDetailsConfig } from "./add-default-note-views";
+import { addDefaultNoteViews } from "./add-default-note-views";
 
 @NgModule({})
 export class NotesModule {
@@ -35,8 +35,6 @@ export class NotesModule {
 
     components.addAll(notesComponents);
 
-    inject(DefaultConfigMigrationRegistryService).register(
-      addDefaultNoteDetailsConfig,
-    );
+    inject(DefaultConfigMigrationRegistryService).register(addDefaultNoteViews);
   }
 }

@@ -32,7 +32,11 @@ export const environment = {
   production: false,
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
-  remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
+  /**
+   * The DSN of the remote monitoring (Sentry) project to report warnings and errors to.
+   * Not set by default, so remote logging is off: deployments set it in their `config.json`.
+   */
+  remoteLoggingDsn: undefined as string | undefined,
   /**
    * The `environment` that remote monitoring files this deployment's events under.
    * Defaults to "production" for production builds - set it in the `config.json`
@@ -68,11 +72,13 @@ export const environment = {
   userSupportEnabled: false,
 
   /**
-   * Use the newer "indexeddb" PouchDB adapter instead of the legacy "idb" adapter.
-   * When false (default), the old adapter is used. Set to true via config.json
-   * to opt into the new adapter for gradual rollout.
+   * Use the newer "indexeddb" PouchDB adapter (and Keycloak-UUID-based local database names)
+   * instead of the legacy "idb" adapter.
+   * When true (default), existing local databases on the old adapter are migrated in the background
+   * (see IndexeddbMigrationService).
+   * Set to false via config.json to opt out and keep using the legacy adapter.
    */
-  use_indexeddb_adapter: false,
+  use_indexeddb_adapter: true,
 
   /** CDN URL for loading translation files at runtime. Empty string disables CDN loading. */
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",

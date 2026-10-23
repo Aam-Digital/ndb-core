@@ -9,7 +9,7 @@
     <table mat-table [attr.aria-label]="subtitle()">
       <!-- Table header only for assistive technologies like screen readers -->
       <tr class="visually-hidden">
-        <th scope="col">{{ entityDefinition().label }}</th>
+        <th scope="col">{{ entityDefinition()?.label }}</th>
         <th scope="col" i18n="Column header for days since the last note">
           Days since last note
         </th>
