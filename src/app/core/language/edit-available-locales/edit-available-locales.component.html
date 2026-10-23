@@ -1,0 +1,18 @@
+@if (multiLingualConfigEnabled) {
+  <app-edit-configurable-enum
+    [formControl]="formControl"
+    [formFieldConfig]="formFieldConfig()"
+  ></app-edit-configurable-enum>
+  @if (systemLanguage(); as language) {
+    <small i18n>
+      The system language ({{ language.label }}) is always offered.
+    </small>
+  }
+} @else {
+  <app-feature-disabled-info
+    featureName="multiple languages"
+    i18n-featureName="Languages offered - feature name"
+    [featureEnabled]="false"
+    [compactView]="true"
+  ></app-feature-disabled-info>
+}

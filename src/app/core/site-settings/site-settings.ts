@@ -36,6 +36,7 @@ export class SiteSettings extends Entity {
     label: $localize`Languages offered`,
     description: $localize`The languages admins can configure texts in and users can switch the app to. Leave empty to offer all of them.`,
     dataType: "configurable-enum",
+    editComponent: "EditAvailableLocales",
     additional: LOCALE_ENUM_ID,
     isArray: true,
   })

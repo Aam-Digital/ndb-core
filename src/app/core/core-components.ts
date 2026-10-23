@@ -312,6 +312,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "EditAvailableLocales",
+    () =>
+      import("./language/edit-available-locales/edit-available-locales.component").then(
+        (c) => c.EditAvailableLocalesComponent,
+      ),
+  ],
+  [
     "EditDateFormat",
     () =>
       import("./basic-datatypes/date/edit-date-format/edit-date-format.component").then(
