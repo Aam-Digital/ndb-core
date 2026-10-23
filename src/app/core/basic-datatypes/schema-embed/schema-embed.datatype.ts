@@ -58,6 +58,40 @@ export interface SchemaEmbedDatatypeAdditional {
 }
 
 /**
+ * Build the inner schema of an embedded field from the embedded type's own schema
+ * and the field's `additional` config (a {@link SchemaEmbedDatatypeAdditional} map).
+ *
+ * An entry in `additional` only overrides what it states explicitly (e.g. restricting the
+ * allowed entity types of a reference), everything else (`dataType`, `label`, ...)
+ * is inherited from the embedded type's field of the same id.
+ *
+ * @param baseSchema schema of the embedded type (e.g. `embeddedType.schema`), not mutated
+ * @param additional the `additional` config of the field holding the embedded object(s)
+ */
+export function mergeEmbeddedSchema(
+  baseSchema: EntitySchema | undefined,
+  additional: unknown,
+): EntitySchema {
+  const schema: EntitySchema = new Map(baseSchema ?? []);
+  if (
+    !additional ||
+    typeof additional !== "object" ||
+    Array.isArray(additional)
+  ) {
+    return schema;
+  }
+
+  for (const [key, value] of Object.entries(
+    additional as SchemaEmbedDatatypeAdditional,
+  )) {
+    if (value && typeof value === "object") {
+      schema.set(key, { ...schema.get(key), ...value, id: key });
+    }
+  }
+  return schema;
+}
+
+/**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
  *
  * Can be used in two ways:
@@ -92,19 +126,30 @@ export class SchemaEmbedDatatype<
    * the merge logic or being limited to the `additional`-only (config-based) case.
    */
   getEffectiveSchema(schemaField?: EntitySchemaField): EntitySchema {
-    // Clone the base schema to avoid mutating the original class schema
-    const baseSchema: EntitySchema = new Map(
-      this.embeddedType?.schema ?? new Map(),
+    return mergeEmbeddedSchema(
+      this.embeddedType?.schema,
+      schemaField?.additional,
     );
-    const additional: SchemaEmbedDatatypeAdditional =
-      schemaField?.additional ?? {};
+  }
 
-    // Add schema from additional config, taking precedence over baseSchema if present
-    for (const [key, value] of Object.entries(additional)) {
-      baseSchema.set(key, { ...value, id: key });
-    }
+  /**
+   * Whether the given field holds an array of embedded objects
+   * (as opposed to a single embedded object).
+   *
+   * Can be removed once {@link EventAttendanceMapDatatype} is removed.
+   */
+  holdsArray(schemaField: EntitySchemaField): boolean {
+    return schemaField.isArray === true;
+  }
 
-    return baseSchema;
+  /**
+   * Path of an inner property within a stored embedded object, for database queries.
+   * The embedded object is stored as-is, so this is the property name itself.
+   *
+   * Can be removed once {@link EventAttendanceMapDatatype} is removed.
+   */
+  getEmbeddedFieldDbPath(innerProp: string): string {
+    return innerProp;
   }
 
   /**
@@ -112,17 +157,16 @@ export class SchemaEmbedDatatype<
    * outer field - either inside an array of embedded objects or, where a single object
    * is stored, through the dotted path to the inner property.
    *
-   * The inner keys come from `additional` only (not from {@link getEffectiveSchema}),
-   * so they stay identical to the ones the in-memory post-filter inspects.
+   * The inner keys come from {@link getEffectiveSchema}.
    */
   override getReferenceSelector(
     fieldId: string,
     schemaField: EntitySchemaField,
     referencedId: string,
   ): DataFilter<any>[] | undefined {
-    const innerKeys = getInnerEntityReferenceFields(schemaField).map(
-      ([key]) => key,
-    );
+    const innerKeys = getInnerEntityReferenceFields(
+      this.getEffectiveSchema(schemaField),
+    ).map(([key]) => key);
     if (innerKeys.length === 0) {
       // nothing we could match on - let the caller load the whole type instead
       return undefined;

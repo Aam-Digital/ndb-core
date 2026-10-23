@@ -15,6 +15,7 @@ import { NAVIGATOR_TOKEN, LOCAL_STORAGE_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { filter, take, takeUntil } from "rxjs/operators";
 import { Subject, Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
@@ -34,6 +35,7 @@ export class SessionManagerService {
   private sessionInfo = inject(SessionSubject);
   private currentUser = inject(CurrentUserSubject);
   private entityMapper = inject(EntityMapperService);
+  private readonly entityRegistry = inject(EntityRegistry);
   private loginStateSubject = inject(LoginStateSubject);
   private router = inject(Router);
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
@@ -152,6 +154,11 @@ export class SessionManagerService {
     }
 
     const entityType = Entity.extractTypeFromId(entityId);
+    if (!this.entityRegistry.has(entityType)) {
+      this.currentUser.next(null);
+      return;
+    }
+
     this.entityMapper
       .load(entityType, entityId)
       .catch(() => null) // see CurrentUserSubject: emits "null" for non-existing user entity

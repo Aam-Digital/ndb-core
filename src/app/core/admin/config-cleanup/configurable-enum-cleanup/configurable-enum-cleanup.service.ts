@@ -6,7 +6,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntitySchema } from "../../../entity/schema/entity-schema";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { SchemaEmbedDatatype } from "../../../basic-datatypes/schema-embed/schema-embed.datatype";
+import { getEmbeddedSchema } from "../../../entity/schema/embedded-schema-field.util";
 
 interface ConfigurableEnumUsage {
   entityType: string;
@@ -125,8 +125,11 @@ export class ConfigurableEnumCleanupService {
       }
     }
 
-    const embeddedSchema = this.getEmbeddedSchema(schemaField);
-    if (!embeddedSchema || embeddedSchema.size === 0) {
+    const embeddedSchema = getEmbeddedSchema(
+      this.entitySchemaService,
+      schemaField,
+    );
+    if (!embeddedSchema) {
       return;
     }
 
@@ -136,24 +139,6 @@ export class ConfigurableEnumCleanupService {
       fieldId,
       usageMap,
     );
-  }
-
-  private getEmbeddedSchema(
-    schemaField: EntitySchemaField,
-  ): EntitySchema | undefined {
-    if (!schemaField?.dataType) {
-      return;
-    }
-
-    const datatype = this.entitySchemaService.getDatatypeOrDefault(
-      schemaField.dataType,
-      true,
-    );
-    if (!(datatype instanceof SchemaEmbedDatatype)) {
-      return;
-    }
-
-    return datatype.getEffectiveSchema(schemaField);
   }
 
   private normalizeEnumId(rawId: unknown): string | undefined {

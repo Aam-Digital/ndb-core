@@ -33,6 +33,7 @@ import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype"
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
+import { DateRangeDatatype } from "../../basic-datatypes/date-range/date-range.datatype";
 import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { LongTextDatatype } from "../../basic-datatypes/string/long-text.datatype";
 import { EmailDatatype } from "../../basic-datatypes/string/email.datatype";
@@ -52,6 +53,9 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 import { expectArrayWithExactContents } from "../../../utils/test-utils/array-test-utils";
+import { AttendanceItem } from "../../../features/attendance/model/attendance-item";
+import { EventAttendanceMapDatatype } from "../../../features/attendance/deprecated/event-attendance-map.datatype";
+import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -82,10 +86,21 @@ describe("FilterGeneratorService", () => {
         { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
         { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
         { provide: DefaultDatatype, useClass: DateOnlyDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: DateRangeDatatype, multi: true },
         { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
         { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },
         { provide: DefaultDatatype, useClass: EmailDatatype, multi: true },
         { provide: DefaultDatatype, useClass: UrlDatatype, multi: true },
+        {
+          provide: DefaultDatatype,
+          useClass: EventAttendanceMapDatatype,
+          multi: true,
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: SchemaEmbedDatatype,
+          multi: true,
+        },
         // EntityDatatype only uses this to offer entity actions, which filters don't
         { provide: EntityActionsService, useValue: {} },
       ],
@@ -246,6 +261,39 @@ describe("FilterGeneratorService", () => {
     }
   });
 
+  it("creates an entity filter offering all entity types a reference field allows", async () => {
+    @DatabaseEntity("FilterGeneratorMultiTypeRefTest")
+    class MultiTypeRefEntity extends Entity {}
+    MultiTypeRefEntity.schema.set("ref", {
+      dataType: "entity",
+      additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+    });
+
+    const testEntity = TestEntity.create("Referenced TestEntity");
+    const note = Note.create(new Date(), "Referenced Note");
+    await TestBed.inject(EntityMapperService).saveAll([testEntity, note]);
+    const refToTestEntity = Object.assign(new MultiTypeRefEntity(), {
+      ref: testEntity.getId(),
+    });
+    const refToNote = Object.assign(new MultiTypeRefEntity(), {
+      ref: note.getId(),
+    });
+
+    const [entityFilter] = await service.generate(
+      [{ id: "ref" }],
+      MultiTypeRefEntity,
+      [],
+    );
+
+    expect(entityFilter).toBeInstanceOf(EntityFilter);
+    const options = (entityFilter as EntityFilter<Entity>).options;
+    const noteOption = options.find((o) => o.key === note.getId());
+    expect(options.map((o) => o.key)).toContain(testEntity.getId());
+    expect(filter([refToTestEntity, refToNote], noteOption)).toEqual([
+      refToNote,
+    ]);
+  });
+
   it("should create filters with all possible options on default", async () => {
     const fieldSchema = TestEntity.schema.get("rating");
 
@@ -322,6 +370,73 @@ describe("FilterGeneratorService", () => {
   it("should create a date range filter", async () => {
     let generatedFilter = await service.generate([{ id: "date" }], Note, []);
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
+  });
+
+  describe("filter for a period field (date-range)", () => {
+    @DatabaseEntity("PeriodFilterTestEntity")
+    class PeriodFilterTestEntity extends Entity {}
+    PeriodFilterTestEntity.schema.set("period", {
+      dataType: "date-range",
+      label: "Period",
+    });
+
+    const day = (month: number, date: number) =>
+      new Date(2026, month - 1, date);
+
+    async function generatePeriodFilter(selectedDates: string[]) {
+      const filter = (
+        await service.generate([{ id: "period" }], PeriodFilterTestEntity, [])
+      )[0] as DateFilter<PeriodFilterTestEntity>;
+      filter.selectedOptionValues = selectedDates;
+      return filterService.getFilterPredicate(filter.getFilter());
+    }
+
+    function entityWith(period?: { start?: Date; end?: Date }) {
+      return Object.assign(new PeriodFilterTestEntity(), { period });
+    }
+
+    it.each([
+      ["lies inside the dates", { start: day(3, 12), end: day(3, 15) }, true],
+      ["covers the dates", { start: day(2, 1), end: day(6, 30) }, true],
+      ["ends on the first date", { start: day(2, 1), end: day(3, 10) }, true],
+      ["starts on the last date", { start: day(3, 20), end: day(4, 30) }, true],
+      ["has no end date and started before", { start: day(3, 1) }, true],
+      ["has no start date and ends within", { end: day(3, 12) }, true],
+      ["ended before the dates", { start: day(1, 1), end: day(3, 9) }, false],
+      ["starts after the dates", { start: day(3, 21), end: day(4, 1) }, false],
+      ["has no end date and starts after", { start: day(3, 21) }, false],
+      ["has no start date and ended before", { end: day(3, 5) }, false],
+      ["is not set", undefined, false],
+    ])(
+      "should match a period that %s only if it overlaps",
+      async (_, period, expected) => {
+        const matches = await generatePeriodFilter([
+          "2026-03-10",
+          "2026-03-20",
+        ]);
+
+        expect(matches(entityWith(period))).toBe(expected);
+      },
+    );
+
+    it("should match only the periods that end after the first date if there is no last date", async () => {
+      const matches = await generatePeriodFilter(["2026-03-10", ""]);
+
+      expect(matches(entityWith({ start: day(1, 1), end: day(3, 9) }))).toBe(
+        false,
+      );
+      expect(matches(entityWith({ start: day(1, 1), end: day(3, 10) }))).toBe(
+        true,
+      );
+      expect(matches(entityWith({ start: day(8, 1) }))).toBe(true);
+    });
+
+    it("should match only the records without a period with the empty option", async () => {
+      const matches = await generatePeriodFilter([EMPTY_FILTER_OPTION_KEY]);
+
+      expect(matches(entityWith())).toBe(true);
+      expect(matches(entityWith({ start: day(3, 1) }))).toBe(false);
+    });
   });
 
   it("should create a string filter for 'string' fields with default text edit component", async () => {
@@ -614,6 +729,329 @@ describe("FilterGeneratorService", () => {
       emptyOption.filter,
     );
     expect(data.filter((item) => filteredByEmpty(item))).toEqual([e3]);
+  });
+
+  describe("filters for properties nested in an embedded field (e.g. Note.childrenAttendance.participant)", () => {
+    it("should create an entity filter for a reference nested in an embedded array field, matching if any entry has the selected value", async () => {
+      const outerSchema = Note.schema.get("childrenAttendance");
+      const participantSchema = outerSchema.additional.participant;
+      const original = {
+        outerLabel: outerSchema.label,
+        participantLabel: participantSchema.label,
+        participantAdditional: participantSchema.additional,
+      };
+      outerSchema.label = "Children attendance";
+      participantSchema.label = "Participant";
+      // simplify the test to not depend on the real "Child" entity type
+      participantSchema.additional = TestEntity.ENTITY_TYPE;
+
+      try {
+        const child1 = new TestEntity();
+        child1.name = "Child One";
+        const child2 = new TestEntity();
+        child2.name = "Child Two";
+        await TestBed.inject(EntityMapperService).saveAll([child1, child2]);
+
+        const note1 = new Note();
+        note1.childrenAttendance = [
+          new AttendanceItem(undefined, undefined, child1.getId()),
+        ];
+        const note2 = new Note();
+        note2.childrenAttendance = [
+          new AttendanceItem(undefined, undefined, child2.getId()),
+          new AttendanceItem(undefined, undefined, child1.getId()),
+        ];
+        const note3 = new Note(); // no attendance entries at all
+        const note4 = new Note();
+        note4.childrenAttendance = [new AttendanceItem()]; // entry without a participant
+        const allNotes = [note1, note2, note3, note4];
+
+        const filterOptions = (
+          await service.generate(
+            [{ id: "childrenAttendance.participant" }],
+            Note,
+            allNotes,
+          )
+        )[0] as EntityFilter<TestEntity>;
+
+        expect(filterOptions.label).toEqual(
+          "Children attendance -> Participant",
+        );
+        expect(filterOptions.name).toEqual("childrenAttendance.participant");
+
+        const child1Option = filterOptions.options.find(
+          (opt) => opt.key === child1.getId(),
+        );
+        expect(child1Option.label).toEqual(child1.name);
+        expect(filter(allNotes, child1Option)).toEqual([note1, note2]);
+
+        const child2Option = filterOptions.options.find(
+          (opt) => opt.key === child2.getId(),
+        );
+        expect(filter(allNotes, child2Option)).toEqual([note2]);
+
+        const emptyOption = filterOptions.options.find(
+          (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+        );
+        // notes without any attendance entries, or with an entry lacking a participant
+        expect(filter(allNotes, emptyOption)).toEqual([note3, note4]);
+      } finally {
+        // restore even on a failed assertion, the schema is shared across spec files
+        outerSchema.label = original.outerLabel;
+        participantSchema.label = original.participantLabel;
+        participantSchema.additional = original.participantAdditional;
+      }
+    });
+
+    it("should create a configurable-enum filter for a property nested in an embedded array field", async () => {
+      @DatabaseEntity("EmbeddedEnumTestEntity")
+      class EmbeddedEnumTestEntity extends Entity {}
+      const enumAdditional = Note.schema.get("category").additional;
+      EmbeddedEnumTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          type: {
+            dataType: "configurable-enum",
+            label: "Type",
+            additional: enumAdditional,
+          },
+        },
+      });
+
+      const e1 = new EmbeddedEnumTestEntity();
+      e1["logEntries"] = [{ type: defaultInteractionTypes[1] }];
+      const e2 = new EmbeddedEnumTestEntity();
+      e2["logEntries"] = [
+        { type: defaultInteractionTypes[2] },
+        { type: defaultInteractionTypes[1] },
+      ];
+      const e3 = new EmbeddedEnumTestEntity();
+      e3["logEntries"] = [];
+      const allEntities = [e1, e2, e3];
+
+      const filterOptions = (
+        await service.generate(
+          [{ id: "logEntries.type" }],
+          EmbeddedEnumTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedEnumTestEntity>;
+
+      expect(filterOptions.label).toEqual("Log Entries -> Type");
+
+      const option1 = filterOptions.options.find(
+        (opt) => opt.key === defaultInteractionTypes[1].id,
+      );
+      expect(filter(allEntities, option1)).toEqual([e1, e2]);
+
+      const emptyOption = filterOptions.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      expect(filter(allEntities, emptyOption)).toEqual([e3]);
+    });
+
+    it("filters a multi-value property nested in an embedded array field by its single values, counting an empty list as not defined", async () => {
+      @DatabaseEntity("EmbeddedMultiEnumTestEntity")
+      class EmbeddedMultiEnumTestEntity extends Entity {}
+      EmbeddedMultiEnumTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          tags: {
+            dataType: "configurable-enum",
+            isArray: true,
+            label: "Tags",
+            additional: Note.schema.get("category").additional,
+          },
+        },
+      });
+
+      const [typeA, typeB, typeC] = defaultInteractionTypes.slice(1, 4);
+      const e1 = new EmbeddedMultiEnumTestEntity();
+      e1["logEntries"] = [{ tags: [typeA, typeB] }];
+      const e2 = new EmbeddedMultiEnumTestEntity();
+      e2["logEntries"] = [{ tags: [typeC] }, { tags: [] }];
+      const allEntities = [e1, e2];
+
+      const enumFilter = (
+        await service.generate(
+          [{ id: "logEntries.tags" }],
+          EmbeddedMultiEnumTestEntity,
+          allEntities,
+        )
+      )[0] as ConfigurableEnumFilter<EmbeddedMultiEnumTestEntity>;
+
+      expect(enumFilter.options.filter((opt) => opt.isInvalid)).toEqual([]);
+      const optionB = enumFilter.options.find((opt) => opt.key === typeB.id);
+      expect(filter(allEntities, optionB)).toEqual([e1]);
+
+      const emptyOption = enumFilter.options.find(
+        (opt) => opt.key === EMPTY_FILTER_OPTION_KEY,
+      );
+      expect(filter(allEntities, emptyOption)).toEqual([e2]);
+    });
+
+    describe("date range nested in an embedded array field", () => {
+      @DatabaseEntity("EmbeddedPeriodTestEntity")
+      class EmbeddedPeriodTestEntity extends Entity {}
+      EmbeddedPeriodTestEntity.schema.set("logEntries", {
+        dataType: "schema-embed",
+        isArray: true,
+        label: "Log Entries",
+        additional: {
+          period: { dataType: "date-range", label: "Period" },
+        },
+      });
+
+      const day = (month: number, date: number) =>
+        new Date(2026, month - 1, date);
+
+      async function generatePeriodFilter(selectedOptionValues: string[]) {
+        const dateFilter = (
+          await service.generate(
+            [{ id: "logEntries.period" }],
+            EmbeddedPeriodTestEntity,
+            [],
+          )
+        )[0] as DateFilter<EmbeddedPeriodTestEntity>;
+        dateFilter.selectedOptionValues = selectedOptionValues;
+        return filterService.getFilterPredicate(dateFilter.getFilter());
+      }
+
+      function entityWith(logEntries?: object[]) {
+        const entity = new EmbeddedPeriodTestEntity();
+        // like a loaded record, which has no key for a field without a value
+        if (logEntries) {
+          entity["logEntries"] = logEntries;
+        }
+        return entity;
+      }
+
+      it.each([
+        [
+          "the only entry overlaps",
+          [{ period: { start: day(3, 12), end: day(3, 18) } }],
+          true,
+        ],
+        [
+          "an entry without an end date started before",
+          [{ period: { start: day(3, 1) } }],
+          true,
+        ],
+        [
+          "a later entry overlaps",
+          [
+            { period: { start: day(1, 1), end: day(2, 1) } },
+            { period: { start: day(3, 19), end: day(6, 1) } },
+          ],
+          true,
+        ],
+        [
+          "one entry ends before, another starts after the dates",
+          [
+            { period: { start: day(1, 1), end: day(2, 1) } },
+            { period: { start: day(5, 1), end: day(6, 1) } },
+          ],
+          false,
+        ],
+        ["the entry has no period", [{}], false],
+        ["there are no entries", [], false],
+      ])(
+        "should match a record only if one of its entries overlaps the dates: %s",
+        async (_, logEntries, expected) => {
+          const matches = await generatePeriodFilter([
+            "2026-03-10",
+            "2026-03-20",
+          ]);
+
+          expect(matches(entityWith(logEntries))).toBe(expected);
+        },
+      );
+
+      it.each([
+        ["there are no entries", [], true],
+        ["the field is not set", undefined, true],
+        [
+          "an entry has no period",
+          [{ period: { start: day(3, 1) } }, {}],
+          true,
+        ],
+        ["every entry has a period", [{ period: { start: day(3, 1) } }], false],
+      ])(
+        "should match 'no date defined' like the empty option of other filters on embedded fields: %s",
+        async (_, logEntries, expected) => {
+          const matches = await generatePeriodFilter([EMPTY_FILTER_OPTION_KEY]);
+
+          expect(matches(entityWith(logEntries))).toBe(expected);
+        },
+      );
+
+      it("should filter by the selection of a copy, as the filter component copies the filter on every change", async () => {
+        const dateFilter = (
+          await service.generate(
+            [{ id: "logEntries.period" }],
+            EmbeddedPeriodTestEntity,
+            [],
+          )
+        )[0] as DateFilter<EmbeddedPeriodTestEntity>;
+        dateFilter.selectedOptionValues = ["2026-03-10", "2026-03-20"];
+
+        const copy = dateFilter.clone({
+          selectedOptionValues: [EMPTY_FILTER_OPTION_KEY],
+        });
+
+        const matches = filterService.getFilterPredicate(copy.getFilter());
+        expect(matches(entityWith([]))).toBe(true);
+      });
+    });
+
+    it("should create a string filter for a property nested in a single (non-array) embedded object field, using a flat dot-path query", async () => {
+      @DatabaseEntity("EmbeddedObjectTestEntity")
+      class EmbeddedObjectTestEntity extends Entity {}
+      EmbeddedObjectTestEntity.schema.set("contact", {
+        dataType: "schema-embed",
+        label: "Contact",
+        additional: {
+          phoneType: {
+            dataType: "string",
+            label: "Phone Type",
+          },
+        },
+      });
+
+      const e1 = new EmbeddedObjectTestEntity();
+      e1["contact"] = { phoneType: "mobile" };
+      const e2 = new EmbeddedObjectTestEntity();
+      e2["contact"] = { phoneType: "landline" };
+      const e3 = new EmbeddedObjectTestEntity(); // no contact at all
+      const allEntities = [e1, e2, e3];
+
+      const filterOptions = (
+        await service.generate(
+          [{ id: "contact.phoneType" }],
+          EmbeddedObjectTestEntity,
+          allEntities,
+        )
+      )[0] as StringFilter<EmbeddedObjectTestEntity>;
+
+      expect(filterOptions).toBeInstanceOf(StringFilter);
+      expect(filterOptions.label).toEqual("Contact -> Phone Type");
+
+      filterOptions.selectedOptionValues = ["mobile"];
+      expect(filterOptions.getFilter()).toEqual({
+        "contact.phoneType": { $regex: "mobile", $options: "i" },
+      });
+      expect(
+        filter(allEntities, {
+          key: "x",
+          label: "x",
+          filter: filterOptions.getFilter(),
+        }),
+      ).toEqual([e1]);
+    });
   });
 
   it("should build configurable-enum filters that match single and array values, independent of isArray (#4406)", async () => {

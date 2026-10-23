@@ -28,7 +28,6 @@ export class DefaultValueService {
     for (const strategy of this.defaultValueStrategies) {
       await strategy.initEntityForm(form);
     }
-    this.enableChangeListener(form);
 
     for (const fieldConfig of form.fieldConfigs) {
       if (!fieldConfig.defaultValue) {
@@ -89,15 +88,6 @@ export class DefaultValueService {
     return true;
   }
 
-  private enableChangeListener<T extends Entity>(form: EntityForm<T>) {
-    form.watcher.set(
-      "formGroupValueChanges",
-      form.formGroup.valueChanges.subscribe(async (change) =>
-        this.defaultValueStrategies.forEach((s) => s.onFormValueChanges(form)),
-      ),
-    );
-  }
-
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     fieldId: string,
@@ -118,6 +108,13 @@ export class DefaultValueService {
 export type DefaultValueHint = FullDefaultValueHint | EmptyDefaultValueHint;
 
 /**
+ * Why linked records provide no value to inherit:
+ * - "conflict": they have different values
+ * - "unavailable": some of them could not be loaded (e.g. no permission to read them)
+ */
+export type NoCommonValueReason = "conflict" | "unavailable";
+
+/**
  * Details of the source for an "inherited" default value in a field,
  * used to display context to the user about this.
  */
@@ -135,7 +132,10 @@ export interface FullDefaultValueHint {
    */
   isCollectedFromLinkedRecords?: boolean;
 
-  isEmpty?: undefined | false;
+  noCommonValue?: undefined;
+
+  isEmpty?: false;
+  isLoading?: false;
 }
 
 /**
@@ -144,6 +144,16 @@ export interface FullDefaultValueHint {
 export interface EmptyDefaultValueHint {
   inheritedFromField: string;
   isEmpty: true;
+
+  /**
+   * Parent records are linked but they provide no value in common to inherit.
+   */
+  noCommonValue?: NoCommonValueReason;
+
+  /**
+   * Parent records are linked but still being loaded.
+   */
+  isLoading?: boolean;
 
   isInSync?: undefined;
   inheritedFromType?: undefined;

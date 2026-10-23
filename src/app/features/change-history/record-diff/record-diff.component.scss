@@ -45,7 +45,7 @@ $diff-columns: 140px minmax(0, 1fr) 28px minmax(0, 1fr);
 .head {
   font-size: 0.7em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--letter-spacing-wide);
   color: colors.$muted;
   padding-bottom: sizes.$x-small;
   border-bottom: 1px solid colors.$grey-medium;

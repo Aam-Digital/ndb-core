@@ -63,7 +63,7 @@ export class TabStateMemoDirective implements OnInit {
         startWith(null),
         untilDestroyed(this),
       )
-      .subscribe(() => {
+      .subscribe((navigationEvent) => {
         const potentialNextTabIndex = parseInt(
           this.route.snapshot.queryParamMap.get(this.tabIndexKey),
           10,
@@ -77,6 +77,10 @@ export class TabStateMemoDirective implements OnInit {
           // Without this, an in-app navigation that only changes the tabIndex
           // query param updates the URL but not the visible tab (OnPush parents).
           this.cdr.markForCheck();
+
+          if (navigationEvent === null) {
+            this.notifyInitialSelectedIndex();
+          }
         }
       });
     this.tab.selectedIndexChange
@@ -84,10 +88,31 @@ export class TabStateMemoDirective implements OnInit {
       .subscribe((next) => this.updateURLQueryParams(next));
   }
 
+  /**
+   * MatTabGroup does not emit `selectedIndexChange` for the very first index it applies,
+   * so a parent binding `[(selectedIndex)]` would not learn about the tab restored from the URL.
+   * Emit it like MatTabGroup does for later changes: in a microtask, after the current
+   * change detection run, with the index the tab group actually applied (clamped to its tabs).
+   */
+  private notifyInitialSelectedIndex() {
+    void Promise.resolve().then(() => {
+      const appliedIndex = this.tab.selectedIndex;
+      if (appliedIndex !== null && appliedIndex >= 0) {
+        this.tab.selectedIndexChange.emit(appliedIndex);
+      }
+    });
+  }
+
   // Update the URL
   private async updateURLQueryParams(value: number) {
     if (this.viewContext?.isDialog) {
       // does not apply if opened in popup
+      return;
+    }
+    if (
+      this.route.snapshot.queryParamMap.get(this.tabIndexKey) === String(value)
+    ) {
+      // URL already holds this state (e.g. the index was just restored from it)
       return;
     }
 

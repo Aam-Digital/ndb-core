@@ -48,6 +48,21 @@ export interface DefaultValueConfigInheritedField {
 }
 
 /**
+ * Whether the field inherits the value of the parent records this record links to in one of its fields
+ * (unlike automation rules with a sourceReferenceEntity, which update the value from the side of the related records).
+ */
+export function isInheritingFromParent(
+  field: EntitySchemaField | undefined,
+): boolean {
+  const config: DefaultValueConfigInheritedField = field?.defaultValue?.config;
+  return (
+    field?.defaultValue?.mode === "inherited-field" &&
+    !!config?.sourceReferenceField &&
+    !config.sourceReferenceEntity
+  );
+}
+
+/**
  * Whether the field collects the values of all related records that link to this record
  * (e.g. a school's field collecting the cities of all its children),
  * adding to the existing values instead of replacing them.

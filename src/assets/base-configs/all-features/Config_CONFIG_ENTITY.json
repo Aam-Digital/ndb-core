@@ -292,8 +292,6 @@
         "clickMode": "popup-details",
         "title": "Notes & Reports",
         "columnGroups": {
-          "default": "Standard",
-          "mobile": "Mobile",
           "groups": [
             {
               "name": "Standard",
@@ -479,6 +477,17 @@
           "title",
           "authors",
           "attendance"
+        ],
+        "filters": [
+          {
+            "id": "attendance.participant"
+          },
+          {
+            "id": "attendance.status"
+          },
+          {
+            "id": "attendance.remarks"
+          }
         ]
       },
       "_id": "view:event"
@@ -720,8 +729,6 @@
           }
         ],
         "columnGroups": {
-          "default": "Basic Info",
-          "mobile": "Mobile",
           "groups": [
             {
               "name": "Basic Info",
@@ -1103,8 +1110,7 @@
                       "visibleFrom": "lg"
                     }
                   ],
-                  "entityType": "HistoricalEntityData",
-                  "loaderMethod": "HistoricalDataService"
+                  "entityType": "HistoricalEntityData"
                 }
               }
             ]
@@ -1505,6 +1511,20 @@
           "dataType": "configurable-enum",
           "additional": "center"
         },
+        "childrenCenter": {
+          "id": "childrenCenter",
+          "label": "Center of Children",
+          "description": "Inherited automatically if all children linked in \"Entity Multi Field\" share the same Center",
+          "dataType": "configurable-enum",
+          "additional": "center",
+          "defaultValue": {
+            "mode": "inherited-field",
+            "config": {
+              "sourceReferenceField": "entityMultiField",
+              "sourceValueField": "center"
+            }
+          }
+        },
         "enumMulti": {
           "id": "enumMulti",
           "label": "enum multi",
@@ -1548,6 +1568,48 @@
           "id": "dateField",
           "label": "Date Field",
           "dataType": "date"
+        },
+        "dateRangeField": {
+          "id": "dateRangeField",
+          "label": "Date Range Field",
+          "dataType": "date-range"
+        },
+        "dateRangeFieldOwnPeriods": {
+          "id": "dateRangeFieldOwnPeriods",
+          "label": "Date Range Field (own periods)",
+          "dataType": "date-range",
+          "additional": [
+            {
+              "label": "This year and the next 2 years",
+              "startOffsets": [
+                {
+                  "amount": 0,
+                  "unit": "years"
+                }
+              ],
+              "endOffsets": [
+                {
+                  "amount": 2,
+                  "unit": "years"
+                }
+              ]
+            },
+            {
+              "label": "Current year",
+              "startOffsets": [
+                {
+                  "amount": 0,
+                  "unit": "years"
+                }
+              ],
+              "endOffsets": [
+                {
+                  "amount": 0,
+                  "unit": "years"
+                }
+              ]
+            }
+          ]
         },
         "entityField": {
           "id": "entityField",
@@ -1624,6 +1686,10 @@
             "value": {
               "dataType": "number",
               "label": "embedded item value"
+            },
+            "period": {
+              "dataType": "date-range",
+              "label": "embedded item period"
             }
           }
         }
@@ -1640,11 +1706,18 @@
             "id": "DisplayParticipantsCount",
             "viewComponent": "DisplayParticipantsCount",
             "label": "Participants"
-          }
+          },
+          "dateRangeField"
         ],
         "filters": [
           {
             "id": "checkboxField"
+          },
+          {
+            "id": "dateRangeField"
+          },
+          {
+            "id": "embeddedArrayOfObjects.period"
           }
         ]
       }
@@ -1673,11 +1746,14 @@
                         "remarks",
                         "enumDropdown",
                         "enumMulti",
+                        "childrenCenter",
                         "numberField",
                         "longTextField",
                         "percentageField",
                         "emailField",
-                        "website"
+                        "website",
+                        "dateRangeField",
+                        "dateRangeFieldOwnPeriods"
                       ]
                     },
                     {

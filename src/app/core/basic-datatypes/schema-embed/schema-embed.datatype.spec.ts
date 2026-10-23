@@ -56,6 +56,17 @@ describe("Schema data type: schema-embed", () => {
       embedded = new InnerClass();
     }
 
+    class TestEntityWithEmbeddedPartialOverride extends Entity {
+      @DatabaseField({
+        dataType: SchemaEmbedTestDatatype.dataType,
+        additional: {
+          // no dataType here - should be forwarded from InnerClass.value ("month")
+          value: { label: "Custom Value Label" },
+        } as SchemaEmbedDatatypeAdditional,
+      })
+      embedded = new InnerClass();
+    }
+
     class InnerClass {
       declare static schema: EntitySchema;
 
@@ -150,6 +161,27 @@ describe("Schema data type: schema-embed", () => {
         moment(loadedEntity.embedded["valueNew"]).isSame("2023-06-01", "day"),
       ).toBe(true);
       expect(loadedEntity.embedded.value2).toBe(5);
+    });
+
+    it("forwards dataType from the embeddedType when a partial override omits it", () => {
+      const entity = new TestEntityWithEmbeddedPartialOverride();
+      entity.embedded.value = moment("2020-01-01").toDate();
+
+      const rawData =
+        entitySchemaService.transformEntityToDatabaseFormat(entity);
+      // still transformed via the "month" datatype inherited from InnerClass.value,
+      // not left as a raw Date (which would happen if dataType were lost, falling back
+      // to the no-op default datatype)
+      expect(rawData.embedded.value).toEqual("2020-01");
+
+      const data = { embedded: { value: "2023-06" } };
+      const loadedEntity = new TestEntityWithEmbeddedPartialOverride();
+      entitySchemaService.loadDataIntoEntity(loadedEntity, data);
+
+      expect(loadedEntity.embedded.value).toBeInstanceOf(Date);
+      expect(
+        moment(loadedEntity.embedded.value).isSame("2023-06-01", "day"),
+      ).toBe(true);
     });
   });
 

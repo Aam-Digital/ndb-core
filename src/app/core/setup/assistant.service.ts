@@ -1,5 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { Directionality } from "@angular/cdk/bidi";
 import { lastValueFrom } from "rxjs";
 import { AssistantDialogComponent } from "./assistant-dialog/assistant-dialog.component";
 
@@ -14,6 +15,7 @@ export class AssistantService {
   static readonly ASSISTANT_DIALOG_HEIGHT = "calc(100% - 64px)";
 
   private readonly dialog = inject(MatDialog);
+  private readonly directionality = inject(Directionality);
   private isDialogOpen: boolean = false;
 
   /**
@@ -42,7 +44,12 @@ export class AssistantService {
         height: AssistantService.ASSISTANT_DIALOG_HEIGHT,
         maxWidth: "100%",
         maxHeight: "100%",
-        position: { top: "0px", right: "0px" },
+        // the panel slides in from the same edge its button sits on, which mirrors
+        // in RTL; a dialog position is set in JS, so it cannot use a logical property
+        position:
+          this.directionality.value === "rtl"
+            ? { top: "0px", left: "0px" }
+            : { top: "0px", right: "0px" },
         backdropClass: "backdrop-below-toolbar",
         minWidth: "350px",
         width: "40vw",
