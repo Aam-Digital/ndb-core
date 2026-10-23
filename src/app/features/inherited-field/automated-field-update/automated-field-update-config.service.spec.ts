@@ -359,6 +359,39 @@ class CycleAction extends Entity {
   inheritedTotal: ConfigurableEnumValue[];
 }
 
+/** a record whose "mainTag" goes down to its sub-records, from where their "tags" are collected again (like Center in the all-features config) */
+@DatabaseEntity("FanOutAction")
+class FanOutAction extends Entity {
+  @DatabaseField({ dataType: "entity", additional: "FanOutAction" })
+  parent: string;
+  @DatabaseField({ dataType: "configurable-enum", additional: "action-tags" })
+  mainTag: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    defaultValue: {
+      mode: "inherited-field",
+      config: { sourceReferenceField: "parent", sourceValueField: "mainTag" },
+    },
+  })
+  tag: ConfigurableEnumValue;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "action-tags",
+    isArray: true,
+    defaultValue: {
+      mode: "inherited-field",
+      config: {
+        sourceReferenceEntity: "FanOutAction",
+        sourceReferenceField: "parent",
+        sourceValueField: "tag",
+        aggregation: "add",
+      },
+    },
+  })
+  subTags: ConfigurableEnumValue[];
+}
+
 describe("AutomatedFieldUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let service: AutomatedFieldUpdateConfigService;
@@ -412,6 +445,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
     entityRegistry.set("FieldChainAction", FieldChainAction);
     entityRegistry.set("CycleAction", CycleAction);
     entityRegistry.set("CommonValueGroup", CommonValueGroup);
+    entityRegistry.set("FanOutAction", FanOutAction);
 
     mockIndexing = {
       generateIndexOnProperty: vi.fn().mockResolvedValue(undefined),
@@ -1482,6 +1516,46 @@ describe("AutomatedFieldUpdateConfigService", () => {
           `${activity.getId()}|inheritedTotal`,
         ].sort(),
       );
+    });
+
+    describe("when the changed record passes a value down to its sub-records, which pass it up again", () => {
+      let project: FanOutAction;
+
+      /** change the main tag of a project with several activities, which have the old main tag */
+      async function changeMainTag(dialogResult?: () => unknown) {
+        project = new FanOutAction();
+        project.mainTag = toTagValue("health");
+        project.subTags = toTags(["health"]);
+        const activities = Array.from({ length: 5 }, () => {
+          const activity = new FanOutAction();
+          activity.parent = project.getId();
+          activity.tag = toTagValue("health");
+          return activity;
+        });
+        [project, ...activities].forEach(
+          (action) => (action._rev = "1-existing"),
+        );
+        entityMapper.addAll([project, ...activities]);
+        const projectBefore = project.copy();
+        project.mainTag = toTagValue("education");
+        mockDialog.open.mockClear();
+        if (dialogResult) {
+          mockDialog.open.mockImplementationOnce(() => ({
+            afterClosed: () => of(dialogResult()),
+          }));
+        }
+        mockIndexing.queryIndexDocs.mockClear();
+
+        await service.applyRulesToDependentEntities(project, projectBefore);
+
+        return mockDialog.open.mock.calls[0][1].data.entities;
+      }
+
+      it("does not set the suggested value of a field of the changed record before the user confirms it", async () => {
+        await changeMainTag(() => undefined);
+
+        expect(project.subTags).toEqual(toTags(["health"]));
+      });
     });
 
     it("stops at the level where nothing changes", async () => {
