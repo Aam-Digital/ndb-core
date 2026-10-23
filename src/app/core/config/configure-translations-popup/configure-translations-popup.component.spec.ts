@@ -10,6 +10,7 @@ import {
 } from "../../language/active-locale";
 import { AVAILABLE_LOCALE_IDS } from "../../language/available-locales";
 import { DEFAULT_LANGUAGE } from "../../language/language-statics";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 import { availableLocales } from "../../language/languages";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { TranslatableText } from "../multi-lingual-config";
@@ -23,7 +24,10 @@ describe("ConfigureTranslationsPopupComponent", () => {
   let fixture: ComponentFixture<ConfigureTranslationsPopupComponent>;
   let dialogRef: { close: ReturnType<typeof vi.fn> };
 
-  async function createComponent(data: ConfigureTranslationsDialogData) {
+  async function createComponent(
+    data: ConfigureTranslationsDialogData,
+    offeredLocales: ConfigurableEnumValue[] = availableLocales.values,
+  ) {
     dialogRef = { close: vi.fn() };
 
     await TestBed.configureTestingModule({
@@ -37,7 +41,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
         { provide: MatDialogRef, useValue: dialogRef },
         {
           provide: SiteSettingsService,
-          useValue: { enabledLocales: signal(availableLocales.values) },
+          useValue: { enabledLocales: signal(offeredLocales) },
         },
       ],
     }).compileComponents();
@@ -185,5 +189,62 @@ describe("ConfigureTranslationsPopupComponent", () => {
     component.onCancel();
 
     expect(dialogRef.close).toHaveBeenCalledWith(undefined);
+  });
+
+  describe("texts in languages the system does not offer", () => {
+    const en = availableLocales.values.find((l) => l.id === "en-US");
+    const de = availableLocales.values.find((l) => l.id === "de");
+
+    it.each<{
+      name: string;
+      value: TranslatableText;
+      enOffered: boolean;
+      expected: TranslatableText;
+    }>(
+      [
+        { name: "plain string", value: "Name", expected: "Name" },
+        {
+          name: "map with exact keys",
+          value: { "en-US": "Name", de: "Vorname" },
+          expected: { "en-US": "Name", de: "Vorname" },
+        },
+        {
+          name: "map with a base-language key",
+          value: { en: "Name", de: "Vorname" },
+          expected: { "en-US": "Name", de: "Vorname" },
+        },
+      ].flatMap((c) => [
+        { ...c, enOffered: true },
+        { ...c, enOffered: false },
+      ]),
+    )(
+      "should keep the existing texts on save: $name, active language offered: $enOffered",
+      async ({ value, enOffered, expected }) => {
+        configureActiveLocale("en-US", AVAILABLE_LOCALE_IDS);
+        await createComponent({ value }, enOffered ? [en, de] : [de]);
+
+        component.onSave();
+
+        expect(dialogRef.close).toHaveBeenCalledWith({ value: expected });
+      },
+    );
+
+    it("should not offer a row for a language that is neither offered nor translated", async () => {
+      await createComponent({ value: { de: "Vorname" } }, [de]);
+
+      expect(component.rows.map((r) => r.locale)).toEqual(["de"]);
+    });
+
+    it("should mark rows of languages that are not offered", async () => {
+      await createComponent({ value: { "en-US": "Name", de: "Vorname" } }, [
+        de,
+      ]);
+
+      expect(component.rows.map((r) => [r.locale, r.offered])).toEqual([
+        ["de", true],
+        ["en-US", false],
+      ]);
+      expect(fixture.nativeElement.textContent).toContain("(not offered)");
+    });
   });
 });

@@ -33,6 +33,8 @@ export interface ConfigureTranslationsDialogData {
 interface TranslationRow {
   locale: string;
   localeLabel: string;
+  /** false if the system does not offer this language, and only keeps existing text */
+  offered: boolean;
   text: string;
 }
 
@@ -62,29 +64,36 @@ export class ConfigureTranslationsPopupComponent {
   private readonly dialogRef =
     inject<MatDialogRef<ConfigureTranslationsPopupComponent>>(MatDialogRef);
 
-  rows: TranslationRow[] = this.offeredLocales().map((locale) => ({
-    locale: locale.id,
-    localeLabel: locale.label,
-    text: this.initialTextFor(locale.id),
-  }));
+  rows: TranslationRow[] = this.buildRows();
 
   /**
-   * The languages this system offers, plus any this text is already translated
-   * into: {@link buildValue} rebuilds the value from these rows, so leaving one
-   * out would delete that translation on save.
+   * One row per language this system offers (in their order), followed by every
+   * other language this text already holds text for. {@link buildValue} rebuilds
+   * the value from the rows, so leaving one out would delete that text on save.
+   *
+   * Existing text means: a key of a translation map (a base-language key like `en`
+   * counts for `en-US`), or, for a plain string, the active language, which
+   * {@link initialTextFor} files it under (so both cases are one check). A language that is not offered and holds
+   * no text gets no row, so admins are not invited to write texts in it.
    */
-  private offeredLocales(): ConfigurableEnumValue[] {
+  private buildRows(): TranslationRow[] {
     const offered = this.siteSettings.enabledLocales();
-    const value = this.data?.value;
-    if (!isLocaleTranslationMap(value)) {
-      return offered;
-    }
+    const isOffered = (locale: ConfigurableEnumValue) =>
+      offered.some(({ id }) => id === locale.id);
 
-    const alreadyTranslated = availableLocales.values.filter(
-      (locale) =>
-        !!value[locale.id] && !offered.some(({ id }) => id === locale.id),
+    const existing = availableLocales.values.filter(
+      (locale) => !isOffered(locale) && !!this.initialTextFor(locale.id),
     );
-    return [...offered, ...alreadyTranslated];
+
+    return [
+      ...offered.map((locale) => ({ locale, offered: true })),
+      ...existing.map((locale) => ({ locale, offered: false })),
+    ].map(({ locale, offered }) => ({
+      locale: locale.id,
+      localeLabel: locale.label,
+      offered,
+      text: this.initialTextFor(locale.id),
+    }));
   }
 
   private initialTextFor(locale: string): string {
