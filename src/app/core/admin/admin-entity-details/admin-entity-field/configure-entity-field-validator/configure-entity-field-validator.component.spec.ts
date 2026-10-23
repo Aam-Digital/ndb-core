@@ -26,6 +26,7 @@ import {
   EntitySchemaField,
   WithinParentConfig,
 } from "../../../../entity/schema/entity-schema-field";
+import { TranslatableText } from "../../../../config/multi-lingual-config";
 
 @DatabaseEntity("ValidatorTestProject")
 class ValidatorTestProject extends Entity {
@@ -226,21 +227,32 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
       },
     );
 
-    it("offers this field for a link to the same type while the new field has no label yet", async () => {
-      fixture.componentRef.setInput("entityType", ValidatorTestAction);
-      fixture.componentRef.setInput("entitySchemaField", {
-        dataType: "date-range",
-      });
-      fixture.detectChanges();
-      const select =
-        await TestbedHarnessEnvironment.loader(fixture).getHarness(
-          MatSelectHarness,
-        );
-      await select.open();
+    it.each<[string, TranslatableText | undefined, string]>([
+      ["has no label yet (a new field)", undefined, "Parent › this field"],
+      [
+        "has a label in several languages",
+        { en: "Planned period", de: "Geplanter Zeitraum" },
+        "Parent › Planned period",
+      ],
+    ])(
+      "names this field for a link to the same type when it %s",
+      async (_, label, expected) => {
+        fixture.componentRef.setInput("entityType", ValidatorTestAction);
+        fixture.componentRef.setInput("entitySchemaField", {
+          dataType: "date-range",
+          label,
+        } as EntitySchemaField);
+        fixture.detectChanges();
+        const select =
+          await TestbedHarnessEnvironment.loader(fixture).getHarness(
+            MatSelectHarness,
+          );
+        await select.open();
 
-      const options = await select.getOptions({ text: /^Parent/ });
-      expect(await options[0].getText()).toBe("Parent › this field");
-    });
+        const options = await select.getOptions({ text: /^Parent/ });
+        expect(await options[0].getText()).toBe(expected);
+      },
+    );
 
     it("shows the saved setting", async () => {
       const { select } = await renderDateRangeField({

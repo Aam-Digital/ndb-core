@@ -29,6 +29,7 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
 import { DateRangeDatatype } from "app/core/basic-datatypes/date-range/date-range.datatype";
 import { asArray } from "app/utils/asArray";
+import { resolveLocaleText } from "app/core/language/active-locale";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
@@ -104,7 +105,7 @@ export class ConfigureEntityFieldValidatorComponent {
         if (parentType === entityType) {
           // the field itself (as the default), even if it is not saved to the schema yet
           options.push({
-            label: `${link.label ?? linkId} › ${field.label || $localize`this field`}`,
+            label: `${link.label ?? linkId} › ${resolveLocaleText(field.label) || $localize`this field`}`,
             value: { parentReferenceField: linkId },
           });
         }
