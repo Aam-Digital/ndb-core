@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -68,6 +70,10 @@ describe("AdminEntityFieldComponent", () => {
       providers: [
         // the preview of the field type in the dialog can be a date picker
         provideNativeDateAdapter(),
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
         {
           provide: MAT_DIALOG_DATA,
           useValue: dialogData,

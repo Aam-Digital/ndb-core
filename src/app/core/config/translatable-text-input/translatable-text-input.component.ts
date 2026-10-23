@@ -25,7 +25,7 @@ import {
   ConfigureTranslationsResult,
 } from "../configure-translations-popup/configure-translations-popup.component";
 import { TranslatableText } from "../multi-lingual-config";
-import { environment } from "#src/environments/environment";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
 
 /**
  * Input for a configurable text that can be translated into multiple languages.
@@ -90,10 +90,12 @@ export class TranslatableTextInputComponent
   showTranslationsButton = input(true);
 
   /**
-   * Whether this system configures texts in several languages at all.
+   * Whether texts can be configured in several languages in this system
+   * ({@link SiteSettingsService.translationsEnabled}).
    * Callers rendering their own translations button read this to hide it as well.
    */
-  readonly multiLingualConfigEnabled = environment.multiLingualConfigEnabled;
+  readonly translationsEnabled =
+    inject(SiteSettingsService).translationsEnabled;
 
   private readonly dialog = inject(MatDialog);
 

@@ -105,6 +105,32 @@ describe("SiteSettingsService", () => {
     expect(service.enabledLocales()).toEqual(expected);
   });
 
+  describe("translationsEnabled", () => {
+    const originalFlag = environment.multiLingualConfigEnabled;
+
+    afterEach(() => {
+      environment.multiLingualConfigEnabled = originalFlag;
+    });
+
+    it.each([
+      ["the flag is off", false, [DE, FR], false],
+      [
+        "the flag is on but only the system language is enabled",
+        true,
+        [],
+        false,
+      ],
+      ["the flag is on and several languages are enabled", true, [FR], true],
+    ])("is %s", (_, flag, enabled, expected) => {
+      environment.multiLingualConfigEnabled = flag;
+      entityMapper.add(
+        SiteSettings.create({ availableLocales: enabled, defaultLanguage: DE }),
+      );
+
+      expect(service.translationsEnabled()).toBe(expected);
+    });
+  });
+
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
     vi.spyOn(document.documentElement.style, "setProperty");
 

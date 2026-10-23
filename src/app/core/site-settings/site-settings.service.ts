@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { computed, inject, Injectable } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
@@ -76,6 +76,16 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
       }),
     ),
     { initialValue: availableLocales.values },
+  );
+
+  /**
+   * Whether the UI to configure texts in several languages is shown (the translations
+   * buttons of admin forms). Requires the `multiLingualConfigEnabled` flag AND more than
+   * one enabled language: if only the system language is enabled, there is nothing to
+   * translate into. Texts already stored per language are resolved and kept as always.
+   */
+  readonly translationsEnabled = computed(
+    () => this.languageSwitchingEnabled && this.enabledLocales().length > 1,
   );
 
   private entityConfigReady = inject(EntityConfigReadyService);

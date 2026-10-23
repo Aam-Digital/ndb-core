@@ -1,3 +1,5 @@
+import { signal } from "@angular/core";
+import { SiteSettingsService } from "#src/app/core/site-settings/site-settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AdminTabsComponent } from "./admin-tabs.component";
@@ -18,6 +20,12 @@ describe("AdminTabsComponent", () => {
         AdminTabsComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
+      ],
+      providers: [
+        {
+          provide: SiteSettingsService,
+          useValue: { translationsEnabled: signal(true) },
+        },
       ],
     }).compileComponents();
 

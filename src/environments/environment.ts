@@ -103,6 +103,9 @@ export const environment = {
    * If off, the translation editing UI is hidden (texts already stored per language are
    * still resolved), and everyone uses the system language from the site settings:
    * a user's own language and one picked on the device are ignored.
+   *
+   * If on, the translation editing UI is still hidden while only the system language
+   * is enabled in the site settings (see `SiteSettingsService.translationsEnabled`).
    */
   multiLingualConfigEnabled: true,
 

@@ -78,12 +78,15 @@ The flag also decides whether users can switch the app's language at all (see
 [Which language a user sees](#which-language-a-user-sees)).
 
 For configured texts it only hides the editing UI — the buttons that open the translations dialog.
+The buttons are also hidden while only one language is enabled (the system language, see
+`SiteSettingsService.enabledLocales`), because there is nothing to translate into. Both
+conditions are combined in `SiteSettingsService.translationsEnabled`.
 Resolving is always on, so a system that has the flag turned off still displays texts
 that are already stored per language, and turning it off cannot strand data.
 
 Components that render their own translations button (rather than letting
-`TranslatableTextInputComponent` draw it) read `multiLingualConfigEnabled` off that
-component, so the flag is looked up in one place.
+`TranslatableTextInputComponent` draw it) read `translationsEnabled` off that
+component, so the condition is looked up in one place.
 
 ### The stored format
 

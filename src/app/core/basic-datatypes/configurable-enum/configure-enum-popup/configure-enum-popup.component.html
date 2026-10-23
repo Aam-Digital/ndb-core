@@ -22,7 +22,7 @@
       ></app-translatable-text-input>
 
       <div matSuffix class="flex-row gap-small">
-        @if (labelInput.multiLingualConfigEnabled) {
+        @if (labelInput.translationsEnabled()) {
           <button
             mat-icon-button
             type="button"
