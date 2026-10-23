@@ -45,7 +45,7 @@
           [label]="step.title"
           [completed]="completedSteps?.includes(index)"
         >
-          <markdown>{{ step.text }}</markdown>
+          <markdown dir="auto">{{ step.text }}</markdown>
 
           <mat-action-list>
             @for (action of step.actions; track action.link) {

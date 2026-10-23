@@ -234,7 +234,7 @@ export class FeaturePermissionService {
 
     for (const { role, actions } of updates) {
       const isDefaultSection = role === DEFAULT_SECTION_KEY;
-      // `_public` (and the legacy spellings) are never edited through this grid,
+      // `_public` is never edited through this grid,
       // as they carry semantics the per-role checkboxes cannot represent
       if (!isDefaultSection && isReservedRuleConfigKey(role)) {
         continue;

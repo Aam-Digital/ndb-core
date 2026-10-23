@@ -10,6 +10,11 @@ import {
 import { Subject } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { DatabaseEntity } from "#src/app/core/entity/database-entity.decorator";
+import { createEmptyValueFilter } from "#src/app/core/filter/filters/filters";
+import { MemoryPouchDatabase } from "#src/app/core/database/pouchdb/memory-pouch-database";
+import { SyncStateSubject } from "#src/app/core/session/session-type";
+import { FilterGeneratorService } from "#src/app/core/filter/filter-generator/filter-generator.service";
 
 /**
  * A minimal fake MatPaginator: PaginatedDataSource only reads `pageSize`/
@@ -118,6 +123,190 @@ describe("PaginatedDataSource", () => {
           { category: "SCHOOL" },
           { category: { $elemMatch: { $eq: "SCHOOL" } } },
         ],
+      });
+    });
+
+    describe("on fields nested inside embedded fields", () => {
+      @DatabaseEntity("PaginatedEmbedTest")
+      class EmbedTest extends Entity {}
+      EmbedTest.schema.set("category", {
+        dataType: "configurable-enum",
+        additional: "categories",
+      });
+      EmbedTest.schema.set("attendance", {
+        dataType: "attendance",
+        isArray: true,
+      });
+      EmbedTest.schema.set("childrenAttendance", {
+        dataType: "event-attendance-map",
+      });
+      EmbedTest.schema.set("phone", {
+        dataType: "schema-embed",
+        additional: {
+          type: { dataType: "configurable-enum", additional: "phone-types" },
+        },
+      });
+      EmbedTest.schema.set("log", {
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          tags: {
+            dataType: "configurable-enum",
+            isArray: true,
+            additional: "tags",
+          },
+          period: { dataType: "date-range" },
+        },
+      });
+
+      // documents as stored in the database, not as loaded entities
+      const docs = [
+        {
+          _id: "PaginatedEmbedTest:a",
+          category: "SCHOOL",
+          attendance: [{ participant: "Child:a", status: "PRESENT" }],
+          childrenAttendance: [["Child:a", { status: "PRESENT" }]],
+          phone: { type: "mobile" },
+          log: [
+            {
+              tags: ["A", "B"],
+              period: { start: "2026-03-12", end: "2026-03-18" },
+            },
+          ],
+        },
+        {
+          _id: "PaginatedEmbedTest:b",
+          attendance: [{ participant: "Child:b" }],
+          childrenAttendance: [["Child:b", { remarks: "" }]],
+          phone: { type: "landline" },
+          log: [
+            {
+              tags: ["C"],
+              period: { start: "2026-01-01", end: "2026-02-01" },
+            },
+            { tags: [], period: { start: "2026-05-01" } },
+          ],
+        },
+      ];
+
+      /** the "not defined" filter as FilterGeneratorService builds it for an embedded array */
+      function notDefinedInArray(
+        outerProp: string,
+        innerProp: string,
+        innerIsArray = false,
+      ) {
+        const inner = createEmptyValueFilter(innerProp, true, innerIsArray) as {
+          $or: object[];
+        };
+        return {
+          $or: [
+            { [outerProp]: { $exists: false } },
+            { [outerProp]: { $size: 0 } },
+            ...inner.$or.map((c) => ({ [outerProp]: { $elemMatch: c } })),
+          ],
+        };
+      }
+
+      let database: MemoryPouchDatabase;
+
+      beforeEach(async () => {
+        database = new MemoryPouchDatabase(
+          "paginated-embed-test",
+          new SyncStateSubject(),
+        );
+        database.init();
+        await database.putAll(docs);
+        dataSource.loadRecordConfig.set({ entityCtr: EmbedTest });
+      });
+
+      afterEach(() => database.destroy());
+
+      it.each([
+        [
+          "top-level enum not defined",
+          createEmptyValueFilter("category", true),
+          ["b"],
+        ],
+        [
+          "enum in embedded array",
+          { attendance: { $elemMatch: { "status.id": "PRESENT" } } },
+          ["a"],
+        ],
+        [
+          "entity in embedded array",
+          { attendance: { $elemMatch: { participant: "Child:b" } } },
+          ["b"],
+        ],
+        [
+          "enum not defined in embedded array",
+          notDefinedInArray("attendance", "status"),
+          ["b"],
+        ],
+        [
+          "participant in legacy attendance tuple",
+          { childrenAttendance: { $elemMatch: { participant: "Child:a" } } },
+          ["a"],
+        ],
+        [
+          "enum in legacy attendance tuple",
+          { childrenAttendance: { $elemMatch: { "status.id": "PRESENT" } } },
+          ["a"],
+        ],
+        [
+          "enum not defined in legacy attendance tuple",
+          notDefinedInArray("childrenAttendance", "status"),
+          ["b"],
+        ],
+        [
+          "multi-value enum in embedded array",
+          {
+            log: {
+              $elemMatch: { "tags.id": { $elemMatch: { $eq: "B" } } },
+            },
+          },
+          ["a"],
+        ],
+        [
+          "multi-value enum not defined in embedded array",
+          notDefinedInArray("log", "tags", true),
+          ["b"],
+        ],
+        [
+          "enum in single embedded object",
+          { "phone.type.id": "mobile" },
+          ["a"],
+        ],
+      ])(
+        "matches the stored documents for: %s",
+        async (_, filter, expected) => {
+          const result = await database.find(
+            "PaginatedEmbedTest",
+            processFilter(filter),
+          );
+
+          expect(result.docs.map((d) => d._id)).toEqual(
+            expected.map((id) => `PaginatedEmbedTest:${id}`),
+          );
+        },
+      );
+
+      it("matches only the stored documents with an entry whose period overlaps the dates, for a period in an embedded array", async () => {
+        // "b" has a period before and another one after the dates, but none overlapping them
+        const dateFilter = (
+          await TestBed.inject(FilterGeneratorService).generate(
+            [{ id: "log.period" }],
+            EmbedTest,
+            [],
+          )
+        )[0];
+        dateFilter.selectedOptionValues = ["2026-03-10", "2026-03-20"];
+
+        const result = await database.find(
+          "PaginatedEmbedTest",
+          processFilter(dateFilter.getFilter()),
+        );
+
+        expect(result.docs.map((d) => d._id)).toEqual(["PaginatedEmbedTest:a"]);
       });
     });
   });

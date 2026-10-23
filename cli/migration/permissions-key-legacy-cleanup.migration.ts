@@ -17,28 +17,24 @@ const LEGACY_KEYS: { legacy: string; renamed: string }[] = [
 ];
 
 /**
- * Remove the legacy (non-underscore-prefixed) `default`/`public` sections
- * from the Config:Permissions document, now that the underscore-prefixed
- * `_default`/`_public` sections exist to replace them.
+ * Leave only the underscore-prefixed `_default`/`_public` sections in the
+ * Config:Permissions document, removing the legacy (non-prefixed)
+ * `default`/`public` sections. The underscore prefix marks a section as
+ * internal so it can never collide with a Keycloak realm role of the same name.
  *
- * `permissionsKeyRename` (see permissions-key-rename.migration.ts) copies
- * `default`/`public` into `_default`/`_public` but deliberately leaves the
- * legacy keys in place, so that app versions predating that change keep
- * reading permissions correctly during a staged rollout. This migration is
- * the follow-up cleanup step — run it only once every environment/app
- * version reading this config is confirmed to read the underscore-prefixed
- * keys.
+ * Per section: if only the legacy key exists, its rules are moved to the
+ * underscore-prefixed key; if both exist, the legacy key is deleted, because
+ * the underscore-prefixed key wins on read anyway. So this never causes a net
+ * loss of permission rules.
  *
- * A legacy key is only removed if its underscore-prefixed replacement is
- * already present, so this can never cause a net loss of permission rules.
  * Only an existing document is touched; role sections and all other keys are
  * left untouched. Idempotent: once the legacy keys are gone, a re-run is a
  * no-op.
  */
 export const permissionsKeyLegacyCleanup: MigrationDefinition = {
-  id: "oneoff-20260804-permissions-key-legacy-cleanup",
+  id: "v4-upgrade-permissions-key-legacy-cleanup",
   description:
-    "Remove legacy Config:Permissions sections default/public once _default/_public exist. Run only after all app versions read the underscore-prefixed keys. Safe to re-run.",
+    "Move/remove legacy Config:Permissions sections default/public so only _default/_public remain. Safe to re-run.",
 
   async run(ctx): Promise<MigrationResult> {
     let doc: PermissionsDoc;
@@ -63,18 +59,23 @@ export const permissionsKeyLegacyCleanup: MigrationDefinition = {
     const newData: Record<string, unknown> = { ...data };
     let changed = false;
     for (const { legacy, renamed } of LEGACY_KEYS) {
-      if (!(legacy in newData) || !(renamed in newData)) {
+      if (!(legacy in newData)) {
         continue;
       }
-      ctx.log.info(
-        `Removing legacy "${legacy}" section ("${renamed}" already present)`,
-      );
+      if (renamed in newData) {
+        ctx.log.info(
+          `Removing legacy "${legacy}" section ("${renamed}" already present)`,
+        );
+      } else {
+        newData[renamed] = newData[legacy];
+        ctx.log.info(`Moving legacy "${legacy}" section to "${renamed}"`);
+      }
       delete newData[legacy];
       changed = true;
     }
 
     if (!changed) {
-      ctx.log.info("No legacy permission section keys to remove");
+      ctx.log.info("No legacy permission section keys to migrate");
       return { changed: false, status: "no-change" };
     }
 

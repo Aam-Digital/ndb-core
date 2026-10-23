@@ -3,15 +3,19 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
   DateRangeFilterPanelComponent,
   defaultDateFilters,
+  RangePreviewStrategy,
 } from "./date-range-filter-panel.component";
 import { vi } from "vitest";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { calculateDateRange } from "./date-range-utils";
-import { MatNativeDateModule } from "@angular/material/core";
+import { DateAdapter, MatNativeDateModule } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { DateRange } from "@angular/material/datepicker";
+import {
+  DateRange,
+  MatDateRangeSelectionStrategy,
+} from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 import { EMPTY_FILTER_OPTION_KEY } from "app/core/filter/filters/filters";
@@ -115,6 +119,73 @@ describe("DateRangeFilterPanelComponent", () => {
   it("should return empty array as filter.selectedOption when 'all' option has been chosen", async () => {
     component.selectRangeAndClose("all");
     expect(dialogCloseSpy).toHaveBeenCalledWith({ selectedOptionValues: [] });
+  });
+
+  describe("preview of the range while hovering the end date", () => {
+    const strategy = () =>
+      new RangePreviewStrategy(TestBed.inject(DateAdapter));
+    const day = (date: number) => new Date(2023, 3, date);
+
+    it.each([
+      ["a later date", day(20), new DateRange(day(10), day(20))],
+      [
+        "an earlier date, as the panel orders the picked dates",
+        day(5),
+        new DateRange(day(5), day(10)),
+      ],
+      [
+        "no date (the mouse left the calendar)",
+        null,
+        new DateRange(null, null),
+      ],
+    ])(
+      "should preview the range up to %s after the start date was picked",
+      (_, hovered, expected) => {
+        expect(
+          strategy().createPreview(hovered, new DateRange(day(10), null)),
+        ).toEqual(expected);
+      },
+    );
+
+    it("should not preview a drag of the selected range, as the panel does not move the selected dates", () => {
+      // as the calendar uses the strategy
+      const calendarStrategy: MatDateRangeSelectionStrategy<Date> = strategy();
+
+      expect(
+        calendarStrategy.createDrag?.(
+          day(10),
+          new DateRange(day(10), day(15)),
+          day(12),
+          new Event("mousemove"),
+        ),
+      ).toBeNull();
+    });
+
+    it.each([
+      ["both dates are selected", new DateRange(day(10), day(15))],
+      ["no date is selected", new DateRange(null, null)],
+    ])("should not preview a range if %s", (_, selected) => {
+      expect(strategy().createPreview(day(20), selected)).toEqual(
+        new DateRange(null, null),
+      );
+    });
+  });
+
+  it("should leave out the 'All' option when selecting the dates of a field", () => {
+    Object.assign(TestBed.inject(MAT_DIALOG_DATA), {
+      hideAllOption: true,
+      dateRange: undefined,
+    });
+    const fieldPanel = TestBed.createComponent(DateRangeFilterPanelComponent);
+    fieldPanel.detectChanges();
+
+    const buttonLabels = [
+      ...fieldPanel.nativeElement.querySelectorAll("button"),
+    ].map((button: HTMLElement) => button.textContent.trim());
+    expect(buttonLabels).not.toContain("All");
+    expect(fieldPanel.componentInstance.selectedRangeValue()).toEqual(
+      new DateRange(null, null),
+    );
   });
 
   it("should set empty option when selected", () => {

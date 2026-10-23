@@ -74,7 +74,7 @@
         <app-entity-block [entityId]="by"></app-entity-block>
       </div>
       <div class="hint-text">
-        {{ at | customDate: "short" }}
+        <bdi>{{ at | customDate: "short" }}</bdi>
         ({{ at | notificationTime | async }})
       </div>
     </ng-template>
@@ -154,7 +154,7 @@
                   }
                 </span>
                 <span class="when">
-                  <span>{{ event.at | customDate: "short" }}</span>
+                  <bdi>{{ event.at | customDate: "short" }}</bdi>
                   @if (isFirst) {
                     <span class="relative">{{
                       event.at | notificationTime | async
