@@ -21,7 +21,7 @@ class DisplayDateRangeTestEntity extends Entity {
 
 @DatabaseEntity("DisplayDateRangeTestAction")
 class DisplayDateRangeTestAction extends Entity {
-  static override toStringAttributes = ["name"];
+  static override readonly toStringAttributes = ["name"];
 
   @DatabaseField() name: string;
 

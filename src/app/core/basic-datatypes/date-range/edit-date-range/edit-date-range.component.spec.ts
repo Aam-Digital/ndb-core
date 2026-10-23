@@ -31,7 +31,7 @@ import {
 
 @DatabaseEntity("EditDateRangeTestAction")
 class EditDateRangeTestAction extends Entity {
-  static override toStringAttributes = ["name"];
+  static override readonly toStringAttributes = ["name"];
 
   @DatabaseField() name: string;
   @DatabaseField() parent: string;
