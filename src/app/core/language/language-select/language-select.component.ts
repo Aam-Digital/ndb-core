@@ -35,9 +35,6 @@ export class LanguageSelectComponent {
    */
   enabledLocales = input<ConfigurableEnumValue[]>([]);
 
-  /** optional explanation shown below the dropdown, like other form fields' hints */
-  hint = input<string>();
-
   /** take the full width, e.g. to line up with other form fields, instead of a compact width */
   fullWidth = input<boolean>(false);
 

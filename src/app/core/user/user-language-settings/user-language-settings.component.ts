@@ -43,13 +43,10 @@ export class UserLanguageSettingsComponent {
 
   readonly enabledLocales = this.siteSettings.enabledLocales;
 
-  readonly languageHint = $localize`:User Profile - language setting hint:Only applies to your account. The app reloads when you change it.`;
-
   /** without language switching, the selector stays visible but locked to the system language */
   readonly switchingEnabled = this.siteSettings.languageSwitchingEnabled;
 
-  readonly switchingDisabledText = $localize`:User Profile - language switching disabled hint:Language switching is not enabled for this system. Your administrator can enable more languages.`;
-
+  /** also shown as alert if saving fails for this reason */
   readonly missingPermissionText = $localize`Your account is not permitted to save its own language. Please ask your administrator.`;
 
   /** Bumped whenever the permission rules change, to re-evaluate {@link mayChangeLanguage}. */

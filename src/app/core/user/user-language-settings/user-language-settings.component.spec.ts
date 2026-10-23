@@ -78,6 +78,10 @@ describe("UserLanguageSettingsComponent", () => {
     TestBed.resetTestingModule();
   });
 
+  function hintText(): string {
+    return fixture.nativeElement.querySelector("mat-hint")?.textContent.trim();
+  }
+
   function languageSelect(): LanguageSelectComponent {
     return fixture.debugElement.query(By.directive(LanguageSelectComponent))
       .componentInstance;
@@ -133,14 +137,14 @@ describe("UserLanguageSettingsComponent", () => {
     fixture.detectChanges();
 
     expect(languageSelect().disabled()).toBe(true);
-    expect(languageSelect().hint()).toBe(component.missingPermissionText);
+    expect(hintText()).toBe(component.missingPermissionText);
 
     // the rules can change at runtime, e.g. when an admin grants the permission
     ability.update([{ subject: "UserSettings", action: "manage" }]);
     fixture.detectChanges();
 
     expect(languageSelect().disabled()).toBe(false);
-    expect(languageSelect().hint()).toBe(component.languageHint);
+    expect(hintText()).toContain("Only applies to your account");
   });
 
   it("should check the permission against the user's own settings document", () => {
@@ -209,6 +213,6 @@ describe("UserLanguageSettingsComponent", () => {
     await createComponent();
 
     expect(languageSelect().disabled()).toBe(true);
-    expect(languageSelect().hint()).toBe(component.switchingDisabledText);
+    expect(hintText()).toContain("Language switching is not enabled");
   });
 });
