@@ -74,7 +74,10 @@ Most systems are run in a single language, so this is off unless
 `multiLingualConfigEnabled` is set for the deployment (in `environment.ts`, or per
 system through `config.json`). It is on in dev builds.
 
-The flag only hides the editing UI — the buttons that open the translations dialog.
+The flag also decides whether users can switch the app's language at all (see
+[Which language a user sees](#which-language-a-user-sees)).
+
+For configured texts it only hides the editing UI — the buttons that open the translations dialog.
 Resolving is always on, so a system that has the flag turned off still displays texts
 that are already stored per language, and turning it off cannot strand data.
 
@@ -184,8 +187,19 @@ per-language list.
 
 ### Which language a user sees
 
-The active locale is stored in `localStorage` and read at bootstrap. What puts it
-there:
+The active locale is stored in `localStorage` and read at bootstrap.
+
+**Without `multiLingualConfigEnabled`** nobody can switch: everyone uses the _system
+language_ (`SiteSettings.defaultLanguage`, `en-US` if unset). A user's own language
+and a language picked on the device earlier are ignored (the saved `UserSettings`
+stay untouched, the locale stored on the device is overwritten with the system
+language). The profile shows the language selector disabled with an explanation,
+and public forms hide it. The "Languages offered" site setting shows that the
+feature is disabled (`EditAvailableLocalesComponent`).
+
+**With the flag** users can switch among `SiteSettingsService.enabledLocales`: the
+"Languages offered" (`availableLocales`, all if empty), always including the system
+language. What puts the locale into `localStorage`:
 
 - **At startup** — whatever the language switcher last stored. If nothing is
   stored, `SiteSettings.defaultLanguage` (the system-wide default) is applied.

@@ -97,7 +97,6 @@ describe("UserSettingsService", () => {
     for (const brandingField of [
       "siteName",
       "hideSiteNameInToolbar",
-      "displayLanguageSelect",
       "dateFormat",
     ]) {
       expect(Object.keys(saved)).not.toContain(brandingField);

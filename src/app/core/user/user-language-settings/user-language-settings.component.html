@@ -1,10 +1,14 @@
-@if (displayLanguageSelect()) {
-  <app-language-select
-    [availableLocales]="availableLocales"
-    [enabledLocales]="enabledLocales()"
-    [applyImmediately]="false"
-    [disabled]="saving() || !mayChangeLanguage()"
-    [hint]="mayChangeLanguage() ? languageHint : missingPermissionText"
-    (localeChange)="onLanguageSelected($event)"
-  ></app-language-select>
-}
+<app-language-select
+  [availableLocales]="availableLocales"
+  [enabledLocales]="enabledLocales()"
+  [applyImmediately]="false"
+  [disabled]="saving() || !switchingEnabled || !mayChangeLanguage()"
+  [hint]="
+    !switchingEnabled
+      ? switchingDisabledText
+      : mayChangeLanguage()
+        ? languageHint
+        : missingPermissionText
+  "
+  (localeChange)="onLanguageSelected($event)"
+></app-language-select>

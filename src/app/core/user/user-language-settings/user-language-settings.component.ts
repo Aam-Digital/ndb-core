@@ -45,8 +45,10 @@ export class UserLanguageSettingsComponent {
 
   readonly languageHint = $localize`:User Profile - language setting hint:Only applies to your account. The app reloads when you change it.`;
 
-  /** admins can hide the language selector for their system */
-  readonly displayLanguageSelect = this.siteSettings.showLanguageSelect;
+  /** without language switching, the selector stays visible but locked to the system language */
+  readonly switchingEnabled = this.siteSettings.languageSwitchingEnabled;
+
+  readonly switchingDisabledText = $localize`:User Profile - language switching disabled hint:Language switching is not enabled for this system. Your administrator can enable more languages.`;
 
   readonly missingPermissionText = $localize`Your account is not permitted to save its own language. Please ask your administrator.`;
 

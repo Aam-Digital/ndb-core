@@ -25,8 +25,8 @@ export class SiteSettings extends Entity {
   hideSiteNameInToolbar: boolean = false;
 
   @DatabaseField({
-    label: $localize`Default language`,
-    description: $localize`This will only be applied once the app is reloaded`,
+    label: $localize`System language`,
+    description: $localize`The language of the app for all users. If several languages are offered, users can switch to another one in their profile.`,
     dataType: "configurable-enum",
     additional: LOCALE_ENUM_ID,
   })
@@ -40,11 +40,6 @@ export class SiteSettings extends Entity {
     isArray: true,
   })
   availableLocales: ConfigurableEnumValue[];
-
-  @DatabaseField({
-    label: $localize`Display language select`,
-  })
-  displayLanguageSelect: boolean = true;
 
   @DatabaseField({
     label: $localize`Date format`,

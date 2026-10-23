@@ -89,12 +89,12 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   readonly availableLocales = this.siteSettings.enabledLocales;
 
   /**
-   * Admins can hide the selector for their system, and a system set up for one
-   * language has nothing to choose between.
+   * Hidden if the system does not allow language switching, and if it is set up
+   * for one language only, which leaves nothing to choose between.
    */
   readonly showLanguageSelect = computed(
     () =>
-      this.siteSettings.showLanguageSelect() &&
+      this.siteSettings.languageSwitchingEnabled &&
       this.availableLocales().length > 1,
   );
 

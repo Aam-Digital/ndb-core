@@ -56,7 +56,7 @@ describe("SiteSettingsService", () => {
 
     expect(titleSpy).not.toHaveBeenCalled();
 
-    settings.displayLanguageSelect = false;
+    settings.hideSiteNameInToolbar = true;
     entityMapper.add(settings);
 
     expect(titleSpy).not.toHaveBeenCalled();
@@ -67,16 +67,36 @@ describe("SiteSettingsService", () => {
     expect(titleSpy).toHaveBeenCalled();
 
     titleSpy.mockClear();
-    settings.displayLanguageSelect = true;
+    settings.hideSiteNameInToolbar = false;
     entityMapper.add(settings);
 
     expect(titleSpy).not.toHaveBeenCalled();
 
-    settings.displayLanguageSelect = false;
+    settings.hideSiteNameInToolbar = true;
     settings.siteName = "Another new name";
     entityMapper.add(settings);
 
     expect(titleSpy).toHaveBeenCalled();
+  });
+
+  const DE = { id: "de", label: "German" };
+  const FR = { id: "fr", label: "French" };
+  const EN = { id: "en-US", label: "English" };
+
+  it.each([
+    ["no list offered: all languages", [], DE, availableLocales.values],
+    ["list with the system language", [DE, FR], DE, [DE, FR]],
+    ["list without the system language", [FR], DE, [FR, DE]],
+    ["list and no system language set", [FR, EN], undefined, [FR, EN]],
+  ])("should offer locales for %s", (_, offered, systemLanguage, expected) => {
+    entityMapper.add(
+      SiteSettings.create({
+        availableLocales: offered,
+        defaultLanguage: systemLanguage,
+      }),
+    );
+
+    expect(service.enabledLocales()).toEqual(expected);
   });
 
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {

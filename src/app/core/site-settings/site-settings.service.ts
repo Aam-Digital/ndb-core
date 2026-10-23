@@ -43,25 +43,31 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   dateFormat = this.getPropertyObservable("dateFormat");
 
   /**
-   * Whether users may switch the app's language themselves. Not
-   * `getPropertyObservable`, which skips falsy values and so can never emit `false`.
+   * Whether users may switch the app's language themselves. If not, everyone uses
+   * the system language ({@link defaultLanguage}). Bound to the deployment's
+   * `multiLingualConfigEnabled` flag, read at runtime because `config.json` overwrites it.
    */
-  readonly showLanguageSelect = toSignal(
-    this.siteSettings.pipe(
-      map((settings) => settings?.displayLanguageSelect ?? true),
-      distinctUntilChanged(),
-    ),
-    { initialValue: true },
-  );
+  get languageSwitchingEnabled(): boolean {
+    return !!environment.multiLingualConfigEnabled;
+  }
 
-  /** The languages this system offers, all of them until an admin narrows it down. */
+  /**
+   * The languages this system offers: all of them until an admin narrows it down.
+   * A narrowed list always includes the system language ({@link defaultLanguage}),
+   * added here at read time so changing the system language needs no data fix-up.
+   */
   readonly enabledLocales = toSignal(
     this.siteSettings.pipe(
-      map((settings) =>
-        settings?.availableLocales?.length
-          ? settings.availableLocales
-          : availableLocales.values,
-      ),
+      map((settings) => {
+        const offered = settings?.availableLocales;
+        if (!offered?.length) return availableLocales.values;
+
+        const systemLanguage = settings.defaultLanguage;
+        return systemLanguage?.id &&
+          !offered.some(({ id }) => id === systemLanguage.id)
+          ? [...offered, systemLanguage]
+          : offered;
+      }),
     ),
     { initialValue: availableLocales.values },
   );

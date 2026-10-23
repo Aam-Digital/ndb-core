@@ -1,4 +1,4 @@
-import { signal, WritableSignal } from "@angular/core";
+import { signal } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -24,8 +24,8 @@ describe("UserLanguageSettingsComponent", () => {
   let userSettings: { setLanguage: ReturnType<typeof vi.fn> };
   let languageService: { switchToOwnLocale: ReturnType<typeof vi.fn> };
   let alertService: { addDanger: ReturnType<typeof vi.fn> };
-  let showLanguageSelect: WritableSignal<boolean>;
   let ability: EntityAbility;
+  let switchingEnabled = true;
 
   async function createComponent() {
     userSettings = { setLanguage: vi.fn().mockResolvedValue(undefined) };
@@ -34,7 +34,6 @@ describe("UserLanguageSettingsComponent", () => {
       getCurrentLocale: vi.fn().mockReturnValue("en-US"),
     } as any;
     alertService = { addDanger: vi.fn() };
-    showLanguageSelect = signal(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -53,7 +52,7 @@ describe("UserLanguageSettingsComponent", () => {
         {
           provide: SiteSettingsService,
           useValue: {
-            showLanguageSelect,
+            languageSwitchingEnabled: switchingEnabled,
             // the service resolves "not narrowed down" to every locale
             enabledLocales: signal(availableLocales.values),
           },
@@ -72,6 +71,7 @@ describe("UserLanguageSettingsComponent", () => {
   beforeEach(() => createComponent());
 
   afterEach(() => {
+    switchingEnabled = true;
     // spies on Logging persist between tests otherwise, so a later test sees
     // the calls of an earlier one
     vi.restoreAllMocks();
@@ -203,12 +203,12 @@ describe("UserLanguageSettingsComponent", () => {
     expect(languageService.switchToOwnLocale).not.toHaveBeenCalled();
   });
 
-  it("should show the selector only when the admin enabled it", async () => {
-    expect(component.displayLanguageSelect()).toBe(true);
+  it("should keep the selector but disable it if language switching is disabled", async () => {
+    TestBed.resetTestingModule();
+    switchingEnabled = false;
+    await createComponent();
 
-    showLanguageSelect.set(false);
-    fixture.detectChanges();
-
-    expect(component.displayLanguageSelect()).toBe(false);
+    expect(languageSelect().disabled()).toBe(true);
+    expect(languageSelect().hint()).toBe(component.switchingDisabledText);
   });
 });

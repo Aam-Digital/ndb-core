@@ -90,10 +90,13 @@ export const environment = {
   default_data_source: undefined as DataSourceType | undefined,
 
   /**
-   * Whether admins can configure texts in several languages. Only about *configured*
-   * texts - the app's own UI is translated either way. Off in prod and enabled per
-   * system; turning it off only hides the editing UI, so texts already stored per
-   * language are still resolved.
+   * Whether the system is multi-language: admins can configure texts in several
+   * languages, and users can switch the app's language (in their profile and on public
+   * forms). Off in prod and enabled per system.
+   *
+   * If off, the translation editing UI is hidden (texts already stored per language are
+   * still resolved), and everyone uses the system language from the site settings:
+   * a user's own language and one picked on the device are ignored.
    */
   multiLingualConfigEnabled: true,
 

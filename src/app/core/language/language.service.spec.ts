@@ -27,6 +27,10 @@ describe("LanguageService", () => {
   let mockUserSettings: { getLanguage: Mock };
   let sessionInfo: SessionSubject;
   let ownLanguage: string | undefined;
+  let siteSettingsMock: {
+    defaultLanguage: ReplaySubject<ConfigurableEnumValue>;
+    languageSwitchingEnabled: boolean;
+  };
 
   beforeEach(() => {
     reloadSpy = vi.fn();
@@ -43,6 +47,10 @@ describe("LanguageService", () => {
     ownLanguage = undefined;
     // mirrors the real service: it reads the logged-in user, so without a
     // session there is no account to look settings up for
+    siteSettingsMock = {
+      defaultLanguage: languageSubject,
+      languageSwitchingEnabled: true,
+    };
     mockUserSettings = {
       getLanguage: vi
         .fn()
@@ -57,7 +65,7 @@ describe("LanguageService", () => {
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         {
           provide: SiteSettingsService,
-          useValue: { defaultLanguage: languageSubject },
+          useValue: siteSettingsMock,
         },
         {
           provide: EntityMapperService,
@@ -241,5 +249,83 @@ describe("LanguageService", () => {
 
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(null);
     expect(reloadSpy).not.toHaveBeenCalled();
+  });
+
+  describe("with language switching disabled", () => {
+    const tick = () => new Promise((resolve) => setTimeout(resolve));
+
+    beforeEach(() => {
+      siteSettingsMock.languageSwitchingEnabled = false;
+      languageSubject.next({ id: "de", label: "de" });
+    });
+
+    it("should ignore a language stored on the device and apply the system language at startup", () => {
+      window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
+
+      service.initDefaultLanguage();
+      return tick().then(() => {
+        expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+          "de",
+        );
+        expect(reloadSpy).toHaveBeenCalled();
+      });
+    });
+
+    it("should ignore the user's own language on login", async () => {
+      ownLanguage = "fr";
+      window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
+      window.localStorage.setItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY, "demo");
+
+      logIn();
+      await tick();
+
+      expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+        "de",
+      );
+      expect(
+        window.localStorage.getItem(LANGUAGE_OWNER_LOCAL_STORAGE_KEY),
+      ).toBeNull();
+    });
+
+    it("should ignore updates of the user's own language", async () => {
+      logIn();
+      await tick();
+      reloadSpy.mockClear();
+
+      userSettingsUpdates.next({
+        entity: Object.assign(new UserSettings("demo"), {
+          defaultLanguage: { id: "fr", label: "fr" },
+        }),
+        type: "update",
+      });
+
+      expect(reloadSpy).not.toHaveBeenCalled();
+    });
+
+    it("should apply a changed system language even if the user has their own", async () => {
+      mockUserSettings.getLanguage.mockResolvedValue("fr");
+      window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
+
+      mockEntityMapperUpdates.next({
+        entity: Object.assign(new SiteSettings(), {
+          defaultLanguage: { id: "es", label: "es" },
+        }),
+        type: "update",
+      });
+      await tick();
+
+      expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe(
+        "es",
+      );
+    });
+
+    it("should not reload if the system language is already active", async () => {
+      languageSubject.next({ id: "en-US", label: "en" });
+
+      logIn();
+      await tick();
+
+      expect(reloadSpy).not.toHaveBeenCalled();
+    });
   });
 });
