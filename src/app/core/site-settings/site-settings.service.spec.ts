@@ -84,7 +84,13 @@ describe("SiteSettingsService", () => {
   const EN = { id: "en-US", label: "English" };
 
   it.each([
-    ["no list enabled: all languages", [], DE, availableLocales.values],
+    ["no list: only the system language", [], DE, [DE]],
+    [
+      "no list and no system language: all languages",
+      [],
+      undefined,
+      availableLocales.values,
+    ],
     ["list with the system language", [DE, FR], DE, [DE, FR]],
     ["list without the system language", [FR], DE, [FR, DE]],
     ["list and no system language set", [FR, EN], undefined, [FR, EN]],

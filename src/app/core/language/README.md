@@ -202,8 +202,11 @@ and public forms hide it. The "Enabled languages" site setting shows that the
 feature is disabled (`EditAvailableLocalesComponent`).
 
 **With the flag** users can switch among `SiteSettingsService.enabledLocales`: the
-"Enabled languages" (`availableLocales`, all if empty), always including the system
-language. What puts the locale into `localStorage`:
+system language plus the "Enabled languages" (`availableLocales`); the stored
+selection comes first, the system language is appended if missing, so an empty
+selection enables only the system language. Only a system without any system
+language and selection (not set up yet, or settings not loaded) has all languages
+enabled. What puts the locale into `localStorage`:
 
 - **At startup** — whatever the language switcher last stored. If nothing is
   stored, `SiteSettings.defaultLanguage` (the system-wide default) is applied.

@@ -53,21 +53,26 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   }
 
   /**
-   * The enabled languages of this system: all of them until an admin narrows it down.
-   * A narrowed list always includes the system language ({@link defaultLanguage}),
-   * added here at read time so changing the system language needs no data fix-up.
+   * The enabled languages of this system: the system language ({@link defaultLanguage})
+   * plus the admin's selection (`availableLocales`). Order: the stored selection first,
+   * the system language appended if it is not part of it. It is added here at read time,
+   * so changing the system language needs no data fix-up.
+   *
+   * So an empty selection enables only the system language. Only if neither a selection
+   * nor a system language is set (system not set up yet, or settings not loaded yet)
+   * are all languages enabled. Never returns an empty list.
    */
   readonly enabledLocales = toSignal(
     this.siteSettings.pipe(
       map((settings) => {
-        const enabled = settings?.availableLocales;
-        if (!enabled?.length) return availableLocales.values;
-
-        const systemLanguage = settings.defaultLanguage;
-        return systemLanguage?.id &&
-          !enabled.some(({ id }) => id === systemLanguage.id)
-          ? [...enabled, systemLanguage]
-          : enabled;
+        const selected = settings?.availableLocales ?? [];
+        const systemLanguage = settings?.defaultLanguage;
+        if (!systemLanguage?.id) {
+          return selected.length ? selected : availableLocales.values;
+        }
+        return selected.some(({ id }) => id === systemLanguage.id)
+          ? selected
+          : [...selected, systemLanguage];
       }),
     ),
     { initialValue: availableLocales.values },

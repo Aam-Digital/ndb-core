@@ -28,8 +28,8 @@ import { EditComponent } from "../../entity/entity-field-edit/dynamic-edit/edit-
  *
  * Only available if the system is set up as multi-language (`multiLingualConfigEnabled`),
  * otherwise it points to that feature being disabled.
- * The system language (`defaultLanguage` in the same form) always stays in a
- * non-empty list, because it is always enabled. It is marked among the options.
+ * The system language (`defaultLanguage` in the same form) always stays in the list,
+ * because it is always enabled (also if nothing else is selected). It is marked among the options.
  */
 @DynamicComponent("EditAvailableLocales")
 @Component({
@@ -91,13 +91,16 @@ export class EditAvailableLocalesComponent
       .subscribe(() => this.keepSystemLanguage());
   }
 
-  /** An empty list means "all languages", so only a narrowed list is amended. */
+  /**
+   * Make sure the system language is part of the list, also an empty one
+   * (the enabled languages are the system language plus the selection).
+   * It is appended, matching the order of `SiteSettingsService.enabledLocales`.
+   */
   private keepSystemLanguage() {
     const systemLanguage = this.systemLanguage();
-    const enabled = this.formControl.value;
+    const enabled: ConfigurableEnumValue[] = this.formControl.value ?? [];
     if (
       !systemLanguage?.id ||
-      !enabled?.length ||
       enabled.some(({ id }) => id === systemLanguage.id)
     ) {
       return;

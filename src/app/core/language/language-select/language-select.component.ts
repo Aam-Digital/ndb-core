@@ -31,7 +31,7 @@ export class LanguageSelectComponent {
 
   /**
    * Which of {@link availableLocales} can actually be picked. The rest stay visible
-   * but disabled, so it is clear the system could enable them. Empty means all.
+   * but disabled, so it is clear the system could enable them. Empty means all (the service never returns an empty list).
    */
   enabledLocales = input<ConfigurableEnumValue[]>([]);
 

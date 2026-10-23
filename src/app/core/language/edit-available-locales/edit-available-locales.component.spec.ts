@@ -65,9 +65,9 @@ describe("EditAvailableLocalesComponent", () => {
   );
 
   it.each([
-    ["adds a missing system language", [FR], [FR, DE]],
-    ["keeps an empty list (all languages) empty", [], []],
-  ])("should %s to a stored list", (_, stored, expected) => {
+    ["add a missing system language", [FR], [FR, DE]],
+    ["add the system language to an empty list", [], [DE]],
+  ])("should %s on init", (_, stored, expected) => {
     create(true, stored);
 
     expect(form.value.availableLocales).toEqual(expected);
@@ -113,6 +113,22 @@ describe("EditAvailableLocalesComponent", () => {
     fixture.componentInstance.onContainerClick(new MouseEvent("click"));
 
     expect(showAutocomplete).toHaveBeenCalled();
+  });
+
+  it("should add a changed system language to the list", () => {
+    create(true, [DE]);
+
+    form.get("defaultLanguage").setValue(FR);
+
+    expect(form.value.availableLocales).toEqual([DE, FR]);
+  });
+
+  it("should leave only the system language if everything else is removed", () => {
+    create(true, [FR, DE]);
+
+    form.get("availableLocales").setValue([]);
+
+    expect(form.value.availableLocales).toEqual([DE]);
   });
 
   it("should re-add the system language if it is removed", () => {

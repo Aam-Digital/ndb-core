@@ -34,7 +34,7 @@ export class SiteSettings extends Entity {
 
   @DatabaseField({
     label: $localize`Enabled languages`,
-    description: $localize`The languages admins can configure texts in and users can switch the app to. Leave empty to enable all of them. The system language is always enabled.`,
+    description: $localize`The languages users can switch the app to and admins can configure texts in. The system language is always enabled.`,
     dataType: "configurable-enum",
     editComponent: "EditAvailableLocales",
     additional: LOCALE_ENUM_ID,
