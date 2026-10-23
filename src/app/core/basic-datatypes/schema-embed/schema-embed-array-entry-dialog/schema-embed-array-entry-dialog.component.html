@@ -1,0 +1,61 @@
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <form class="entry-form">
+    @for (column of data.columns; track column.id) {
+      <div class="entry-form-cell">
+        <app-entity-field-edit
+          [field]="column"
+          [fieldFormGroup]="form"
+        ></app-entity-field-edit>
+      </div>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  @if (!data.readonly) {
+    <button mat-raised-button color="accent" (click)="save()">
+      @if (data.deferSave) {
+        <ng-container i18n="Button for closing popup and applying changes"
+          >Apply</ng-container
+        >
+      } @else {
+        <ng-container i18n="Form save button">Save</ng-container>
+      }
+    </button>
+  }
+
+  <button mat-stroked-button (click)="cancel()" i18n="Form cancel button">
+    Cancel
+  </button>
+
+  @if (!data.readonly && !isNew) {
+    <button
+      mat-icon-button
+      color="primary"
+      class="context-menu-button"
+      [matMenuTriggerFor]="additional"
+      aria-label="more actions"
+      i18n-aria-label
+    >
+      <app-fa-dynamic-icon
+        aria-hidden="true"
+        icon="ellipsis-v"
+        class="standard-icon"
+      ></app-fa-dynamic-icon>
+    </button>
+
+    <mat-menu #additional>
+      <button mat-menu-item (click)="delete()">
+        <app-fa-dynamic-icon
+          class="standard-icon-with-text color-accent"
+          icon="trash"
+        ></app-fa-dynamic-icon>
+        <span i18n="Delete action of an entry in an embedded table"
+          >Delete</span
+        >
+      </button>
+    </mat-menu>
+  }
+</mat-dialog-actions>

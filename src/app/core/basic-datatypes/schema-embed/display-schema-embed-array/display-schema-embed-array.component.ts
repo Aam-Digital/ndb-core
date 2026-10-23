@@ -1,0 +1,85 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from "@angular/core";
+import { ViewDirective } from "#src/app/core/entity/default-datatype/view.directive";
+import { DynamicComponent } from "#src/app/core/config/dynamic-components/dynamic-component.decorator";
+import { DynamicComponentDirective } from "#src/app/core/config/dynamic-components/dynamic-component.directive";
+import { TemplateTooltipDirective } from "#src/app/core/common-components/template-tooltip/template-tooltip.directive";
+import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
+import { getSchemaEmbedArrayColumns } from "../schema-embed-array-columns";
+import { SchemaEmbedArrayTableComponent } from "../schema-embed-array-table/schema-embed-array-table.component";
+
+/**
+ * Generic view component for the `schema-embed-array` datatype.
+ *
+ * Shows a one-line summary of the entries, e.g. "Passport, ID Card +1 more"
+ * (nothing when there are no entries):
+ * the first column's value of the first few entries (skipping entries where it is empty),
+ * each rendered through the column's own view component, so this works for any datatype.
+ * Falls back to a plain "N entries" count if there are no columns or no such values.
+ *
+ * Hovering the summary shows all entries in a read-only preview table
+ * (via {@link TemplateTooltipDirective}).
+ */
+@DynamicComponent("DisplaySchemaEmbedArray")
+@Component({
+  selector: "app-display-schema-embed-array",
+  imports: [
+    DynamicComponentDirective,
+    TemplateTooltipDirective,
+    SchemaEmbedArrayTableComponent,
+  ],
+  templateUrl: "./display-schema-embed-array.component.html",
+  styleUrls: ["./display-schema-embed-array.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class DisplaySchemaEmbedArrayComponent extends ViewDirective<
+  Record<string, any>[],
+  any
+> {
+  static readonly MAX_PREVIEW_ENTRIES = 2;
+
+  private readonly entitySchemaService = inject(EntitySchemaService);
+
+  rows = computed(() => this.value() ?? []);
+
+  /** The inner fields (table columns), each with its resolved viewComponent for rendering cells. */
+  columns = computed<FormFieldConfig[]>(() =>
+    getSchemaEmbedArrayColumns(
+      this.formFieldConfig(),
+      this.entitySchemaService,
+    ),
+  );
+
+  summaryColumn = computed<FormFieldConfig | undefined>(
+    () => this.columns()[0],
+  );
+
+  /** First column's values of the first entries that have one. */
+  previewValues = computed<any[]>(() => {
+    const column = this.summaryColumn();
+    if (!column) {
+      return [];
+    }
+    return this.rows()
+      .map((row) => row?.[column.id])
+      .filter((value) => !isEmpty(value))
+      .slice(0, DisplaySchemaEmbedArrayComponent.MAX_PREVIEW_ENTRIES);
+  });
+
+  /** Number of entries not covered by {@link previewValues}. */
+  moreCount = computed(() => this.rows().length - this.previewValues().length);
+}
+
+function isEmpty(value: any): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0)
+  );
+}

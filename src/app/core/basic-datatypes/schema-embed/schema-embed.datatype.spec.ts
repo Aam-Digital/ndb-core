@@ -25,6 +25,7 @@ import {
   SchemaEmbedDatatypeAdditional,
 } from "./schema-embed.datatype";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { SchemaEmbedArrayDatatype } from "./schema-embed-array.datatype";
 import { NumberDatatype } from "../number/number.datatype";
 import { MonthDatatype } from "../month/month.datatype";
 import { Injectable } from "@angular/core";
@@ -195,6 +196,16 @@ describe("Schema data type: schema-embed", () => {
         } as SchemaEmbedDatatypeAdditional,
       })
       embedded: any;
+
+      @DatabaseField({
+        dataType: "schema-embed",
+        isArray: true,
+        additional: {
+          value: { dataType: "month" },
+          value2: { dataType: "number" },
+        } as SchemaEmbedDatatypeAdditional,
+      })
+      embeddedArray: any[];
     }
 
     let entitySchemaService: EntitySchemaService;
@@ -266,5 +277,80 @@ describe("Schema data type: schema-embed", () => {
       expect(rawData.embedded.value2).toEqual(42);
       expect(rawData.embedded.extra).toBeUndefined();
     });
+
+    it("applies inner schema transformation to each entry of an array", () => {
+      const entity = new ConfigTestEntity();
+      entity.embeddedArray = [
+        { value: moment("2020-01-01").toDate(), value2: 1 },
+        { value: moment("2021-06-01").toDate(), value2: 2 },
+      ];
+
+      const rawData =
+        entitySchemaService.transformEntityToDatabaseFormat(entity);
+      expect(rawData.embeddedArray).toEqual([
+        { value: "2020-01", value2: 1 },
+        { value: "2021-06", value2: 2 },
+      ]);
+
+      const loadedEntity = new ConfigTestEntity();
+      entitySchemaService.loadDataIntoEntity(loadedEntity, rawData);
+
+      expect(loadedEntity.embeddedArray).toHaveLength(2);
+      expect(
+        moment(loadedEntity.embeddedArray[1].value).isSame("2021-06-01", "day"),
+      ).toBe(true);
+      expect(loadedEntity.embeddedArray[1].value2).toEqual(2);
+    });
+
+    describe("getColumns", () => {
+      const field = ConfigTestEntity.schema.get("embedded");
+      const datatype = () =>
+        entitySchemaService.getDatatypeOrDefault(
+          "schema-embed",
+        ) as SchemaEmbedDatatype;
+
+      it("returns all inner fields with their view components", () => {
+        const columns = datatype().getColumns(field);
+
+        expect(columns.map((c) => c.id)).toEqual(["value", "value2"]);
+        expect(columns[1].viewComponent).toBe(
+          entitySchemaService.getComponent({ dataType: "number" }, "view"),
+        );
+      });
+
+      it("returns the selected inner fields in the given order, with overrides", () => {
+        const columns = datatype().getColumns(field, [
+          { id: "value2", label: "Custom" },
+          "value",
+        ]);
+
+        expect(columns.map((c) => [c.id, c.label, c.dataType])).toEqual([
+          ["value2", "Custom", "number"],
+          ["value", undefined, "month"],
+        ]);
+      });
+
+      it("skips selected columns that are not inner fields", () => {
+        const columns = datatype().getColumns(field, ["unknown", "value"]);
+
+        expect(columns.map((c) => c.id)).toEqual(["value"]);
+      });
+    });
+
+    it.each([undefined, false])(
+      "always stores schema-embed-array fields as array (configured isArray: %s)",
+      (isArray) => {
+        const datatype = TestBed.runInInjectionContext(
+          () => new SchemaEmbedArrayDatatype(),
+        );
+
+        expect(
+          datatype.normalizeSchemaField({
+            dataType: SchemaEmbedArrayDatatype.dataType,
+            isArray,
+          }).isArray,
+        ).toBe(true);
+      },
+    );
   });
 });

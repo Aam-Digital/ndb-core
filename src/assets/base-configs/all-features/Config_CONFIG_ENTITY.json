@@ -757,7 +757,8 @@
                 "name",
                 "center",
                 "status",
-                "admissionDate"
+                "admissionDate",
+                "identificationDocuments"
               ]
             },
             {
@@ -830,6 +831,7 @@
                       "fields": [
                         "dateOfBirth",
                         "birth_certificate",
+                        "identificationDocuments",
                         "gender",
                         "motherTongue"
                       ],
@@ -843,6 +845,26 @@
                         "phone"
                       ],
                       "header": "Scholar activities"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "Identification Documents",
+            "components": [
+              {
+                "title": "",
+                "component": "EmbeddedArrayData",
+                "config": {
+                  "property": "identificationDocuments",
+                  "columns": [
+                    "documentType",
+                    "documentNumber",
+                    {
+                      "id": "issueDate",
+                      "visibleFrom": "md"
                     }
                   ]
                 }
@@ -1505,6 +1527,24 @@
         "email": {
           "dataType": "email",
           "label": "Email"
+        },
+        "identificationDocuments": {
+          "dataType": "schema-embed-array",
+          "label": "Identification Documents",
+          "additional": {
+            "documentType": {
+              "dataType": "string",
+              "label": "Document Type"
+            },
+            "documentNumber": {
+              "dataType": "string",
+              "label": "Document Number"
+            },
+            "issueDate": {
+              "dataType": "date",
+              "label": "Issue Date"
+            }
+          }
         }
       }
     },
@@ -1730,7 +1770,7 @@
         "embeddedArrayOfObjects": {
           "id": "embeddedArrayOfObjects",
           "label": "Embedded Array of Objects",
-          "dataType": "schema-embed",
+          "dataType": "schema-embed-array",
           "additional": {
             "type": {
               "dataType": "string",
@@ -1744,8 +1784,7 @@
               "dataType": "date-range",
               "label": "embedded item period"
             }
-          },
-          "isArray": true
+          }
         }
       },
       "hasPII": false

@@ -1,0 +1,76 @@
+@use "variables/sizes";
+@use "variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+:host {
+  display: block;
+}
+
+/* same look as the entities-table used by RelatedEntitiesComponent */
+
+.table {
+  @include mat-elevation.elevation(2);
+}
+
+.table-row.clickable {
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+}
+
+/* adjust action column width to use least possible width */
+.mat-column-__edit {
+  flex: 0 0 auto !important;
+  width: 78px;
+  padding-right: 0;
+}
+
+.table-action-button {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  margin: sizes.$small;
+  color: colors.$accent;
+}
+
+.icon-only {
+  vertical-align: initial;
+}
+
+/* small, borderless preview (e.g. in a tooltip) */
+:host(.compact) {
+  padding: 0.5em;
+
+  .table-container {
+    // keep a tooltip-hosted table from growing unbounded with many rows/columns
+    max-height: 300px;
+    max-width: 480px;
+    overflow: auto;
+  }
+
+  .table {
+    box-shadow: none;
+    background: transparent;
+    // min-width (not width): lets the table grow past its container so cells don't get
+    // squeezed - .table-container then scrolls horizontally instead of clipping content.
+    min-width: 100%;
+    width: max-content;
+  }
+
+  .mat-mdc-header-row,
+  .mat-mdc-row {
+    height: auto;
+  }
+
+  .mat-mdc-header-cell,
+  .mat-mdc-cell {
+    padding: 2px 12px 2px 0;
+    white-space: nowrap;
+    border-bottom: none;
+  }
+
+  .mat-mdc-header-cell {
+    border-bottom: 1px solid var(--mdc-theme-divider-color, rgba(0, 0, 0, 0.12));
+  }
+}
