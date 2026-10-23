@@ -78,7 +78,7 @@ export class ConfigureTranslationsPopupComponent {
   readonly showDisabled = signal(false);
 
   /**
-   * One row per enabled language (in their order), followed by every
+   * One row per enabled language (the default language first, then in their order), followed by every
    * other language this text already holds text for. {@link buildValue} rebuilds
    * the value from the rows, so leaving one out would delete that text on save.
    * Rows of disabled languages are only hidden in the template
@@ -90,7 +90,11 @@ export class ConfigureTranslationsPopupComponent {
    * no text gets no row, so admins are not invited to write texts in it.
    */
   private buildRows(): TranslationRow[] {
-    const enabled = this.siteSettings.enabledLocales();
+    const defaultId = this.siteSettings.defaultLocale()?.id;
+    // the default language always comes first, the others keep their order
+    const enabled = [...this.siteSettings.enabledLocales()].sort(
+      (a, b) => Number(b.id === defaultId) - Number(a.id === defaultId),
+    );
     const isEnabled = (locale: ConfigurableEnumValue) =>
       enabled.some(({ id }) => id === locale.id);
 

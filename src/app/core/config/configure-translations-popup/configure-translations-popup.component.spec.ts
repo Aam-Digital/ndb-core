@@ -27,6 +27,7 @@ describe("ConfigureTranslationsPopupComponent", () => {
   async function createComponent(
     data: ConfigureTranslationsDialogData,
     enabledLocales: ConfigurableEnumValue[] = availableLocales.values,
+    defaultLocale?: ConfigurableEnumValue,
   ) {
     dialogRef = { close: vi.fn() };
 
@@ -41,7 +42,10 @@ describe("ConfigureTranslationsPopupComponent", () => {
         { provide: MatDialogRef, useValue: dialogRef },
         {
           provide: SiteSettingsService,
-          useValue: { enabledLocales: signal(enabledLocales) },
+          useValue: {
+            enabledLocales: signal(enabledLocales),
+            defaultLocale: signal(defaultLocale),
+          },
         },
       ],
     }).compileComponents();
@@ -66,6 +70,15 @@ describe("ConfigureTranslationsPopupComponent", () => {
     expect(component.rows.length).toBeGreaterThan(1);
     expect(component.rows.map((r) => r.locale)).toContain("en-US");
     expect(component.rows.map((r) => r.locale)).toContain("de");
+  });
+
+  it("should show the default language first, even if it is not first in the enabled list", async () => {
+    const en = availableLocales.values.find((l) => l.id === "en-US");
+    const de = availableLocales.values.find((l) => l.id === "de");
+    const fr = availableLocales.values.find((l) => l.id === "fr");
+    await createComponent({}, [de, fr, en], en);
+
+    expect(component.rows.map((r) => r.locale)).toEqual(["en-US", "de", "fr"]);
   });
 
   it("should pre-fill each language from an existing translation map", async () => {

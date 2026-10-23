@@ -52,6 +52,11 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     return !!environment.multiLingualConfigEnabled;
   }
 
+  /** The site's default language (system-wide), if one is set. */
+  readonly defaultLocale = toSignal(
+    this.siteSettings.pipe(map((settings) => settings?.defaultLanguage)),
+  );
+
   /**
    * The enabled languages of this system: the system language ({@link defaultLanguage})
    * plus the admin's selection (`availableLocales`). Order: the stored selection first,
