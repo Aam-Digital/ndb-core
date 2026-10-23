@@ -38,6 +38,9 @@ export class LanguageSelectComponent {
   /** optional explanation shown below the dropdown, like other form fields' hints */
   hint = input<string>();
 
+  /** take the full width, e.g. to line up with other form fields, instead of a compact width */
+  fullWidth = input<boolean>(false);
+
   /**
    * Whether picking a language applies it immediately (which reloads the app).
    *

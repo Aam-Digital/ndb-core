@@ -1,4 +1,8 @@
-<mat-form-field appearance="fill" class="language-select-dropdown">
+<mat-form-field
+  appearance="fill"
+  class="language-select-dropdown"
+  [class.full-width-dropdown]="fullWidth()"
+>
   <mat-label i18n>Choose your language</mat-label>
 
   <mat-select
