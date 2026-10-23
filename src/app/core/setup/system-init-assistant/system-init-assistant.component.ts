@@ -175,6 +175,7 @@ export class SystemInitAssistantComponent implements OnInit {
 
     try {
       await this.setupService.initSystemWithBaseConfig(this.selectedUseCase()!);
+      await this.saveSelectedLanguageAsSystemLanguage();
 
       if (this.generateDemoData()) {
         await this.demoDataInitializer.generateDemoData();
@@ -187,6 +188,18 @@ export class SystemInitAssistantComponent implements OnInit {
       Logging.error("Error initializing demo data:", error);
     } finally {
       this.generatingData.set(false);
+    }
+  }
+
+  /**
+   * The language selected here always becomes the system language, also if it was
+   * only preselected and over a language the imported site settings define.
+   */
+  private async saveSelectedLanguageAsSystemLanguage() {
+    const currentLocale = this.languageService.getCurrentLocale();
+    const locale = availableLocales.values.find((l) => l.id === currentLocale);
+    if (locale) {
+      await this.siteSettings.setDefaultLanguage(locale);
     }
   }
 
