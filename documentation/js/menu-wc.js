@@ -831,6 +831,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/AdvancedFeaturesComponent.html" data-type="entity-link" >AdvancedFeaturesComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/AffectedEntityValueComponent.html" data-type="entity-link" >AffectedEntityValueComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/AlertStoriesHelperComponent.html" data-type="entity-link" >AlertStoriesHelperComponent</a>
                             </li>
                             <li class="link">
@@ -1691,6 +1694,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="classes/ActivityAttendance.html" data-type="entity-link" >ActivityAttendance</a>
                             </li>
                             <li class="link">
+                                <a href="classes/AffectedEntitiesCalculation.html" data-type="entity-link" >AffectedEntitiesCalculation</a>
+                            </li>
+                            <li class="link">
                                 <a href="classes/AttendanceItem.html" data-type="entity-link" >AttendanceItem</a>
                             </li>
                             <li class="link">
@@ -1704,6 +1710,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="classes/Changelog.html" data-type="entity-link" >Changelog</a>
+                            </li>
+                            <li class="link">
+                                <a href="classes/ChangeSet.html" data-type="entity-link" >ChangeSet</a>
                             </li>
                             <li class="link">
                                 <a href="classes/ChildSchoolRelation.html" data-type="entity-link" >ChildSchoolRelation</a>
@@ -2436,6 +2445,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/AdminWidgetDialogData.html" data-type="entity-link" >AdminWidgetDialogData</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/AffectedEntitiesContext.html" data-type="entity-link" >AffectedEntitiesContext</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/AffectedEntity.html" data-type="entity-link" >AffectedEntity</a>
                             </li>
                             <li class="link">
@@ -2533,6 +2545,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/CellState.html" data-type="entity-link" >CellState</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/ChangedRecord.html" data-type="entity-link" >ChangedRecord</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/ChangeEvent.html" data-type="entity-link" >ChangeEvent</a>
@@ -2649,6 +2664,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/DetailsComponentData.html" data-type="entity-link" >DetailsComponentData</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/DialogRow.html" data-type="entity-link" >DialogRow</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/DialogViewData.html" data-type="entity-link" >DialogViewData&lt;T &#x3D; any&gt;</a>
                             </li>
                             <li class="link">
@@ -2683,6 +2701,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/EmptyDefaultValueHint.html" data-type="entity-link" >EmptyDefaultValueHint</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/EnteredValue.html" data-type="entity-link" >EnteredValue</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/EntitiesTableSelectionContext.html" data-type="entity-link" >EntitiesTableSelectionContext&lt;T extends Entity&gt;</a>
@@ -3033,6 +3054,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/PWAInstallChoice.html" data-type="entity-link" >PWAInstallChoice</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/QueuedChange.html" data-type="entity-link" >QueuedChange</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/RawAuditDoc.html" data-type="entity-link" >RawAuditDoc</a>
                             </li>
                             <li class="link">
@@ -3138,6 +3162,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="interfaces/TranslationRow.html" data-type="entity-link" >TranslationRow</a>
                             </li>
                             <li class="link">
+                                <a href="interfaces/TriggerChange.html" data-type="entity-link" >TriggerChange</a>
+                            </li>
+                            <li class="link">
                                 <a href="interfaces/UniquePropertyValidatorConfig.html" data-type="entity-link" >UniquePropertyValidatorConfig</a>
                             </li>
                             <li class="link">
@@ -3145,6 +3172,12 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UpdatedEntity.html" data-type="entity-link" >UpdatedEntity&lt;T extends Entity&gt;</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UpdateGroup.html" data-type="entity-link" >UpdateGroup</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UpdateTrigger.html" data-type="entity-link" >UpdateTrigger</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/UsageAnalyticsConfig.html" data-type="entity-link" >UsageAnalyticsConfig</a>
@@ -3160,6 +3193,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UserDetailsDialogData.html" data-type="entity-link" >UserDetailsDialogData</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UserEntry.html" data-type="entity-link" >UserEntry</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/UserProfilesToKeep.html" data-type="entity-link" >UserProfilesToKeep</a>

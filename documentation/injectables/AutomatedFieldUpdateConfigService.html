@@ -204,8 +204,28 @@ It finds dependent entities and updates their fields based on changes in the sou
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
+                                <a href="#canUpdate" >canUpdate</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#collectValues" >collectValues</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
                                 <a href="#collectValuesOfLinkedRecords" >collectValuesOfLinkedRecords</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#getDatabaseValue" >getDatabaseValue</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#getTriggeredRules" >getTriggeredRules</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -221,12 +241,28 @@ It finds dependent entities and updates their fields based on changes in the sou
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
-                                <a href="#transformSourceValueToDatabaseFormat" >transformSourceValueToDatabaseFormat</a>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadEntitiesByIds" >loadEntitiesByIds</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                     <span class="modifier">Public</span>
                                     <span class="modifier">Async</span>
+                                <a href="#loadRecordsLinkingTo" >loadRecordsLinkingTo</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#toEntityFormat" >toEntityFormat</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
+                                <a href="#transformSourceValueToDatabaseFormat" >transformSourceValueToDatabaseFormat</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                    <span class="modifier">Public</span>
                                 <a href="#updateLinkedRecords" >updateLinkedRecords</a>
                             </li>
                         </ul>
@@ -270,8 +306,8 @@ It finds dependent entities and updates their fields based on changes in the sou
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="85"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:85</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -365,8 +401,8 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="577"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:577</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:285</a></div>
                         </td>
                     </tr>
 
@@ -449,8 +485,8 @@ Also prompts user confirmation and saves updates if any changes were made.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="551"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:551</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="259"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:259</a></div>
                         </td>
                     </tr>
 
@@ -524,6 +560,173 @@ Transforms to database format for consistent handling of all datatypes.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="canUpdate"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>canUpdate</b></span>
+                        <a href="#canUpdate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>canUpdate(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:144</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the user may change the field of the entity.
+Until the permissions are loaded, this is not known (the server checks them anyway).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="collectValues"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>collectValues</b></span>
+                        <a href="#collectValues"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>collectValues(records: <a href="../classes/Entity.html" target="_self">Entity[]</a>, rule: <a href="../interfaces/DefaultValueConfigInheritedField.html" target="_self">DefaultValueConfigInheritedField</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="355"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:355</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The values of the given records as defined by the automation rule, skipping duplicates (database format).</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>records</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>rule</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DefaultValueConfigInheritedField.html" target="_self" >DefaultValueConfigInheritedField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>any[]</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="collectValuesOfLinkedRecords"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -543,8 +746,8 @@ Transforms to database format for consistent handling of all datatypes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="624"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:624</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="340"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:340</a></div>
                         </td>
                     </tr>
 
@@ -619,6 +822,171 @@ Transforms to database format for consistent handling of all datatypes.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getDatabaseValue"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getDatabaseValue</b></span>
+                        <a href="#getDatabaseValue"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getDatabaseValue(entity: <a href="../classes/Entity.html" target="_self">Entity</a>, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="232"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:232</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The value of the field of the entity in database format</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTriggeredRules"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getTriggeredRules</b></span>
+                        <a href="#getTriggeredRules"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTriggeredRules(source: <a href="../classes/Entity.html" target="_self">Entity</a>, : <a href="../interfaces/QueuedChange.html" target="_self">QueuedChange</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="120"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:120</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The rules that pass on the changed fields of the source entity.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>source</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                            <code><a href="../interfaces/QueuedChange.html" target="_self" >QueuedChange</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/AffectedRule.html" target="_self" >AffectedRule[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="hasLinkedRecordsToUpdate"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -637,8 +1005,8 @@ Transforms to database format for consistent handling of all datatypes.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="136"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:136</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -715,15 +1083,15 @@ by an automation rule (e.g. a sub-item&#39;s field that updates its linked paren
             <tr>
                 <td class="col-md-4">
                         <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>loadCommonValue(parentIds: string[], rule: <a href="../interfaces/DefaultValueConfigInheritedField.html" target="_self">DefaultValueConfigInheritedField</a>, options: <a href="../classes/Entity.html" target="_self">{ parentType?: EntityConstructor; loadedParents?: Entity[] }</a>)</code>
+                    <code>loadCommonValue(parentIds: string[], rule: <a href="../interfaces/DefaultValueConfigInheritedField.html" target="_self">DefaultValueConfigInheritedField</a>, options: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">{ parentType?: EntityConstructor; loadedParents?: Entity[]; changeSet?: ChangeSet }</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="597"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:597</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="306"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:306</a></div>
                         </td>
                     </tr>
 
@@ -790,7 +1158,7 @@ If any of them cannot be loaded (e.g. the user has no permission to read it), no
                                         <tr>
                                                 <td>options</td>
                                             <td>
-                                                            <code><a href="../classes/Entity.html" target="_self" >{ parentType?: EntityConstructor; loadedParents?: Entity[] }</a></code>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >{ parentType?: EntityConstructor; loadedParents?: Entity[]; changeSet?: ChangeSet }</a></code>
                                             </td>
 
                                             <td>
@@ -822,6 +1190,294 @@ If any of them cannot be loaded (e.g. the user has no permission to read it), no
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="loadEntitiesByIds"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>loadEntitiesByIds</b></span>
+                        <a href="#loadEntitiesByIds"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadEntitiesByIds(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor | undefined</a>, entityIds: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="475"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:475</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load entities by their IDs, skipping those that cannot be loaded.
+  if undefined, each entity is loaded as the type of its id prefix</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor | undefined</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The type of entities to load (ids of other types are skipped);
+if undefined, each entity is loaded as the type of its id prefix</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entityIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadRecordsLinkingTo"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>loadRecordsLinkingTo</b></span>
+                        <a href="#loadRecordsLinkingTo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadRecordsLinkingTo(entityType: <a href="../classes/Entity.html" target="_self">string | EntityConstructor</a>, referenceField: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="373"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:373</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load the records of the given type that reference the given entity in the given field
+(a single reference or a list of references) through a database index,
+instead of loading and checking all records of the type.
+If the index cannot be used (e.g. it cannot be created in online-only mode),
+all records of the type are loaded and checked instead.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >string | EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>referenceField</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toEntityFormat"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>toEntityFormat</b></span>
+                        <a href="#toEntityFormat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toEntityFormat(value: unknown, entityType: <a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self">EntityConstructor</a>, fieldId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="242"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:242</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>A value of a field of the entity type, converted from database format to entity format</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>fieldId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="transformSourceValueToDatabaseFormat"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
@@ -840,8 +1496,8 @@ If any of them cannot be loaded (e.g. the user has no permission to read it), no
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="718"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:718</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="444"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:444</a></div>
                         </td>
                     </tr>
 
@@ -950,7 +1606,6 @@ This finds the field schema from the source entity and applies the transformatio
                     <a name="updateLinkedRecords"></a>
                     <span class="name">
                             <span class="modifier">Public</span>
-                            <span class="modifier">Async</span>
                         <span ><b>updateLinkedRecords</b></span>
                         <a href="#updateLinkedRecords"><span class="icon ion-ios-link"></span></a>
                     </span>
@@ -966,8 +1621,8 @@ This finds the field schema from the source entity and applies the transformatio
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="150"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:150</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="91"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update-config.service.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -1041,25 +1696,28 @@ import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entit
 import { EntityMapperService } from &quot;#src/app/core/entity/entity-mapper/entity-mapper.service&quot;;
 import { EntityRegistry } from &quot;#src/app/core/entity/database-entity.decorator&quot;;
 import { MatDialog } from &quot;@angular/material/dialog&quot;;
-import type { AffectedEntity } from &quot;./automated-field-update.component&quot;;
-import { lastValueFrom } from &quot;rxjs&quot;;
 import {
-  DefaultValueConfigInheritedField,
-  isCollectingFromLinkedRecords,
-} from &quot;../inherited-field-config&quot;;
+  AffectedEntity,
+  AffectedRule,
+  CommonValueOfParents,
+  EnteredValue,
+  UpdateTrigger,
+} from &quot;./automated-field-update.types&quot;;
+import { lastValueFrom } from &quot;rxjs&quot;;
+import { DefaultValueConfigInheritedField } from &quot;../inherited-field-config&quot;;
 import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
 import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
 import { DatabaseIndexingService } from &quot;#src/app/core/entity/database-indexing/database-indexing.service&quot;;
-import { differenceWith, isEqual } from &quot;lodash-es&quot;;
 import { asArray } from &quot;#src/app/utils/asArray&quot;;
-import {
-  addAndRemoveValues,
-  addMissingValues,
-  getRemovedValues,
-  isEmptyValue,
-} from &quot;../add-missing-values&quot;;
+import { addMissingValues } from &quot;../add-missing-values&quot;;
 import { CommonValue, getCommonValue, isSameValue } from &quot;../get-common-value&quot;;
-import { NoCommonValueReason } from &quot;#src/app/core/default-values/default-value-service/default-value.service&quot;;
+import { ChangeSet } from &quot;./change-set&quot;;
+import { EntityAbility } from &quot;#src/app/core/permissions/ability/entity-ability&quot;;
+import {
+  AffectedEntitiesCalculation,
+  AffectedEntitiesContext,
+  QueuedChange,
+} from &quot;./affected-entities-calculation&quot;;
 
 /** the property of an entity that a reference index can be created for */
 type IndexedProperty &#x3D; Parameters&lt;
@@ -1067,44 +1725,17 @@ type IndexedProperty &#x3D; Parameters&lt;
 &gt;[2];
 
 /**
- * Represents a rule with its associated entity type and field information
- */
-interface AffectedRule {
-  rule: DefaultValueConfigInheritedField;
-  entityType: EntityConstructor;
-  fieldId: string;
-}
-
-/**
- * The new value of a target entity, which is its current value if the linked entities have no value in common.
- */
-interface NewValue {
-  value: any;
-  noCommonValue?: NoCommonValueReason;
-}
-
-/**
- * The value that the linked parent records of a record have in common.
- */
-export interface CommonValueOfParents {
-  /** the value the parent records have in common (in database format) */
-  value?: unknown;
-
-  /** why the parent records provide no value in common, if they don&#x27;t */
-  noCommonValue?: NoCommonValueReason;
-}
-
-/**
  * Service to automatically update related entities based on configured rules.
  * It finds dependent entities and updates their fields based on changes in the source entity.
  */
 @Injectable({ providedIn: &quot;root&quot; })
-export class AutomatedFieldUpdateConfigService {
+export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContext {
   private readonly entityRegistry &#x3D; inject(EntityRegistry);
   private readonly entityMapper &#x3D; inject(EntityMapperService);
   private readonly dialog &#x3D; inject(MatDialog);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
   private readonly dbIndexing &#x3D; inject(DatabaseIndexingService);
+  private readonly ability &#x3D; inject(EntityAbility, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes &#x3D; new Set&lt;string&gt;();
@@ -1126,45 +1757,10 @@ export class AutomatedFieldUpdateConfigService {
   ): Promise&lt;void&gt; {
     if (this.checkRefAlreadyProcessed(entity)) return;
 
-    const changedFields &#x3D; this.getChangedFields(entity, entityBeforeChanges);
-    const changedFieldIds &#x3D; changedFields.map((f) &#x3D;&gt; f.fieldId);
-
-    const relevantDirectRules: AffectedRule[] &#x3D;
-      this.getInheritanceRulesFromDirectEntity(entity.getConstructor()).filter(
-        (r) &#x3D;&gt;
-          changedFieldIds.includes(r.rule.sourceValueField) ||
-          changedFieldIds.includes(r.rule.sourceReferenceField),
-      );
-    const relevantIndirectRules: AffectedRule[] &#x3D;
-      this.getInheritanceRulesReferencingThisEntity(
-        entity.getConstructor(),
-      ).filter((r) &#x3D;&gt; changedFieldIds.includes(r.rule.sourceValueField));
-
-    const affectedEntities: AffectedEntity[] &#x3D; [
-      ...(
-        await Promise.all(
-          relevantDirectRules.map((rule) &#x3D;&gt;
-            this.loadAffectedEntitiesForRule(
-              rule,
-              entity,
-              entityBeforeChanges,
-              changedFieldIds.includes(rule.rule.sourceValueField),
-            ),
-          ),
-        )
-      ).flat(),
-      ...(
-        await Promise.all(
-          relevantIndirectRules.map((rule) &#x3D;&gt;
-            this.loadAffectedEntitiesForInheritanceRule(rule, entity),
-          ),
-        )
-      ).flat(),
-    ];
-
-    if (affectedEntities.length &gt; 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
-    }
+    await this.confirmAndSaveAffectedEntities({
+      entity,
+      before: entityBeforeChanges,
+    });
   }
 
   /**
@@ -1185,22 +1781,63 @@ export class AutomatedFieldUpdateConfigService {
    * regardless of whether the field was changed recently.
    * @return whether there were any linked entities to update
    */
-  public async updateLinkedRecords(
+  public updateLinkedRecords(
     entity: Entity,
     fieldId: string,
   ): Promise&lt;boolean&gt; {
-    const affectedEntities &#x3D; (
-      await Promise.all(
-        this.getRulesUsingFieldAsSource(entity.getConstructor(), fieldId).map(
-          (rule) &#x3D;&gt; this.loadAffectedEntitiesForRule(rule, entity, entity),
-        ),
-      )
-    ).flat();
+    return this.confirmAndSaveAffectedEntities({
+      entity,
+      before: entity,
+      fieldId,
+    });
+  }
 
-    if (affectedEntities.length &gt; 0) {
-      await this.confirmAndSaveAffectedEntities(affectedEntities);
-    }
-    return affectedEntities.length &gt; 0;
+  /**
+   * Find the entities that the rules would update, level by level up the hierarchy
+   * (see {@link AffectedEntitiesCalculation}).
+   * @param trigger the change that starts the update
+   * @param enteredValues values the user entered for affected entities (database format),
+   *   which the entities above are based on instead of the suggestions
+   * @return the affected entities, ordered by level
+   */
+  private findAffectedEntities(
+    trigger: UpdateTrigger,
+    enteredValues: EnteredValue[] &#x3D; [],
+  ): Promise&lt;AffectedEntity[]&gt; {
+    return new AffectedEntitiesCalculation(this, trigger, enteredValues).run();
+  }
+
+  /**
+   * The rules that pass on the changed fields of the source entity.
+   */
+  public getTriggeredRules(
+    source: Entity,
+    { changedFields, onlyLinkedEntities }: QueuedChange,
+  ): AffectedRule[] {
+    const isChanged &#x3D; (fieldId: string) &#x3D;&gt; changedFields.includes(fieldId);
+    const directRules &#x3D; this.getInheritanceRulesFromDirectEntity(
+      source.getConstructor(),
+    ).filter(
+      ({ rule }) &#x3D;&gt;
+        isChanged(rule.sourceValueField) ||
+        isChanged(rule.sourceReferenceField),
+    );
+    const indirectRules &#x3D; onlyLinkedEntities
+      ? []
+      : this.getInheritanceRulesReferencingThisEntity(
+          source.getConstructor(),
+        ).filter(({ rule }) &#x3D;&gt; isChanged(rule.sourceValueField));
+    return [...directRules, ...indirectRules];
+  }
+
+  /**
+   * Whether the user may change the field of the entity.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  public canUpdate(entity: Entity, fieldId: string): boolean {
+    return (
+      !this.ability?.initialized || this.ability.can(&quot;update&quot;, entity, fieldId)
+    );
   }
 
   private getRulesUsingFieldAsSource(
@@ -1284,300 +1921,26 @@ export class AutomatedFieldUpdateConfigService {
     );
   }
 
-  /**
-   * Load affected entities for a single automation rule (direct references)
-   * Source entity has reference field pointing TO target entities
-   * @param valueChanged whether the source value changed (all linked entities are affected),
-   *   or only the link (then only newly linked entities get the value, and unlinked ones may lose it)
-   */
-  private async loadAffectedEntitiesForRule(
-    affectedRule: AffectedRule,
-    sourceEntity: Entity,
-    sourceEntityBeforeChanges: Entity,
-    valueChanged &#x3D; true,
-  ): Promise&lt;AffectedEntity[]&gt; {
-    const { rule, entityType } &#x3D; affectedRule;
-
-    const linkedIds &#x3D; this.getLinkedIds(sourceEntity, rule);
-    const previousIds &#x3D; sourceEntityBeforeChanges.isNew
-      ? []
-      : this.getLinkedIds(sourceEntityBeforeChanges, rule);
-    // a changed link alone only passes on a value that is set, instead of clearing the value of the new parent
-    const idsToUpdate &#x3D; valueChanged
-      ? linkedIds
-      : linkedIds.filter(
-          (id) &#x3D;&gt;
-            !previousIds.includes(id) &amp;&amp;
-            !isEmptyValue(this.calculateNewValue(sourceEntity, rule)),
-        );
-
-    const targetEntities &#x3D; await this.loadEntitiesByIds(
-      entityType,
-      idsToUpdate,
-    );
-    const previouslyLinkedTargets &#x3D; targetEntities.filter((target) &#x3D;&gt;
-      previousIds.includes(target.getId()),
-    );
-    const newValue: NewValue &#x3D; {
-      value: this.calculateNewValue(sourceEntity, rule),
-    };
-
-    return [
-      ...this.processTargetEntities(
-        targetEntities,
-        affectedRule,
-        sourceEntity,
-        new Map(
-          targetEntities.map((entity): [string, NewValue] &#x3D;&gt; [
-            entity.getId(),
-            newValue,
-          ]),
-        ),
-        await this.loadRemovedValues(
-          previouslyLinkedTargets,
-          affectedRule,
-          getRemovedValues(
-            sourceEntityBeforeChanges.isNew
-              ? []
-              : this.calculateNewValue(sourceEntityBeforeChanges, rule),
-            this.calculateNewValue(sourceEntity, rule),
-          ),
-        ),
-      ),
-      ...(await this.loadAffectedEntitiesForUnlinkedEntities(
-        affectedRule,
-        sourceEntityBeforeChanges,
-        previousIds.filter((id) &#x3D;&gt; !linkedIds.includes(id)),
-      )),
-    ];
-  }
-
-  private getLinkedIds(
-    entity: Entity,
-    rule: DefaultValueConfigInheritedField,
-  ): string[] {
-    const referencedIds &#x3D; entity[rule.sourceReferenceField];
-    return referencedIds ? asArray(referencedIds) : [];
-  }
-
-  /**
-   * Load the entities that the source entity is no longer linked to,
-   * to suggest removing the values only the source entity contributed to their collected field.
-   */
-  private async loadAffectedEntitiesForUnlinkedEntities(
-    affectedRule: AffectedRule,
-    sourceEntityBeforeChanges: Entity,
-    unlinkedIds: string[],
-  ): Promise&lt;AffectedEntity[]&gt; {
-    const { rule, entityType, fieldId } &#x3D; affectedRule;
-    if (
-      unlinkedIds.length &#x3D;&#x3D;&#x3D; 0 ||
-      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
-    ) {
-      return [];
-    }
-
-    const unlinkedTargets &#x3D; await this.loadEntitiesByIds(
-      entityType,
-      unlinkedIds,
-    );
-    return this.processTargetEntities(
-      unlinkedTargets,
-      affectedRule,
-      sourceEntityBeforeChanges,
-      new Map(
-        unlinkedTargets.map((target): [string, NewValue] &#x3D;&gt; [
-          target.getId(),
-          { value: [] },
-        ]),
-      ),
-      await this.loadRemovedValues(
-        unlinkedTargets,
-        affectedRule,
-        getRemovedValues(
-          this.calculateNewValue(sourceEntityBeforeChanges, rule),
-          [],
-        ),
-      ),
-    ).map((affectedEntity) &#x3D;&gt; ({ ...affectedEntity, unlinked: true }));
-  }
-
-  /**
-   * Load affected entities for a single inheritance rule (indirect references)
-   * Target entities have reference field pointing TO source entity
-   */
-  private async loadAffectedEntitiesForInheritanceRule(
-    affectedRule: AffectedRule,
-    sourceEntity: Entity,
-  ): Promise&lt;AffectedEntity[]&gt; {
-    const { rule, entityType } &#x3D; affectedRule;
-
-    const targetEntities &#x3D; await this.loadRecordsLinkingTo(
-      entityType,
-      rule.sourceReferenceField,
-      sourceEntity.getId(),
-    );
-
-    const newValues &#x3D; new Map&lt;string, NewValue&gt;(
-      await Promise.all(
-        targetEntities.map(async (entity): Promise&lt;[string, NewValue]&gt; &#x3D;&gt; [
-          entity.getId(),
-          await this.loadNewValue(entity, affectedRule, sourceEntity),
-        ]),
-      ),
-    );
-
-    return this.processTargetEntities(
-      targetEntities,
-      affectedRule,
-      sourceEntity,
-      newValues,
+  /** The value of the field of the entity in database format */
+  public getDatabaseValue(entity: Entity, fieldId: string): any {
+    return this.transformSourceValueToDatabaseFormat(
+      entity[fieldId],
+      entity,
+      fieldId,
+      this.entitySchemaService,
     );
   }
 
-  /**
-   * Get the new value for a target entity linking to the (already updated) source entity.
-   * If the target links to several entities, it only inherits a value shared by all of them.
-   * If they have different values or some linked entities cannot be loaded,
-   * the target&#x27;s current value is returned.
-   * If none of them has a value, the value is cleared like for a single linked entity.
-   */
-  private async loadNewValue(
-    targetEntity: Entity,
-    { rule, fieldId }: AffectedRule,
-    sourceEntity: Entity,
-  ): Promise&lt;NewValue&gt; {
-    const otherIds &#x3D; asArray(targetEntity[rule.sourceReferenceField]).filter(
-      (id) &#x3D;&gt; id !&#x3D;&#x3D; sourceEntity.getId(),
-    );
-    if (otherIds.length &#x3D;&#x3D;&#x3D; 0) {
-      return { value: this.calculateNewValue(sourceEntity, rule) };
-    }
-
-    const { value, noCommonValue } &#x3D; await this.loadCommonValue(
-      otherIds,
-      rule,
-      {
-        parentType: sourceEntity.getConstructor(),
-        loadedParents: [sourceEntity],
-      },
-    );
-
-    if (noCommonValue) {
-      return {
-        value: this.transformSourceValueToDatabaseFormat(
-          targetEntity[fieldId],
-          targetEntity,
-          fieldId,
-          this.entitySchemaService,
-        ),
-        noCommonValue,
-      };
-    }
-    return { value };
-  }
-
-  /**
-   * Find the values that the source entity no longer has and that are not used by any other entity linking to the same target,
-   * for fields that collect the values of their linked entities (i.e. these values can be removed from the target).
-   * @param removedValues the values that the source entity lost for the target entities
-   * @return the values to remove by target entity id
-   */
-  private async loadRemovedValues(
-    targetEntities: Entity[],
-    { rule, entityType, fieldId }: AffectedRule,
-    removedValues: any[],
-  ): Promise&lt;Map&lt;string, any[]&gt;&gt; {
-    if (
-      removedValues.length &#x3D;&#x3D;&#x3D; 0 ||
-      !isCollectingFromLinkedRecords(entityType.schema.get(fieldId))
-    ) {
-      return new Map();
-    }
-
-    try {
-      return new Map(
-        await Promise.all(
-          targetEntities.map(async (target): Promise&lt;[string, any[]]&gt; &#x3D;&gt; [
-            target.getId(),
-            differenceWith(
-              removedValues,
-              await this.collectValuesOfLinkedRecords(target, rule),
-              isEqual,
-            ),
-          ]),
-        ),
-      );
-    } catch (error) {
-      Logging.warn(
-        &quot;AutomatedFieldUpdateConfigService: Could not check which values are still used by other linked entities&quot;,
-        { entityType: entityType.ENTITY_TYPE, fieldId },
-        error,
-      );
-      return new Map();
-    }
-  }
-
-  /**
-   * Common logic for processing target entities and creating AffectedEntity objects
-   */
-  private processTargetEntities(
-    targetEntities: Entity[],
-    {
-      rule,
-      entityType: targetEntityType,
-      fieldId: targetFieldId,
-    }: AffectedRule,
-    sourceEntity: Entity,
-    newValues: Map&lt;string, NewValue&gt;,
-    removedValues: Map&lt;string, any[]&gt; &#x3D; new Map(),
-  ): AffectedEntity[] {
-    const affectedEntities: AffectedEntity[] &#x3D; [];
-    const sourceEntityType &#x3D; sourceEntity.getConstructor();
-    const relatedReferenceFieldEntityType &#x3D; rule.sourceReferenceEntity
-      ? sourceEntityType
-      : targetEntityType;
-    const fieldConfig &#x3D; targetEntityType.schema.get(targetFieldId);
-    const addToExisting &#x3D; isCollectingFromLinkedRecords(fieldConfig);
-    const combineWithCurrentValue &#x3D; addToExisting
-      ? addAndRemoveValues
-      : (_currentValue: any, newValue: any) &#x3D;&gt; newValue;
-
-    for (const targetEntity of targetEntities) {
-      // compare in database format, as the loaded entity holds e.g. enum objects instead of ids
-      const currentValue &#x3D; this.transformSourceValueToDatabaseFormat(
-        targetEntity[targetFieldId],
-        targetEntity,
-        targetFieldId,
-        this.entitySchemaService,
-      );
-      const { value, noCommonValue } &#x3D; newValues.get(targetEntity.getId());
-      const newValue &#x3D; combineWithCurrentValue(
-        currentValue,
-        value,
-        removedValues.get(targetEntity.getId()),
-      );
-      // an existing value is kept, but the user is informed that there is nothing to suggest
-      const shownNoCommonValue &#x3D; isEmptyValue(currentValue)
-        ? undefined
-        : noCommonValue;
-      if (isSameValue(currentValue, newValue) &amp;&amp; !shownNoCommonValue) continue;
-
-      affectedEntities.push({
-        id: targetEntity.getId(),
-        newValue: newValue,
-        targetFieldId,
-        targetEntityType,
-        selectedField: { ...fieldConfig, id: targetFieldId },
-        affectedEntity: targetEntity,
-        relatedReferenceField: rule.sourceReferenceField,
-        relatedReferenceFieldEntityType,
-        addToExisting,
-        noCommonValue: shownNoCommonValue,
-      });
-    }
-
-    return affectedEntities;
+  /** A value of a field of the entity type, converted from database format to entity format */
+  public toEntityFormat(
+    value: unknown,
+    entityType: EntityConstructor,
+    fieldId: string,
+  ): unknown {
+    return this.entitySchemaService.valueToEntityFormat(value, {
+      ...entityType.schema.get(fieldId),
+      id: fieldId,
+    });
   }
 
   /**
@@ -1631,18 +1994,26 @@ export class AutomatedFieldUpdateConfigService {
    *   (ids of other types are not loaded, ids without type prefix are loaded as this type);
    *   if not given, each record is loaded as the type of its id prefix
    * @param options.loadedParents Further linked parents that are already loaded (not in parentIds)
+   * @param options.changeSet Changes that are not saved yet, used instead of the saved records
    */
   public async loadCommonValue(
     parentIds: string[],
     rule: DefaultValueConfigInheritedField,
-    options: { parentType?: EntityConstructor; loadedParents?: Entity[] } &#x3D; {},
+    options: {
+      parentType?: EntityConstructor;
+      loadedParents?: Entity[];
+      changeSet?: ChangeSet;
+    } &#x3D; {},
   ): Promise&lt;CommonValueOfParents&gt; {
-    const parents &#x3D; await this.loadEntitiesByIds(options.parentType, parentIds);
+    const loaded &#x3D; await this.loadEntitiesByIds(options.parentType, parentIds);
     // without all linked parents available, no shared value can be determined
-    if (parents.length !&#x3D;&#x3D; parentIds.length) {
+    if (loaded.length !&#x3D;&#x3D; parentIds.length) {
       return { noCommonValue: &quot;unavailable&quot; };
     }
 
+    const parents &#x3D; options.changeSet
+      ? loaded.map((parent) &#x3D;&gt; options.changeSet.get(parent, &quot;after&quot;))
+      : loaded;
     const commonValue &#x3D; this.calculateCommonValue(
       [...(options.loadedParents ?? []), ...parents],
       rule,
@@ -1663,12 +2034,22 @@ export class AutomatedFieldUpdateConfigService {
     entity: Entity,
     rule: DefaultValueConfigInheritedField,
   ): Promise&lt;any[]&gt; {
-    const linkedRecords &#x3D; await this.loadRecordsLinkingTo(
-      rule.sourceReferenceEntity,
-      rule.sourceReferenceField,
-      entity.getId(),
+    return this.collectValues(
+      await this.loadRecordsLinkingTo(
+        rule.sourceReferenceEntity,
+        rule.sourceReferenceField,
+        entity.getId(),
+      ),
+      rule,
     );
-    return linkedRecords.reduce(
+  }
+
+  /** The values of the given records as defined by the automation rule, skipping duplicates (database format). */
+  public collectValues(
+    records: Entity[],
+    rule: DefaultValueConfigInheritedField,
+  ): any[] {
+    return records.reduce(
       (values, record) &#x3D;&gt;
         addMissingValues(values, this.calculateNewValue(record, rule)),
       [],
@@ -1682,7 +2063,7 @@ export class AutomatedFieldUpdateConfigService {
    * If the index cannot be used (e.g. it cannot be created in online-only mode),
    * all records of the type are loaded and checked instead.
    */
-  private async loadRecordsLinkingTo(
+  public async loadRecordsLinkingTo(
     entityType: string | EntityConstructor,
     referenceField: string,
     entityId: string,
@@ -1784,7 +2165,7 @@ export class AutomatedFieldUpdateConfigService {
    *   if undefined, each entity is loaded as the type of its id prefix
    * @param entityIds
    */
-  private async loadEntitiesByIds(
+  public async loadEntitiesByIds(
     entityType: EntityConstructor | undefined,
     entityIds: string[],
   ): Promise&lt;Entity[]&gt; {
@@ -1842,39 +2223,21 @@ export class AutomatedFieldUpdateConfigService {
   }
 
   /**
-   * Analyze which fields changed during the current editing.
-   * @param newEntity Updated entity after saving
-   * @param originalEntity Entity before changes were applied
-   * @return List of key-value pairs of all changed fields
-   *         (field ID and new value in that field)
-   * @private
-   */
-  private getChangedFields(
-    newEntity: Entity,
-    originalEntity: Entity,
-  ): { fieldId: string; value: any }[] {
-    const changedFields &#x3D; [];
-
-    for (const [key] of originalEntity.getSchema().entries()) {
-      if (
-        JSON.stringify(originalEntity[key]) !&#x3D;&#x3D; JSON.stringify(newEntity[key])
-      ) {
-        changedFields.push({ fieldId: key, value: newEntity[key] });
-      }
-    }
-
-    return changedFields;
-  }
-
-  /**
-   * Opens a dialog to confirm entity updates with the user.
+   * Find the entities affected by the change and open a dialog to confirm their updates with the user.
    * Saves entities only if the user confirms the changes.
+   * @return whether there were any affected entities
    */
   private async confirmAndSaveAffectedEntities(
-    affectedEntities: AffectedEntity[],
-  ): Promise&lt;void&gt; {
-    const userConfirmed &#x3D; await this.showConfirmationDialog(affectedEntities);
-    if (!userConfirmed) return;
+    trigger: UpdateTrigger,
+  ): Promise&lt;boolean&gt; {
+    const affectedEntities &#x3D; await this.findAffectedEntities(trigger);
+    if (affectedEntities.length &#x3D;&#x3D;&#x3D; 0) return false;
+
+    const userConfirmed &#x3D; await this.showConfirmationDialog(
+      affectedEntities,
+      trigger,
+    );
+    if (!userConfirmed) return true;
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
@@ -1885,39 +2248,28 @@ export class AutomatedFieldUpdateConfigService {
       updatesByEntityId.set(update.id, existing);
     });
 
-    const savePromises: Promise&lt;any&gt;[] &#x3D; [];
+    const entitiesToSave: Entity[] &#x3D; [];
     updatesByEntityId.forEach((updates) &#x3D;&gt; {
       const entity &#x3D; updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
       const changes &#x3D; updates.filter(
-        (update) &#x3D;&gt; entity &amp;&amp; !this.isCurrentValue(entity, update),
+        (update) &#x3D;&gt; entity &amp;&amp; !isSameValue(update.newValue, update.savedValue),
       );
       if (changes.length &gt; 0) {
         changes.forEach((update) &#x3D;&gt; {
-          entity[update.targetFieldId] &#x3D; update.newValue;
+          entity[update.targetFieldId] &#x3D;
+            this.entitySchemaService.valueToEntityFormat(
+              update.newValue,
+              update.selectedField,
+            );
         });
-        savePromises.push(this.entityMapper.save(entity));
+        entitiesToSave.push(entity);
       }
     });
 
-    await Promise.all(savePromises);
-  }
-
-  /**
-   * Whether the confirmed new value is the value that the entity already has (compared in database format).
-   */
-  private isCurrentValue(entity: Entity, update: AffectedEntity): boolean {
-    const toDatabaseFormat &#x3D; (value: any) &#x3D;&gt;
-      this.transformSourceValueToDatabaseFormat(
-        value,
-        entity,
-        update.targetFieldId,
-        this.entitySchemaService,
-      );
-    return isSameValue(
-      toDatabaseFormat(update.newValue),
-      toDatabaseFormat(entity[update.targetFieldId]),
-    );
+    // together, so that none of them is saved if the user may not save one of them
+    await this.entityMapper.saveAll(entitiesToSave);
+    return true;
   }
 
   /**
@@ -1926,13 +2278,19 @@ export class AutomatedFieldUpdateConfigService {
    */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
+    trigger: UpdateTrigger,
   ): Promise&lt;AffectedEntity[] | null&gt; {
     // loaded lazily to avoid a circular import (dialog -&gt; field edit -&gt; inherited value button -&gt; this service)
     const { AutomatedFieldUpdateComponent } &#x3D;
       await import(&quot;./automated-field-update.component&quot;);
     const dialogRef &#x3D; this.dialog.open(AutomatedFieldUpdateComponent, {
       maxHeight: &quot;90vh&quot;,
-      data: { entities: entitiesToUpdate },
+      data: {
+        entities: entitiesToUpdate,
+        trigger,
+        recalculate: (enteredValues: EnteredValue[]) &#x3D;&gt;
+          this.findAffectedEntities(trigger, enteredValues),
+      },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }

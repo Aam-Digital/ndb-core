@@ -158,17 +158,13 @@
         <p>A confirmation dialog for the user to review and confirm
 the automated updates of fields in related entities,
 after a triggering entity has been updated.</p>
+<p>The suggestions and what the user entered are kept apart: the suggestions are calculated again
+whenever the user enters a value (as the entities above are based on it), what the user entered stays.</p>
 <p>(also see AutomatedFieldUpdateConfigService)</p>
 
     </p>
 
 
-    <p class="comment">
-        <h3>Implements</h3>
-    </p>
-    <p class="comment">
-                    <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
-    </p>
 
     <p class="comment">
         <h3>Example</h3>
@@ -209,13 +205,19 @@ after a triggering entity has been updated.</p>
             <tr>
                 <td class="col-md-3">imports</td>
                 <td class="col-md-9">
-                        <div>        <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
+                        <div>        <code><a href="../components/AffectedEntityValueComponent.html" target="_self" >AffectedEntityValueComponent</a></code>
 </div>
-                        <div>        <code><a href="../components/EntityFieldEditComponent.html" target="_self" >EntityFieldEditComponent</a></code>
+                        <div>        <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
 </div>
                         <div>        <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
 </div>
                         <div>        <code><a href="../classes/Entity.html" target="_self" >EntityFieldLabelPipe</a></code>
+</div>
+                        <div>        <code><a href="../components/EntityFieldViewComponent.html" target="_self" >EntityFieldViewComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+</div>
+                        <div>        <code><a href="../components/HelpButtonComponent.html" target="_self" >HelpButtonComponent</a></code>
 </div>
                         <div>        <code><a href="../components/HintBoxComponent.html" target="_self" >HintBoxComponent</a></code>
 </div>
@@ -223,7 +225,9 @@ after a triggering entity has been updated.</p>
 </div>
                         <div>    <code>MatDialogModule</code>
 </div>
-                        <div>        <code><a href="../components/NoCommonValueHintComponent.html" target="_self" >NoCommonValueHintComponent</a></code>
+                        <div>    <code>MatExpansionModule</code>
+</div>
+                        <div>    <code>MatTooltipModule</code>
 </div>
                 </td>
             </tr>
@@ -269,16 +273,25 @@ after a triggering entity has been updated.</p>
                     <h4>Depends on</h4>
                         <ul class="list-unstyled relationships-list">
                                 <li>
-                                            <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
+                                            <code><a href="../components/AffectedEntityValueComponent.html" target="_self" >AffectedEntityValueComponent</a></code>
                                 </li>
                                 <li>
-                                            <code><a href="../components/EntityFieldEditComponent.html" target="_self" >EntityFieldEditComponent</a></code>
+                                            <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
                                 </li>
                                 <li>
                                             <code><a href="../components/EntityBlockComponent.html" target="_self" >EntityBlockComponent</a></code>
                                 </li>
                                 <li>
                                             <code><a href="../classes/Entity.html" target="_self" >EntityFieldLabelPipe</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/EntityFieldViewComponent.html" target="_self" >EntityFieldViewComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/FaDynamicIconComponent.html" target="_self" >FaDynamicIconComponent</a></code>
+                                </li>
+                                <li>
+                                            <code><a href="../components/HelpButtonComponent.html" target="_self" >HelpButtonComponent</a></code>
                                 </li>
                                 <li>
                                             <code><a href="../components/HintBoxComponent.html" target="_self" >HintBoxComponent</a></code>
@@ -290,10 +303,10 @@ after a triggering entity has been updated.</p>
                                         <code>MatDialogModule</code>
                                 </li>
                                 <li>
-                                            <code><a href="../components/NoCommonValueHintComponent.html" target="_self" >NoCommonValueHintComponent</a></code>
+                                        <code>MatExpansionModule</code>
                                 </li>
                                 <li>
-                                            <code><a href="https://angular.dev/api/core/OnInit" target="_blank" >OnInit</a></code>
+                                        <code>MatTooltipModule</code>
                                 </li>
                         </ul>
                 </div>
@@ -313,16 +326,32 @@ after a triggering entity has been updated.</p>
                         <ul class="index-list">
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#allLinkedThroughSameField" >allLinkedThroughSameField</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#data" >data</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
-                                <a href="#entityConstructor" >entityConstructor</a>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#groups" >groups</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                     <span class="modifier">Readonly</span>
-                                <a href="#sharedLinkEntity" >sharedLinkEntity</a>
+                                <a href="#recalculating" >recalculating</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#recalculationFailed" >recalculationFailed</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#rows" >rows</a>
                             </li>
                         </ul>
                     </td>
@@ -342,6 +371,14 @@ after a triggering entity has been updated.</p>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onConfirm" >onConfirm</a>
                             </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#onValueChange" >onValueChange</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#useSuggestion" >useSuggestion</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -354,6 +391,24 @@ after a triggering entity has been updated.</p>
 
 </section>
 
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="284" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:284</a></div>
+                            </td>
+                        </tr>
+
+            </tbody>
+        </table>
+</section>
 
 
 
@@ -384,8 +439,8 @@ after a triggering entity has been updated.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="152"
-                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:152</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="389"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:389</a></div>
                         </td>
                     </tr>
 
@@ -401,6 +456,156 @@ after a triggering entity has been updated.</p>
             </tr>
         </tbody>
     </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onValueChange"></a>
+                    <span class="name">
+                        <span ><b>onValueChange</b></span>
+                        <a href="#onValueChange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onValueChange(row: <a href="../interfaces/DialogRow.html" target="_self">DialogRow</a>, value: unknown)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="319"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:319</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The user entered a value for the row (database format)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>row</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DialogRow.html" target="_self" >DialogRow</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                        <code>unknown</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="useSuggestion"></a>
+                    <span class="name">
+                        <span ><b>useSuggestion</b></span>
+                        <a href="#useSuggestion"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>useSuggestion(row: <a href="../interfaces/DialogRow.html" target="_self">DialogRow</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="335"
+                                    class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:335</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Replace the value that the user entered with the suggested value</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>row</td>
+                                            <td>
+                                                            <code><a href="../interfaces/DialogRow.html" target="_self" >DialogRow</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </section>
 
     <section data-compodoc="block-properties">
@@ -408,6 +613,52 @@ after a triggering entity has been updated.</p>
     <h3 id="inputs">
         Properties
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allLinkedThroughSameField"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>allLinkedThroughSameField</b></span>
+                        <a href="#allLinkedThroughSameField"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.data.entities
+    .filter((entity) &#x3D;&gt; entity.level &#x3D;&#x3D;&#x3D; 1)
+    .every(
+      (entity, _, firstLevel) &#x3D;&gt;
+        entity.relatedReferenceField &#x3D;&#x3D;&#x3D; firstLevel[0].relatedReferenceField &amp;&amp;
+        entity.relatedReferenceFieldEntityType &#x3D;&#x3D;&#x3D;
+          firstLevel[0].relatedReferenceFieldEntityType,
+    )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="177" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:177</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether all entities directly linked to the changed entity are linked through the same field
+(otherwise each of them shows how it is linked).</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -429,12 +680,15 @@ after a triggering entity has been updated.</p>
                     <td class="col-md-4">
                         <i>Default value : </i><code>inject&lt;{
     entities: AffectedEntity[];
+    trigger?: UpdateTrigger;
+    /** Finds the affected entities again, based on the values the user entered instead of the suggestions */
+    recalculate?: (enteredValues: EnteredValue[]) &#x3D;&gt; Promise&lt;AffectedEntity[]&gt;;
   }&gt;(MAT_DIALOG_DATA)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="93" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:93</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="121" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -445,69 +699,166 @@ after a triggering entity has been updated.</p>
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="entityConstructor"></a>
-                    <span class="name">
-                        <span ><b>entityConstructor</b></span>
-                        <a href="#entityConstructor"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
-
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="103" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:103</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="sharedLinkEntity"></a>
+                    <a name="groups"></a>
                     <span class="name">
                             <span class="modifier">Readonly</span>
-                        <span ><b>sharedLinkEntity</b></span>
-                        <a href="#sharedLinkEntity"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>groups</b></span>
+                        <a href="#groups"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/AffectedEntity.html" target="_self" >AffectedEntity | undefined</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>this.data.entities.every(
-      (entity) &#x3D;&gt;
-        entity.relatedReferenceField &#x3D;&#x3D;&#x3D;
-          this.data.entities[0].relatedReferenceField &amp;&amp;
-        entity.relatedReferenceFieldEntityType &#x3D;&#x3D;&#x3D;
-          this.data.entities[0].relatedReferenceFieldEntityType,
-    )
-      ? this.data.entities[0]
-      : undefined</code>
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; this.groupByTriggerField(this.rows()))</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="109" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:109</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="171" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:171</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>The first affected entity, if all affected entities are linked through the same field
-(otherwise each entity shows how it is linked).</p>
+                    <div class="io-description"><p>The affected entities, grouped by the field of the changed entity that the update is based on</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="recalculating"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>recalculating</b></span>
+                        <a href="#recalculating"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; !!this.data.recalculate &amp;&amp; this.entries() !&#x3D;&#x3D; this.calculatedFor(),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="163" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:163</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the entities above are being updated after a change, which has to finish before saving</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="recalculationFailed"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>recalculationFailed</b></span>
+                        <a href="#recalculationFailed"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="168" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:168</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Whether the last update of the entities above failed, so that it has to be tried again with a change</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rows"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>rows</b></span>
+                        <a href="#rows"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed&lt;DialogRow[]&gt;(() &#x3D;&gt; {
+    const entries &#x3D; this.entries();
+    const suggestions &#x3D; this.suggestions();
+    const suggestedKeys &#x3D; new Set(suggestions.map(getRowKey));
+    const notSuggestedAnyMore &#x3D; [...entries.values()]
+      .filter((entry) &#x3D;&gt; !suggestedKeys.has(getRowKey(entry.row)))
+      .map((entry) &#x3D;&gt; ({
+        ...entry.row,
+        newValue: entry.row.savedValue,
+        // the hints of the earlier suggestion
+        noCommonValue: undefined,
+        unlinked: undefined,
+      }));
+    return [...suggestions, ...notSuggestedAnyMore].map((row) &#x3D;&gt;
+      this.toDialogRow(row, entries.get(getRowKey(row))),
+    );
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/features/inherited-field/automated-field-update/automated-field-update.component.ts:144</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The shown rows: the suggestions, and the rows the user changed (also if they are not suggested any more)</p>
 </div>
                 </td>
             </tr>
@@ -520,20 +871,21 @@ after a triggering entity has been updated.</p>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntityForm } from &quot;#src/app/core/common-components/entity-form/entity-form&quot;;
-import { EntityFieldEditComponent } from &quot;#src/app/core/entity/entity-field-edit/entity-field-edit.component&quot;;
-import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntitySchemaService } from &quot;#src/app/core/entity/schema/entity-schema.service&quot;;
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
+  signal,
 } from &quot;@angular/core&quot;;
+import { takeUntilDestroyed } from &quot;@angular/core/rxjs-interop&quot;;
+import { FaDynamicIconComponent } from &quot;#src/app/core/common-components/fa-dynamic-icon/fa-dynamic-icon.component&quot;;
 import { HintBoxComponent } from &quot;#src/app/core/common-components/hint-box/hint-box.component&quot;;
-import { NoCommonValueHintComponent } from &quot;../no-common-value-hint/no-common-value-hint.component&quot;;
 import { MatButton } from &quot;@angular/material/button&quot;;
+import { MatExpansionModule } from &quot;@angular/material/expansion&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -543,49 +895,69 @@ import { EntityBlockComponent } from &quot;#src/app/core/basic-datatypes/entity/
 import { DialogCloseComponent } from &quot;#src/app/core/common-components/dialog-close/dialog-close.component&quot;;
 import { EntityFormService } from &quot;#src/app/core/common-components/entity-form/entity-form.service&quot;;
 import { FormFieldConfig } from &quot;#src/app/core/common-components/entity-form/FormConfig&quot;;
+import { EntityFieldViewComponent } from &quot;#src/app/core/entity/entity-field-view/entity-field-view.component&quot;;
+import { HelpButtonComponent } from &quot;#src/app/core/common-components/help-button/help-button.component&quot;;
 import { EntityFieldLabelPipe } from &quot;#src/app/core/entity/entity-field-label/entity-field-label.pipe&quot;;
-import { Entity, EntityConstructor } from &quot;#src/app/core/entity/model/entity&quot;;
-import { NoCommonValueReason } from &quot;#src/app/core/default-values/default-value-service/default-value.service&quot;;
+import { differenceWith, isEqual, uniq } from &quot;lodash-es&quot;;
+import { asArray } from &quot;#src/app/utils/asArray&quot;;
+import {
+  catchError,
+  debounceTime,
+  EMPTY,
+  from,
+  map,
+  Subject,
+  switchMap,
+} from &quot;rxjs&quot;;
+import { Logging } from &quot;#src/app/core/logging/logging.service&quot;;
+import { Entity } from &quot;#src/app/core/entity/model/entity&quot;;
+import { isEmptyValue } from &quot;../add-missing-values&quot;;
+import { isSameValue } from &quot;../get-common-value&quot;;
+import { AffectedEntityValueComponent } from &quot;./affected-entity-value/affected-entity-value.component&quot;;
+import { isFieldChanged } from &quot;./change-set&quot;;
+import {
+  AffectedEntity,
+  DialogRow,
+  EnteredValue,
+  UpdateTrigger,
+} from &quot;./automated-field-update.types&quot;;
 
-/**
- * Represents an entity that will be affected by a status update.
- * This interface is used to define the structure of the data
- * that will be passed to the
- * AutomatedFieldUpdateComponent for processing.
- */
-export interface AffectedEntity {
-  /** entityId of the affected entity */
-  id: string;
+/** What the user entered for an affected entity */
+interface UserEntry {
+  /** the affected entity, to keep showing it also if it is not suggested any more */
+  row: AffectedEntity;
 
-  /** New value to be applied to the target field */
-  newValue: string;
+  /** database format */
+  value: unknown;
 
-  /** Field Id that will receive the status update */
-  targetFieldId: string;
+  /** the suggestion when the user entered the value (database format) */
+  suggestion: unknown;
+}
 
-  /** Entity type constructor for the target entity */
-  targetEntityType: EntityConstructor;
+/** A field of the changed entity that caused an update, and whether its value was changed */
+interface TriggerChange {
+  field: FormFieldConfig;
+  isChanged: boolean;
 
-  /** Actual entity which is being modified through automatedconfig rule */
-  affectedEntity?: Entity;
+  /** The old values that the change removed, as an entity with only these values (to display them) */
+  removed?: Entity;
 
-  /** Reference field name that triggered the status update */
-  relatedReferenceField: string;
+  /** The values that the change added, as an entity with only these values (to display them) */
+  added?: Entity;
+}
 
-  /** Entity type where the related reference field is defined */
-  relatedReferenceFieldEntityType?: EntityConstructor;
+/** The affected entities that are based on the same field of the changed entity */
+interface UpdateGroup {
+  sourceFieldId: string;
+  changes: TriggerChange[];
+  rows: DialogRow[];
+}
 
-  form?: EntityForm&lt;Entity&gt;;
-  selectedField?: FormFieldConfig;
+/** How long to wait for further changes of the user before the entities above are updated */
+const RECALCULATION_DELAY_MS &#x3D; 300;
 
-  /** Whether the new value is merged into the existing values instead of replacing them completely */
-  addToExisting?: boolean;
-
-  /** Why the entities linked to the affected entity provide no value in common, so the current value is kept */
-  noCommonValue?: NoCommonValueReason;
-
-  /** Whether the affected entity is no longer linked to the changed entity */
-  unlinked?: boolean;
+function getRowKey(row: AffectedEntity): string {
+  return &#x60;${row.id}|${row.targetFieldId}&#x60;;
 }
 
 /**
@@ -593,167 +965,437 @@ export interface AffectedEntity {
  * the automated updates of fields in related entities,
  * after a triggering entity has been updated.
  *
+ * The suggestions and what the user entered are kept apart: the suggestions are calculated again
+ * whenever the user enters a value (as the entities above are based on it), what the user entered stays.
+ *
  * (also see AutomatedFieldUpdateConfigService)
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-automated-field-update&quot;,
   imports: [
+    AffectedEntityValueComponent,
     DialogCloseComponent,
-    EntityFieldEditComponent,
     EntityBlockComponent,
     EntityFieldLabelPipe,
+    EntityFieldViewComponent,
+    FaDynamicIconComponent,
+    HelpButtonComponent,
     HintBoxComponent,
     MatButton,
     MatDialogModule,
-    NoCommonValueHintComponent,
+    MatExpansionModule,
+    MatTooltipModule,
   ],
   templateUrl: &quot;./automated-field-update.component.html&quot;,
   styleUrl: &quot;./automated-field-update.component.scss&quot;,
 })
-export class AutomatedFieldUpdateComponent implements OnInit {
+export class AutomatedFieldUpdateComponent {
   data &#x3D; inject&lt;{
     entities: AffectedEntity[];
+    trigger?: UpdateTrigger;
+    /** Finds the affected entities again, based on the values the user entered instead of the suggestions */
+    recalculate?: (enteredValues: EnteredValue[]) &#x3D;&gt; Promise&lt;AffectedEntity[]&gt;;
   }&gt;(MAT_DIALOG_DATA);
   private dialogRef &#x3D;
     inject&lt;MatDialogRef&lt;AutomatedFieldUpdateComponent&gt;&gt;(MatDialogRef);
   private readonly entityFormService &#x3D; inject(EntityFormService);
   private readonly entitySchemaService &#x3D; inject(EntitySchemaService);
-  private readonly cdr &#x3D; inject(ChangeDetectorRef);
   private readonly destroyRef &#x3D; inject(DestroyRef);
 
-  entityConstructor: EntityConstructor;
+  /** The suggested updates */
+  private readonly suggestions &#x3D; signal&lt;AffectedEntity[]&gt;(this.data.entities);
+
+  /** What the user entered, by row key */
+  private readonly entries &#x3D; signal(new Map&lt;string, UserEntry&gt;());
+
+  /** The entries that the current suggestions are calculated for */
+  private readonly calculatedFor &#x3D; signal(this.entries());
+  private readonly entriesChanged &#x3D; new Subject&lt;Map&lt;string, UserEntry&gt;&gt;();
+
+  /** The shown rows: the suggestions, and the rows the user changed (also if they are not suggested any more) */
+  readonly rows &#x3D; computed&lt;DialogRow[]&gt;(() &#x3D;&gt; {
+    const entries &#x3D; this.entries();
+    const suggestions &#x3D; this.suggestions();
+    const suggestedKeys &#x3D; new Set(suggestions.map(getRowKey));
+    const notSuggestedAnyMore &#x3D; [...entries.values()]
+      .filter((entry) &#x3D;&gt; !suggestedKeys.has(getRowKey(entry.row)))
+      .map((entry) &#x3D;&gt; ({
+        ...entry.row,
+        newValue: entry.row.savedValue,
+        // the hints of the earlier suggestion
+        noCommonValue: undefined,
+        unlinked: undefined,
+      }));
+    return [...suggestions, ...notSuggestedAnyMore].map((row) &#x3D;&gt;
+      this.toDialogRow(row, entries.get(getRowKey(row))),
+    );
+  });
+
+  /** Whether the entities above are being updated after a change, which has to finish before saving */
+  readonly recalculating &#x3D; computed(
+    () &#x3D;&gt; !!this.data.recalculate &amp;&amp; this.entries() !&#x3D;&#x3D; this.calculatedFor(),
+  );
+
+  /** Whether the last update of the entities above failed, so that it has to be tried again with a change */
+  readonly recalculationFailed &#x3D; signal(false);
+
+  /** The affected entities, grouped by the field of the changed entity that the update is based on */
+  readonly groups &#x3D; computed(() &#x3D;&gt; this.groupByTriggerField(this.rows()));
 
   /**
-   * The first affected entity, if all affected entities are linked through the same field
-   * (otherwise each entity shows how it is linked).
+   * Whether all entities directly linked to the changed entity are linked through the same field
+   * (otherwise each of them shows how it is linked).
    */
-  readonly sharedLinkEntity: AffectedEntity | undefined &#x3D;
-    this.data.entities.every(
-      (entity) &#x3D;&gt;
-        entity.relatedReferenceField &#x3D;&#x3D;&#x3D;
-          this.data.entities[0].relatedReferenceField &amp;&amp;
+  readonly allLinkedThroughSameField: boolean &#x3D; this.data.entities
+    .filter((entity) &#x3D;&gt; entity.level &#x3D;&#x3D;&#x3D; 1)
+    .every(
+      (entity, _, firstLevel) &#x3D;&gt;
+        entity.relatedReferenceField &#x3D;&#x3D;&#x3D; firstLevel[0].relatedReferenceField &amp;&amp;
         entity.relatedReferenceFieldEntityType &#x3D;&#x3D;&#x3D;
-          this.data.entities[0].relatedReferenceFieldEntityType,
-    )
-      ? this.data.entities[0]
-      : undefined;
+          firstLevel[0].relatedReferenceFieldEntityType,
+    );
 
-  async ngOnInit(): Promise&lt;void&gt; {
-    for (const entity of this.data.entities) {
-      const fieldId &#x3D; entity.targetFieldId;
-      const entityConstructor &#x3D; entity.targetEntityType;
-
-      entity.selectedField &#x3D; this.entityFormService.extendFormFieldConfig(
-        fieldId,
-        entityConstructor,
-      );
-
-      // without default value handling: for existing records it only loads linked records
-      // for the inherit button, which is not shown here (one query per row)
-      const entityForm &#x3D; await this.entityFormService.createEntityForm(
-        [fieldId],
-        entity.affectedEntity,
-        this.destroyRef,
-        false,
-        true,
-        false,
-      );
-
-      entity.form &#x3D; entityForm;
-
-      const formattedValue &#x3D; this.entitySchemaService.valueToEntityFormat(
-        entity.newValue,
-        entity.selectedField,
-      );
-      entity.form.formGroup.controls[fieldId].setValue(formattedValue);
+  private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
+    const groups &#x3D; new Map&lt;string, DialogRow[]&gt;();
+    for (const row of rows) {
+      groups.set(row.sourceFieldId, [
+        ...(groups.get(row.sourceFieldId) ?? []),
+        row,
+      ]);
     }
-    this.cdr.markForCheck();
+    return [...groups].map(([sourceFieldId, groupRows]) &#x3D;&gt; ({
+      sourceFieldId,
+      changes: this.getTriggerChanges(sourceFieldId, groupRows),
+      rows: groupRows,
+    }));
+  }
+
+  /** The fields of the changed entity that caused the update of the given rows, to show what changed */
+  private getTriggerChanges(
+    sourceFieldId: string,
+    groupRows: DialogRow[],
+  ): TriggerChange[] {
+    const trigger &#x3D; this.data.trigger;
+    if (!trigger) return [];
+
+    const entityType &#x3D; trigger.entity.getConstructor();
+    const isChanged &#x3D; (fieldId: string) &#x3D;&gt;
+      isFieldChanged(trigger.entity, trigger.before, fieldId);
+    const firstLevel &#x3D; groupRows.filter((entity) &#x3D;&gt; entity.level &#x3D;&#x3D;&#x3D; 1);
+    // the value that is passed on, and the link to the affected entities if it was changed
+    const fieldIds &#x3D; uniq([
+      sourceFieldId,
+      ...firstLevel
+        .filter(
+          (entity) &#x3D;&gt; entity.relatedReferenceFieldEntityType &#x3D;&#x3D;&#x3D; entityType,
+        )
+        .map((entity) &#x3D;&gt; entity.relatedReferenceField)
+        .filter(isChanged),
+    ]).filter((fieldId) &#x3D;&gt; !!fieldId);
+    return fieldIds.map((fieldId) &#x3D;&gt; {
+      const field &#x3D; this.entityFormService.extendFormFieldConfig(
+        fieldId,
+        entityType,
+      );
+      return {
+        field,
+        isChanged: isChanged(fieldId),
+        ...this.getRemovedAndAdded(trigger, field),
+      };
+    });
+  }
+
+  /** What a change of the changed entity removed from the old value of the field, and what it added */
+  private getRemovedAndAdded(
+    trigger: UpdateTrigger,
+    field: FormFieldConfig,
+  ): Pick&lt;TriggerChange, &quot;removed&quot; | &quot;added&quot;&gt; {
+    const oldValues &#x3D; this.getValues(trigger.before, field);
+    const newValues &#x3D; this.getValues(trigger.entity, field);
+
+    return {
+      removed: this.withOnlyValues(
+        trigger.before,
+        field,
+        differenceWith(oldValues, newValues, isEqual),
+      ),
+      added: this.withOnlyValues(
+        trigger.entity,
+        field,
+        differenceWith(newValues, oldValues, isEqual),
+      ),
+    };
+  }
+
+  /** The values of the field of the entity as a list (database format), which is empty if there is no value */
+  private getValues(entity: Entity, field: FormFieldConfig): unknown[] {
+    const value &#x3D; this.entitySchemaService.valueToDatabaseFormat(
+      entity[field.id],
+      field,
+      entity,
+    );
+    return isEmptyValue(value) ? [] : asArray&lt;unknown&gt;(value);
+  }
+
+  /**
+   * A copy of the entity that has only the given values (database format) in the field, to display them,
+   * or undefined if there are none.
+   */
+  private withOnlyValues(
+    entity: Entity,
+    field: FormFieldConfig,
+    values: unknown[],
+  ): Entity | undefined {
+    if (values.length &#x3D;&#x3D;&#x3D; 0) return undefined;
+    const copy &#x3D; entity.copy();
+    copy[field.id] &#x3D; this.entitySchemaService.valueToEntityFormat(
+      field.isArray ? values : values[0],
+      field,
+    );
+    return copy;
+  }
+
+  constructor() {
+    this.recalculateOnChange();
+  }
+
+  private toDialogRow(row: AffectedEntity, entry?: UserEntry): DialogRow {
+    const value &#x3D; entry ? entry.value : row.newValue;
+    return {
+      ...row,
+      value,
+      edited: !!entry,
+      suggestionChanged:
+        !!entry &amp;&amp; !isSameValue(entry.suggestion, row.newValue),
+      removedEntity: this.getRemovedEntity(row, value),
+    };
+  }
+
+  /** The saved values that the shown value does not have any more, as they are removed by it */
+  private getRemovedEntity(
+    row: AffectedEntity,
+    value: unknown,
+  ): Entity | undefined {
+    if (!row.addToExisting || !Array.isArray(row.savedValue)) {
+      return undefined;
+    }
+
+    return this.withOnlyValues(
+      row.affectedEntity,
+      row.selectedField,
+      differenceWith(row.savedValue, asArray&lt;unknown&gt;(value ?? []), isEqual),
+    );
+  }
+
+  /** The user entered a value for the row (database format) */
+  onValueChange(row: DialogRow, value: unknown): void {
+    const entries &#x3D; new Map(this.entries());
+    const key &#x3D; getRowKey(row);
+    if (isSameValue(value, row.newValue)) {
+      entries.delete(key);
+    } else {
+      entries.set(key, {
+        row,
+        value,
+        suggestion: entries.get(key)?.suggestion ?? row.newValue,
+      });
+    }
+    this.setEntries(entries);
+  }
+
+  /** Replace the value that the user entered with the suggested value */
+  useSuggestion(row: DialogRow): void {
+    const entries &#x3D; new Map(this.entries());
+    entries.delete(getRowKey(row));
+    this.setEntries(entries);
+  }
+
+  private setEntries(entries: Map&lt;string, UserEntry&gt;): void {
+    this.recalculationFailed.set(false);
+    this.entries.set(entries);
+    this.entriesChanged.next(entries);
+  }
+
+  /** Suggest the values of the entities above again whenever a value is entered, as they are based on it */
+  private recalculateOnChange(): void {
+    if (!this.data.recalculate) return;
+
+    this.entriesChanged
+      .pipe(
+        debounceTime(RECALCULATION_DELAY_MS),
+        switchMap((entries) &#x3D;&gt;
+          from(
+            this.data.recalculate(
+              [...entries.values()].map(({ row, value }) &#x3D;&gt; ({
+                id: row.id,
+                targetFieldId: row.targetFieldId,
+                value,
+              })),
+            ),
+          ).pipe(
+            map((suggestions) &#x3D;&gt; ({ entries, suggestions })),
+            catchError((error) &#x3D;&gt; this.onRecalculationFailed(error)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(({ entries, suggestions }) &#x3D;&gt; {
+        this.suggestions.set(suggestions);
+        this.calculatedFor.set(entries);
+      });
+  }
+
+  /**
+   * Keep listening for changes, so that a later change tries again. Until an update succeeds,
+   * saving stays disabled, because the entities above could be based on an outdated value.
+   */
+  private onRecalculationFailed(error: unknown) {
+    Logging.warn(
+      &quot;AutomatedFieldUpdate: Could not update the suggestions for the entities above&quot;,
+      error,
+    );
+    this.recalculationFailed.set(true);
+    return EMPTY;
   }
 
   onConfirm(): void {
-    for (const entity of this.data.entities) {
-      const fieldId &#x3D; entity.targetFieldId;
-      const formControl &#x3D; entity.form?.formGroup.controls[fieldId];
-      if (formControl) {
-        entity.newValue &#x3D; formControl.value;
-      }
-    }
-    this.dialogRef.close(this.data.entities);
+    this.dialogRef.close(
+      this.rows().map((row) &#x3D;&gt; ({ ...row, newValue: row.value })),
+    );
   }
 }
 </code></pre>
     </div>
 
     <div class="tab-pane fade " id="templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;h2 mat-dialog-title i18n&gt;Update related records&lt;/h2&gt;
+        <pre class="line-numbers"><code class="language-html">&lt;h2 mat-dialog-title class&#x3D;&quot;title&quot;&gt;
+  &lt;span i18n&gt;Update related records&lt;/span&gt;
+  &lt;app-help-button
+    i18n-text
+    text&#x3D;&quot;The suggested values come from the changed record. Fields that collect values get them added to the existing ones, and lose values that no linked record has any more; other fields take the suggested value. A record takes a shared value only if all its linked records agree. You can change a suggested value before you confirm.&quot;
+  &gt;&lt;/app-help-button&gt;
+&lt;/h2&gt;
 &lt;app-dialog-close mat-dialog-close&gt;&lt;/app-dialog-close&gt;
 
 &lt;mat-dialog-content&gt;
-  &lt;p i18n&gt;
-    You have made changes to a field that is linked to other records and can
-    automatically update them.
-    @if (sharedLinkEntity) {
-      The following records are linked through the
-      &lt;b&gt;
-        &quot;{{
-          sharedLinkEntity.relatedReferenceField
-            | entityFieldLabel
-              : sharedLinkEntity.relatedReferenceFieldEntityType
-        }}&quot;
-      &lt;/b&gt;
-      field.
-    }
-    Please review these affected records below. You can manually change the new
-    value if the automatically suggested value is not matching what you need.
-  &lt;/p&gt;
+  @for (group of groups(); track group.sourceFieldId) {
+    @if (data.trigger) {
+      &lt;mat-expansion-panel class&#x3D;&quot;trigger&quot;&gt;
+        &lt;mat-expansion-panel-header&gt;
+          &lt;mat-panel-title class&#x3D;&quot;trigger-header&quot;&gt;
+            &lt;span class&#x3D;&quot;trigger-label&quot; i18n&gt;Triggered by&lt;/span&gt;
+            &lt;app-entity-block
+              [entityId]&#x3D;&quot;data.trigger.entity.getId()&quot;
+              [linkDisabled]&#x3D;&quot;true&quot;
+            &gt;&lt;/app-entity-block&gt;
+          &lt;/mat-panel-title&gt;
+        &lt;/mat-expansion-panel-header&gt;
 
-  &lt;table class&#x3D;&quot;full-width&quot;&gt;
-    @for (entity of data.entities; track entity.id) {
-      &lt;tr&gt;
-        &lt;td&gt;
-          &lt;app-entity-block [entityId]&#x3D;&quot;entity.id&quot;&gt;&lt;/app-entity-block&gt;
-          @if (!sharedLinkEntity) {
-            &lt;div class&#x3D;&quot;hint-text&quot; i18n&gt;
-              Linked through &quot;{{
-                entity.relatedReferenceField
-                  | entityFieldLabel: entity.relatedReferenceFieldEntityType
-              }}&quot;
-            &lt;/div&gt;
-          }
-        &lt;/td&gt;
-        &lt;td&gt;
-          &lt;app-entity-field-edit
-            [field]&#x3D;&quot;entity.selectedField&quot;
-            [entity]&#x3D;&quot;entity.affectedEntity&quot;
-            [form]&#x3D;&quot;entity.form&quot;
-            [hideInheritButton]&#x3D;&quot;true&quot;
-          &gt;&lt;/app-entity-field-edit&gt;
-          @if (entity.noCommonValue) {
-            &lt;app-hint-box type&#x3D;&quot;warning&quot;&gt;
-              &lt;app-no-common-value-hint [reason]&#x3D;&quot;entity.noCommonValue&quot; /&gt;
-            &lt;/app-hint-box&gt;
-          }
-          @if (entity.unlinked) {
-            &lt;div class&#x3D;&quot;hint-text&quot; i18n&gt;
-              The record is no longer linked. Values that no other linked record
-              has are removed here.
-            &lt;/div&gt;
-          } @else if (entity.addToExisting) {
-            &lt;div class&#x3D;&quot;hint-text&quot; i18n&gt;
-              The values of the linked record are added to the existing ones.
-              Values it just lost are removed here too, unless another linked
-              record still has them.
-            &lt;/div&gt;
-          }
-        &lt;/td&gt;
-      &lt;/tr&gt;
+        @for (change of group.changes; track change.field.id) {
+          &lt;div class&#x3D;&quot;trigger-change&quot;&gt;
+            &lt;span class&#x3D;&quot;trigger-label&quot;&gt;{{ change.field.label }}:&lt;/span&gt;
+            @if (!change.isChanged) {
+              &lt;app-entity-field-view
+                [field]&#x3D;&quot;change.field&quot;
+                [entity]&#x3D;&quot;data.trigger.before&quot;
+              &gt;&lt;/app-entity-field-view&gt;
+            }
+            @if (change.removed; as removed) {
+              &lt;span class&#x3D;&quot;trigger-removed&quot;&gt;
+                &lt;app-fa-dynamic-icon
+                  icon&#x3D;&quot;minus&quot;
+                  i18n-matTooltip&#x3D;&quot;tooltip for values that are removed&quot;
+                  matTooltip&#x3D;&quot;Removed&quot;
+                &gt;&lt;/app-fa-dynamic-icon&gt;
+                &lt;span
+                  class&#x3D;&quot;visually-hidden&quot;
+                  i18n&#x3D;&quot;screen reader text for values that are removed&quot;
+                  &gt;Removed:&lt;/span
+                &gt;
+                &lt;app-entity-field-view
+                  [field]&#x3D;&quot;change.field&quot;
+                  [entity]&#x3D;&quot;removed&quot;
+                &gt;&lt;/app-entity-field-view&gt;
+              &lt;/span&gt;
+            }
+            @if (change.added; as added) {
+              &lt;span class&#x3D;&quot;trigger-added&quot;&gt;
+                &lt;app-fa-dynamic-icon
+                  icon&#x3D;&quot;plus&quot;
+                  i18n-matTooltip&#x3D;&quot;tooltip for values that are added&quot;
+                  matTooltip&#x3D;&quot;Added&quot;
+                &gt;&lt;/app-fa-dynamic-icon&gt;
+                &lt;span
+                  class&#x3D;&quot;visually-hidden&quot;
+                  i18n&#x3D;&quot;screen reader text for values that are added&quot;
+                  &gt;Added:&lt;/span
+                &gt;
+                &lt;app-entity-field-view
+                  [field]&#x3D;&quot;change.field&quot;
+                  [entity]&#x3D;&quot;added&quot;
+                &gt;&lt;/app-entity-field-view&gt;
+              &lt;/span&gt;
+            }
+          &lt;/div&gt;
+        }
+      &lt;/mat-expansion-panel&gt;
     }
-  &lt;/table&gt;
+
+    &lt;table class&#x3D;&quot;full-width&quot;&gt;
+      @for (
+        entity of group.rows;
+        track entity.id + &quot;|&quot; + entity.targetFieldId
+      ) {
+        &lt;tr [class.above]&#x3D;&quot;entity.level &gt; 1&quot; [style.--level]&#x3D;&quot;entity.level&quot;&gt;
+          &lt;td&gt;
+            &lt;app-entity-block [entityId]&#x3D;&quot;entity.id&quot;&gt;&lt;/app-entity-block&gt;
+            @if (entity.level &gt; 1) {
+              &lt;div class&#x3D;&quot;hint-text via&quot;&gt;
+                &lt;span i18n&gt;via&lt;/span&gt;
+                @for (viaId of entity.via; track viaId; let last &#x3D; $last) {
+                  &lt;app-entity-block [entityId]&#x3D;&quot;viaId&quot;&gt;&lt;/app-entity-block&gt;
+                  @if (!last) {
+                    &lt;span&gt;, &lt;/span&gt;
+                  }
+                }
+              &lt;/div&gt;
+            }
+            @if (!allLinkedThroughSameField &amp;&amp; entity.level &#x3D;&#x3D;&#x3D; 1) {
+              &lt;div class&#x3D;&quot;hint-text&quot; i18n&gt;
+                Linked through &quot;{{
+                  entity.relatedReferenceField
+                    | entityFieldLabel: entity.relatedReferenceFieldEntityType
+                }}&quot;
+              &lt;/div&gt;
+            }
+          &lt;/td&gt;
+          &lt;td&gt;
+            &lt;app-affected-entity-value
+              [row]&#x3D;&quot;entity&quot;
+              (valueChange)&#x3D;&quot;onValueChange(entity, $event)&quot;
+              (useSuggestion)&#x3D;&quot;useSuggestion(entity)&quot;
+            &gt;&lt;/app-affected-entity-value&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      }
+    &lt;/table&gt;
+  }
+
+  @if (recalculationFailed()) {
+    &lt;app-hint-box type&#x3D;&quot;warning&quot;&gt;
+      &lt;span i18n&gt;
+        The suggestions for the records above could not be updated. Change a
+        value to try again.
+      &lt;/span&gt;
+    &lt;/app-hint-box&gt;
+  }
 &lt;/mat-dialog-content&gt;
 
 &lt;mat-dialog-actions&gt;
-  &lt;button mat-button (click)&#x3D;&quot;onConfirm()&quot; i18n&gt;Update related records&lt;/button&gt;
+  &lt;button mat-button [disabled]&#x3D;&quot;recalculating()&quot; (click)&#x3D;&quot;onConfirm()&quot; i18n&gt;
+    Update related records
+  &lt;/button&gt;
   &lt;button mat-button mat-dialog-close i18n&gt;Do not update&lt;/button&gt;
 &lt;/mat-dialog-actions&gt;
 </code></pre>
@@ -763,15 +1405,73 @@ export class AutomatedFieldUpdateComponent implements OnInit {
                 <p class="comment">
                     <code>./automated-field-update.component.scss</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/sizes&quot;;
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+@use &quot;variables/sizes&quot;;
 
-:host ::ng-deep .mat-mdc-form-field {
-  width: 100%;
+.title {
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
 }
 
-// keep a hint next to the field it explains (cancels the global bottom margin of mat-form-field)
-app-entity-field-edit + .hint-text {
-  margin-top: calc(#{sizes.$small} - 22px);
+// the change that opened the dialog, collapsed to the triggering record until expanded
+.trigger {
+  margin-bottom: sizes.$regular;
+  background-color: colors.$background-secondary;
+
+  .trigger-header {
+    display: flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
+
+  .trigger-label {
+    color: colors.$text-secondary;
+    font-size: 0.85em;
+  }
+
+  // one changed field per line
+  .trigger-change {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: sizes.$small;
+
+    &amp;:not(:last-child) {
+      margin-bottom: sizes.$small;
+    }
+  }
+
+  // the change as removed and added values, in the style of the values that the suggestions add and remove
+  .trigger-removed,
+  .trigger-added {
+    display: inline-flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
+
+  .trigger-removed {
+    color: colors.$error;
+
+    app-entity-field-view {
+      text-decoration: line-through;
+    }
+  }
+
+  .trigger-added app-fa-dynamic-icon {
+    color: colors.$success;
+  }
+}
+
+// a further group is set apart from the table of the group above
+table + .trigger {
+  margin-top: sizes.$large;
+}
+
+// records further up the hierarchy are indented, with a line along the way from the records they are reached from
+tr.above &gt; td:first-child {
+  padding-left: calc(#{sizes.$large} * (var(--level) - 1));
+  border-left: 2px solid colors.$border-color;
 }
 
 .hint-text {
@@ -805,8 +1505,8 @@ app-entity-field-edit + .hint-text {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><h2 mat-dialog-title i18n>Update related records</h2><app-dialog-close mat-dialog-close></app-dialog-close><mat-dialog-content>  <p i18n>    You have made changes to a field that is linked to other records and can    automatically update them.    @if (sharedLinkEntity) {      The following records are linked through the      <b>        "{{          sharedLinkEntity.relatedReferenceField            | entityFieldLabel              : sharedLinkEntity.relatedReferenceFieldEntityType        }}"      </b>      field.    }    Please review these affected records below. You can manually change the new    value if the automatically suggested value is not matching what you need.  </p>  <table class="full-width">    @for (entity of data.entities; track entity.id) {      <tr>        <td>          <app-entity-block [entityId]="entity.id"></app-entity-block>          @if (!sharedLinkEntity) {            <div class="hint-text" i18n>              Linked through "{{                entity.relatedReferenceField                  | entityFieldLabel: entity.relatedReferenceFieldEntityType              }}"            </div>          }        </td>        <td>          <app-entity-field-edit            [field]="entity.selectedField"            [entity]="entity.affectedEntity"            [form]="entity.form"            [hideInheritButton]="true"          ></app-entity-field-edit>          @if (entity.noCommonValue) {            <app-hint-box type="warning">              <app-no-common-value-hint [reason]="entity.noCommonValue" />            </app-hint-box>          }          @if (entity.unlinked) {            <div class="hint-text" i18n>              The record is no longer linked. Values that no other linked record              has are removed here.            </div>          } @else if (entity.addToExisting) {            <div class="hint-text" i18n>              The values of the linked record are added to the existing ones.              Values it just lost are removed here too, unless another linked              record still has them.            </div>          }        </td>      </tr>    }  </table></mat-dialog-content><mat-dialog-actions>  <button mat-button (click)="onConfirm()" i18n>Update related records</button>  <button mat-button mat-dialog-close i18n>Do not update</button></mat-dialog-actions></div>'
-    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminDisplayConditionButtonComponent', 'selector': 'app-admin-display-condition-button'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'ApiClientCredentialsDialogComponent', 'selector': 'app-api-client-credentials-dialog'},{'name': 'ApiClientListComponent', 'selector': 'app-api-client-list'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryChangedFieldsComponent', 'selector': 'app-change-history-changed-fields'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangeHistoryListComponent', 'selector': 'app-change-history-list'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionEditorDialogComponent', 'selector': 'app-condition-editor-dialog'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfigureTranslationsPopupComponent', 'selector': 'app-configure-translations-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CreateApiClientDialogComponent', 'selector': 'app-create-api-client-dialog'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayAuditRecordComponent', 'selector': 'app-display-audit-record'},{'name': 'DisplayAuditTimestampComponent', 'selector': 'app-display-audit-timestamp'},{'name': 'DisplayAuditUserComponent', 'selector': 'app-display-audit-user'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDateRangeComponent', 'selector': 'app-display-date-range'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayTranslatableTextComponent', 'selector': 'app-display-translatable-text'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditAvailableLocalesComponent', 'selector': 'app-edit-available-locales'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditDateRangeComponent', 'selector': 'app-edit-date-range'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FeaturePermissionDialogComponent', 'selector': 'app-feature-permission-dialog'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoCommonValueHintComponent', 'selector': 'app-no-common-value-hint'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionCheckboxComponent', 'selector': 'app-permission-checkbox'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RecordIdDisplayComponent', 'selector': 'app-record-id-display'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'TranslatableTextInputComponent', 'selector': 'app-translatable-text-input'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserLanguageSettingsComponent', 'selector': 'app-user-language-settings'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'UserProfileSetupComponent', 'selector': 'app-user-profile-setup'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+        var COMPONENT_TEMPLATE = '<div><h2 mat-dialog-title class="title">  <span i18n>Update related records</span>  <app-help-button    i18n-text    text="The suggested values come from the changed record. Fields that collect values get them added to the existing ones, and lose values that no linked record has any more; other fields take the suggested value. A record takes a shared value only if all its linked records agree. You can change a suggested value before you confirm."  ></app-help-button></h2><app-dialog-close mat-dialog-close></app-dialog-close><mat-dialog-content>  @for (group of groups(); track group.sourceFieldId) {    @if (data.trigger) {      <mat-expansion-panel class="trigger">        <mat-expansion-panel-header>          <mat-panel-title class="trigger-header">            <span class="trigger-label" i18n>Triggered by</span>            <app-entity-block              [entityId]="data.trigger.entity.getId()"              [linkDisabled]="true"            ></app-entity-block>          </mat-panel-title>        </mat-expansion-panel-header>        @for (change of group.changes; track change.field.id) {          <div class="trigger-change">            <span class="trigger-label">{{ change.field.label }}:</span>            @if (!change.isChanged) {              <app-entity-field-view                [field]="change.field"                [entity]="data.trigger.before"              ></app-entity-field-view>            }            @if (change.removed; as removed) {              <span class="trigger-removed">                <app-fa-dynamic-icon                  icon="minus"                  i18n-matTooltip="tooltip for values that are removed"                  matTooltip="Removed"                ></app-fa-dynamic-icon>                <span                  class="visually-hidden"                  i18n="screen reader text for values that are removed"                  >Removed:</span                >                <app-entity-field-view                  [field]="change.field"                  [entity]="removed"                ></app-entity-field-view>              </span>            }            @if (change.added; as added) {              <span class="trigger-added">                <app-fa-dynamic-icon                  icon="plus"                  i18n-matTooltip="tooltip for values that are added"                  matTooltip="Added"                ></app-fa-dynamic-icon>                <span                  class="visually-hidden"                  i18n="screen reader text for values that are added"                  >Added:</span                >                <app-entity-field-view                  [field]="change.field"                  [entity]="added"                ></app-entity-field-view>              </span>            }          </div>        }      </mat-expansion-panel>    }    <table class="full-width">      @for (        entity of group.rows;        track entity.id + "|" + entity.targetFieldId      ) {        <tr [class.above]="entity.level > 1" [style.--level]="entity.level">          <td>            <app-entity-block [entityId]="entity.id"></app-entity-block>            @if (entity.level > 1) {              <div class="hint-text via">                <span i18n>via</span>                @for (viaId of entity.via; track viaId; let last = $last) {                  <app-entity-block [entityId]="viaId"></app-entity-block>                  @if (!last) {                    <span>, </span>                  }                }              </div>            }            @if (!allLinkedThroughSameField && entity.level === 1) {              <div class="hint-text" i18n>                Linked through "{{                  entity.relatedReferenceField                    | entityFieldLabel: entity.relatedReferenceFieldEntityType                }}"              </div>            }          </td>          <td>            <app-affected-entity-value              [row]="entity"              (valueChange)="onValueChange(entity, $event)"              (useSuggestion)="useSuggestion(entity)"            ></app-affected-entity-value>          </td>        </tr>      }    </table>  }  @if (recalculationFailed()) {    <app-hint-box type="warning">      <span i18n>        The suggestions for the records above could not be updated. Change a        value to try again.      </span>    </app-hint-box>  }</mat-dialog-content><mat-dialog-actions>  <button mat-button [disabled]="recalculating()" (click)="onConfirm()" i18n>    Update related records  </button>  <button mat-button mat-dialog-close i18n>Do not update</button></mat-dialog-actions></div>'
+    var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminDisplayConditionButtonComponent', 'selector': 'app-admin-display-condition-button'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AffectedEntityValueComponent', 'selector': 'app-affected-entity-value'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'ApiClientCredentialsDialogComponent', 'selector': 'app-api-client-credentials-dialog'},{'name': 'ApiClientListComponent', 'selector': 'app-api-client-list'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryChangedFieldsComponent', 'selector': 'app-change-history-changed-fields'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangeHistoryListComponent', 'selector': 'app-change-history-list'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionEditorDialogComponent', 'selector': 'app-condition-editor-dialog'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfigureTranslationsPopupComponent', 'selector': 'app-configure-translations-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CreateApiClientDialogComponent', 'selector': 'app-create-api-client-dialog'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayAuditRecordComponent', 'selector': 'app-display-audit-record'},{'name': 'DisplayAuditTimestampComponent', 'selector': 'app-display-audit-timestamp'},{'name': 'DisplayAuditUserComponent', 'selector': 'app-display-audit-user'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDateRangeComponent', 'selector': 'app-display-date-range'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayTranslatableTextComponent', 'selector': 'app-display-translatable-text'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditAvailableLocalesComponent', 'selector': 'app-edit-available-locales'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditDateRangeComponent', 'selector': 'app-edit-date-range'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FeaturePermissionDialogComponent', 'selector': 'app-feature-permission-dialog'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoCommonValueHintComponent', 'selector': 'app-no-common-value-hint'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionCheckboxComponent', 'selector': 'app-permission-checkbox'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RecordIdDisplayComponent', 'selector': 'app-record-id-display'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'TranslatableTextInputComponent', 'selector': 'app-translatable-text-input'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserLanguageSettingsComponent', 'selector': 'app-user-language-settings'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'UserProfileSetupComponent', 'selector': 'app-user-profile-setup'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'KeepPanelOpenOnSelectDirective', 'selector': 'input[appKeepPanelOpenOnSelect]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'AutomatedFieldUpdateComponent'};
 </script>

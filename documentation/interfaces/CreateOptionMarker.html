@@ -568,6 +568,31 @@ export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
   _selectedOptions &#x3D; signal&lt;SelectableOption&lt;O, V&gt;[]&gt;([]);
 
   /**
+   * The values that existed before the user selected anything (multi select only).
+   * If given, selected values that are not among them are highlighted as added.
+   *
+   * This is an input instead of being taken from the first value of the component,
+   * because the form control can already hold a new value when the component is created
+   * (e.g. a suggested value in the &quot;Update related records&quot; dialog).
+   */
+  existingValues &#x3D; input&lt;V[]&gt;();
+
+  /** The selected options that are not among the &#x60;existingValues&#x60; */
+  readonly addedOptions &#x3D; computed(() &#x3D;&gt; {
+    const existingValues &#x3D; this.existingValues();
+    return new Set(
+      existingValues
+        ? this._selectedOptions().filter(
+            (option) &#x3D;&gt;
+              !existingValues.some((value) &#x3D;&gt;
+                this.compareEnumValues(value, option.asValue),
+              ),
+          )
+        : [],
+    );
+  });
+
+  /**
    * Keep the search value to help users quickly multi-select multiple related options without having to type filter text again
    */
   retainSearchValue: string;

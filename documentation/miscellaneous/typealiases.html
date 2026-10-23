@@ -161,6 +161,9 @@
                             <a href="#ChangeOperation" title="src/app/features/change-history/change-history.types.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ChangeOperation</b>&nbsp;&nbsp;&nbsp;(src/.../change-history.types.ts)</span></a>
                         </li>
                         <li>
+                            <a href="#ChangeSetState" title="src/app/features/inherited-field/automated-field-update/change-set.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ChangeSetState</b>&nbsp;&nbsp;&nbsp;(src/.../change-set.ts)</span></a>
+                        </li>
+                        <li>
                             <a href="#ColumnConfig" title="src/app/core/common-components/entity-form/FormConfig.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>ColumnConfig</b>&nbsp;&nbsp;&nbsp;(src/.../FormConfig.ts)</span></a>
                         </li>
                         <li>
@@ -360,6 +363,9 @@
                         </li>
                         <li>
                             <a href="#SqlType" title="src/app/features/reporting/sql-report/sqs-schema.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SqlType</b>&nbsp;&nbsp;&nbsp;(src/.../sqs-schema.ts)</span></a>
+                        </li>
+                        <li>
+                            <a href="#Suggestion" title="src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>Suggestion</b>&nbsp;&nbsp;&nbsp;(src/.../affected-entities-calculation.ts)</span></a>
                         </li>
                         <li>
                             <a href="#SupportedFileType" title="src/app/core/common-components/parsed-file-input/parsed-file-input.component.ts" class="reference-link "><span class="reference-badge reference-badge--typealias" aria-hidden="true">T</span><span class="reference-link-label"><b>SupportedFileType</b>&nbsp;&nbsp;&nbsp;(src/.../parsed-file-input.component.ts)</span></a>
@@ -581,6 +587,31 @@ sub-features are nested under their parent feature (e.g. <code>admin.api-client<
             <tr>
                 <td class="col-md-4">
                     <code>        <code><a href="../miscellaneous/variables.html#CHANGE_OPERATIONS" target="_self" >typeof CHANGE_OPERATIONS[&#x27;number&#x27;]</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/inherited-field/automated-field-update/change-set.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ChangeSetState"></a>
+                    <span class="name "><b>ChangeSetState</b><a href="#ChangeSetState"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The state of the records: as saved before the change, or with the change and the suggested values</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;before&quot; | &quot;after&quot;</code>
 </code>
                 </td>
             </tr>
@@ -2203,6 +2234,31 @@ comparable value or <code>undefined</code> to fall back to default sorting in <a
             <tr>
                 <td class="col-md-4">
                     <code>    <code>&quot;TEXT&quot; | &quot;INTEGER&quot; | &quot;REAL&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <h3>src/app/features/inherited-field/automated-field-update/affected-entities-calculation.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Suggestion"></a>
+                    <span class="name "><b>Suggestion</b><a href="#Suggestion"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The suggested update of an affected entity, before it is known on which path(s) and level the entity is reached</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../interfaces/AffectedEntity.html" target="_self" >Omit&lt;AffectedEntity | &quot;level&quot; | &quot;via&quot; | &quot;sourceFieldId&quot;&gt;</a></code>
 </code>
                 </td>
             </tr>
