@@ -17,10 +17,8 @@ import {
 } from "./inherited-field-config";
 import { isEqual, xorWith } from "lodash-es";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import {
-  AutomatedFieldUpdateConfigService,
-  CommonValueOfParents,
-} from "./automated-field-update/automated-field-update-config.service";
+import { AutomatedFieldUpdateConfigService } from "./automated-field-update/automated-field-update-config.service";
+import { CommonValueOfParents } from "./automated-field-update/automated-field-update.types";
 import { Logging } from "../../core/logging/logging.service";
 import { isSameValue } from "./get-common-value";
 import {

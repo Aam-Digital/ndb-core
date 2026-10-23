@@ -1,12 +1,70 @@
+@use "variables/colors";
 @use "variables/sizes";
 
-:host ::ng-deep .mat-mdc-form-field {
-  width: 100%;
+.title {
+  display: flex;
+  align-items: center;
+  gap: sizes.$small;
 }
 
-// keep a hint next to the field it explains (cancels the global bottom margin of mat-form-field)
-app-entity-field-edit + .hint-text {
-  margin-top: calc(#{sizes.$small} - 22px);
+// the change that opened the dialog, collapsed to the triggering record until expanded
+.trigger {
+  margin-bottom: sizes.$regular;
+  background-color: colors.$background-secondary;
+
+  .trigger-header {
+    display: flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
+
+  .trigger-label {
+    color: colors.$text-secondary;
+    font-size: 0.85em;
+  }
+
+  // one changed field per line
+  .trigger-change {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: sizes.$small;
+
+    &:not(:last-child) {
+      margin-bottom: sizes.$small;
+    }
+  }
+
+  // the change as removed and added values, in the style of the values that the suggestions add and remove
+  .trigger-removed,
+  .trigger-added {
+    display: inline-flex;
+    align-items: center;
+    gap: sizes.$small;
+  }
+
+  .trigger-removed {
+    color: colors.$error;
+
+    app-entity-field-view {
+      text-decoration: line-through;
+    }
+  }
+
+  .trigger-added app-fa-dynamic-icon {
+    color: colors.$success;
+  }
+}
+
+// a further group is set apart from the table of the group above
+table + .trigger {
+  margin-top: sizes.$large;
+}
+
+// records further up the hierarchy are indented, with a line along the way from the records they are reached from
+tr.above > td:first-child {
+  padding-left: calc(#{sizes.$large} * (var(--level) - 1));
+  border-left: 2px solid colors.$border-color;
 }
 
 .hint-text {

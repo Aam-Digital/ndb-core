@@ -59,6 +59,7 @@ Use `Logging` (from `#src/app/core/logging/logging.service`), never `console.log
 
 - **Unit tests (Vitest):** test behaviour, not existence; write the failing test first for a bug fix; do not generate "too many" tests; use `it.each` tables for repeated shapes. The rules and examples are in [`unit-tests.instructions.md`](.github/instructions/unit-tests.instructions.md).
 - **e2e tests (Playwright):** add an e2e scenario for a new larger feature, but keep the number of stand-alone tests, scenarios and screenshots small: prefer a step in an existing scenario. See [`e2e/README.md`](e2e/README.md).
+- **Config for manual testing:** if trying a change needs a special config (fields, rules, features), add it to the [all-features config](src/assets/base-configs/all-features/) in the same PR, and revert it before merge only if it should not stay. The manual testing steps of the PR then say "demo mode All Features" instead of listing admin-UI setup steps.
 
 ## Public GitHub content (PRs, issues, comments, commit messages)
 

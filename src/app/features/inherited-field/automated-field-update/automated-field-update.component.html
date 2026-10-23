@@ -1,70 +1,129 @@
-<h2 mat-dialog-title i18n>Update related records</h2>
+<h2 mat-dialog-title class="title">
+  <span i18n>Update related records</span>
+  <app-help-button
+    i18n-text
+    text="The suggested values come from the changed record. Fields that collect values get them added to the existing ones, and lose values that no linked record has any more; other fields take the suggested value. A record takes a shared value only if all its linked records agree. You can change a suggested value before you confirm."
+  ></app-help-button>
+</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p i18n>
-    You have made changes to a field that is linked to other records and can
-    automatically update them.
-    @if (sharedLinkEntity) {
-      The following records are linked through the
-      <b>
-        "{{
-          sharedLinkEntity.relatedReferenceField
-            | entityFieldLabel
-              : sharedLinkEntity.relatedReferenceFieldEntityType
-        }}"
-      </b>
-      field.
-    }
-    Please review these affected records below. You can manually change the new
-    value if the automatically suggested value is not matching what you need.
-  </p>
+  @for (group of groups(); track group.sourceFieldId) {
+    @if (data.trigger) {
+      <mat-expansion-panel class="trigger">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="trigger-header">
+            <span class="trigger-label" i18n>Triggered by</span>
+            <app-entity-block
+              [entityId]="data.trigger.entity.getId()"
+              [linkDisabled]="true"
+            ></app-entity-block>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
 
-  <table class="full-width">
-    @for (entity of data.entities; track entity.id) {
-      <tr>
-        <td>
-          <app-entity-block [entityId]="entity.id"></app-entity-block>
-          @if (!sharedLinkEntity) {
-            <div class="hint-text" i18n>
-              Linked through "{{
-                entity.relatedReferenceField
-                  | entityFieldLabel: entity.relatedReferenceFieldEntityType
-              }}"
-            </div>
-          }
-        </td>
-        <td>
-          <app-entity-field-edit
-            [field]="entity.selectedField"
-            [entity]="entity.affectedEntity"
-            [form]="entity.form"
-            [hideInheritButton]="true"
-          ></app-entity-field-edit>
-          @if (entity.noCommonValue) {
-            <app-hint-box type="warning">
-              <app-no-common-value-hint [reason]="entity.noCommonValue" />
-            </app-hint-box>
-          }
-          @if (entity.unlinked) {
-            <div class="hint-text" i18n>
-              The record is no longer linked. Values that no other linked record
-              has are removed here.
-            </div>
-          } @else if (entity.addToExisting) {
-            <div class="hint-text" i18n>
-              The values of the linked record are added to the existing ones.
-              Values it just lost are removed here too, unless another linked
-              record still has them.
-            </div>
-          }
-        </td>
-      </tr>
+        @for (change of group.changes; track change.field.id) {
+          <div class="trigger-change">
+            <span class="trigger-label">{{ change.field.label }}:</span>
+            @if (!change.isChanged) {
+              <app-entity-field-view
+                [field]="change.field"
+                [entity]="data.trigger.before"
+              ></app-entity-field-view>
+            }
+            @if (change.removed; as removed) {
+              <span class="trigger-removed">
+                <app-fa-dynamic-icon
+                  icon="minus"
+                  i18n-matTooltip="tooltip for values that are removed"
+                  matTooltip="Removed"
+                ></app-fa-dynamic-icon>
+                <span
+                  class="visually-hidden"
+                  i18n="screen reader text for values that are removed"
+                  >Removed:</span
+                >
+                <app-entity-field-view
+                  [field]="change.field"
+                  [entity]="removed"
+                ></app-entity-field-view>
+              </span>
+            }
+            @if (change.added; as added) {
+              <span class="trigger-added">
+                <app-fa-dynamic-icon
+                  icon="plus"
+                  i18n-matTooltip="tooltip for values that are added"
+                  matTooltip="Added"
+                ></app-fa-dynamic-icon>
+                <span
+                  class="visually-hidden"
+                  i18n="screen reader text for values that are added"
+                  >Added:</span
+                >
+                <app-entity-field-view
+                  [field]="change.field"
+                  [entity]="added"
+                ></app-entity-field-view>
+              </span>
+            }
+          </div>
+        }
+      </mat-expansion-panel>
     }
-  </table>
+
+    <table class="full-width">
+      @for (
+        entity of group.rows;
+        track entity.id + "|" + entity.targetFieldId
+      ) {
+        <tr [class.above]="entity.level > 1" [style.--level]="entity.level">
+          <td>
+            <app-entity-block [entityId]="entity.id"></app-entity-block>
+            @if (entity.level > 1) {
+              <div class="hint-text via">
+                <span i18n>via</span>
+                @for (viaId of entity.via; track viaId; let last = $last) {
+                  <app-entity-block [entityId]="viaId"></app-entity-block>
+                  @if (!last) {
+                    <span>, </span>
+                  }
+                }
+              </div>
+            }
+            @if (!allLinkedThroughSameField && entity.level === 1) {
+              <div class="hint-text" i18n>
+                Linked through "{{
+                  entity.relatedReferenceField
+                    | entityFieldLabel: entity.relatedReferenceFieldEntityType
+                }}"
+              </div>
+            }
+          </td>
+          <td>
+            <app-affected-entity-value
+              [row]="entity"
+              (valueChange)="onValueChange(entity, $event)"
+              (useSuggestion)="useSuggestion(entity)"
+            ></app-affected-entity-value>
+          </td>
+        </tr>
+      }
+    </table>
+  }
+
+  @if (recalculationFailed()) {
+    <app-hint-box type="warning">
+      <span i18n>
+        The suggestions for the records above could not be updated. Change a
+        value to try again.
+      </span>
+    </app-hint-box>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="onConfirm()" i18n>Update related records</button>
+  <button mat-button [disabled]="recalculating()" (click)="onConfirm()" i18n>
+    Update related records
+  </button>
   <button mat-button mat-dialog-close i18n>Do not update</button>
 </mat-dialog-actions>
