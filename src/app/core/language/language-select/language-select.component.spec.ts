@@ -84,4 +84,40 @@ describe("LanguageSelectComponent", () => {
     // a caller that persists the choice must not save one the user backed out of
     expect(emitted).toEqual([]);
   });
+
+  describe("options", () => {
+    const locales = [
+      { id: "en-US", label: "English" },
+      { id: "fr", label: "Français" },
+    ];
+
+    it.each([
+      ["all enabled when no restriction is set", [], [true, true]],
+      ["only the enabled ones", [locales[0]], [true, false]],
+    ])("marks %s", (_name, enabled, expected) => {
+      fixture.componentRef.setInput("availableLocales", locales);
+      fixture.componentRef.setInput("enabledLocales", enabled);
+
+      expect(component.options().map((o) => o.enabled)).toEqual(expected);
+    });
+
+    it("shows a marker in the text of a disabled option", async () => {
+      fixture.componentRef.setInput("availableLocales", locales);
+      fixture.componentRef.setInput("enabledLocales", [locales[0]]);
+      fixture.detectChanges();
+
+      fixture.nativeElement
+        .querySelector("mat-select .mat-mdc-select-trigger")
+        .click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      const texts = Array.from(
+        document.querySelectorAll("mat-option") as NodeListOf<HTMLElement>,
+      ).map((o) => o.textContent);
+      expect(texts[0]).not.toContain(component.notAvailableMarker);
+      expect(texts[1]).toContain("Français");
+      expect(texts[1]).toContain(component.notAvailableMarker);
+    });
+  });
 });

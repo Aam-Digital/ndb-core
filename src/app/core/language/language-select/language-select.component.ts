@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
   output,
@@ -52,12 +53,20 @@ export class LanguageSelectComponent {
 
   currentLocale = signal(this.languageService.getCurrentLocale());
 
-  readonly notOfferedHint = $localize`:Language select - disabled option tooltip:Not one of the languages this system is set up for. Ask your administrator to add it.`;
+  /** short marker in the option text, so keyboard and touch users see why it is disabled */
+  readonly notAvailableMarker = $localize`:Language select - marker for a disabled option:not available`;
 
-  isEnabled(localeId: string): boolean {
-    const enabled = this.enabledLocales();
-    return enabled.length === 0 || enabled.some(({ id }) => id === localeId);
-  }
+  readonly notOfferedHint = $localize`:Language select - disabled option tooltip:Your administrator has not enabled this language for this system.`;
+
+  /** {@link availableLocales} with a flag whether each can be picked */
+  readonly options = computed(() => {
+    const enabledIds = new Set(this.enabledLocales().map(({ id }) => id));
+    return this.availableLocales().map((locale) => ({
+      id: locale.id,
+      label: locale.label,
+      enabled: enabledIds.size === 0 || enabledIds.has(locale.id),
+    }));
+  });
 
   /**
    * Switching reloads the page, which would silently discard anything already
