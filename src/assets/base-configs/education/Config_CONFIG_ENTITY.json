@@ -148,7 +148,8 @@
             }
           },
           {
-            "component": "TodosDashboard"
+            "component": "TodosDashboard",
+            "config": {}
           },
           {
             "component": "AttendanceWeekDashboard",
@@ -631,14 +632,9 @@
             },
             "components": [
               {
-                "title": {
-                  "en-US": "School History",
-                  "de": "Schullaufbahn",
-                  "fr": "Parcours scolaire"
-                },
-                "component": "ChildSchoolOverview",
+                "component": "RelatedEntities",
                 "config": {
-                  "single": true,
+                  "entityType": "ChildSchoolRelation",
                   "columns": [
                     {
                       "id": "start",
@@ -651,7 +647,10 @@
                     "schoolId",
                     "schoolClass",
                     "result"
-                  ]
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations",
+                  "showInactive": true,
+                  "single": true
                 }
               },
               {
@@ -703,7 +702,8 @@
             "components": [
               {
                 "title": "",
-                "component": "GroupedChildAttendance"
+                "component": "GroupedChildAttendance",
+                "config": {}
               }
             ]
           },
@@ -716,11 +716,69 @@
             "components": [
               {
                 "title": "",
-                "component": "NotesRelatedToEntity"
+                "component": "NotesRelatedToEntity",
+                "config": {
+                  "entityType": "Note",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "subject",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "text",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "authors",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "warningLevel",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
               },
               {
                 "title": "Tasks",
-                "component": "TodosRelatedToEntity"
+                "component": "TodosRelatedToEntity",
+                "config": {
+                  "entityType": "Todo",
+                  "columns": [
+                    {
+                      "id": "deadline"
+                    },
+                    {
+                      "id": "subject"
+                    },
+                    {
+                      "id": "startDate"
+                    },
+                    {
+                      "id": "assignedTo"
+                    },
+                    {
+                      "id": "description",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "repetitionInterval",
+                      "visibleFrom": "xl"
+                    },
+                    {
+                      "id": "relatedEntities",
+                      "hideFromTable": true
+                    },
+                    {
+                      "id": "completed",
+                      "hideFromForm": true
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1024,7 +1082,8 @@
             },
             "components": [
               {
-                "component": "ActivityAttendanceSection"
+                "component": "ActivityAttendanceSection",
+                "config": {}
               }
             ]
           }
@@ -1400,8 +1459,30 @@
             },
             "components": [
               {
-                "title": "",
-                "component": "ChildSchoolOverview"
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "ChildSchoolRelation",
+                  "columns": [
+                    {
+                      "id": "childId"
+                    },
+                    {
+                      "id": "start",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "end",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "schoolClass"
+                    },
+                    {
+                      "id": "result"
+                    }
+                  ],
+                  "loaderMethod": "ChildrenServiceQueryRelations"
+                }
               }
             ]
           },
@@ -1414,7 +1495,8 @@
             "components": [
               {
                 "title": "",
-                "component": "ActivitiesOverview"
+                "component": "ActivitiesOverview",
+                "config": {}
               }
             ]
           }
@@ -1485,7 +1567,8 @@
             "fr": "Date d'entrée"
           }
         }
-      }
+      },
+      "enableUserAccounts": true
     },
     "view:user": {
       "component": "EntityList",

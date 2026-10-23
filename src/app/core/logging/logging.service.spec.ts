@@ -1,7 +1,8 @@
 import type * as Sentry from "@sentry/angular";
+import { isInitialized } from "@sentry/angular";
 import { HttpErrorResponse } from "@angular/common/http";
 import { LogLevel } from "./log-level";
-import { toReportedError } from "./logging.service";
+import { LoggingService, toReportedError } from "./logging.service";
 import { LoggedError, NamedError } from "./reported-errors";
 import {
   MAX_REPEATED_SENTRY_EVENTS,
@@ -100,6 +101,15 @@ describe("LoggingService", () => {
   it("should report an error logged directly as it is", () => {
     expect(toReportedError(failure, [], LogLevel.WARN)).toBe(failure);
   });
+
+  it.each([undefined, ""])(
+    "should not set up remote logging without a DSN (%j)",
+    (dsn) => {
+      new LoggingService().initRemoteLogging({ dsn });
+
+      expect(isInitialized()).toBe(false);
+    },
+  );
 });
 
 describe("normalizeErrorValue", () => {

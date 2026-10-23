@@ -9,9 +9,7 @@ export const environment = {
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
 
-  // add via config.json overwrite. Default DSN value will be removed in future
-  remoteLoggingDsn:
-    "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  remoteLoggingDsn: undefined as string | undefined,
   remoteLoggingEnvironment: undefined as string | undefined,
   demo_mode: true,
   session_type: SessionType.mock,
@@ -24,7 +22,7 @@ export const environment = {
   notificationsConfig: undefined,
   SaaS: false,
   userSupportEnabled: false,
-  use_indexeddb_adapter: false,
+  use_indexeddb_adapter: true,
   translationsCdnUrl: "https://aam-digital.github.io/ndb-core/locale",
 
   default_data_source: undefined as DataSourceType | undefined,

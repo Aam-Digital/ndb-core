@@ -18,6 +18,7 @@
   },
   "include": [
     "**/*.ts",
-    "../src/app/core/config/config-migrations.ts"
+    "../src/app/core/config/config-migrations.ts",
+    "../src/app/child-dev-project/notes/deprecated/legacy-note-fields.ts"
   ]
 }
