@@ -64,7 +64,7 @@
     "buffer": "^6.0.3",
     "deep-object-diff": "^1.1.9",
     "exceljs": "^4.4.0",
-    "firebase": "^12.19.0",
+    "firebase": "^13.1.0",
     "json-query": "^2.2.2",
     "jsondiffpatch": "^0.7.6",
     "keycloak-angular": "^22.0.0",
