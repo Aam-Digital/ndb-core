@@ -590,8 +590,11 @@ env:
 
 ### 4) Add language to the UI
 
-Add the language to the `availableLocales` list in `src/app/core/language/languages.ts`.
+Add the language to `AVAILABLE_LOCALES` in `src/app/core/language/available-locales.ts`.
 This allows the app to show the language in the language select component.
+
+A right-to-left language needs nothing beyond this: `isRtlLocale` already knows them
+(see `language-statics.ts`), so the document direction and the RTL styles follow.
 
 ### 5) Register Angular locale data
 

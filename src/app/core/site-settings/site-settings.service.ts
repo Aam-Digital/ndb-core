@@ -185,13 +185,16 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   /**
    * Make the given language the default language for all users,
    * keeping the other site settings (a new settings document is created if none exists yet).
-   * Resolves once saved.
+   * Resolves once saved and cached in localStorage.
    */
   async setDefaultLanguage(locale: ConfigurableEnumValue): Promise<void> {
     // a failure other than "does not exist" must not end up replacing the existing settings
     const settings = (await this.loadOnce()) ?? new SiteSettings();
     settings.defaultLanguage = locale;
     await this.entityMapper.save(settings);
+    // callers reload the app right after this to apply the language; the database change feed
+    // may not have arrived by then, and the old cached default would be applied again after the reload
+    this.entityUpdated.next(settings);
   }
 
   /**
