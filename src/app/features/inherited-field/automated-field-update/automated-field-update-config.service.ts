@@ -20,6 +20,7 @@ import { addMissingValues } from "../add-missing-values";
 import { CommonValue, getCommonValue, isSameValue } from "../get-common-value";
 import { ChangeSet } from "./change-set";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import { SessionSubject } from "#src/app/core/session/auth/session-info";
 import {
   AffectedEntitiesCalculation,
   AffectedEntitiesContext,
@@ -43,6 +44,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
   private readonly ability = inject(EntityAbility, { optional: true });
+  private readonly sessionInfo = inject(SessionSubject, { optional: true });
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes = new Set<string>();
@@ -62,6 +64,9 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     entity: Entity,
     entityBeforeChanges: Entity,
   ): Promise<void> {
+    // a visitor without an account (e.g. of a public form) may neither read nor update the linked records,
+    // and the server rejects their queries of the reference index
+    if (this.sessionInfo && !this.sessionInfo.value) return;
     if (this.checkRefAlreadyProcessed(entity)) return;
 
     await this.confirmAndSaveAffectedEntities({
