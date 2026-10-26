@@ -7,7 +7,8 @@
       "label": {
         "en-US": "Present",
         "de": "Anwesend",
-        "fr": "Présent"
+        "fr": "Présent",
+        "es": "Presente"
       },
       "color": "#c8e6c9",
       "countAs": "PRESENT"
@@ -18,7 +19,8 @@
       "label": {
         "en-US": "Absent",
         "de": "Abwesend",
-        "fr": "Absent"
+        "fr": "Absent",
+        "es": "Ausente"
       },
       "color": "#ff8a65",
       "countAs": "ABSENT"
@@ -29,7 +31,8 @@
       "label": {
         "en-US": "Late",
         "de": "Zu spät",
-        "fr": "En retard"
+        "fr": "En retard",
+        "es": "Tarde"
       },
       "color": "#ffecb3",
       "countAs": "PRESENT"
@@ -40,7 +43,8 @@
       "label": {
         "en-US": "Excused",
         "de": "Entschuldigt",
-        "fr": "Excusé"
+        "fr": "Excusé",
+        "es": "Justificado"
       },
       "color": "#d7ccc8",
       "countAs": "IGNORE"
