@@ -35,6 +35,12 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
 
+/** an option of the date ranges a date range field can be checked against */
+interface ParentRangeOption {
+  label: string;
+  value: WithinParentConfig;
+}
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-configure-entity-field-validator",
@@ -96,35 +102,54 @@ export class ConfigureEntityFieldValidatorComponent {
       return [];
     }
 
-    const options: { label: string; value: WithinParentConfig }[] = [];
-    for (const [linkId, link] of entityType.schema) {
-      if (link.dataType !== EntityDatatype.dataType) continue;
-      for (const typeId of asArray(link.additional ?? [])) {
-        if (!this.entityRegistry.has(typeId)) continue;
-        const parentType = this.entityRegistry.get(typeId);
-        if (parentType === entityType) {
-          // the field itself (as the default), even if it is not saved to the schema yet
-          options.push({
-            label: `${link.label ?? linkId} › ${resolveLocaleText(field.label) || $localize`this field`}`,
-            value: { parentReferenceField: linkId },
-          });
-        }
-        for (const [valueId, parentField] of parentType.schema) {
-          if (
-            parentField.dataType !== DateRangeDatatype.dataType ||
-            (parentType === entityType && valueId === field.id)
-          ) {
-            continue;
-          }
-          options.push({
-            label: `${link.label ?? linkId} › ${parentField.label ?? valueId}`,
-            value: { parentReferenceField: linkId, parentValueField: valueId },
-          });
-        }
+    return Array.from(entityType.schema)
+      .filter(([, link]) => link.dataType === EntityDatatype.dataType)
+      .flatMap(([linkId, link]) =>
+        asArray(link.additional ?? [])
+          .filter((typeId) => this.entityRegistry.has(typeId))
+          .flatMap((typeId) =>
+            this.rangeOptionsOfLinkedType(
+              linkId,
+              link.label ?? linkId,
+              this.entityRegistry.get(typeId),
+              entityType,
+              field,
+            ),
+          ),
+      );
+  });
+
+  /** the date range fields of a record type that the link field links to ("link field › date range field") */
+  private rangeOptionsOfLinkedType(
+    linkId: string,
+    linkLabel: string,
+    parentType: EntityConstructor,
+    entityType: EntityConstructor,
+    field: EntitySchemaField,
+  ): ParentRangeOption[] {
+    const isSameType = parentType === entityType;
+    const options: ParentRangeOption[] = [];
+    if (isSameType) {
+      // the field itself (as the default), even if it is not saved to the schema yet
+      const thisField = resolveLocaleText(field.label) || $localize`this field`;
+      options.push({
+        label: `${linkLabel} › ${thisField}`,
+        value: { parentReferenceField: linkId },
+      });
+    }
+    for (const [valueId, parentField] of parentType.schema) {
+      if (
+        parentField.dataType === DateRangeDatatype.dataType &&
+        !(isSameType && valueId === field.id)
+      ) {
+        options.push({
+          label: `${linkLabel} › ${parentField.label ?? valueId}`,
+          value: { parentReferenceField: linkId, parentValueField: valueId },
+        });
       }
     }
     return options;
-  });
+  }
 
   readonly isSameParentRange = (
     a: WithinParentConfig | null,
