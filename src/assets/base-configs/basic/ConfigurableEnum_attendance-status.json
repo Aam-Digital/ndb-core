@@ -8,6 +8,7 @@
         "en-US": "Present",
         "de": "Anwesend",
         "fr": "Présent",
+        "es": "Presente",
         "ar": "حاضر"
       },
       "color": "#c8e6c9",
@@ -20,6 +21,7 @@
         "en-US": "Absent",
         "de": "Abwesend",
         "fr": "Absent",
+        "es": "Ausente",
         "ar": "غائب"
       },
       "color": "#ff8a65",
@@ -32,6 +34,7 @@
         "en-US": "Late",
         "de": "Zu spät",
         "fr": "En retard",
+        "es": "Tarde",
         "ar": "متأخر"
       },
       "color": "#ffecb3",
@@ -44,6 +47,7 @@
         "en-US": "Excused",
         "de": "Entschuldigt",
         "fr": "Excusé",
+        "es": "Justificado",
         "ar": "بعذر"
       },
       "color": "#d7ccc8",

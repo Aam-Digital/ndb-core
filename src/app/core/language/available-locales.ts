@@ -8,6 +8,7 @@ export const AVAILABLE_LOCALES = [
   { id: "en-US", label: "English (en)" },
   { id: "de", label: "Deutsch / German (de)" },
   { id: "fr", label: "Français / French (fr)" },
+  { id: "es", label: "Español / Spanish (es)" },
   { id: "ar", label: "العربية / Arabic (ar)" },
 ] as const;
 

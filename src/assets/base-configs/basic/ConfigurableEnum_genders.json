@@ -7,6 +7,7 @@
         "en-US": "Male",
         "de": "männlich",
         "fr": "masculin",
+        "es": "Masculino",
         "ar": "ذكر"
       }
     },
@@ -16,6 +17,7 @@
         "en-US": "Female",
         "de": "weiblich",
         "fr": "féminin",
+        "es": "Femenino",
         "ar": "أنثى"
       }
     },
@@ -25,6 +27,7 @@
         "en-US": "Non-binary / third gender",
         "de": "nicht-binär",
         "fr": "non binaire",
+        "es": "No binario / tercer género",
         "ar": "غير ثنائي / جنس ثالث"
       }
     }
