@@ -6,7 +6,8 @@
       "label": {
         "en-US": "Male",
         "de": "männlich",
-        "fr": "masculin"
+        "fr": "masculin",
+        "ar": "ذكر"
       }
     },
     {
@@ -14,7 +15,8 @@
       "label": {
         "en-US": "Female",
         "de": "weiblich",
-        "fr": "féminin"
+        "fr": "féminin",
+        "ar": "أنثى"
       }
     },
     {
@@ -22,7 +24,8 @@
       "label": {
         "en-US": "Non-binary / third gender",
         "de": "nicht-binär",
-        "fr": "non binaire"
+        "fr": "non binaire",
+        "ar": "غير ثنائي / جنس ثالث"
       }
     }
   ]

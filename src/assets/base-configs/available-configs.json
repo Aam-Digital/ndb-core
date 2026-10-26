@@ -1,8 +1,14 @@
 [
   {
     "id": "basic",
-    "name": "Basic Setup",
-    "description": "A basic setup with minimal configuration to get started quickly.",
+    "name": {
+      "en-US": "Basic Setup",
+      "ar": "إعداد أساسي"
+    },
+    "description": {
+      "en-US": "A basic setup with minimal configuration to get started quickly.",
+      "ar": "إعداد أساسي بأقل قدر من الضبط للبدء بسرعة."
+    },
     "entitiesToImport": [
       "basic/Config_CONFIG_ENTITY.json",
       "basic/configurable-enums.json",
@@ -15,7 +21,10 @@
       "basic/MarkdownContent_help.json",
       "basic/SiteSettings_global.json"
     ],
-    "locale": "en-US"
+    "locale": [
+      "en-US",
+      "ar"
+    ]
   },
   {
     "id": "education",
