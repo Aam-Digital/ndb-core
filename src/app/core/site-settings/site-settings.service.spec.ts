@@ -272,6 +272,22 @@ describe("SiteSettingsService", () => {
     expect(saved.siteName).toBe("My site");
   });
 
+  it("caches a saved default language before the database change feed delivers it", async () => {
+    // a cached default from a previous system (e.g. before restarting the demo)
+    storage.setItem(
+      service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+      JSON.stringify({ defaultLanguage: "fr" }),
+    );
+    // the update is not emitted yet when the caller reloads the app right after saving
+    vi.spyOn(entityMapper, "save").mockResolvedValue(undefined);
+
+    await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
+
+    expect(storage.getItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY)).toMatch(
+      '"defaultLanguage":"de"',
+    );
+  });
+
   it("creates the site settings to save the default language on a fresh system", async () => {
     await service.setDefaultLanguage({ id: "de", label: "Deutsch" });
 
