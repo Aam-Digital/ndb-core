@@ -814,7 +814,9 @@
                     {
                       "fields": [
                         "photo",
-                        "schoolId"
+                        "schoolId",
+                        "projectSchool",
+                        "projectPeriod"
                       ]
                     },
                     {
@@ -1435,6 +1437,19 @@
           "label": "Admission",
           "anonymize": "retain-anonymized"
         },
+        "projectSchool": {
+          "dataType": "entity",
+          "label": "Project school",
+          "additional": "School"
+        },
+        "projectPeriod": {
+          "dataType": "date-range",
+          "label": "Project period",
+          "withinParent": {
+            "parentReferenceField": "projectSchool",
+            "parentValueField": "dateRangeField"
+          }
+        },
         "status": {
           "dataType": "string",
           "label": "Status",
@@ -1634,6 +1649,10 @@
           "id": "dateRangeFieldOwnPeriods",
           "label": "Date Range Field (own periods)",
           "dataType": "date-range",
+          "withinParent": {
+            "parentReferenceField": "parentSchool",
+            "parentValueField": "dateRangeField"
+          },
           "additional": [
             {
               "label": "This year and the next 2 years",
