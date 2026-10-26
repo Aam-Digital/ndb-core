@@ -511,8 +511,10 @@ This makes the language available for translators.</p>
 environment variable so that the export workflow includes the new language:</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-yaml">env:
   LANGUAGES: &quot;fr de hi&quot;</code></pre></div><h3>4) Add language to the UI</h3>
-<p>Add the language to the <code>availableLocales</code> list in <code>src/app/core/language/languages.ts</code>.
+<p>Add the language to <code>AVAILABLE_LOCALES</code> in <code>src/app/core/language/available-locales.ts</code>.
 This allows the app to show the language in the language select component.</p>
+<p>A right-to-left language needs nothing beyond this: <code>isRtlLocale</code> already knows them
+(see <code>language-statics.ts</code>), so the document direction and the RTL styles follow.</p>
 <h3>5) Register Angular locale data</h3>
 <p>In <code>src/bootstrap-i18n.ts</code>, add an <code>else if</code> branch for the new locale to import the
 Angular locale data (this is what makes locale-aware pipes such as <code>DatePipe</code> work):</p>

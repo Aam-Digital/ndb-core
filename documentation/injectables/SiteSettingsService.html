@@ -374,8 +374,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="291"
-                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:291</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="294"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:294</a></div>
                         </td>
                     </tr>
 
@@ -498,7 +498,7 @@
                 <td class="col-md-4">
                         <div class="io-description"><p>Make the given language the default language for all users,
 keeping the other site settings (a new settings document is created if none exists yet).
-Resolves once saved.</p>
+Resolves once saved and cached in localStorage.</p>
 </div>
 
                             <div class="io-description">
@@ -1350,13 +1350,16 @@ export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; 
   /**
    * Make the given language the default language for all users,
    * keeping the other site settings (a new settings document is created if none exists yet).
-   * Resolves once saved.
+   * Resolves once saved and cached in localStorage.
    */
   async setDefaultLanguage(locale: ConfigurableEnumValue): Promise&lt;void&gt; {
     // a failure other than &quot;does not exist&quot; must not end up replacing the existing settings
     const settings &#x3D; (await this.loadOnce()) ?? new SiteSettings();
     settings.defaultLanguage &#x3D; locale;
     await this.entityMapper.save(settings);
+    // callers reload the app right after this to apply the language; the database change feed
+    // may not have arrived by then, and the old cached default would be applied again after the reload
+    this.entityUpdated.next(settings);
   }
 
   /**
