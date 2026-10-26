@@ -8,6 +8,7 @@ export const AVAILABLE_LOCALES = [
   { id: "en-US", label: "English (en)" },
   { id: "de", label: "Deutsch / German (de)" },
   { id: "fr", label: "Français / French (fr)" },
+  { id: "es", label: "Español / Spanish (es)" },
 ] as const;
 
 export const AVAILABLE_LOCALE_IDS: readonly string[] = AVAILABLE_LOCALES.map(

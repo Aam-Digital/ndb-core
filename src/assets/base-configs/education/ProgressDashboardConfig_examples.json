@@ -4,14 +4,16 @@
     "title": {
       "en-US": "Annual Survey",
       "de": "Jährliche Umfrage",
-      "fr": "Enquête annuelle"
+      "fr": "Enquête annuelle",
+      "es": "Encuesta anual"
     },
     "parts": [
       {
         "label": {
           "en-US": "Clubs visited",
           "de": "Besuchte Vereine",
-          "fr": "Clubs visités"
+          "fr": "Clubs visités",
+          "es": "Clubes visitados"
         },
         "currentValue": 12,
         "targetValue": 25
@@ -20,7 +22,8 @@
         "label": {
           "en-US": "Schools checked",
           "de": "Überprüfte Schulen",
-          "fr": "Écoles vérifiées"
+          "fr": "Écoles vérifiées",
+          "es": "Escuelas revisadas"
         },
         "currentValue": 18,
         "targetValue": 30
@@ -29,7 +32,8 @@
         "label": {
           "en-US": "Government Officials met",
           "de": "Getroffene Beamte",
-          "fr": "Fonctionnaires rencontrés"
+          "fr": "Fonctionnaires rencontrés",
+          "es": "Funcionarios públicos contactados"
         },
         "currentValue": 8,
         "targetValue": 15

@@ -12,7 +12,8 @@
       "label": {
         "en-US": "Solved",
         "de": "OK",
-        "fr": "bien"
+        "fr": "bien",
+        "es": "Resuelto"
       }
     },
     {
@@ -21,7 +22,8 @@
       "label": {
         "en-US": "Needs Follow-Up",
         "de": "nachfassen",
-        "fr": "suivi nécessaire"
+        "fr": "suivi nécessaire",
+        "es": "Necesita seguimiento"
       }
     },
     {
@@ -30,7 +32,8 @@
       "label": {
         "en-US": "Urgent Follow-Up",
         "de": "Dringend nachfassen",
-        "fr": "suivi urgent"
+        "fr": "suivi urgent",
+        "es": "Seguimiento urgente"
       }
     }
   ]
