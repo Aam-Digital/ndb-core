@@ -7,8 +7,8 @@
         "en-US": "Male",
         "de": "männlich",
         "fr": "masculin",
-        "ar": "ذكر",
-        "es": "Masculino"
+        "es": "Masculino",
+        "ar": "ذكر"
       }
     },
     {
@@ -17,8 +17,8 @@
         "en-US": "Female",
         "de": "weiblich",
         "fr": "féminin",
-        "ar": "أنثى",
-        "es": "Femenino"
+        "es": "Femenino",
+        "ar": "أنثى"
       }
     },
     {
@@ -27,8 +27,8 @@
         "en-US": "Non-binary / third gender",
         "de": "nicht-binär",
         "fr": "non binaire",
-        "ar": "غير ثنائي / جنس ثالث",
-        "es": "No binario / tercer género"
+        "es": "No binario / tercer género",
+        "ar": "غير ثنائي / جنس ثالث"
       }
     }
   ]
