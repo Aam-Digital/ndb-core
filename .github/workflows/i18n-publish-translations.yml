@@ -37,7 +37,7 @@ jobs:
   publish-translations:
     runs-on: ubuntu-latest
     env:
-      LANGUAGES: "fr de ar"
+      LANGUAGES: "fr de es ar"
 
     steps:
       - name: Determine version

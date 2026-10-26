@@ -69,6 +69,8 @@ async function registerLocaleDataFor(locale: string): Promise<void> {
     localeModule = await import("@angular/common/locales/fr");
   } else if (locale == "ar") {
     localeModule = await import("@angular/common/locales/ar");
+  } else if (locale == "es") {
+    localeModule = await import("@angular/common/locales/es");
   }
 
   if (localeModule) {

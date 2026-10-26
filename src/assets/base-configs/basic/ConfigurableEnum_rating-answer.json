@@ -7,7 +7,8 @@
         "en-US": "not at all",
         "de": "überhaupt nicht",
         "fr": "pas du tout",
-        "ar": "إطلاقاً"
+        "ar": "إطلاقاً",
+        "es": "en absoluto"
       },
       "color": "rgba(253, 114, 114, 0.5)"
     },
@@ -17,7 +18,8 @@
         "en-US": "rarely",
         "de": "kaum",
         "fr": "rarement",
-        "ar": "نادراً"
+        "ar": "نادراً",
+        "es": "rara vez"
       },
       "color": "rgba(255, 165, 0, 0.5)"
     },
@@ -27,7 +29,8 @@
         "en-US": "usually",
         "de": "normalerweise",
         "fr": "souvent",
-        "ar": "عادةً"
+        "ar": "عادةً",
+        "es": "normalmente"
       },
       "color": "rgba(255, 242, 0, 0.5)"
     },
@@ -37,7 +40,8 @@
         "en-US": "absolutely",
         "de": "absolut",
         "fr": "absolument",
-        "ar": "تماماً"
+        "ar": "تماماً",
+        "es": "totalmente"
       },
       "color": "rgba(144, 238, 144, 0.5)"
     },
@@ -47,7 +51,8 @@
         "en-US": "N/A",
         "de": "k.A.",
         "fr": "N/D",
-        "ar": "غير متاح"
+        "ar": "غير متاح",
+        "es": "N/D"
       },
       "color": "#b0b0b0"
     }
