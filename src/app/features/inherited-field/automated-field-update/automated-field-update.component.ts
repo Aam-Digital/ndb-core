@@ -5,6 +5,7 @@ import {
   computed,
   DestroyRef,
   inject,
+  Signal,
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -76,7 +77,8 @@ interface TriggerChange {
 /** A changed entity that caused an update, with the changes of the fields that the update is based on */
 interface TriggerWithChanges {
   trigger: UpdateTrigger;
-  changes: TriggerChange[];
+  /** calculated only when shown, as a bulk edit can change many entities */
+  changes: Signal<TriggerChange[]>;
 }
 
 /** The affected entities that are based on the same field of the changed entities */
@@ -206,7 +208,9 @@ export class AutomatedFieldUpdateComponent {
       sourceFieldId,
       triggers: (this.data.triggers ?? []).map((trigger) => ({
         trigger,
-        changes: this.getTriggerChanges(trigger, sourceFieldId, groupRows),
+        changes: computed(() =>
+          this.getTriggerChanges(trigger, sourceFieldId, groupRows),
+        ),
       })),
       rows: groupRows,
     }));

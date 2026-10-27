@@ -39,7 +39,7 @@
                 [linkDisabled]="true"
               ></app-entity-block>
             }
-            @for (change of item.changes; track change.field.id) {
+            @for (change of item.changes(); track change.field.id) {
               <div class="trigger-change" [class.of-record]="several">
                 <span class="trigger-label">{{ change.field.label }}:</span>
                 @if (!change.isChanged) {

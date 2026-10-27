@@ -17,7 +17,7 @@ function summarizeGroups(
   groups: ReturnType<AutomatedFieldUpdateComponent["groups"]>,
 ) {
   return groups.map((group) => ({
-    fields: group.triggers[0].changes.map((change) => change.field.id),
+    fields: group.triggers[0].changes().map((change) => change.field.id),
     rows: group.rows.map((row) => row.id),
   }));
 }
@@ -375,8 +375,9 @@ describe("AutomatedFieldUpdateComponent", () => {
         [{ ...affected(FIRST, ["a"], 1), sourceFieldId: "center" }],
         [centerChange("trigger", before, after)],
       );
-      const { isChanged, removed, added } =
-        component.groups()[0].triggers[0].changes[0];
+      const { isChanged, removed, added } = component
+        .groups()[0]
+        .triggers[0].changes()[0];
       return {
         isChanged,
         removed: removed?.["center"],
@@ -431,13 +432,30 @@ describe("AutomatedFieldUpdateComponent", () => {
           .groups()[0]
           .triggers.map(({ trigger, changes }) => [
             trigger.entity.getId(),
-            changes[0].removed?.["center"],
-            changes[0].added?.["center"],
+            changes()[0].removed?.["center"],
+            changes()[0].added?.["center"],
           ]),
       ).toEqual([
         ["Entity:first-child", "old", "new"],
         ["Entity:second-child", "other", "new"],
       ]);
+    });
+
+    it("should calculate the change of a changed record only when it is shown", () => {
+      fieldConfigs["center"] = { id: "center" };
+      initDialog(
+        [{ ...affected(FIRST, ["new"], 1), sourceFieldId: "center" }],
+        [centerChange("trigger", "old", "new")],
+      );
+      const extendFormFieldConfig = vi.spyOn(
+        TestBed.inject(EntityFormService),
+        "extendFormFieldConfig",
+      );
+
+      const [item] = component.groups()[0].triggers;
+      expect(extendFormFieldConfig).not.toHaveBeenCalled();
+
+      expect(item.changes()[0].added?.["center"]).toBe("new");
     });
 
     it("should show neither removed nor added values if the field did not change", () => {
