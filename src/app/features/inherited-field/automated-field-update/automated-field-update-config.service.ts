@@ -64,9 +64,6 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     entity: Entity,
     entityBeforeChanges: Entity,
   ): Promise<void> {
-    // a visitor without an account (e.g. of a public form) may neither read nor update the linked records,
-    // and the server rejects their queries of the reference index
-    if (this.sessionInfo && !this.sessionInfo.value) return;
     if (this.checkRefAlreadyProcessed(entity)) return;
 
     await this.confirmAndSaveAffectedEntities({
@@ -150,6 +147,14 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     return (
       !this.ability?.initialized || this.ability.can("update", entity, fieldId)
     );
+  }
+
+  /**
+   * Whether the user may read records of the type.
+   * Until the permissions are loaded, this is not known (the server checks them anyway).
+   */
+  private canRead(entityType: EntityConstructor): boolean {
+    return !this.ability?.initialized || this.ability.can("read", entityType);
   }
 
   private getRulesUsingFieldAsSource(
@@ -372,7 +377,8 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * Load the records of the given type that reference the given entity in the given field
    * (a single reference or a list of references) through a database index,
    * instead of loading and checking all records of the type.
-   * If the index cannot be used (e.g. it cannot be created in online-only mode),
+   * If the index cannot be used (e.g. it cannot be created in online-only mode,
+   * or for a visitor without an account, who the server does not let query indexes),
    * all records of the type are loaded and checked instead.
    */
   public async loadRecordsLinkingTo(
@@ -384,8 +390,12 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
       typeof entityType === "string"
         ? this.entityRegistry.get(entityType)
         : entityType;
-    if (!ctor?.schema.has(referenceField)) {
+    if (!ctor?.schema.has(referenceField) || !this.canRead(ctor)) {
       return [];
+    }
+
+    if (this.sessionInfo && !this.sessionInfo.value) {
+      return this.loadAllRecordsLinkingTo(ctor, referenceField, entityId);
     }
 
     try {
@@ -400,10 +410,18 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         { entityType: ctor.ENTITY_TYPE, referenceField },
         error,
       );
-      return (await this.entityMapper.loadType(ctor)).filter((record) =>
-        asArray(record[referenceField]).includes(entityId),
-      );
+      return this.loadAllRecordsLinkingTo(ctor, referenceField, entityId);
     }
+  }
+
+  private async loadAllRecordsLinkingTo(
+    ctor: EntityConstructor,
+    referenceField: string,
+    entityId: string,
+  ): Promise<Entity[]> {
+    return (await this.entityMapper.loadType(ctor)).filter((record) =>
+      asArray(record[referenceField]).includes(entityId),
+    );
   }
 
   private async queryLinkingRecordsIndex(

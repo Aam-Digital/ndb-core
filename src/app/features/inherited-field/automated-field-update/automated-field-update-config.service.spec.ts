@@ -752,23 +752,43 @@ describe("AutomatedFieldUpdateConfigService", () => {
     expect(currentChild.category).toBe("");
   });
 
-  it("does not look for linked records to update when a visitor without an account saves a record", async () => {
-    TestBed.inject(SessionSubject).next(undefined);
-    const school = createSchool("primary");
-    const child = new Child();
-    child.school = school.getId();
-    child.category = "";
-    entityMapper.addAll([school, child]);
-    const originalSchool = school.copy();
-    mockDialog.open.mockClear();
+  describe("finding the records linking to a changed record", () => {
+    let school: School;
+    let originalSchool: School;
+    let child: Child;
 
-    school.category = TEST_SCHOOL_ENUM[1];
-    await service.applyRulesToDependentEntities(school, originalSchool);
+    beforeEach(() => {
+      school = createSchool("primary");
+      child = new Child();
+      child.school = school.getId();
+      child.category = "";
+      entityMapper.addAll([school, child]);
+      originalSchool = school.copy();
+      mockDialog.open.mockClear();
 
-    expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
-    expect(mockDialog.open).not.toHaveBeenCalled();
-    const currentChild = await entityMapper.load(Child, child.getId());
-    expect(currentChild.category).toBe("");
+      school.category = TEST_SCHOOL_ENUM[1];
+    });
+
+    it("does not use the reference index for a visitor without an account", async () => {
+      TestBed.inject(SessionSubject).next(undefined);
+
+      await service.applyRulesToDependentEntities(school, originalSchool);
+
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+      const updatedChild = await entityMapper.load(Child, child.getId());
+      expect(updatedChild.category).toBe("secondary-student");
+    });
+
+    it("does not look for records of a type that the user may not read", async () => {
+      ability.can.mockImplementation((action: string) => action !== "read");
+
+      await service.applyRulesToDependentEntities(school, originalSchool);
+
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      const currentChild = await entityMapper.load(Child, child.getId());
+      expect(currentChild.category).toBe("");
+    });
   });
 
   it("should handle multiple children referencing same school", async () => {
@@ -1742,7 +1762,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       entityMapper.addAll([project, workPackage, activity]);
       ability.can.mockImplementation(
         (action: string, entity: Entity) =>
-          entity.getId() !== workPackage.getId(),
+          action === "read" || entity.getId() !== workPackage.getId(),
       );
 
       const suggestions = await changeTags(activity, ["education"]);
