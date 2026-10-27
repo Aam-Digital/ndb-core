@@ -589,8 +589,8 @@ but disabled, so it is clear the system could enable them. Empty means all (the 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="75"
-                                    class="link-to-prism">src/app/core/language/language-select/language-select.component.ts:75</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="80"
+                                    class="link-to-prism">src/app/core/language/language-select/language-select.component.ts:80</a></div>
                         </td>
                     </tr>
 
@@ -659,8 +659,8 @@ typed into a form (e.g. a half-filled public form), so ask first.</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="92"
-                                    class="link-to-prism">src/app/core/language/language-select/language-select.component.ts:92</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">src/app/core/language/language-select/language-select.component.ts:97</a></div>
                         </td>
                     </tr>
 
@@ -808,11 +808,16 @@ typed into a form (e.g. a half-filled public form), so ask first.</p>
                     <td class="col-md-4">
                         <i>Default value : </i><code>computed(() &#x3D;&gt; {
     const enabledIds &#x3D; new Set(this.enabledLocales().map(({ id }) &#x3D;&gt; id));
-    return this.availableLocales().map((locale) &#x3D;&gt; ({
-      id: locale.id,
-      label: locale.label,
-      enabled: enabledIds.size &#x3D;&#x3D;&#x3D; 0 || enabledIds.has(locale.id),
-    }));
+    return (
+      this.availableLocales()
+        .map((locale) &#x3D;&gt; ({
+          id: locale.id,
+          label: locale.label,
+          enabled: enabledIds.size &#x3D;&#x3D;&#x3D; 0 || enabledIds.has(locale.id),
+        }))
+        // a stable sort, so the configured order is kept within each group
+        .sort((a, b) &#x3D;&gt; Number(b.enabled) - Number(a.enabled))
+    );
   })</code>
                     </td>
                 </tr>
@@ -824,7 +829,7 @@ typed into a form (e.g. a half-filled public form), so ask first.</p>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p><a href="../miscellaneous/variables.html#availableLocales">availableLocales</a> with a flag whether each can be picked</p>
+                    <div class="io-description"><p><a href="../miscellaneous/variables.html#availableLocales">availableLocales</a> with a flag whether each can be picked, the pickable ones first</p>
 </div>
                 </td>
             </tr>
@@ -897,14 +902,19 @@ export class LanguageSelectComponent {
 
   readonly disabledHint &#x3D; $localize&#x60;:Language select - disabled option tooltip:Your administrator has not enabled this language for this system.&#x60;;
 
-  /** {@link availableLocales} with a flag whether each can be picked */
+  /** {@link availableLocales} with a flag whether each can be picked, the pickable ones first */
   readonly options &#x3D; computed(() &#x3D;&gt; {
     const enabledIds &#x3D; new Set(this.enabledLocales().map(({ id }) &#x3D;&gt; id));
-    return this.availableLocales().map((locale) &#x3D;&gt; ({
-      id: locale.id,
-      label: locale.label,
-      enabled: enabledIds.size &#x3D;&#x3D;&#x3D; 0 || enabledIds.has(locale.id),
-    }));
+    return (
+      this.availableLocales()
+        .map((locale) &#x3D;&gt; ({
+          id: locale.id,
+          label: locale.label,
+          enabled: enabledIds.size &#x3D;&#x3D;&#x3D; 0 || enabledIds.has(locale.id),
+        }))
+        // a stable sort, so the configured order is kept within each group
+        .sort((a, b) &#x3D;&gt; Number(b.enabled) - Number(a.enabled))
+    );
   });
 
   /**
