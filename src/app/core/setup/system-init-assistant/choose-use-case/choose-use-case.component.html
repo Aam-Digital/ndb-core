@@ -8,8 +8,8 @@
       <mat-label i18n>Select your use case:</mat-label>
 
       <mat-select
-        [(ngModel)]="selectedUseCase"
-        (selectionChange)="onSelectionChange()"
+        [value]="selectedUseCase()"
+        (selectionChange)="onSelectionChange($event.value)"
         [disabled]="startFromScratch()"
         [placeholder]="startFromScratch() ? emptySystemPlaceholder : ''"
         [compareWith]="compareUseCases"
@@ -68,8 +68,8 @@
         [data]="startFromScratchUseCase()?.description"
         dir="auto"
       ></div>
-    } @else if (selectedUseCase) {
-      <div markdown [data]="selectedUseCase.description" dir="auto"></div>
+    } @else if (selectedUseCase(); as useCase) {
+      <div markdown [data]="useCase.description" dir="auto"></div>
     } @else {
       <p class="description-no-use-case" i18n>
         Select a use case as an initial configuration for your system.

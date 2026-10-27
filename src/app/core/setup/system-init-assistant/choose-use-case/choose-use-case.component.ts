@@ -16,7 +16,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MarkdownComponent } from "ngx-markdown";
-import { FormsModule } from "@angular/forms";
 import { LanguageService } from "app/core/language/language.service";
 
 export interface UseCaseOption {
@@ -35,7 +34,6 @@ export interface UseCaseOption {
     MatSlideToggleModule,
     MatTooltipModule,
     MarkdownComponent,
-    FormsModule,
   ],
   styleUrls: ["./choose-use-case.component.scss"],
 })
@@ -46,7 +44,7 @@ export class ChooseUseCaseComponent {
 
   selectionChanged = output<BaseConfig | null>();
 
-  selectedUseCase: UseCaseOption;
+  selectedUseCase = signal<UseCaseOption | undefined>(undefined);
   startFromScratch = signal(false);
   showOtherLanguages = signal(false);
 
@@ -110,15 +108,16 @@ export class ChooseUseCaseComponent {
   compareUseCases = (a: UseCaseOption, b: UseCaseOption) =>
     a?.config === b?.config;
 
-  onSelectionChange() {
-    this.selectionChanged.emit(this.selectedUseCase.config);
+  onSelectionChange(option: UseCaseOption) {
+    this.selectedUseCase.set(option);
+    this.selectionChanged.emit(option.config);
   }
 
   onStartFromScratchChange(checked: boolean) {
     this.startFromScratch.set(checked);
     if (checked) {
       // a pick left in the disabled dropdown would read as if it were still used
-      this.selectedUseCase = undefined;
+      this.selectedUseCase.set(undefined);
     }
     this.selectionChanged.emit(
       checked ? (this.startFromScratchUseCase()?.config ?? null) : null,
@@ -127,10 +126,10 @@ export class ChooseUseCaseComponent {
 
   onShowOtherLanguagesChange(checked: boolean) {
     this.showOtherLanguages.set(checked);
-    const selected = this.selectedUseCase?.config;
+    const selected = this.selectedUseCase()?.config;
     if (!checked && selected && !this.offeredInCurrentLocale().has(selected)) {
       // no longer in the list, so the dropdown would show a blank selection
-      this.selectedUseCase = undefined;
+      this.selectedUseCase.set(undefined);
       this.selectionChanged.emit(null);
     }
   }
