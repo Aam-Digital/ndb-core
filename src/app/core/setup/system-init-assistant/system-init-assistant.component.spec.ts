@@ -9,6 +9,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SetupService } from "../setup.service";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { AlertService } from "../../alerts/alert.service";
+import { AVAILABLE_LOCALE_IDS } from "../../language/available-locales";
 
 describe("SystemInitAssistantComponent", () => {
   let component: SystemInitAssistantComponent;
@@ -107,7 +108,7 @@ describe("SystemInitAssistantComponent", () => {
     [
       "every language if a use case is offered in all of them",
       [{ locale: "de" }, {}],
-      ["en-US", "de", "fr"],
+      [...AVAILABLE_LOCALE_IDS],
     ],
   ])("offers %s to choose from", async (_, useCases, expectedLocales) => {
     await configureComponent();
