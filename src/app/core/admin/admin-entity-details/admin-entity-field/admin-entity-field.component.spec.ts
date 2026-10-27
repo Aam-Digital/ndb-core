@@ -391,29 +391,29 @@ describe("AdminEntityFieldComponent", () => {
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
+    // the embedded fields can have more config, set in the JSON config
+    const additional = {
+      participant: {
+        dataType: "entity",
+        additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
+        selectionCondition: { other: { $in: ["X"] } },
+      },
+      remarks: { label: "Comments" },
+    };
     await recreateComponentWithData({
       label: "Attendance",
       dataType: "attendance",
       isArray: true,
-      additional: {
-        participant: {
-          dataType: "entity",
-          additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-        },
-      },
+      additional,
     } as EntitySchemaField);
+    await new Promise((resolve) => setTimeout(resolve));
     await fixture.whenStable();
 
     expect(component.attendanceParticipantTypesForm.value).toEqual([
       TestEntity.ENTITY_TYPE,
       Note.ENTITY_TYPE,
     ]);
-    expect(component.additionalForm.value).toEqual({
-      participant: {
-        dataType: "entity",
-        additional: [TestEntity.ENTITY_TYPE, Note.ENTITY_TYPE],
-      },
-    });
+    expect(component.additionalForm.value).toEqual(additional);
   });
 
   it("should sync attendance participant type selection to nested additional format", async () => {
@@ -443,6 +443,42 @@ describe("AdminEntityFieldComponent", () => {
     component.attendanceParticipantTypesForm.setValue([]);
     await fixture.whenStable();
     expect(component.additionalForm.value).toBeNull();
+  });
+
+  it("keeps the config of embedded attendance fields when the participant types change, except a selection filter for the previous types", async () => {
+    const mockEntityTypes = [TestEntity, Note];
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    vi.spyOn(entityRegistry, "getEntityTypes").mockReturnValue(
+      mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
+    );
+    await recreateComponentWithData({
+      label: "Attendance",
+      dataType: "attendance",
+      isArray: true,
+      additional: {
+        participant: {
+          dataType: "entity",
+          additional: [TestEntity.ENTITY_TYPE],
+          selectionCondition: { other: { $in: ["X"] } },
+          label: "Child",
+        },
+        remarks: { label: "Comments" },
+      },
+    } as EntitySchemaField);
+    await new Promise((resolve) => setTimeout(resolve));
+    await fixture.whenStable();
+
+    component.attendanceParticipantTypesForm.setValue([Note.ENTITY_TYPE]);
+    await fixture.whenStable();
+
+    expect(component.additionalForm.value).toEqual({
+      participant: {
+        dataType: "entity",
+        additional: [Note.ENTITY_TYPE],
+        label: "Child",
+      },
+      remarks: { label: "Comments" },
+    });
   });
 
   describe("predefined periods of a date range", () => {
