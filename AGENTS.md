@@ -67,7 +67,7 @@ This repository is public. Never include customer/project-identifying informatio
 
 ## Skills
 
-Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`.
+Shared Claude skills are in `.claude/skills/` (overview in the [README](README.md#skills)). A feature usually goes through them in this order: `feature-use-cases`, `design-prototype` or `figma-mockups`, `plan-implementation`, the code, then `review-pull-request`. Outside that flow, `translate-base-configs` adds a language to the base configs in `src/assets/base-configs/`.
 
 ## Common commands
 
