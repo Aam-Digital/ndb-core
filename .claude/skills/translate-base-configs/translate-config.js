@@ -183,6 +183,7 @@ function apply(options) {
 
   let applied = 0;
   const untranslated = new Map();
+  const invalid = new Set();
   const suspicious = [];
 
   for (const file of files) {
@@ -203,8 +204,11 @@ function apply(options) {
     walk(translatablePart(file, data, options), options.source, (map, path) => {
       if (map[options.target] !== undefined) return;
       const source = map[options.source];
-      const translation = table[source];
-      if (translation === undefined) {
+      const translation = Object.hasOwn(table, source)
+        ? table[source]
+        : undefined;
+      if (typeof translation !== "string") {
+        if (translation !== undefined) invalid.add(source);
         untranslated.set(source, (untranslated.get(source) ?? 0) + 1);
         return;
       }
@@ -231,7 +235,10 @@ function apply(options) {
   const missing = [...untranslated.values()].reduce((sum, n) => sum + n, 0);
   console.log(`untranslated: ${missing}`);
   for (const [source, count] of untranslated) {
-    console.log(`  (${count}x) ${JSON.stringify(source)}`);
+    const reason = invalid.has(source)
+      ? " <-- table entry is not a string"
+      : "";
+    console.log(`  (${count}x) ${JSON.stringify(source)}${reason}`);
   }
   if (suspicious.length > 0) {
     console.log(`\ncheck by hand: ${suspicious.length}`);

@@ -68,6 +68,11 @@ done in the same PR. This skill only fills the base config files.
    The new key goes in as the **second to last** one in each map, so the line before it is
    not touched and the diff is pure insertions. Keep it that way: `ar` stays last.
 
+   The exception is a map that held only `en-US` - the key is appended and the English
+   line gains a comma, so it shows up as a changed line. Every use case in the repository
+   today has at least two locales, so this only comes up for a use case being translated
+   for the very first time, where it affects every map.
+
    **`untranslated` has to be 0.** Anything above 0 is printed with its text - add it to
    the table and run again. A non-zero count is never "close enough": that is exactly how
    a string gets skipped. `check by hand: N` lists translations whose line count or
@@ -89,8 +94,9 @@ done in the same PR. This skill only fills the base config files.
    fix. It finds maps by their English key, so a map with a translation but no `en-US` is
    a broken config it cannot see at all.
 
-   Then `git diff --stat -- src/assets`: insertions only. A single removed line means
-   something reformatted a file - find out what before going on. (On Windows these files
+   Then `git diff --stat -- src/assets`: insertions only, apart from the English lines
+   that gained a comma as described in step 4. Any other changed line means something
+   reformatted a file - find out what before going on. (On Windows these files
    are checked out with CRLF and `prettier --check` fails on them untouched. Do not "fix"
    that with `prettier --write`; it rewrites every line of every file.)
 
@@ -104,7 +110,8 @@ done in the same PR. This skill only fills the base config files.
 
 - `untranslated: 0` from `apply` and `missing <locale>: 0` from `check`, both from a real
   run, not from memory.
-- `git diff --stat` shows insertions and no deletions.
+- `git diff --stat` shows insertions, and the only changed lines are English ones that
+  gained a comma because their map had no second locale yet.
 - The use case entry in `available-configs.json` has the new code in `locale`, and its
   `name` and `description` are translated too.
 - Prose was read in full once more in the target language: headings, links and line
