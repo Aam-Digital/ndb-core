@@ -17,11 +17,14 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MarkdownComponent } from "ngx-markdown";
 import { LanguageService } from "app/core/language/language.service";
+import { asArray } from "app/utils/asArray";
 
 export interface UseCaseOption {
   config: BaseConfig;
   name: string;
   description: string;
+  offered?: boolean;
+  languages?: string;
 }
 
 @Component({
@@ -50,6 +53,7 @@ export class ChooseUseCaseComponent {
 
   readonly startFromScratchHint = $localize`:Setup wizard - start from scratch tooltip:Set up a system without any predefined record types and define your own from the admin screens.`;
   readonly emptySystemPlaceholder = $localize`:Setup wizard - use case placeholder while starting from scratch:empty system`;
+  readonly otherLanguageHint = $localize`:Setup wizard - tooltip on a use case that is not in the user's language:This use case is not available in your language. Its texts come in the language shown.`;
 
   private readonly scenarios = computed(() =>
     this.useCases().filter((uc) => !uc.startFromScratch),
@@ -91,9 +95,18 @@ export class ChooseUseCaseComponent {
   availableUseCases: Signal<UseCaseOption[]> = computed(() => {
     const offered = this.offeredInCurrentLocale();
     const showAll = this.revealOtherLanguages();
-    return this.scenarios()
-      .filter((uc) => offered.has(uc) || showAll)
-      .map((config) => this.toOption(config));
+    const languageName = this.languageNamer();
+    return (
+      this.scenarios()
+        .filter((uc) => offered.has(uc) || showAll)
+        .map((config) => ({
+          ...this.toOption(config),
+          offered: offered.has(config),
+          languages: languageName(config.locale),
+        }))
+        // a stable sort, so the configured order is kept within each group
+        .sort((a, b) => Number(b.offered) - Number(a.offered))
+    );
   });
 
   startFromScratchUseCase: Signal<UseCaseOption | undefined> = computed(() => {
@@ -129,6 +142,20 @@ export class ChooseUseCaseComponent {
       this.selectedUseCase.set(undefined);
       this.selectionChanged.emit(null);
     }
+  }
+
+  /** Names the languages of a use case in the user's own language, e.g. "German, French". */
+  private languageNamer(): (locale: BaseConfig["locale"]) => string {
+    const names = new Intl.DisplayNames(
+      [this.languageService.getCurrentLocale()],
+      { type: "language", fallback: "code" },
+    );
+    return (locale) =>
+      locale
+        ? asArray(locale)
+            .map((l) => names.of(l) ?? l)
+            .join(", ")
+        : "";
   }
 
   private toOption(config: BaseConfig): UseCaseOption {

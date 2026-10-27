@@ -21,6 +21,12 @@
   opacity: 0.5;
 }
 
+.option-language-tag {
+  margin-inline-start: 8px;
+  font-size: 0.75em;
+  color: colors.$hint-text;
+}
+
 .min-width {
   min-width: 240px;
   margin-bottom: 0;

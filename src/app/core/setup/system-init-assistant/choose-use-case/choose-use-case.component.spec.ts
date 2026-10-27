@@ -65,7 +65,7 @@ describe("ChooseUseCaseComponent", () => {
         useCase("Start from scratch"),
       ]);
 
-      expect(names()).toEqual(["French", "German", "Start from scratch"]);
+      expect(names()).toEqual(["Start from scratch", "French", "German"]);
       expect(component.hasNoUseCaseInCurrentLocale()).toBe(true);
     });
 

@@ -17,9 +17,13 @@
         @for (useCase of availableUseCases(); track useCase.config.id) {
           <mat-option
             [value]="useCase"
-            [class.greyed-out]="!offeredInCurrentLocale().has(useCase.config)"
+            [class.greyed-out]="!useCase.offered"
+            [matTooltip]="useCase.offered ? '' : otherLanguageHint"
           >
             {{ useCase.name }}
+            @if (!useCase.offered && useCase.languages) {
+              <span class="option-language-tag">{{ useCase.languages }}</span>
+            }
           </mat-option>
         }
       </mat-select>
