@@ -545,10 +545,7 @@ export class AdminEntityFieldComponent implements OnInit {
       const validValues = newAdditional.filter((value) =>
         this.isValidEntityType(value),
       );
-      // Use setTimeout to ensure Angular processes the multi input change before setting the value
-      setTimeout(() => {
-        this.additionalForm.setValue(validValues);
-      });
+      this.additionalForm.setValue(validValues);
       return;
     }
 
@@ -584,10 +581,7 @@ export class AdminEntityFieldComponent implements OnInit {
       this.additionalForm.setValue(this.buildAttendanceAdditional(validValues));
     }
 
-    // Use setTimeout to ensure Angular processes the @if block and creates the EntityTypeSelectComponent before setting the value
-    setTimeout(() => {
-      this.attendanceParticipantTypesForm.setValue(validValues);
-    });
+    this.attendanceParticipantTypesForm.setValue(validValues);
   }
 
   private initAdditionalForDateRange(newAdditional?: unknown) {

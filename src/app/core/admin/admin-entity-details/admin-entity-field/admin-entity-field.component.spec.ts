@@ -690,6 +690,31 @@ describe("AdminEntityFieldComponent", () => {
       },
     );
 
+    it.each<[string, string | string[]]>([
+      ["a single record type", TestEntity.ENTITY_TYPE],
+      ["a list of one record type", [TestEntity.ENTITY_TYPE]],
+    ])(
+      "keeps the condition when the form is opened (%s)",
+      async (_, additional) => {
+        const condition = { other: { $in: ["X"] } };
+        await recreateComponentWithData({
+          label: "ref",
+          dataType: EntityDatatype.dataType,
+          additional,
+          selectionCondition: condition,
+        } as EntitySchemaField);
+        await new Promise((resolve) => setTimeout(resolve));
+        await fixture.whenStable();
+
+        expect(
+          component.schemaFieldsForm.get("selectionCondition").value,
+        ).toEqual(condition);
+        expect(dialogData.entitySchemaField.selectionCondition).toEqual(
+          condition,
+        );
+      },
+    );
+
     describe("when the target of the field changes", () => {
       const condition = { other: { $in: ["X"] } };
 
@@ -706,12 +731,6 @@ describe("AdminEntityFieldComponent", () => {
         fixture.detectChanges();
         await fixture.whenStable();
       }
-
-      it("keeps the condition when the form is opened", () => {
-        expect(dialogData.entitySchemaField.selectionCondition).toEqual(
-          condition,
-        );
-      });
 
       it.each<[string, (c: AdminEntityFieldComponent) => void]>([
         [
