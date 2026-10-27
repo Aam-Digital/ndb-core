@@ -1,6 +1,10 @@
 <div class="flex-row flex-wrap gap-regular align-center">
   <div class="flex-1 flex-column gap-small">
-    <mat-form-field appearance="fill" class="min-width">
+    <mat-form-field
+      appearance="fill"
+      class="min-width"
+      [floatLabel]="startFromScratch() ? 'always' : 'auto'"
+    >
       <mat-label i18n>Select your use case:</mat-label>
 
       <mat-select
@@ -8,6 +12,7 @@
         (selectionChange)="onSelectionChange()"
         [disabled]="startFromScratch()"
         [placeholder]="startFromScratch() ? emptySystemPlaceholder : ''"
+        [compareWith]="compareUseCases"
       >
         @for (useCase of availableUseCases(); track useCase.config.id) {
           <mat-option

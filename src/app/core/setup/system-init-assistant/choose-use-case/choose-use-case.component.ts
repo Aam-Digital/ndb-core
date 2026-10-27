@@ -103,6 +103,13 @@ export class ChooseUseCaseComponent {
     return config ? this.toOption(config) : undefined;
   });
 
+  /**
+   * The options are rebuilt whenever the list changes, so the selection has to be
+   * matched on the config it wraps rather than on the wrapper's identity.
+   */
+  compareUseCases = (a: UseCaseOption, b: UseCaseOption) =>
+    a?.config === b?.config;
+
   onSelectionChange() {
     this.selectionChanged.emit(this.selectedUseCase.config);
   }

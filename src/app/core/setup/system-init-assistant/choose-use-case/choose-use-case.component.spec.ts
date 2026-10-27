@@ -69,6 +69,19 @@ describe("ChooseUseCaseComponent", () => {
       expect(component.hasNoUseCaseInCurrentLocale()).toBe(true);
     });
 
+    it("should still match the selection after the option list is rebuilt", () => {
+      given("en", [useCase("English", "en"), useCase("German", "de")]);
+      const picked = component.availableUseCases()[0];
+
+      component.onShowOtherLanguagesChange(true);
+      const rebuilt = component
+        .availableUseCases()
+        .find((o) => o.name === picked.name);
+
+      expect(rebuilt).not.toBe(picked);
+      expect(component.compareUseCases(picked, rebuilt)).toBe(true);
+    });
+
     it("should never switch the language on the user's behalf", () => {
       given("ar", [useCase("French", "fr"), useCase("German", "de")]);
 
