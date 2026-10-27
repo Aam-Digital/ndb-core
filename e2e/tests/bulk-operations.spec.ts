@@ -136,7 +136,8 @@ test("Bulk-edit a field across selected records", async ({ page }) => {
   await expect(schoolRow.locator("#entity-field__enumMulti")).toContainText(
     CENTER_BARABAZAR.label,
   );
-  // the change of each edited record
+  // the change of each edited record, only rendered when expanded (a bulk edit can change many records)
+  await expect(updateDialog).not.toContainText("BulkEdit Child B");
   await updateDialog.getByText("Triggered by 2 Children").click();
   await expect(updateDialog).toContainText("BulkEdit Child B");
   // only the dialog, as the records behind it have random values

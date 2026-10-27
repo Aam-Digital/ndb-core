@@ -28,63 +28,66 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        @let several = group.triggers.length > 1;
-        @for (item of group.triggers; track item.trigger.entity.getId()) {
-          @if (several) {
-            <app-entity-block
-              class="trigger-record"
-              [entityId]="item.trigger.entity.getId()"
-              [linkDisabled]="true"
-            ></app-entity-block>
-          }
-          @for (change of item.changes; track change.field.id) {
-            <div class="trigger-change" [class.of-record]="several">
-              <span class="trigger-label">{{ change.field.label }}:</span>
-              @if (!change.isChanged) {
-                <app-entity-field-view
-                  [field]="change.field"
-                  [entity]="item.trigger.before"
-                ></app-entity-field-view>
-              }
-              @if (change.removed; as removed) {
-                <span class="trigger-removed">
-                  <app-fa-dynamic-icon
-                    icon="minus"
-                    i18n-matTooltip="tooltip for values that are removed"
-                    matTooltip="Removed"
-                  ></app-fa-dynamic-icon>
-                  <span
-                    class="visually-hidden"
-                    i18n="screen reader text for values that are removed"
-                    >Removed:</span
-                  >
+        <!-- rendered only when expanded, as a bulk edit can change many records -->
+        <ng-template matExpansionPanelContent>
+          @let several = group.triggers.length > 1;
+          @for (item of group.triggers; track item.trigger.entity.getId()) {
+            @if (several) {
+              <app-entity-block
+                class="trigger-record"
+                [entityId]="item.trigger.entity.getId()"
+                [linkDisabled]="true"
+              ></app-entity-block>
+            }
+            @for (change of item.changes; track change.field.id) {
+              <div class="trigger-change" [class.of-record]="several">
+                <span class="trigger-label">{{ change.field.label }}:</span>
+                @if (!change.isChanged) {
                   <app-entity-field-view
                     [field]="change.field"
-                    [entity]="removed"
+                    [entity]="item.trigger.before"
                   ></app-entity-field-view>
-                </span>
-              }
-              @if (change.added; as added) {
-                <span class="trigger-added">
-                  <app-fa-dynamic-icon
-                    icon="plus"
-                    i18n-matTooltip="tooltip for values that are added"
-                    matTooltip="Added"
-                  ></app-fa-dynamic-icon>
-                  <span
-                    class="visually-hidden"
-                    i18n="screen reader text for values that are added"
-                    >Added:</span
-                  >
-                  <app-entity-field-view
-                    [field]="change.field"
-                    [entity]="added"
-                  ></app-entity-field-view>
-                </span>
-              }
-            </div>
+                }
+                @if (change.removed; as removed) {
+                  <span class="trigger-removed">
+                    <app-fa-dynamic-icon
+                      icon="minus"
+                      i18n-matTooltip="tooltip for values that are removed"
+                      matTooltip="Removed"
+                    ></app-fa-dynamic-icon>
+                    <span
+                      class="visually-hidden"
+                      i18n="screen reader text for values that are removed"
+                      >Removed:</span
+                    >
+                    <app-entity-field-view
+                      [field]="change.field"
+                      [entity]="removed"
+                    ></app-entity-field-view>
+                  </span>
+                }
+                @if (change.added; as added) {
+                  <span class="trigger-added">
+                    <app-fa-dynamic-icon
+                      icon="plus"
+                      i18n-matTooltip="tooltip for values that are added"
+                      matTooltip="Added"
+                    ></app-fa-dynamic-icon>
+                    <span
+                      class="visually-hidden"
+                      i18n="screen reader text for values that are added"
+                      >Added:</span
+                    >
+                    <app-entity-field-view
+                      [field]="change.field"
+                      [entity]="added"
+                    ></app-entity-field-view>
+                  </span>
+                }
+              </div>
+            }
           }
-        }
+        </ng-template>
       </mat-expansion-panel>
     }
 
