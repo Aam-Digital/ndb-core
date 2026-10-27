@@ -1790,6 +1790,10 @@ describe("AutomatedFieldUpdateConfigService", () => {
         return mockDialog.open.mock.calls[0]?.[1].data;
       }
 
+      afterEach(() => {
+        vi.restoreAllMocks();
+      });
+
       it("lists a record that several changed records link to once, based on the values of all of them", async () => {
         const workPackage = createAction(["health", "education"]);
         const activity1 = createAction(["health"], workPackage);
@@ -1806,6 +1810,42 @@ describe("AutomatedFieldUpdateConfigService", () => {
             [activity1.getId(), activity2.getId()],
           ],
         ]);
+      });
+
+      it("calculates a record that many changed records link to only until its value settles, not again for each of them", async () => {
+        const workPackage = createAction(["health"]);
+        const activities = Array.from({ length: 20 }, () =>
+          createAction(["health"], workPackage),
+        );
+        entityMapper.addAll([workPackage, ...activities]);
+        const collectValues = vi.spyOn(service, "collectValues");
+
+        await changeAllTags(activities, ["water"]);
+
+        expect(collectValues.mock.calls.length).toBeLessThan(activities.length);
+      });
+
+      it("calculates a record again when another record linking to it gets a new value later", async () => {
+        const project = createAction(["health"]);
+        const workPackage1 = createAction(["health"], project);
+        const workPackage2 = createAction(["health"], project);
+        const activity = createAction(["health"], workPackage1);
+        entityMapper.addAll([project, workPackage1, workPackage2, activity]);
+        const before = [workPackage2.copy(), activity.copy()];
+        // the project is calculated from the second work package before the first one gets the new value of the activity
+        workPackage2.tags = toTags(["water"]);
+        activity.tags = toTags(["education"]);
+        mockDialog.open.mockClear();
+
+        await service.applyRulesToDependentEntities(
+          [workPackage2, activity],
+          before,
+        );
+
+        const projectRow = mockDialog.open.mock.calls[0][1].data.entities.find(
+          (e) => e.id === project.getId(),
+        );
+        expect([...projectRow.newValue].sort()).toEqual(["education", "water"]);
       });
 
       it("keeps the value that the change set on a record that another changed record passes its value to", async () => {
@@ -1827,7 +1867,6 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(mockDialog.open).not.toHaveBeenCalled();
       });
 
-      // over a thousand records take longer than the default timeout with coverage on CI
       it("reaches the levels above also if more records changed than the calculation takes steps at most", async () => {
         const project = createAction(["health"]);
         const workPackage = createAction(["health"], project);
@@ -1842,7 +1881,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
           [workPackage.getId(), ["water"]],
           [project.getId(), ["water"]],
         ]);
-      }, 30_000);
+      });
 
       it("returns the updated records as they were before the update, so that it can be undone", async () => {
         const workPackage = createAction(["health"]);

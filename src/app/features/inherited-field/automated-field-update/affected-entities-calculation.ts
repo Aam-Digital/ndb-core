@@ -150,6 +150,16 @@ export class AffectedEntitiesCalculation {
   private readonly loadedRecords = new Map<string, Promise<Entity[]>>();
 
   /**
+   * The suggestions calculated so far, by entity id and field, with the version of the change set they are based on.
+   * Many changed records can lead to the same entity (e.g. all children of a school in a bulk edit),
+   * which is only calculated again once the change set changed.
+   */
+  private readonly suggestions = new Map<
+    string,
+    { version: number; suggestion: Suggestion | undefined }
+  >();
+
+  /**
    * @param context the rules, records and permissions that the calculation works with
    * @param triggers the changes that start the update (several for a bulk edit)
    * @param enteredValues values the user entered for affected entities (database format),
@@ -250,7 +260,7 @@ export class AffectedEntitiesCalculation {
 
     const key = `${target.getId()}|${rule.fieldId}`;
     const existing = this.affectedEntities.get(key);
-    const suggestion = await this.suggestValue(target, rule, source);
+    const suggestion = await this.getSuggestion(key, target, rule, source);
     if (suggestion) {
       this.affectedEntities.set(key, {
         ...suggestion,
@@ -346,6 +356,23 @@ export class AffectedEntitiesCalculation {
       isSameValue(this.context.getDatabaseValue(target, fieldId), value),
     );
     return true;
+  }
+
+  /** The suggested value of the affected entity (see {@link suggestions}) */
+  private async getSuggestion(
+    key: string,
+    target: Entity,
+    affectedRule: AffectedRule,
+    source: Entity,
+  ): Promise<Suggestion | undefined> {
+    const version = this.changeSet.version;
+    const cached = this.suggestions.get(key);
+    if (cached?.version === version) {
+      return cached.suggestion;
+    }
+    const suggestion = await this.suggestValue(target, affectedRule, source);
+    this.suggestions.set(key, { version, suggestion });
+    return suggestion;
   }
 
   /**
