@@ -1827,6 +1827,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(mockDialog.open).not.toHaveBeenCalled();
       });
 
+      // over a thousand records take longer than the default timeout with coverage on CI
       it("reaches the levels above also if more records changed than the calculation takes steps at most", async () => {
         const project = createAction(["health"]);
         const workPackage = createAction(["health"], project);
@@ -1841,7 +1842,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
           [workPackage.getId(), ["water"]],
           [project.getId(), ["water"]],
         ]);
-      });
+      }, 30_000);
 
       it("returns the updated records as they were before the update, so that it can be undone", async () => {
         const workPackage = createAction(["health"]);
