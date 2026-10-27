@@ -59,7 +59,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * @param entities - The source entities whose changes should trigger updates
    * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
    *   (in the same order)
-   * @return the updated entities as they were before the update (to undo it)
+   * @return the updated entities as they were before the update (to undo it), without the given entities themselves
    */
   public async applyRulesToDependentEntities(
     entities: Entity | Entity[],
@@ -581,7 +581,10 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         (update) => entity && !isSameValue(update.newValue, update.savedValue),
       );
       if (changes.length > 0) {
-        previousVersions.push(entity.copy());
+        // the caller has the changed entities themselves as they were before their change
+        if (!triggers.some((t) => t.entity.getId() === entity.getId())) {
+          previousVersions.push(entity.copy());
+        }
         changes.forEach((update) => {
           entity[update.targetFieldId] =
             this.entitySchemaService.valueToEntityFormat(

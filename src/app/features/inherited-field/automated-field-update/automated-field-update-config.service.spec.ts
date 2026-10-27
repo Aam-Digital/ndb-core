@@ -1864,6 +1864,32 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(saved.tags).toEqual(toTags(["water"]));
       });
 
+      it("does not return a changed record that the update changed again, as the caller has it from before its change", async () => {
+        const project = new CycleAction();
+        const activity = new CycleAction();
+        const otherActivity = new CycleAction();
+        [activity, otherActivity].forEach((action) => {
+          action.parent = project.getId();
+          action.value = [];
+          action.inheritedTotal = [];
+        });
+        [project, activity, otherActivity].forEach(
+          (action) => (action._rev = "1-existing"),
+        );
+        entityMapper.addAll([project, activity, otherActivity]);
+        const activityBefore = activity.copy();
+        activity.value = toTags(["health"]);
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [activity],
+          [activityBefore],
+        );
+
+        expect(previousVersions.map((record) => record.getId()).sort()).toEqual(
+          [project.getId(), otherActivity.getId()].sort(),
+        );
+      });
+
       it("passes only the records whose change is passed on to the dialog", async () => {
         const workPackage = createAction(["health", "water"]);
         const changed = createAction(["health"], workPackage);

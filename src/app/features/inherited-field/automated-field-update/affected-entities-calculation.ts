@@ -194,7 +194,10 @@ export class AffectedEntitiesCalculation {
       if (steps++ >= MAX_STEPS + this.triggers.length) {
         Logging.warn(
           "AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps",
-          { entityType: this.triggers[0]?.entity.getType() },
+          {
+            entityType: this.triggers[0]?.entity.getType(),
+            changedRecords: this.triggers.length,
+          },
         );
         break;
       }
