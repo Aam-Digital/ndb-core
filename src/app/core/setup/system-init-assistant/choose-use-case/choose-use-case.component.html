@@ -1,5 +1,5 @@
 <div class="flex-row flex-wrap gap-regular align-center">
-  <div class="flex-1 flex-column gap-x-small">
+  <div class="flex-1 flex-column gap-small">
     <mat-form-field appearance="fill" class="min-width">
       <mat-label i18n>Select your use case:</mat-label>
 
@@ -7,6 +7,7 @@
         [(ngModel)]="selectedUseCase"
         (selectionChange)="onSelectionChange()"
         [disabled]="startFromScratch()"
+        [placeholder]="startFromScratch() ? emptySystemPlaceholder : ''"
       >
         @for (useCase of availableUseCases(); track useCase.config.id) {
           <mat-option
@@ -31,10 +32,24 @@
       }
     </mat-form-field>
 
+    @if (hasUseCasesInOtherLanguages()) {
+      <mat-slide-toggle
+        [checked]="revealOtherLanguages()"
+        [disabled]="hasNoUseCaseInCurrentLocale()"
+        (change)="onShowOtherLanguagesChange($event.checked)"
+        i18n="
+          Setup wizard - reveal use cases that are not in the user's language
+        "
+      >
+        Show use cases of other languages
+      </mat-slide-toggle>
+    }
+
     @if (startFromScratchUseCase(); as blankUseCase) {
       <mat-checkbox
         [checked]="startFromScratch()"
         (change)="onStartFromScratchChange($event.checked)"
+        [matTooltip]="startFromScratchHint"
       >
         {{ blankUseCase.name }}
       </mat-checkbox>
