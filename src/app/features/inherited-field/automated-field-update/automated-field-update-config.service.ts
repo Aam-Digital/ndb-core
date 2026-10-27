@@ -13,6 +13,7 @@ import {
 import { lastValueFrom } from "rxjs";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
@@ -43,6 +44,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly dbIndexing = inject(DatabaseIndexingService);
   private readonly ability = inject(EntityAbility, { optional: true });
+  private readonly alertService = inject(AlertService);
 
   /** ids of the reference indexes that were already requested in this session */
   private readonly requestedReferenceIndexes = new Set<string>();
@@ -59,15 +61,36 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
    * @param entities - The source entities whose changes should trigger updates
    * @param entitiesBeforeChanges The state of the entities before changes were applied to identify what has changed
    *   (in the same order)
+   * A failure is reported and shown to the user here, as the changed entities themselves are already saved.
    * @return the updated entities as they were before the update (to undo it), without the given entities themselves
    */
   public async applyRulesToDependentEntities(
     entities: Entity | Entity[],
     entitiesBeforeChanges: Entity | Entity[],
   ): Promise<Entity[]> {
-    const before = asArray(entitiesBeforeChanges);
+    try {
+      return await this.updateEntitiesDependingOn(
+        asArray(entities),
+        asArray(entitiesBeforeChanges),
+      );
+    } catch (error) {
+      Logging.error(
+        "AutomatedFieldUpdateConfigService: Could not update the linked records after saving",
+        error,
+      );
+      this.alertService.addDanger(
+        $localize`The linked records could not be updated.`,
+      );
+      return [];
+    }
+  }
+
+  private async updateEntitiesDependingOn(
+    entities: Entity[],
+    before: Entity[],
+  ): Promise<Entity[]> {
     // only the entities with a change that is passed on (saving also changes e.g. the update time)
-    const triggers = asArray(entities)
+    const triggers = entities
       .map((entity, i) => ({ entity, before: before[i] }))
       .filter(
         ({ entity, before }) =>

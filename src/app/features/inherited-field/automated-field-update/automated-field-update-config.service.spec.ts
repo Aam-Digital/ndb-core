@@ -16,6 +16,7 @@ import {
 import { DatabaseField } from "#src/app/core/entity/database-field.decorator";
 import { Entity, EntityConstructor } from "#src/app/core/entity/model/entity";
 import { UpdateMetadata } from "#src/app/core/entity/model/update-metadata";
+import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
@@ -448,6 +449,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
   const mockDialog = {
     open: vi.fn().mockName("MatDialog.open"),
   };
+  const alertService = { addDanger: vi.fn() };
   mockDialog.open.mockImplementation((component, config) => {
     mockDialogAfterClosed = () => of(config?.data?.entities || []);
     return mockDialogRef;
@@ -494,6 +496,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
         ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: AlertService, useValue: alertService },
         // only the datatypes of the test entities' schemas, rather than a whole module
         {
           provide: DefaultDatatype,
@@ -1862,6 +1865,31 @@ describe("AutomatedFieldUpdateConfigService", () => {
           workPackage.getId(),
         );
         expect(saved.tags).toEqual(toTags(["water"]));
+      });
+
+      it("reports a failure to update the linked records and tells the user, without failing the save of the changed records", async () => {
+        const workPackage = createAction(["health"]);
+        const activity = createAction(["health"], workPackage);
+        entityMapper.addAll([workPackage, activity]);
+        const before = activity.copy();
+        activity.tags = toTags(["water"]);
+        const error = new Error("Failed to fetch dynamically imported module");
+        mockDialog.open.mockImplementationOnce(() => {
+          throw error;
+        });
+        const logError = vi
+          .spyOn(Logging, "error")
+          .mockImplementation(() => {});
+        alertService.addDanger.mockClear();
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [activity],
+          [before],
+        );
+
+        expect(previousVersions).toEqual([]);
+        expect(logError).toHaveBeenCalledWith(expect.any(String), error);
+        expect(alertService.addDanger).toHaveBeenCalledOnce();
       });
 
       it("does not return a changed record that the update changed again, as the caller has it from before its change", async () => {
