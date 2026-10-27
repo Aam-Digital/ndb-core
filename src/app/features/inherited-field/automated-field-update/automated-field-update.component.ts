@@ -73,10 +73,16 @@ interface TriggerChange {
   added?: Entity;
 }
 
-/** The affected entities that are based on the same field of the changed entity */
+/** A changed entity that caused an update, with the changes of the fields that the update is based on */
+interface TriggerWithChanges {
+  trigger: UpdateTrigger;
+  changes: TriggerChange[];
+}
+
+/** The affected entities that are based on the same field of the changed entities */
 interface UpdateGroup {
   sourceFieldId: string;
-  changes: TriggerChange[];
+  triggers: TriggerWithChanges[];
   rows: DialogRow[];
 }
 
@@ -120,7 +126,8 @@ function getRowKey(row: AffectedEntity): string {
 export class AutomatedFieldUpdateComponent {
   data = inject<{
     entities: AffectedEntity[];
-    trigger?: UpdateTrigger;
+    /** the changes that opened the dialog (several for a bulk edit) */
+    triggers?: UpdateTrigger[];
     /** Finds the affected entities again, based on the values the user entered instead of the suggestions */
     recalculate?: (enteredValues: EnteredValue[]) => Promise<AffectedEntity[]>;
   }>(MAT_DIALOG_DATA);
@@ -170,6 +177,10 @@ export class AutomatedFieldUpdateComponent {
   /** The affected entities, grouped by the field of the changed entity that the update is based on */
   readonly groups = computed(() => this.groupByTriggerField(this.rows()));
 
+  /** The name of the type of the changed entities, to show how many of them caused the update */
+  readonly triggerTypeLabel =
+    this.data.triggers?.[0]?.entity.getConstructor().labelPlural;
+
   /**
    * Whether all entities directly linked to the changed entity are linked through the same field
    * (otherwise each of them shows how it is linked).
@@ -193,19 +204,20 @@ export class AutomatedFieldUpdateComponent {
     }
     return [...groups].map(([sourceFieldId, groupRows]) => ({
       sourceFieldId,
-      changes: this.getTriggerChanges(sourceFieldId, groupRows),
+      triggers: (this.data.triggers ?? []).map((trigger) => ({
+        trigger,
+        changes: this.getTriggerChanges(trigger, sourceFieldId, groupRows),
+      })),
       rows: groupRows,
     }));
   }
 
   /** The fields of the changed entity that caused the update of the given rows, to show what changed */
   private getTriggerChanges(
+    trigger: UpdateTrigger,
     sourceFieldId: string,
     groupRows: DialogRow[],
   ): TriggerChange[] {
-    const trigger = this.data.trigger;
-    if (!trigger) return [];
-
     const entityType = trigger.entity.getConstructor();
     const isChanged = (fieldId: string) =>
       isFieldChanged(trigger.entity, trigger.before, fieldId);

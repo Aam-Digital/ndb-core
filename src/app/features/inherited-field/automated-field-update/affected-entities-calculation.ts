@@ -26,7 +26,10 @@ import {
 /** Number of levels above the changed entity that are included in one update dialog. */
 export const MAX_HIERARCHY_LEVELS = 10;
 
-/** Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop) */
+/**
+ * Safety limit for the calculation of the affected entities, in case their values do not settle (e.g. in a loop).
+ * The changes that start the calculation (e.g. of a bulk edit) come on top of it.
+ */
 const MAX_STEPS = 1000;
 
 /** An entity whose fields changed, so that the entities based on them have to be calculated (again) */
@@ -131,9 +134,10 @@ function getLinkedIds(
  * It collects its result while it runs, so use a new instance for each calculation.
  */
 export class AffectedEntitiesCalculation {
-  private readonly changedFields: string[];
+  /** the fields of each changed record that are passed on, by the id of the record */
+  private readonly changedFields: Map<string, string[]>;
 
-  /** the changed entity and the entities with a suggested value, which the entities above are calculated from */
+  /** the changed entities and the entities with a suggested value, which the entities above are calculated from */
   private readonly changeSet: ChangeSet;
 
   /** the affected entities found so far, by entity id and field */
@@ -147,22 +151,29 @@ export class AffectedEntitiesCalculation {
 
   /**
    * @param context the rules, records and permissions that the calculation works with
-   * @param trigger the change that starts the update
+   * @param triggers the changes that start the update (several for a bulk edit)
    * @param enteredValues values the user entered for affected entities (database format),
    *   which the entities above are based on instead of the suggestions
    */
   constructor(
     private readonly context: AffectedEntitiesContext,
-    private readonly trigger: UpdateTrigger,
+    private readonly triggers: UpdateTrigger[],
     private readonly enteredValues: EnteredValue[] = [],
   ) {
-    this.changedFields = trigger.fieldId
-      ? [trigger.fieldId]
-      : getChangedFields(trigger.entity, trigger.before);
+    this.changedFields = new Map(
+      triggers.map((trigger) => [
+        trigger.entity.getId(),
+        trigger.fieldId
+          ? [trigger.fieldId]
+          : getChangedFields(trigger.entity, trigger.before),
+      ]),
+    );
     this.changeSet = new ChangeSet(
-      trigger.entity,
-      trigger.before,
-      this.changedFields,
+      triggers.map((trigger) => ({
+        entity: trigger.entity,
+        before: trigger.before,
+        changedFields: this.changedFields.get(trigger.entity.getId()),
+      })),
     );
   }
 
@@ -171,21 +182,19 @@ export class AffectedEntitiesCalculation {
    * @return the affected entities, ordered by level
    */
   async run(): Promise<AffectedEntity[]> {
-    const queue: QueuedChange[] = [
-      {
-        entity: this.trigger.entity,
-        level: 0,
-        changedFields: this.changedFields,
-        onlyLinkedEntities: !!this.trigger.fieldId,
-      },
-    ];
+    const queue: QueuedChange[] = this.triggers.map((trigger) => ({
+      entity: trigger.entity,
+      level: 0,
+      changedFields: this.changedFields.get(trigger.entity.getId()),
+      onlyLinkedEntities: !!trigger.fieldId,
+    }));
 
     let steps = 0;
     while (queue.length > 0) {
-      if (steps++ >= MAX_STEPS) {
+      if (steps++ >= MAX_STEPS + this.triggers.length) {
         Logging.warn(
           "AutomatedFieldUpdateConfigService: Stopped looking for affected entities after the maximum number of steps",
-          { entityType: this.trigger.entity.getType() },
+          { entityType: this.triggers[0]?.entity.getType() },
         );
         break;
       }
@@ -229,10 +238,9 @@ export class AffectedEntitiesCalculation {
     source: Entity,
     { level, sourceFieldId }: Pick<QueuedChange, "level" | "sourceFieldId">,
   ): Promise<boolean> {
-    // the field that was changed is never offered again, and the chain ends at an entity the user may not update
+    // a field that was changed is never offered again, and the chain ends at an entity the user may not update
     const isChangedField =
-      target.getId() === this.trigger.entity.getId() &&
-      this.changedFields.includes(rule.fieldId);
+      this.changedFields.get(target.getId())?.includes(rule.fieldId) ?? false;
     if (isChangedField || !this.context.canUpdate(target, rule.fieldId)) {
       return false;
     }

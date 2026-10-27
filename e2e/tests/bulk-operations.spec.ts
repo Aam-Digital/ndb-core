@@ -9,16 +9,32 @@ import {
 } from "#e2e/fixtures.js";
 import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
 import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-type.js";
+
+// Center enum values from configurable-enums.json (id: label)
+const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
+const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };
+const CENTER_BARABAZAR = { id: "C3", label: "Barabazar" };
 
 const NEW_PROJECT_NUMBER = "BE-EDITED-001";
+const BULK_EDIT_SCHOOL_NAME = "<BULK EDIT SCHOOL>";
 
 test("Bulk-edit a field across selected records", async ({ page }) => {
   const users = generateUsers();
   const c1 = generateChild({ name: "BulkEdit Child A" });
   const c2 = generateChild({ name: "BulkEdit Child B" });
   const c3 = generateChild({ name: "BulkEdit Child C" });
+  // In the all-features config, the school collects the centers of its children ("enum multi").
+  const school = createEntityOfType("School", "bulk-edit-school");
+  Object.assign(school, {
+    name: BULK_EDIT_SCHOOL_NAME,
+    enumMulti: [CENTER_ALIPORE],
+  });
+  for (const child of [c1, c2]) {
+    Object.assign(child, { schoolId: school.getId(), center: CENTER_ALIPORE });
+  }
 
-  await loadApp(page, [...users, c1, c2, c3]);
+  await loadApp(page, [...users, c1, c2, c3, school]);
 
   await page.getByRole("navigation").getByText("Children").click();
 
@@ -79,6 +95,74 @@ test("Bulk-edit a field across selected records", async ({ page }) => {
   await expect(
     page.locator("#entity-field__projectNumber").getByRole("textbox"),
   ).toHaveValue(NEW_PROJECT_NUMBER);
+
+  // Bulk-editing a field that other records collect offers to update them, in one dialog for all edited records.
+  await page.getByRole("navigation").getByText("Children").click();
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
+  for (const name of ["BulkEdit Child A", "BulkEdit Child B"]) {
+    await page
+      .locator("app-entities-table tbody tr")
+      .filter({ hasText: name })
+      .click();
+  }
+  await page
+    .locator("app-entity-bulk-actions")
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: "Bulk Edit" }).click();
+  await dialog
+    .locator("mat-form-field")
+    .filter({ hasText: "Property to update" })
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: "Center", exact: true }).click();
+  await dialog.locator("#entity-field__center .fa-caret-down").click();
+  await page
+    .getByRole("option", { name: CENTER_BARABAZAR.label, exact: true })
+    .click();
+  await dialog.getByRole("button", { name: "Save" }).click();
+
+  const updateDialog = page.getByRole("dialog", {
+    name: /Update related records/,
+  });
+  await expect(updateDialog).toContainText("Triggered by 2 Children");
+  const schoolRow = updateDialog
+    .getByRole("row")
+    .filter({ hasText: BULK_EDIT_SCHOOL_NAME });
+  await expect(schoolRow).toHaveCount(1);
+  await expect(schoolRow.locator("#entity-field__enumMulti")).toContainText(
+    CENTER_BARABAZAR.label,
+  );
+  // the change of each edited record
+  await updateDialog.getByText("Triggered by 2 Children").click();
+  await expect(updateDialog).toContainText("BulkEdit Child B");
+  // only the dialog, as the records behind it have random values
+  await argosScreenshot(page, "bulk-edit-update-related-records", {
+    element: updateDialog,
+    fullPage: false,
+  });
+
+  await updateDialog
+    .getByRole("button", { name: "Update related records", exact: true })
+    .click();
+  await expect(updateDialog).not.toBeVisible();
+  const snackbar = page
+    .locator("simple-snack-bar")
+    .filter({ hasText: "2 Children edited" });
+  await expect(snackbar).toBeVisible();
+
+  await page.getByRole("navigation").getByText("Schools").click();
+  await page.getByRole("cell", { name: BULK_EDIT_SCHOOL_NAME }).click();
+  const schoolCenters = page.locator("#entity-field__enumMulti");
+  await expect(schoolCenters).toContainText(CENTER_BARABAZAR.label);
+
+  // undo also reverts the related records that were updated
+  await snackbar.getByRole("button", { name: "Undo" }).click();
+  await expect(schoolCenters).toContainText(CENTER_ALIPORE.label);
+  await expect(schoolCenters).not.toContainText(CENTER_BARABAZAR.label);
 });
 
 const CHILD_A_NAME = "<MERGE CHILD A>";
@@ -190,10 +274,6 @@ test("Bulk-archive selected records hides them from the default list", async ({
     page.getByRole("cell", { name: ARCHIVE_CHILD_B_NAME }),
   ).not.toBeVisible();
 });
-
-// Center enum values from configurable-enums.json (id: label)
-const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
-const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };
 
 /**
  * 14 children in Alipore, so filtering by that center still leaves two pages
