@@ -67,6 +67,7 @@ export function endNotBeforeStart(
   templateUrl: "./edit-date-range.component.html",
   styleUrls: [
     "../../../entity/entity-field-edit/dynamic-edit/dynamic-edit.component.scss",
+    "./edit-date-range.component.scss",
   ],
   imports: [
     MatInputModule,
