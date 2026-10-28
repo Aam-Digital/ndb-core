@@ -6,6 +6,12 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Logging } from "../../logging/logging.service";
+import { Entity } from "../../entity/model/entity";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import {
+  DataFilter,
+  resolveCurrentRecordPlaceholders,
+} from "../../filter/filters/filters";
 import {
   AdminDefaultValueContext,
   DefaultValueStrategy,
@@ -22,6 +28,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
   override readonly mode = "dynamic";
 
   private currentUser = inject(CurrentUserSubject);
+  private entitySchemaService = inject(EntitySchemaService);
 
   override async getAdminUI(): Promise<AdminDefaultValueContext> {
     const component =
@@ -75,5 +82,29 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
         );
         return;
     }
+  }
+
+  /**
+   * Replace the `$current_record.<fieldId>` placeholders in a condition
+   * (e.g. the `selectionCondition` of a field) with the values of the given record.
+   *
+   * The values are used in database format, like the values of the records the condition is applied to.
+   * See {@link resolveCurrentRecordPlaceholders} for which parts of the condition are left out.
+   *
+   * @param condition The condition to resolve. It is not changed, a resolved copy is returned.
+   * @param record The record being edited. Without a record (e.g. in bulk edit) no placeholder can be resolved.
+   */
+  resolveRecordPlaceholders<T>(
+    condition: DataFilter<T>,
+    record: Entity | undefined,
+  ): DataFilter<T> {
+    return resolveCurrentRecordPlaceholders(condition, (fieldId) => {
+      const value = record?.[fieldId];
+      const schemaField = record?.getSchema().get(fieldId);
+      if (value === undefined || value === null || !schemaField) {
+        return value;
+      }
+      return this.entitySchemaService.valueToDatabaseFormat(value, schemaField);
+    });
   }
 }

@@ -9,6 +9,9 @@ import { DefaultValueStrategy } from "../default-value-strategy.interface";
 import { PrebuiltFilterConfig } from "app/core/entity-list/EntityListConfig";
 import { PLACEHOLDERS } from "app/core/entity/schema/entity-schema-field";
 import { Note } from "app/child-dev-project/notes/model/note";
+import { TestEntity } from "app/utils/test-utils/TestEntity";
+import { DefaultDatatype } from "app/core/entity/default-datatype/default.datatype";
+import { StringDatatype } from "app/core/basic-datatypes/string/string.datatype";
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;
@@ -18,6 +21,8 @@ describe("DynamicPlaceholderValueService", () => {
     TestBed.configureTestingModule({
       providers: [
         CurrentUserSubject,
+        { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
         {
           provide: DefaultValueStrategy,
           useClass: DynamicPlaceholderValueService,
@@ -93,5 +98,23 @@ describe("DynamicPlaceholderValueService", () => {
       placeholderUserFilter.default,
     );
     expect(defaultValString).toEqual(user.getId());
+  });
+
+  describe("resolveRecordPlaceholders", () => {
+    const condition = { other: { $in: ["$current_record.other"] } };
+
+    it("should resolve the placeholders with the values of the given record", () => {
+      const record = TestEntity.create({ other: "BERLIN" });
+
+      expect(service.resolveRecordPlaceholders(condition, record)).toEqual({
+        other: { $in: ["BERLIN"] },
+      });
+    });
+
+    it("should leave out what refers to the record, if there is no record", () => {
+      expect(service.resolveRecordPlaceholders(condition, undefined)).toEqual(
+        {},
+      );
+    });
   });
 });

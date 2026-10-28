@@ -41,12 +41,9 @@ import {
 } from "../../../entity/entity-field-edit/dynamic-edit/edit-component.interface";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
+import { DynamicPlaceholderValueService } from "../../../default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { FilterService } from "../../../filter/filter.service";
-import {
-  DataFilter,
-  resolveCurrentRecordPlaceholders,
-} from "../../../filter/filters/filters";
+import { DataFilter } from "../../../filter/filters/filters";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Logging } from "../../../logging/logging.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
@@ -105,7 +102,7 @@ export class EditEntityComponent<
   private readonly formDialog = inject(FormDialogService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly ability = inject(EntityAbility);
-  private readonly entitySchemaService = inject(EntitySchemaService);
+  private readonly placeholderService = inject(DynamicPlaceholderValueService);
   private readonly filterService = inject(FilterService);
 
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:Loading...`;
@@ -250,20 +247,9 @@ export class EditEntityComponent<
           return undefined;
         }
 
-        const record = this.currentRecord();
-        const resolved = resolveCurrentRecordPlaceholders(
+        const resolved = this.placeholderService.resolveRecordPlaceholders(
           condition,
-          (fieldId) => {
-            const value = record?.[fieldId];
-            const schemaField = record?.getSchema().get(fieldId);
-            if (value === undefined || value === null || !schemaField) {
-              return value;
-            }
-            return this.entitySchemaService.valueToDatabaseFormat(
-              value,
-              schemaField,
-            );
-          },
+          this.currentRecord(),
         );
         return Object.keys(resolved).length > 0 ? resolved : undefined;
       },
