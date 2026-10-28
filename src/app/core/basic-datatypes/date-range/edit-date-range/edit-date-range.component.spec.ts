@@ -51,6 +51,10 @@ describe("EditDateRangeComponent", () => {
     name: "Training",
     plannedPeriod: { start, end },
   });
+  const ongoingParentAction = Object.assign(new EditDateRangeTestAction("2"), {
+    name: "Ongoing",
+    plannedPeriod: { start },
+  });
 
   beforeEach(async () => {
     dialog = mockMatDialog();
@@ -59,7 +63,7 @@ describe("EditDateRangeComponent", () => {
       providers: [
         provideNativeDateAdapter(),
         { provide: MatDialog, useValue: dialog },
-        ...mockEntityMapperProvider([parentAction]),
+        ...mockEntityMapperProvider([parentAction, ongoingParentAction]),
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
@@ -312,7 +316,7 @@ describe("EditDateRangeComponent", () => {
           .query(By.directive(MatTooltip))
           ?.injector.get(MatTooltip).message;
       };
-      return { form, warning };
+      return { form, warning, component: parentFixture.componentInstance };
     }
 
     it.each<{
@@ -385,6 +389,44 @@ describe("EditDateRangeComponent", () => {
 
       await vi.waitFor(() =>
         expect(period.errors?.withinParent?.warning).toBe(true),
+      );
+    });
+
+    it("offers the parent's period as the first predefined period", async () => {
+      const { form, warning, component } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      await warning();
+      dialog.open.mockReturnValue(
+        mockMatDialogRef({ selectedOptionValues: ["0"] }),
+      );
+
+      component.openPanel(new Event("click"));
+
+      expect(dialog.open.mock.calls[0][1].data.rangeOptions[0].label).toBe(
+        "Period of Training",
+      );
+      expect(form.get("period").value).toEqual({ start, end });
+    });
+
+    it("does not offer an ongoing parent period (without end) as a predefined period", async () => {
+      const { warning, component } = await render(
+        within,
+        ongoingParentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      await warning();
+
+      component.openPanel(new Event("click"));
+
+      expect(dialog.open.mock.calls[0][1].data.rangeOptions).toEqual(
+        periodRangeOptions,
       );
     });
 

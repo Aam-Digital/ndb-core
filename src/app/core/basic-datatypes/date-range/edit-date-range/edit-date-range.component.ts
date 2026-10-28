@@ -91,12 +91,20 @@ export class EditDateRangeComponent
   private readonly dialog = inject(MatDialog);
 
   /**
-   * The predefined ranges offered next to the calendar: the ones in the `additional` config of the field
-   * (an empty list offers none), or the default ones.
+   * The predefined ranges offered next to the calendar: the periods of the linked parent records (see `withinParent`),
+   * then the ones in the `additional` config of the field (an empty list offers none), or the default ones.
    */
   readonly rangeOptions = computed<DateRangeFilterConfigOption[]>(() => {
     const configured = this.formFieldConfig()?.additional;
-    return Array.isArray(configured) ? configured : periodRangeOptions;
+    return [
+      ...(this.parents.value() ?? [])
+        // a predefined range always has an end, so an ongoing period cannot be one
+        .filter(({ range }) => range?.start && range?.end)
+        .map(({ name, range }) =>
+          fixedRangeOption($localize`Period of ${name}`, range),
+        ),
+      ...(Array.isArray(configured) ? configured : periodRangeOptions),
+    ];
   });
 
   private readonly currentValue = signal<DateRangeValue | null>(null);
@@ -268,6 +276,21 @@ export class EditDateRangeComponent
     }
     return { start: fromDateString(first), end: fromDateString(second) };
   }
+}
+
+/** a predefined range for the given dates (the options are offsets from today) */
+function fixedRangeOption(
+  label: string,
+  range: DateRangeValue,
+): DateRangeFilterConfigOption {
+  const today = moment().startOf("day");
+  const daysFromToday = (date: Date) =>
+    moment(date).startOf("day").diff(today, "days");
+  return {
+    label,
+    startOffsets: [{ amount: daysFromToday(range.start), unit: "days" }],
+    endOffsets: [{ amount: daysFromToday(range.end), unit: "days" }],
+  };
 }
 
 function startOfDay(date: Date): Date {
