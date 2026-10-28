@@ -57,7 +57,8 @@ export function endNotBeforeStart(
 
 /**
  * Form field to edit a {@link DateRangeValue}: the start and the end date in one range picker.
- * If the field is configured with `withinParent`, a warning shows when the range goes beyond a linked parent's range.
+ * With the `withinParent` validator, a warning icon shows in view mode when the range goes beyond a linked parent's range
+ * (while editing, the validator's error shows below the field instead).
  */
 @DynamicComponent("EditDateRange")
 @Component({
@@ -106,7 +107,7 @@ export class EditDateRangeComponent
 
   private readonly parents = parentRangesResource(() => {
     const field = this.formFieldConfig();
-    const config = field?.withinParent;
+    const config = field?.validators?.withinParent;
     if (!config || this.entity()?.anonymized) {
       return undefined;
     }
@@ -194,14 +195,20 @@ export class EditDateRangeComponent
   }
 
   private followParentReferenceInForm() {
-    const field = this.formFieldConfig()?.withinParent?.parentReferenceField;
+    const field =
+      this.formFieldConfig()?.validators?.withinParent?.parentReferenceField;
     const control = field && this.formControl.parent?.get(field);
     if (!control) {
       return;
     }
+    this.parentReferenceInForm.set({ value: control.value });
     control.valueChanges
-      .pipe(startWith(control.value), takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => this.parentReferenceInForm.set({ value }));
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.parentReferenceInForm.set({ value });
+        // the validator of this field reads the parent link, which is another field of the form
+        this.formControl.updateValueAndValidity();
+      });
   }
 
   /** Show a value that was set from outside, without resetting what the user is just typing. */

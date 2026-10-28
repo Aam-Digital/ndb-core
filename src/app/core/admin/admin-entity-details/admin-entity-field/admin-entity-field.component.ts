@@ -322,8 +322,7 @@ export class AdminEntityFieldComponent implements OnInit {
         this.updateDataTypeAdditional(v);
         this.resetIsArrayIfUnsupported(v);
         if (v !== DateRangeDatatype.dataType) {
-          // only offered for date ranges, so it would stay in the config without being visible anywhere
-          delete this.data.entitySchemaField.withinParent;
+          this.removeWithinParentValidator();
         }
       });
     this.updateForNewOrExistingField();
@@ -360,6 +359,15 @@ export class AdminEntityFieldComponent implements OnInit {
       this.fieldIdForm.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => autoGenerateSubscr.unsubscribe());
+    }
+  }
+
+  /** only offered for date ranges, so it would stay in the config without being visible anywhere */
+  private removeWithinParentValidator() {
+    const validatorsControl = this.schemaFieldsForm.get("validators");
+    const { withinParent, ...otherValidators } = validatorsControl.value ?? {};
+    if (withinParent) {
+      validatorsControl.setValue(otherValidators);
     }
   }
 

@@ -22,10 +22,11 @@ import {
 } from "../../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { Entity } from "../../../../entity/model/entity";
+import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
 import {
-  EntitySchemaField,
+  FormValidatorConfig,
   WithinParentConfig,
-} from "../../../../entity/schema/entity-schema-field";
+} from "../../../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { TranslatableText } from "../../../../config/multi-lingual-config";
 
 @DatabaseEntity("ValidatorTestProject")
@@ -180,14 +181,14 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
     async function renderDateRangeField(withinParent?: WithinParentConfig) {
       const field: EntitySchemaField = {
         ...ValidatorTestAction.schema.get("period"),
-        withinParent,
+        validators: withinParent && { withinParent },
       };
       fixture.componentRef.setInput("entityType", ValidatorTestAction);
       fixture.componentRef.setInput("entitySchemaField", field);
       fixture.detectChanges();
 
-      const emitted: Partial<EntitySchemaField>[] = [];
-      component.entitySchemaFieldChanges.subscribe((c) => emitted.push(c));
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
       const select =
         await TestbedHarnessEnvironment.loader(fixture).getHarness(
           MatSelectHarness,
@@ -223,7 +224,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
 
         await select.clickOptions({ text });
 
-        expect(emitted.at(-1)).toEqual({ withinParent: expected });
+        expect(emitted.at(-1)?.withinParent).toEqual(expected);
       },
     );
 
@@ -253,6 +254,20 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         expect(await options[0].getText()).toBe(expected);
       },
     );
+
+    it("does not keep the setting for a field that is not a date range", async () => {
+      fixture.componentRef.setInput("entitySchemaField", {
+        dataType: "string",
+        validators: { withinParent: { parentReferenceField: "parent" } },
+      });
+      fixture.detectChanges();
+      const emitted: FormValidatorConfig[] = [];
+      component.entityValidatorChanges.subscribe((v) => emitted.push(v));
+
+      component.validatorForm().get("required").setValue(true);
+
+      expect(emitted.at(-1)).toEqual({ required: true });
+    });
 
     it("shows the saved setting", async () => {
       const { select } = await renderDateRangeField({

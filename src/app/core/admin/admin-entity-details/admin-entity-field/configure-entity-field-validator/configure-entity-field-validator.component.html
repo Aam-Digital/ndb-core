@@ -60,7 +60,7 @@
     <mat-form-field floatLabel="always">
       <mat-label i18n>Must lie within the period of a linked record</mat-label>
       <mat-select
-        [formControl]="withinParentControl()"
+        formControlName="withinParent"
         [compareWith]="isSameParentRange"
       >
         <mat-option [value]="null" i18n>none</mat-option>

@@ -20,17 +20,17 @@ import {
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import {
-  EntitySchemaField,
-  WithinParentConfig,
-} from "app/core/entity/schema/entity-schema-field";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
 import { DateRangeDatatype } from "app/core/basic-datatypes/date-range/date-range.datatype";
 import { asArray } from "app/utils/asArray";
 import { resolveLocaleText } from "app/core/language/active-locale";
-import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import {
+  FormValidatorConfig,
+  WithinParentConfig,
+} from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 import { EditDateComponent } from "../../../../basic-datatypes/date/edit-date/edit-date.component";
 import { EditMonthComponent } from "../../../../basic-datatypes/month/edit-month/edit-month.component";
@@ -82,13 +82,6 @@ export class ConfigureEntityFieldValidatorComponent {
 
   trimControl = computed(
     () => new FormControl(this.entitySchemaField()?.trim !== false),
-  );
-
-  withinParentControl = computed(
-    () =>
-      new FormControl<WithinParentConfig | null>(
-        this.entitySchemaField()?.withinParent ?? null,
-      ),
   );
 
   /**
@@ -176,6 +169,7 @@ export class ConfigureEntityFieldValidatorComponent {
       patternMessage: [(isObjectForm ? v.pattern.message : "") ?? ""],
       uniqueId: [v?.uniqueId ?? ""],
       readonlyAfterSet: [v?.readonlyAfterSet ?? false],
+      withinParent: [v?.withinParent ?? null],
     });
   });
 
@@ -195,6 +189,10 @@ export class ConfigureEntityFieldValidatorComponent {
       const sub = form.valueChanges.subscribe(() => {
         const rawValues = form.getRawValue();
         this.transformPatternValue(rawValues);
+        if (this.entitySchemaField()?.dataType !== DateRangeDatatype.dataType) {
+          // only offered for date ranges (the type can change while the dialog is open)
+          delete rawValues.withinParent;
+        }
         const cleanedValues =
           this.removeDefaultValuesFromValidatorConfig(rawValues);
         this.entityValidatorChanges.emit(cleanedValues);
@@ -218,15 +216,6 @@ export class ConfigureEntityFieldValidatorComponent {
       const sub = ctrl.valueChanges.subscribe((value: boolean) => {
         this.entitySchemaFieldChanges.emit({ trim: value });
       });
-      onCleanup(() => sub.unsubscribe());
-    });
-
-    effect((onCleanup) => {
-      const sub = this.withinParentControl().valueChanges.subscribe((value) =>
-        this.entitySchemaFieldChanges.emit({
-          withinParent: value ?? undefined,
-        }),
-      );
       onCleanup(() => sub.unsubscribe());
     });
   }

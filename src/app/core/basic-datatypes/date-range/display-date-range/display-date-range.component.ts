@@ -10,7 +10,7 @@ import { findParentOutside, parentRangesResource } from "../parent-ranges";
 /**
  * Displays a {@link DateRangeValue} as "start - end", or "from start" / "until end" if one of the dates is missing.
  * The dates of an anonymized record are reduced to the year (like in the date field), with a warning.
- * If the field is configured with `withinParent`, a warning shows when the range goes beyond a linked parent's range.
+ * With the `withinParent` validator, a warning shows when the range goes beyond a linked parent's range.
  */
 @DynamicComponent("DisplayDateRange")
 @Component({
@@ -27,7 +27,7 @@ export class DisplayDateRangeComponent extends ViewDirective<DateRangeValue> {
   private readonly parents = parentRangesResource(() => {
     const entity = this.entity();
     const fieldId = this.id();
-    const config = entity?.getSchema()?.get(fieldId)?.withinParent;
+    const config = entity?.getSchema()?.get(fieldId)?.validators?.withinParent;
     if (!config || entity.anonymized) {
       return undefined;
     }

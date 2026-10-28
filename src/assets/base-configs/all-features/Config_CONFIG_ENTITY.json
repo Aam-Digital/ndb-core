@@ -1445,9 +1445,11 @@
         "projectPeriod": {
           "dataType": "date-range",
           "label": "Project period",
-          "withinParent": {
-            "parentReferenceField": "projectSchool",
-            "parentValueField": "dateRangeField"
+          "validators": {
+            "withinParent": {
+              "parentReferenceField": "projectSchool",
+              "parentValueField": "dateRangeField"
+            }
           }
         },
         "status": {
@@ -1641,17 +1643,21 @@
           "id": "dateRangeField",
           "label": "Date Range Field",
           "dataType": "date-range",
-          "withinParent": {
-            "parentReferenceField": "parentSchool"
+          "validators": {
+            "withinParent": {
+              "parentReferenceField": "parentSchool"
+            }
           }
         },
         "dateRangeFieldOwnPeriods": {
           "id": "dateRangeFieldOwnPeriods",
           "label": "Date Range Field (own periods)",
           "dataType": "date-range",
-          "withinParent": {
-            "parentReferenceField": "parentSchool",
-            "parentValueField": "dateRangeField"
+          "validators": {
+            "withinParent": {
+              "parentReferenceField": "parentSchool",
+              "parentValueField": "dateRangeField"
+            }
           },
           "additional": [
             {

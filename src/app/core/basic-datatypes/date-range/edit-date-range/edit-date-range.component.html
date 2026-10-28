@@ -1,5 +1,5 @@
 <div class="flex-row">
-  @if (outsideParent(); as parentName) {
+  @if (!enabled() && outsideParent(); as parentName) {
     <!-- before the inputs: the date picker button after them overlaps its neighbours (negative margin) -->
     <app-fa-dynamic-icon
       class="margin-end-small input-tooltip-icon"

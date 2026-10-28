@@ -23,6 +23,8 @@ export const DYNAMIC_VALIDATORS = [
   "readonlyAfterSet",
   /** type: string or regex */
   "pattern",
+  /** type: WithinParentConfig; warns (without blocking saving) when a date range goes beyond the one of a linked parent */
+  "withinParent",
 ] as const;
 
 /**
@@ -62,3 +64,15 @@ export type DynamicValidator = (typeof DYNAMIC_VALIDATORS)[number];
 export type FormValidatorConfig = {
   [key in DynamicValidator]?: any;
 };
+
+/** config of the `withinParent` validator (for "date-range" fields) */
+export interface WithinParentConfig {
+  /** field of this record that links to the parent record(s) */
+  parentReferenceField: string;
+
+  /**
+   * field of the parent record holding the range this value should lie within
+   * (default: the same field id as this field, e.g. for a hierarchy of records of the same type)
+   */
+  parentValueField?: string;
+}

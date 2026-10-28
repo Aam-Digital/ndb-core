@@ -17,6 +17,7 @@ import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeValue } from "../date-range.datatype";
+import { withinParentValidator } from "../within-parent-validator";
 import {
   MatDialogMock,
   mockMatDialog,
@@ -259,6 +260,10 @@ describe("EditDateRangeComponent", () => {
       start: new Date(2026, 4, 20),
       end: new Date(2026, 5, 15),
     };
+    const withinParent = {
+      parentReferenceField: "parent",
+      parentValueField: "plannedPeriod",
+    };
     const within = {
       start: new Date(2026, 2, 10),
       end: new Date(2026, 2, 20),
@@ -267,23 +272,20 @@ describe("EditDateRangeComponent", () => {
     /**
      * @param parentInForm the parent link entered in the form; undefined if the form has no such field
      * @param parentOfRecord the parent link saved for the record
+     * @param editing false for the view mode (a disabled form)
      */
     async function render(
       period: DateRangeValue,
       parentInForm: string | null | undefined,
       parentOfRecord?: string,
       anonymized = false,
+      editing = false,
     ) {
       const parentFixture = TestBed.createComponent(EditDateRangeComponent);
       const form = setupCustomFormControlEditComponent(
         parentFixture.componentInstance,
         "period",
-        {
-          withinParent: {
-            parentReferenceField: "parent",
-            parentValueField: "plannedPeriod",
-          },
-        },
+        { validators: { withinParent } },
         parentFixture,
       );
       if (parentInForm !== undefined) {
@@ -297,6 +299,9 @@ describe("EditDateRangeComponent", () => {
         }),
       );
       form.get("period").setValue(period);
+      if (!editing) {
+        form.get("period").disable();
+      }
       parentFixture.detectChanges();
 
       const warning = async () => {
@@ -350,6 +355,37 @@ describe("EditDateRangeComponent", () => {
       );
 
       expect(await warning()).toBeUndefined();
+    });
+
+    it("shows no warning icon while editing, as the validator's error shows below the field", async () => {
+      const { warning } = await render(
+        outside,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+
+      expect(await warning()).toBeUndefined();
+    });
+
+    it("validates the dates again when the parent link entered in the form changes", async () => {
+      const { form } = await render(within, null, undefined, false, true);
+      const period = form.get("period");
+      period.setAsyncValidators(
+        withinParentValidator(withinParent, "period", undefined, async () => [
+          { name: "Training", range: { start, end } },
+        ]),
+      );
+      period.setValue(outside);
+      await vi.waitFor(() => expect(period.pending).toBe(false));
+      expect(period.errors).toBeNull();
+
+      form.get("parent").setValue(parentAction.getId());
+
+      await vi.waitFor(() =>
+        expect(period.errors?.withinParent?.warning).toBe(true),
+      );
     });
 
     it("follows a parent link entered in the form", async () => {

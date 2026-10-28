@@ -1,7 +1,7 @@
 import { inject, resource } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
-import { WithinParentConfig } from "../../entity/schema/entity-schema-field";
+import { WithinParentConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { Logging } from "../../logging/logging.service";
 import { asArray } from "app/utils/asArray";
 import { DateRangeValue } from "./date-range.datatype";
@@ -14,8 +14,33 @@ export interface ParentRange {
 }
 
 /**
- * Loads the ranges of the parent records that a record links to
- * (except anonymized ones, whose dates are reduced to the year).
+ * Loads the ranges of the given parent records
+ * (except anonymized ones, whose dates are reduced to the year, and the ones that cannot be loaded).
+ */
+export async function loadParentRanges(
+  entityMapper: EntityMapperService,
+  parentIds: string[],
+  valueField: string,
+): Promise<ParentRange[]> {
+  const load = async (id: string): Promise<Entity | undefined> => {
+    try {
+      return await entityMapper.load(Entity.extractTypeFromId(id), id);
+    } catch (e) {
+      Logging.debug("[DATE_RANGE] Could not load parent record.", id, e);
+      return undefined;
+    }
+  };
+  const parents = await Promise.all(parentIds.map((id) => load(id)));
+  return parents
+    .filter((parent) => !!parent && !parent.anonymized)
+    .map((parent) => ({
+      name: parent.toString(),
+      range: parent[valueField],
+    }));
+}
+
+/**
+ * Loads the ranges of the parent records that a record links to (see {@link loadParentRanges}).
  * Must be called in an injection context (e.g. as a field initializer of a component).
  *
  * @param params the parent link (one or several ids), the config and the id of the field, or undefined if there is nothing to check
@@ -31,15 +56,6 @@ export function parentRangesResource(
 ) {
   const entityMapper = inject(EntityMapperService);
 
-  async function load(id: string): Promise<Entity | undefined> {
-    try {
-      return await entityMapper.load(Entity.extractTypeFromId(id), id);
-    } catch (e) {
-      Logging.debug("[DATE_RANGE] Could not load parent record.", id, e);
-      return undefined;
-    }
-  }
-
   return resource({
     params: () => {
       const current = params();
@@ -51,17 +67,8 @@ export function parentRangesResource(
           }
         : undefined;
     },
-    loader: async ({
-      params: { parentIds, valueField },
-    }): Promise<ParentRange[]> => {
-      const parents = await Promise.all(parentIds.map((id) => load(id)));
-      return parents
-        .filter((parent) => !!parent && !parent.anonymized)
-        .map((parent) => ({
-          name: parent.toString(),
-          range: parent[valueField],
-        }));
-    },
+    loader: ({ params: { parentIds, valueField } }) =>
+      loadParentRanges(entityMapper, parentIds, valueField),
   });
 }
 

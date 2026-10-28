@@ -33,7 +33,7 @@ class DisplayDateRangeTestAction extends Entity {
 
   @DatabaseField({
     dataType: "date-range",
-    withinParent: { parentReferenceField: "parent" },
+    validators: { withinParent: { parentReferenceField: "parent" } },
   })
   period: DateRangeValue;
 }
