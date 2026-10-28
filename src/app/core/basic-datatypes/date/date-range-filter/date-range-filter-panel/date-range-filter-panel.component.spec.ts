@@ -188,6 +188,25 @@ describe("DateRangeFilterPanelComponent", () => {
     );
   });
 
+  it("shades the given range in the calendar while no predefined range is hovered", () => {
+    const parentPeriod = new DateRange(
+      new Date(2023, 2, 1),
+      new Date(2023, 4, 31),
+    );
+    Object.assign(TestBed.inject(MAT_DIALOG_DATA), {
+      highlightRange: parentPeriod,
+    });
+    const panel = TestBed.createComponent(
+      DateRangeFilterPanelComponent,
+    ).componentInstance;
+    expect(panel.comparisonRange()).toEqual(parentPeriod);
+
+    panel.preselectRange(defaultDateFilters[0]);
+    panel.unselectRange();
+
+    expect(panel.comparisonRange()).toEqual(parentPeriod);
+  });
+
   it("should set empty option when selected", () => {
     component.selectRangeAndClose("empty");
     expect(dialogCloseSpy).toHaveBeenCalledWith({

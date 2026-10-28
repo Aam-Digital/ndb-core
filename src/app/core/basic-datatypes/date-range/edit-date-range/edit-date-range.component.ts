@@ -97,14 +97,27 @@ export class EditDateRangeComponent
   readonly rangeOptions = computed<DateRangeFilterConfigOption[]>(() => {
     const configured = this.formFieldConfig()?.additional;
     return [
-      ...(this.parents.value() ?? [])
-        // a predefined range always has an end, so an ongoing period cannot be one
-        .filter(({ range }) => range?.start && range?.end)
-        .map(({ name, range }) =>
-          fixedRangeOption($localize`Period of ${name}`, range),
-        ),
+      ...this.closedParentPeriods().map(({ name, range }) =>
+        fixedRangeOption($localize`Period of ${name}`, range),
+      ),
       ...(Array.isArray(configured) ? configured : periodRangeOptions),
     ];
+  });
+
+  /**
+   * The linked parent periods with a start and an end
+   * (a predefined range always has an end, so an ongoing period cannot be one).
+   */
+  private readonly closedParentPeriods = computed(() =>
+    (this.parents.value() ?? []).filter(
+      ({ range }) => range?.start && range?.end,
+    ),
+  );
+
+  /** shaded in the calendar: the period of the (first) parent */
+  private readonly highlightedParentRange = computed(() => {
+    const range = this.closedParentPeriods()[0]?.range;
+    return range && new DateRange(range.start, range.end);
   });
 
   private readonly currentValue = signal<DateRangeValue | null>(null);
@@ -252,6 +265,7 @@ export class EditDateRangeComponent
           dateRange: new DateRange(start ?? null, end ?? null),
           rangeOptions: this.rangeOptions(),
           hideAllOption: true,
+          highlightRange: this.highlightedParentRange(),
         },
       })
       .afterClosed()

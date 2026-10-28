@@ -103,6 +103,8 @@ export class DateRangeFilterPanelComponent {
      * no "All" option, and without given dates nothing is selected initially.
      */
     hideAllOption?: boolean;
+    /** a range shaded in the calendar while no predefined range is hovered (e.g. the period of a parent record) */
+    highlightRange?: DateRange<Date>;
   };
   private dialogRef =
     inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
@@ -129,7 +131,9 @@ export class DateRangeFilterPanelComponent {
   rangeOptions = signal<DateRangeFilterConfigOption[]>(
     this.data?.rangeOptions ?? [],
   );
-  comparisonRange = signal<DateRange<Date>>(new DateRange(null, null));
+  private readonly highlightRange =
+    this.data?.highlightRange ?? new DateRange<Date>(null, null);
+  comparisonRange = signal<DateRange<Date>>(this.highlightRange);
 
   preselectRange(dateRangeOption): void {
     this.comparisonRange.set(calculateDateRange(dateRangeOption));
@@ -142,7 +146,7 @@ export class DateRangeFilterPanelComponent {
   }
 
   unselectRange() {
-    this.comparisonRange.set(new DateRange(null, null));
+    this.comparisonRange.set(this.highlightRange);
   }
 
   selectRangeAndClose(index: number | "all" | "empty"): void {

@@ -413,6 +413,23 @@ describe("EditDateRangeComponent", () => {
       expect(form.get("period").value).toEqual({ start, end });
     });
 
+    it("shades the parent's period in the calendar", async () => {
+      const { warning, component } = await render(
+        within,
+        parentAction.getId(),
+        undefined,
+        false,
+        true,
+      );
+      await warning();
+
+      component.openPanel(new Event("click"));
+
+      expect(dialog.open.mock.calls[0][1].data.highlightRange).toEqual(
+        new DateRange(start, end),
+      );
+    });
+
     it("does not offer an ongoing parent period (without end) as a predefined period", async () => {
       const { warning, component } = await render(
         within,
