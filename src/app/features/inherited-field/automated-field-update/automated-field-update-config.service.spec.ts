@@ -839,6 +839,27 @@ describe("AutomatedFieldUpdateConfigService", () => {
       expect(mockDialog.open).toHaveBeenCalledOnce();
     });
 
+    it("counts each record once, also if several of its fields are updated", async () => {
+      const project = new CycleAction();
+      const activities = Array.from({ length: 60 }, () => {
+        const activity = new CycleAction();
+        activity.parent = project.getId();
+        return activity;
+      });
+      [project, ...activities].forEach((a) => (a._rev = "1-existing"));
+      entityMapper.addAll([project, ...activities]);
+      const before = project.copy();
+      project.total = toTags(["health"]);
+      mockDialog.open.mockClear();
+      confirmationDialog.getConfirmation.mockClear();
+
+      await service.applyRulesToDependentEntities(project, before);
+
+      expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+      const rows = mockDialog.open.mock.calls[0][1].data.entities;
+      expect(rows.length).toBeGreaterThan(MAX_ENTITIES_TO_REVIEW);
+    });
+
     it("asks the user first, and shows them for review if the user chooses so", async () => {
       const { school } = createSchoolWithChildren(MAX_ENTITIES_TO_REVIEW + 1);
       confirmationDialog.getConfirmation.mockResolvedValueOnce("review");
@@ -2043,6 +2064,29 @@ describe("AutomatedFieldUpdateConfigService", () => {
         expect(previousVersions.map((record) => record.getId()).sort()).toEqual(
           [project.getId(), otherActivity.getId()].sort(),
         );
+      });
+
+      it("does not return a given record that the update changed, also if its own change is not passed on", async () => {
+        const parent = new FieldChainAction();
+        parent.lowerTags = toTags(["water"]);
+        parent.middleTags = toTags(["health"]);
+        const child = new FieldChainAction();
+        child.parent = parent.getId();
+        child.lowerTags = toTags(["health"]);
+        [parent, child].forEach((action) => (action._rev = "1-existing"));
+        entityMapper.addAll([parent, child]);
+        const before = [parent.copy(), child.copy()];
+        // e.g. a bulk edit of both, where the parent already had the value
+        child.lowerTags = toTags(["water"]);
+
+        const previousVersions = await service.applyRulesToDependentEntities(
+          [parent, child],
+          before,
+        );
+
+        const saved = await entityMapper.load(FieldChainAction, parent.getId());
+        expect(saved.middleTags).toEqual(toTags(["water"]));
+        expect(previousVersions).toEqual([]);
       });
 
       it("passes only the records whose change is passed on to the dialog", async () => {

@@ -29,7 +29,7 @@ import {
   QueuedChange,
 } from "./affected-entities-calculation";
 
-/** Above this number of affected entities, the dialog to review them can take long to show, so the user is asked first */
+/** Above this number of affected records, the dialog to review them can take long to show, so the user is asked first */
 export const MAX_ENTITIES_TO_REVIEW = 100;
 
 /** the property of an entity that a reference index can be created for */
@@ -110,7 +110,9 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
 
     const { previousVersions } =
       await this.confirmAndSaveAffectedEntities(triggers);
-    return previousVersions;
+    // the caller has the given entities as they were before their change
+    const givenIds = new Set(entities.map((entity) => entity.getId()));
+    return previousVersions.filter((entity) => !givenIds.has(entity.getId()));
   }
 
   /**
@@ -607,10 +609,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
         (update) => entity && !isSameValue(update.newValue, update.savedValue),
       );
       if (changes.length > 0) {
-        // the caller has the changed entities themselves as they were before their change
-        if (!triggers.some((t) => t.entity.getId() === entity.getId())) {
-          previousVersions.push(entity.copy());
-        }
+        previousVersions.push(entity.copy());
         changes.forEach((update) => {
           entity[update.targetFieldId] =
             this.entitySchemaService.valueToEntityFormat(
@@ -635,8 +634,10 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     entitiesToUpdate: AffectedEntity[],
     triggers: UpdateTrigger[],
   ): Promise<AffectedEntity[] | null> {
-    if (entitiesToUpdate.length > MAX_ENTITIES_TO_REVIEW) {
-      const choice = await this.askHowToConfirmMany(entitiesToUpdate, triggers);
+    // an entity is listed once for each of its fields that is updated
+    const count = new Set(entitiesToUpdate.map((entity) => entity.id)).size;
+    if (count > MAX_ENTITIES_TO_REVIEW) {
+      const choice = await this.askHowToConfirmMany(count, triggers.length > 1);
       if (choice === "update-all") return entitiesToUpdate;
       if (choice !== "review") return null;
     }
@@ -644,23 +645,25 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
   }
 
   private askHowToConfirmMany(
-    entitiesToUpdate: AffectedEntity[],
-    triggers: UpdateTrigger[],
+    count: number,
+    afterBulkEdit: boolean,
   ): Promise<boolean | string | undefined> {
-    const count = new Set(entitiesToUpdate.map((entity) => entity.id)).size;
-    let text = $localize`:automated update of many related records:Showing all of them for review may take a while. You can also update all of them with the suggested values directly.`;
-    if (triggers.length > 1) {
+    let text = $localize`Showing all of them for review may take a while. You can also update all of them with the suggested values directly.`;
+    if (afterBulkEdit) {
       text +=
-        "\n\n" +
-        $localize`:automated update of many related records after a bulk edit:If this is too slow, edit fewer records at once.`;
+        "\n\n" + $localize`If this is too slow, edit fewer records at once.`;
     }
     const buttons: ConfirmationDialogButton[] = [
-      { text: $localize`Review`, dialogResult: "review", click() {} },
+      {
+        text: $localize`:button to show the related records for review:Review`,
+        dialogResult: "review",
+        click() {},
+      },
       { text: $localize`Update all`, dialogResult: "update-all", click() {} },
       { text: $localize`Do not update`, dialogResult: false, click() {} },
     ];
     return this.confirmationDialog.getConfirmation(
-      $localize`:automated update of many related records:Update ${count}:count: related records?`,
+      $localize`Update ${count}:count: related records?`,
       text,
       buttons,
     );
