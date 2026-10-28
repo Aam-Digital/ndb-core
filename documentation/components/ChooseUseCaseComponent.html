@@ -192,9 +192,11 @@
 </div>
                         <div>    <code>MatCheckboxModule</code>
 </div>
-                        <div>    <code>MarkdownComponent</code>
+                        <div>    <code>MatSlideToggleModule</code>
 </div>
-                        <div>        <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+                        <div>    <code>MatTooltipModule</code>
+</div>
+                        <div>    <code>MarkdownComponent</code>
 </div>
                 </td>
             </tr>
@@ -246,10 +248,13 @@
                                         <code>MatCheckboxModule</code>
                                 </li>
                                 <li>
-                                        <code>MarkdownComponent</code>
+                                        <code>MatSlideToggleModule</code>
                                 </li>
                                 <li>
-                                            <code><a href="https://angular.dev/api/forms/FormsModule" target="_blank" >FormsModule</a></code>
+                                        <code>MatTooltipModule</code>
+                                </li>
+                                <li>
+                                        <code>MarkdownComponent</code>
                                 </li>
                         </ul>
                 </div>
@@ -273,7 +278,20 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#compareUseCases" >compareUseCases</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#emptySystemPlaceholder" >emptySystemPlaceholder</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#hasNoUseCaseInCurrentLocale" >hasNoUseCaseInCurrentLocale</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#hasUseCasesInOtherLanguages" >hasUseCasesInOtherLanguages</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -281,11 +299,29 @@
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#otherLanguageHint" >otherLanguageHint</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#revealOtherLanguages" >revealOtherLanguages</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#selectedUseCase" >selectedUseCase</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                <a href="#showOtherLanguages" >showOtherLanguages</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
                                 <a href="#startFromScratch" >startFromScratch</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#startFromScratchHint" >startFromScratchHint</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--property" aria-hidden="true">P</span>
@@ -308,6 +344,10 @@
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
                                 <a href="#onSelectionChange" >onSelectionChange</a>
+                            </li>
+                            <li>
+                                <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
+                                <a href="#onShowOtherLanguagesChange" >onShowOtherLanguagesChange</a>
                             </li>
                             <li>
                                 <span class="reference-badge reference-badge--method" aria-hidden="true">M</span>
@@ -375,7 +415,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="36" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:36</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="46" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:46</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -400,7 +440,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-2" colspan="2">
-                                    <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:86</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="48" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:48</a></div>
                             </td>
                         </tr>
             </tbody>
@@ -427,15 +467,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>onSelectionChange()</code>
+<code>onSelectionChange(option: <a href="../interfaces/UseCaseOption.html" target="_self">UseCaseOption</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="91"
-                                    class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:91</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:121</a></div>
                         </td>
                     </tr>
 
@@ -443,10 +483,107 @@
             <tr>
                 <td class="col-md-4">
 
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>option</td>
+                                            <td>
+                                                            <code><a href="../interfaces/UseCaseOption.html" target="_self" >UseCaseOption</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         <div class="io-description">
                             <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
 
                         </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onShowOtherLanguagesChange"></a>
+                    <span class="name">
+                        <span ><b>onShowOtherLanguagesChange</b></span>
+                        <a href="#onShowOtherLanguagesChange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onShowOtherLanguagesChange(checked: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:137</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>checked</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
                 </td>
             </tr>
         </tbody>
@@ -471,17 +608,14 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="126"
+                                    class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:126</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                        <div class="io-description"><p>Starting from scratch is an alternative to picking a scenario, not one of them,
-so it replaces the dropdown&#39;s selection while it is ticked.</p>
-</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -549,26 +683,104 @@ so it replaces the dropdown&#39;s selection while it is ticked.</p>
                     <td class="col-md-4">
                         <i>Default value : </i><code>computed(() &#x3D;&gt; {
     const offered &#x3D; this.offeredInCurrentLocale();
-    return this.scenarios()
-      .filter((uc) &#x3D;&gt; offered.has(uc) || this.hasNoUseCaseInCurrentLocale())
-      .map((config) &#x3D;&gt; this.toOption(config));
+    const showAll &#x3D; this.revealOtherLanguages();
+    const languageName &#x3D; this.languageNamer();
+    return (
+      this.scenarios()
+        .filter((uc) &#x3D;&gt; offered.has(uc) || showAll)
+        .map((config) &#x3D;&gt; ({
+          ...this.toOption(config),
+          offered: offered.has(config),
+          languages: languageName(config.locale),
+        }))
+        // a stable sort, so the configured order is kept within each group
+        .sort((a, b) &#x3D;&gt; Number(b.offered) - Number(a.offered))
+    );
   })</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:66</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="95" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:95</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Falls back to offering every use case rather than switching the user&#39;s language
-for them - they came here in the language they want to work in. The ones from
-another language are greyed out, so the mismatch is visible rather than silent.</p>
+                    <div class="io-description"><p>Use cases of another language are greyed out rather than switching the user&#39;s
+language for them - they came here in the language they want to work in.</p>
 </div>
                 </td>
             </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="compareUseCases"></a>
+                    <span class="name">
+                        <span ><b>compareUseCases</b></span>
+                        <a href="#compareUseCases"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; {...}</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="118" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:118</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The option wrappers are rebuilt, so match on the config they wrap.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="emptySystemPlaceholder"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>emptySystemPlaceholder</b></span>
+                        <a href="#emptySystemPlaceholder"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:Setup wizard - use case placeholder while starting from scratch:empty system&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:55</a></div>
+                        </td>
+                    </tr>
+
 
         </tbody>
     </table>
@@ -600,7 +812,7 @@ another language are greyed out, so the mismatch is visible rather than silent.<
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="55" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:55</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="75" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:75</a></div>
                         </td>
                     </tr>
 
@@ -610,6 +822,40 @@ another language are greyed out, so the mismatch is visible rather than silent.<
 </div>
                 </td>
             </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasUseCasesInOtherLanguages"></a>
+                    <span class="name">
+                        <span ><b>hasUseCasesInOtherLanguages</b></span>
+                        <a href="#hasUseCasesInOtherLanguages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(() &#x3D;&gt; {
+    const offered &#x3D; this.offeredInCurrentLocale();
+    return this.scenarios().some((uc) &#x3D;&gt; !offered.has(uc));
+  })</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:81</a></div>
+                        </td>
+                    </tr>
+
 
         </tbody>
     </table>
@@ -642,13 +888,84 @@ another language are greyed out, so the mismatch is visible rather than silent.<
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="47" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:47</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:67</a></div>
                         </td>
                     </tr>
 
             <tr>
                 <td class="col-md-4">
                     <div class="io-description"><p>Precomputed, so the template does not re-check every option on each cycle.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="otherLanguageHint"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>otherLanguageHint</b></span>
+                        <a href="#otherLanguageHint"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:Setup wizard - tooltip on a use case that is not in the user&#x27;s language:This use case is not available in your language. Its texts come in the language shown.&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="56" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:56</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="revealOtherLanguages"></a>
+                    <span class="name">
+                        <span ><b>revealOtherLanguages</b></span>
+                        <a href="#revealOtherLanguages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>Signal&lt;boolean&gt;</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>computed(
+    () &#x3D;&gt; this.showOtherLanguages() || this.hasNoUseCaseInCurrentLocale(),
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="87" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:87</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Fixed on with nothing in the user&#39;s language, to explain the greyed-out options.</p>
 </div>
                 </td>
             </tr>
@@ -668,13 +985,49 @@ another language are greyed out, so the mismatch is visible rather than silent.<
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="../interfaces/UseCaseOption.html" target="_self" >UseCaseOption</a></code>
+                        <i>Type : </i>    <code>unknown</code>
 
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal&lt;UseCaseOption | undefined&gt;(undefined)</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="88" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:88</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:50</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showOtherLanguages"></a>
+                    <span class="name">
+                        <span ><b>showOtherLanguages</b></span>
+                        <a href="#showOtherLanguages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>signal(false)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="52" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:52</a></div>
                         </td>
                     </tr>
 
@@ -705,7 +1058,39 @@ another language are greyed out, so the mismatch is visible rather than silent.<
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="89" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:89</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="51" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startFromScratchHint"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>startFromScratchHint</b></span>
+                        <a href="#startFromScratchHint"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:Setup wizard - start from scratch tooltip:Set up a system without any predefined record types and define your own from the admin screens.&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="54" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -739,7 +1124,7 @@ another language are greyed out, so the mismatch is visible rather than silent.<
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="73" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:73</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="112" class="link-to-prism">src/app/core/setup/system-init-assistant/choose-use-case/choose-use-case.component.ts:112</a></div>
                         </td>
                     </tr>
 
@@ -767,27 +1152,47 @@ import { BaseConfig, isOfferedInLocale } from &quot;../../base-config&quot;;
 import { resolveLocaleText } from &quot;app/core/language/active-locale&quot;;
 import { MatSelectModule } from &quot;@angular/material/select&quot;;
 import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import { MatSlideToggleModule } from &quot;@angular/material/slide-toggle&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
 import { MarkdownComponent } from &quot;ngx-markdown&quot;;
-import { FormsModule } from &quot;@angular/forms&quot;;
 import { LanguageService } from &quot;app/core/language/language.service&quot;;
+import { asArray } from &quot;app/utils/asArray&quot;;
 
 export interface UseCaseOption {
   config: BaseConfig;
   name: string;
   description: string;
+  offered?: boolean;
+  languages?: string;
 }
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: &quot;app-choose-use-case&quot;,
   templateUrl: &quot;./choose-use-case.component.html&quot;,
-  imports: [MatSelectModule, MatCheckboxModule, MarkdownComponent, FormsModule],
+  imports: [
+    MatSelectModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    MatTooltipModule,
+    MarkdownComponent,
+  ],
   styleUrls: [&quot;./choose-use-case.component.scss&quot;],
 })
 export class ChooseUseCaseComponent {
   private readonly languageService &#x3D; inject(LanguageService);
 
   useCases: InputSignal&lt;BaseConfig[]&gt; &#x3D; input([]);
+
+  selectionChanged &#x3D; output&lt;BaseConfig | null&gt;();
+
+  selectedUseCase &#x3D; signal&lt;UseCaseOption | undefined&gt;(undefined);
+  startFromScratch &#x3D; signal(false);
+  showOtherLanguages &#x3D; signal(false);
+
+  readonly startFromScratchHint &#x3D; $localize&#x60;:Setup wizard - start from scratch tooltip:Set up a system without any predefined record types and define your own from the admin screens.&#x60;;
+  readonly emptySystemPlaceholder &#x3D; $localize&#x60;:Setup wizard - use case placeholder while starting from scratch:empty system&#x60;;
+  readonly otherLanguageHint &#x3D; $localize&#x60;:Setup wizard - tooltip on a use case that is not in the user&#x27;s language:This use case is not available in your language. Its texts come in the language shown.&#x60;;
 
   private readonly scenarios &#x3D; computed(() &#x3D;&gt;
     this.useCases().filter((uc) &#x3D;&gt; !uc.startFromScratch),
@@ -812,22 +1217,85 @@ export class ChooseUseCaseComponent {
     return localised.length &gt; 0 &amp;&amp; !localised.some((uc) &#x3D;&gt; offered.has(uc));
   });
 
+  hasUseCasesInOtherLanguages: Signal&lt;boolean&gt; &#x3D; computed(() &#x3D;&gt; {
+    const offered &#x3D; this.offeredInCurrentLocale();
+    return this.scenarios().some((uc) &#x3D;&gt; !offered.has(uc));
+  });
+
+  /** Fixed on with nothing in the user&#x27;s language, to explain the greyed-out options. */
+  revealOtherLanguages: Signal&lt;boolean&gt; &#x3D; computed(
+    () &#x3D;&gt; this.showOtherLanguages() || this.hasNoUseCaseInCurrentLocale(),
+  );
+
   /**
-   * Falls back to offering every use case rather than switching the user&#x27;s language
-   * for them - they came here in the language they want to work in. The ones from
-   * another language are greyed out, so the mismatch is visible rather than silent.
+   * Use cases of another language are greyed out rather than switching the user&#x27;s
+   * language for them - they came here in the language they want to work in.
    */
   availableUseCases: Signal&lt;UseCaseOption[]&gt; &#x3D; computed(() &#x3D;&gt; {
     const offered &#x3D; this.offeredInCurrentLocale();
-    return this.scenarios()
-      .filter((uc) &#x3D;&gt; offered.has(uc) || this.hasNoUseCaseInCurrentLocale())
-      .map((config) &#x3D;&gt; this.toOption(config));
+    const showAll &#x3D; this.revealOtherLanguages();
+    const languageName &#x3D; this.languageNamer();
+    return (
+      this.scenarios()
+        .filter((uc) &#x3D;&gt; offered.has(uc) || showAll)
+        .map((config) &#x3D;&gt; ({
+          ...this.toOption(config),
+          offered: offered.has(config),
+          languages: languageName(config.locale),
+        }))
+        // a stable sort, so the configured order is kept within each group
+        .sort((a, b) &#x3D;&gt; Number(b.offered) - Number(a.offered))
+    );
   });
 
   startFromScratchUseCase: Signal&lt;UseCaseOption | undefined&gt; &#x3D; computed(() &#x3D;&gt; {
     const config &#x3D; this.useCases().find((uc) &#x3D;&gt; uc.startFromScratch);
     return config ? this.toOption(config) : undefined;
   });
+
+  /** The option wrappers are rebuilt, so match on the config they wrap. */
+  compareUseCases &#x3D; (a: UseCaseOption, b: UseCaseOption) &#x3D;&gt;
+    a?.config &#x3D;&#x3D;&#x3D; b?.config;
+
+  onSelectionChange(option: UseCaseOption) {
+    this.selectedUseCase.set(option);
+    this.selectionChanged.emit(option.config);
+  }
+
+  onStartFromScratchChange(checked: boolean) {
+    this.startFromScratch.set(checked);
+    if (checked) {
+      // a pick left in the disabled dropdown would read as if it were still used
+      this.selectedUseCase.set(undefined);
+    }
+    this.selectionChanged.emit(
+      checked ? (this.startFromScratchUseCase()?.config ?? null) : null,
+    );
+  }
+
+  onShowOtherLanguagesChange(checked: boolean) {
+    this.showOtherLanguages.set(checked);
+    const selected &#x3D; this.selectedUseCase()?.config;
+    if (!checked &amp;&amp; selected &amp;&amp; !this.offeredInCurrentLocale().has(selected)) {
+      // no longer in the list, so the dropdown would show a blank selection
+      this.selectedUseCase.set(undefined);
+      this.selectionChanged.emit(null);
+    }
+  }
+
+  /** Names the languages of a use case in the user&#x27;s own language, e.g. &quot;German, French&quot;. */
+  private languageNamer(): (locale: BaseConfig[&quot;locale&quot;]) &#x3D;&gt; string {
+    const names &#x3D; new Intl.DisplayNames(
+      [this.languageService.getCurrentLocale()],
+      { type: &quot;language&quot;, fallback: &quot;code&quot; },
+    );
+    return (locale) &#x3D;&gt;
+      locale
+        ? asArray(locale)
+            .map((l) &#x3D;&gt; names.of(l) ?? l)
+            .join(&quot;, &quot;)
+        : &quot;&quot;;
+  }
 
   private toOption(config: BaseConfig): UseCaseOption {
     return {
@@ -836,49 +1304,37 @@ export class ChooseUseCaseComponent {
       description: resolveLocaleText(config.description) ?? &quot;&quot;,
     };
   }
-
-  selectionChanged &#x3D; output&lt;BaseConfig | null&gt;();
-
-  selectedUseCase: UseCaseOption;
-  startFromScratch &#x3D; signal(false);
-
-  onSelectionChange() {
-    this.selectionChanged.emit(this.selectedUseCase.config);
-  }
-
-  /**
-   * Starting from scratch is an alternative to picking a scenario, not one of them,
-   * so it replaces the dropdown&#x27;s selection while it is ticked.
-   */
-  onStartFromScratchChange(checked: boolean) {
-    this.startFromScratch.set(checked);
-    this.selectionChanged.emit(
-      checked
-        ? (this.startFromScratchUseCase()?.config ?? null)
-        : (this.selectedUseCase?.config ?? null),
-    );
-  }
 }
 </code></pre>
     </div>
 
     <div class="tab-pane fade " id="templateData">
         <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;flex-row flex-wrap gap-regular align-center&quot;&gt;
-  &lt;div class&#x3D;&quot;flex-1 flex-column gap-x-small&quot;&gt;
-    &lt;mat-form-field appearance&#x3D;&quot;fill&quot; class&#x3D;&quot;min-width&quot;&gt;
+  &lt;div class&#x3D;&quot;flex-1 flex-column gap-small use-case-options&quot;&gt;
+    &lt;mat-form-field
+      appearance&#x3D;&quot;fill&quot;
+      class&#x3D;&quot;min-width&quot;
+      [floatLabel]&#x3D;&quot;startFromScratch() ? &#x27;always&#x27; : &#x27;auto&#x27;&quot;
+    &gt;
       &lt;mat-label i18n&gt;Select your use case:&lt;/mat-label&gt;
 
       &lt;mat-select
-        [(ngModel)]&#x3D;&quot;selectedUseCase&quot;
-        (selectionChange)&#x3D;&quot;onSelectionChange()&quot;
+        [value]&#x3D;&quot;selectedUseCase()&quot;
+        (selectionChange)&#x3D;&quot;onSelectionChange($event.value)&quot;
         [disabled]&#x3D;&quot;startFromScratch()&quot;
+        [placeholder]&#x3D;&quot;startFromScratch() ? emptySystemPlaceholder : &#x27;&#x27;&quot;
+        [compareWith]&#x3D;&quot;compareUseCases&quot;
       &gt;
         @for (useCase of availableUseCases(); track useCase.config.id) {
           &lt;mat-option
             [value]&#x3D;&quot;useCase&quot;
-            [class.greyed-out]&#x3D;&quot;!offeredInCurrentLocale().has(useCase.config)&quot;
+            [class.greyed-out]&#x3D;&quot;!useCase.offered&quot;
+            [matTooltip]&#x3D;&quot;useCase.offered ? &#x27;&#x27; : otherLanguageHint&quot;
           &gt;
             {{ useCase.name }}
+            @if (!useCase.offered &amp;&amp; useCase.languages) {
+              &lt;span class&#x3D;&quot;option-language-tag&quot;&gt;{{ useCase.languages }}&lt;/span&gt;
+            }
           &lt;/mat-option&gt;
         }
       &lt;/mat-select&gt;
@@ -896,10 +1352,24 @@ export class ChooseUseCaseComponent {
       }
     &lt;/mat-form-field&gt;
 
+    @if (hasUseCasesInOtherLanguages()) {
+      &lt;mat-slide-toggle
+        [checked]&#x3D;&quot;revealOtherLanguages()&quot;
+        [disabled]&#x3D;&quot;hasNoUseCaseInCurrentLocale()&quot;
+        (change)&#x3D;&quot;onShowOtherLanguagesChange($event.checked)&quot;
+        i18n&#x3D;&quot;
+          Setup wizard - reveal use cases that are not in the user&#x27;s language
+        &quot;
+      &gt;
+        Show use cases of other languages
+      &lt;/mat-slide-toggle&gt;
+    }
+
     @if (startFromScratchUseCase(); as blankUseCase) {
       &lt;mat-checkbox
         [checked]&#x3D;&quot;startFromScratch()&quot;
         (change)&#x3D;&quot;onStartFromScratchChange($event.checked)&quot;
+        [matTooltip]&#x3D;&quot;startFromScratchHint&quot;
       &gt;
         {{ blankUseCase.name }}
       &lt;/mat-checkbox&gt;
@@ -913,8 +1383,8 @@ export class ChooseUseCaseComponent {
         [data]&#x3D;&quot;startFromScratchUseCase()?.description&quot;
         dir&#x3D;&quot;auto&quot;
       &gt;&lt;/div&gt;
-    } @else if (selectedUseCase) {
-      &lt;div markdown [data]&#x3D;&quot;selectedUseCase.description&quot; dir&#x3D;&quot;auto&quot;&gt;&lt;/div&gt;
+    } @else if (selectedUseCase(); as useCase) {
+      &lt;div markdown [data]&#x3D;&quot;useCase.description&quot; dir&#x3D;&quot;auto&quot;&gt;&lt;/div&gt;
     } @else {
       &lt;p class&#x3D;&quot;description-no-use-case&quot; i18n&gt;
         Select a use case as an initial configuration for your system.
@@ -948,20 +1418,28 @@ export class ChooseUseCaseComponent {
   color: colors.$hint-text;
 }
 
-.hidden {
-  padding: 0;
-  box-shadow: none;
-  visibility: hidden;
-  height: 0;
-}
-
 .greyed-out {
   opacity: 0.5;
+}
+
+.option-language-tag {
+  margin-inline-start: 8px;
+  font-size: 0.75em;
+  color: colors.$hint-text;
 }
 
 .min-width {
   min-width: 240px;
   margin-bottom: 0;
+}
+
+.use-case-options {
+  padding-inline-start: 12px;
+  min-width: 0;
+
+  ::ng-deep .mat-mdc-slide-toggle label {
+    white-space: normal;
+  }
 }
 </code></pre>
     </div>
@@ -991,7 +1469,7 @@ export class ChooseUseCaseComponent {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="flex-row flex-wrap gap-regular align-center">  <div class="flex-1 flex-column gap-x-small">    <mat-form-field appearance="fill" class="min-width">      <mat-label i18n>Select your use case:</mat-label>      <mat-select        [(ngModel)]="selectedUseCase"        (selectionChange)="onSelectionChange()"        [disabled]="startFromScratch()"      >        @for (useCase of availableUseCases(); track useCase.config.id) {          <mat-option            [value]="useCase"            [class.greyed-out]="!offeredInCurrentLocale().has(useCase.config)"          >            {{ useCase.name }}          </mat-option>        }      </mat-select>      @if (hasNoUseCaseInCurrentLocale()) {        <mat-hint          i18n="            Setup wizard hint, shown when no setup scenario exists in the user\'s            own language and the ones from other languages are offered greyed            out instead          "        >          Nothing in your language yet - you can still choose one of these.        </mat-hint>      }    </mat-form-field>    @if (startFromScratchUseCase(); as blankUseCase) {      <mat-checkbox        [checked]="startFromScratch()"        (change)="onStartFromScratchChange($event.checked)"      >        {{ blankUseCase.name }}      </mat-checkbox>    }  </div>  <div class="flex-1 description-container">    @if (startFromScratch()) {      <div        markdown        [data]="startFromScratchUseCase()?.description"        dir="auto"      ></div>    } @else if (selectedUseCase) {      <div markdown [data]="selectedUseCase.description" dir="auto"></div>    } @else {      <p class="description-no-use-case" i18n>        Select a use case as an initial configuration for your system.      </p>    }  </div></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="flex-row flex-wrap gap-regular align-center">  <div class="flex-1 flex-column gap-small use-case-options">    <mat-form-field      appearance="fill"      class="min-width"      [floatLabel]="startFromScratch() ? \'always\' : \'auto\'"    >      <mat-label i18n>Select your use case:</mat-label>      <mat-select        [value]="selectedUseCase()"        (selectionChange)="onSelectionChange($event.value)"        [disabled]="startFromScratch()"        [placeholder]="startFromScratch() ? emptySystemPlaceholder : \'\'"        [compareWith]="compareUseCases"      >        @for (useCase of availableUseCases(); track useCase.config.id) {          <mat-option            [value]="useCase"            [class.greyed-out]="!useCase.offered"            [matTooltip]="useCase.offered ? \'\' : otherLanguageHint"          >            {{ useCase.name }}            @if (!useCase.offered && useCase.languages) {              <span class="option-language-tag">{{ useCase.languages }}</span>            }          </mat-option>        }      </mat-select>      @if (hasNoUseCaseInCurrentLocale()) {        <mat-hint          i18n="            Setup wizard hint, shown when no setup scenario exists in the user\'s            own language and the ones from other languages are offered greyed            out instead          "        >          Nothing in your language yet - you can still choose one of these.        </mat-hint>      }    </mat-form-field>    @if (hasUseCasesInOtherLanguages()) {      <mat-slide-toggle        [checked]="revealOtherLanguages()"        [disabled]="hasNoUseCaseInCurrentLocale()"        (change)="onShowOtherLanguagesChange($event.checked)"        i18n="          Setup wizard - reveal use cases that are not in the user\'s language        "      >        Show use cases of other languages      </mat-slide-toggle>    }    @if (startFromScratchUseCase(); as blankUseCase) {      <mat-checkbox        [checked]="startFromScratch()"        (change)="onStartFromScratchChange($event.checked)"        [matTooltip]="startFromScratchHint"      >        {{ blankUseCase.name }}      </mat-checkbox>    }  </div>  <div class="flex-1 description-container">    @if (startFromScratch()) {      <div        markdown        [data]="startFromScratchUseCase()?.description"        dir="auto"      ></div>    } @else if (selectedUseCase(); as useCase) {      <div markdown [data]="useCase.description" dir="auto"></div>    } @else {      <p class="description-no-use-case" i18n>        Select a use case as an initial configuration for your system.      </p>    }  </div></div></div>'
     var COMPONENTS = [{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressGpsLocationComponent', 'selector': 'app-address-gps-location'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminAiAgentComponent', 'selector': 'app-admin-ai-agent'},{'name': 'AdminConfigCleanupComponent', 'selector': 'app-admin-config-cleanup'},{'name': 'AdminDashboardComponent', 'selector': 'app-admin-dashboard'},{'name': 'AdminDefaultValueComponent', 'selector': 'app-admin-default-value'},{'name': 'AdminDefaultValueDynamicComponent', 'selector': 'app-admin-default-value-dynamic'},{'name': 'AdminDefaultValueStaticComponent', 'selector': 'app-admin-default-value-static'},{'name': 'AdminDisplayConditionButtonComponent', 'selector': 'app-admin-display-condition-button'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityPublicFormsComponent', 'selector': 'app-admin-entity-public-forms-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminInheritedFieldComponent', 'selector': 'app-admin-inherited-field'},{'name': 'AdminListManagerComponent', 'selector': 'app-admin-list-manager'},{'name': 'AdminMatchingEntitiesComponent', 'selector': 'app-admin-matching-entities'},{'name': 'AdminMenuComponent', 'selector': 'app-admin-menu'},{'name': 'AdminMenuItemComponent', 'selector': 'app-admin-menu-item'},{'name': 'AdminMenuItemDetailsComponent', 'selector': 'app-admin-menu-item-details'},{'name': 'AdminNoteDetailsComponent', 'selector': 'app-admin-note-details'},{'name': 'AdminOverviewComponent', 'selector': 'app-admin-overview'},{'name': 'AdminPrimaryActionComponent', 'selector': 'app-admin-primary-action'},{'name': 'AdminRelatedEntityDetailsComponent', 'selector': 'app-admin-related-entity-details'},{'name': 'AdminRoleDetailsComponent', 'selector': 'app-admin-role-details'},{'name': 'AdminRolesListComponent', 'selector': 'app-admin-roles-list'},{'name': 'AdminSearchableCheckboxComponent', 'selector': 'app-admin-searchable-checkbox'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AdminWidgetDialogComponent', 'selector': 'app-admin-widget-dialog'},{'name': 'AdvancedFeaturesComponent', 'selector': 'app-advanced-features'},{'name': 'AffectedEntityValueComponent', 'selector': 'app-affected-entity-value'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'ApiClientCredentialsDialogComponent', 'selector': 'app-api-client-credentials-dialog'},{'name': 'ApiClientListComponent', 'selector': 'app-api-client-list'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': 'app-application-loading'},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AssistantButtonComponent', 'selector': 'app-assistant-button'},{'name': 'AssistantDialogComponent', 'selector': 'app-assistant-dialog'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'AttendanceWeekDashboardSettingsComponent', 'selector': 'app-attendance-week-dashboard-settings'},{'name': 'AutomatedFieldMappingComponent', 'selector': 'app-automated-field-mapping'},{'name': 'AutomatedFieldUpdateComponent', 'selector': 'app-automated-field-update'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BirthdayDashboardSettingsComponent', 'selector': 'app-birthday-dashboard-settings'},{'name': 'BulkLinkExternalProfilesComponent', 'selector': 'app-bulk-link-external-profiles'},{'name': 'BulkMergeRecordsComponent', 'selector': 'app-bulk-merge-records'},{'name': 'ChangeHistoryActionBadgeComponent', 'selector': 'app-change-history-action-badge'},{'name': 'ChangeHistoryChangedFieldsComponent', 'selector': 'app-change-history-changed-fields'},{'name': 'ChangeHistoryDialogComponent', 'selector': 'app-change-history-dialog'},{'name': 'ChangeHistoryListComponent', 'selector': 'app-change-history-list'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChooseUseCaseComponent', 'selector': 'app-choose-use-case'},{'name': 'ColorInputComponent', 'selector': 'app-color-input'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConditionalColorConfigComponent', 'selector': 'app-conditional-color-config'},{'name': 'ConditionalColorSectionComponent', 'selector': 'app-conditional-color-section'},{'name': 'ConditionEditorDialogComponent', 'selector': 'app-condition-editor-dialog'},{'name': 'ConditionsEditorComponent', 'selector': 'app-conditions-editor'},{'name': 'ConfigurableEnumCleanupComponent', 'selector': 'app-configurable-enum-cleanup'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfigureTranslationsPopupComponent', 'selector': 'app-configure-translations-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'ContextAwareAssistantComponent', 'selector': 'app-context-aware-assistant'},{'name': 'CreateApiClientDialogComponent', 'selector': 'app-create-api-client-dialog'},{'name': 'CustomFormLinkButtonComponent', 'selector': 'app-custom-form-link-button'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DataPrivacyComponent', 'selector': 'app-data-privacy'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateImportDialogComponent', 'selector': 'app-date-import-dialog'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DiscreteImportDialogComponent', 'selector': 'app-discrete-import-dialog'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayAttendanceComponent', 'selector': 'app-display-attendance'},{'name': 'DisplayAuditRecordComponent', 'selector': 'app-display-audit-record'},{'name': 'DisplayAuditTimestampComponent', 'selector': 'app-display-audit-timestamp'},{'name': 'DisplayAuditUserComponent', 'selector': 'app-display-audit-user'},{'name': 'DisplayCalculatedValueComponent', 'selector': 'app-display-calculated-value'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDateRangeComponent', 'selector': 'app-display-date-range'},{'name': 'DisplayDescriptionOnlyComponent', 'selector': 'app-display-description-only'},{'name': 'DisplayEmailComponent', 'selector': 'app-display-email'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayEntityTypeComponent', 'selector': 'app-display-entity-type'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayLongTextComponent', 'selector': 'app-display-long-text'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayTranslatableTextComponent', 'selector': 'app-display-translatable-text'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'DisplayUrlComponent', 'selector': 'app-display-url'},{'name': 'DynamicEditComponent', 'selector': 'app-dynamic-edit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditAvailableLocalesComponent', 'selector': 'app-edit-available-locales'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDateFormatComponent', 'selector': 'app-edit-date-format'},{'name': 'EditDateRangeComponent', 'selector': 'app-edit-date-range'},{'name': 'EditEmailComponent', 'selector': 'app-edit-email'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditEntityTypeComponent', 'selector': 'app-edit-entity-type'},{'name': 'EditExternalProfileLinkComponent', 'selector': 'app-edit-external-profile-link'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditImportColumnMappingComponent', 'selector': 'app-edit-import-column-mapping'},{'name': 'EditJsonComponent', 'selector': 'app-edit-json'},{'name': 'EditLegacyAttendanceComponent', 'selector': 'app-edit-legacy-attendance'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMatchingEntitySideComponent', 'selector': 'app-edit-matching-entity-side'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNewMatchActionComponent', 'selector': 'app-new-match-action'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditPrefilledValuesComponent', 'selector': 'app-edit-prefilled-values'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditPublicFormColumnsComponent', 'selector': 'app-edit-public-form-columns'},{'name': 'EditPublicFormRelatedEntitiesComponent', 'selector': 'app-edit-public-form-related-entities'},{'name': 'EditPublicformRouteComponent', 'selector': 'app-edit-publicform-route'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditReportDefinitionComponent', 'selector': 'app-edit-report-definition'},{'name': 'EditReportModeComponent', 'selector': 'app-edit-report-mode'},{'name': 'EditReportPeriodToggleComponent', 'selector': 'app-edit-report-period-toggle'},{'name': 'EditTemplateExportFileComponent', 'selector': 'app-template-export-file'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EditTodoCompletionComponent', 'selector': 'app-edit-todo-completion'},{'name': 'EditUrlComponent', 'selector': 'app-edit-url'},{'name': 'EmailTemplateSelectionDialogComponent', 'selector': 'app-email-template-selection-dialog'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityBulkActionsComponent', 'selector': 'app-entity-bulk-actions'},{'name': 'EntityBulkEditComponent', 'selector': 'app-entity-bulk-edit'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCountDashboardSettingsComponent', 'selector': 'app-entity-count-dashboard-settings'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldSelectComponent', 'selector': 'app-entity-field-select'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntityTypeSelectComponent', 'selector': 'app-entity-type-select'},{'name': 'EntityUserComponent', 'selector': 'app-entity-user'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'ExportDialogComponent', 'selector': 'app-export-dialog'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FeatureDisabledInfoComponent', 'selector': 'app-feature-disabled-info'},{'name': 'FeaturePermissionDialogComponent', 'selector': 'app-feature-permission-dialog'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GotoThirdPartySystemComponent', 'selector': 'app-goto-third-party-system'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HintBoxComponent', 'selector': 'app-hint-box'},{'name': 'IconButtonComponent', 'selector': 'app-icon-button'},{'name': 'IconComponent', 'selector': 'app-icon-input'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportantNotesDashboardSettingsComponent', 'selector': 'app-important-notes-dashboard-settings'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportMatchExistingComponent', 'selector': 'app-import-match-existing'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InheritedValueButtonComponent', 'selector': 'app-inherited-value-button'},{'name': 'JsonEditorComponent', 'selector': 'app-json-editor'},{'name': 'JsonEditorDialogComponent', 'selector': 'app-json-editor-dialog'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'LinkExternalProfileDialogComponent', 'selector': 'app-link-external-profile-dialog'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationImportConfigComponent', 'selector': 'app-location-import-config'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'MenuItemComponent', 'selector': 'app-menu-item'},{'name': 'MenuItemFormComponent', 'selector': 'app-menu-item-form'},{'name': 'MenuItemListEditorComponent', 'selector': 'app-menu-item-list-editor'},{'name': 'MergeAccountSectionComponent', 'selector': 'app-merge-account-section'},{'name': 'MergeFieldsComponent', 'selector': 'app-merge-fields'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoCommonValueHintComponent', 'selector': 'app-no-common-value-hint'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesDashboardSettingsComponent', 'selector': 'app-notes-dashboard-settings'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'NotificationComponent', 'selector': 'app-notification'},{'name': 'NotificationItemComponent', 'selector': 'app-notification-item'},{'name': 'NotificationLinkComponent', 'selector': 'app-notification-link'},{'name': 'NotificationRuleComponent', 'selector': 'app-notification-rule'},{'name': 'NotificationSettingsComponent', 'selector': 'app-notification-settings'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'ParsedFileInputComponent', 'selector': 'app-parsed-file-input'},{'name': 'PermissionCheckboxComponent', 'selector': 'app-permission-checkbox'},{'name': 'PermissionMatrixComponent', 'selector': 'app-permission-matrix'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PoweredByComponent', 'selector': 'app-powered-by'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProfileComponent', 'selector': 'app-profile'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDashboardSettingsComponent', 'selector': 'app-progress-dashboard-settings'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PublicFormFormatWarningComponent', 'selector': 'app-public-form-format-warning'},{'name': 'PublicFormPermissionWarningComponent', 'selector': 'app-public-form-permission-warning'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecordDiffComponent', 'selector': 'app-record-diff'},{'name': 'RecordIdDisplayComponent', 'selector': 'app-record-id-display'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'ReviewDuplicatesComponent', 'selector': 'app-review-duplicates'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShortcutDashboardSettingsComponent', 'selector': 'app-shortcut-dashboard-settings'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SqlCodeEditorComponent', 'selector': 'app-edit-sql-query'},{'name': 'SqlV2TableComponent', 'selector': 'app-sql-v2-table'},{'name': 'StringFilterComponent', 'selector': 'app-string-filter'},{'name': 'SubmissionSuccessComponent', 'selector': 'app-submission-success'},{'name': 'SubscriptionInfoComponent', 'selector': 'app-subscription-info'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'SystemInitAssistantComponent', 'selector': 'app-system-init-assistant'},{'name': 'TemplateExportSelectionDialogComponent', 'selector': 'app-file-template-selection-dialog-component'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosDashboardSettingsComponent', 'selector': 'app-todos-dashboard-settings'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'TranslatableTextInputComponent', 'selector': 'app-translatable-text-input'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserDetailsComponent', 'selector': 'app-user-details'},{'name': 'UserLanguageSettingsComponent', 'selector': 'app-user-language-settings'},{'name': 'UserListComponent', 'selector': 'app-user-list'},{'name': 'UserProfileSetupComponent', 'selector': 'app-user-profile-setup'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WarningNotOptimizedForSmallScreenComponent', 'selector': 'app-warning-not-optimized-for-small-screen'},{'name': 'WidgetComponentSelectComponent', 'selector': 'app-widget-component-select'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
     var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'KeepPanelOpenOnSelectDirective', 'selector': 'input[appKeepPanelOpenOnSelect]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
     var ACTUAL_COMPONENT = {'name': 'ChooseUseCaseComponent'};
