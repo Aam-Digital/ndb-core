@@ -96,6 +96,26 @@ describe("EditAttendanceComponent", () => {
     expect(labels).not.toContain("Status");
   });
 
+  it("should pass all config of the embedded participant field on to the participant dropdown", () => {
+    fixture.componentRef.setInput("formFieldConfig", {
+      id: "attendance",
+      additional: {
+        participant: {
+          dataType: "entity",
+          additional: "TestEntity",
+          description: "Only children of the same center",
+        },
+      },
+    });
+
+    expect(component.participantFieldConfig()).toMatchObject({
+      id: "participant",
+      dataType: "entity",
+      additional: "TestEntity",
+      description: "Only children of the same center",
+    });
+  });
+
   it("should add a participant when addParticipant is called", () => {
     component.addParticipant("child3");
     expect(attendanceForm.value).toHaveLength(3);

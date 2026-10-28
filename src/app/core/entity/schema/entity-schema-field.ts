@@ -180,8 +180,8 @@ export interface EntitySchemaField {
    *
    * Only applies to a field referencing a single record type and edited with the entity dropdown
    * (or an edit component using it), not if a form layout sets another `editComponent`.
-   * An `attendance` field takes it in the config of its embedded `participant` field
-   * (`additional.participant.selectionCondition`).
+   * A `schema-embed` field (e.g. `attendance`) takes it in the config of its embedded
+   * entity field (e.g. `additional.participant.selectionCondition`).
    *
    * Records that do not match can still be shown by the user on request,
    * and already selected records are kept even if they do not match (anymore).

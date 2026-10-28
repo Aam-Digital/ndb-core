@@ -437,6 +437,7 @@ export class AdminEntityFieldComponent implements OnInit {
     }
 
     const types = asArray(this.additionalForm.value ?? []);
+    // TODO: generalize to support multiple entity types
     if (types.length !== 1 || !this.entityRegistry.has(types[0])) {
       return undefined;
     }
