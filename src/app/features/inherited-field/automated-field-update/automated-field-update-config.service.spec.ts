@@ -25,7 +25,7 @@ import { AlertService } from "#src/app/core/alerts/alert.service";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { DatabaseIndexingService } from "#src/app/core/entity/database-indexing/database-indexing.service";
 import { asArray } from "#src/app/utils/asArray";
-import { of } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { ConfigurableEnumValue } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { DefaultValueMode } from "../../../core/default-values/default-value-config";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
@@ -33,6 +33,10 @@ import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configur
 import { ConfigurableEnumService } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
 import { EntityAbility } from "#src/app/core/permissions/ability/entity-ability";
+import {
+  SessionInfo,
+  SessionSubject,
+} from "#src/app/core/session/auth/session-info";
 
 const mockAutomationConfig = {
   mode: "inherited-field" as DefaultValueMode,
@@ -497,6 +501,14 @@ describe("AutomatedFieldUpdateConfigService", () => {
       providers: [
         AutomatedFieldUpdateConfigService,
         { provide: EntityAbility, useValue: ability },
+        {
+          provide: SessionSubject,
+          useValue: new BehaviorSubject<SessionInfo>({
+            name: "test-user",
+            id: "test-user",
+            roles: [],
+          }),
+        },
         { provide: DatabaseIndexingService, useValue: mockIndexing },
         EntitySchemaService,
         ...mockEntityMapperProvider(),
@@ -769,6 +781,45 @@ describe("AutomatedFieldUpdateConfigService", () => {
 
     const currentChild = await entityMapper.load(Child, child.getId());
     expect(currentChild.category).toBe("");
+  });
+
+  describe("finding the records linking to a changed record", () => {
+    let school: School;
+    let originalSchool: School;
+    let child: Child;
+
+    beforeEach(() => {
+      school = createSchool("primary");
+      child = new Child();
+      child.school = school.getId();
+      child.category = "";
+      entityMapper.addAll([school, child]);
+      originalSchool = school.copy();
+      mockDialog.open.mockClear();
+
+      school.category = TEST_SCHOOL_ENUM[1];
+    });
+
+    it("does not use the reference index for a visitor without an account", async () => {
+      TestBed.inject(SessionSubject).next(undefined);
+
+      await service.applyRulesToDependentEntities(school, originalSchool);
+
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+      const updatedChild = await entityMapper.load(Child, child.getId());
+      expect(updatedChild.category).toBe("secondary-student");
+    });
+
+    it("does not look for records of a type that the user may not read", async () => {
+      ability.can.mockImplementation((action: string) => action !== "read");
+
+      await service.applyRulesToDependentEntities(school, originalSchool);
+
+      expect(mockIndexing.queryIndexDocs).not.toHaveBeenCalled();
+      expect(mockDialog.open).not.toHaveBeenCalled();
+      const currentChild = await entityMapper.load(Child, child.getId());
+      expect(currentChild.category).toBe("");
+    });
   });
 
   it("should handle multiple children referencing same school", async () => {
@@ -1843,7 +1894,7 @@ describe("AutomatedFieldUpdateConfigService", () => {
       entityMapper.addAll([project, workPackage, activity]);
       ability.can.mockImplementation(
         (action: string, entity: Entity) =>
-          entity.getId() !== workPackage.getId(),
+          action === "read" || entity.getId() !== workPackage.getId(),
       );
 
       const suggestions = await changeTags(activity, ["education"]);

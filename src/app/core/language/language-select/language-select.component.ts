@@ -58,14 +58,19 @@ export class LanguageSelectComponent {
 
   readonly disabledHint = $localize`:Language select - disabled option tooltip:Your administrator has not enabled this language for this system.`;
 
-  /** {@link availableLocales} with a flag whether each can be picked */
+  /** {@link availableLocales} with a flag whether each can be picked, the pickable ones first */
   readonly options = computed(() => {
     const enabledIds = new Set(this.enabledLocales().map(({ id }) => id));
-    return this.availableLocales().map((locale) => ({
-      id: locale.id,
-      label: locale.label,
-      enabled: enabledIds.size === 0 || enabledIds.has(locale.id),
-    }));
+    return (
+      this.availableLocales()
+        .map((locale) => ({
+          id: locale.id,
+          label: locale.label,
+          enabled: enabledIds.size === 0 || enabledIds.has(locale.id),
+        }))
+        // a stable sort, so the configured order is kept within each group
+        .sort((a, b) => Number(b.enabled) - Number(a.enabled))
+    );
   });
 
   /**
