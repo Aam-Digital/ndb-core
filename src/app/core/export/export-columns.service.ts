@@ -24,6 +24,9 @@ export class ExportColumnsService {
   /**
    * Build a list of export columns available for selection and which of those
    * should be preselected based on the currently visible list columns.
+   *
+   * This includes the record's internal id (`_id`), which is never a visible list
+   * column and therefore offered for selection but not preselected.
    */
   buildExportColumns(
     opts: BuildExportColumnsOptions,
@@ -46,7 +49,6 @@ export class ExportColumnsService {
       for (const r of resolvers) {
         const keySuffix = r.column.keySuffix ?? "";
         const columnId = r.sourceFieldId + keySuffix;
-        if (columnId.startsWith("_")) continue;
         const col: ExportColumnConfig = {
           query: `.${columnId}`,
           label: r.column.label,
