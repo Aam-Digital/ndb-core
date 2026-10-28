@@ -1,6 +1,5 @@
 import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
-  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -11,11 +10,8 @@ import {
 } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { map, Observable, of, startWith, switchMap } from "rxjs";
-import {
-  createCurrentRecordState,
-  CurrentRecordContext,
-} from "#src/app/core/common-components/entity-form/current-record-state";
+import { Observable, of, switchMap } from "rxjs";
+import { CurrentRecordContext } from "#src/app/core/common-components/entity-form/current-record-state";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -92,38 +88,15 @@ export class EntityFieldEditComponent<
   hideInheritButton = input<boolean>(false);
 
   /**
-   * Whether the field edits a value for several records at once (e.g. bulk edit),
-   * so that there is no single "current record" other fields could be compared with.
-   */
-  forMultipleRecords = input(false, { transform: booleanAttribute });
-
-  /**
-   * The record with the current, possibly unsaved values of its form,
+   * The record with the current, possibly unsaved values of the form,
    * for fields that depend on other fields of the record.
    * Only computed while subscribed, so fields that don't need it don't cost anything.
    */
   currentRecordState(): Observable<T | undefined> {
     return toObservable(
-      computed(() => ({
-        entity: this.entity(),
-        form: this.form(),
-        forMultipleRecords: this.forMultipleRecords(),
-      })),
+      computed(() => this.form()?.currentRecord ?? of(this.entity())),
       { injector: this.injector },
-    ).pipe(
-      switchMap(({ entity, form, forMultipleRecords }) => {
-        if (!entity || forMultipleRecords) {
-          return of(undefined);
-        }
-        if (!form) {
-          return of(entity);
-        }
-        return form.formGroup.valueChanges.pipe(
-          startWith(null),
-          map(() => createCurrentRecordState(entity, form.formGroup)),
-        );
-      }),
-    );
+    ).pipe(switchMap((currentRecord) => currentRecord));
   }
 
   /** full field config extended from schema */

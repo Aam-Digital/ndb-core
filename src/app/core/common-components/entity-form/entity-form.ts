@@ -1,5 +1,5 @@
 import { FormGroup, ɵElement } from "@angular/forms";
-import { Subscription } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { FormFieldConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EventEmitter } from "@angular/core";
@@ -27,6 +27,16 @@ export interface EntityForm<T extends Entity> {
   >;
 
   watcher: Map<string, Subscription>;
+
+  /**
+   * The record with the current, possibly unsaved values of this form, updated with every change,
+   * for fields that depend on the values of other fields of the record
+   * (like the `selectionCondition` of an entity field).
+   *
+   * `undefined` if the form does not edit one single record (e.g. in bulk edit).
+   * If not set, the field components use the saved `entity` of the form.
+   */
+  currentRecord?: Observable<T | undefined>;
 }
 
 export class EntityFormSavedEvent {

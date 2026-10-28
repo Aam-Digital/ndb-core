@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormControl, FormGroup } from "@angular/forms";
+import { BehaviorSubject, of } from "rxjs";
 
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
@@ -119,10 +120,10 @@ describe("EntityFieldEditComponent", () => {
 
   describe("current record state for the fields", () => {
     function collectStates() {
-      const states: TestEntity[] = [];
+      const states: (TestEntity | undefined)[] = [];
       component
         .currentRecordState()
-        .subscribe((s) => states.push(s as TestEntity));
+        .subscribe((s) => states.push(s as TestEntity | undefined));
       return states;
     }
 
@@ -132,26 +133,42 @@ describe("EntityFieldEditComponent", () => {
       );
     });
 
-    it("combines the record with the current, possibly unsaved values of its form", async () => {
-      const entity = TestEntity.create({ name: "Saved", other: "BERLIN" });
-      const formGroup = new FormGroup({ other: new FormControl("BERLIN") });
-      fixture.componentRef.setInput("entity", entity);
-      fixture.componentRef.setInput("form", { formGroup } as any);
+    it("follows the current record of the form", async () => {
+      const currentRecord = new BehaviorSubject<TestEntity | undefined>(
+        TestEntity.create({ other: "BERLIN" }),
+      );
+      fixture.componentRef.setInput("entity", new TestEntity());
+      fixture.componentRef.setInput("form", {
+        formGroup: new FormGroup({}),
+        currentRecord,
+      } as any);
       const states = collectStates();
       await vi.waitFor(() => {
         fixture.detectChanges();
         expect(states.at(-1)?.other).toBe("BERLIN");
       });
 
-      formGroup.get("other").setValue("HAMBURG");
-      formGroup.get("other").disable(); // disabled fields still count, like for display conditions
+      currentRecord.next(TestEntity.create({ other: "HAMBURG" }));
 
-      await vi.waitFor(() => expect(states.at(-1)?.other).toBe("HAMBURG"));
-      expect(states.at(-1)?.name).toBe("Saved");
-      expect(entity.other, "the saved record is not changed").toBe("BERLIN");
+      expect(states.at(-1)?.other).toBe("HAMBURG");
     });
 
-    it("is the record itself if there is no form", async () => {
+    it("is empty if the form has no single record (e.g. bulk edit)", async () => {
+      fixture.componentRef.setInput("entity", new TestEntity());
+      fixture.componentRef.setInput("form", {
+        formGroup: new FormGroup({}),
+        currentRecord: of(undefined),
+      } as any);
+      const states = collectStates();
+
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(states).toHaveLength(1);
+      });
+      expect(states[0]).toBeUndefined();
+    });
+
+    it("is the record itself if there is no form that provides the current record", async () => {
       const entity = TestEntity.create({ other: "BERLIN" });
       fixture.componentRef.setInput("entity", entity);
       const states = collectStates();
@@ -160,24 +177,6 @@ describe("EntityFieldEditComponent", () => {
         fixture.detectChanges();
         expect(states.at(-1)).toBe(entity);
       });
-    });
-
-    it("is empty if the field edits several records at once", async () => {
-      fixture.componentRef.setInput(
-        "entity",
-        TestEntity.create({ other: "A" }),
-      );
-      fixture.componentRef.setInput("form", {
-        formGroup: new FormGroup({ other: new FormControl("A") }),
-      } as any);
-      fixture.componentRef.setInput("forMultipleRecords", true);
-      const states = collectStates();
-
-      await vi.waitFor(() => {
-        fixture.detectChanges();
-        expect(states).toHaveLength(1);
-      });
-      expect(states[0]).toBeUndefined();
     });
   });
 });

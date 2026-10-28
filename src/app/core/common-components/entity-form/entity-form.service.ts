@@ -2,6 +2,7 @@ import { DestroyRef, EventEmitter, inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
+import { createCurrentRecordState } from "./current-record-state";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -10,7 +11,7 @@ import { PermissionConditionValidatorsService } from "./dynamic-form-validators/
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
-import { filter } from "rxjs/operators";
+import { filter, map, startWith } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 import { Logging } from "../../logging/logging.service";
@@ -166,6 +167,10 @@ export class EntityFormService {
       fieldConfigs: fields,
       onFormStateChange: new EventEmitter(),
       watcher: new Map(),
+      currentRecord: typedFormGroup.valueChanges.pipe(
+        startWith(null),
+        map(() => createCurrentRecordState(entity, typedFormGroup)),
+      ),
     };
 
     // Track unsaved changes for this form, keyed by the EntityForm itself.

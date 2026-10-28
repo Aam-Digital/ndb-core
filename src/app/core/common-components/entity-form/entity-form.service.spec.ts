@@ -350,6 +350,20 @@ describe("EntityFormService", () => {
     expect(form.formGroup.get("emptyField").value).toBeUndefined();
   });
 
+  it("provides the record with the current, possibly unsaved values of the form", async () => {
+    const entity = TestEntity.create({ name: "Saved", other: "BERLIN" });
+    const form = await createForm(["name", "other"], entity);
+    const records: TestEntity[] = [];
+    form.currentRecord.subscribe((record) => records.push(record));
+
+    form.formGroup.get("other").setValue("HAMBURG");
+    form.formGroup.get("other").disable(); // disabled fields still count, like for display conditions
+
+    expect(records.at(-1).other).toBe("HAMBURG");
+    expect(records.at(-1).name).toBe("Saved");
+    expect(entity.other, "the saved record is not changed").toBe("BERLIN");
+  });
+
   it("should clear pending changes and stop tracking once the DestroyRef is destroyed (no leak)", async () => {
     const unsavedChanged = TestBed.inject(UnsavedChangesService);
     const formFields = [{ id: "inactive" }];
