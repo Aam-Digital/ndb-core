@@ -62,12 +62,9 @@ export interface StartingChange {
  */
 export class ChangeSet {
   private readonly records = new Map<string, ChangedRecord>();
-  private setValues = 0;
 
   /** Increases whenever a value is set, so that what is calculated from the records stays valid until then */
-  get version(): number {
-    return this.setValues;
-  }
+  version = 0;
 
   constructor(changes: StartingChange[]) {
     for (const { entity, before, changedFields } of changes) {
@@ -108,7 +105,7 @@ export class ChangeSet {
     value: unknown,
     isSavedValue: boolean,
   ): void {
-    this.setValues++;
+    this.version++;
     const id = saved.getId();
     const record = this.records.get(id) ?? {
       before: saved,

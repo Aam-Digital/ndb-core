@@ -13,6 +13,7 @@ import {
   UpdateTrigger,
 } from "./automated-field-update.types";
 import { lastValueFrom } from "rxjs";
+import { groupBy } from "lodash-es";
 import { DefaultValueConfigInheritedField } from "../inherited-field-config";
 import { Logging } from "#src/app/core/logging/logging.service";
 import { AlertService } from "#src/app/core/alerts/alert.service";
@@ -96,15 +97,16 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     before: Entity[],
   ): Promise<Entity[]> {
     // only the entities with a change that is passed on (saving also changes e.g. the update time)
-    const triggers = entities
-      .map((entity, i) => ({ entity, before: before[i] }))
+    const triggers: UpdateTrigger[] = entities
+      .map((entity, i) => ({
+        entity,
+        before: before[i],
+        changedFields: getChangedFields(entity, before[i]),
+      }))
       .filter(
-        ({ entity, before }) =>
-          this.getTriggeredRules(entity, {
-            entity,
-            level: 0,
-            changedFields: getChangedFields(entity, before),
-          }).length > 0 && !this.checkRefAlreadyProcessed(entity),
+        (trigger) =>
+          this.getTriggeredRules(trigger.entity, { ...trigger, level: 0 })
+            .length > 0 && !this.checkRefAlreadyProcessed(trigger.entity),
       );
     if (triggers.length === 0) return [];
 
@@ -138,7 +140,7 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
     fieldId: string,
   ): Promise<boolean> {
     const { hasAffectedEntities } = await this.confirmAndSaveAffectedEntities([
-      { entity, before: entity, fieldId },
+      { entity, before: entity, fieldId, changedFields: [fieldId] },
     ]);
     return hasAffectedEntities;
   }
@@ -593,16 +595,11 @@ export class AutomatedFieldUpdateConfigService implements AffectedEntitiesContex
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
     // we need a proper UI to show the same entity and field with multiple values
-    const updatesByEntityId = new Map<string, AffectedEntity[]>();
-    userConfirmed.forEach((update) => {
-      const existing = updatesByEntityId.get(update.id) || [];
-      existing.push(update);
-      updatesByEntityId.set(update.id, existing);
-    });
+    const updatesByEntityId = groupBy(userConfirmed, (update) => update.id);
 
     const entitiesToSave: Entity[] = [];
     const previousVersions: Entity[] = [];
-    updatesByEntityId.forEach((updates) => {
+    Object.values(updatesByEntityId).forEach((updates) => {
       const entity = updates[0].affectedEntity;
       // e.g. records only listed to note that their linked records have no value in common
       const changes = updates.filter(

@@ -86,7 +86,11 @@ describe("AutomatedFieldUpdateComponent", () => {
   function initDialog(
     entities: AffectedEntity[],
     triggers: UpdateTrigger[] = [
-      { entity: new Entity("trigger"), before: new Entity("trigger") },
+      {
+        entity: new Entity("trigger"),
+        before: new Entity("trigger"),
+        changedFields: [],
+      },
     ],
   ) {
     TestBed.configureTestingModule({
@@ -363,7 +367,11 @@ describe("AutomatedFieldUpdateComponent", () => {
 
     /** a change of the center of a record (in entity format) */
     function centerChange(id: string, before: unknown, after: unknown) {
-      const trigger = { entity: new Entity(id), before: new Entity(id) };
+      const trigger = {
+        entity: new Entity(id),
+        before: new Entity(id),
+        changedFields: ["center"],
+      };
       Object.assign(trigger.before, { center: before });
       Object.assign(trigger.entity, { center: after });
       return trigger;

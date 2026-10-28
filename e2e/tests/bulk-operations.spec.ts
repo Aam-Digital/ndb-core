@@ -4,6 +4,7 @@ import {
   argosScreenshot,
   expect,
   loadApp,
+  type Page,
   selectFilterOption,
   test,
 } from "#e2e/fixtures.js";
@@ -15,6 +16,42 @@ import { createEntityOfType } from "#src/app/core/demo-data/create-entity-of-typ
 const CENTER_ALIPORE = { id: "C1", label: "Alipore" };
 const CENTER_TOLLYGUNGE = { id: "C2", label: "Tollygunge" };
 const CENTER_BARABAZAR = { id: "C3", label: "Barabazar" };
+
+/** Enter the bulk-actions mode of the current list via its "additional actions" menu. */
+async function enterBulkMode(page: Page) {
+  await page.locator("button[mat-icon-button][color='primary']").click();
+  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
+}
+
+async function selectRows(page: Page, names: string[]) {
+  for (const name of names) {
+    await page
+      .locator("app-entities-table tbody tr")
+      .filter({ hasText: name })
+      .click();
+  }
+}
+
+async function chooseBulkAction(page: Page, action: string) {
+  await page
+    .locator("app-entity-bulk-actions")
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: action }).click();
+}
+
+/** Pick the field to update in the open bulk edit dialog. */
+async function chooseBulkEditField(page: Page, property: string) {
+  await page
+    .getByRole("dialog")
+    .locator("mat-form-field")
+    .filter({ hasText: "Property to update" })
+    .locator("input")
+    .first()
+    .click();
+  await page.getByRole("option", { name: property, exact: true }).click();
+}
 
 const NEW_PROJECT_NUMBER = "BE-EDITED-001";
 const BULK_EDIT_SCHOOL_NAME = "<BULK EDIT SCHOOL>";
@@ -37,42 +74,17 @@ test("Bulk-edit a field across selected records", async ({ page }) => {
   await loadApp(page, [...users, c1, c2, c3, school]);
 
   await page.getByRole("navigation").getByText("Children").click();
-
-  // Enter bulk-actions mode.
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
-
-  // Select all three rows.
-  for (const name of [
+  await enterBulkMode(page);
+  await selectRows(page, [
     "BulkEdit Child A",
     "BulkEdit Child B",
     "BulkEdit Child C",
-  ]) {
-    await page
-      .locator("app-entities-table tbody tr")
-      .filter({ hasText: name })
-      .click();
-  }
+  ]);
+  await chooseBulkAction(page, "Bulk Edit");
 
-  // Open the bulk action dropdown and pick "Bulk Edit".
-  await page
-    .locator("app-entity-bulk-actions")
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Bulk Edit" }).click();
-
-  // Bulk-edit dialog opens — pick the "Phone" property to update.
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-
-  await dialog
-    .locator("mat-form-field")
-    .filter({ hasText: "Property to update" })
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Project Number" }).click();
+  await chooseBulkEditField(page, "Project Number");
 
   // The value form for the selected field appears — fill the new value.
   await dialog
@@ -98,27 +110,10 @@ test("Bulk-edit a field across selected records", async ({ page }) => {
 
   // Bulk-editing a field that other records collect offers to update them, in one dialog for all edited records.
   await page.getByRole("navigation").getByText("Children").click();
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
-  for (const name of ["BulkEdit Child A", "BulkEdit Child B"]) {
-    await page
-      .locator("app-entities-table tbody tr")
-      .filter({ hasText: name })
-      .click();
-  }
-  await page
-    .locator("app-entity-bulk-actions")
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Bulk Edit" }).click();
-  await dialog
-    .locator("mat-form-field")
-    .filter({ hasText: "Property to update" })
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Center", exact: true }).click();
+  await enterBulkMode(page);
+  await selectRows(page, ["BulkEdit Child A", "BulkEdit Child B"]);
+  await chooseBulkAction(page, "Bulk Edit");
+  await chooseBulkEditField(page, "Center");
   await dialog.locator("#entity-field__center .fa-caret-down").click();
   await page
     .getByRole("option", { name: CENTER_BARABAZAR.label, exact: true })
@@ -178,27 +173,9 @@ test("Bulk-merge two records combines them into one", async ({ page }) => {
 
   await page.getByRole("navigation").getByText("Children").click();
 
-  // Enter bulk-actions mode via the list's "additional actions" menu.
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
-
-  // Selection checkboxes are now visible. Click both target rows.
-  await page
-    .locator("app-entities-table tbody tr")
-    .filter({ hasText: CHILD_A_NAME })
-    .click();
-  await page
-    .locator("app-entities-table tbody tr")
-    .filter({ hasText: CHILD_B_NAME })
-    .click();
-
-  // Open the bulk action dropdown and pick "Merge".
-  await page
-    .locator("app-entity-bulk-actions")
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Merge" }).click();
+  await enterBulkMode(page);
+  await selectRows(page, [CHILD_A_NAME, CHILD_B_NAME]);
+  await chooseBulkAction(page, "Merge");
 
   // The merge preview dialog opens.
   const mergeDialog = page.getByRole("dialog");
@@ -242,26 +219,9 @@ test("Bulk-archive selected records hides them from the default list", async ({
 
   // Enter bulk-actions mode directly from the list, without ever opening any
   // entity's details view first — "Archive" must be available as a bulk action.
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
-
-  // Select both target rows.
-  await page
-    .locator("app-entities-table tbody tr")
-    .filter({ hasText: ARCHIVE_CHILD_A_NAME })
-    .click();
-  await page
-    .locator("app-entities-table tbody tr")
-    .filter({ hasText: ARCHIVE_CHILD_B_NAME })
-    .click();
-
-  // Open the bulk action dropdown and pick "Archive".
-  await page
-    .locator("app-entity-bulk-actions")
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Archive" }).click();
+  await enterBulkMode(page);
+  await selectRows(page, [ARCHIVE_CHILD_A_NAME, ARCHIVE_CHILD_B_NAME]);
+  await chooseBulkAction(page, "Archive");
 
   // A snackbar confirms the bulk archive.
   await expect(page.getByText(/archived/)).toBeVisible();
@@ -355,8 +315,7 @@ test("Bulk selection follows the rendered order through sorting, filtering and p
     await expect(rows.nth(0).locator("mat-checkbox input")).not.toBeChecked();
   }
 
-  await page.locator("button[mat-icon-button][color='primary']").click();
-  await page.getByRole("menuitem", { name: "Bulk Actions" }).click();
+  await enterBulkMode(page);
   await expect(headerCheckbox).toBeVisible();
 
   // 1. In the list's initial order.
@@ -406,22 +365,11 @@ test("Bulk selection follows the rendered order through sorting, filtering and p
 
   // Bulk-editing them out of the active filter must update the filtered result
   // and the paginator resets to page 1
-  await page
-    .locator("app-entity-bulk-actions")
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Bulk Edit" }).click();
+  await chooseBulkAction(page, "Bulk Edit");
 
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  await dialog
-    .locator("mat-form-field")
-    .filter({ hasText: "Property to update" })
-    .locator("input")
-    .first()
-    .click();
-  await page.getByRole("option", { name: "Center", exact: true }).click();
+  await chooseBulkEditField(page, "Center");
 
   // the enum field renders as chips; its dropdown opens via the caret suffix
   await dialog.locator("#entity-field__center .fa-caret-down").click();

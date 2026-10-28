@@ -16,12 +16,7 @@ import {
   EnteredValue,
   UpdateTrigger,
 } from "./automated-field-update.types";
-import {
-  ChangeSet,
-  ChangeSetState,
-  getChangedFields,
-  isLinkedTo,
-} from "./change-set";
+import { ChangeSet, ChangeSetState, isLinkedTo } from "./change-set";
 
 /** Number of levels above the changed entity that are included in one update dialog. */
 export const MAX_HIERARCHY_LEVELS = 10;
@@ -173,18 +168,10 @@ export class AffectedEntitiesCalculation {
     this.changedFields = new Map(
       triggers.map((trigger) => [
         trigger.entity.getId(),
-        trigger.fieldId
-          ? [trigger.fieldId]
-          : getChangedFields(trigger.entity, trigger.before),
+        trigger.changedFields,
       ]),
     );
-    this.changeSet = new ChangeSet(
-      triggers.map((trigger) => ({
-        entity: trigger.entity,
-        before: trigger.before,
-        changedFields: this.changedFields.get(trigger.entity.getId()),
-      })),
-    );
+    this.changeSet = new ChangeSet(triggers);
   }
 
   /**
@@ -195,7 +182,7 @@ export class AffectedEntitiesCalculation {
     const queue: QueuedChange[] = this.triggers.map((trigger) => ({
       entity: trigger.entity,
       level: 0,
-      changedFields: this.changedFields.get(trigger.entity.getId()),
+      changedFields: trigger.changedFields,
       onlyLinkedEntities: !!trigger.fieldId,
     }));
 

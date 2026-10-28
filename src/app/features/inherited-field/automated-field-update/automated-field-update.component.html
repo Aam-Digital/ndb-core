@@ -10,10 +10,11 @@
 <mat-dialog-content>
   @for (group of groups(); track group.sourceFieldId) {
     @if (group.triggers.length > 0) {
+      @let several = group.triggers.length > 1;
       <mat-expansion-panel class="trigger">
         <mat-expansion-panel-header>
           <mat-panel-title class="trigger-header">
-            @if (group.triggers.length === 1) {
+            @if (!several) {
               <span class="trigger-label" i18n>Triggered by</span>
               <app-entity-block
                 [entityId]="group.triggers[0].trigger.entity.getId()"
@@ -30,7 +31,6 @@
 
         <!-- rendered only when expanded, as a bulk edit can change many records -->
         <ng-template matExpansionPanelContent>
-          @let several = group.triggers.length > 1;
           @for (item of group.triggers; track item.trigger.entity.getId()) {
             @if (several) {
               <app-entity-block

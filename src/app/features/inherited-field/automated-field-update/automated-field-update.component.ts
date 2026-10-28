@@ -26,7 +26,7 @@ import { FormFieldConfig } from "#src/app/core/common-components/entity-form/For
 import { EntityFieldViewComponent } from "#src/app/core/entity/entity-field-view/entity-field-view.component";
 import { HelpButtonComponent } from "#src/app/core/common-components/help-button/help-button.component";
 import { EntityFieldLabelPipe } from "#src/app/core/entity/entity-field-label/entity-field-label.pipe";
-import { differenceWith, isEqual, uniq } from "lodash-es";
+import { differenceWith, groupBy, isEqual, uniq } from "lodash-es";
 import { asArray } from "#src/app/utils/asArray";
 import {
   catchError,
@@ -179,6 +179,12 @@ export class AutomatedFieldUpdateComponent {
   /** The affected entities, grouped by the field of the changed entity that the update is based on */
   readonly groups = computed(() => this.groupByTriggerField(this.rows()));
 
+  /**
+   * The change of a field of a changed entity, by entity id and field, which does not depend on the values
+   * the user enters, so that it is calculated once although the groups are made again for each entered value.
+   */
+  private readonly triggerChanges = new Map<string, TriggerChange>();
+
   /** The name of the type of the changed entities, to show how many of them caused the update */
   readonly triggerTypeLabel =
     this.data.triggers?.[0]?.entity.getConstructor().labelPlural;
@@ -197,14 +203,8 @@ export class AutomatedFieldUpdateComponent {
     );
 
   private groupByTriggerField(rows: DialogRow[]): UpdateGroup[] {
-    const groups = new Map<string, DialogRow[]>();
-    for (const row of rows) {
-      groups.set(row.sourceFieldId, [
-        ...(groups.get(row.sourceFieldId) ?? []),
-        row,
-      ]);
-    }
-    return [...groups].map(([sourceFieldId, groupRows]) => ({
+    const groups = groupBy(rows, (row) => row.sourceFieldId);
+    return Object.entries(groups).map(([sourceFieldId, groupRows]) => ({
       sourceFieldId,
       triggers: (this.data.triggers ?? []).map((trigger) => ({
         trigger,
@@ -223,8 +223,6 @@ export class AutomatedFieldUpdateComponent {
     groupRows: DialogRow[],
   ): TriggerChange[] {
     const entityType = trigger.entity.getConstructor();
-    const isChanged = (fieldId: string) =>
-      isFieldChanged(trigger.entity, trigger.before, fieldId);
     const firstLevel = groupRows.filter((entity) => entity.level === 1);
     // the value that is passed on, and the link to the affected entities if it was changed
     const fieldIds = uniq([
@@ -234,19 +232,32 @@ export class AutomatedFieldUpdateComponent {
           (entity) => entity.relatedReferenceFieldEntityType === entityType,
         )
         .map((entity) => entity.relatedReferenceField)
-        .filter(isChanged),
+        .filter((fieldId) =>
+          isFieldChanged(trigger.entity, trigger.before, fieldId),
+        ),
     ]).filter((fieldId) => !!fieldId);
     return fieldIds.map((fieldId) => {
-      const field = this.entityFormService.extendFormFieldConfig(
-        fieldId,
-        entityType,
-      );
-      return {
-        field,
-        isChanged: isChanged(fieldId),
-        ...this.getRemovedAndAdded(trigger, field),
-      };
+      const key = `${trigger.entity.getId()}|${fieldId}`;
+      if (!this.triggerChanges.has(key)) {
+        this.triggerChanges.set(key, this.getTriggerChange(trigger, fieldId));
+      }
+      return this.triggerChanges.get(key);
     });
+  }
+
+  private getTriggerChange(
+    trigger: UpdateTrigger,
+    fieldId: string,
+  ): TriggerChange {
+    const field = this.entityFormService.extendFormFieldConfig(
+      fieldId,
+      trigger.entity.getConstructor(),
+    );
+    return {
+      field,
+      isChanged: isFieldChanged(trigger.entity, trigger.before, fieldId),
+      ...this.getRemovedAndAdded(trigger, field),
+    };
   }
 
   /** What a change of the changed entity removed from the old value of the field, and what it added */
