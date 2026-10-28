@@ -135,6 +135,11 @@ export class DateRangeFilterPanelComponent {
     this.data?.highlightRange ?? new DateRange<Date>(null, null);
   comparisonRange = signal<DateRange<Date>>(this.highlightRange);
 
+  /** the month shown first: for a field its start date, else the highlighted range (a filter starts at today) */
+  readonly startAt: Date | null = this.showAllOption
+    ? null
+    : (this.data?.dateRange?.start ?? this.highlightRange.start ?? null);
+
   preselectRange(dateRangeOption): void {
     this.comparisonRange.set(calculateDateRange(dateRangeOption));
   }

@@ -207,6 +207,35 @@ describe("DateRangeFilterPanelComponent", () => {
     expect(panel.comparisonRange()).toEqual(parentPeriod);
   });
 
+  it.each<[string, object, Date | null]>([
+    ["a filter", {}, null],
+    [
+      "a field without dates, on the highlighted range",
+      { hideAllOption: true, dateRange: undefined },
+      new Date(2023, 2, 1),
+    ],
+    [
+      "a field with dates, on its start date",
+      {
+        hideAllOption: true,
+        dateRange: new DateRange(new Date(2022, 5, 1), null),
+      },
+      new Date(2022, 5, 1),
+    ],
+  ])("opens the calendar of %s", (_, data, expectedStart) => {
+    Object.assign(TestBed.inject(MAT_DIALOG_DATA), data, {
+      highlightRange: new DateRange(
+        new Date(2023, 2, 1),
+        new Date(2023, 4, 31),
+      ),
+    });
+    const panel = TestBed.createComponent(
+      DateRangeFilterPanelComponent,
+    ).componentInstance;
+
+    expect(panel.startAt).toEqual(expectedStart);
+  });
+
   it("should set empty option when selected", () => {
     component.selectRangeAndClose("empty");
     expect(dialogCloseSpy).toHaveBeenCalledWith({
